@@ -145,7 +145,7 @@ The visual column gives the region and the mark.
 | Packcaller | Horde | `alone` | When it sees a player, it calls the zombies in 24 blocks | Players hear its groans from two times farther | Face: open jaw |
 | Brood | Horde | `crowd` | Its spawn groups have 1 more zombie | Each zombie of the group has 15% less maximum health | Shirt: ribs show through |
 | Rally | Horde | `alone` | 10% more damage for each zombie in 6 blocks, to a maximum of 30% | 20% less damage when alone | Arms: bands of cloth |
-| Runt | Horde | `projectile` | 15% more chance to spawn as a baby zombie | Its baby zombies have 50% less maximum health | No mark. The baby model shows the gene |
+| Runt | Horde | `projectile` | 20% chance to spawn as a baby zombie | Its baby zombies have 50% less maximum health | The baby model, and scalp: thin tufts of hair |
 | Grave Call | Horde | `melee` | When hit, it has a 10% chance to call a new zombie | 2 less armor | Hands: grave dirt |
 | Siege | Horde, sub Tank | `unreached` | It breaks doors on all difficulties, and it breaks glass slowly | 20% less speed | Hands: wood splinters |
 
@@ -187,6 +187,13 @@ The major family comes first, and the sub family comes second.
 | Rotbulks | Blight | Tank | Slow, tough carriers of rot |
 | Pestilence | Blight | Horde | A plague that grows with each kill |
 
+## Baby zombies
+
+- Baby zombies do not spawn in vanilla ways.
+- Only the Runt gene makes baby zombies.
+  Thus, a baby zombie shows that its pool evolved Runt.
+- At the start of a world, no baby zombies spawn.
+
 ## Pure families
 
 A pure family has all its points in one major family.
@@ -217,6 +224,3 @@ Each hybrid has its own name.
 A neutral zombie has no genes, or no family points.
 It is a plain zombie, with no family effects.
 
-## Open questions
-
-- Do Runt babies replace the vanilla baby zombies?

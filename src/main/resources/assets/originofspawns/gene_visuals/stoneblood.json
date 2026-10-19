@@ -1,0 +1,29 @@
+{
+	"layers": [
+		{
+			"regions": [
+				"lower_legs",
+				"feet"
+			],
+			"effect": {
+				"type": "desaturate",
+				"amount": 1.0,
+				"darken": 0.1
+			},
+			"order": -3
+		},
+		{
+			"regions": [
+				"lower_legs",
+				"feet"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/stoneblood_0.png",
+				"tint": "#9A9A9A"
+			},
+			"order": -3
+		}
+	],
+	"model": "originofspawns:stoneblood_shell"
+}

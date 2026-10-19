@@ -279,6 +279,97 @@ def nightborn():
     return [pale]
 
 
+def thickskull():
+    # Thickskull has no marks on the texture. Its bone plate is the gene
+    # model thickskull_plate.
+    return []
+
+
+def blob(core, rim, center, ring):
+    """Put a swollen blotch: a light core pixel and a darker ring around it."""
+    core.put(center)
+    for p in ring:
+        rim.put(p, 230)
+
+
+def bloat():
+    # Swollen green blotches on the shirt, on pixels that no other gene marks.
+    # The swollen body needs a gene model that uses the mob texture. It is
+    # not here yet.
+    core = Mark("#9DB64C")
+    rim = Mark("#6A852A")
+    blob(core, rim, (21, 24), [(21, 23), (22, 23), (22, 24), (21, 25)])
+    blob(core, rim, (26, 25), [(25, 25), (26, 26), (25, 26)])
+    blob(core, rim, (35, 24), [(34, 24), (35, 25), (36, 24)])
+    blob(core, rim, (37, 26), [(37, 25), (38, 26)])
+    blob(core, rim, (17, 23), [(18, 23), (17, 24)])
+    blob(core, rim, (29, 24), [(30, 24), (29, 25)])
+    return [core, rim]
+
+
+def stoneblood():
+    # The lower legs and the feet turn to gray stone, with light and dark
+    # specks. This goes under the marks of other genes (order -3). The gene
+    # model stoneblood_shell adds chips of stone that also cover the bone
+    # legs of Bonerunner.
+    legs = {"regions": ["lower_legs", "feet"]}
+    gray = dict(legs, effect={"type": "desaturate", "amount": 1.0, "darken": 0.1}, order=-3)
+    speck = Mark("#9A9A9A", alpha=110, order=-3, size=16, **legs)
+    for y in range(16):
+        for x in range(16):
+            n = (x * 73856093 ^ y * 19349663) * 2654435761 % 4294967296 % 100
+            speck.put((x, y), 255 if n < 30 else 120 if n < 55 else 190)
+    return [gray, speck]
+
+
+def blastproof():
+    # Soot on the edges of the shirt: the shoulders, the sides of the chest
+    # and the back, and the top of the sleeves. The soot is thick on the edge
+    # and thin one pixel in, and some pixels stay clean, so it reads as a
+    # smudge.
+    soot = Mark("#2B2520", alpha=200)
+    thin = Mark("#2B2520", alpha=110)
+
+    def put(mark, p, x, y, clean=2):
+        n = (x * 31 + y * 17) % 10
+        if n >= clean:
+            mark.put(p, (255, 215, 175)[n % 3])
+    for y in range(16, 20):
+        for x in (20, 27):
+            put(soot, (x, y), x, y)
+    for y in range(20, 28):
+        for x in (20, 27):
+            put(soot, (x, y), x, y)
+        if y not in (23, 24, 25):
+            put(thin, (21, y), 21, y, 4)
+        if y < 25:
+            put(thin, (26, y), 26, y, 4)
+    for y in range(20, 26):
+        put(soot, (32, y), 32, y)
+        put(thin, (33, y), 33, y, 4)
+        if y != 22:
+            put(soot, (39, y), 39, y)
+        if y not in (21, 22):
+            put(thin, (38, y), 38, y, 4)
+    for col in range(4):
+        for row in range(4):
+            for u, v in ARMS:
+                put(thin, (u + 4 + col, v + row), col, row, 3)
+    return [soot, thin]
+
+
+def mender():
+    # Stitched seams on the outer side of each arm: a dark seam down the
+    # middle, with pale cross stitches.
+    seam = Mark("#3A1E16")
+    thread = Mark("#C8B890")
+    for row in range(4, 8):
+        seam.put(arm(OUTER, 1, row))
+    for row in (4, 6):
+        thread.put(arm(OUTER, 0, row)).put(arm(OUTER, 2, row), 225)
+    return [seam, thread]
+
+
 GENES = {
     "lunger": lunger,
     "frenzy": frenzy,
@@ -289,6 +380,11 @@ GENES = {
     "burrower": burrower,
     "lurker": lurker,
     "nightborn": nightborn,
+    "thickskull": thickskull,
+    "bloat": bloat,
+    "stoneblood": stoneblood,
+    "blastproof": blastproof,
+    "mender": mender,
 }
 
 # The gene models of the genes in GENES.
@@ -296,6 +392,8 @@ MODELS = {
     "burrower": "originofspawns:burrower_dirt",
     "lurker": "originofspawns:lurker_hood",
     "nightborn": "originofspawns:nightborn_eyes",
+    "thickskull": "originofspawns:thickskull_plate",
+    "stoneblood": "originofspawns:stoneblood_shell",
 }
 
 

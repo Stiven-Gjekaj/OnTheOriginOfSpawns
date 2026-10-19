@@ -1,0 +1,41 @@
+{
+	"texture": "originofspawns:textures/entity/thickskull_plate.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				-10,
+				-3
+			],
+			"size": [
+				6,
+				2,
+				6
+			]
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-3,
+				-8,
+				-4.6
+			],
+			"size": [
+				6,
+				2,
+				1
+			]
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mender_0.png",
+				"tint": "#3A1E16"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mender_1.png",
+				"tint": "#C8B890"
+			}
+		}
+	]
+}

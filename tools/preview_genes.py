@@ -53,7 +53,8 @@ FAMILIES = {
 # the genes of the family.
 EXTRA = {
     "predators": [("Cinder + all 6", ["cinder"], True),
-                  ("Ironhide + D. Throes", ["ironhide", "death_throes"], False)],
+                  ("Ironhide + D. Throes", ["ironhide", "death_throes"], False),
+                  ("Ironhide + all 6", ["ironhide"], True)],
 }
 
 SCALE = 8

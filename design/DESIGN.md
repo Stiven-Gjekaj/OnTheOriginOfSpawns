@@ -116,8 +116,14 @@ Change this document when a decision changes.
   This is rare.
   It is only for a gene that a texture cannot show.
 - Milestone 1 has one model change: Bonerunner.
-- The beta stage can add model changes for Bloat, Thickskull, and
-  Sporebearer.
+- Milestone 2a adds model changes for Bloat, Thickskull, and Sporebearer.
+- The marks must not clutter the mob.
+  First, the modeller makes the marks small and puts them on different
+  pixels.
+  If marks still collide, the region map gets smaller regions, for example
+  mouth, eyes, brow, chest, belly, back, and sleeves.
+- The user reviews the visuals with one preview sheet for each family: 6
+  genes on white, front and back.
 - Data packs define the visual recipes.
 - The modeller makes the region maps and the patterns with code.
   The mod does not use Blockbench.
@@ -389,7 +395,18 @@ Version 1.0.0 has these 30 perks:
   stamina.
 - Each bred line gets a pedigree page in the notebook.
 
+## Mob info on hover
+
+- When the player looks at a mob, a small panel shows at the top of the
+  screen.
+  Mods such as AppleSkin and Jade show information in a similar way.
+- The panel shows short information: the family of the mob and its dominant
+  genes.
+
 ## Beagle Notebook
+
+- The notebook has a tab for each species.
+  Each species tab has family tabs and gene tabs.
 
 - The Beagle Notebook is an item.
 - The notebook has one page for each species.

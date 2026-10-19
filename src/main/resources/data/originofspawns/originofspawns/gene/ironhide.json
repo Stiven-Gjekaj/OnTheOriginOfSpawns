@@ -1,0 +1,13 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:zombie/tank",
+	"gains": [
+		{ "type": "damage_taken", "damage_types": "#minecraft:is_projectile", "multiplier": 0.5 },
+		{ "type": "attribute", "attribute": "minecraft:knockback_resistance", "amount": 0.5, "operation": "add_value" }
+	],
+	"downsides": [
+		{ "type": "attribute", "attribute": "minecraft:movement_speed", "amount": -0.1, "operation": "add_multiplied_base" },
+		{ "type": "damage_taken", "damage_types": "#minecraft:is_explosion", "multiplier": 1.25 }
+	]
+}

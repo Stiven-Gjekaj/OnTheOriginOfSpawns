@@ -1,0 +1,14 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:fire",
+	"family": "originofspawns:zombie/stalker",
+	"sub_family": "originofspawns:zombie/predator",
+	"gains": [
+		{ "type": "damage_taken", "damage_types": "#minecraft:is_fire", "multiplier": 0 },
+		{ "type": "ignite_target", "chance": 0.2, "seconds": 4 }
+	],
+	"downsides": [
+		{ "type": "water_damage", "amount": 1, "interval": 20 },
+		{ "type": "attribute", "attribute": "minecraft:max_health", "amount": -4, "operation": "add_value" }
+	]
+}

@@ -38,8 +38,7 @@ _A Fabric mod where the mobs evolve from how you kill them_
 
 **On the Origin of Spawns** makes the mobs in your world evolve. Each mob
 that you kill changes the next generation. Burn many zombies, and their
-offspring start to resist fire. Drown them, and they learn to stay away from
-water.
+offspring start to resist fire. Outrun them, and their offspring get faster.
 
 You evolve too, but you choose how. Select small adaptations, each with a
 trade-off. Then watch the mobs adapt to counter you. Record each species in
@@ -52,8 +51,8 @@ These features are for the first release. Some are not complete.
 
 - A gene pool for each species in each biome category: hot, cold, wet,
   temperate, nether, and end
-- The cause of each death changes the pool: fire, drowning, arrows, melee,
-  explosions, and falls
+- The cause of each death changes the pool: fire, arrows, melee, explosions,
+  falls, and zombies that die before they reach you
 - Genes that change how mobs look, fight, sense, and spawn
 - A cost for each gene, and a fixed number of gene points for each mob
 - Extinction of a species in a biome category

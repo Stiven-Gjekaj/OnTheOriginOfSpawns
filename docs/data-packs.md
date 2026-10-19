@@ -20,8 +20,9 @@ A death counts for a pressure when its damage type is in the tag.
 |---|---|---|
 | `damage_types` | damage type tag, with `#` | The damage types that count for this pressure |
 
-The mod has these pressures: `fire`, `drowning`, `projectile`, `melee`,
-`explosion`, and `fall`.
+The mod has these pressures: `fire`, `projectile`, `melee`, `explosion`, and
+`fall`.
+The list is not final.
 The `melee` pressure uses the tag `#originofspawns:melee`.
 
 ## Gene

@@ -6,7 +6,7 @@ The mobs in your world evolve.
 Each mob that you kill changes the next generation.
 
 Burn many zombies, and their offspring start to resist fire.
-Drown them, and they learn to stay away from water.
+Outrun them, and their offspring get faster.
 Shoot them, and they grow plates that stop arrows.
 
 You evolve too, but you choose how.
@@ -20,8 +20,8 @@ artificial selection race each other.
 ## Natural selection
 
 Each mob species has a gene pool.
-The mod records how each mob dies: fire, drowning, arrows, melee, explosions,
-or falls.
+The mod records how each mob dies: fire, arrows, melee, explosions, falls, or
+before it can reach you.
 When a cause of death is common, the gene that counters it becomes stronger.
 Each new mob gets its genes from the pool.
 
@@ -36,7 +36,7 @@ Each new mob gets its genes from the pool.
   Mobs that die alone start to move in groups.
   Creepers that die before they explode get a shorter fuse.
 - **Nothing is free.** Each gene has a cost.
-  A zombie that resists fire is weak to water.
+  A zombie that resists fire has less health.
   A fixed number of gene points stops a species from having every defense.
 - **Use it or lose it.** If you stop a cause of death, the gene that counters
   it fades slowly.

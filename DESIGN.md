@@ -117,18 +117,30 @@ Change this document when a decision changes.
 
 ## Player adaptations
 
-- The player earns Insight when they study a species.
-  To study a species, the player observes it, kills it in different ways,
-  and finds mutations.
-- Each Insight milestone opens a perk slot.
+- The notebook shows a knowledge percentage.
+  It is the part of all notebook entries that the player has filled.
+  Entries include species pages, observed genes, variants, mutations, and
+  fossils.
+- The knowledge percentage sets the number of perk slots.
+
+| Knowledge | Perk slots |
+|---|---|
+| 0% | 1 |
+| 20% | 2 |
+| 40% | 3 |
+| 60% | 4 |
+| 80% | 5 |
+
+- The maximum is 5 slots.
+- Shared pages from the Royal Society also increase the knowledge percentage.
 - To take a perk, the player pays XP levels.
 - Each perk has a trade-off.
-  For example, "thick hide" decreases damage taken by 10% and decreases speed
-  by 10%.
 - The player can change a perk.
   A change has a small cost.
+- Some perks cannot be used together.
+  For example, the player cannot have Ruminant and Carnivore at the same time.
 
-These are the first perks:
+The first release has these 30 perks:
 
 | Perk | Gain | Cost |
 |---|---|---|
@@ -138,6 +150,30 @@ These are the first perks:
 | Gills | The player breathes longer under water | The player loses air slowly on land |
 | Lean frame | More sprint speed | 2 fewer hearts |
 | Scent mask | Mobs notice the player later | Animals run from the player |
+| Hollow bones | Less fall damage | More knockback taken |
+| Hard shell | 2 more armor points | The player sinks in water |
+| Heat sink | Less fire and lava damage | Powder snow freezes the player faster |
+| Ruminant | The player can eat grass and leaves | Meat gives less food |
+| Carnivore | Raw meat is safe and gives full food | Plant food gives half food |
+| Fat stores | Saturation lasts longer | Slower swim speed |
+| Adrenaline | Speed and strength at low health | Slowness and hunger after the burst |
+| Axolotl blood | Faster natural healing | Healing uses more hunger |
+| Venom glands | Melee attacks poison the target | Healing potions heal less |
+| Echolocation | Sneaking shows mobs through walls | Mobs hear the player from farther |
+| Keen nose | The player sees the trails of near mobs | Rotten flesh and zombies cause nausea |
+| Long arms | 1 more block of reach | Slower attack speed |
+| Claws | An empty hand digs dirt and sand fast | Tools lose durability faster |
+| Gecko pads | The player climbs walls while sneaking | More fall damage |
+| Spring legs | Higher jumps | Jumps use more hunger |
+| Camouflage skin | Invisible when still in grass or leaves | Works only with no chestplate |
+| Nocturnal | More damage at night | Less damage in the day |
+| Hibernation | Sleep restores all hunger and health | Slowness for one minute after sleep |
+| Pack instinct | More damage near tame wolves or players | Less damage when alone |
+| Symbiosis | Near tame animals heal the player slowly | The player takes part of their damage |
+| Immune memory | Each bad effect is shorter after the player survives it | Good effects are also shorter |
+| Tough stomach | No bad effects from rotten flesh, spider eyes, or pufferfish | Golden apples give less |
+| Bioluminescence | The player gives light | Mobs see the player from farther at night |
+| Mimic scent | Zombies ignore the player until the player attacks | Villagers give worse trades, and iron golems do not trust the player |
 
 ## Player evolution modes
 
@@ -172,7 +208,7 @@ These are the first perks:
 - A page shows gene frequencies, a chart of change over time, mutations, and
   a family tree.
 - A page opens when the player first observes or kills a mob of that species.
-- Notebook progress is the source of Insight.
+- Notebook progress sets the knowledge percentage.
 - A phylogenetic tree shows when each variant split from its species.
 - Field sketches show each mob with its current genes.
   The sketch changes when the genes change.

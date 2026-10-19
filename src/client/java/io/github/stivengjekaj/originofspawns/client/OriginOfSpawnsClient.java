@@ -4,6 +4,7 @@ import io.github.stivengjekaj.originofspawns.client.render.GeneModelLayer;
 import io.github.stivengjekaj.originofspawns.client.render.GeneModels;
 import io.github.stivengjekaj.originofspawns.client.render.GeneTextures;
 import io.github.stivengjekaj.originofspawns.client.render.GeneVisuals;
+import io.github.stivengjekaj.originofspawns.client.render.MobInfoHud;
 import io.github.stivengjekaj.originofspawns.client.screen.NotebookScreen;
 import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
 import io.github.stivengjekaj.originofspawns.notebook.NotebookPayload;
@@ -12,6 +13,8 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityRenderLayerRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 
 import net.minecraft.client.model.HumanoidModel;
@@ -31,6 +34,7 @@ public class OriginOfSpawnsClient implements ClientModInitializer {
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(GeneTextures::clear));
 		ClientPlayNetworking.registerGlobalReceiver(NotebookPayload.TYPE,
 				(payload, context) -> context.client().gui.setScreen(new NotebookScreen(payload)));
+		HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, OriginOfSpawns.id("mob_info"), new MobInfoHud());
 		LivingEntityRenderLayerRegistrationCallback.EVENT.register((type, renderer, helper, context) -> {
 			if (renderer instanceof AbstractZombieRenderer<?, ?, ?>) {
 				helper.register(new GeneModelLayer(

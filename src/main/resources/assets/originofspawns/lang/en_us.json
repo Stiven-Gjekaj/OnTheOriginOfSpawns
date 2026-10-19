@@ -78,5 +78,10 @@
 	"family.originofspawns.zombie.blight.and.stalker": "Mirelings",
 	"family.originofspawns.zombie.horde.and.tank": "Bulwark",
 	"family.originofspawns.zombie.blight.and.tank": "Moldhides",
-	"family.originofspawns.zombie.blight.and.horde": "Plaguetide"
+	"family.originofspawns.zombie.blight.and.horde": "Plaguetide",
+	"mob_info.originofspawns.kind.major": "Major family",
+	"mob_info.originofspawns.kind.pure": "Pure family",
+	"mob_info.originofspawns.kind.minor": "Minor family",
+	"mob_info.originofspawns.kind.hybrid": "Hybrid",
+	"mob_info.originofspawns.no_genes": "No genes"
 }

@@ -68,6 +68,9 @@ EXTRA = {
               ("Tanks + Burrower", ["burrower"], True, {}),
               ("Bloat + others", ["bloat", "ironhide", "frenzy", "bloodscent", "death_throes",
                                   "thickskull"], False, {})],
+    "hordes": [("Hordes + Lurker", ["lurker", "thickskull"], True, {}),
+               ("Hordes + Cinder", ["cinder", "bloat"], True, {}),
+               ("Hordes + Hush", ["hush", "rabid"], True, {})],
 }
 NIGHT = (18, 22, 38, 255)
 

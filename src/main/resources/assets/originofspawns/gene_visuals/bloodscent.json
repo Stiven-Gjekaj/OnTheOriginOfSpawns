@@ -18,7 +18,7 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/bloodscent_2.png",
-				"tint": "#6E1212"
+				"tint": "#5A0E0E"
 			}
 		}
 	]

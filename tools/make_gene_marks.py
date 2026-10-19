@@ -75,16 +75,31 @@ def leg(face, col, row):
 
 
 class Mark:
-    """One color of a mark: a tint and the gray of each pixel."""
+    """One color of a mark: a tint and the gray of each pixel.
 
-    def __init__(self, tint, alpha=255):
+    The order puts the layer before (lower) or after (higher) the layers of
+    other genes. The regions and the materials limit the layer, as in a gene
+    visual. A mark of size 16 is a tile that covers the whole texture.
+    """
+
+    def __init__(self, tint, alpha=255, order=0, regions=None, materials=None, size=64):
         self.tint = tint
         self.alpha = alpha
+        self.order = order
+        self.regions = regions
+        self.materials = materials
+        self.size = size
         self.pixels = {}
 
     def put(self, pixels, gray=255):
         for p in pixels if isinstance(pixels, list) else [pixels]:
             self.pixels[p] = gray
+        return self
+
+    def fill(self, gray=255):
+        for y in range(self.size):
+            for x in range(self.size):
+                self.pixels[(x, y)] = gray
         return self
 
 
@@ -125,43 +140,57 @@ def lunger():
     return [hole, scrape, thread]
 
 
+def ruin(tear, skin, face, depths):
+    """Tear away the bottom of a shirt face, like the shirt of the drowned.
+
+    depths gives, for each column, how many rows of cloth are gone at the
+    bottom of the shirt (row 9). The skin shows there. The row over the gap
+    gets a dark torn edge, if the depth is 1 to 5.
+    """
+    for col, depth in enumerate(depths):
+        for d in range(depth):
+            skin.put(body(face, col, 9 - d), 255 if (col + d) % 2 else 225)
+        if depth and depth < 6 and depth not in NO_EDGE.get((face, col), ()):
+            tear.put(body(face, col, 9 - depth), 220)
+
+
+# Shirt pixels where a torn edge would go on an Ironhide plate. The plate
+# seam is the edge there.
+NO_EDGE = {(CHEST, c): (2,) for c in (0, 1, 2, 5, 6, 7)}
+NO_EDGE.update({(SHIRT_BACK, c): (2,) for c in range(1, 7)})
+
+
 def frenzy():
-    # Ripped sleeves with jagged edges, claw scratches on the forearms, and
-    # small tears in the shirt where the skin shows.
+    # A ruined shirt, like the shirt of the drowned: the cloth is torn away
+    # at the bottom of the shirt and at the sleeves, so the skin shows, with
+    # a deep rip in the middle of the chest. Claw scratches on the forearms.
     tear = Mark("#121818")
-    fray = Mark("#9AA6A6")
+    skin = Mark(SKIN)
     for face in SIDES:
-        tear.put(arm(face, 1, 2)).put(arm(face, 0, 3)).put(arm(face, 2, 3))
-        fray.put(arm(face, 3, 3), 220)
+        tear.put(arm(face, 0, 2)).put(arm(face, 3, 2)).put(arm(face, 2, 3), 200)
+        skin.put(arm(face, 0, 3)).put(arm(face, 1, 2), 225).put(arm(face, 1, 3)).put(arm(face, 3, 3), 225)
+    ruin(tear, skin, CHEST, (1, 2, 1, 5, 4, 2, 1, 2))
+    ruin(tear, skin, SHIRT_BACK, (3, 1, 2, 1, 2, 1, 2, 3))
+    ruin(tear, skin, RIGHT_SIDE, (2, 3, 1, 2))
+    ruin(tear, skin, LEFT_SIDE, (1, 2, 3, 2))
     scratch = Mark("#8E1A1A")
     for col, row in ((0, 4), (1, 5), (2, 6), (2, 4), (3, 5)):
         scratch.put(arm(FRONT, col, row), 255 if row < 6 else 190)
-    skin = Mark(SKIN)
-    # One long, jagged tear down the middle of the chest and the belly.
-    rip = (
-        (0, "d", "."), (1, "s", "d"), (2, "s", "s"), (3, "s", "s"),
-        (4, "d", "s"), (5, "s", "s"), (6, "s", "d"), (7, ".", "d"),
-    )
-    for row, left, right in rip:
-        for col, kind in ((3, left), (4, right)):
-            if kind == "s":
-                skin.put(body(CHEST, col, row + 2), 255 if (row + col) % 2 else 225)
-            elif kind == "d":
-                tear.put(body(CHEST, col, row + 2), 220)
-    return [tear, fray, scratch, skin]
+    return [tear, skin, scratch]
 
 
 def bloodscent():
     # A flared, sniffing snout: wrinkles on the nose bridge, wide nostrils,
-    # and dark red streaks in the nostrils. Blood stains on the shirt, low on
-    # the right of the belly and high on the back, away from the Frenzy tear.
+    # and dark red streaks in the nostrils.
     snout = Mark("#3E4A26")
     snout.put((11, 12), 230).put((12, 12), 230).put((10, 13), 255).put((13, 13), 255)
     streak = Mark("#7A1414")
     streak.put((11, 13), 255).put((12, 13), 200)
-    stain = Mark("#6E1212")
-    stain.put(body(CHEST, 6, 8)).put(body(CHEST, 7, 8), 200).put(body(CHEST, 7, 9))
-    stain.put(body(CHEST, 5, 9), 190)
+    stain = Mark("#5A0E0E")
+    # Blood that dripped from the snout onto the cloth in the middle of the
+    # chest, over the Frenzy rip, and a stain high on the back.
+    stain.put(body(CHEST, 3, 2)).put(body(CHEST, 4, 2), 200).put(body(CHEST, 4, 3))
+    stain.put(body(CHEST, 4, 4), 180)
     stain.put(body(SHIRT_BACK, 6, 1)).put(body(SHIRT_BACK, 7, 2), 200)
     return [snout, streak, stain]
 
@@ -184,24 +213,36 @@ def rabid():
     return [rim, fever, foam, bubbles]
 
 
+# The pixels in the belt rows that the shirt of the vanilla zombie covers.
+SHIRT_TAIL = {(26, 30), (27, 30), (28, 30), (34, 30), (35, 30), (36, 30), (37, 30),
+              (27, 31), (36, 31)}
+
+
 def death_throes():
-    # Gunpowder: gray-black speckles and a few dim orange cracks, scattered
-    # over the body with space between them. One small crack on each side of
-    # the neck goes up to the jaw. The face stays clear.
-    powder = Mark("#2E2C2A")
-    crack = Mark("#A65A24")
-    powder.put(body(CHEST, 1, 0)).put(body(CHEST, 6, 1), 210)
-    powder.put(body(SHIRT_BACK, 2, 0), 230).put(body(SHIRT_BACK, 5, 9))
-    crack.put(body(SHIRT_BACK, 0, 8), 220)
-    powder.put(body(RIGHT_SIDE, 2, 6), 230)
-    crack.put(body(LEFT_SIDE, 1, 3), 210)
-    powder.put(arm(OUTER, 0, 4)).put(arm(BACK, 2, 5), 220)
-    crack.put(arm(OUTER, 2, 6), 220)
-    powder.put(leg(FRONT, 3, 0), 230).put(leg(BACK, 1, 0))
-    crack.put(leg(OUTER, 2, 1), 210)
-    for side in (0, 1):
-        crack.put(head_side(side, 1, 7), 220).put(head_side(side, 1, 6), 190)
-    return [powder, crack]
+    # Gunpowder: the shirt turns a grayish orange, with black specks on it.
+    # The color goes under the marks of the other genes (order -10).
+    # The specks go over all of them (order 10), also over the Ironhide
+    # plates. The face stays clear.
+    cloth = {"regions": ["torso", "arms"], "materials": ["cloth"]}
+    # The hue covers the shirt and the sleeves, but not the belt: rows y 30
+    # and 31 of the body, and the bottom of the body. Its gray changes a
+    # little from pixel to pixel, so that the cloth keeps a texture.
+    hue = Mark("#B4743F", alpha=225, order=-10, **cloth)
+    for y in range(64):
+        for x in range(64):
+            belt = 16 <= x < 40 and y in (30, 31, 46, 47) and (x, y) not in SHIRT_TAIL
+            bottom = 28 <= x < 36 and 16 <= y < 20
+            if not (belt or bottom):
+                hue.put((x, y), (230, 255, 215, 245)[(x * 7 + y * 13) % 4])
+    speck = Mark("#161514", order=10, **cloth)
+    speck.put(body(CHEST, 1, 0)).put(body(CHEST, 6, 1), 210).put(body(CHEST, 1, 3), 230)
+    speck.put(body(CHEST, 6, 5)).put(body(CHEST, 2, 6), 200)
+    speck.put(body(SHIRT_BACK, 2, 1)).put(body(SHIRT_BACK, 5, 4), 220).put(body(SHIRT_BACK, 0, 4))
+    speck.put(body(SHIRT_BACK, 3, 6), 210)
+    speck.put(body(RIGHT_SIDE, 1, 2)).put(body(RIGHT_SIDE, 3, 5), 220)
+    speck.put(body(LEFT_SIDE, 2, 1), 230).put(body(LEFT_SIDE, 0, 4))
+    speck.put(arm(OUTER, 1, 0)).put(arm(BACK, 2, 1), 220).put(arm(INNER, 0, 1), 200)
+    return [hue, speck]
 
 
 GENES = {
@@ -219,15 +260,29 @@ def write(gene, marks):
         if old.startswith(gene + "_") and old[len(gene) + 1:-4].isdigit():
             os.remove(os.path.join(MARK_DIR, old))
     layers = []
-    for n, mark in enumerate(marks):
-        im = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+    n = 0
+    for mark in marks:
+        if isinstance(mark, dict):
+            # A layer that is not a pattern, for example a desaturate layer.
+            layers.append(mark)
+            continue
+        im = Image.new("RGBA", (mark.size, mark.size), (0, 0, 0, 0))
         for (x, y), gray in mark.pixels.items():
             im.putpixel((x, y), (gray, gray, gray, mark.alpha))
         name = f"{gene}_{n}"
+        n += 1
         im.save(os.path.join(MARK_DIR, name + ".png"))
-        layers.append({"effect": {"type": "pattern",
-                                  "texture": f"originofspawns:textures/gene_marks/{name}.png",
-                                  "tint": mark.tint}})
+        layer = {}
+        if mark.regions:
+            layer["regions"] = mark.regions
+        if mark.materials:
+            layer["materials"] = mark.materials
+        layer["effect"] = {"type": "pattern",
+                           "texture": f"originofspawns:textures/gene_marks/{name}.png",
+                           "tint": mark.tint}
+        if mark.order:
+            layer["order"] = mark.order
+        layers.append(layer)
     with open(os.path.join(VISUAL_DIR, gene + ".json"), "w") as fh:
         json.dump({"layers": layers}, fh, indent="\t")
         fh.write("\n")
@@ -241,14 +296,15 @@ MATERIALS = {"skin": 1, "cloth": 2, "eyes": 3}
 def touched(visual):
     """Return the pixels that the marks of a gene visual change.
 
-    A desaturate layer is a color change of a whole part, not a mark, so the
-    check does not count it. A spots layer can change each pixel that it covers.
+    A desaturate layer, or a layer with an order below 0, is a color change
+    of a whole part that goes under the marks. The check does not count it.
+    A spots layer can change each pixel that it covers.
     """
     regions = Image.open(os.path.join(ASSETS, "textures/region/humanoid.png")).convert("RGBA")
     pixels = set()
     for layer in visual.get("layers", []):
         effect = layer["effect"]
-        if effect["type"] == "desaturate":
+        if effect["type"] == "desaturate" or layer.get("order", 0) < 0:
             continue
         pattern = None
         if effect["type"] == "pattern":
@@ -272,7 +328,8 @@ def main():
     for gene, make in GENES.items():
         marks = make()
         write(gene, marks)
-        print(gene, sum(len(m.pixels) for m in marks), "pixels")
+        marked = [m for m in marks if not isinstance(m, dict) and m.order >= 0]
+        print(gene, sum(len(m.pixels) for m in marked), "mark pixels")
     owners = {}
     for name in sorted(os.listdir(VISUAL_DIR)):
         with open(os.path.join(VISUAL_DIR, name)) as fh:

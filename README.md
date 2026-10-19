@@ -27,8 +27,9 @@ _A Fabric mod where the mobs evolve from how you kill them_
 ---
 
 > [!NOTE]
-> **The mod is in development.** There is no release yet. The project
-> builds, but it has no gameplay.
+> **The mod is in development.** There is no release yet. Milestone 1 is
+> done: zombies evolve Cinder, Ironhide, and Bonerunner from how they die,
+> and the Beagle Notebook shows their gene pools.
 > [ROADMAP.md](design/ROADMAP.md) lists the milestones to version 1.0.0.
 > [DESIGN.md](design/DESIGN.md) holds each decision of the design.
 
@@ -72,7 +73,8 @@ and downloads Java 25 if it is not on the computer.
 
 | Command | Result |
 | ------- | ------ |
-| `./gradlew build` | The mod file in `build/libs/` |
+| `./gradlew build` | The mod file in `build/libs/`, after the game tests pass |
+| `./gradlew runClientGameTest` | Starts the game, runs the client tests, and saves screenshots in `build/run/clientGameTest/screenshots/` |
 | `./gradlew runClient` | Starts Minecraft with the mod |
 | `./gradlew runServer` | Starts a server with the mod |
 

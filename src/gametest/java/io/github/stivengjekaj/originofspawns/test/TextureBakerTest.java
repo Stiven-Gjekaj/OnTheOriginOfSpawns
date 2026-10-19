@@ -7,6 +7,7 @@ import com.mojang.serialization.JsonOps;
 
 import io.github.stivengjekaj.originofspawns.visual.BodyMaterial;
 import io.github.stivengjekaj.originofspawns.visual.BodyRegion;
+import io.github.stivengjekaj.originofspawns.visual.GeneModel;
 import io.github.stivengjekaj.originofspawns.visual.GeneVisual;
 import io.github.stivengjekaj.originofspawns.visual.TextureBaker;
 import io.github.stivengjekaj.originofspawns.visual.TextureBaker.Image;
@@ -116,6 +117,25 @@ public class TextureBakerTest {
 		helper.assertValueEqual(visual.layers().size(), 2, "layer count");
 		helper.assertValueEqual(visual.layers().get(1).effect(),
 				new VisualEffect.Spots(List.of(0xFF1A1A1A, 0xFF8B2E1F), 0.3F), "spots effect");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void geneModelReadsFromJson(GameTestHelper helper) {
+		String json = """
+				{
+					"texture": "originofspawns_test:textures/entity/bone.png",
+					"texture_width": 16,
+					"texture_height": 16,
+					"parts": [
+						{ "bone": "right_leg", "uv": [0, 0], "from": [-1.5, 6, -1.5], "size": [3, 6, 3] }
+					]
+				}
+				""";
+		GeneModel model = GeneModel.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
+		helper.assertValueEqual(model.textureWidth(), 16, "texture width");
+		helper.assertValueEqual(model.parts().getFirst(), new GeneModel.Part(GeneModel.Bone.RIGHT_LEG, List.of(0, 0),
+				List.of(-1.5F, 6.0F, -1.5F), List.of(3.0F, 6.0F, 3.0F), 0.0F, false), "part");
 		helper.succeed();
 	}
 

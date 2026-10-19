@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.client;
 
-import io.github.stivengjekaj.originofspawns.client.render.BoneLegsLayer;
+import io.github.stivengjekaj.originofspawns.client.render.GeneModelLayer;
+import io.github.stivengjekaj.originofspawns.client.render.GeneModels;
 import io.github.stivengjekaj.originofspawns.client.render.GeneTextures;
 import io.github.stivengjekaj.originofspawns.client.render.GeneVisuals;
 import io.github.stivengjekaj.originofspawns.client.screen.NotebookScreen;
@@ -25,12 +26,14 @@ public class OriginOfSpawnsClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		ResourceLoader.get(PackType.CLIENT_RESOURCES)
 				.registerReloadListener(OriginOfSpawns.id("gene_visuals"), new GeneVisuals());
+		ResourceLoader.get(PackType.CLIENT_RESOURCES)
+				.registerReloadListener(OriginOfSpawns.id("gene_models"), new GeneModels());
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(GeneTextures::clear));
 		ClientPlayNetworking.registerGlobalReceiver(NotebookPayload.TYPE,
 				(payload, context) -> context.client().gui.setScreen(new NotebookScreen(payload)));
 		LivingEntityRenderLayerRegistrationCallback.EVENT.register((type, renderer, helper, context) -> {
 			if (renderer instanceof AbstractZombieRenderer<?, ?, ?>) {
-				helper.register(new BoneLegsLayer(
+				helper.register(new GeneModelLayer(
 						(RenderLayerParent<ZombieRenderState, HumanoidModel<ZombieRenderState>>) renderer));
 			}
 		});

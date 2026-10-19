@@ -4,6 +4,7 @@ import java.util.List;
 
 import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
 import io.github.stivengjekaj.originofspawns.evolution.BiomeCategory;
+import io.github.stivengjekaj.originofspawns.evolution.FamilyResult;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -12,9 +13,9 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 
 /**
- * The notebook page of one species. The server sends it when a player opens the notebook.
+ * The pages of the notebook: one page for each species. The server sends them when a player opens the notebook.
  */
-public record NotebookPayload(Identifier species, List<Entry> entries) implements CustomPacketPayload {
+public record NotebookPayload(List<Page> pages) implements CustomPacketPayload {
 	public static final Type<NotebookPayload> TYPE = new Type<>(OriginOfSpawns.id("notebook"));
 
 	/**
@@ -31,9 +32,33 @@ public record NotebookPayload(Identifier species, List<Entry> entries) implement
 				Entry::new);
 	}
 
+	/**
+	 * One family name of a species, and if the player found it.
+	 */
+	public record FamilyEntry(String key, FamilyResult.Kind kind, boolean found) {
+		private static final StreamCodec<RegistryFriendlyByteBuf, FamilyResult.Kind> KIND_CODEC =
+				ByteBufCodecs.VAR_INT.map(index -> FamilyResult.Kind.values()[index], FamilyResult.Kind::ordinal).cast();
+
+		public static final StreamCodec<RegistryFriendlyByteBuf, FamilyEntry> STREAM_CODEC = StreamCodec.composite(
+				ByteBufCodecs.STRING_UTF8.cast(), FamilyEntry::key,
+				KIND_CODEC, FamilyEntry::kind,
+				ByteBufCodecs.BOOL.cast(), FamilyEntry::found,
+				FamilyEntry::new);
+	}
+
+	/**
+	 * The page of one species: its genes, with their frequencies, and its family names.
+	 */
+	public record Page(Identifier species, List<Entry> entries, List<FamilyEntry> families) {
+		public static final StreamCodec<RegistryFriendlyByteBuf, Page> STREAM_CODEC = StreamCodec.composite(
+				Identifier.STREAM_CODEC.cast(), Page::species,
+				Entry.STREAM_CODEC.apply(ByteBufCodecs.list()), Page::entries,
+				FamilyEntry.STREAM_CODEC.apply(ByteBufCodecs.list()), Page::families,
+				Page::new);
+	}
+
 	public static final StreamCodec<RegistryFriendlyByteBuf, NotebookPayload> STREAM_CODEC = StreamCodec.composite(
-			Identifier.STREAM_CODEC.cast(), NotebookPayload::species,
-			Entry.STREAM_CODEC.apply(ByteBufCodecs.list()), NotebookPayload::entries,
+			Page.STREAM_CODEC.apply(ByteBufCodecs.list()), NotebookPayload::pages,
 			NotebookPayload::new);
 
 	@Override

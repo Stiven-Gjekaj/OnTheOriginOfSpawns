@@ -83,5 +83,13 @@
 	"mob_info.originofspawns.kind.pure": "Pure family",
 	"mob_info.originofspawns.kind.minor": "Minor family",
 	"mob_info.originofspawns.kind.hybrid": "Hybrid",
-	"mob_info.originofspawns.no_genes": "No genes"
+	"mob_info.originofspawns.no_genes": "No genes",
+	"screen.originofspawns.notebook.no_species": "No species are known.",
+	"screen.originofspawns.notebook.found": "Found %s of %s",
+	"screen.originofspawns.notebook.section.genes": "Genes",
+	"screen.originofspawns.notebook.section.families": "Families",
+	"screen.originofspawns.notebook.kind.pure": "Pure families",
+	"screen.originofspawns.notebook.kind.minor": "Minor families",
+	"screen.originofspawns.notebook.kind.hybrid": "Hybrids",
+	"screen.originofspawns.notebook.kind.neutral": "Neutral"
 }

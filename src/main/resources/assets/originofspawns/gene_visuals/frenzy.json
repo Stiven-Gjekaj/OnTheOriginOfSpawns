@@ -20,6 +20,13 @@
 				"texture": "originofspawns:textures/gene_marks/frenzy_2.png",
 				"tint": "#8E1A1A"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/frenzy_3.png",
+				"tint": "#71955B"
+			}
 		}
 	]
 }

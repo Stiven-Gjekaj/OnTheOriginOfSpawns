@@ -13,6 +13,13 @@
 				"texture": "originofspawns:textures/gene_marks/bloodscent_1.png",
 				"tint": "#7A1414"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/bloodscent_2.png",
+				"tint": "#6E1212"
+			}
 		}
 	]
 }

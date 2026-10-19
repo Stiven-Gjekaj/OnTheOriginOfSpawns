@@ -20,6 +20,13 @@
 				"texture": "originofspawns:textures/gene_marks/rabid_2.png",
 				"tint": "#ECEFE2"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/rabid_3.png",
+				"tint": "#ECEFE2"
+			}
 		}
 	]
 }

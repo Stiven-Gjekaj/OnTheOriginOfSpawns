@@ -11,6 +11,8 @@ _A Fabric mod where the mobs evolve from how you kill them_
 ![Java](https://img.shields.io/badge/java-25-e76f00?style=for-the-badge&logo=openjdk&logoColor=ffffff)
 [![All rights reserved](https://img.shields.io/badge/all_rights_reserved-3a3f47?style=for-the-badge)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/Stiven-Gjekaj/OnTheOriginOfSpawns?style=for-the-badge&label=release&color=16181c)](https://github.com/Stiven-Gjekaj/OnTheOriginOfSpawns/releases/latest)
+[![Modrinth](https://img.shields.io/badge/modrinth-download-00af5c?style=for-the-badge&logo=modrinth&logoColor=ffffff)](https://modrinth.com/mod/tvKIdALe)
+[![CurseForge](https://img.shields.io/badge/curseforge-download-f16436?style=for-the-badge&logo=curseforge&logoColor=ffffff)](https://www.curseforge.com/projects/1754344)
 [![Ko-fi](https://img.shields.io/badge/ko--fi-support_this_project-f26a1b?style=for-the-badge&logo=ko-fi&logoColor=ffffff)](https://ko-fi.com/stivengjekaj)
 
 <p align="center">

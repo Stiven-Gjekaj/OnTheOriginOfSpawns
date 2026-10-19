@@ -4,7 +4,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/death_throes_0.png",
-				"tint": "#4C2244"
+				"tint": "#3E1A3A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/death_throes_1.png",
+				"tint": "#7A4A6E"
 			}
 		}
 	]

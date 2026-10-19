@@ -4,7 +4,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/bloodscent_0.png",
-				"tint": "#A41E1E"
+				"tint": "#3E4A26"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/bloodscent_1.png",
+				"tint": "#7A1414"
 			}
 		}
 	]

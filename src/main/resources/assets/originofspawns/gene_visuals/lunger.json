@@ -4,7 +4,21 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/lunger_0.png",
-				"tint": "#3A302A"
+				"tint": "#16121E"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/lunger_1.png",
+				"tint": "#9A2A22"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/lunger_2.png",
+				"tint": "#B8B2C8"
 			}
 		}
 	]

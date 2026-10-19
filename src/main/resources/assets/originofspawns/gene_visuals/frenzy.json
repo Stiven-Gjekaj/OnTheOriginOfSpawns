@@ -4,7 +4,21 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/frenzy_0.png",
-				"tint": "#1C2424"
+				"tint": "#121818"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/frenzy_1.png",
+				"tint": "#9AA6A6"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/frenzy_2.png",
+				"tint": "#8E1A1A"
 			}
 		}
 	]

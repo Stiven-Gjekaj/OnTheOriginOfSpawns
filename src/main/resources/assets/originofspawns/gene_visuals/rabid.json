@@ -4,6 +4,20 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/rabid_0.png",
+				"tint": "#B42828"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/rabid_1.png",
+				"tint": "#C2554A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/rabid_2.png",
 				"tint": "#ECEFE2"
 			}
 		}

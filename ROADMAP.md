@@ -2,9 +2,22 @@
 
 This document puts the features in DESIGN.md in order.
 Each milestone needs the milestones before it.
-Milestones 0 to 5 make the first release.
+Milestones 0 to 5 and the beta stage make version 1.0.0.
 
-## First release
+## Releases
+
+- Each finished milestone from 1 to 5 makes an alpha release.
+  An alpha release has the systems, but not all of the content.
+- After milestone 5, the beta stage starts.
+  Beta releases add the content, the balance, and the fixes.
+- Version 1.0.0 comes when each vanilla hostile species has:
+  - 30 genes.
+  - 5 major families, each with a name, a buff, and a debuff.
+  - 20 minor families, each with a name.
+- Version 1.0.0 is not close.
+  The alpha and beta releases build toward it.
+
+## Version 1.0.0
 
 ### Milestone 0: Setup
 
@@ -68,7 +81,14 @@ Milestones 0 to 5 make the first release.
 - Add the Naturalist villager.
 - Add the village building that holds the block.
 
-## After the first release
+### Beta stage: content and balance
+
+- Add the genes, the families, and the minor family names for each vanilla
+  hostile species.
+- Balance the genes, the families, the perks, and the classes.
+- Fix the problems that players report.
+
+## After version 1.0.0
 
 ### Milestone 6: Breeding
 

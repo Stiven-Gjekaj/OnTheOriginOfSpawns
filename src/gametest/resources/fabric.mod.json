@@ -9,7 +9,8 @@
 		"fabric-gametest": [
 			"io.github.stivengjekaj.originofspawns.test.DefinitionTest",
 			"io.github.stivengjekaj.originofspawns.test.GenePoolsTest",
-			"io.github.stivengjekaj.originofspawns.test.PoolCommandTest"
+			"io.github.stivengjekaj.originofspawns.test.PoolCommandTest",
+			"io.github.stivengjekaj.originofspawns.test.BiomeCategoryTest"
 		]
 	},
 	"depends": {

@@ -12,6 +12,8 @@ All values are first drafts. The beta stage balances them.
 | Genes | 30, 6 for each major family |
 | Genes with a sub tag | 5 |
 | Minor families | 20 |
+| Pure families | 5 |
+| Hybrids | 10 |
 
 ## Major families
 
@@ -173,16 +175,37 @@ The major family comes first, and the sub family comes second.
 | Rotbulks | Blight | Tank | Slow, tough carriers of rot |
 | Pestilence | Blight | Horde | A plague that grows with each kill |
 
-## Other results
+## Pure families
 
-- A pure family has all its points in one major family. Its name is the name
-  of the major family, for example "pure Predators".
-- A hybrid has the same points in two families. Its name is the two names,
-  for example "Predator-Tank hybrid".
-- A neutral zombie has no genes, or no family points. It is a plain zombie.
+A pure family has all its points in one major family.
+It has the name of its major family, for example "Predators".
+It gives the tier 2 effects of that family only.
+
+## Hybrids
+
+A hybrid has the same points in two families.
+It gives the tier 1 effects of each of the two families.
+Each hybrid has its own name.
+
+| Hybrid | Families | Play style |
+|---|---|---|
+| Gloamhunters | Predator and Stalker | Hunters of the dusk, quick and hard to see |
+| Rendhulks | Predator and Tank | Heavy bodies that still close the distance |
+| Feral Host | Predator and Horde | Wild groups that chase as one |
+| Fevered | Predator and Blight | Restless biters that burn with disease |
+| Cairnwalkers | Stalker and Tank | Quiet, heavy shapes that rise from old graves |
+| Hollow Choir | Stalker and Horde | Silent crowds that move together in the dark |
+| Mirelings | Stalker and Blight | Damp, hidden carriers from swamps and caves |
+| Bulwark | Tank and Horde | Tough groups that hold a line |
+| Moldhides | Tank and Blight | Thick skins covered in mold and rot |
+| Plaguetide | Horde and Blight | A rising wave of sick zombies |
+
+## Neutral
+
+A neutral zombie has no genes, or no family points.
+It is a plain zombie, with no family effects.
 
 ## Open questions
 
-- Do hybrids and pure families get their own names too?
 - Does Runt need a visual mark, or is the baby model enough?
 - Which genes need a change to the model? Bonerunner does. Others may.

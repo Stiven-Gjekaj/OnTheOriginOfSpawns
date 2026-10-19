@@ -28,20 +28,21 @@ the feet, so no other mark goes there.
 - Face, mouth: Rabid has the mouth corners (x 9 and 14) and the jaw edges
   (x 8 and 15, y 15). Hush has the lips (y 14, x 10 to 13). Packcaller has
   the jaw (y 15, x 10 to 13). Leech has no face pixels yet.
-- Low head sides, next to the face: Death Throes.
-- Chest: Death Throes has rows 0 and 1, and the neck. Ironhide has the
-  breastplate, x 21 to 26 and y 22 to 27. Frenzy has the belly, x 20 to 23
-  and y 28 and 29. Bloodscent has the right edge under the breastplate, and
-  the belly, x 24 and 25.
-- Back of the shirt: Death Throes has rows 0 and 1. Ironhide has the
-  breastplate, x 33 to 38 and y 22 to 27. Bloodscent has x 38 and 39 in
-  rows 1 and 2. Frenzy has rows 8 and 9.
-- Sides of the shirt: Frenzy has the right side, rows 2 to 4.
+- Low head sides, next to the face: Death Throes, one small crack.
+- Chest: Ironhide has two columns of plates, x 20 to 22 and x 25 to 27,
+  y 22 to 27. Frenzy has the tear in the middle, x 23 and 24, y 22 to 29.
+  Bloodscent has x 25 to 27, y 28 and 29. Death Throes has two speckles in
+  rows 0 and 1.
+- Back of the shirt: Ironhide has the breastplate, x 33 to 38 and y 22
+  to 27. Bloodscent has x 38 and 39 in rows 1 and 2. Death Throes has three
+  marks.
+- Sides of the shirt: Death Throes has one mark on each side.
 - Sleeves: Ironhide has the arm top and rows 0 and 1. Frenzy has rows 2
   and 3.
-- Arm skin, rows 4 to 6: Frenzy has the front face. Death Throes has the
-  outer face.
-- Legs: Lunger has the knees, rows 2 to 5 of all four faces.
+- Arm skin, rows 4 to 6: Frenzy has the front face. Death Throes has
+  three marks on the outer and the back faces.
+- Legs: Lunger has the knees, rows 2 to 5 of all four faces. Death Throes
+  has three marks in rows 0 and 1.
 This script needs Pillow.
 """
 import json
@@ -136,27 +137,31 @@ def frenzy():
     for col, row in ((0, 4), (1, 5), (2, 6), (2, 4), (3, 5)):
         scratch.put(arm(FRONT, col, row), 255 if row < 6 else 190)
     skin = Mark(SKIN)
-    # A tear on the belly, on the right side, and on the back.
-    tear.put(body(CHEST, 0, 8)).put(body(CHEST, 3, 9), 200)
-    skin.put(body(CHEST, 1, 8)).put(body(CHEST, 2, 8), 225).put(body(CHEST, 2, 9))
-    tear.put(body(RIGHT_SIDE, 1, 2)).put(body(RIGHT_SIDE, 3, 4))
-    skin.put(body(RIGHT_SIDE, 2, 3)).put(body(RIGHT_SIDE, 1, 3), 225).put(body(RIGHT_SIDE, 2, 4))
-    tear.put(body(SHIRT_BACK, 2, 8)).put(body(SHIRT_BACK, 5, 9), 200)
-    skin.put(body(SHIRT_BACK, 3, 8)).put(body(SHIRT_BACK, 4, 9), 225).put(body(SHIRT_BACK, 3, 9))
+    # One long, jagged tear down the middle of the chest and the belly.
+    rip = (
+        (0, "d", "."), (1, "s", "d"), (2, "s", "s"), (3, "s", "s"),
+        (4, "d", "s"), (5, "s", "s"), (6, "s", "d"), (7, ".", "d"),
+    )
+    for row, left, right in rip:
+        for col, kind in ((3, left), (4, right)):
+            if kind == "s":
+                skin.put(body(CHEST, col, row + 2), 255 if (row + col) % 2 else 225)
+            elif kind == "d":
+                tear.put(body(CHEST, col, row + 2), 220)
     return [tear, fray, scratch, skin]
 
 
 def bloodscent():
     # A flared, sniffing snout: wrinkles on the nose bridge, wide nostrils,
     # and dark red streaks in the nostrils. Blood stains on the shirt, low on
-    # the belly and on the right edge, away from the Frenzy tears.
+    # the right of the belly and high on the back, away from the Frenzy tear.
     snout = Mark("#3E4A26")
     snout.put((11, 12), 230).put((12, 12), 230).put((10, 13), 255).put((13, 13), 255)
     streak = Mark("#7A1414")
     streak.put((11, 13), 255).put((12, 13), 200)
     stain = Mark("#6E1212")
-    stain.put(body(CHEST, 7, 5)).put(body(CHEST, 7, 6), 200).put(body(CHEST, 7, 8))
-    stain.put(body(CHEST, 4, 8), 220).put(body(CHEST, 5, 8)).put(body(CHEST, 5, 9), 190)
+    stain.put(body(CHEST, 6, 8)).put(body(CHEST, 7, 8), 200).put(body(CHEST, 7, 9))
+    stain.put(body(CHEST, 5, 9), 190)
     stain.put(body(SHIRT_BACK, 6, 1)).put(body(SHIRT_BACK, 7, 2), 200)
     return [snout, streak, stain]
 
@@ -180,25 +185,22 @@ def rabid():
 
 
 def death_throes():
-    # Gunpowder: gray-black speckles with a few dim orange cracks, on the
-    # upper chest, the neck, the upper back, and the outer side of the arms.
-    # Two cracks go up the neck to the jaw, on the sides of the head.
+    # Gunpowder: gray-black speckles and a few dim orange cracks, scattered
+    # over the body with space between them. One small crack on each side of
+    # the neck goes up to the jaw. The face stays clear.
     powder = Mark("#2E2C2A")
     crack = Mark("#A65A24")
-    for col, gray in ((0, 255), (1, 190), (6, 220), (7, 255)):
-        powder.put(body(CHEST, col, 0), gray)
-    powder.put(body(CHEST, 2, 0), 200).put(body(CHEST, 0, 1), 220).put(body(CHEST, 7, 1), 190)
-    powder.put(body(CHEST, 5, 0), 230).put(body(CHEST, 4, 1), 210)
-    crack.put(body(CHEST, 3, 1), 230).put(body(CHEST, 3, 0), 200).put(body(CHEST, 6, 1), 200)
-    for col, row, gray in ((0, 0, 230), (2, 1, 255), (3, 0, 200), (5, 1, 240), (7, 0, 220)):
-        powder.put(body(SHIRT_BACK, col, row), gray)
-    crack.put(body(SHIRT_BACK, 4, 0), 210)
-    for col, row, gray in ((0, 4, 255), (2, 4, 210), (1, 5, 230), (3, 6, 240), (0, 6, 200)):
-        powder.put(arm(OUTER, col, row), gray)
-    crack.put(arm(OUTER, 2, 5), 220).put(arm(OUTER, 1, 6), 190)
+    powder.put(body(CHEST, 1, 0)).put(body(CHEST, 6, 1), 210)
+    powder.put(body(SHIRT_BACK, 2, 0), 230).put(body(SHIRT_BACK, 5, 9))
+    crack.put(body(SHIRT_BACK, 0, 8), 220)
+    powder.put(body(RIGHT_SIDE, 2, 6), 230)
+    crack.put(body(LEFT_SIDE, 1, 3), 210)
+    powder.put(arm(OUTER, 0, 4)).put(arm(BACK, 2, 5), 220)
+    crack.put(arm(OUTER, 2, 6), 220)
+    powder.put(leg(FRONT, 3, 0), 230).put(leg(BACK, 1, 0))
+    crack.put(leg(OUTER, 2, 1), 210)
     for side in (0, 1):
-        crack.put(head_side(side, 1, 7)).put(head_side(side, 1, 6), 220).put(head_side(side, 0, 5), 200)
-        powder.put(head_side(side, 2, 7), 240).put(head_side(side, 0, 7), 210).put(head_side(side, 2, 5), 200)
+        crack.put(head_side(side, 1, 7), 220).put(head_side(side, 1, 6), 190)
     return [powder, crack]
 
 

@@ -32,13 +32,19 @@ Milestones 0 to 5 and the beta stage make version 1.0.0.
 - Record the cause of each zombie death.
 - Keep one zombie pool for each biome category.
 - Add pressures that are conditions of the death, such as "unreached".
-- Add three genes: fire resistance, arrow resistance, and speed.
+- Add three genes:
+  - Cinder: fire resistance, and sets the player on fire. It takes damage from
+    rain and water, and has less health.
+  - Ironhide: resists projectiles and knockback. It is slower, and drowns
+    faster.
+  - Bonerunner: faster, and chases longer. It has less armor, and takes more
+    fall damage.
 - Give each new zombie genes from its pool.
 - Add mutation, pressure decay, and the limit of 5 genes for each mob.
-- Give each gene a downside and a family tag.
+- Give each gene its gains, its downsides, and a main family tag.
 - Add the humanoid region map.
 - Make the gene textures at load time from visual recipes.
-- Add the bone legs model for the speed gene.
+- Add the bone legs model for Bonerunner.
 - Add the Beagle Notebook with one zombie page.
 
 ### Milestone 2: All hostile mobs
@@ -122,7 +128,8 @@ Milestones 0 to 5 and the beta stage make version 1.0.0.
 ### Milestone 11: End game
 
 - Let the Wither and the Ender Dragon get genes from the pools.
-- Add the last perk tier for a full speciation.
+- Add the last perk tier when the notebook records all families of one
+  species.
 - Add the Red Queen meter.
 - Add lineage mode.
 

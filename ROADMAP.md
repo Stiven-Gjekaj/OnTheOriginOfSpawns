@@ -34,7 +34,7 @@ Milestones 0 to 5 make the first release.
 - Add extinction in a category.
 - Set the speed of evolution from the difficulty and a gamerule.
 
-### Milestone 3: Player perks
+### Milestone 3: Player perks and classes
 
 - Calculate the knowledge percentage.
 - Open perk slots at 0%, 20%, 40%, 60%, and 80%.
@@ -42,6 +42,9 @@ Milestones 0 to 5 make the first release.
   pairs.
 - Add the Lamarck and Darwin schools.
 - Add epigenetics.
+- Record the activity categories with more weight for recent activity.
+- Add the evolution classes with tier 1 and tier 2 effects.
+- Make the mobs counter the classes of the players.
 
 ### Milestone 4: Full notebook
 

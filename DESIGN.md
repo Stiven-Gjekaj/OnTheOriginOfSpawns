@@ -13,6 +13,9 @@ Change this document when a decision changes.
   a port to 26.x later.
 - The mod uses Fabric Loader 0.19.5 or a later version.
 - NeoForge support is not in scope.
+- Data packs define the genes, the perks, and the pressures in JSON.
+  Thus, pack makers can add their own.
+  The code must read these definitions from the start.
 
 ## Gene pools
 
@@ -74,6 +77,44 @@ Change this document when a decision changes.
   An extinct species does not spawn there.
 - If a pool moves far from its start, it becomes a new named variant.
 
+## Species against species
+
+- Mobs evolve against other mobs.
+  For example, wolves hunt skeletons, so skeletons evolve to run.
+  Then wolves evolve more speed.
+  The world evolves when the player is not near.
+- Mobs that kill the player get more of the genes that did the kill.
+  The deaths of the player are data too.
+- Convergent evolution: two species under the same pressure can grow the same
+  trait.
+  For example, burned spiders and burned zombies both get char plates.
+  The notebook shows the match.
+
+## Population genetics
+
+- Bottleneck: after a large cull, the survivors have little variety.
+  The pool locks onto a small number of traits.
+  These traits are strong, but the pool is fragile.
+- Founder effect: mobs that go through a Nether portal or in a boat start a
+  new pool.
+  The new pool has only their genes.
+- Invasive species: a player can lead a mob into a different biome.
+  The mob competes with the local pool, and it can replace it.
+- Genetic drift: small, isolated pools change at random with no pressure.
+
+## Other biology
+
+- Hybrids: related species can breed in border biomes and mix their traits.
+  Examples are zombie with husk, and skeleton with stray.
+- Vestigial traits: a lost gene leaves a visual mark, such as faded char.
+  The gene comes back faster under the same pressure.
+- Kin selection: related mobs defend each other.
+  If the player hits one mob, its siblings attack.
+- Sexual selection: a bright trait makes a mob spawn more.
+  The same trait makes the mob easier to see.
+- Parasites: a parasite moves through dense groups of mobs.
+  Thus, the player has a reason to keep mixed spawners.
+
 ## Player adaptations
 
 - The player earns Insight when they study a species.
@@ -97,6 +138,21 @@ These are the first perks:
 | Gills | The player breathes longer under water | The player loses air slowly on land |
 | Lean frame | More sprint speed | 2 fewer hearts |
 | Scent mask | Mobs notice the player later | Animals run from the player |
+
+## Player evolution modes
+
+- Lineage mode is for hardcore play.
+  When the player dies, the player continues as their own offspring.
+  The offspring gets some of the perks, with a small mutation.
+  The notebook keeps a family tree of the past players.
+- The player selects a school at the start of the world.
+  - Lamarck: perks grow from use.
+    This is slow, but it costs nothing.
+  - Darwin: the player selects perks at milestones.
+    This is fast, but the offers are random.
+- Epigenetics: the place where the player lives gives a short buff.
+  For example, a week in the desert gives heat tolerance.
+  The buff fades when the player leaves.
 
 ## Breeding
 
@@ -160,6 +216,33 @@ These are the first perks:
 - The block is the job site of a new villager, the Naturalist.
 - A new village building holds the block.
   Thus, a player can find the block before they can craft it.
+
+## Fossils
+
+- Suspicious sand and suspicious gravel can hold fossils.
+  The fossils come from extinct variants in the history of the same world.
+- A museum building displays fossils and specimens.
+  A full set gives a reward.
+- A sequencer block reads the genes of a captured mob or of a mob drop.
+  The notebook then shows the exact values.
+- A lab block uses fossils to bring back an extinct variant.
+  It can also add old genes to a pool.
+  This is late game content.
+
+## End game
+
+- The Wither and the Ender Dragon read the gene pools when they spawn.
+  They get the strongest genes in the world.
+- The player completes the notebook when it records a full speciation.
+  This opens the last perk tier.
+- The Red Queen meter shows who leads the arms race: the players or the mobs.
+  It is one value for the world.
+
+## Sharing and compatibility
+
+- The player can export the evolution of the world as an image or a web page.
+- Seasons from seasonal mods add pressure.
+  For example, winter selects for cold traits.
 
 ## First milestone
 

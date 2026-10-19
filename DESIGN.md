@@ -19,6 +19,10 @@ Change this document when a decision changes.
 
 ## Gene pools
 
+- A species is one mob type, for example zombie, skeleton, or creeper.
+- Vanilla variants are different species.
+  For example, zombie, husk, and drowned do not share pools or families.
+  A husk evolves genes that fit sand and dry biomes.
 - Each species has a gene pool.
 - Each species has one pool for each biome category.
   The categories are hot, cold, wet, temperate, nether, and end.

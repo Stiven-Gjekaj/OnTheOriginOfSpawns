@@ -23,7 +23,11 @@
 		]
 	},
 	"mixins": [
-		"originofspawns.mixins.json"
+		"originofspawns.mixins.json",
+		{
+			"config": "originofspawns.client.mixins.json",
+			"environment": "client"
+		}
 	],
 	"depends": {
 		"fabricloader": ">=0.19.5",

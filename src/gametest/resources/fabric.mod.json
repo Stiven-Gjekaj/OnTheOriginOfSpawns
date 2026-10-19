@@ -16,6 +16,9 @@
 			"io.github.stivengjekaj.originofspawns.test.GeneEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.SelectionTest",
 			"io.github.stivengjekaj.originofspawns.test.TextureBakerTest"
+		],
+		"fabric-client-gametest": [
+			"io.github.stivengjekaj.originofspawns.test.GeneTextureClientTest"
 		]
 	},
 	"depends": {

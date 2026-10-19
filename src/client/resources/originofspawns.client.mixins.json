@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "io.github.stivengjekaj.originofspawns.client.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"client": [
+		"AbstractZombieRendererMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

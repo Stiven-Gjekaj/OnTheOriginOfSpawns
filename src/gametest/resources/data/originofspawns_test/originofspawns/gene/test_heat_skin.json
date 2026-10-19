@@ -12,5 +12,10 @@
 		{ "type": "water_damage", "amount": 1 },
 		{ "type": "air_loss", "extra": 2 }
 	],
-	"mutation_rate": 0.5
+	"mutation_rate": 0.5,
+	"visual": {
+		"layers": [
+			{ "materials": ["skin"], "effect": { "type": "desaturate", "amount": 1 } }
+		]
+	}
 }

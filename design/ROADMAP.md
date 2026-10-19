@@ -19,7 +19,7 @@ Milestones 0 to 5 and the beta stage make version 1.0.0.
 
 ## Version 1.0.0
 
-### Milestone 0: Setup
+### Milestone 0: Setup (done)
 
 - Make a Fabric project for Minecraft 26.3.
 - Make the build run in GitHub Actions.
@@ -27,7 +27,7 @@ Milestones 0 to 5 and the beta stage make version 1.0.0.
 - Save the gene pools with the world.
 - Add debug commands that show and set a pool.
 
-### Milestone 1: Core loop with zombies
+### Milestone 1: Core loop with zombies (done)
 
 - Record the cause of each zombie death.
 - Keep one zombie pool for each biome category.

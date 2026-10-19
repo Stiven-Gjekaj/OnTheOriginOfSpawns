@@ -1,0 +1,31 @@
+{
+	"schemaVersion": 1,
+	"id": "originofspawns",
+	"version": "${version}",
+	"name": "On the Origin of Spawns",
+	"description": "Mobs evolve from how you kill them. You pick adaptations with a trade-off. Track each species in your Beagle Notebook.",
+	"authors": [
+		"Stiven Gjekaj"
+	],
+	"contact": {
+		"homepage": "https://github.com/Stiven-Gjekaj/OnTheOriginOfSpawns",
+		"sources": "https://github.com/Stiven-Gjekaj/OnTheOriginOfSpawns",
+		"issues": "https://github.com/Stiven-Gjekaj/OnTheOriginOfSpawns/issues"
+	},
+	"license": "LicenseRef-All-Rights-Reserved",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"io.github.stivengjekaj.originofspawns.OriginOfSpawns"
+		],
+		"client": [
+			"io.github.stivengjekaj.originofspawns.client.OriginOfSpawnsClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}

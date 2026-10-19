@@ -1,5 +1,9 @@
 ![On the Origin of Spawns](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/brand/banner.png)
 
+> **Alpha.** Zombies evolve three genes so far: Cinder, Ironhide, and
+> Bonerunner. The Beagle Notebook shows their gene pools. The other features
+> on this page are the plan for version 1.0.0. Use a test world.
+
 # Adapt or go extinct
 
 The mobs in your world evolve.
@@ -27,10 +31,10 @@ Each new mob gets its genes from the pool.
 
 - **Each biome is different.** Each species has a pool for each biome
   category: hot, cold, wet, temperate, nether, and end.
-  Desert zombies can resist fire while swamp zombies learn to swim.
+  Desert zombies can resist fire while forest zombies learn to run.
 - **You can see it.** Each gene changes how the mob looks.
-  Charred skin, gills, and armor plates tell you what you fight before the
-  fight starts.
+  Charred skin, iron plates, and bare bone legs tell you what you fight before
+  the fight starts.
 - **It is more than stats.** Mobs that die in the open start to attack from
   cover.
   Mobs that die alone start to move in groups.
@@ -43,6 +47,15 @@ Each new mob gets its genes from the pool.
 - **Extinction is real.** Kill a species too much in one area, and it stops
   spawning there.
   Think before you lose your only source of gunpowder.
+
+## Families
+
+The genes of a mob decide its family.
+Each species has 5 major families, such as Predators, Stalkers, and Tanks.
+Each major family has 4 sub families, so each species has 20 minor families,
+each with its own name.
+A mob with all its genes in one family is a pure family, the strongest result.
+A mob with two families in balance is a hybrid.
 
 ## Artificial selection
 

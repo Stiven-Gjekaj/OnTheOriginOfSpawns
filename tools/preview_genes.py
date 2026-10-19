@@ -3,31 +3,33 @@
 Usage: python3 tools/preview_genes.py
 
 The script reads the vanilla zombie texture from the Minecraft jar in the
-Gradle cache of Loom. It applies the visual recipes with the region map, and
-writes PNG files to build/previews/. Git ignores build/.
+Gradle cache of Loom. It reads the visual layers of each gene from the data
+pack of the mod, applies them with the region map, and writes PNG files to
+build/previews/. Git ignores build/.
 Each preview uses the vanilla texture. Do not commit a preview.
 This script needs Pillow.
 
-The recipes here are a copy for review. The data packs of the mod hold the
-real recipes. The game applies them when it loads.
+The effects here copy TextureBaker in the mod, so that the previews show the
+same pixels as the game. If TextureBaker changes, change this script too.
 """
-import colorsys
 import glob
 import io
+import json
 import os
 import zipfile
 
 from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ASSETS = os.path.join(ROOT, "src/main/resources/assets/originofspawns/textures")
-REGION_MAP = os.path.join(ASSETS, "region/humanoid.png")
-IRON_PLATES = os.path.join(ASSETS, "pattern/iron_plates.png")
+RESOURCES = os.path.join(ROOT, "src/main/resources")
+GENE_DIR = os.path.join(RESOURCES, "data/originofspawns/originofspawns/gene")
+REGION_MAP = os.path.join(RESOURCES, "assets/originofspawns/textures/region/humanoid.png")
 OUT_DIR = os.path.join(ROOT, "build/previews")
 ZOMBIE_PATH = "assets/minecraft/textures/entity/zombie/zombie.png"
 
-FACE, SCALP, TORSO, ARMS, HANDS, LEGS, LOWER_LEGS, FEET = range(1, 9)
-SKIN, CLOTH, EYES = 1, 2, 3
+REGIONS = {"face": 1, "scalp": 2, "torso": 3, "arms": 4, "hands": 5, "legs": 6,
+           "lower_legs": 7, "feet": 8}
+MATERIALS = {"skin": 1, "cloth": 2, "eyes": 3}
 
 SCALE = 12
 
@@ -49,60 +51,99 @@ def find_zombie_texture():
     raise SystemExit("No Minecraft jar with the zombie texture. Run ./gradlew build first.")
 
 
-def noise(x, y, seed):
-    """Return a fixed number from 0 to 99 for a pixel."""
-    n = (x * 374761393 + y * 668265263 + seed * 982451653) & 0xFFFFFFFF
-    n = (n ^ (n >> 13)) * 1274126177 & 0xFFFFFFFF
-    return (n ^ (n >> 16)) % 100
+def int32(n):
+    n &= 0xFFFFFFFF
+    return n - (1 << 32) if n & 0x80000000 else n
 
 
-def pixels(regions, region_ids=None, material_ids=None):
+def java_string_hash(s):
+    h = 0
+    for c in s:
+        h = int32(31 * h + ord(c))
+    return h
+
+
+def identifier_hash(identifier):
+    """Return the Java hashCode of an Identifier, which the game uses as the seed."""
+    namespace, path = identifier.split(":")
+    return int32(31 * java_string_hash(namespace) + java_string_hash(path))
+
+
+def spot_hash(x, y, seed):
+    """Copy TextureBaker.hash, with Java int overflow."""
+    h = seed
+    h = int32(h * 31 + x)
+    h = int32(h * 31 + y)
+    h = int32(h ^ ((h & 0xFFFFFFFF) >> 16))
+    h = int32(h * int32(0x85EBCA6B))
+    h = int32(h ^ ((h & 0xFFFFFFFF) >> 13))
+    h = int32(h * int32(0xC2B2AE35))
+    h = int32(h ^ ((h & 0xFFFFFFFF) >> 16))
+    return h
+
+
+def rgb(hex_color):
+    return tuple(int(hex_color[i:i + 2], 16) for i in (1, 3, 5))
+
+
+def texture_file(identifier):
+    namespace, path = identifier.split(":")
+    return os.path.join(RESOURCES, "assets", namespace, path)
+
+
+def desaturate(color, amount, darken):
+    r, g, b, a = color
+    gray = (r * 299 + g * 587 + b * 114) // 1000
+    keep = 1.0 - darken
+    return tuple(int((c + (gray - c) * amount) * keep) for c in (r, g, b)) + (a,)
+
+
+def apply(effect, color, x, y, seed, patterns):
+    kind = effect["type"]
+    if kind == "desaturate":
+        return desaturate(color, effect["amount"], effect.get("darken", 0.0))
+    if kind == "spots":
+        h = spot_hash(x, y, seed)
+        if (h & 0xFFFF) >= effect["density"] * 0x10000:
+            return color
+        spot = rgb(effect["colors"][((h & 0xFFFFFFFF) >> 16 & 0x7FFF) % len(effect["colors"])])
+        return (*spot, color[3])
+    if kind == "pattern":
+        pattern = patterns[effect["texture"]]
+        tint = rgb(effect.get("tint", "#FFFFFF"))
+        stamp = pattern.getpixel((x % pattern.width, y % pattern.height))
+        strength = stamp[3] / 255
+        shade = stamp[0] / 255
+        return tuple(int(color[i] + (tint[i] * shade - color[i]) * strength) for i in range(3)) + (color[3],)
+    if kind == "erase":
+        return (0, 0, 0, 0)
+    raise ValueError("unknown effect " + kind)
+
+
+def bake(tex, regions, gene):
+    """Apply the visual layers of one gene, like TextureBaker.bake."""
+    with open(os.path.join(GENE_DIR, gene + ".json")) as fh:
+        layers = json.load(fh)["visual"]["layers"]
+    patterns = {}
+    for layer in layers:
+        effect = layer["effect"]
+        if effect["type"] == "pattern":
+            patterns[effect["texture"]] = Image.open(texture_file(effect["texture"])).convert("RGBA")
+    seed = identifier_hash("originofspawns:" + gene)
+    out = tex.copy()
     for y in range(64):
         for x in range(64):
-            r, m, _, a = regions.getpixel((x, y))
-            if not a:
+            region, material, _, alpha = regions.getpixel((x, y))
+            if not alpha:
                 continue
-            if region_ids and r not in region_ids:
-                continue
-            if material_ids and m not in material_ids:
-                continue
-            yield x, y
-
-
-def cinder(tex, regions):
-    """Skin: more gray. Hands and feet: dark and red spots."""
-    out = tex.copy()
-    for x, y in pixels(regions, material_ids={SKIN}):
-        r, g, b, a = out.getpixel((x, y))
-        if not a:
-            continue
-        h, s, v = colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)
-        r, g, b = colorsys.hsv_to_rgb(h, s * 0.6, v * 0.88)
-        out.putpixel((x, y), (round(r * 255), round(g * 255), round(b * 255), a))
-    for x, y in pixels(regions, region_ids={HANDS, FEET}):
-        a = out.getpixel((x, y))[3]
-        if not a:
-            continue
-        n = noise(x, y, 11)
-        if n < 18:
-            out.putpixel((x, y), (30, 26, 24, a))
-        elif n < 30:
-            out.putpixel((x, y), (112, 40, 32, a))
-    return out
-
-
-def ironhide(tex, regions, plates):
-    """Torso cloth: iron plates, tinted iron gray."""
-    tint = (216, 218, 224)
-    out = tex.copy()
-    for x, y in pixels(regions, region_ids={TORSO}, material_ids={CLOTH}):
-        base = out.getpixel((x, y))
-        if not base[3]:
-            continue
-        gray, _, _, alpha = plates.getpixel((x % 16, y % 16))
-        k = alpha / 255
-        color = [round(base[i] * (1 - k) + tint[i] * gray / 255 * k) for i in range(3)]
-        out.putpixel((x, y), (*color, base[3]))
+            for layer in layers:
+                wanted_regions = {REGIONS[r] for r in layer.get("regions", [])}
+                wanted_materials = {MATERIALS[m] for m in layer.get("materials", [])}
+                if wanted_regions and region not in wanted_regions:
+                    continue
+                if wanted_materials and material not in wanted_materials:
+                    continue
+                out.putpixel((x, y), apply(layer["effect"], out.getpixel((x, y)), x, y, seed, patterns))
     return out
 
 
@@ -148,11 +189,10 @@ def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     tex = find_zombie_texture()
     regions = Image.open(REGION_MAP).convert("RGBA")
-    plates = Image.open(IRON_PLATES).convert("RGBA")
     save("zombie_plain", tex)
-    save("zombie_cinder", cinder(tex, regions))
-    save("zombie_ironhide", ironhide(tex, regions, plates))
-    save("zombie_combined", ironhide(cinder(tex, regions), regions, plates))
+    save("zombie_cinder", bake(tex, regions, "cinder"))
+    save("zombie_ironhide", bake(tex, regions, "ironhide"))
+    save("zombie_combined", bake(bake(tex, regions, "cinder"), regions, "ironhide"))
 
 
 if __name__ == "__main__":

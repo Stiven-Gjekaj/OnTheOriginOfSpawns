@@ -145,6 +145,8 @@ Thus, the bones look worn, not undead.
 
 ## Families
 
+- Each species has a file in [species/](species/) with its families and genes.
+  For example, [species/zombie.md](species/zombie.md).
 - Each species has 5 major families.
   Each species has its own families, with its own names.
   For example, a zombie family can be "Predators".

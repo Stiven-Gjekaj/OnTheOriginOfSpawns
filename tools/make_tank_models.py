@@ -2,10 +2,9 @@
 
 Usage: python3 tools/make_tank_models.py
 
-Thickskull: a crown of thick bone on the top of the head, raised above the
-skin, and a thin plate flat on the forehead. Both sit outside the Lurker
-hood (inflate 0.4), so the two can be on one zombie. No part juts out in
-front of the face.
+Thickskull: a thin plate of bone flat on the forehead. It sits outside the
+Lurker hood (inflate 0.4), so the two can be on one zombie. No part juts
+out in front of the face.
 
 Stoneblood: a thin shell of stone chips over the lower legs and the feet,
 with gaps. It shows on the normal legs and on the bone legs of Bonerunner.
@@ -57,33 +56,23 @@ def bone_box(im, u, v, w, h, d, seed):
 
 
 def thickskull():
-    # The crown: 6x2x6 at uv (0, 0), on the top of the head, from y -10 to
-    # -8. The forehead plate: 6x2x1 at uv (0, 8), flat on the forehead, over
-    # face rows y 8 and 9. Its back half is inside the head, so its front is
-    # only 0.6 pixel in front of the face. No part juts out. The sizes are
-    # whole pixels, so that the box UV has no half pixels.
-    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
-    bone_box(im, 0, 0, 6, 2, 6, 1)
-    bone_box(im, 0, 8, 6, 2, 1, 7)
-    # Sutures on the top of the crown: a line along the middle and a crack.
-    for y in range(6):
-        im.putpixel((9, y), SUTURE)
-    for x, y in ((7, 1), (8, 2), (10, 4), (11, 3)):
+    # The forehead plate: 6x2x1 at uv (0, 0), flat on the forehead, over face
+    # rows y 8 and 9. Its back half is inside the head, so its front is only
+    # 0.6 pixel in front of the face. No part juts out. The sizes are whole
+    # pixels, so that the box UV has no half pixels.
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    bone_box(im, 0, 0, 6, 2, 1, 7)
+    for x, y in ((3, 1), (4, 2)):
         im.putpixel((x, y), SUTURE)
-    # The thick edge of the crown and a crack in the forehead plate.
-    for x in range(24):
-        for y in (6, 7):
-            if noise(x, y, 2) % 3 == 0:
-                im.putpixel((x, y), BONE_EDGE)
-    for x, y in ((3, 9), (4, 10)):
-        im.putpixel((x, y), SUTURE)
+    for x in range(14):
+        if noise(x, 1, 2) % 4 == 0 and im.getpixel((x, 1))[3]:
+            im.putpixel((x, 1), BONE_EDGE)
     model = {
         "texture": "originofspawns:textures/entity/thickskull_plate.png",
-        "texture_width": 32,
+        "texture_width": 16,
         "texture_height": 16,
         "parts": [
-            {"bone": "head", "uv": [0, 0], "from": [-3, -10, -3], "size": [6, 2, 6]},
-            {"bone": "head", "uv": [0, 8], "from": [-3, -8, -4.6], "size": [6, 2, 1]},
+            {"bone": "head", "uv": [0, 0], "from": [-3, -8, -4.6], "size": [6, 2, 1]},
         ],
     }
     save("thickskull_plate", im, model)

@@ -281,8 +281,8 @@ def nightborn():
 
 def thickskull():
     # The cheekbones show as bare bone, with a raw, dark edge of skin around
-    # them: on each outer cheek and on the next side of the head. The crown
-    # and the forehead plate are the gene model thickskull_plate. The marks
+    # them: on each outer cheek and on the next side of the head. The
+    # forehead plate is the gene model thickskull_plate. The marks
     # go at order -1, so that the Rabid cheeks go on top of them, and the raw
     # edge goes on top of the Lurker shade.
     bone = Mark("#CEC4A8", order=-1)
@@ -293,7 +293,20 @@ def thickskull():
         raw.put((face_x, 11), 230).put((face_x, 14))
         raw.put(head_side(side, 0, 3), 230).put(head_side(side, 1, 4)).put(head_side(side, 0, 6), 215)
         raw.put(head_side(side, 2, 5), 200).put(head_side(side, 1, 6), 230)
-    return [bone, raw]
+    # A patch on the back of the head where the skin is gone and the skull
+    # shows, with a suture line and a crack, and a raw edge around it. Only
+    # the Runt hair uses the back of the head, in its top 2 rows.
+    skull = Mark("#CEC4A8", order=-1)
+    suture = Mark("#6E6248", order=-1)
+    for x, y in ((26, 11), (27, 11), (28, 11), (26, 12), (27, 12), (28, 12), (29, 12),
+                 (26, 13), (27, 13), (28, 13), (27, 14)):
+        skull.put((x, y), 255 if (x + y) % 2 else 225)
+    suture.put((27, 11)).put((27, 12)).put((28, 13), 230)
+    skull.pixels.pop((27, 11)), skull.pixels.pop((27, 12)), skull.pixels.pop((28, 13))
+    for p in ((26, 10), (27, 10), (28, 10), (25, 11), (29, 11), (25, 12), (30, 12),
+              (25, 13), (29, 13), (26, 14), (28, 14), (27, 15)):
+        raw.put(p, 230 if sum(p) % 2 else 200)
+    return [bone, raw, skull, suture]
 
 
 def blob(core, rim, center, ring):

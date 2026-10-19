@@ -15,6 +15,22 @@
 				"tint": "#7A2E24"
 			},
 			"order": -1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/thickskull_2.png",
+				"tint": "#CEC4A8"
+			},
+			"order": -1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/thickskull_3.png",
+				"tint": "#6E6248"
+			},
+			"order": -1
 		}
 	],
 	"model": "originofspawns:thickskull_plate"

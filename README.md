@@ -82,6 +82,23 @@ and downloads Java 25 if it is not on the computer.
 
 ## Release
 
+### Versions
+
+The versions follow Semantic Versioning, with a stage at the end.
+
+| Stage | Version | Example |
+|---|---|---|
+| Alpha | `0.<number>.0-alpha` for each finished milestone or part | `0.1.0-alpha` for milestone 1, `0.2.0-alpha` for milestone 2a |
+| Beta | `0.<number>.0-beta` for each beta release | `0.6.0-beta` |
+| Full release | `1.0.0`, then `1.<number>.0` for new features | `1.1.0` |
+| Fix | Add 1 to the last number | `0.1.1-alpha` |
+
+Modrinth and CurseForge show the stage from the version: alpha, beta, or
+release. The Minecraft version is not in the mod version. The release pages
+show it.
+
+### Steps
+
 1. Set `mod_version` in `gradle.properties`.
 2. Commit the change.
 3. Publish a GitHub release with the tag `v` and the version, for example

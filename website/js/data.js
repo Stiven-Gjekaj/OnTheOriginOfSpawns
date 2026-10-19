@@ -15,7 +15,7 @@ window.SITE_DATA = {
  "tagline": "Adapt or go extinct",
  "subtitle": "A Fabric mod where the mobs evolve from how you kill them",
  "overview": [
-  "**On the Origin of Spawns** makes the mobs in your world evolve. Each mob that you kill changes the next generation. Burn many zombies, and their offspring start to resist fire. Outrun them, and their offspring get faster.",
+  "On the Origin of Spawns makes the mobs in your world evolve. Each mob that you kill changes the next generation. Burn many zombies, and their offspring start to resist fire. Outrun them, and their offspring get faster.",
   "You evolve too, but you choose how. Select small adaptations, each with a trade-off. Then watch the mobs adapt to counter you. Record each species in your Beagle Notebook while natural selection and artificial selection race each other."
  ],
  "features": [

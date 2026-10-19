@@ -85,6 +85,13 @@ function bullets(lines) {
   return out;
 }
 
+// Plain text from inline Markdown: no bold, no code marks, and link text only.
+const plain = (s) => s.replace(/\*\*([^*]+)\*\*/g, "$1").replace(/`([^`]*)`/g, "$1")
+  .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/(^|\W)_([^_]+)_(?=\W|$)/g, "$1$2");
+const plainDeep = (v) => typeof v === "string" ? plain(v)
+  : Array.isArray(v) ? v.map(plainDeep)
+  : v && typeof v === "object" ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, plainDeep(x)])) : v;
+
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 // Inline Markdown: code, bold, italic, and links. Links to other files of
@@ -378,19 +385,19 @@ const out = {
   links,
   tagline,
   subtitle,
-  overview,
-  features,
-  roadmap: roadmap.map(({ text, ...r }) => r),
+  overview: plainDeep(overview),
+  features: plainDeep(features),
+  roadmap: plainDeep(roadmap.map(({ text, ...r }) => r)),
   families,
   minors,
   hybrids,
   resultRules,
   powerOrder,
-  pressures,
-  genes,
-  evolution,
-  notebook,
-  perks,
+  pressures: plainDeep(pressures),
+  genes: genes.map((g) => ({ ...g, gains: plain(g.gains), downsides: plain(g.downsides), look: plain(g.look), details: plain(g.details) })),
+  evolution: plainDeep(evolution),
+  notebook: { ...plainDeep(notebook), lang: notebook.lang },
+  perks: plainDeep(perks),
   dataPacks,
 };
 

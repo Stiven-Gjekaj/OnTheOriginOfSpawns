@@ -150,7 +150,8 @@ Thus, the bones look worn, not undead.
 - Each species has 5 major families.
   Each species has its own families, with its own names.
   For example, a zombie family can be "Predators".
-- Each major family has one big buff and one big debuff.
+- Each major family has one big buff and one big debuff, at 3 tiers.
+  A higher tier makes the buff and the debuff stronger.
 - Each gene has a main family tag.
   The main tag gives 2 points to its family.
 - A small number of genes also have a sub family tag.
@@ -168,9 +169,7 @@ Thus, the bones look worn, not undead.
   For example, a zombie with speed, fire resistance, faster attacks, less
   health, and more damage on death is a Predator.
 - The family with the most points is the major family.
-  It gives tier 2 effects.
 - The family with the second most points is the sub family.
-  It gives tier 1 effects.
 - The major family and the sub family make a minor family.
   For example, a Predator with a Tank sub family is a different minor family
   from a Predator with a Stalker sub family.
@@ -181,11 +180,14 @@ Thus, the bones look worn, not undead.
 
 | Points of the genes | Result |
 |---|---|
+| One family has all points | Pure family: tier 3 effects from the major |
 | One family has the most points, and a second family is next | Minor family: tier 2 effects from the major, tier 1 effects from the sub |
-| One family has all points | Pure major family: tier 2 effects only |
-| Two families have the most points, with the same number | Hybrid: tier 1 effects from each of the two |
+| Two families have the most points, with the same number | Hybrid: tier 2 effects from each of the two |
 | No family points | Neutral: no family effects |
 
+- For example, a pure Predator gets the tier 3 Predator effects.
+  A Predator with a Tank sub family gets the tier 2 Predator effects and the
+  tier 1 Tank effects.
 - If two families have the same number of points for the sub family, the
   family of the gene with the highest frequency wins.
 - At the start of a world, all mobs are neutral.

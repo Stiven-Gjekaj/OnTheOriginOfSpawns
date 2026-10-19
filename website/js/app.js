@@ -790,6 +790,7 @@
   let labTurn = -0.5;
   let labSpin = !reduced;
   let labWalk = false;
+  let labBaby = false;
   let labModel = null;
   let labMsg = "";
 
@@ -807,6 +808,7 @@
           <div class="lab-row">
             <button class="btn small" id="lab-spin" aria-pressed="${labSpin}">Turn</button>
             <button class="btn small" id="lab-walk" aria-pressed="${labWalk}">Walk</button>
+            <button class="btn small" id="lab-baby" aria-pressed="${labBaby}" data-tip="Only the Runt gene makes baby zombies">Baby</button>
             <button class="btn small" id="lab-night" aria-pressed="${labNight}">${icon("moon")} Night</button>
             <button class="btn small dark" id="lab-clear">Remove all</button>
           </div>
@@ -816,7 +818,7 @@
         <div>
           <div class="panel">
             <h3 style="margin-top:0">Genes <span class="muted" id="lab-count"></span></h3>
-            <p class="muted" style="margin-top:-6px">A zombie carries a maximum of 5 genes. The family result uses the rules of the mod.</p>
+            <p class="muted" style="margin-top:-6px">A zombie carries a maximum of 5 genes. The family result uses the rules of the mod. The Baby button shows the marks on a baby zombie, as the game fits them. Only the Runt gene makes baby zombies.</p>
             <div id="lab-msg" class="sim-log" aria-live="polite"></div>
             <div id="lab-toggles"></div>
           </div>
@@ -827,6 +829,7 @@
     $("#lab-spin").addEventListener("click", (e) => { labSpin = !labSpin; e.currentTarget.setAttribute("aria-pressed", labSpin); });
     $("#lab-walk").addEventListener("click", (e) => { labWalk = !labWalk; e.currentTarget.setAttribute("aria-pressed", labWalk); });
     $("#lab-night").addEventListener("click", (e) => { labNight = !labNight; e.currentTarget.setAttribute("aria-pressed", labNight); wrap.classList.toggle("night", labNight); });
+    $("#lab-baby").addEventListener("click", (e) => { labBaby = !labBaby; e.currentTarget.setAttribute("aria-pressed", labBaby); renderLabToggles(); });
     $("#lab-clear").addEventListener("click", () => { labGenes.clear(); labMsg = ""; renderLabToggles(); });
     $("#lab-angle").addEventListener("input", (e) => { labTurn = (e.target.value * Math.PI) / 180; labSpin = false; $("#lab-spin").setAttribute("aria-pressed", false); });
     let drag = null;
@@ -872,7 +875,7 @@
     if (genes.length) recordFound(r);
     $("#lab-result").innerHTML = `<div class="fam-name" style="color:${r.color}">${esc(r.name)}</div><div class="muted">${r.kind === "neutral" ? "No family effects" : esc(kindName(r.kind))}${r.style ? ": " + esc(r.style) : ""}</div>
       <div class="points">${r.points.map((p) => `<span class="badge fam" style="--fam:${FAMILY_HEX[p.id]}">${esc(famName(p.id))} ${p.points}</span>`).join("")}</div>`;
-    Z.bake(genes.filter((g) => g.visual)).then((m) => { labModel = m; });
+    Z.bake(genes.filter((g) => g.visual), labBaby).then((m) => { labModel = m; });
   }
 
   let labLoop = false;

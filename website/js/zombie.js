@@ -33,6 +33,80 @@
     ["left_leg", [0, 16], [-2, 0, -2], [4, 12, 4], true],
   ];
 
+  // The baby zombie model, as BabyLayout.java in the mod and
+  // tools/preview_genes.py give it. The feet are at y 24, as for the adult.
+  const BABY_PIVOTS = {
+    head: [0, 15.25, 0], body: [0, 17.5, 0], right_arm: [-3, 15.5, 0], left_arm: [3, 15.5, 0],
+    right_leg: [-1, 20, 0], left_leg: [1, 20, 0],
+  };
+  // Each pair: bone (null for the hat layer), the adult cube, the baby cube,
+  // and true if the adult cube mirrors its texture. A cube is
+  // [u, v, width, height, depth, x, y, z].
+  const BABY_PAIRS = [
+    ["head", [0, 0, 8, 8, 8, -4, -8, -4], [3, 3, 6, 6, 6, -3, -6.25, -3], false],
+    [null, [32, 0, 8, 8, 8, -4, -8, -4], [35, 3, 6, 6, 6, -3, -6.15, -3], false],
+    ["body", [16, 16, 8, 12, 4, -4, 0, -2], [16, 16, 4, 5, 2, -2, -2.5, -1], false],
+    ["right_arm", [40, 16, 4, 12, 4, -3, -2, -2], [36, 16, 2, 5, 2, -1, -0.5, -1], false],
+    ["left_arm", [40, 16, 4, 12, 4, -1, -2, -2], [28, 16, 2, 5, 2, -1, -0.5, -1], true],
+    ["right_leg", [0, 16, 4, 12, 4, -2, 0, -2], [8, 16, 2, 4, 2, -1, 0, -1], false],
+    ["left_leg", [0, 16, 4, 12, 4, -2, 0, -2], [0, 16, 2, 4, 2, -1, 0, -1], true],
+  ];
+  // The faces that change places in a mirrored cube: side 1 and side 2.
+  const MIRRORED_FACE = [0, 1, 4, 3, 2, 5];
+
+  // The faces of a box UV: top, bottom, side 1, front, side 2, back, as
+  // [x, y, width, height].
+  function uvFaces([u, v, w, h, d]) {
+    return [[u + d, v, w, d], [u + d + w, v, w, d], [u, v + d, d, h], [u + d, v + d, w, h], [u + d + w, v + d, d, h], [u + d * 2 + w, v + d, w, h]];
+  }
+
+  // Copy one face to a face of a different size, with the nearest pixel.
+  function copyFace(src, from, out, to, scale, flip) {
+    const tw = to[2] * scale, th = to[3] * scale, fw = from[2] * scale, fh = from[3] * scale;
+    for (let y = 0; y < th; y++) {
+      for (let x = 0; x < tw; x++) {
+        const fx = flip ? tw - 1 - x : x;
+        const sx = from[0] * scale + Math.trunc(((fx + 0.5) * fw) / tw);
+        const sy = from[1] * scale + Math.trunc(((y + 0.5) * fh) / th);
+        const tx = to[0] * scale + x, ty = to[1] * scale + y;
+        if (sx >= src.width || sy >= src.height || tx >= out.width || ty >= out.height) continue;
+        const si = (sy * src.width + sx) * 4, ti = (ty * out.width + tx) * 4;
+        for (let k = 0; k < 4; k++) out.data[ti + k] = src.data[si + k];
+      }
+    }
+  }
+
+  // Move an image in the adult layout to the baby layout, like BabyLayout.toBaby.
+  function toBaby(adult) {
+    const scale = Math.max(Math.floor(adult.width / 64), 1);
+    const out = new ImageData(adult.width, adult.height);
+    for (const [, a, b, mirror] of BABY_PAIRS) {
+      const bf = uvFaces(b), af = uvFaces(a);
+      for (let f = 0; f < 6; f++) copyFace(adult, af[mirror ? MIRRORED_FACE[f] : f], out, bf[f], scale, mirror);
+    }
+    return out;
+  }
+
+  // Move an image in the baby layout to the adult layout, like BabyLayout.toAdult.
+  function toAdult(baby) {
+    const scale = Math.max(Math.floor(baby.width / 64), 1);
+    const out = new ImageData(baby.width, baby.height);
+    for (const [, a, b, mirror] of BABY_PAIRS) {
+      if (mirror) continue;
+      const bf = uvFaces(b), af = uvFaces(a);
+      for (let f = 0; f < 6; f++) copyFace(baby, bf[f], out, af[f], scale, false);
+    }
+    return out;
+  }
+
+  // The change from an adult bone to a baby bone, like BabyLayout.boneChange.
+  // A point p of the adult bone goes to move + (p - adult) * scale.
+  function boneChange(bone) {
+    const pair = BABY_PAIRS.find((p) => p[0] === bone);
+    const a = pair[1], b = pair[2];
+    return { move: [b[5], b[6], b[7]], scale: [b[2] / a[2], b[3] / a[3], b[4] / a[4]], adult: [a[5], a[6], a[7]] };
+  }
+
   const assetUrl = (id) => {
     const [ns, p] = id.split(":");
     return `mod/${ns}/${p}`;
@@ -110,13 +184,13 @@
     return out;
   }
 
-  async function applyLayer(out, gene, layer, maps) {
+  async function applyLayer(out, gene, layer, maps, patternOf) {
     const map = maps[gene.visual.regionMap || DEFAULT_REGION_MAP];
     const seed = identifierHash("originofspawns:" + gene.id);
     const regions = new Set((layer.regions || []).map((r) => REGIONS[r]));
     const materials = new Set((layer.materials || []).map((m) => MATERIALS[m]));
     const e = layer.effect;
-    const pattern = e.type === "pattern" ? await loadImage(e.texture) : null;
+    const pattern = e.type === "pattern" ? await patternOf(e.texture) : null;
     const tint = e.tint ? rgb(e.tint) : [255, 255, 255];
     const colors = e.colors ? e.colors.map(rgb) : [];
     const o = out.data;
@@ -150,40 +224,56 @@
 
   const baked = new Map();
   // Return the texture of a zombie with the genes, like TextureBaker.bakeAll.
-  async function bake(genes) {
-    const key = genes.map((g) => g.id).sort().join(",");
+  // With baby, the region maps and the marks move to the baby layout, and the
+  // gene models move onto the baby bones, as GeneTextures and GeneModelLayer
+  // do in the game.
+  async function bake(genes, baby = false) {
+    const key = genes.map((g) => g.id).sort().join(",") + (baby ? "|baby" : "");
     if (baked.has(key)) return baked.get(key);
     const job = (async () => {
       const maps = {};
       const mapIds = new Set([DEFAULT_REGION_MAP]);
       for (const g of genes) if (g.visual && g.visual.regionMap) mapIds.add(g.visual.regionMap);
-      for (const id of mapIds) maps[id] = await loadImage(id);
+      for (const id of mapIds) maps[id] = baby ? toBaby(await loadImage(id)) : await loadImage(id);
       const base = baseTexture(maps[DEFAULT_REGION_MAP]);
+      // A pattern with the size of a whole mob texture is a mark in the adult
+      // layout, so it moves to the baby layout. A smaller pattern is a tile.
+      const patternOf = async (id) => {
+        const img = await loadImage(id);
+        return baby && img.width >= 64 && img.height >= 64 ? toBaby(img) : img;
+      };
       const steps = [];
       [...genes].sort((a, b) => (a.id < b.id ? -1 : 1)).forEach((g) => {
         if (!g.visual) return;
         for (const layer of g.visual.layers) steps.push({ order: layer.order || 0, gene: g, layer });
       });
       steps.sort((a, b) => a.order - b.order);
-      for (const s of steps) await applyLayer(base, s.gene, s.layer, maps);
-      const cubes = ZOMBIE_CUBES.map(([bone, uv, from, size, mirror]) => ({
+      for (const s of steps) await applyLayer(base, s.gene, s.layer, maps, patternOf);
+      const body = baby
+        ? BABY_PAIRS.filter((p) => p[0]).map(([bone, , b]) => [bone, [b[0], b[1]], [b[5], b[6], b[7]], [b[2], b[3], b[4]], false])
+        : ZOMBIE_CUBES;
+      const cubes = body.map(([bone, uv, from, size, mirror]) => ({
         bone, uv, from, size, mirror, inflate: 0, tex: base, scale: 1, pivot: [0, 0, 0], rotation: [0, 0, 0], glow: false,
       }));
+      // Gene model cubes have adult UVs, so a model with mob_texture reads the
+      // baby texture in the adult layout.
+      const mobTex = baby ? toAdult(base) : base;
       for (const g of genes) {
         const m = g.visual && g.visual.model;
         if (!m) continue;
         // A model with mob_texture uses the baked texture of the zombie, with
         // the marks of all its genes, as GeneModel does in the game.
-        const tex = m.mob_texture ? base : await loadImage(m.texture);
+        const tex = m.mob_texture ? mobTex : await loadImage(m.texture);
         const scale = tex.width / (m.texture_width || 64);
         for (const p of m.parts) {
           cubes.push({
             bone: p.bone, uv: p.uv, from: p.from, size: p.size, mirror: !!p.mirror, inflate: p.inflate || 0,
             tex, scale, pivot: p.pivot || [0, 0, 0], rotation: p.rotation || [0, 0, 0], glow: !!p.glow, gene: g.id,
+            change: baby ? boneChange(p.bone) : null,
           });
         }
       }
-      return { texture: base, cubes, faces: buildFaces(cubes) };
+      return { texture: base, cubes, faces: buildFaces(cubes), pivots: baby ? BABY_PIVOTS : PIVOTS };
     })();
     baked.set(key, job);
     return job;
@@ -253,14 +343,21 @@
   }
 
   // Return a function that moves a point of a cube into the view.
-  function transformer(cube, pose, view) {
+  function transformer(cube, pose, view, pivots) {
     const piv = cube.pivot, rot = cube.rotation.map(rad);
-    const bonePivot = PIVOTS[cube.bone] || [0, 0, 0];
+    const bonePivot = pivots[cube.bone] || [0, 0, 0];
+    const ch = cube.change;
     const boneRot = (pose[cube.bone] || [0, 0, 0]);
     const point = (p, isNormal) => {
       let q = isNormal ? p : sub(p, piv);
       q = rotZ(rotY(rotX(q, rot[0]), rot[1]), rot[2]);
       if (!isNormal) q = add(q, piv);
+      // Move and scale an adult part onto the baby bone.
+      if (ch) {
+        q = isNormal
+          ? (() => { const n = [q[0] / ch.scale[0], q[1] / ch.scale[1], q[2] / ch.scale[2]]; const l = Math.hypot(...n) || 1; return n.map((x) => x / l); })()
+          : [0, 1, 2].map((k) => ch.move[k] + (q[k] - ch.adult[k]) * ch.scale[k]);
+      }
       q = rotZ(rotY(rotX(q, boneRot[0]), boneRot[1]), boneRot[2]);
       if (!isNormal) q = add(q, bonePivot);
       q = rotX(rotY(q, view.turn), view.tilt);
@@ -277,7 +374,7 @@
     const lightDir = (() => { const v = [-0.45, -0.75, -0.5]; const l = Math.hypot(...v); return v.map((x) => x / l); })();
     const list = [];
     for (const f of model.faces) {
-      const tf = transformer(f.cube, o.pose, view);
+      const tf = transformer(f.cube, o.pose, view, model.pivots || PIVOTS);
       const n = tf(f.n, true);
       if (n[2] >= -1e-4) continue;
       const O = tf(f.o);
@@ -334,5 +431,5 @@
     return op;
   }
 
-  window.Zombie = { bake, draw, pose, opacityAt, loadImage };
+  window.Zombie = { bake, draw, pose, opacityAt, loadImage, toBaby, toAdult };
 })();

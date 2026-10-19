@@ -1,0 +1,89 @@
+{
+	"texture": "originofspawns:textures/entity/death_throes_fuse.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4.0,
+				-4.0,
+				1.5
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"pivot": [
+				-3.5,
+				1.0,
+				2.0
+			],
+			"rotation": [
+				-25.0,
+				0.0,
+				-35.0
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-4.0,
+				-5.0,
+				1.5
+			],
+			"size": [
+				1,
+				1,
+				1
+			],
+			"pivot": [
+				-3.5,
+				1.0,
+				2.0
+			],
+			"rotation": [
+				-25.0,
+				0.0,
+				-35.0
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				12
+			],
+			"from": [
+				-4.0,
+				-6.0,
+				1.5
+			],
+			"size": [
+				1,
+				1,
+				1
+			],
+			"pivot": [
+				-3.5,
+				1.0,
+				2.0
+			],
+			"rotation": [
+				-25.0,
+				0.0,
+				-35.0
+			],
+			"glow": true
+		}
+	]
+}

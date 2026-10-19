@@ -1,34 +1,4 @@
 {
-	"layers": [
-		{
-			"regions": [
-				"torso",
-				"arms"
-			],
-			"materials": [
-				"cloth"
-			],
-			"effect": {
-				"type": "pattern",
-				"texture": "originofspawns:textures/gene_marks/death_throes_0.png",
-				"tint": "#B4743F"
-			},
-			"order": -10
-		},
-		{
-			"regions": [
-				"torso",
-				"arms"
-			],
-			"materials": [
-				"cloth"
-			],
-			"effect": {
-				"type": "pattern",
-				"texture": "originofspawns:textures/gene_marks/death_throes_1.png",
-				"tint": "#161514"
-			},
-			"order": 10
-		}
-	]
+	"layers": [],
+	"model": "originofspawns:death_throes_fuse"
 }

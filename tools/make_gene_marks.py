@@ -28,21 +28,15 @@ the feet, so no other mark goes there.
 - Face, mouth: Rabid has the mouth corners (x 9 and 14) and the jaw edges
   (x 8 and 15, y 15). Hush has the lips (y 14, x 10 to 13). Packcaller has
   the jaw (y 15, x 10 to 13). Leech has no face pixels yet.
-- Low head sides, next to the face: Death Throes, one small crack.
-- Chest: Ironhide has two columns of plates, x 20 to 22 and x 25 to 27,
-  y 22 to 27. Frenzy has the tear in the middle, x 23 and 24, y 22 to 29.
-  Bloodscent has x 25 to 27, y 28 and 29. Death Throes has two speckles in
-  rows 0 and 1.
-- Back of the shirt: Ironhide has the breastplate, x 33 to 38 and y 22
-  to 27. Bloodscent has x 38 and 39 in rows 1 and 2. Death Throes has three
-  marks.
-- Sides of the shirt: Death Throes has one mark on each side.
-- Sleeves: Ironhide has the arm top and rows 0 and 1. Frenzy has rows 2
-  and 3.
-- Arm skin, rows 4 to 6: Frenzy has the front face. Death Throes has
-  three marks on the outer and the back faces.
-- Legs: Lunger has the knees, rows 2 to 5 of all four faces. Death Throes
-  has three marks in rows 0 and 1.
+- Shirt and sleeves: Ironhide covers all the cloth at order -5, so the
+  marks of other genes go on top of its plates.
+- Shirt: Frenzy tears the cloth away at the bottom, with a deep rip in the
+  middle of the chest (x 23 and 24). Bloodscent has the cloth over the rip
+  (x 23 and 24, y 22 to 24) and x 38 and 39 in rows 1 and 2 of the back.
+- Sleeves: Frenzy has rows 2 and 3.
+- Arm skin, rows 4 to 6: Frenzy has the front face.
+- Legs: Lunger has the knees, rows 2 to 5 of all four faces.
+- Death Throes has no marks. Its look is the fuse, a gene model.
 This script needs Pillow.
 """
 import json
@@ -213,44 +207,11 @@ def rabid():
     return [rim, fever, foam, bubbles]
 
 
-# The pixels in the belt rows that the shirt of the vanilla zombie covers.
-SHIRT_TAIL = {(26, 30), (27, 30), (28, 30), (34, 30), (35, 30), (36, 30), (37, 30),
-              (27, 31), (36, 31)}
-
-
-def death_throes():
-    # Gunpowder: the shirt turns a grayish orange, with black specks on it.
-    # The color goes under the marks of the other genes (order -10).
-    # The specks go over all of them (order 10), also over the Ironhide
-    # plates. The face stays clear.
-    cloth = {"regions": ["torso", "arms"], "materials": ["cloth"]}
-    # The hue covers the shirt and the sleeves, but not the belt: rows y 30
-    # and 31 of the body, and the bottom of the body. Its gray changes a
-    # little from pixel to pixel, so that the cloth keeps a texture.
-    hue = Mark("#B4743F", alpha=225, order=-10, **cloth)
-    for y in range(64):
-        for x in range(64):
-            belt = 16 <= x < 40 and y in (30, 31, 46, 47) and (x, y) not in SHIRT_TAIL
-            bottom = 28 <= x < 36 and 16 <= y < 20
-            if not (belt or bottom):
-                hue.put((x, y), (230, 255, 215, 245)[(x * 7 + y * 13) % 4])
-    speck = Mark("#161514", order=10, **cloth)
-    speck.put(body(CHEST, 1, 0)).put(body(CHEST, 6, 1), 210).put(body(CHEST, 1, 3), 230)
-    speck.put(body(CHEST, 6, 5)).put(body(CHEST, 2, 6), 200)
-    speck.put(body(SHIRT_BACK, 2, 1)).put(body(SHIRT_BACK, 5, 4), 220).put(body(SHIRT_BACK, 0, 4))
-    speck.put(body(SHIRT_BACK, 3, 6), 210)
-    speck.put(body(RIGHT_SIDE, 1, 2)).put(body(RIGHT_SIDE, 3, 5), 220)
-    speck.put(body(LEFT_SIDE, 2, 1), 230).put(body(LEFT_SIDE, 0, 4))
-    speck.put(arm(OUTER, 1, 0)).put(arm(BACK, 2, 1), 220).put(arm(INNER, 0, 1), 200)
-    return [hue, speck]
-
-
 GENES = {
     "lunger": lunger,
     "frenzy": frenzy,
     "bloodscent": bloodscent,
     "rabid": rabid,
-    "death_throes": death_throes,
 }
 
 

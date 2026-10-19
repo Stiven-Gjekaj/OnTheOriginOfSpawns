@@ -18,8 +18,8 @@ _A Fabric mod where the mobs evolve from how you kill them_
   <a href="#features"><b>Features</b></a> |
   <a href="#build"><b>Build</b></a> |
   <a href="#release"><b>Release</b></a> |
-  <a href="DESIGN.md"><b>Design</b></a> |
-  <a href="ROADMAP.md"><b>Roadmap</b></a>
+  <a href="design/DESIGN.md"><b>Design</b></a> |
+  <a href="design/ROADMAP.md"><b>Roadmap</b></a>
 </p>
 
 </div>
@@ -29,8 +29,8 @@ _A Fabric mod where the mobs evolve from how you kill them_
 > [!NOTE]
 > **The mod is in development.** There is no release yet. The project
 > builds, but it has no gameplay.
-> [ROADMAP.md](ROADMAP.md) lists the milestones to version 1.0.0.
-> [DESIGN.md](DESIGN.md) holds each decision of the design.
+> [ROADMAP.md](design/ROADMAP.md) lists the milestones to version 1.0.0.
+> [DESIGN.md](design/DESIGN.md) holds each decision of the design.
 
 ---
 

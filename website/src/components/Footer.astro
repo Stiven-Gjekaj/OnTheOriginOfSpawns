@@ -1,0 +1,44 @@
+---
+// The footer: the links of the project and the legal note.
+import site from "../data/site.json";
+import { PAGES } from "../lib/nav.js";
+import { url } from "../lib/site.js";
+const { links, generated, version } = site;
+---
+<footer class="site-footer">
+  <div class="container cols">
+    <div class="about">
+      <div class="name">On the Origin of Spawns</div>
+      <p class="muted small">A Fabric mod by Stiven Gjekaj. The newest release is {version}. All rights reserved.</p>
+      <p class="muted small">This is not an official Minecraft product. Mojang and Microsoft do not approve it, and it has no connection with them.</p>
+    </div>
+    <nav aria-label="Wiki pages">
+      <div class="head">Wiki</div>
+      {PAGES.map((p) => <a href={url(p.path)}>{p.title}</a>)}
+    </nav>
+    <nav aria-label="Project links">
+      <div class="head">Project</div>
+      <a href={links.modrinth}>Modrinth</a>
+      <a href={links.curseforge}>CurseForge</a>
+      <a href={links.github}>GitHub</a>
+      <a href={links.kofi}>Ko-fi</a>
+    </nav>
+  </div>
+  <div class="container note muted small">The wiki data comes from the files of the mod. Last build: {generated}.</div>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--border); background: var(--bg-raised); padding: var(--s-7) 0 var(--s-6); }
+  .cols { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: var(--s-6); }
+  .name { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-md); margin-bottom: var(--s-2); }
+  .about p + p { margin-top: var(--s-2); }
+  nav { display: grid; gap: 6px; align-content: start; }
+  nav a { color: var(--text-muted); text-decoration: none; font-size: var(--fs-sm); }
+  nav a:hover { color: var(--text); }
+  .head { font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 2px; }
+  .note { margin-top: var(--s-6); padding-top: var(--s-4); border-top: 1px solid var(--border); }
+  @media (max-width: 720px) {
+    .cols { grid-template-columns: 1fr 1fr; }
+    .about { grid-column: 1 / -1; }
+  }
+</style>

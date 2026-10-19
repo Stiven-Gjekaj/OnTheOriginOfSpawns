@@ -1,0 +1,17 @@
+---
+// The tooltip templates of all genes. Put this component one time on a page
+// that uses data-tip-ref="tip-gene-<id>".
+import site from "../data/site.json";
+import { famName, label, effectLine } from "../lib/site.js";
+---
+{site.genes.map((g) => (
+  <template id={`tip-gene-${g.id}`}>
+    <div class="t-name" style={`color:var(--${g.family})`}>{g.name}</div>
+    <div class="t-blue">{famName(g.family)}{g.sub && <span class="t-line"> (sub: {famName(g.sub)})</span>}</div>
+    <div class="t-line">Pressure: {label(g.counters)}</div>
+    {g.effects.gains.map((e) => <div class="t-gain">+ {effectLine(e)}</div>)}
+    {g.effects.downsides.map((e) => <div class="t-loss">- {effectLine(e)}</div>)}
+    <div class="t-gray">{g.look}</div>
+    <div class="t-id">originofspawns:{g.id}</div>
+  </template>
+))}

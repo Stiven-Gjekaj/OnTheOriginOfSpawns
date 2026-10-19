@@ -1,0 +1,27 @@
+---
+// The head of a page: a small label, the title, and a lead paragraph.
+interface Props { eyebrow?: string; title: string }
+const { eyebrow, title } = Astro.props;
+---
+<header class="page-header">
+  <div class="container">
+    {eyebrow && <div class="eyebrow">{eyebrow}</div>}
+    <h1>{title}</h1>
+    <div class="lead"><slot /></div>
+  </div>
+</header>
+
+<style>
+  .page-header {
+    padding: var(--s-8) 0 var(--s-6);
+    margin-bottom: var(--s-6);
+    border-bottom: 1px solid var(--border);
+    background:
+      radial-gradient(60% 120% at 0% 0%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 60%),
+      var(--bg-raised);
+  }
+  .page-header .container { display: grid; gap: var(--s-3); }
+  h1 { max-width: 22ch; }
+  .lead { font-size: var(--fs-md); }
+  @media (max-width: 640px) { .page-header { padding: var(--s-6) 0 var(--s-5); } }
+</style>

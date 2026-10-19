@@ -1,0 +1,7 @@
+---
+// A badge for the state of a feature: released, in development, or planned.
+import { statusText, statusClass } from "../lib/site.js";
+interface Props { status: string; text?: string }
+const { status, text } = Astro.props;
+---
+<span class={`badge ${statusClass(status)}`}><span class="dot"></span>{text ?? statusText(status)}</span>

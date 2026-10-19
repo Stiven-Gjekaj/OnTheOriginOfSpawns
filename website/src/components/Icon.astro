@@ -1,0 +1,7 @@
+---
+// A pixel icon from src/lib/icons.js.
+import { icon } from "../lib/icons.js";
+interface Props { name: string }
+const { name } = Astro.props;
+---
+<Fragment set:html={icon(name)} />

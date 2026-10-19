@@ -402,7 +402,6 @@ code {
   text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
   flex: none;
 }
-.brand img { width: 40px; height: 40px; border: 2px solid #000; image-rendering: auto; }
 .brand small { display: block; font-size: 0.75rem; color: #e7d3a8; }
 
 .nav { display: flex; gap: 6px; margin-left: auto; align-items: center; }

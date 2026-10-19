@@ -39,6 +39,10 @@ Change this document when a decision changes.
   For example, a zombie that dies before it hits the player counts for the
   "unreached" pressure.
   This happens when the player runs away or wins the fight quickly.
+- A death counts for "unreached" when the mob targeted a player and did not
+  damage a player before it died.
+- The "unreached" pressure does not select for attack speed.
+  Attack speed comes from the "melee" pressure.
 - The list of pressures is not final.
   The mod adds pressures for new genes.
 - A common cause of death makes the gene that counters it stronger.
@@ -46,6 +50,12 @@ Change this document when a decision changes.
   Thus, one player cannot control a pool alone.
 - Each new mob gets its genes from its pool.
 - Random mutation makes small changes to the pool.
+- Each death raises the gene that counters its pressure by 2% of the
+  distance to 100%.
+  For example, about 50 fire deaths take Cinder from 0% to about 60%.
+- Each Minecraft day, decay lowers each frequency by 1% of its value.
+- Mutation gives each gene a small chance to go to a new mob, also at 0%.
+- These values are first drafts.
 - Each gene has a cost.
   For example, fire resistance lowers the maximum health.
 - Each gene changes how the mob looks.
@@ -104,6 +114,10 @@ Change this document when a decision changes.
   Examples of effects are a color change, spots, and a pattern.
 - A gene can also change the model.
   This is rare.
+  It is only for a gene that a texture cannot show.
+- Milestone 1 has one model change: Bonerunner.
+- The beta stage can add model changes for Bloat, Thickskull, and
+  Sporebearer.
 - Data packs define the visual recipes.
 - The modeller makes the region maps and the patterns with code.
   The mod does not use Blockbench.
@@ -454,10 +468,6 @@ Version 1.0.0 has these 30 perks:
 - The player can export the evolution of the world as an image or a web page.
 - Seasons from seasonal mods add pressure.
   For example, winter selects for cold traits.
-
-## Open questions
-
-- Does the "unreached" pressure also select for attack speed?
 
 ## First milestone
 

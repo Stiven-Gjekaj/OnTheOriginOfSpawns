@@ -280,9 +280,20 @@ def nightborn():
 
 
 def thickskull():
-    # Thickskull has no marks on the texture. Its bone plate is the gene
-    # model thickskull_plate.
-    return []
+    # The cheekbones show as bare bone, with a raw, dark edge of skin around
+    # them: on each outer cheek and on the next side of the head. The crown
+    # and the forehead plate are the gene model thickskull_plate. The marks
+    # go at order -1, so that the Rabid cheeks go on top of them, and the raw
+    # edge goes on top of the Lurker shade.
+    bone = Mark("#CEC4A8", order=-1)
+    raw = Mark("#7A2E24", order=-1)
+    for face_x, side in ((8, 0), (15, 1)):
+        bone.put((face_x, 12)).put((face_x, 13), 225)
+        bone.put(head_side(side, 0, 4), 235).put(head_side(side, 0, 5)).put(head_side(side, 1, 5), 215)
+        raw.put((face_x, 11), 230).put((face_x, 14))
+        raw.put(head_side(side, 0, 3), 230).put(head_side(side, 1, 4)).put(head_side(side, 0, 6), 215)
+        raw.put(head_side(side, 2, 5), 200).put(head_side(side, 1, 6), 230)
+    return [bone, raw]
 
 
 def blob(core, rim, center, ring):
@@ -323,51 +334,81 @@ def stoneblood():
 
 
 def blastproof():
-    # Soot on the edges of the shirt: the shoulders, the sides of the chest
-    # and the back, and the top of the sleeves. The soot is thick on the edge
-    # and thin one pixel in, and some pixels stay clean, so it reads as a
-    # smudge.
-    soot = Mark("#2B2520", alpha=200)
-    thin = Mark("#2B2520", alpha=110)
+    # Blast scars. The cloth of the shirt, the sleeves, and the pants loses
+    # its color (order -7), and a heavy scorch darkens it (order -6). Both go
+    # under the Ironhide plates (order -5),
+    # so that the plates stay readable. Charred holes with burnt edges are on
+    # the edges of the shirt, on the belt, and on the top of the pants. Soot
+    # covers the hands, under the Grave Call earth and the Cinder spots
+    # (order -2).
+    cloth = {"regions": ["torso", "arms", "legs", "lower_legs"], "materials": ["cloth"]}
+    gray = dict(cloth, effect={"type": "desaturate", "amount": 0.75, "darken": 0.2}, order=-7)
+    scorch = Mark("#2A1E16", alpha=170, order=-6, size=16, **cloth)
+    for y in range(16):
+        for x in range(16):
+            scorch.put((x, y), (255, 200, 150, 230)[(x * 7 + y * 11) % 4])
+    hole = Mark("#120E0C")
+    burnt = Mark("#4A3020")
+    ember = Mark("#A04A1E")
 
-    def put(mark, p, x, y, clean=2):
-        n = (x * 31 + y * 17) % 10
-        if n >= clean:
-            mark.put(p, (255, 215, 175)[n % 3])
-    for y in range(16, 20):
-        for x in (20, 27):
-            put(soot, (x, y), x, y)
-    for y in range(20, 28):
-        for x in (20, 27):
-            put(soot, (x, y), x, y)
-        if y not in (23, 24, 25):
-            put(thin, (21, y), 21, y, 4)
-        if y < 25:
-            put(thin, (26, y), 26, y, 4)
-    for y in range(20, 26):
-        put(soot, (32, y), 32, y)
-        put(thin, (33, y), 33, y, 4)
-        if y != 22:
-            put(soot, (39, y), 39, y)
-        if y not in (21, 22):
-            put(thin, (38, y), 38, y, 4)
-    for col in range(4):
-        for row in range(4):
-            for u, v in ARMS:
-                put(thin, (u + 4 + col, v + row), col, row, 3)
-    return [soot, thin]
+    def char(center, edges, glow=None):
+        hole.put(center)
+        for p in edges:
+            burnt.put(p, 230)
+        if glow:
+            ember.put(glow, 210)
+    # The edges of the shirt, front and back.
+    char((20, 22), [(20, 21), (20, 23)])
+    char((27, 25), [(27, 24), (27, 26)], (27, 27))
+    char((32, 21), [(32, 20), (33, 21)])
+    char((39, 24), [(39, 23), (39, 25)], (38, 24))
+    # The belt, front and back.
+    char((22, 30), [(21, 30), (23, 30), (22, 31)])
+    char((25, 31), [(26, 31)], (24, 31))
+    char((34, 31), [(33, 31), (35, 31)])
+    char((38, 30), [(38, 31)], (37, 31))
+    # The top of the pants.
+    for face, col in ((FRONT, 1), (OUTER, 2), (BACK, 1)):
+        hole.put(leg(face, col, 0))
+        burnt.put(leg(face, col + 1, 0), 230).put(leg(face, col, 1), 230)
+    ember.put(leg(FRONT, 0, 1), 200)
+    soot = Mark("#1E1A17", alpha=200, order=-2, regions=["hands"])
+    for face in SIDES:
+        for col in range(4):
+            for row in range(8, 12):
+                if (face + col * 3 + row * 5) % 4:
+                    soot.put(arm(face, col, row), (255, 210, 170)[(col + row) % 3])
+    return [gray, scorch, hole, burnt, ember, soot]
 
 
 def mender():
-    # Stitched seams on the outer side of each arm: a dark seam down the
-    # middle, with pale cross stitches.
+    # Bold, stitched scars: a thick dark seam with pale cross stitches and a
+    # strip of pink new skin, on the outer and the inner side of each arm,
+    # and one across the neck. The arm scars stop over row 7, where the
+    # Rally band is. A bandage is wrapped around the shins.
     seam = Mark("#3A1E16")
-    thread = Mark("#C8B890")
-    for row in range(4, 8):
-        seam.put(arm(OUTER, 1, row))
-    for row in (4, 6):
-        thread.put(arm(OUTER, 0, row)).put(arm(OUTER, 2, row), 225)
-    return [seam, thread]
+    thread = Mark("#E0D2A8")
+    pink = Mark("#C98A84")
+    for face in (OUTER, INNER):
+        for row in range(4, 7):
+            seam.put(arm(face, 1, row))
+            pink.put(arm(face, 2, row), 255 if row % 2 else 225)
+            thread.put(arm(face, 0 if row % 2 == 0 else 3, row))
+    seam.put((23, 20)).put((24, 20))
+    pink.put((22, 20)).put((25, 20), 225)
+    thread.put((23, 21)).put((24, 21), 225)
+    # A bandage wrapped around the shins, with a spot of old blood. The legs
+    # share one texture, so both shins have it.
+    bandage = Mark("#DCD5C2")
+    blood = Mark("#8A2A22")
+    for face in SIDES:
+        for col in range(4):
+            bandage.put(leg(face, col, 7), 255 if (col + face) % 3 else 215)
+            bandage.put(leg(face, col, 8), 230 if col % 2 else 200)
+    blood.put(leg(FRONT, 2, 8))
+    bandage.pixels.pop(leg(FRONT, 2, 8)[0], None)
+    bandage.pixels.pop(leg(FRONT, 2, 8)[1], None)
+    return [seam, thread, pink, bandage, blood]
 
 
 def packcaller():

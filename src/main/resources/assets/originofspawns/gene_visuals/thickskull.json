@@ -1,4 +1,21 @@
 {
-	"layers": [],
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/thickskull_0.png",
+				"tint": "#CEC4A8"
+			},
+			"order": -1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/thickskull_1.png",
+				"tint": "#7A2E24"
+			},
+			"order": -1
+		}
+	],
 	"model": "originofspawns:thickskull_plate"
 }

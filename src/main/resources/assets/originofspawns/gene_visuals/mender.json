@@ -11,7 +11,28 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/mender_1.png",
-				"tint": "#C8B890"
+				"tint": "#E0D2A8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mender_2.png",
+				"tint": "#C98A84"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mender_3.png",
+				"tint": "#DCD5C2"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mender_4.png",
+				"tint": "#8A2A22"
 			}
 		}
 	]

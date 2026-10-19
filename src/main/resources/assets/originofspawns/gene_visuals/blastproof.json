@@ -1,18 +1,70 @@
 {
 	"layers": [
 		{
+			"regions": [
+				"torso",
+				"arms",
+				"legs",
+				"lower_legs"
+			],
+			"materials": [
+				"cloth"
+			],
+			"effect": {
+				"type": "desaturate",
+				"amount": 0.75,
+				"darken": 0.2
+			},
+			"order": -7
+		},
+		{
+			"regions": [
+				"torso",
+				"arms",
+				"legs",
+				"lower_legs"
+			],
+			"materials": [
+				"cloth"
+			],
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/blastproof_0.png",
-				"tint": "#2B2520"
-			}
+				"tint": "#2A1E16"
+			},
+			"order": -6
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/blastproof_1.png",
-				"tint": "#2B2520"
+				"tint": "#120E0C"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blastproof_2.png",
+				"tint": "#4A3020"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blastproof_3.png",
+				"tint": "#A04A1E"
+			}
+		},
+		{
+			"regions": [
+				"hands"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blastproof_4.png",
+				"tint": "#1E1A17"
+			},
+			"order": -2
 		}
 	]
 }

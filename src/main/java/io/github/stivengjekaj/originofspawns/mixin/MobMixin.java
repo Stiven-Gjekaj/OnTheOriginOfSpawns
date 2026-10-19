@@ -2,7 +2,7 @@ package io.github.stivengjekaj.originofspawns.mixin;
 
 import io.github.stivengjekaj.originofspawns.evolution.CombatRecord;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
-import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.server.level.ServerLevel;
@@ -41,7 +41,7 @@ public abstract class MobMixin {
 			return;
 		}
 		Mob self = (Mob) (Object) this;
-		GeneEffects.onHit(self, target);
+		GeneCombat.onHit(self, target);
 		if (target instanceof Player) {
 			CombatRecord record = self.getAttachedOrElse(ModAttachments.COMBAT, CombatRecord.NONE);
 			if (!record.damagedPlayer()) {

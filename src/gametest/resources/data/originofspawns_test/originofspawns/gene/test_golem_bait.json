@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "damage_from", "attackers": "minecraft:iron_golem", "multiplier": 1.5 }],
+	"mutation_rate": 0
+}

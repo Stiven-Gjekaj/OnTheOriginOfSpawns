@@ -10,16 +10,22 @@ import java.util.UUID;
  * @param criticalTime the game time when a player last started a critical hit on the mob, or -1
  * @param spotter the player that sees the mob from far away now, if one does
  * @param spottedSeconds how many seconds in a row the spotter saw the mob
+ * @param combatTime the game time of the last hit that the mob gave or took, or -1
  */
-public record DeathTrace(long sunBurnTime, long criticalTime, Optional<UUID> spotter, int spottedSeconds) {
-	public static final DeathTrace NONE = new DeathTrace(-1L, -1L, Optional.empty(), 0);
+public record DeathTrace(long sunBurnTime, long criticalTime, Optional<UUID> spotter, int spottedSeconds,
+		long combatTime) {
+	public static final DeathTrace NONE = new DeathTrace(-1L, -1L, Optional.empty(), 0, -1L);
 
 	public DeathTrace withSunBurn(long time) {
-		return new DeathTrace(time, criticalTime, spotter, spottedSeconds);
+		return new DeathTrace(time, criticalTime, spotter, spottedSeconds, combatTime);
 	}
 
 	public DeathTrace withCritical(long time) {
-		return new DeathTrace(sunBurnTime, time, spotter, spottedSeconds);
+		return new DeathTrace(sunBurnTime, time, spotter, spottedSeconds, combatTime);
+	}
+
+	public DeathTrace withCombat(long time) {
+		return new DeathTrace(sunBurnTime, criticalTime, spotter, spottedSeconds, time);
 	}
 
 	/**
@@ -27,10 +33,10 @@ public record DeathTrace(long sunBurnTime, long criticalTime, Optional<UUID> spo
 	 */
 	public DeathTrace seenBy(UUID player) {
 		int seconds = spotter.filter(player::equals).isPresent() ? spottedSeconds + 1 : 1;
-		return new DeathTrace(sunBurnTime, criticalTime, Optional.of(player), seconds);
+		return new DeathTrace(sunBurnTime, criticalTime, Optional.of(player), seconds, combatTime);
 	}
 
 	public DeathTrace unseen() {
-		return new DeathTrace(sunBurnTime, criticalTime, Optional.empty(), 0);
+		return new DeathTrace(sunBurnTime, criticalTime, Optional.empty(), 0, combatTime);
 	}
 }

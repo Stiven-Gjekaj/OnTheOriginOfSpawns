@@ -107,30 +107,6 @@ public final class GeneEffects {
 	}
 
 	/**
-	 * Returns the damage after the damage_taken effects of the genes.
-	 */
-	public static float modifyDamageTaken(LivingEntity entity, DamageSource source, float amount) {
-		float result = amount;
-		for (GeneEffect effect : (Iterable<GeneEffect>) of(entity)::iterator) {
-			if (effect instanceof GeneEffect.DamageTaken taken && source.is(taken.damageTypes())) {
-				result *= taken.multiplier();
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Runs the effects that act when the mob hits a target.
-	 */
-	public static void onHit(Mob mob, Entity target) {
-		for (GeneEffect effect : (Iterable<GeneEffect>) of(mob)::iterator) {
-			if (effect instanceof GeneEffect.IgniteTarget ignite && mob.getRandom().nextFloat() < ignite.chance()) {
-				target.igniteForSeconds(ignite.seconds());
-			}
-		}
-	}
-
-	/**
 	 * Runs the effects that act each tick.
 	 */
 	public static void tick(LivingEntity entity, ServerLevel level) {

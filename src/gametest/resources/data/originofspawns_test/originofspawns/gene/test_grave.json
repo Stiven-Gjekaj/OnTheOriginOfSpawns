@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "grave_call", "chance": 1, "max_calls": 2 }],
+	"mutation_rate": 0
+}

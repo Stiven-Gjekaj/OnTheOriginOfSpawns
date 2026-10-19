@@ -61,6 +61,8 @@ public final class Evolution {
 	public static void register() {
 		ServerEntityEvents.ENTITY_LOAD.register(Evolution::onLoad);
 		ServerLivingEntityEvents.AFTER_DEATH.register(Evolution::onDeath);
+		ServerLivingEntityEvents.AFTER_DAMAGE.register(
+				(entity, source, baseDamage, damageTaken, blocked) -> GeneCombat.onHurt(entity, source));
 		ServerTickEvents.END_SERVER_TICK.register(Evolution::decay);
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> CROWDS.clear());
 	}
@@ -119,6 +121,7 @@ public final class Evolution {
 		if (!(entity instanceof Mob mob)) {
 			return;
 		}
+		GeneCombat.onDeath(mob, level);
 		Identifier species = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
 		BiomeCategory category = BiomeCategory.of(level.getBiome(mob.blockPosition()));
 		select(level, mob.getType(), category, new DeathContext(source, facts(mob, source, level)));

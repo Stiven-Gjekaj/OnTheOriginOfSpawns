@@ -30,7 +30,8 @@ Milestones 0 to 5 make the first release.
 
 ### Milestone 2: All hostile mobs
 
-- Add the 3 major families of each species, with tier 1 and tier 2 effects.
+- Add the 5 major families of each species, with tier 1 and tier 2 effects.
+- Add minor families from the major family and the sub family.
 - Add hybrids and neutral mobs.
 - Add pools for all vanilla hostile mobs.
 - Add behavior genes, sense genes, and life-history genes.
@@ -78,7 +79,6 @@ Milestones 0 to 5 make the first release.
 ### Milestone 7: Population genetics
 
 - Add bottleneck, founder effect, invasive species, and genetic drift.
-- Add minor families for gene combinations that do not match a major family.
 - Add mass extinction and adaptive radiation.
 
 ### Milestone 8: Species against species

@@ -64,7 +64,8 @@ Change this document when a decision changes.
 | The mob sometimes sets the player on fire | Less health, because the mob is burnt |
 
 - The kinds below are the parts that a gene can use.
-- The first release has almost as many genes as perks.
+- Each species has 30 genes at the first release.
+  Some genes are for one species only, and some are for more species.
 - Resistance genes decrease damage from one cause.
   Examples are fire and arrows.
 - Speed genes make the mob faster.
@@ -148,18 +149,24 @@ Thus, the bones look worn, not undead.
   Each species has its own families, with its own names.
   For example, a zombie family can be "Predators".
 - Each major family has one big buff and one big debuff.
-- Each gene has one family tag.
-  The tag tells what kind of change the gene makes.
+- Each gene has a main family tag and a sub family tag.
+  The main tag gives 2 points to its family.
+  The sub tag gives 1 point to its family.
+  For example, Cinder has Stalker as its main tag and Predator as its sub
+  tag.
+- Families are different for each species.
+  Thus, a gene that more than one species can carry has different tags for
+  each species.
 - Each mob gets its own genes.
   Each gene in the pool has a chance to go to a new mob, equal to its
   frequency.
   Thus, two mobs from the same pool can be different.
-- The family tags of the genes of a mob select its families.
+- The family points of the genes of a mob select its families.
   For example, a zombie with speed, fire resistance, faster attacks, less
   health, and more damage on death is a Predator.
-- The family with the most tags is the major family.
+- The family with the most points is the major family.
   It gives tier 2 effects.
-- The family with the second most tags is the sub family.
+- The family with the second most points is the sub family.
   It gives tier 1 effects.
 - The major family and the sub family make a minor family.
   For example, a Predator with a Tank sub family is a different minor family
@@ -167,14 +174,14 @@ Thus, the bones look worn, not undead.
 - Each minor family has its own name.
   The name is not only the names of its major and sub family.
 
-| Tags of the genes | Result |
+| Points of the genes | Result |
 |---|---|
-| One family has the most tags, and a second family is next | Minor family: tier 2 effects from the major, tier 1 effects from the sub |
-| One family has all tags | Pure major family: tier 2 effects only |
-| Two families have the most tags, with the same number | Hybrid: tier 1 effects from each of the two |
-| No family tags | Neutral: no family effects |
+| One family has the most points, and a second family is next | Minor family: tier 2 effects from the major, tier 1 effects from the sub |
+| One family has all points | Pure major family: tier 2 effects only |
+| Two families have the most points, with the same number | Hybrid: tier 1 effects from each of the two |
+| No family points | Neutral: no family effects |
 
-- If two families have the same number of tags for the sub family, the
+- If two families have the same number of points for the sub family, the
   family of the gene with the highest frequency wins.
 - At the start of a world, all mobs are neutral.
   Evolution can also make a mob neutral again by chance.

@@ -93,12 +93,12 @@ Each one is a condition of the death, like "unreached".
 | `fall` | A fall kills the zombie | In the mod |
 | `unreached` | The zombie targeted a player and did not damage a player before it died | New |
 | `sunlight` | The sun burns the zombie to death | New |
-| `spotted` | The player sees the zombie from more than 8 blocks before the kill | New |
+| `spotted` | The zombie was in the view of the killer, at more than 8 blocks, for 2 seconds or more before the death | New |
 | `alone` | The zombie dies with no other zombie in 8 blocks | New |
-| `crowd` | 3 or more zombies die in 8 blocks in 5 seconds | New |
+| `crowd` | 3 or more zombies die in 8 blocks in 5 seconds. The death counts for each of them | New |
 | `critical` | A critical hit kills the zombie | New |
 | `golem` | An iron golem kills the zombie | New |
-| `player_death` | The zombie kills a player. This adds to the pressure, not a death | New |
+| `player_death` | The zombie kills a player. Each gene of the killer rises by its selection rate, and this pressure counts one time | New |
 
 ## Genes
 
@@ -134,7 +134,7 @@ The visual column gives the region and the mark.
 | Ironhide | Tank | `projectile` | 50% less projectile damage, and 50% knockback resistance | 10% less speed, and 25% more explosion damage | Shirt: plates that look like iron |
 | Thickskull | Tank | `critical` | Critical hits do no extra damage to it | 15% less attack speed | Scalp: a bone plate |
 | Bloat | Tank, sub Blight | `melee` | 10 more maximum health, and a small cloud of Poison when it dies | 25% less speed | Shirt: swollen green blotches |
-| Stoneblood | Tank | `fall` | No fall damage, and full knockback resistance | It sinks in water and cannot swim | Feet and lower legs: gray, like stone |
+| Stoneblood | Tank | `fall` | No fall damage, and full knockback resistance | 50% slower in water | Feet and lower legs: gray, like stone |
 | Blastproof | Tank | `explosion` | 60% less explosion damage | 50% more fire damage | Shirt: soot on the edges |
 | Mender | Tank | `melee` | It heals 1 health each 3 seconds when nothing hits it for 5 seconds | 25% less attack damage | Arms: stitched seams |
 
@@ -159,6 +159,37 @@ The visual column gives the region and the mark.
 | Leech | Blight | `melee` | Each hit takes some XP from the player | It drops no XP | Face: a round mouth with teeth |
 | Miasma | Blight | `projectile` | Players in 3 blocks get Weakness | It glows, so players see it through walls | Hands: thin gloves, like slime. Eyes: lime green |
 | Plague Carrier | Blight, sub Horde | `player_death` | A player that it kills rises as a zombie with its genes | 10% less maximum health | Skin: gray-green blotches |
+
+## Gene details
+
+These rules make the gene table exact.
+
+| Gene | Rules |
+|---|---|
+| Frenzy | A zombie attacks on a timer of 1 second. Frenzy makes the timer 30% shorter |
+| Thickskull | The attack timer is 15% longer |
+| Lunger | It leaps when the player is 3 to 5 blocks away, with 5 seconds between leaps. A leap that touches the player does a normal hit. After a missed leap, it cannot move for 1 second |
+| Bloodscent | It can target an invisible player in 8 blocks. The double follow range is only for players under half health |
+| Rabid | Each 10 seconds, it has a 10% chance to target the nearest mob in 8 blocks that is not a zombie |
+| Death Throes | The 4 damage hits players only, not mobs or blocks. A small burst of particles shows it |
+| Hush | It keeps its death sound |
+| Shade | The client draws it translucent at night. It is not the invisibility effect, so other mobs still see it |
+| Burrower | When it spawns at night in 24 blocks of a player, it starts 2 blocks under the surface, and rises in 2 seconds with dirt particles. It rises only through dirt, grass, sand, and gravel. It breaks no blocks |
+| Lurker | It moves only where the player does not face. The camera mode does not change this |
+| Packcaller | When it first sees a player, all zombies in 24 blocks target that player. It can call again after 30 seconds |
+| Brood | When it spawns in a natural way, 1 more zombie with the same genes spawns near it |
+| Grave Call | The new zombie has no genes. Each Grave Call zombie calls a maximum of 2 zombies |
+| Siege | It breaks glass blocks and glass panes only, in 10 seconds for each block. It obeys the gamerule that stops mobs from breaking blocks |
+| Runt | Runt babies can ride chickens at the vanilla chance |
+| Leech | Each hit takes 3 XP points. When it dies, it drops the XP that it took, and no other XP |
+| Miasma | It has the Glowing effect all the time. Its aura gives Weakness I to players in 3 blocks, renewed each 2 seconds |
+| Plague Carrier | A zombie with the genes of the killer spawns where the player died, and wears the head of the player. The items of the player drop on the ground as in vanilla |
+
+## Family details
+
+- The Stalker "first hit" is the first hit after 10 seconds with no combat.
+- The Horde call makes all zombies in range attack the attacker, of any
+  family.
 
 ## Minor families
 

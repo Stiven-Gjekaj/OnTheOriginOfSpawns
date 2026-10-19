@@ -35,13 +35,9 @@ the question leaves this file.
    small burst of particles.
 
 6. **Hush has no idle sounds and no hurt sounds.**
+   The question: is Hush also silent when it dies?
    Recommendation: it keeps its death sound, so that a kill still feels
    complete.
-
-7. **Shade cannot be seen from more than 12 blocks at night.**
-   Recommendation: the client does not draw it at more than 12 blocks when its
-   light level is 7 or less.
-   It is not the invisibility effect, so other mobs still see it.
 
 8. **Burrower comes up from the ground near a player.**
    Recommendation: when a Burrower zombie spawns at night in 24 blocks of a
@@ -49,11 +45,6 @@ the question leaves this file.
    dirt particles.
    It moves through the blocks, and breaks none.
    It rises only through dirt, grass, sand, and gravel.
-
-9. **Lurker waits in the dark.**
-   Recommendation: at light level 7 or less, it stands still and targets no
-   player until a player is in 6 blocks.
-   After that, it acts as a normal zombie.
 
 10. **Stoneblood sinks in water.**
     Zombies already sink in water in vanilla, so this downside does nothing.
@@ -122,55 +113,3 @@ the question leaves this file.
 23. **Horde effects: "all zombies in N blocks attack the attacker".**
     Recommendation: all zombies, of any family.
 
-24. **How the player sees the family of a zombie.**
-    Recommendation: only through the gene marks and the notebook.
-    No name over the head.
-
-25. **The notebook page for families.**
-    Recommendation: the zombie page gets a list of the families that the
-    player found.
-    A player finds a family when a zombie of that family is in 16 blocks.
-    The list shows the name, the major and sub family, and the effects.
-    Families that the player did not find show as "???".
-    This list is the start of the knowledge percentage of milestone 3.
-
-## Modelling
-
-26. **Gene marks on the same region.**
-    With 30 genes and 5 genes on each zombie, two marks often go on the same
-    region.
-    For example, Bloodscent, Rabid, Hush, Nightborn, Packcaller, and Leech all
-    mark the face.
-    Recommendation: the modeller adds smaller regions to the region map, for
-    example mouth, eyes, brow, chest, belly, back, and sleeves.
-    Each gene then marks a different small region where possible.
-
-27. **Model changes in milestone 2a.**
-    The design moves the model changes of Bloat, Thickskull, and Sporebearer to
-    the beta stage.
-    Recommendation: do them in milestone 2a, while the modeller works on these
-    genes.
-    All other genes stay texture only.
-
-28. **Miasma has a green haze on its pants.**
-    Recommendation: a green tint on the texture, and a few green particles near
-    the zombie.
-
-29. **The review of the visuals.**
-    Recommendation: the modeller sends one preview sheet for each family,
-    with 6 genes on white, front and back.
-    You approve each sheet, or ask for changes.
-
-## Other
-
-30. **The mutation rate with 30 genes.**
-    Each gene has a 1% mutation rate now.
-    With 30 genes, about 26% of all zombies get one or more random genes, from
-    the start of a world.
-    Recommendation: lower the default to 0.3%, so that about 9% of zombies get a
-    random gene.
-    Then evolution, not chance, makes most of the changes.
-
-31. **Zombies from older versions.**
-    Zombies that spawned in 0.1.0-alpha keep their genes.
-    Recommendation: no change is necessary.

@@ -19,7 +19,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.golem.IronGolem;
-import net.minecraft.world.entity.monster.zombie.Husk;
+import net.minecraft.world.entity.monster.zombie.Drowned;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
@@ -114,17 +114,17 @@ public class DeathFactsTest {
 	@GameTest
 	public void playerKillRaisesTheGenesOfTheKiller(GameTestHelper helper) {
 		BlockPos pos = new BlockPos(1, 1, 1);
-		Husk husk = helper.spawnWithNoFreeWill(EntityTypes.HUSK, pos);
+		Drowned drowned = helper.spawnWithNoFreeWill(EntityTypes.DROWNED, pos);
 		Identifier heatSkin = Identifier.fromNamespaceAndPath("originofspawns_test", "test_heat_skin");
 		Identifier plague = Identifier.fromNamespaceAndPath("originofspawns_test", "test_plague");
-		husk.setAttached(ModAttachments.GENES, new CarriedGenes(List.of(heatSkin)));
-		Identifier species = Identifier.withDefaultNamespace("husk");
+		drowned.setAttached(ModAttachments.GENES, new CarriedGenes(List.of(heatSkin)));
+		Identifier species = Identifier.withDefaultNamespace("drowned");
 		BiomeCategory category = BiomeCategory.of(helper.getLevel().getBiome(helper.absolutePos(pos)));
 		GenePools pools = GenePools.get(helper.getLevel().getServer());
 		float heatBefore = pools.frequency(species, category, heatSkin);
 		float plagueBefore = pools.frequency(species, category, plague);
 
-		Evolution.onPlayerKilled(helper.getLevel(), husk, helper.getLevel().damageSources().mobAttack(husk));
+		Evolution.onPlayerKilled(helper.getLevel(), drowned, helper.getLevel().damageSources().mobAttack(drowned));
 
 		helper.assertValueEqual(pools.frequency(species, category, heatSkin), heatBefore + 0.02F * (1 - heatBefore),
 				"gene of the killer");

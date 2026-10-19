@@ -30,10 +30,11 @@ public class PoolCommandTest {
 
 	@GameTest
 	public void setRefusesUnknownInput(GameTestHelper helper) {
+		int before = GenePools.get(helper.getLevel().getServer()).pool(HUSK, BiomeCategory.HOT).size();
 		assertFails(helper, "originofspawns pool set minecraft:husk lava originofspawns_test:test_heat_skin 0.4");
 		assertFails(helper, "originofspawns pool set minecraft:husk hot originofspawns_test:no_such_gene 0.4");
 		assertFails(helper, "originofspawns pool set minecraft:husk hot originofspawns_test:test_heat_skin 2");
-		helper.assertValueEqual(GenePools.get(helper.getLevel().getServer()).pool(HUSK, BiomeCategory.HOT).size(), 0,
+		helper.assertValueEqual(GenePools.get(helper.getLevel().getServer()).pool(HUSK, BiomeCategory.HOT).size(), before,
 				"genes in the hot pool");
 		helper.succeed();
 	}

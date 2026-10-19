@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:zombie/stalker",
+	"gains": [
+		{
+			"type": "translucent",
+			"max_light": 7,
+			"opacity": 0.1
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 2
+		}
+	]
+}

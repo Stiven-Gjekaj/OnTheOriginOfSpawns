@@ -1,0 +1,12 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:zombie/stalker",
+	"gains": [
+		{
+			"type": "burrow",
+			"player_radius": 24,
+			"rise_seconds": 2
+		}
+	]
+}

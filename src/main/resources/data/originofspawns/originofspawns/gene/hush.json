@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:zombie/stalker",
+	"gains": [
+		{
+			"type": "silence",
+			"idle": true,
+			"hurt": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

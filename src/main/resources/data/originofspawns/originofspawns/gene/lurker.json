@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:zombie/stalker",
+	"gains": [
+		{
+			"type": "lurk",
+			"radius": 6
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:follow_range",
+			"amount": -0.25,
+			"operation": "add_multiplied_base"
+		}
+	]
+}

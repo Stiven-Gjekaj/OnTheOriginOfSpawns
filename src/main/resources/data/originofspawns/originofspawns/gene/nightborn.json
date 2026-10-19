@@ -1,0 +1,24 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:sunlight",
+	"family": "originofspawns:zombie/stalker",
+	"gains": [
+		{
+			"type": "speed_when",
+			"when": "dark",
+			"multiplier": 1.2
+		},
+		{
+			"type": "damage_dealt_when",
+			"when": "dark",
+			"multiplier": 1.2
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "bright",
+			"multiplier": 0.8
+		}
+	]
+}

@@ -12,38 +12,76 @@ A file with an error stops the world from loading, and the log names the file.
 ## Pressure
 
 A pressure is a cause of death.
-A death counts for a pressure when its damage type is in the tag.
+A death counts for a pressure when it matches all the parts of the pressure.
 
     { "damage_types": "#minecraft:is_fire" }
+    { "conditions": ["unreached"] }
 
-| Field | Type | Description |
-|---|---|---|
-| `damage_types` | damage type tag, with `#` | The damage types that count for this pressure |
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `damage_types` | damage type tag, with `#` | none | The damage types that count for this pressure |
+| `conditions` | list of conditions | `[]` | The conditions of the death that must all be true |
 
-The mod has these pressures: `fire`, `projectile`, `melee`, `explosion`, and
-`fall`.
+A pressure needs `damage_types`, `conditions`, or both.
+
+| Condition | True when |
+|---|---|
+| `unreached` | The mob targeted a player, but did not damage a player before it died |
+
+The mod has these pressures: `fire`, `projectile`, `melee`, `explosion`,
+`fall`, and `unreached`.
 The list is not final.
 The `melee` pressure uses the tag `#originofspawns:melee`.
 
 ## Gene
 
 A gene is a trait that a species can carry.
+It has gains and downsides, like a player perk.
 
     {
-        "species": ["minecraft:zombie", "minecraft:husk"],
+        "species": "minecraft:zombie",
         "counters": "originofspawns:fire",
-        "cost": 2,
-        "mutation_rate": 0.01,
-        "decay_rate": 0.001
+        "family": "originofspawns:zombie/stalker",
+        "sub_family": "originofspawns:zombie/predator",
+        "gains": [
+            { "type": "damage_taken", "damage_types": "#minecraft:is_fire", "multiplier": 0 }
+        ],
+        "downsides": [
+            { "type": "attribute", "attribute": "minecraft:max_health", "amount": -4, "operation": "add_value" }
+        ]
     }
 
 | Field | Type | Default | Description |
 |---|---|---|---|
 | `species` | entity type, list, or tag | | The mobs that can carry the gene |
 | `counters` | pressure id | | The pressure that makes the gene stronger |
-| `cost` | integer, 0 or more | | The gene points that the gene uses |
-| `mutation_rate` | number, 0 to 1 | `0.01` | The random change in each generation |
-| `decay_rate` | number, 0 to 1 | `0.001` | The loss in each generation when the pressure stops |
+| `family` | family id | | The main family tag. It gives 2 points |
+| `sub_family` | family id | none | The sub family tag. It gives 1 point. Only a few genes have one |
+| `gains` | list of effects | `[]` | The effects that help the mob |
+| `downsides` | list of effects | `[]` | The effects that hurt the mob |
+| `selection_rate` | number, 0 to 1 | `0.02` | The rise for each death, as a part of the distance to 100% |
+| `mutation_rate` | number, 0 to 1 | `0.01` | The smallest chance that a new mob gets the gene |
+| `decay_rate` | number, 0 to 1 | `0.01` | The loss for each Minecraft day, as a part of the frequency |
+
+### Effects
+
+Each effect has a `type` field.
+
+| Type | Fields | Result |
+|---|---|---|
+| `attribute` | `attribute`, `amount`, `operation` | Changes an attribute of the mob. `operation` is `add_value`, `add_multiplied_base`, or `add_multiplied_total` |
+| `damage_taken` | `damage_types`, `multiplier` | Multiplies the damage from these damage types. `0` makes the mob immune |
+| `ignite_target` | `chance`, `seconds` | Each hit has this chance to set the target on fire |
+| `water_damage` | `amount`, `interval` (default `20`) | Damages the mob each `interval` ticks in water or rain |
+| `air_loss` | `extra` | The mob loses this much more air each tick under water. Mobs that breathe under water, such as zombies, do not drown |
+
+### Genes on mobs
+
+- A mob gets its genes one time, when it first joins a world.
+- Each gene has a chance equal to its frequency in the pool of the biome
+  category, or its mutation rate if that is higher.
+- A mob carries a maximum of 5 genes. The genes with the highest frequency
+  stay.
 
 ## Perk
 

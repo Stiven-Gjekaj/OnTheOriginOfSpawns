@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.stivengjekaj.originofspawns.evolution.BiomeCategory;
+import io.github.stivengjekaj.originofspawns.evolution.MobInfo;
 import io.github.stivengjekaj.originofspawns.notebook.NotebookPayload;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -86,7 +87,7 @@ public class NotebookScreen extends Screen {
 	 * Returns the name of a gene. A gene with no translation gets its path, for example "test_gene".
 	 */
 	private static Component geneName(Identifier gene) {
-		return Component.translatableWithFallback("gene." + gene.getNamespace() + "." + gene.getPath(), gene.getPath());
+		return MobInfo.geneName(gene);
 	}
 
 	@Override

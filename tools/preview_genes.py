@@ -4,8 +4,13 @@ Usage: python3 tools/preview_genes.py
 
 The script reads the vanilla zombie texture from the Minecraft jar in the
 Gradle cache of Loom. It reads the visual layers of each gene from the data
-pack of the mod, applies them with the region map, and writes PNG files to
-build/previews/. Git ignores build/.
+pack of the mod, and applies them with the region map. A gene with the model
+originofspawns:bone_legs also gets the bone legs, as BoneLegsLayer draws them.
+The script writes PNG files to build/previews/genes/. Git ignores build/:
+- one image for each gene, a plain zombie, and a zombie with all genes. Each
+  image has a front view and a back view on a white background.
+- zombie_genes_sheet.png, with all of them in a row. The front views are on
+  top, and the back views are under them.
 Each preview uses the vanilla texture. Do not commit a preview.
 This script needs Pillow.
 
@@ -18,20 +23,26 @@ import json
 import os
 import zipfile
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RESOURCES = os.path.join(ROOT, "src/main/resources")
 GENE_DIR = os.path.join(RESOURCES, "data/originofspawns/originofspawns/gene")
 REGION_MAP = os.path.join(RESOURCES, "assets/originofspawns/textures/region/humanoid.png")
-OUT_DIR = os.path.join(ROOT, "build/previews")
+OUT_DIR = os.path.join(ROOT, "build/previews/genes")
+BONE_LEG_FILE = os.path.join(RESOURCES, "assets/originofspawns/textures/entity/bone_leg.png")
+BONE_LEGS = "originofspawns:bone_legs"
+WHITE = (255, 255, 255, 255)
+# The genes come in this order. Other genes come after them, by name.
+ORDER = ["cinder", "ironhide", "bonerunner"]
 ZOMBIE_PATH = "assets/minecraft/textures/entity/zombie/zombie.png"
 
 REGIONS = {"face": 1, "scalp": 2, "torso": 3, "arms": 4, "hands": 5, "legs": 6,
            "lower_legs": 7, "feet": 8}
 MATERIALS = {"skin": 1, "cloth": 2, "eyes": 3}
 
-SCALE = 12
+SCALE = 8
+BONE_LEG = Image.open(BONE_LEG_FILE).convert("RGBA")
 
 
 def find_zombie_texture():
@@ -147,52 +158,101 @@ def bake(tex, regions, gene):
     return out
 
 
+def models(gene):
+    """Return the model changes of a gene."""
+    with open(os.path.join(GENE_DIR, gene + ".json")) as fh:
+        model = json.load(fh)["visual"].get("model")
+    return {model} if model else set()
+
+
 def face(tex, x0, y0, w, h, flip=False):
     img = tex.crop((x0, y0, x0 + w, y0 + h))
-    return img.transpose(Image.FLIP_LEFT_RIGHT) if flip else img
+    img = img.transpose(Image.FLIP_LEFT_RIGHT) if flip else img
+    return img.resize((w * SCALE, h * SCALE), Image.NEAREST)
 
 
-def render(tex):
-    """Draw the front and the back of the standing zombie, side by side.
+def view(tex, back, bone_legs):
+    """Draw the front or the back of the standing zombie, 16x32 pixels at SCALE.
 
     The vanilla zombie uses the right limbs for the left limbs, with a mirror.
+    From the front, the right side of the zombie is on the left of the image.
     """
-    view = Image.new("RGBA", (16 * 2 + 4, 32), (0, 0, 0, 0))
-    # Front. The right side of the zombie is on the left of the image.
-    view.paste(face(tex, 8, 8, 8, 8), (4, 0))
-    view.paste(face(tex, 20, 20, 8, 12), (4, 8))
-    view.paste(face(tex, 44, 20, 4, 12), (0, 8))
-    view.paste(face(tex, 44, 20, 4, 12, flip=True), (12, 8))
-    view.paste(face(tex, 4, 20, 4, 12), (4, 20))
-    view.paste(face(tex, 4, 20, 4, 12, flip=True), (8, 20))
-    # Back. The right side of the zombie is on the right of the image.
-    ox = 20
-    view.paste(face(tex, 24, 8, 8, 8), (ox + 4, 0))
-    view.paste(face(tex, 32, 20, 8, 12), (ox + 4, 8))
-    view.paste(face(tex, 52, 20, 4, 12, flip=True), (ox, 8))
-    view.paste(face(tex, 52, 20, 4, 12), (ox + 12, 8))
-    view.paste(face(tex, 12, 20, 4, 12, flip=True), (ox + 4, 20))
-    view.paste(face(tex, 12, 20, 4, 12), (ox + 8, 20))
-    bg = Image.new("RGBA", view.size, (200, 210, 220, 255))
-    bg.alpha_composite(view)
-    return bg.resize((view.width * SCALE, view.height * SCALE), Image.NEAREST)
+    im = Image.new("RGBA", (16 * SCALE, 32 * SCALE), (0, 0, 0, 0))
+    s = SCALE
+    if not back:
+        parts = [((8, 8, 8, 8), False, (4, 0)), ((20, 20, 8, 12), False, (4, 8)),
+                 ((44, 20, 4, 12), False, (0, 8)), ((44, 20, 4, 12), True, (12, 8)),
+                 ((4, 20, 4, 12), False, (4, 20)), ((4, 20, 4, 12), True, (8, 20))]
+    else:
+        parts = [((24, 8, 8, 8), False, (4, 0)), ((32, 20, 8, 12), False, (4, 8)),
+                 ((52, 20, 4, 12), True, (0, 8)), ((52, 20, 4, 12), False, (12, 8)),
+                 ((12, 20, 4, 12), True, (4, 20)), ((12, 20, 4, 12), False, (8, 20))]
+    for (x0, y0, w, h), flip, (px, py) in parts:
+        im.alpha_composite(face(tex, x0, y0, w, h, flip), (px * s, py * s))
+    if bone_legs:
+        # Copy BoneLegsLayer: a 3x6x3 bone in the middle of the lower half of
+        # each leg. The bone is half a pixel in from each side of the leg.
+        bone = face(BONE_LEG, 9 if back else 3, 3, 3, 6)
+        for leg_x in (4, 8):
+            im.alpha_composite(bone, (leg_x * s + s // 2, 26 * s))
+    return im
 
 
-def save(name, tex):
-    tex.resize((64 * 8, 64 * 8), Image.NEAREST).save(os.path.join(OUT_DIR, name + "_texture.png"))
-    path = os.path.join(OUT_DIR, name + "_front_back.png")
-    render(tex).save(path)
-    print(path)
+def text(draw, xy, label, size):
+    font = ImageFont.load_default(size=size)
+    w = draw.textlength(label, font=font)
+    draw.text((xy[0] - w / 2, xy[1]), label, fill=(0, 0, 0, 255), font=font)
+
+
+def gene_image(label, tex, bone_legs):
+    """Return one image with the front and the back view, and a label."""
+    gap, top, foot = 4 * SCALE, 6 * SCALE, 4 * SCALE
+    w, h = 16 * SCALE, 32 * SCALE
+    im = Image.new("RGBA", (2 * w + 3 * gap, h + top + foot), WHITE)
+    draw = ImageDraw.Draw(im)
+    text(draw, (im.width / 2, SCALE), label, 3 * SCALE)
+    for i, back in enumerate((False, True)):
+        x = gap + i * (w + gap)
+        im.alpha_composite(view(tex, back, bone_legs), (x, top))
+        text(draw, (x + w / 2, top + h + SCALE), "back" if back else "front", 2 * SCALE)
+    return im
+
+
+def sheet(zombies):
+    """Return all zombies in a row: the front views on top, the back views under them."""
+    gap, top = 4 * SCALE, 6 * SCALE
+    w, h = 16 * SCALE, 32 * SCALE
+    im = Image.new("RGBA", (len(zombies) * (w + gap) + gap, top + 2 * h + 3 * gap), WHITE)
+    draw = ImageDraw.Draw(im)
+    for i, (label, tex, bone_legs) in enumerate(zombies):
+        x = gap + i * (w + gap)
+        text(draw, (x + w / 2, SCALE), label, 3 * SCALE)
+        im.alpha_composite(view(tex, False, bone_legs), (x, top))
+        im.alpha_composite(view(tex, True, bone_legs), (x, top + h + 2 * gap))
+    return im
 
 
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     tex = find_zombie_texture()
     regions = Image.open(REGION_MAP).convert("RGBA")
-    save("zombie_plain", tex)
-    save("zombie_cinder", bake(tex, regions, "cinder"))
-    save("zombie_ironhide", bake(tex, regions, "ironhide"))
-    save("zombie_combined", bake(bake(tex, regions, "cinder"), regions, "ironhide"))
+    found = sorted(f[:-5] for f in os.listdir(GENE_DIR) if f.endswith(".json"))
+    genes = [g for g in ORDER if g in found] + [g for g in found if g not in ORDER]
+    zombies = [("plain", "Plain zombie", tex, False)]
+    for gene in genes:
+        zombies.append((gene, gene.capitalize(), bake(tex, regions, gene), BONE_LEGS in models(gene)))
+    combined = tex
+    for gene in genes:
+        combined = bake(combined, regions, gene)
+    all_models = set().union(*(models(g) for g in genes))
+    zombies.append(("all_genes", "All genes", combined, BONE_LEGS in all_models))
+    for key, label, baked, bone_legs in zombies:
+        path = os.path.join(OUT_DIR, "zombie_" + key + ".png")
+        gene_image(label, baked, bone_legs).save(path)
+        print(path)
+    path = os.path.join(OUT_DIR, "zombie_genes_sheet.png")
+    sheet([z[1:] for z in zombies]).save(path)
+    print(path)
 
 
 if __name__ == "__main__":

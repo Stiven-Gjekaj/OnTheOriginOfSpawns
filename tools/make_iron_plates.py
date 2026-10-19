@@ -8,10 +8,11 @@ position in the mob texture, so pattern pixel (x % w, y % h) goes on
 texture pixel (x, y).
 
 iron_plates.png is for the shirt. It is 64x64, so each plate is on exact
-pixels of the zombie texture. It is a breastplate of 6x6 pixels on the
-chest, and the same on the back. The breastplate has four plates of 3x3
-pixels, each with a rivet and a dark seam. The rest of the shirt stays
-clear for the marks of other genes.
+pixels of the zombie texture. The plates are 3x3 pixels, each with a rivet
+and a dark seam. The chest has two columns of 2 plates, at x 20 to 22 and
+x 25 to 27, y 22 to 27. The back has a breastplate of 2x2 plates, at x 33
+to 38, y 22 to 27. The rest of the shirt stays clear for the marks of
+other genes.
 
 iron_plates_sleeve.png is for the sleeves. Each face of an arm is 4 pixels
 wide, and each face starts at an x that is a multiple of 4. Thus the sleeve
@@ -59,12 +60,14 @@ def sleeve_pixel(px, py):
     return CLEAR
 
 
-# The top left pixel of the breastplate on the front and on the back.
-BREASTPLATES = ((21, 22), (33, 22))
+# The plates on the shirt: x, y, width, and height. On the chest, two
+# columns of plates leave the middle clear for the Frenzy tear. The back has
+# one breastplate.
+BREASTPLATES = ((20, 22, 3, 6), (25, 22, 3, 6), (33, 22, 6, 6))
 
 
 def breastplate_pixel(px, py):
-    """Return (gray, alpha) for a pixel of the 6x6 breastplate."""
+    """Return (gray, alpha) for a pixel of a breastplate of 3x3 plates."""
     cx, cy = px % 3, py % 3
     if cx == 2 or cy == 2:
         return SEAM
@@ -79,9 +82,9 @@ def breastplate_pixel(px, py):
 
 def make_shirt():
     im = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
-    for x0, y0 in BREASTPLATES:
-        for py in range(6):
-            for px in range(6):
+    for x0, y0, w, h in BREASTPLATES:
+        for py in range(h):
+            for px in range(w):
                 gray, alpha = breastplate_pixel(px, py)
                 im.putpixel((x0 + px, y0 + py), (gray, gray, gray, alpha))
     return im

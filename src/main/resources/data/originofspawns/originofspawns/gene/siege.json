@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:zombie/horde",
+	"sub_family": "originofspawns:zombie/tank",
+	"gains": [
+		{
+			"type": "siege",
+			"break_seconds": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.2,
+			"operation": "add_multiplied_base"
+		}
+	]
+}

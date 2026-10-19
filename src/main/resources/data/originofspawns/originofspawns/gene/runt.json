@@ -1,0 +1,12 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:zombie/horde",
+	"gains": [
+		{
+			"type": "runt",
+			"chance": 0.2,
+			"baby_health_multiplier": 0.5
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:zombie/horde",
+	"gains": [
+		{
+			"type": "grave_call",
+			"chance": 0.1,
+			"max_calls": 2,
+			"radius": 8
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

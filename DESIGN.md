@@ -129,29 +129,50 @@ Thus, the bones look worn, not undead.
 
 ## Families
 
-- Each species has 3 major families.
+- Each species has 5 major families.
   Each species has its own families, with its own names.
   For example, a zombie family can be "Predators".
 - Each major family has one big buff and one big debuff.
-- Each gene has a family tag.
+- Each gene has one family tag.
   The tag tells what kind of change the gene makes.
-- The family tags of the genes of a mob select its family.
+- Each mob gets its own genes.
+  Each gene in the pool has a chance to go to a new mob, equal to its
+  frequency.
+  Thus, two mobs from the same pool can be different.
+- The family tags of the genes of a mob select its families.
   For example, a zombie with speed, fire resistance, faster attacks, less
   health, and more damage on death is a Predator.
-- The families use the same tiers as the evolution classes of the player:
+- The family with the most tags is the major family.
+  It gives tier 2 effects.
+- The family with the second most tags is the sub family.
+  It gives tier 1 effects.
+- The major family and the sub family make a minor family.
+  For example, a Predator with a Tank sub family is a different minor family
+  from a Predator with a Stalker sub family.
 
-| Condition | Effects |
+| Tags of the genes | Result |
 |---|---|
-| One family has the most tags | That family gives tier 2 effects |
-| Two families have the same number of tags | Each of the two families gives tier 1 effects. The mob is a hybrid |
-| No family tag on the genes | No family effects. The mob is neutral |
+| One family has the most tags, and a second family is next | Minor family: tier 2 effects from the major, tier 1 effects from the sub |
+| One family has all tags | Pure major family: tier 2 effects only |
+| Two families have the most tags, with the same number | Hybrid: tier 1 effects from each of the two |
+| No family tags | Neutral: no family effects |
 
+- If two families have the same number of tags for the sub family, the
+  family of the gene with the highest frequency wins.
 - At the start of a world, all mobs are neutral.
   Evolution can also make a mob neutral again by chance.
-- Minor families record combinations of genes that do not match a major
-  family.
-  They catalog the randomness of evolution.
-  The notebook records each minor family that the player finds.
+- Each species has these family results:
+
+| Result | Number |
+|---|---|
+| Minor families: 5 majors, each with one of the other 4 as sub | 20 |
+| Pure major families | 5 |
+| Hybrids: one for each pair of families | 10 |
+| Neutral | 1 |
+| Total | 36 |
+
+- Mobs in the same family still differ by their genes.
+- The notebook records each family that the player finds.
 
 ## Species against species
 
@@ -397,8 +418,6 @@ The first release has these 30 perks:
 ## Open questions
 
 - Does the "unreached" pressure also select for attack speed?
-- Do all mobs in one pool get the same 5 genes, or does each mob get its own
-  5 genes, at random, from the frequencies of the pool?
 
 ## First milestone
 

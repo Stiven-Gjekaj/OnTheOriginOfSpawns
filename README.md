@@ -29,10 +29,12 @@ _A Fabric mod where the mobs evolve from how you kill them_
 ---
 
 > [!NOTE]
-> **The mod is in development.** Version 0.1.0-alpha is out: zombies evolve
-> Cinder, Ironhide, and Bonerunner from how they die, and the Beagle Notebook
-> shows their gene pools. Milestone 2a, the complete zombie with 30 genes and
-> 5 families, comes next in 0.2.0-alpha.
+> **The mod is in development.** Version 0.2.0-alpha is out: the zombie is
+> complete, with 30 genes, 5 families, 20 minor families, and 10 hybrids.
+> The Beagle Notebook shows the gene pools and the families that you found.
+> The husk and the drowned come next, in milestone 2b.
+> The [wiki](https://stiven-gjekaj.github.io/OnTheOriginOfSpawns/) shows each
+> gene and family.
 > [ROADMAP.md](design/ROADMAP.md) lists the milestones to version 1.0.0.
 > [DESIGN.md](design/DESIGN.md) holds each decision of the design.
 

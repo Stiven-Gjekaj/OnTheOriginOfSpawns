@@ -149,14 +149,15 @@ Thus, the bones look worn, not undead.
   Each species has its own families, with its own names.
   For example, a zombie family can be "Predators".
 - Each major family has one big buff and one big debuff.
-- Each gene has a main family tag and a sub family tag.
+- Each gene has a main family tag.
   The main tag gives 2 points to its family.
-  The sub tag gives 1 point to its family.
-  For example, Cinder has Stalker as its main tag and Predator as its sub
-  tag.
+- A small number of genes also have a sub family tag.
+  The sub tag gives 1 point to a second family.
+  Only a gene that truly belongs to two families gets a sub tag.
 - Families are different for each species.
   Thus, a gene that more than one species can carry has different tags for
   each species.
+- For example, Cinder has Stalker as its main tag for zombies.
 - Each mob gets its own genes.
   Each gene in the pool has a chance to go to a new mob, equal to its
   frequency.

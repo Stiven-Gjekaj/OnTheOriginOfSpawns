@@ -49,6 +49,11 @@ FAMILIES = {
     "blights": ["rotgut", "contagion", "sporebearer", "leech", "miasma", "plague_carrier"],
 }
 
+# More zombies for a family sheet: a label and the genes before the family.
+EXTRA = {
+    "predators": [("Cinder + all 6", ["cinder"])],
+}
+
 SCALE = 8
 WHITE = (255, 255, 255, 255)
 
@@ -329,6 +334,9 @@ def main():
             gene_image(label(gene), baked, [gene]).save(path)
         if len(ready) > 1:
             columns.append(("All " + str(len(ready)), zombie(tex, ready), ready))
+        for name, before in EXTRA.get(family, []):
+            genes_here = before + ready
+            columns.append((name, zombie(tex, genes_here), genes_here))
         path = os.path.join(FAMILY_OUT, family + ".png")
         sheet(family.title(), columns).save(path)
         print(path)

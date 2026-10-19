@@ -2,12 +2,13 @@
 
 Usage: python3 tools/make_fuse.py
 
-The fuse comes out of the upper back of the zombie, near its right
-shoulder. It leans back and away from the head, so that from the front it
-stands out next to the head and does not look like an earring.
-The three parts share one pivot at the base of the fuse, on the back, and
-one rotation:
-- the wick, 1x5x1, charcoal brown,
+The fuse starts inside the body, near the neck, and comes out between the
+head and the right shoulder. It leans back and away from the head, so that
+from the front it stands out next to the head and does not look like an
+earring. No part of it lies on the outside of the back.
+The three parts share one pivot at the base of the fuse, inside the body,
+and one rotation:
+- the wick, 1x7x1, charcoal brown. Its lower part is inside the body,
 - a singed ring, 1x1x1, ash brown, under the tip,
 - the tip, 1x1x1, bright orange. It glows, so it is bright in the dark.
 This script needs Pillow.
@@ -29,17 +30,19 @@ SINGED_DARK = (70, 60, 50, 255)
 TIP = (255, 138, 31, 255)
 TIP_HOT = (255, 196, 92, 255)
 
-# The base of the fuse, on the back of the body, near the right shoulder.
-PIVOT = [-3.5, 1.0, 2.0]
-# Lean back (x) and away from the head (z), in degrees.
-ROTATION = [-25.0, 0.0, -35.0]
-WICK_LENGTH = 5
+# The base of the fuse, inside the body, under the head, near the neck.
+PIVOT = [-2.5, 2.0, -1.0]
+# Lean back (x) and away from the head (z), in degrees. The fuse leaves the
+# body at the top of the right shoulder, just outside the head, and its tip
+# stays in front of the plane of the back.
+ROTATION = [-15.0, 0.0, -45.0]
+WICK_LENGTH = 7
 
 
 def texture():
     """Return the 16x16 texture. Each part has its own box UV area."""
     im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
-    # The wick, 1x5x1, at uv (0, 0): rows 0 to 5.
+    # The wick, 1x7x1, at uv (0, 0): rows 0 to 7.
     for x in range(4):
         for y in range(1 + WICK_LENGTH):
             im.putpixel((x, y), WICK_LIGHT if x in (0, 1) and y > 0 and y % 2 else WICK)

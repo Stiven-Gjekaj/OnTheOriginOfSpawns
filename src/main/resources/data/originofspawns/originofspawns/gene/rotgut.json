@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:zombie/blight",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:hunger",
+			"seconds": 10,
+			"amplifier": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

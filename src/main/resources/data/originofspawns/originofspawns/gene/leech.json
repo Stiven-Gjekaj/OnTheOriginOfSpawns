@@ -1,0 +1,11 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:zombie/blight",
+	"gains": [
+		{
+			"type": "leech_xp",
+			"amount": 3
+		}
+	]
+}

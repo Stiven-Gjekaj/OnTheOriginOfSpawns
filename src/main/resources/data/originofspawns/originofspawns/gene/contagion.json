@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:zombie/blight",
+	"gains": [
+		{
+			"type": "convert_villagers"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_from",
+			"attackers": "minecraft:iron_golem",
+			"multiplier": 1.5
+		}
+	]
+}

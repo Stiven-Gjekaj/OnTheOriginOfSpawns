@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:zombie/blight",
+	"sub_family": "originofspawns:zombie/horde",
+	"gains": [
+		{
+			"type": "raise_victim"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

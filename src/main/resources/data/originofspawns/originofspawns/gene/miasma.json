@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:zombie/blight",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:weakness",
+			"amplifier": 0,
+			"radius": 3,
+			"interval_seconds": 2,
+			"particles": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "glowing"
+		}
+	]
+}

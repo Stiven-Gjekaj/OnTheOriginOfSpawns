@@ -8,6 +8,9 @@ Change this document when a decision changes.
 - The mod uses Fabric.
 - The mod targets Minecraft 26.3.
   This is the newest stable version that Fabric supports on 2026-10-19.
+- Reason: 1.21.1 and 1.21.11 have more Fabric mods now.
+  But the 26.x versions ship without obfuscation, and the mod does not need
+  a port to 26.x later.
 - The mod uses Fabric Loader 0.19.5 or a later version.
 - NeoForge support is not in scope.
 

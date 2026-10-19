@@ -29,6 +29,18 @@ fabricApi {
 	}
 }
 
+// The test source set exists only after fabricApi.configureTests, so this run comes after it.
+loom {
+	runs {
+		// A client with the test mod, for its demo functions, for example /function originofspawns_test:demo.
+		demoClient {
+			inherit client
+			name "Demo Client"
+			source sourceSets.gametest
+		}
+	}
+}
+
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"

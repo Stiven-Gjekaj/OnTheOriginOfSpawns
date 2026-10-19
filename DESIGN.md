@@ -49,6 +49,17 @@ Change this document when a decision changes.
 
 ## Kinds of genes
 
+- Genes work like player perks.
+  Each gene has a name, one or more gains, and one or more downsides.
+  The gains and the downsides have one theme.
+- For example, the "Cinder" gene:
+
+| Gains | Downsides |
+|---|---|
+| Fire resistance | Rain and water damage the mob |
+| The mob sometimes sets the player on fire | Less health, because the mob is burnt |
+
+- The kinds below are the parts that a gene can use.
 - The first release has almost as many genes as perks.
 - Resistance genes decrease damage from one cause.
   Examples are fire and arrows.

@@ -1,8 +1,10 @@
 ![On the Origin of Spawns](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/brand/banner.png)
 
-> **Alpha.** Zombies evolve three genes so far: Cinder, Ironhide, and
-> Bonerunner. The Beagle Notebook shows their gene pools. The other features
-> on this page are the plan for version 1.0.0. Use a test world.
+> **Alpha.** The zombie is complete: 30 genes, 5 families, 20 minor families,
+> and 10 hybrids. The other mobs, the player adaptations, and the later
+> notebook pages are the plan for version 1.0.0. Use a test world.
+> The [wiki](https://stiven-gjekaj.github.io/OnTheOriginOfSpawns/) shows each
+> gene and family.
 
 > **Content warning: body horror.** Mobs change how they look as they evolve.
 > Some gene mixes show bare bone, open wounds, blood, rot, fungus, and veins on
@@ -29,8 +31,10 @@ artificial selection race each other.
 ## Natural selection
 
 Each mob species has a gene pool.
-The mod records how each mob dies: fire, arrows, melee, explosions, falls, or
-before it can reach you.
+The mod records how each mob dies: fire, arrows, melee, explosions, falls,
+sunlight, critical hits, iron golems, alone or in a crowd, or before it can
+reach you.
+A mob that kills a player makes its own genes stronger.
 When a cause of death is common, the gene that counters it becomes stronger.
 Each new mob gets its genes from the pool.
 
@@ -61,6 +65,9 @@ Each major family has 4 sub families, so each species has 20 minor families,
 each with its own name.
 A mob with all its genes in one family is a pure family, the strongest result.
 A mob with two families in balance is a hybrid.
+Each family has three tiers. A stronger family result gives a bigger buff and a
+smaller debuff.
+Look at a mob to see its family and its genes.
 
 ## Artificial selection
 
@@ -88,13 +95,16 @@ If you take fire perks, the mobs evolve to ignore fire.
 
 ## The Beagle Notebook
 
-Your notebook has a page for each species that you meet.
+Your notebook has a tab for each species.
 
 - Gene frequencies for each biome.
-- Charts of change over time.
-- Family trees and a phylogenetic tree.
-- Field sketches that change when the genes change.
-- Predictions, for example: "Zombies in hot biomes move toward fire immunity."
+- The families that you found. You find a family when you come near a mob
+  of that family.
+- Charts of change over time (planned).
+- Family trees and a phylogenetic tree (planned).
+- Field sketches that change when the genes change (planned).
+- Predictions, for example: "Zombies in hot biomes move toward fire immunity"
+  (planned).
 
 The more you know, the more you can adapt.
 
@@ -137,3 +147,5 @@ Do not upload a copy of the file to a different site.
 If you like the mod, you can support it on
 [Ko-fi](https://ko-fi.com/stivengjekaj).
 Report problems on [GitHub](https://github.com/Stiven-Gjekaj/OnTheOriginOfSpawns/issues).
+Read about each gene and family on the
+[wiki](https://stiven-gjekaj.github.io/OnTheOriginOfSpawns/).

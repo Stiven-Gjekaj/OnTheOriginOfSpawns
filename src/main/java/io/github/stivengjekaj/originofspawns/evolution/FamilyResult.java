@@ -65,6 +65,40 @@ public record FamilyResult(Kind kind, Optional<Identifier> first, Optional<Ident
 			FamilyResult::new);
 
 	/**
+	 * The translation key of the name of this result.
+	 * A pure family and a major family alone use the key of the family, for example
+	 * "family.originofspawns.zombie.predator". A minor family adds the last part of the sub family, for example
+	 * "family.originofspawns.zombie.predator.stalker". A hybrid sorts its two families and joins them with "and",
+	 * for example "family.originofspawns.zombie.predator.and.stalker".
+	 */
+	public String translationKey() {
+		return switch (kind) {
+			case NEUTRAL -> "family.originofspawns.neutral";
+			case MAJOR, PURE -> key(first.orElseThrow());
+			case MINOR -> key(first.orElseThrow()) + "." + lastPart(second.orElseThrow());
+			case HYBRID -> {
+				Identifier a = first.orElseThrow();
+				Identifier b = second.orElseThrow();
+				if (a.compareTo(b) > 0) {
+					Identifier swap = a;
+					a = b;
+					b = swap;
+				}
+				yield key(a) + ".and." + lastPart(b);
+			}
+		};
+	}
+
+	private static String key(Identifier id) {
+		return id.toLanguageKey("family").replace('/', '.');
+	}
+
+	private static String lastPart(Identifier id) {
+		String path = id.getPath();
+		return path.substring(path.lastIndexOf('/') + 1);
+	}
+
+	/**
 	 * The kinds of results, and the tiers of effects that they give.
 	 */
 	public enum Kind implements StringRepresentable {

@@ -127,4 +127,18 @@ public class FamilyTest {
 	private static Identifier id(String path) {
 		return Identifier.fromNamespaceAndPath("originofspawns_test", path);
 	}
+
+	@GameTest
+	public void resultsHaveTranslationKeys(GameTestHelper helper) {
+		Identifier predator = Identifier.fromNamespaceAndPath("originofspawns", "zombie/predator");
+		Identifier stalker = Identifier.fromNamespaceAndPath("originofspawns", "zombie/stalker");
+		helper.assertValueEqual(FamilyResult.NEUTRAL.translationKey(), "family.originofspawns.neutral", "neutral");
+		helper.assertValueEqual(new FamilyResult(Kind.PURE, Optional.of(predator), Optional.empty()).translationKey(),
+				"family.originofspawns.zombie.predator", "pure");
+		helper.assertValueEqual(new FamilyResult(Kind.MINOR, Optional.of(stalker), Optional.of(predator)).translationKey(),
+				"family.originofspawns.zombie.stalker.predator", "minor");
+		helper.assertValueEqual(new FamilyResult(Kind.HYBRID, Optional.of(stalker), Optional.of(predator)).translationKey(),
+				"family.originofspawns.zombie.predator.and.stalker", "hybrid in either order");
+		helper.succeed();
+	}
 }

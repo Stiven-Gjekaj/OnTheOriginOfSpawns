@@ -30,21 +30,30 @@ Change this document when a decision changes.
 ## Selection
 
 - Each pool counts the causes of death of its members.
-  Examples of causes are fire, drowning, arrows, melee, explosions, and falls.
+  Examples of causes are fire, arrows, melee, explosions, and falls.
+- A pressure can also be a condition of the death.
+  For example, a zombie that dies before it hits the player counts for the
+  "unreached" pressure.
+  This happens when the player runs away or wins the fight quickly.
+- The list of pressures is not final.
+  The mod adds pressures for new genes.
 - A common cause of death makes the gene that counters it stronger.
 - The mod weights each death by its cause, not by its player.
   Thus, one player cannot control a pool alone.
 - Each new mob gets its genes from its pool.
 - Random mutation makes small changes to the pool.
 - Each gene has a cost.
-  For example, fire resistance lowers water resistance.
+  For example, fire resistance lowers the maximum health.
 - Each gene changes how the mob looks.
   The player can see the threat before the fight.
 
 ## Kinds of genes
 
+- The first release has almost as many genes as perks.
 - Resistance genes decrease damage from one cause.
-  Examples are fire, water, and arrows.
+  Examples are fire and arrows.
+- Speed genes make the mob faster.
+  The "unreached" pressure selects for speed.
 - Behavior genes change the AI of the mob.
   - Mobs that die in the open start to attack from cover.
   - Mobs that die alone start to move in groups.
@@ -58,6 +67,44 @@ Change this document when a decision changes.
   mobs.
 - Mimicry is a rare zombie mutation.
   The zombie looks like a villager until the player comes near.
+
+## Gene visuals
+
+- Each gene adds a small but distinct mark to the mob.
+  The mob stays easy to recognize.
+  A player who knows the genes can read the history of a mob.
+- The marks of different genes go on different body parts.
+  Thus, all genes can combine on one mob, and no mark hides another.
+- The mod does not have a texture for each mix of genes.
+  The game makes the textures when it loads, from the texture of the mob.
+- Each body type has a region map.
+  A region map is an image that labels each pixel of the mob texture.
+  The regions are skin, shirt, pants, hands, feet, and head.
+- One region map serves all mobs with the same body type.
+  For example, the humanoid map serves zombies, husks, drowned, and
+  piglins.
+- Each gene has a visual recipe.
+  The recipe applies an effect to a region.
+  Examples of effects are a color change, spots, and a pattern.
+- A gene can also change the model.
+  This is rare.
+- Data packs define the visual recipes.
+- The modeller makes the region maps and the patterns with code.
+  The mod does not use Blockbench.
+
+These are the visuals of the first zombie genes:
+
+| Gene | Region | Visual |
+|---|---|---|
+| Fire resistance | Skin | The skin is more gray |
+| Fire resistance | Hands and feet | Dark spots and red spots |
+| Arrow resistance | Shirt | Plates that look like iron |
+| Speed | Lower legs | Bare bone, thicker than the legs of a skeleton |
+
+The speed gene changes the model.
+The bone legs are narrower than the zombie legs, but wider than the legs of
+a skeleton.
+Thus, the bones look worn, not undead.
 
 ## Balance
 
@@ -318,10 +365,14 @@ The first release has these 30 perks:
 - Seasons from seasonal mods add pressure.
   For example, winter selects for cold traits.
 
+## Open questions
+
+- Does the "unreached" pressure also select for attack speed?
+
 ## First milestone
 
 - The first milestone is a small test of the full loop.
 - It has zombies only, in one biome category.
-- It has three genes: fire resistance, water resistance, and arrow resistance.
+- It has three genes: fire resistance, arrow resistance, and speed.
 - Each gene changes how the zombie looks.
 - It has one notebook page for zombies.

@@ -7,7 +7,8 @@ A tilt above 0 looks down on the mob.
 
 Each cube is a dict with: "bone", "uv", "from", "size", "inflate",
 "mirror", "texture" (a Pillow image), and "scale" (texture pixels for each
-UV unit). The faces use the box UV layout of the vanilla ModelPart: in the
+UV unit). It can also have "pivot" and "rotation" (degrees), as the parts
+of a gene model, and "glow": True to keep its full light in the dark. The faces use the box UV layout of the vanilla ModelPart: in the
 side row, the faces are the right side (-x), the front, the left side (+x),
 and the back.
 This script needs Pillow.
@@ -17,17 +18,31 @@ import math
 from PIL import Image, ImageDraw
 
 
-def faces(cube, pivot):
+def part_rotation(angles):
+    """Return a function that turns a vector like ModelPart: Z, then Y, then X.
+
+    The vector turns around X first, then around Y, then around Z.
+    """
+    ax, ay, az = (math.radians(a) for a in angles)
+
+    def turn(v):
+        x, y, z = v
+        y, z = y * math.cos(ax) - z * math.sin(ax), y * math.sin(ax) + z * math.cos(ax)
+        x, z = x * math.cos(ay) + z * math.sin(ay), -x * math.sin(ay) + z * math.cos(ay)
+        x, y = x * math.cos(az) - y * math.sin(az), x * math.sin(az) + y * math.cos(az)
+        return (x, y, z)
+    return turn
+
+
+def faces(cube, bone_pivot):
     """Return the visible parts of a cube: (origin, u vector, v vector, normal, rect)."""
+    part_pivot = cube.get("pivot", (0, 0, 0))
+    turn = part_rotation(cube.get("rotation", (0, 0, 0)))
     w, h, d = (int(s) for s in cube["size"])
     u, v = cube["uv"]
     i = cube["inflate"]
-    x0 = pivot[0] + cube["from"][0] - i
-    y0 = pivot[1] + cube["from"][1] - i
-    z0 = pivot[2] + cube["from"][2] - i
-    x1 = pivot[0] + cube["from"][0] + cube["size"][0] + i
-    y1 = pivot[1] + cube["from"][1] + cube["size"][1] + i
-    z1 = pivot[2] + cube["from"][2] + cube["size"][2] + i
+    x0, y0, z0 = (cube["from"][n] - i for n in range(3))
+    x1, y1, z1 = (cube["from"][n] + cube["size"][n] + i for n in range(3))
     sx, sy, sz = x1 - x0, y1 - y0, z1 - z0
     rects = {
         "top": (u + d, v, w, d), "bottom": (u + d + w, v, w, d),
@@ -36,14 +51,21 @@ def faces(cube, pivot):
     }
     if cube["mirror"]:
         rects["right"], rects["left"] = rects["left"], rects["right"]
-    return [
+
+    def place(origin, du, dv, normal, rect):
+        local = [origin[n] - part_pivot[n] for n in range(3)]
+        moved = turn(local)
+        origin = tuple(bone_pivot[n] + part_pivot[n] + moved[n] for n in range(3))
+        return origin, turn(du), turn(dv), turn(normal), rect
+
+    return [place(*f) for f in [
         ((x0, y0, z0), (sx, 0, 0), (0, sy, 0), (0, 0, -1), rects["front"]),
         ((x1, y0, z1), (-sx, 0, 0), (0, sy, 0), (0, 0, 1), rects["back"]),
         ((x0, y0, z1), (0, 0, -sz), (0, sy, 0), (-1, 0, 0), rects["right"]),
         ((x1, y0, z0), (0, 0, sz), (0, sy, 0), (1, 0, 0), rects["left"]),
         ((x0, y0, z1), (sx, 0, 0), (0, 0, -sz), (0, -1, 0), rects["top"]),
         ((x0, y1, z0), (sx, 0, 0), (0, 0, sz), (0, 1, 0), rects["bottom"]),
-    ]
+    ]]
 
 
 def rotation(turn, tilt):
@@ -56,8 +78,12 @@ def rotation(turn, tilt):
     return rotate
 
 
-def render(cubes, pivots, turn=0, tilt=0, scale=8, size=(24, 40), center=(0, 6)):
-    """Return an image of the cubes. size and center are in model pixels."""
+def render(cubes, pivots, turn=0, tilt=0, scale=8, size=(24, 40), center=(0, 6), light=1.0):
+    """Return an image of the cubes. size and center are in model pixels.
+
+    light from 0 to 1 makes the cubes darker, as at night. A cube with
+    "glow" keeps its full light.
+    """
     rotate = rotation(turn, tilt)
     width, height = size
     im = Image.new("RGBA", (width * scale, height * scale), (0, 0, 0, 0))
@@ -87,6 +113,8 @@ def render(cubes, pivots, turn=0, tilt=0, scale=8, size=(24, 40), center=(0, 6))
                 color = cube["texture"].getpixel((tx, round(rv * k) + j))
                 if color[3] == 0:
                     continue
+                if light < 1 and not cube.get("glow"):
+                    color = tuple(int(c * light) for c in color[:3]) + (color[3],)
                 points = []
                 for a, b in ((i, j), (i + 1, j), (i + 1, j + 1), (i, j + 1)):
                     points.append([origin[n] + du[n] * a / cols + dv[n] * b / rows for n in range(3)])

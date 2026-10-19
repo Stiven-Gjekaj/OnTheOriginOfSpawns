@@ -16,7 +16,7 @@ This script needs Pillow.
 
 The effects here copy TextureBaker in the mod, so that the previews show the
 same pixels as the game. If TextureBaker changes, change this script too.
-The views are flat: each cube shows only its front face or its back face.
+tools/render3d.py draws the views.
 """
 import glob
 import io
@@ -25,6 +25,8 @@ import os
 import zipfile
 
 from PIL import Image, ImageDraw, ImageFont
+
+import render3d
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RESOURCES = os.path.join(ROOT, "src/main/resources")
@@ -219,51 +221,27 @@ def gene_cubes(gene):
         cubes.append({
             "bone": part["bone"], "uv": part["uv"], "from": part["from"], "size": part["size"],
             "inflate": part.get("inflate", 0.0), "mirror": part.get("mirror", False),
-            "texture": tex, "scale": scale,
+            "texture": tex, "scale": scale, "pivot": part.get("pivot", (0, 0, 0)),
+            "rotation": part.get("rotation", (0, 0, 0)), "glow": part.get("glow", False),
         })
     return cubes
 
 
-def face_image(cube, back):
-    """Return the front or the back face of a box UV cube, at SCALE."""
-    w, h, d = (int(s) for s in cube["size"])
-    u, v = cube["uv"]
-    k = cube["scale"]
-    x0 = u + 2 * d + w if back else u + d
-    y0 = v + d
-    face = cube["texture"].crop((round(x0 * k), round(y0 * k), round((x0 + w) * k), round((y0 + h) * k)))
-    if cube["mirror"]:
-        face = face.transpose(Image.FLIP_LEFT_RIGHT)
-    i = cube["inflate"]
-    size = (round((cube["size"][0] + 2 * i) * SCALE), round((cube["size"][1] + 2 * i) * SCALE))
-    return face.resize(size, Image.NEAREST)
-
-
-def view(tex, genes, back):
-    """Draw the front or the back of the standing zombie with the gene models."""
+def cubes_of(tex, genes):
+    """Return the cubes of the zombie and of the gene models of the genes."""
     cubes = [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": m,
               "texture": tex, "scale": 1.0} for b, uv, f, s, m in ZOMBIE_CUBES]
     for gene in genes:
         cubes += gene_cubes(gene)
-    placed = []
-    for cube in cubes:
-        px, py, pz = PIVOTS[cube["bone"]]
-        i = cube["inflate"]
-        x0 = px + cube["from"][0] - i
-        x1 = px + cube["from"][0] + cube["size"][0] + i
-        y0 = py + cube["from"][1] - i
-        z0 = pz + cube["from"][2] - i
-        z1 = pz + cube["from"][2] + cube["size"][2] + i
-        # From the front, the right side of the zombie is on the left.
-        left = 8 - x1 if back else x0 + 8
-        depth = z1 if back else -z0
-        placed.append((depth, left, y0 + 8, cube))
-    im = Image.new("RGBA", (VIEW_W * SCALE, VIEW_H * SCALE), (0, 0, 0, 0))
-    # Draw the far faces first.
-    for depth, left, top, cube in sorted(placed, key=lambda p: p[0]):
-        im.alpha_composite(face_image(cube, back),
-                           (round((left + VIEW_X - 8) * SCALE), round((top + VIEW_Y - 8) * SCALE)))
-    return im
+    return cubes
+
+
+def view(tex, genes, back, turn=None, tilt=0, light=1.0):
+    """Draw the zombie with the gene models: the front, the back, or any turn."""
+    if turn is None:
+        turn = 180 if back else 0
+    return render3d.render(cubes_of(tex, genes), PIVOTS, turn, tilt, SCALE, (VIEW_W, VIEW_H),
+                           center=(0, VIEW_H / 2 - VIEW_Y), light=light)
 
 
 def text(draw, xy, label, size):

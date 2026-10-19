@@ -95,7 +95,7 @@ A resource pack can change the look of any gene.
 |---|---|---|
 | `region_map` | `originofspawns:textures/region/humanoid.png` | The map that labels the pixels of the mob texture |
 | `layers` | | The changes to the texture, in order. A layer with no `regions` or no `materials` covers all of them |
-| `model` | none | A model change. `originofspawns:bone_legs` is the only one now |
+| `model` | none | A gene model that adds cubes to the mob, for example `originofspawns:bone_legs` |
 
 The regions are `face`, `scalp`, `torso`, `arms`, `hands`, `legs`,
 `lower_legs`, and `feet`. The materials are `skin`, `cloth`, and `eyes`.
@@ -106,6 +106,31 @@ The regions are `face`, `scalp`, `torso`, `arms`, `hands`, `legs`,
 | `spots` | `colors`, `density` | Puts spots of the colors on a part of the pixels |
 | `pattern` | `texture`, `tint` | Stamps a tiled grayscale texture in the tint color |
 | `erase` | | Makes the pixels transparent |
+
+### Gene models
+
+A gene model adds cubes to the model of a mob.
+The file `assets/<namespace>/gene_models/<name>.json` is the model
+`<namespace>:<name>`.
+Each cube moves with one bone: `head`, `body`, `right_arm`, `left_arm`,
+`right_leg`, or `left_leg`.
+The coordinates are in pixels, in the coordinates of the bone, as in the
+vanilla models.
+
+    {
+        "texture": "originofspawns:textures/entity/bone_leg.png",
+        "texture_width": 16,
+        "texture_height": 16,
+        "parts": [
+            { "bone": "right_leg", "uv": [0, 0], "from": [-1.5, 6, -1.5], "size": [3, 6, 3] }
+        ]
+    }
+
+| Field | Default | Description |
+|---|---|---|
+| `texture` | | The texture of the cubes |
+| `texture_width`, `texture_height` | `64` | The size of the texture |
+| `parts` | | The cubes. Each has `bone`, `uv`, `from`, `size`, and optional `inflate` and `mirror` |
 
 ### Genes on mobs
 

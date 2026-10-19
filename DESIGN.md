@@ -175,6 +175,44 @@ The first release has these 30 perks:
 | Bioluminescence | The player gives light | Mobs see the player from farther at night |
 | Mimic scent | Zombies ignore the player until the player attacks | Villagers give worse trades, and iron golems do not trust the player |
 
+## Evolution classes
+
+- Each player has passive evolution classes.
+  The player does not select a class.
+  The play style of the player selects it.
+- The mod records the activity of the player in categories.
+  These are the first categories:
+
+| Class | Activity |
+|---|---|
+| Builder | Blocks placed |
+| Fighter | Kills and damage dealt |
+| Explorer | Distance traveled, new biomes, and new structures |
+| Miner | Blocks mined under the surface |
+| Farmer | Crops harvested and animals bred |
+
+- More categories can come later.
+- Each category has a percentage of the total activity of the player.
+- Recent activity has more weight than old activity.
+  The weight of each activity point decreases with time.
+  Thus, the classes change when the play style changes.
+- Each class has two tiers of effects.
+  Each tier has a gain and a cost.
+  The cost is smaller than the cost of a perk.
+- The classes come from the two highest categories:
+
+| Condition | Highest category | Second category |
+|---|---|---|
+| The highest category is 10 or more points above the second | Main class: tier 2 effects | Tier 1 effects |
+| The highest category is less than 10 points above the second | Tier 1 effects | Tier 1 effects |
+
+- The other categories give no effects.
+- The mobs counter the classes of the players.
+  For example, a world of Fighters selects for tougher mobs.
+  A world of Explorers selects for faster mobs.
+- The notebook shows the percentage of each category and the current classes.
+- Data packs define the classes, their activities, and their effects.
+
 ## Player evolution modes
 
 - Lineage mode is for hardcore play.

@@ -176,6 +176,8 @@ Thus, the bones look worn, not undead.
   from a Predator with a Stalker sub family.
 - Each minor family has its own name.
   The name is not only the names of its major and sub family.
+- Each hybrid has its own name.
+- A pure family has the name of its major family.
 
 | Points of the genes | Result |
 |---|---|

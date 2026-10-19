@@ -18,10 +18,13 @@ Milestones 0 to 5 make the first release.
 
 - Record the cause of each zombie death.
 - Keep one zombie pool for each biome category.
-- Add three genes: fire resistance, water resistance, and arrow resistance.
+- Add pressures that are conditions of the death, such as "unreached".
+- Add three genes: fire resistance, arrow resistance, and speed.
 - Give each new zombie genes from its pool.
 - Add mutation, pressure decay, and gene points.
-- Change how the zombie looks for each gene.
+- Add the humanoid region map.
+- Make the gene textures at load time from visual recipes.
+- Add the bone legs model for the speed gene.
 - Add the Beagle Notebook with one zombie page.
 
 ### Milestone 2: All hostile mobs

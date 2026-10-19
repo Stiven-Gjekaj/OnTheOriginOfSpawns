@@ -60,6 +60,7 @@ EXTRA = {
                   ("Ironhide + all 6", ["ironhide"], True, {})],
     "stalkers": [("All 6 at night", [], True, {"light": 0.18}),
                  ("Shade at 10%", ["shade"], False, {"opacity": 0.1}),
+                 ("Burrower + Bonerunner", ["burrower", "bonerunner"], False, {}),
                  ("Ironhide + all 6", ["ironhide"], True, {})],
 }
 NIGHT = (18, 22, 38, 255)

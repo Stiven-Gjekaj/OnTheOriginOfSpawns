@@ -17,7 +17,7 @@ pixels, so that a zombie can carry 5 genes and each mark stays visible.
 
 Pixel plan. The UV is the vanilla zombie UV. The arms and the legs are
 4 pixels on each side. Their side faces are, from left to right in the
-texture: inner, front, outer, back. Rows count from the top of a side face.
+texture: outer, front, inner, back. Rows count from the top of a side face.
 Cinder keeps the hands and the feet. Bonerunner erases the lower legs and
 the feet, so no other mark goes there.
 - Face, eyes: Nightborn has the outer eye pixels. Miasma has the inner eye
@@ -50,8 +50,10 @@ MARK_DIR = os.path.join(ASSETS, "textures/gene_marks")
 VISUAL_DIR = os.path.join(ASSETS, "gene_visuals")
 
 # The side faces of a limb, as the x offset from the start of the limb UV.
-INNER, FRONT, OUTER, BACK = 0, 4, 8, 12
-SIDES = (INNER, FRONT, OUTER, BACK)
+# The first side face in the texture is the outer side of the limb, as in
+# the vanilla box UV: the right side (-x) of the right limb.
+OUTER, FRONT, INNER, BACK = 0, 4, 8, 12
+SIDES = (OUTER, FRONT, INNER, BACK)
 
 # The UV of the limbs. The vanilla zombie uses the right limbs for both
 # sides. The drowned has its own left limbs. A mark on a limb goes on both.

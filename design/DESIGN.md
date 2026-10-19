@@ -151,7 +151,10 @@ Thus, the bones look worn, not undead.
   Each species has its own families, with its own names.
   For example, a zombie family can be "Predators".
 - Each major family has one big buff and one big debuff, at 3 tiers.
-  A higher tier makes the buff and the debuff stronger.
+- A higher tier makes the buff stronger and the debuff weaker.
+  Thus, a mob gets stronger at a higher tier.
+- The tier 3 buff is about two times the tier 2 buff.
+  Thus, a pure family is stronger than a hybrid.
 - Each gene has a main family tag.
   The main tag gives 2 points to its family.
 - A small number of genes also have a sub family tag.
@@ -188,6 +191,11 @@ Thus, the bones look worn, not undead.
 - For example, a pure Predator gets the tier 3 Predator effects.
   A Predator with a Tank sub family gets the tier 2 Predator effects and the
   tier 1 Tank effects.
+- This is the order of power, from the strongest to the weakest:
+  1. Pure families.
+  2. Hybrids.
+  3. Minor families.
+  4. Neutral mobs.
 - If two families have the same number of points for the sub family, the
   family of the gene with the highest frequency wins.
 - At the start of a world, all mobs are neutral.

@@ -60,7 +60,7 @@ It has gains and downsides, like a player perk.
 | `gains` | list of effects | `[]` | The effects that help the mob |
 | `downsides` | list of effects | `[]` | The effects that hurt the mob |
 | `selection_rate` | number, 0 to 1 | `0.02` | The rise for each death, as a part of the distance to 100% |
-| `mutation_rate` | number, 0 to 1 | `0.01` | The smallest chance that a new mob gets the gene |
+| `mutation_rate` | number, 0 to 1 | `0.003` | The smallest chance that a new mob gets the gene |
 | `decay_rate` | number, 0 to 1 | `0.01` | The loss for each Minecraft day, as a part of the frequency |
 
 ### Effects

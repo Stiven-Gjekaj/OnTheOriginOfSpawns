@@ -1,21 +1,38 @@
 {
-	"species": ["minecraft:zombie", "minecraft:husk"],
+	"species": [
+		"minecraft:zombie",
+		"minecraft:husk"
+	],
 	"counters": "originofspawns_test:test_heat",
 	"family": "originofspawns_test:stalker",
 	"sub_family": "originofspawns_test:predator",
 	"gains": [
-		{ "type": "damage_taken", "damage_types": "#minecraft:is_fire", "multiplier": 0 },
-		{ "type": "ignite_target", "chance": 0.2, "seconds": 4 }
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 0
+		},
+		{
+			"type": "ignite_target",
+			"chance": 0.2,
+			"seconds": 4
+		}
 	],
 	"downsides": [
-		{ "type": "attribute", "attribute": "minecraft:max_health", "amount": -4, "operation": "add_value" },
-		{ "type": "water_damage", "amount": 1 },
-		{ "type": "air_loss", "extra": 2 }
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		},
+		{
+			"type": "water_damage",
+			"amount": 1
+		},
+		{
+			"type": "air_loss",
+			"extra": 2
+		}
 	],
-	"mutation_rate": 0.5,
-	"visual": {
-		"layers": [
-			{ "materials": ["skin"], "effect": { "type": "desaturate", "amount": 1 } }
-		]
-	}
+	"mutation_rate": 0.5
 }

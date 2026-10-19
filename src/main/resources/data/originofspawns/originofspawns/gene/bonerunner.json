@@ -3,17 +3,31 @@
 	"counters": "originofspawns:unreached",
 	"family": "originofspawns:zombie/predator",
 	"gains": [
-		{ "type": "attribute", "attribute": "minecraft:movement_speed", "amount": 0.2, "operation": "add_multiplied_base" },
-		{ "type": "attribute", "attribute": "minecraft:follow_range", "amount": 16, "operation": "add_value" }
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": 0.2,
+			"operation": "add_multiplied_base"
+		},
+		{
+			"type": "attribute",
+			"attribute": "minecraft:follow_range",
+			"amount": 16,
+			"operation": "add_value"
+		}
 	],
 	"downsides": [
-		{ "type": "attribute", "attribute": "minecraft:armor", "amount": -2, "operation": "add_value" },
-		{ "type": "attribute", "attribute": "minecraft:fall_damage_multiplier", "amount": 0.5, "operation": "add_multiplied_base" }
-	],
-	"visual": {
-		"layers": [
-			{ "regions": ["lower_legs", "feet"], "effect": { "type": "erase" } }
-		],
-		"model": "originofspawns:bone_legs"
-	}
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		},
+		{
+			"type": "attribute",
+			"attribute": "minecraft:fall_damage_multiplier",
+			"amount": 0.5,
+			"operation": "add_multiplied_base"
+		}
+	]
 }

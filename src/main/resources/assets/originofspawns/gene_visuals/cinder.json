@@ -1,0 +1,30 @@
+{
+	"layers": [
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "desaturate",
+				"amount": 0.4,
+				"darken": 0.15
+			}
+		},
+		{
+			"regions": [
+				"hands",
+				"feet"
+			],
+			"effect": {
+				"type": "spots",
+				"colors": [
+					"#1A1A1A",
+					"#2B2B2B",
+					"#8B2E1F",
+					"#6E1F14"
+				],
+				"density": 0.35
+			}
+		}
+	]
+}

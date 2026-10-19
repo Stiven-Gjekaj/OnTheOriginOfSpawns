@@ -10,8 +10,6 @@ import java.util.Map;
 import com.mojang.blaze3d.platform.NativeImage;
 
 import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
-import io.github.stivengjekaj.originofspawns.definition.Gene;
-import io.github.stivengjekaj.originofspawns.registry.ModRegistries;
 import io.github.stivengjekaj.originofspawns.visual.GeneVisual;
 import io.github.stivengjekaj.originofspawns.visual.TextureBaker;
 
@@ -19,7 +17,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 
 /**
@@ -42,14 +39,12 @@ public final class GeneTextures {
 	 * Returns the texture for a mob with these genes. It is the base texture if no gene changes how the mob looks.
 	 */
 	public static Identifier textureFor(Identifier base, List<Identifier> genes) {
-		if (genes == null || genes.isEmpty() || Minecraft.getInstance().level == null) {
+		if (genes == null || genes.isEmpty()) {
 			return base;
 		}
-		Registry<Gene> registry = Minecraft.getInstance().level.registryAccess().lookupOrThrow(ModRegistries.GENE);
 		List<Identifier> visible = new ArrayList<>();
 		for (Identifier id : genes) {
-			Gene gene = registry.getValue(id);
-			if (gene != null && gene.visual().isPresent()) {
+			if (GeneVisuals.get(id) != null) {
 				visible.add(id);
 			}
 		}
@@ -60,20 +55,20 @@ public final class GeneTextures {
 		String key = base + "|" + visible;
 		Identifier baked = BAKED.get(key);
 		if (baked == null) {
-			baked = bake(base, visible, registry);
+			baked = bake(base, visible);
 			BAKED.put(key, baked);
 		}
 		return baked;
 	}
 
-	private static Identifier bake(Identifier base, List<Identifier> genes, Registry<Gene> registry) {
+	private static Identifier bake(Identifier base, List<Identifier> genes) {
 		TextureBaker.Image source = image(base);
 		if (source == null) {
 			return base;
 		}
 		TextureBaker.Image texture = new TextureBaker.Image(source.width(), source.height(), source.pixels().clone());
 		for (Identifier id : genes) {
-			GeneVisual visual = registry.getValue(id).visual().orElseThrow();
+			GeneVisual visual = GeneVisuals.get(id);
 			TextureBaker.Image regionMap = image(visual.regionMap());
 			if (regionMap != null) {
 				TextureBaker.bake(texture, regionMap, visual.layers(), id.hashCode(), GeneTextures::image);
@@ -116,13 +111,12 @@ public final class GeneTextures {
 	 * Returns true if one of the genes has a visual with this model change.
 	 */
 	public static boolean hasModel(List<Identifier> genes, Identifier model) {
-		if (genes == null || genes.isEmpty() || Minecraft.getInstance().level == null) {
+		if (genes == null) {
 			return false;
 		}
-		Registry<Gene> registry = Minecraft.getInstance().level.registryAccess().lookupOrThrow(ModRegistries.GENE);
 		for (Identifier id : genes) {
-			Gene gene = registry.getValue(id);
-			if (gene != null && gene.visual().flatMap(GeneVisual::model).filter(model::equals).isPresent()) {
+			GeneVisual visual = GeneVisuals.get(id);
+			if (visual != null && visual.model().filter(model::equals).isPresent()) {
 				return true;
 			}
 		}
@@ -133,7 +127,10 @@ public final class GeneTextures {
 	 * Releases all baked textures. The next frame bakes them again.
 	 */
 	public static void clear() {
-		BAKED.values().forEach(Minecraft.getInstance().getTextureManager()::release);
+		Minecraft minecraft = Minecraft.getInstance();
+		if (minecraft != null && minecraft.getTextureManager() != null) {
+			BAKED.values().forEach(minecraft.getTextureManager()::release);
+		}
 		BAKED.clear();
 		IMAGES.clear();
 	}

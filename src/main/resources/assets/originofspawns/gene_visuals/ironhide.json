@@ -1,0 +1,30 @@
+{
+	"layers": [
+		{
+			"regions": [
+				"torso"
+			],
+			"materials": [
+				"cloth"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/pattern/iron_plates.png",
+				"tint": "#8C9196"
+			}
+		},
+		{
+			"regions": [
+				"arms"
+			],
+			"materials": [
+				"cloth"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/pattern/iron_plates_sleeve.png",
+				"tint": "#8C9196"
+			}
+		}
+	]
+}

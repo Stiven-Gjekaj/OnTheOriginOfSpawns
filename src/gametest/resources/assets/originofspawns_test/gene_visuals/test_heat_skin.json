@@ -1,0 +1,13 @@
+{
+	"layers": [
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "desaturate",
+				"amount": 1
+			}
+		}
+	]
+}

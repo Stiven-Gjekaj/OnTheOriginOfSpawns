@@ -1,0 +1,14 @@
+{
+	"layers": [
+		{
+			"regions": [
+				"lower_legs",
+				"feet"
+			],
+			"effect": {
+				"type": "erase"
+			}
+		}
+	],
+	"model": "originofspawns:bone_legs"
+}

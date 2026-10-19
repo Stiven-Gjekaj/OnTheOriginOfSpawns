@@ -294,8 +294,8 @@ def blob(core, rim, center, ring):
 
 def bloat():
     # Swollen green blotches on the shirt, on pixels that no other gene marks.
-    # The swollen body needs a gene model that uses the mob texture. It is
-    # not here yet.
+    # The swollen body is the gene model bloat_body. It uses the mob texture,
+    # so these blotches and the marks of other genes show on it.
     core = Mark("#9DB64C")
     rim = Mark("#6A852A")
     blob(core, rim, (21, 24), [(21, 23), (22, 23), (22, 24), (21, 25)])
@@ -393,6 +393,7 @@ MODELS = {
     "lurker": "originofspawns:lurker_hood",
     "nightborn": "originofspawns:nightborn_eyes",
     "thickskull": "originofspawns:thickskull_plate",
+    "bloat": "originofspawns:bloat_body",
     "stoneblood": "originofspawns:stoneblood_shell",
 }
 

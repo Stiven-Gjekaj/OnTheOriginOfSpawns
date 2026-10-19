@@ -1,4 +1,4 @@
-"""Make the gene models of the Tank genes: Thickskull and Stoneblood.
+"""Make the gene models of the Tank genes: Thickskull, Stoneblood, and Bloat.
 
 Usage: python3 tools/make_tank_models.py
 
@@ -10,6 +10,11 @@ front of the face.
 Stoneblood: a thin shell of stone chips over the lower legs and the feet,
 with gaps. It shows on the normal legs and on the bone legs of Bonerunner.
 It is thinner than the Burrower dirt (inflate 0.3), so the dirt sits on top.
+
+Bloat: a swollen body. It is one body cube, larger than the body, with the
+texture of the mob ("mob_texture"), so that the marks of all the genes on
+the shirt show on it too. It is a model of its own, because a model uses
+one texture for all its parts.
 This script needs Pillow.
 """
 import json
@@ -121,6 +126,20 @@ def stoneblood():
     save("stoneblood_shell", im, model)
 
 
+def bloat():
+    model = {
+        "mob_texture": True,
+        "parts": [{"bone": "body", "uv": [16, 16], "from": [-4, 0, -2], "size": [8, 12, 4],
+                   "inflate": 0.8}],
+    }
+    path = os.path.join(ASSETS, "gene_models", "bloat_body.json")
+    with open(path, "w") as fh:
+        json.dump(model, fh, indent="\t")
+        fh.write("\n")
+    print(path)
+
+
 if __name__ == "__main__":
     thickskull()
     stoneblood()
+    bloat()

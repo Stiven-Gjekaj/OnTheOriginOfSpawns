@@ -1,0 +1,23 @@
+{
+	"mob_texture": true,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				16,
+				16
+			],
+			"from": [
+				-4,
+				0,
+				-2
+			],
+			"size": [
+				8,
+				12,
+				4
+			],
+			"inflate": 0.8
+		}
+	]
+}

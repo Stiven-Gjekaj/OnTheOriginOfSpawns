@@ -84,7 +84,11 @@ public class BehaviorEffectsTest {
 
 	@GameTest
 	public void runtMakesASmallBaby(GameTestHelper helper) {
-		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_runt");
+		// The zombie is not in the level, so it gets no genes from the pool when it loads.
+		Zombie zombie = EntityTypes.ZOMBIE.create(helper.getLevel(), EntitySpawnReason.NATURAL);
+		zombie.setPos(helper.absoluteVec(new Vec3(1.5, 1.0, 1.5)));
+		zombie.setAttached(ModAttachments.GENES, new CarriedGenes(List.of(
+				Identifier.fromNamespaceAndPath("originofspawns_test", "test_runt"))));
 		double adultHealth = zombie.getAttributeValue(Attributes.MAX_HEALTH);
 		GeneBehaviors.onSpawn(zombie, helper.getLevel(), EntitySpawnReason.NATURAL);
 		helper.assertTrue(zombie.isBaby(), "the zombie is a baby");
@@ -249,9 +253,14 @@ public class BehaviorEffectsTest {
 	}
 
 	private static Zombie zombieWith(GameTestHelper helper, BlockPos pos, String... genes) {
-		Zombie zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, pos);
+		// The genes go on before the zombie enters the level, so it gets no genes from the pool.
+		Zombie zombie = EntityTypes.ZOMBIE.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
 		zombie.setAttached(ModAttachments.GENES, new CarriedGenes(java.util.Arrays.stream(genes)
 				.map(gene -> Identifier.fromNamespaceAndPath("originofspawns_test", gene)).toList()));
+		zombie.setNoAi(true);
+		zombie.setPersistenceRequired();
+		zombie.snapTo(helper.absoluteVec(Vec3.atBottomCenterOf(pos)), 0.0F, 0.0F);
+		helper.getLevel().addFreshEntity(zombie);
 		return zombie;
 	}
 }

@@ -23,6 +23,7 @@ import net.minecraft.world.phys.Vec3;
 public class GeneTextureClientTest implements FabricClientGameTest {
 	private static final Identifier CINDER = Identifier.fromNamespaceAndPath("originofspawns", "cinder");
 	private static final Identifier IRONHIDE = Identifier.fromNamespaceAndPath("originofspawns", "ironhide");
+	private static final Identifier BONERUNNER = Identifier.fromNamespaceAndPath("originofspawns", "bonerunner");
 	private static final Identifier TEST_GENE = Identifier.fromNamespaceAndPath("originofspawns_test", "test_heat_skin");
 	private static final Identifier TEST_PLAIN_GENE = Identifier.fromNamespaceAndPath("originofspawns_test", "test_swift");
 	private static final Identifier ZOMBIE_TEXTURE = Identifier.withDefaultNamespace("textures/entity/zombie/zombie.png");
@@ -41,6 +42,8 @@ public class GeneTextureClientTest implements FabricClientGameTest {
 				spawn(player, front.add(-1.2, 0.0, 0.0), List.of());
 				spawn(player, front, List.of(CINDER));
 				spawn(player, front.add(1.2, 0.0, 0.0), List.of(CINDER, IRONHIDE));
+				spawn(player, front.add(2.4, 0.0, 0.0), List.of(BONERUNNER));
+				spawn(player, front.add(-2.4, 0.0, 0.0), List.of(CINDER, IRONHIDE, BONERUNNER));
 			});
 			context.waitTicks(40);
 
@@ -64,7 +67,8 @@ public class GeneTextureClientTest implements FabricClientGameTest {
 			if (!again.equals(baked)) {
 				throw new AssertionError("The same genes give a second texture");
 			}
-			// The screenshot shows the real genes for a person to check: plain, Cinder, and Cinder with Ironhide.
+			// The screenshot shows the real genes for a person to check. From left to right: Bonerunner,
+			// Cinder with Ironhide, Cinder, plain, and all three genes.
 			context.takeScreenshot("zombie_genes");
 		}
 	}

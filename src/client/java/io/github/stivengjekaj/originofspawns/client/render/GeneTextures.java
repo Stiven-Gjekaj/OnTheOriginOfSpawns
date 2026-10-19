@@ -113,6 +113,23 @@ public final class GeneTextures {
 	}
 
 	/**
+	 * Returns true if one of the genes has a visual with this model change.
+	 */
+	public static boolean hasModel(List<Identifier> genes, Identifier model) {
+		if (genes == null || genes.isEmpty() || Minecraft.getInstance().level == null) {
+			return false;
+		}
+		Registry<Gene> registry = Minecraft.getInstance().level.registryAccess().lookupOrThrow(ModRegistries.GENE);
+		for (Identifier id : genes) {
+			Gene gene = registry.getValue(id);
+			if (gene != null && gene.visual().flatMap(GeneVisual::model).filter(model::equals).isPresent()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Releases all baked textures. The next frame bakes them again.
 	 */
 	public static void clear() {

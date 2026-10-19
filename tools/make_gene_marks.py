@@ -253,17 +253,10 @@ def shade():
 
 
 def burrower():
-    # Dirt from the ground, caked on the shins and the shoes. It is thickest
-    # at the bottom. It goes under the marks of other genes (order -1).
-    dirt = Mark("#6A4A2C", alpha=235, order=-1)
-    chance = {6: 15, 7: 30, 8: 50, 9: 70, 10: 65, 11: 80}
-    for face in SIDES:
-        for row, percent in chance.items():
-            for col in range(4):
-                h = (face * 17 + row * 31 + col * 7) % 100
-                if h < percent:
-                    dirt.put(leg(face, col, row), (255, 200, 160)[h % 3])
-    return [dirt]
+    # Burrower has no marks on the texture. Its dirt is the gene model
+    # burrower_dirt, a shell over the lower legs, so that it also covers the
+    # bone legs of Bonerunner.
+    return []
 
 
 def lurker():
@@ -307,6 +300,7 @@ GENES = {
 
 # The gene models of the genes in GENES.
 MODELS = {
+    "burrower": "originofspawns:burrower_dirt",
     "nightborn": "originofspawns:nightborn_eyes",
 }
 

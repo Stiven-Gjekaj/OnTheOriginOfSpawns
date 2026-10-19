@@ -1,0 +1,44 @@
+{
+	"texture": "originofspawns:textures/entity/burrower_dirt.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2,
+				6,
+				-2
+			],
+			"size": [
+				4,
+				6,
+				4
+			],
+			"inflate": 0.3
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2,
+				6,
+				-2
+			],
+			"size": [
+				4,
+				6,
+				4
+			],
+			"inflate": 0.3,
+			"mirror": true
+		}
+	]
+}

@@ -36,6 +36,7 @@ MODEL_DIR = os.path.join(ASSETS, "originofspawns/gene_models")
 GENE_OUT = os.path.join(ROOT, "build/previews/genes")
 FAMILY_OUT = os.path.join(ROOT, "build/previews/families")
 ZOMBIE_PATH = "assets/minecraft/textures/entity/zombie/zombie.png"
+BABY_PATH = "assets/minecraft/textures/entity/zombie/zombie_baby.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
 REGIONS = {"face": 1, "scalp": 2, "torso": 3, "arms": 4, "hands": 5, "legs": 6,
@@ -69,7 +70,9 @@ EXTRA = {
               ("Bloat + others", ["bloat", "ironhide", "frenzy", "bloodscent", "death_throes",
                                   "thickskull"], False, {}),
               ("Thickskull + face", ["thickskull", "rabid", "nightborn"], False, {})],
-    "hordes": [("Hordes + Lurker", ["lurker", "thickskull"], True, {}),
+    "hordes": [("Runt baby", ["runt"], False, {"baby": True}),
+               ("Plain baby", [], False, {"baby": True}),
+               ("Hordes + Lurker", ["lurker", "thickskull"], True, {}),
                ("Hordes + Cinder", ["cinder", "bloat"], True, {}),
                ("Hordes + Hush", ["hush", "rabid"], True, {})],
 }
@@ -95,12 +98,27 @@ ZOMBIE_CUBES = [
     ("left_leg", (0, 16), (-2, 0, -2), (4, 12, 4), True),
 ]
 
+# The baby zombie has its own model (BabyZombieModel) and its own texture
+# layout. The feet are at y 24, as for the adult.
+BABY_PIVOTS = {
+    "head": (0, 15.25, 0), "body": (0, 17.5, 0), "right_arm": (-3, 15.5, 0), "left_arm": (3, 15.5, 0),
+    "right_leg": (-1, 20, 0), "left_leg": (1, 20, 0),
+}
+BABY_CUBES = [
+    ("head", (3, 3), (-3, -6.25, -3), (6, 6, 6), False),
+    ("body", (16, 16), (-2, -2.5, -1), (4, 5, 2), False),
+    ("right_arm", (36, 16), (-1, -0.5, -1), (2, 5, 2), False),
+    ("left_arm", (28, 16), (-1, -0.5, -1), (2, 5, 2), False),
+    ("right_leg", (8, 16), (-1, 0, -1), (2, 4, 2), False),
+    ("left_leg", (0, 16), (-1, 0, -1), (2, 4, 2), False),
+]
+
 # The area that a view shows, in model pixels: x from -VIEW_X, y from -VIEW_Y.
 VIEW_X, VIEW_Y, VIEW_W, VIEW_H = 11, 11, 22, 37
 
 
-def find_zombie_texture():
-    """Return the vanilla zombie texture from a Minecraft jar of Loom."""
+def find_zombie_texture(path=ZOMBIE_PATH):
+    """Return a vanilla zombie texture from a Minecraft jar of Loom."""
     caches = os.path.expanduser("~/.gradle/caches/fabric-loom")
     jars = sorted(glob.glob(os.path.join(caches, "**", "*.jar"), recursive=True))
     # The client jar is the most likely place. Look at it first.
@@ -108,9 +126,9 @@ def find_zombie_texture():
     for jar in jars:
         try:
             with zipfile.ZipFile(jar) as z:
-                if ZOMBIE_PATH in z.namelist():
+                if path in z.namelist():
                     print("vanilla texture from", jar)
-                    return Image.open(io.BytesIO(z.read(ZOMBIE_PATH))).convert("RGBA")
+                    return Image.open(io.BytesIO(z.read(path))).convert("RGBA")
         except zipfile.BadZipFile:
             continue
     raise SystemExit("No Minecraft jar with the zombie texture. Run ./gradlew build first.")
@@ -250,21 +268,26 @@ def gene_cubes(gene, mob_tex=None):
     return cubes
 
 
-def cubes_of(tex, genes):
+def cubes_of(tex, genes, baby=False):
     """Return the cubes of the zombie and of the gene models of the genes."""
     cubes = [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": m,
-              "texture": tex, "scale": 1.0} for b, uv, f, s, m in ZOMBIE_CUBES]
+              "texture": tex, "scale": 1.0} for b, uv, f, s, m in (BABY_CUBES if baby else ZOMBIE_CUBES)]
     for gene in genes:
         cubes += gene_cubes(gene, tex)
     return cubes
 
 
-def view(tex, genes, back, turn=None, tilt=0, light=1.0, opacity=1.0):
-    """Draw the zombie with the gene models: the front, the back, or any turn."""
+def view(tex, genes, back, turn=None, tilt=0, light=1.0, opacity=1.0, baby=False):
+    """Draw the zombie with the gene models: the front, the back, or any turn.
+
+    With baby, it draws the baby model. The gene models then sit on the bones
+    of the baby, as in the game.
+    """
     if turn is None:
         turn = 180 if back else 0
-    return render3d.render(cubes_of(tex, genes), PIVOTS, turn, tilt, SCALE, (VIEW_W, VIEW_H),
-                           center=(0, VIEW_H / 2 - VIEW_Y), light=light, opacity=opacity)
+    return render3d.render(cubes_of(tex, genes, baby), BABY_PIVOTS if baby else PIVOTS, turn, tilt,
+                           SCALE, (VIEW_W, VIEW_H), center=(0, VIEW_H / 2 - VIEW_Y), light=light,
+                           opacity=opacity)
 
 
 def text(draw, xy, label, size):
@@ -335,6 +358,7 @@ def main():
     os.makedirs(GENE_OUT, exist_ok=True)
     os.makedirs(FAMILY_OUT, exist_ok=True)
     tex = find_zombie_texture()
+    baby_tex = find_zombie_texture(BABY_PATH)
     for family, genes in FAMILIES.items():
         ready = [g for g in genes if visual(g) is not None]
         missing = [g for g in genes if g not in ready]
@@ -352,7 +376,8 @@ def main():
             columns.append(("All " + str(len(ready)), zombie(tex, ready), ready, {}))
         for name, extra, with_family, options in EXTRA.get(family, []):
             genes_here = extra + (ready if with_family else [])
-            columns.append((name, zombie(tex, genes_here), genes_here, options))
+            base = baby_tex if options.get("baby") else tex
+            columns.append((name, zombie(base, genes_here), genes_here, options))
         path = os.path.join(FAMILY_OUT, family + ".png")
         sheet(family.title(), columns).save(path)
         print(path)

@@ -25,6 +25,30 @@
 				"tint": "#D8FF9A"
 			},
 			"order": 2
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/miasma_3.png",
+				"tint": "#8FE03A"
+			},
+			"order": 2
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/miasma_4.png",
+				"tint": "#8FE03A"
+			},
+			"order": 2
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/miasma_5.png",
+				"tint": "#8FE03A"
+			},
+			"order": 2
 		}
 	]
 }

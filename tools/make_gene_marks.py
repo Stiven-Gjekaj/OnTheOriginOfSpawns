@@ -578,33 +578,46 @@ def sporebearer():
 
 
 def leech():
-    # The face has no free pixels for a mouth, so the round mouths with teeth
-    # are on the palms, the inner side of each hand, where the zombie grabs.
-    # A ring of pale teeth around a dark red middle. They go on top of the
-    # Cinder spots and the other hand marks (order 1).
-    teeth = Mark("#E6DCC0", order=1)
-    throat = Mark("#4A0E12", order=1)
-    gum = Mark("#8A2A30", order=1)
-    throat.put(arm(INNER, 1, 9)).put(arm(INNER, 2, 9), 220)
-    for col, row in ((1, 8), (2, 8), (0, 9), (3, 9), (1, 10), (2, 10)):
-        teeth.put(arm(INNER, col, row), 255 if (col + row) % 2 else 225)
-    for col, row in ((0, 8), (3, 8), (0, 10), (3, 10)):
-        gum.put(arm(INNER, col, row), 220)
-    return [teeth, throat, gum]
+    # Dark tendrils, like veins, that start at the hand and climb up the arm
+    # in curves: on the front, the outer side, and the back of each arm. They
+    # go under the Rally band, the Mender scars, and the Frenzy scratches
+    # (order -1), as veins under the skin, and they keep away from the
+    # Contagion sores, which have the same order.
+    vein = Mark("#4A1630", order=-1)
+    light = Mark("#7A2850", order=-1)
+    paths = {
+        FRONT: ((0, 11), (0, 10), (1, 9), (1, 8), (0, 7), (0, 6), (0, 5)),
+        OUTER: ((3, 11), (3, 10), (2, 9), (2, 8), (1, 7), (1, 6), (0, 5), (0, 4)),
+        BACK: ((1, 11), (1, 10), (2, 9), (2, 8), (3, 7), (3, 6), (3, 5), (3, 4)),
+    }
+    for face, path in paths.items():
+        for n, (col, row) in enumerate(path):
+            (light if n % 3 == 2 else vein).put(arm(face, col, row))
+    return [vein, light]
 
 
 def miasma():
     # Lime green eyes, on the inner eye pixels (Nightborn has the outer
     # ones), and thin gloves of slime: a translucent lime layer over the
-    # hands. The gloves go over the other hand marks (order 2), but they are
-    # thin, so those marks show through.
+    # hands that fades into the arm. The gloves go over the other hand and
+    # arm marks (order 2), but they are thin, so those marks show through.
     eyes = Mark("#A6FF3C")
     eyes.put((10, 12)).put((13, 12))
     slime = Mark("#8FE03A", alpha=95, order=2, regions=["hands"], size=16).fill()
     shine = Mark("#D8FF9A", alpha=150, order=2)
     for face in (FRONT, OUTER):
         shine.put(arm(face, 1, 8)).put(arm(face, 2, 10), 220)
-    return [eyes, slime, shine]
+    # Above the glove, the slime fades into the arm over 3 rows: each row
+    # has fewer slime pixels, and they are fainter.
+    fade = []
+    for row, alpha, keep in ((7, 75, (0, 1, 2)), (6, 55, (0, 2)), (5, 35, (1,))):
+        mark = Mark("#8FE03A", alpha=alpha, order=2)
+        for face in SIDES:
+            for col in range(4):
+                if (col + row + face // 4) % 4 in keep:
+                    mark.put(arm(face, col, row))
+        fade.append(mark)
+    return [eyes, slime, shine] + fade
 
 
 def plague_carrier():

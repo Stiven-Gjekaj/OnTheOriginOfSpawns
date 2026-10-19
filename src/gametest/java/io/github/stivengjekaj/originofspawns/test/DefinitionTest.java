@@ -34,6 +34,25 @@ public class DefinitionTest {
 	private static final String NAMESPACE = "originofspawns_test";
 
 	@GameTest
+	public void modGenesNameFamiliesThatExist(GameTestHelper helper) {
+		var genes = helper.getLevel().registryAccess().lookupOrThrow(ModRegistries.GENE);
+		var families = helper.getLevel().registryAccess().lookupOrThrow(ModRegistries.FAMILY);
+		int checked = 0;
+		for (var entry : genes.entrySet()) {
+			Identifier id = entry.getKey().identifier();
+			if (!id.getNamespace().equals("originofspawns")) {
+				continue;
+			}
+			Gene gene = entry.getValue();
+			helper.assertTrue(families.containsKey(gene.family()), id + " names the family " + gene.family());
+			gene.subFamily().ifPresent(sub -> helper.assertTrue(families.containsKey(sub), id + " names the sub " + sub));
+			checked++;
+		}
+		helper.assertTrue(checked > 0, "the mod has genes");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void pressureReadsDamageTag(GameTestHelper helper) {
 		Pressure pressure = get(helper, ModRegistries.PRESSURE, "test_heat");
 		helper.assertValueEqual(pressure.damageTypes(), Optional.of(DamageTypeTags.IS_FIRE), "damage types");

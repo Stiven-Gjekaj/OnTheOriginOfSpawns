@@ -15,10 +15,12 @@
 			"io.github.stivengjekaj.originofspawns.test.GeneRollerTest",
 			"io.github.stivengjekaj.originofspawns.test.GeneEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.SelectionTest",
-			"io.github.stivengjekaj.originofspawns.test.TextureBakerTest"
+			"io.github.stivengjekaj.originofspawns.test.TextureBakerTest",
+			"io.github.stivengjekaj.originofspawns.test.NotebookPagesTest"
 		],
 		"fabric-client-gametest": [
-			"io.github.stivengjekaj.originofspawns.test.GeneTextureClientTest"
+			"io.github.stivengjekaj.originofspawns.test.GeneTextureClientTest",
+			"io.github.stivengjekaj.originofspawns.test.NotebookClientTest"
 		]
 	},
 	"depends": {

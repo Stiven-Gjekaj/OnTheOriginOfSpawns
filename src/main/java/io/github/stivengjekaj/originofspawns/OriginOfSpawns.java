@@ -2,11 +2,14 @@ package io.github.stivengjekaj.originofspawns;
 
 import io.github.stivengjekaj.originofspawns.command.PoolCommand;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
+import io.github.stivengjekaj.originofspawns.notebook.NotebookPayload;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
+import io.github.stivengjekaj.originofspawns.registry.ModItems;
 import io.github.stivengjekaj.originofspawns.registry.ModRegistries;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 
 import net.minecraft.resources.Identifier;
 
@@ -23,6 +26,8 @@ public class OriginOfSpawns implements ModInitializer {
 		ModRegistries.register();
 		ModAttachments.register();
 		Evolution.register();
+		ModItems.register();
+		PayloadTypeRegistry.clientboundPlay().register(NotebookPayload.TYPE, NotebookPayload.STREAM_CODEC);
 		CommandRegistrationCallback.EVENT.register((dispatcher, context, selection) ->
 				PoolCommand.register(dispatcher, context));
 		LOGGER.info("On the Origin of Spawns starts.");

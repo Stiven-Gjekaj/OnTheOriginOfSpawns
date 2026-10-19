@@ -1,0 +1,19 @@
+{
+	"item.originofspawns.beagle_notebook": "Beagle Notebook",
+	"gene.originofspawns.cinder": "Cinder",
+	"gene.originofspawns.ironhide": "Ironhide",
+	"gene.originofspawns.bonerunner": "Bonerunner",
+	"biome_category.originofspawns.hot": "Hot",
+	"biome_category.originofspawns.hot.short": "Hot",
+	"biome_category.originofspawns.cold": "Cold",
+	"biome_category.originofspawns.cold.short": "Cold",
+	"biome_category.originofspawns.wet": "Wet",
+	"biome_category.originofspawns.wet.short": "Wet",
+	"biome_category.originofspawns.temperate": "Temperate",
+	"biome_category.originofspawns.temperate.short": "Mild",
+	"biome_category.originofspawns.nether": "Nether",
+	"biome_category.originofspawns.nether.short": "Nether",
+	"biome_category.originofspawns.end": "End",
+	"biome_category.originofspawns.end.short": "End",
+	"screen.originofspawns.notebook.no_genes": "No genes are known for this species."
+}

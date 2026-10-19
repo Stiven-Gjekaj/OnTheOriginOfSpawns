@@ -50,6 +50,19 @@ Gradle runs the build on Java 25.
 
 The mod file is in `build/libs/`.
 
+## Release
+
+1. Set `mod_version` in `gradle.properties`.
+2. Commit the change.
+3. Publish a GitHub release with the tag `v` and the version, for example
+   `v0.1.0`.
+   The text of the release becomes the changelog.
+
+The `release` workflow then builds the mod.
+It uploads the mod file to Modrinth, CurseForge, and the GitHub release.
+The workflow uses the `MODRINTH_TOKEN` and `CURSEFORGE_TOKEN` repository
+secrets.
+
 ## Support
 
 If you like the project, you can support it on

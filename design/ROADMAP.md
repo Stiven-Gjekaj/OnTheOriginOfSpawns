@@ -54,7 +54,7 @@ Milestones 0 to 5 and the beta stage make version 1.0.0.
 
 Milestone 2 has four parts. Each part makes its own alpha release.
 
-#### Milestone 2a: Complete zombie
+#### Milestone 2a: Complete zombie (done)
 
 - Add the family system: family points, the major family, the sub family,
   hybrids, pure families, and neutral mobs.

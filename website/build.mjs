@@ -308,7 +308,11 @@ function visualOf(id) {
   if (vis.model) {
     const [ns, name] = vis.model.split(":");
     model = readJson(path.join(RES, "assets", ns, "gene_models", name + ".json"));
-    textures.add(model.texture);
+    // A model with mob_texture uses the baked texture of the mob, as in the game.
+    if (model.texture) textures.add(model.texture);
+    else if (!model.mob_texture) {
+      throw new Error(`the gene model ${vis.model} needs a texture, or mob_texture set to true`);
+    }
   }
   return { layers: vis.layers || [], regionMap: vis.region_map || null, model };
 }

@@ -172,7 +172,9 @@
       for (const g of genes) {
         const m = g.visual && g.visual.model;
         if (!m) continue;
-        const tex = await loadImage(m.texture);
+        // A model with mob_texture uses the baked texture of the zombie, with
+        // the marks of all its genes, as GeneModel does in the game.
+        const tex = m.mob_texture ? base : await loadImage(m.texture);
         const scale = tex.width / (m.texture_width || 64);
         for (const p of m.parts) {
           cubes.push({

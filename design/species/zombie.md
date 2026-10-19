@@ -122,9 +122,9 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Cinder | Stalker, sub Predator | `fire` | Fire immunity, and each hit has a 20% chance to set the player on fire | Rain and water damage it, and 4 less maximum health | Skin: more gray. Hands and feet: dark and red spots |
 | Hush | Stalker | `spotted` | No idle sounds and no hurt sounds | 2 less attack damage | Face: mouth sewn shut |
-| Shade | Stalker | `spotted` | At night, players cannot see it from more than 12 blocks | The sun burns it two times faster | Arms and legs: dark, mottled patches |
+| Shade | Stalker | `spotted` | At night, it is almost invisible: translucent, at about 10% opacity | The sun burns it two times faster | Arms and legs: dark, mottled patches |
 | Burrower | Stalker | `unreached` | At night, it can come up from the ground near a player | It cannot move for 2 seconds after it comes up | Feet and pants: dirt |
-| Lurker | Stalker | `spotted` | In the dark, it waits without movement until a player is in 6 blocks | 25% less follow range | Scalp: a dark shadow, like a hood |
+| Lurker | Stalker | `spotted` | It stays out of the view of players. It can come close from behind. In 6 blocks, it attacks as a normal zombie | 25% less follow range | Scalp: a dark shadow, like a hood |
 | Nightborn | Stalker | `sunlight` | 20% more speed and damage at light level 6 or less | 20% less damage at light level 12 or more | Face: pale, bright eyes |
 
 ### Tank genes
@@ -157,7 +157,7 @@ The visual column gives the region and the mark.
 | Contagion | Blight | `golem` | A villager that it kills always becomes a zombie villager | Iron golems attack it first, and do 50% more damage to it | Arms: green, wet sores |
 | Sporebearer | Blight | `crowd` | When it dies, it leaves a cloud of Weakness, 3 blocks wide | 4 less maximum health | Scalp: small fungus |
 | Leech | Blight | `melee` | Each hit takes some XP from the player | It drops no XP | Face: a round mouth with teeth |
-| Miasma | Blight | `projectile` | Players in 3 blocks get Weakness | It glows, so players see it through walls | Pants: a green haze |
+| Miasma | Blight | `projectile` | Players in 3 blocks get Weakness | It glows, so players see it through walls | Hands: thin gloves, like slime. Eyes: lime green |
 | Plague Carrier | Blight, sub Horde | `player_death` | A player that it kills rises as a zombie with its genes | 10% less maximum health | Skin: gray-green blotches |
 
 ## Minor families

@@ -1,0 +1,34 @@
+{
+	"layers": [
+		{
+			"regions": [
+				"torso",
+				"arms"
+			],
+			"materials": [
+				"cloth"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/rotgut_0.png",
+				"tint": "#4E6A22"
+			},
+			"order": -6
+		},
+		{
+			"regions": [
+				"torso",
+				"arms"
+			],
+			"materials": [
+				"cloth"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/rotgut_1.png",
+				"tint": "#16180E"
+			},
+			"order": -6
+		}
+	]
+}

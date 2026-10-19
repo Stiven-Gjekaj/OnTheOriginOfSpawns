@@ -1,0 +1,28 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/leech_0.png",
+				"tint": "#E6DCC0"
+			},
+			"order": 1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/leech_1.png",
+				"tint": "#4A0E12"
+			},
+			"order": 1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/leech_2.png",
+				"tint": "#8A2A30"
+			},
+			"order": 1
+		}
+	]
+}

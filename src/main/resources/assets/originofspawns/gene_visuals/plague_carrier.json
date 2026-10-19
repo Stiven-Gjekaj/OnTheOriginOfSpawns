@@ -1,0 +1,26 @@
+{
+	"layers": [
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/plague_carrier_0.png",
+				"tint": "#A3AC93"
+			},
+			"order": -2
+		},
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/plague_carrier_1.png",
+				"tint": "#4C5644"
+			},
+			"order": -2
+		}
+	]
+}

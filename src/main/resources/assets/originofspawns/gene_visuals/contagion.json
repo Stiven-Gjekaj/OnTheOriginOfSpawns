@@ -1,0 +1,28 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/contagion_0.png",
+				"tint": "#2E3A12"
+			},
+			"order": -1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/contagion_1.png",
+				"tint": "#7FA83A"
+			},
+			"order": -1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/contagion_2.png",
+				"tint": "#D2EE78"
+			},
+			"order": -1
+		}
+	]
+}

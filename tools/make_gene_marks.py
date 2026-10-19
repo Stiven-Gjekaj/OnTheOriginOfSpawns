@@ -533,6 +533,96 @@ def siege():
     return [bruise, split, raw, wood, tip]
 
 
+def noise100(x, y, seed):
+    return (x * 73856093 ^ y * 19349663 ^ seed * 83492791) * 2654435761 % 4294967296 % 100
+
+
+def rotgut():
+    # Green and black rot on the shirt and the sleeves. It goes with the
+    # Blastproof scorch (order -6), under the Ironhide plates (order -5), so
+    # the plates stay readable and the marks of other genes go on top.
+    cloth = {"regions": ["torso", "arms"], "materials": ["cloth"]}
+    green = Mark("#4E6A22", alpha=220, order=-6, **cloth)
+    black = Mark("#16180E", alpha=225, order=-6, **cloth)
+    for y in range(16, 48):
+        for x in range(16, 56):
+            n = noise100(x // 2, y // 2, 9)
+            if n < 18:
+                green.put((x, y), 255 if noise100(x, y, 10) % 2 else 215)
+            elif n < 26:
+                black.put((x, y))
+    return [green, black]
+
+
+def contagion():
+    # Green, wet sores on the skin of the arms: a dark rim, a green middle,
+    # and a bright wet spot. They go under the Frenzy scratches, the Mender
+    # scars, and the Rally band (order -1), and over the Shade patches.
+    rim = Mark("#2E3A12", order=-1)
+    sore = Mark("#7FA83A", order=-1)
+    wet = Mark("#D2EE78", order=-1)
+    sores = ((OUTER, 2, 5), (FRONT, 1, 4), (INNER, 2, 5), (BACK, 1, 4), (FRONT, 3, 6))
+    for face, col, row in sores:
+        wet.put(arm(face, col, row))
+        for dc, dr in ((-1, 0), (0, 1), (1, 0), (0, -1)):
+            c, r = col + dc, row + dr
+            if 0 <= c < 4 and 4 <= r <= 7:
+                (sore if (dc + dr) % 2 else rim).put(arm(face, c, r), 230)
+    return [rim, sore, wet]
+
+
+def sporebearer():
+    # Sporebearer has no marks on the texture. Its fungus is the gene model
+    # sporebearer_fungus.
+    return []
+
+
+def leech():
+    # The face has no free pixels for a mouth, so the round mouths with teeth
+    # are on the palms, the inner side of each hand, where the zombie grabs.
+    # A ring of pale teeth around a dark red middle. They go on top of the
+    # Cinder spots and the other hand marks (order 1).
+    teeth = Mark("#E6DCC0", order=1)
+    throat = Mark("#4A0E12", order=1)
+    gum = Mark("#8A2A30", order=1)
+    throat.put(arm(INNER, 1, 9)).put(arm(INNER, 2, 9), 220)
+    for col, row in ((1, 8), (2, 8), (0, 9), (3, 9), (1, 10), (2, 10)):
+        teeth.put(arm(INNER, col, row), 255 if (col + row) % 2 else 225)
+    for col, row in ((0, 8), (3, 8), (0, 10), (3, 10)):
+        gum.put(arm(INNER, col, row), 220)
+    return [teeth, throat, gum]
+
+
+def miasma():
+    # Lime green eyes, on the inner eye pixels (Nightborn has the outer
+    # ones), and thin gloves of slime: a translucent lime layer over the
+    # hands. The gloves go over the other hand marks (order 2), but they are
+    # thin, so those marks show through.
+    eyes = Mark("#A6FF3C")
+    eyes.put((10, 12)).put((13, 12))
+    slime = Mark("#8FE03A", alpha=95, order=2, regions=["hands"], size=16).fill()
+    shine = Mark("#D8FF9A", alpha=150, order=2)
+    for face in (FRONT, OUTER):
+        shine.put(arm(face, 1, 8)).put(arm(face, 2, 10), 220)
+    return [eyes, slime, shine]
+
+
+def plague_carrier():
+    # Gray-green blotches on the skin: a light gray-green middle with a dark
+    # rim, so that they show on green skin. They go under all other marks
+    # (order -2), so they never hide one.
+    skin = {"materials": ["skin"]}
+    core = Mark("#A3AC93", alpha=230, order=-2, **skin)
+    rim = Mark("#4C5644", alpha=220, order=-2, **skin)
+    for y in range(64):
+        for x in range(64):
+            n = noise100(x // 2, y // 2, 21)
+            if n < 20:
+                inner = noise100(x // 2, y // 2, 24) < 60 and noise100(x, y, 22) < 75
+                (core if inner else rim).put((x, y), 255 if noise100(x, y, 23) % 3 else 215)
+    return [core, rim]
+
+
 GENES = {
     "lunger": lunger,
     "frenzy": frenzy,
@@ -554,6 +644,12 @@ GENES = {
     "runt": runt,
     "grave_call": grave_call,
     "siege": siege,
+    "rotgut": rotgut,
+    "contagion": contagion,
+    "sporebearer": sporebearer,
+    "leech": leech,
+    "miasma": miasma,
+    "plague_carrier": plague_carrier,
 }
 
 # The gene models of the genes in GENES.
@@ -564,6 +660,7 @@ MODELS = {
     "thickskull": "originofspawns:thickskull_plate",
     "bloat": "originofspawns:bloat_body",
     "packcaller": "originofspawns:packcaller_jaw",
+    "sporebearer": "originofspawns:sporebearer_fungus",
     "stoneblood": "originofspawns:stoneblood_shell",
 }
 

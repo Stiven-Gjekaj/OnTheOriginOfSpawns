@@ -110,8 +110,10 @@ Thus, the bones look worn, not undead.
 
 - Pressure decays.
   If players stop a cause of death, the gene that counters it fades slowly.
-- Each mob has a fixed number of gene points.
+- Each mob has a maximum of 5 genes.
+  The genes under the most pressure come first.
   Thus, a species cannot have all defenses at the same time.
+- Each gene has a gain and a downside.
 - The difficulty sets the speed of evolution.
   Peaceful has no evolution.
   Hard has the fastest evolution.
@@ -122,7 +124,34 @@ Thus, the bones look worn, not undead.
 - If players kill a species too much in a category, the species goes extinct
   in that category.
   An extinct species does not spawn there.
-- If a pool moves far from its start, it becomes a new named variant.
+- Families replace named variants.
+  Refer to "Families".
+
+## Families
+
+- Each species has 3 major families.
+  Each species has its own families, with its own names.
+  For example, a zombie family can be "Predators".
+- Each major family has one big buff and one big debuff.
+- Each gene has a family tag.
+  The tag tells what kind of change the gene makes.
+- The family tags of the genes of a mob select its family.
+  For example, a zombie with speed, fire resistance, faster attacks, less
+  health, and more damage on death is a Predator.
+- The families use the same tiers as the evolution classes of the player:
+
+| Condition | Effects |
+|---|---|
+| One family has the most tags | That family gives tier 2 effects |
+| Two families have the same number of tags | Each of the two families gives tier 1 effects. The mob is a hybrid |
+| No family tag on the genes | No family effects. The mob is neutral |
+
+- At the start of a world, all mobs are neutral.
+  Evolution can also make a mob neutral again by chance.
+- Minor families record combinations of genes that do not match a major
+  family.
+  They catalog the randomness of evolution.
+  The notebook records each minor family that the player finds.
 
 ## Species against species
 
@@ -368,6 +397,8 @@ The first release has these 30 perks:
 ## Open questions
 
 - Does the "unreached" pressure also select for attack speed?
+- Do all mobs in one pool get the same 5 genes, or does each mob get its own
+  5 genes, at random, from the frequencies of the pool?
 
 ## First milestone
 

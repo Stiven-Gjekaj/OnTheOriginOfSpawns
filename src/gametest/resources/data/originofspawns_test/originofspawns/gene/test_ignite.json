@@ -1,0 +1,9 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:stalker",
+	"gains": [
+		{ "type": "ignite_target", "chance": 1, "seconds": 5 }
+	],
+	"mutation_rate": 0
+}

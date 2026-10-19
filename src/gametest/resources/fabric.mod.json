@@ -11,7 +11,9 @@
 			"io.github.stivengjekaj.originofspawns.test.GenePoolsTest",
 			"io.github.stivengjekaj.originofspawns.test.PoolCommandTest",
 			"io.github.stivengjekaj.originofspawns.test.BiomeCategoryTest",
-			"io.github.stivengjekaj.originofspawns.test.PressureTest"
+			"io.github.stivengjekaj.originofspawns.test.PressureTest",
+			"io.github.stivengjekaj.originofspawns.test.GeneRollerTest",
+			"io.github.stivengjekaj.originofspawns.test.GeneEffectsTest"
 		]
 	},
 	"depends": {

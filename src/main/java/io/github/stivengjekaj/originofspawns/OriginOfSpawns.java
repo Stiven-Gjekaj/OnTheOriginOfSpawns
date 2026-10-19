@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns;
 
 import io.github.stivengjekaj.originofspawns.command.PoolCommand;
+import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 import io.github.stivengjekaj.originofspawns.registry.ModRegistries;
 
@@ -21,6 +22,7 @@ public class OriginOfSpawns implements ModInitializer {
 	public void onInitialize() {
 		ModRegistries.register();
 		ModAttachments.register();
+		Evolution.register();
 		CommandRegistrationCallback.EVENT.register((dispatcher, context, selection) ->
 				PoolCommand.register(dispatcher, context));
 		LOGGER.info("On the Origin of Spawns starts.");

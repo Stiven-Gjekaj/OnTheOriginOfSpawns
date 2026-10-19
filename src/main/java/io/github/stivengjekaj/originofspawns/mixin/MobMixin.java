@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
 import io.github.stivengjekaj.originofspawns.evolution.CombatRecord;
+import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.server.level.ServerLevel;
@@ -30,8 +31,12 @@ public abstract class MobMixin {
 
 	@Inject(method = "doHurtTarget", at = @At("RETURN"))
 	private void originofspawns$recordHit(ServerLevel level, Entity target, CallbackInfoReturnable<Boolean> info) {
-		if (info.getReturnValueZ() && target instanceof Player) {
-			Mob self = (Mob) (Object) this;
+		if (!info.getReturnValueZ()) {
+			return;
+		}
+		Mob self = (Mob) (Object) this;
+		GeneEffects.onHit(self, target);
+		if (target instanceof Player) {
 			CombatRecord record = self.getAttachedOrElse(ModAttachments.COMBAT, CombatRecord.NONE);
 			if (!record.damagedPlayer()) {
 				self.setAttached(ModAttachments.COMBAT, record.withDamagedPlayer());

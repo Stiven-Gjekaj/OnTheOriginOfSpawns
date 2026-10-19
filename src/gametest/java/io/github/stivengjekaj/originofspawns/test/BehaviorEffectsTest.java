@@ -5,6 +5,8 @@ import java.util.List;
 import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.Evolution;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.goal.LeapGoal;
 import io.github.stivengjekaj.originofspawns.evolution.goal.LurkGoal;
@@ -23,6 +25,8 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.pig.Pig;
@@ -249,6 +253,29 @@ public class BehaviorEffectsTest {
 		helper.assertFalse(LurkGoal.isWatchedFromAfar(zombie, player, 3.0), "player looks away");
 		player.setYRot(180.0F);
 		helper.assertFalse(LurkGoal.isWatchedFromAfar(zombie, player, 6.0), "player is in the radius");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void sunburnHurtsOnlyWhileTheSunBurns(GameTestHelper helper) {
+		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_sunburn");
+		DamageSource fire = helper.getLevel().damageSources().onFire();
+		helper.assertValueEqual(GeneCombat.modifyDamage(zombie, fire, 2.0F), 2.0F, "fire with no sun");
+		Evolution.markSunBurn(zombie);
+		helper.assertValueEqual(GeneCombat.modifyDamage(zombie, fire, 2.0F), 4.0F, "fire from the sun");
+		helper.assertValueEqual(GeneCombat.modifyDamage(zombie, helper.getLevel().damageSources().generic(), 2.0F), 2.0F,
+				"other damage while the sun burns");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void golemsTurnToTheBait(GameTestHelper helper) {
+		Zombie bait = zombieWith(helper, new BlockPos(1, 1, 1), "test_attract_golems");
+		Zombie plain = zombieWith(helper, new BlockPos(5, 1, 5));
+		IronGolem golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(4, 1, 1));
+		golem.setTarget(plain);
+		GeneBehaviors.attractGolems(bait, helper.getLevel(), new GeneEffect.AttractGolems(16.0F));
+		helper.assertTrue(golem.getTarget() == bait, "the golem attacks the bait first");
 		helper.succeed();
 	}
 

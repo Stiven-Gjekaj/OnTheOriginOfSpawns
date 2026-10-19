@@ -60,7 +60,9 @@ public sealed interface GeneEffect {
 			Map.entry("siege", Siege.CODEC),
 			Map.entry("aura", Aura.CODEC),
 			Map.entry("glowing", Glowing.CODEC),
-			Map.entry("raise_victim", RaiseVictim.CODEC)
+			Map.entry("raise_victim", RaiseVictim.CODEC),
+			Map.entry("sunburn", Sunburn.CODEC),
+			Map.entry("attract_golems", AttractGolems.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -653,6 +655,34 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "raise_victim";
+		}
+	}
+
+	/**
+	 * Multiplies the fire damage that the mob takes while the sun burns it. Other fire does normal damage.
+	 */
+	record Sunburn(float multiplier) implements GeneEffect {
+		public static final MapCodec<Sunburn> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).fieldOf("multiplier").forGetter(Sunburn::multiplier)
+		).apply(instance, Sunburn::new));
+
+		@Override
+		public String type() {
+			return "sunburn";
+		}
+	}
+
+	/**
+	 * Iron golems in the radius attack the mob first, before other targets.
+	 */
+	record AttractGolems(float radius) implements GeneEffect {
+		public static final MapCodec<AttractGolems> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("radius", 16.0F).forGetter(AttractGolems::radius)
+		).apply(instance, AttractGolems::new));
+
+		@Override
+		public String type() {
+			return "attract_golems";
 		}
 	}
 }

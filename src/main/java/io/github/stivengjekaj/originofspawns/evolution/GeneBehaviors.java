@@ -28,6 +28,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
 import net.minecraft.world.entity.animal.chicken.Chicken;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -184,6 +185,7 @@ public final class GeneBehaviors {
 								4, 0.4, 0.5, 0.4, 0.0);
 					}
 				}
+				case GeneEffect.AttractGolems attract -> attractGolems(mob, level, attract);
 				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
 				case GeneEffect.FrenziedTargeting frenzy
 						when now % Math.max(1, Math.round(frenzy.intervalSeconds() * 20.0F)) < TICK_INTERVAL
@@ -196,6 +198,20 @@ public final class GeneBehaviors {
 				case GeneEffect.Hunt hunt -> hunt(mob, level, hunt);
 				default -> {
 				}
+			}
+		}
+	}
+
+	/**
+	 * Turns the iron golems near the mob to the mob, unless they already attack a mob that attracts golems.
+	 */
+	public static void attractGolems(Mob mob, ServerLevel level, GeneEffect.AttractGolems attract) {
+		for (IronGolem golem : level.getEntitiesOfClass(IronGolem.class, mob.getBoundingBox().inflate(attract.radius()),
+				IronGolem::isAlive)) {
+			LivingEntity target = golem.getTarget();
+			boolean busy = target != null && target.isAlive() && GeneCombat.has(target, GeneEffect.AttractGolems.class);
+			if (!busy && golem.canAttack(mob)) {
+				golem.setTarget(mob);
 			}
 		}
 	}

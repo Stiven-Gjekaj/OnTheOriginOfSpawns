@@ -15,6 +15,7 @@ import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
@@ -71,6 +72,8 @@ public final class GeneCombat {
 		for (GeneEffect effect : victimEffects) {
 			switch (effect) {
 				case GeneEffect.DamageTaken taken when source.is(taken.damageTypes()) -> result *= taken.multiplier();
+				case GeneEffect.Sunburn sunburn when source.is(DamageTypeTags.IS_FIRE)
+						&& Evolution.isSunBurning(victim, victim.level().getGameTime()) -> result *= sunburn.multiplier();
 				case GeneEffect.DamageTakenWhen taken when test(victim, taken.when()) -> result *= taken.multiplier();
 				case GeneEffect.DamageFrom from when source.getEntity() != null
 						&& from.attackers().stream().anyMatch(type -> type.value() == source.getEntity().getType()) ->

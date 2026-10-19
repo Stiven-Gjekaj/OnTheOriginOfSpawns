@@ -207,7 +207,7 @@ public final class Evolution {
 		if (combat.targetedPlayer() && !combat.damagedPlayer()) {
 			facts.add(DeathCondition.UNREACHED);
 		}
-		if (source.is(DamageTypeTags.IS_FIRE) && trace.sunBurnTime() >= 0L && now - trace.sunBurnTime() <= SUN_BURN_TICKS) {
+		if (source.is(DamageTypeTags.IS_FIRE) && isSunBurning(mob, now)) {
 			facts.add(DeathCondition.SUNLIGHT);
 		}
 		if (source.getEntity() instanceof Player player) {
@@ -248,6 +248,14 @@ public final class Evolution {
 		}
 		double facing = player.getViewVector(1.0F).dot(toMob.scale(1.0 / distance));
 		return facing >= SPOT_VIEW_COS && player.hasLineOfSight(mob);
+	}
+
+	/**
+	 * Tells if the sun set the mob on fire a short time ago, so that its fire comes from the sun.
+	 */
+	public static boolean isSunBurning(LivingEntity mob, long now) {
+		long time = mob.getAttachedOrElse(ModAttachments.TRACE, DeathTrace.NONE).sunBurnTime();
+		return time >= 0L && now - time <= SUN_BURN_TICKS;
 	}
 
 	public static void markSunBurn(Mob mob) {

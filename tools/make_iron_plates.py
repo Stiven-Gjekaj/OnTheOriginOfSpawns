@@ -2,14 +2,16 @@
 
 Usage: python3 tools/make_iron_plates.py
 
-Each pattern is 16x16 and tiles in both directions. It is gray with alpha.
-The file is RGBA with the same value in red, green, and blue.
-The game tints a pattern and stamps it at the same position in the mob
-texture, so pattern pixel (x % 16, y % 16) goes on texture pixel (x, y).
+Each pattern is gray with alpha. The file is RGBA with the same value in
+red, green, and blue. The game tints a pattern and stamps it at the same
+position in the mob texture, so pattern pixel (x % w, y % h) goes on
+texture pixel (x, y).
 
-iron_plates.png is for the shirt. There are two rows of 8x8 plates. The
-second row moves 4 pixels to the right. Each plate has a light top edge, a
-dark seam, and two rivets.
+iron_plates.png is for the shirt. It is 64x64, so each plate is on exact
+pixels of the zombie texture. It is a breastplate of 6x6 pixels on the
+chest, and the same on the back. The breastplate has four plates of 3x3
+pixels, each with a rivet and a dark seam. The rest of the shirt stays
+clear for the marks of other genes.
 
 iron_plates_sleeve.png is for the sleeves. Each face of an arm is 4 pixels
 wide, and each face starts at an x that is a multiple of 4. Thus the sleeve
@@ -29,34 +31,9 @@ SEAM = (72, 235)
 PLATE = (150, 205)
 EDGE_LIGHT = (188, 215)
 EDGE_SIDE = (172, 210)
-EDGE_SHADE = (122, 210)
-WEAR = (136, 205)
 RIVET = (226, 255)
 RIVET_SHADOW = (92, 240)
 CLEAR = (0, 0)
-
-# Pixels in plate space that show wear. Each plate uses the same set.
-WEAR_PIXELS = {(3, 3), (4, 4), (2, 5)}
-
-
-def plate_pixel(px, py):
-    """Return (gray, alpha) for a pixel of an 8x8 plate."""
-    if px == 7 or py == 7:
-        return SEAM
-    if (px, py) in ((1, 1), (5, 1)):
-        return RIVET
-    if (px, py) in ((1, 2), (5, 2)):
-        return RIVET_SHADOW
-    if py == 0:
-        return EDGE_LIGHT
-    if py == 6:
-        return EDGE_SHADE
-    if px == 0:
-        return EDGE_SIDE
-    if (px, py) in WEAR_PIXELS:
-        return WEAR
-    return PLATE
-
 
 def sleeve_pixel(px, py):
     """Return (gray, alpha) for a pixel of a 4x8 sleeve cell."""
@@ -82,13 +59,31 @@ def sleeve_pixel(px, py):
     return CLEAR
 
 
+# The top left pixel of the breastplate on the front and on the back.
+BREASTPLATES = ((21, 22), (33, 22))
+
+
+def breastplate_pixel(px, py):
+    """Return (gray, alpha) for a pixel of the 6x6 breastplate."""
+    cx, cy = px % 3, py % 3
+    if cx == 2 or cy == 2:
+        return SEAM
+    if (cx, cy) == (0, 0):
+        return RIVET
+    if cy == 0:
+        return EDGE_LIGHT
+    if cx == 0:
+        return EDGE_SIDE
+    return PLATE
+
+
 def make_shirt():
-    im = Image.new("RGBA", (16, 16))
-    for y in range(16):
-        shift = 0 if y < 8 else 4
-        for x in range(16):
-            gray, alpha = plate_pixel((x - shift) % 8, y % 8)
-            im.putpixel((x, y), (gray, gray, gray, alpha))
+    im = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+    for x0, y0 in BREASTPLATES:
+        for py in range(6):
+            for px in range(6):
+                gray, alpha = breastplate_pixel(px, py)
+                im.putpixel((x0 + px, y0 + py), (gray, gray, gray, alpha))
     return im
 
 

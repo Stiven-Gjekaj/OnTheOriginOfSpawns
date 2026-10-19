@@ -29,11 +29,6 @@ public record Pressure(Optional<TagKey<DamageType>> damageTypes, List<DeathCondi
 		if (damageTypes.isPresent() && !context.source().is(damageTypes.get())) {
 			return false;
 		}
-		for (DeathCondition condition : conditions) {
-			if (!condition.test(context)) {
-				return false;
-			}
-		}
-		return true;
+		return context.facts().containsAll(conditions);
 	}
 }

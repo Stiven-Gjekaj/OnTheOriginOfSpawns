@@ -1,0 +1,6 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns_test:test_player_death",
+	"family": "originofspawns_test:blight",
+	"mutation_rate": 0
+}

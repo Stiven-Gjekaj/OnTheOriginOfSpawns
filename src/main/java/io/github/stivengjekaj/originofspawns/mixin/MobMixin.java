@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
 import io.github.stivengjekaj.originofspawns.evolution.CombatRecord;
+import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -27,6 +28,11 @@ public abstract class MobMixin {
 				self.setAttached(ModAttachments.COMBAT, record.withTargetedPlayer());
 			}
 		}
+	}
+
+	@Inject(method = "burnUndead", at = @At("HEAD"))
+	private void originofspawns$recordSunBurn(CallbackInfo info) {
+		Evolution.markSunBurn((Mob) (Object) this);
 	}
 
 	@Inject(method = "doHurtTarget", at = @At("RETURN"))

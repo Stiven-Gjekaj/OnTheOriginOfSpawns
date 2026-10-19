@@ -1,11 +1,13 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
+import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,6 +27,9 @@ public abstract class LivingEntityMixin {
 		LivingEntity self = (LivingEntity) (Object) this;
 		if (self.level() instanceof ServerLevel level && self.hasAttached(ModAttachments.GENES)) {
 			GeneEffects.tick(self, level);
+			if (self instanceof Mob mob && mob.tickCount % 20 == 0) {
+				Evolution.trackSpotter(mob, level);
+			}
 		}
 	}
 }

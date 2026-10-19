@@ -3,6 +3,7 @@ package io.github.stivengjekaj.originofspawns.registry;
 import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.CombatRecord;
+import io.github.stivengjekaj.originofspawns.evolution.DeathTrace;
 
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
@@ -21,6 +22,11 @@ public final class ModAttachments {
 	public static final AttachmentType<CarriedGenes> GENES = AttachmentRegistry.create(OriginOfSpawns.id("genes"),
 			builder -> builder.persistent(CarriedGenes.CODEC)
 					.syncWith(CarriedGenes.STREAM_CODEC, AttachmentSyncPredicate.all()));
+
+	/**
+	 * Short-lived facts for the death of a mob. The game does not save them.
+	 */
+	public static final AttachmentType<DeathTrace> TRACE = AttachmentRegistry.create(OriginOfSpawns.id("trace"));
 
 	private ModAttachments() {
 	}

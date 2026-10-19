@@ -1,11 +1,13 @@
 package io.github.stivengjekaj.originofspawns.evolution;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.stivengjekaj.originofspawns.definition.DeathCondition;
 import io.github.stivengjekaj.originofspawns.definition.DeathContext;
 import io.github.stivengjekaj.originofspawns.definition.Gene;
 import io.github.stivengjekaj.originofspawns.definition.Pressure;
@@ -14,6 +16,7 @@ import io.github.stivengjekaj.originofspawns.registry.ModRegistries;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 
 import net.minecraft.core.Registry;
@@ -22,16 +25,31 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Connects the evolution of the mod to the game.
  */
 public final class Evolution {
 	private static final long TICKS_PER_DAY = 24000L;
+	private static final long SUN_BURN_TICKS = 200L;
+	private static final int SPOTTED_SECONDS = 2;
+	private static final double SPOT_MIN_DISTANCE = 8.0;
+	private static final double SPOT_RANGE = 48.0;
+	/**
+	 * The cosine of the half angle of the view of a player, about 70 degrees.
+	 */
+	private static final double SPOT_VIEW_COS = 0.34;
+	private static final CrowdTracker CROWDS = new CrowdTracker();
 
 	/**
 	 * The decay rate of a gene that the data packs no longer have.
@@ -44,6 +62,7 @@ public final class Evolution {
 		ServerEntityEvents.ENTITY_LOAD.register(Evolution::onLoad);
 		ServerLivingEntityEvents.AFTER_DEATH.register(Evolution::onDeath);
 		ServerTickEvents.END_SERVER_TICK.register(Evolution::decay);
+		ServerLifecycleEvents.SERVER_STOPPED.register(server -> CROWDS.clear());
 	}
 
 	private static void onLoad(Entity entity, ServerLevel level) {
@@ -88,12 +107,53 @@ public final class Evolution {
 	/**
 	 * Counts a death for each pressure that it matches. Each gene that counters one of these pressures rises
 	 * in the pool of the species, in the category of the biome where the mob died.
+	 * A player that a mob kills also makes the genes of the killer rise.
 	 */
 	public static void onDeath(LivingEntity entity, DamageSource source) {
-		if (!(entity instanceof Mob mob) || !(mob.level() instanceof ServerLevel level)) {
+		if (!(entity.level() instanceof ServerLevel level)) {
 			return;
 		}
-		DeathContext context = new DeathContext(source, mob.getAttachedOrElse(ModAttachments.COMBAT, CombatRecord.NONE));
+		if (entity instanceof Player && source.getEntity() instanceof Mob killer) {
+			onPlayerKilled(level, killer, source);
+		}
+		if (!(entity instanceof Mob mob)) {
+			return;
+		}
+		Identifier species = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
+		BiomeCategory category = BiomeCategory.of(level.getBiome(mob.blockPosition()));
+		select(level, mob.getType(), category, new DeathContext(source, facts(mob, source, level)));
+
+		List<CrowdTracker.Death> crowd = CROWDS.add(new CrowdTracker.Death(level.dimension(), species, category,
+				mob.position(), level.getGameTime(), false));
+		for (CrowdTracker.Death death : crowd) {
+			select(level, mob.getType(), death.category(), new DeathContext(source, Set.of(DeathCondition.CROWD)));
+		}
+	}
+
+	/**
+	 * Raises the genes that a killer mob carries, and counts the player death pressure for its species.
+	 */
+	public static void onPlayerKilled(ServerLevel level, Mob killer, DamageSource source) {
+		CarriedGenes carried = killer.getAttached(ModAttachments.GENES);
+		Identifier species = BuiltInRegistries.ENTITY_TYPE.getKey(killer.getType());
+		BiomeCategory category = BiomeCategory.of(level.getBiome(killer.blockPosition()));
+		if (carried != null) {
+			Registry<Gene> genes = level.registryAccess().lookupOrThrow(ModRegistries.GENE);
+			GenePools pools = GenePools.get(level.getServer());
+			for (Identifier id : carried.genes()) {
+				Gene gene = genes.getValue(id);
+				if (gene != null) {
+					pools.select(species, category, id, gene.selectionRate());
+				}
+			}
+		}
+		select(level, killer.getType(), category, new DeathContext(source, Set.of(DeathCondition.PLAYER_DEATH)));
+	}
+
+	/**
+	 * Raises each gene of the species that counters a pressure that the context matches.
+	 */
+	public static void select(ServerLevel level, EntityType<?> type, BiomeCategory category, DeathContext context) {
 		Set<ResourceKey<Pressure>> matched = new HashSet<>();
 		for (Map.Entry<ResourceKey<Pressure>, Pressure> entry
 				: level.registryAccess().lookupOrThrow(ModRegistries.PRESSURE).entrySet()) {
@@ -104,14 +164,81 @@ public final class Evolution {
 		if (matched.isEmpty()) {
 			return;
 		}
-		Identifier species = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
-		BiomeCategory category = BiomeCategory.of(level.getBiome(mob.blockPosition()));
+		Identifier species = BuiltInRegistries.ENTITY_TYPE.getKey(type);
 		GenePools pools = GenePools.get(level.getServer());
 		for (Map.Entry<ResourceKey<Gene>, Gene> entry : level.registryAccess().lookupOrThrow(ModRegistries.GENE).entrySet()) {
 			Gene gene = entry.getValue();
-			if (gene.carriedBy(mob.getType()) && matched.contains(gene.counters())) {
+			if (gene.carriedBy(type) && matched.contains(gene.counters())) {
 				pools.select(species, category, entry.getKey().identifier(), gene.selectionRate());
 			}
+		}
+	}
+
+	/**
+	 * Finds the facts of the death of a mob, except the crowd fact. The crowd fact needs the other deaths.
+	 */
+	public static Set<DeathCondition> facts(Mob mob, DamageSource source, ServerLevel level) {
+		Set<DeathCondition> facts = EnumSet.noneOf(DeathCondition.class);
+		long now = level.getGameTime();
+		CombatRecord combat = mob.getAttachedOrElse(ModAttachments.COMBAT, CombatRecord.NONE);
+		DeathTrace trace = mob.getAttachedOrElse(ModAttachments.TRACE, DeathTrace.NONE);
+		if (combat.targetedPlayer() && !combat.damagedPlayer()) {
+			facts.add(DeathCondition.UNREACHED);
+		}
+		if (source.is(DamageTypeTags.IS_FIRE) && trace.sunBurnTime() >= 0L && now - trace.sunBurnTime() <= SUN_BURN_TICKS) {
+			facts.add(DeathCondition.SUNLIGHT);
+		}
+		if (source.getEntity() instanceof Player player) {
+			if (trace.criticalTime() == now) {
+				facts.add(DeathCondition.CRITICAL);
+			}
+			if (trace.spotter().filter(player.getUUID()::equals).isPresent() && trace.spottedSeconds() >= SPOTTED_SECONDS) {
+				facts.add(DeathCondition.SPOTTED);
+			}
+		}
+		if (source.getEntity() instanceof IronGolem) {
+			facts.add(DeathCondition.GOLEM);
+		}
+		AABB area = mob.getBoundingBox().inflate(CrowdTracker.RADIUS);
+		if (level.getEntities(mob.getType(), area, other -> other != mob && other.isAlive()).isEmpty()) {
+			facts.add(DeathCondition.ALONE);
+		}
+		return facts;
+	}
+
+	/**
+	 * Records each second if a player sees a mob from far away. Only mobs with genes need it.
+	 */
+	public static void trackSpotter(Mob mob, ServerLevel level) {
+		Player player = level.getNearestPlayer(mob, SPOT_RANGE);
+		DeathTrace trace = mob.getAttachedOrElse(ModAttachments.TRACE, DeathTrace.NONE);
+		DeathTrace next = player != null && isSpottedBy(mob, player) ? trace.seenBy(player.getUUID()) : trace.unseen();
+		if (!next.equals(trace)) {
+			mob.setAttached(ModAttachments.TRACE, next);
+		}
+	}
+
+	private static boolean isSpottedBy(Mob mob, Player player) {
+		Vec3 toMob = mob.getEyePosition().subtract(player.getEyePosition());
+		double distance = toMob.length();
+		if (distance <= SPOT_MIN_DISTANCE || distance > SPOT_RANGE) {
+			return false;
+		}
+		double facing = player.getViewVector(1.0F).dot(toMob.scale(1.0 / distance));
+		return facing >= SPOT_VIEW_COS && player.hasLineOfSight(mob);
+	}
+
+	public static void markSunBurn(Mob mob) {
+		if (mob.level() instanceof ServerLevel level) {
+			mob.setAttached(ModAttachments.TRACE,
+					mob.getAttachedOrElse(ModAttachments.TRACE, DeathTrace.NONE).withSunBurn(level.getGameTime()));
+		}
+	}
+
+	public static void markCritical(Entity target) {
+		if (target.level() instanceof ServerLevel level) {
+			target.setAttached(ModAttachments.TRACE,
+					target.getAttachedOrElse(ModAttachments.TRACE, DeathTrace.NONE).withCritical(level.getGameTime()));
 		}
 	}
 

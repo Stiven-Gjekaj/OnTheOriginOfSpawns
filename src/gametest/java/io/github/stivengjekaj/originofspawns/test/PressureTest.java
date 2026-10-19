@@ -1,5 +1,8 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import java.util.Set;
+
+import io.github.stivengjekaj.originofspawns.definition.DeathCondition;
 import io.github.stivengjekaj.originofspawns.definition.DeathContext;
 import io.github.stivengjekaj.originofspawns.definition.Pressure;
 import io.github.stivengjekaj.originofspawns.evolution.CombatRecord;
@@ -19,23 +22,22 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 
 public class PressureTest {
-	private static final CombatRecord UNREACHED = new CombatRecord(true, false);
-	private static final CombatRecord REACHED = new CombatRecord(true, true);
+	private static final Set<DeathCondition> UNREACHED = Set.of(DeathCondition.UNREACHED);
+	private static final Set<DeathCondition> REACHED = Set.of();
 
 	@GameTest
 	public void damagePressureChecksTheDamageType(GameTestHelper helper) {
 		Pressure heat = pressure(helper, "test_heat");
-		helper.assertTrue(heat.matches(new DeathContext(fire(helper), CombatRecord.NONE)), "fire death");
-		helper.assertFalse(heat.matches(new DeathContext(fall(helper), CombatRecord.NONE)), "fall death");
+		helper.assertTrue(heat.matches(new DeathContext(fire(helper), Set.of())), "fire death");
+		helper.assertFalse(heat.matches(new DeathContext(fall(helper), Set.of())), "fall death");
 		helper.succeed();
 	}
 
 	@GameTest
 	public void unreachedNeedsATargetAndNoHit(GameTestHelper helper) {
 		Pressure unreached = pressure(helper, "test_unreached");
-		helper.assertTrue(unreached.matches(new DeathContext(fall(helper), UNREACHED)), "targeted, no hit");
-		helper.assertFalse(unreached.matches(new DeathContext(fall(helper), REACHED)), "targeted and hit");
-		helper.assertFalse(unreached.matches(new DeathContext(fall(helper), CombatRecord.NONE)), "no target");
+		helper.assertTrue(unreached.matches(new DeathContext(fall(helper), UNREACHED)), "unreached death");
+		helper.assertFalse(unreached.matches(new DeathContext(fall(helper), REACHED)), "reached death");
 		helper.succeed();
 	}
 
@@ -54,9 +56,9 @@ public class PressureTest {
 		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
 		helper.assertValueEqual(record(zombie), CombatRecord.NONE, "record at spawn");
 		zombie.setTarget(player);
-		helper.assertValueEqual(record(zombie), UNREACHED, "record after target");
+		helper.assertValueEqual(record(zombie), new CombatRecord(true, false), "record after target");
 		zombie.doHurtTarget(helper.getLevel(), player);
-		helper.assertValueEqual(record(zombie), REACHED, "record after hit");
+		helper.assertValueEqual(record(zombie), new CombatRecord(true, true), "record after hit");
 		helper.succeed();
 	}
 

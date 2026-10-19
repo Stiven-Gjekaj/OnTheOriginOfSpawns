@@ -10,8 +10,9 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/pattern/iron_plates.png",
-				"tint": "#8C9196"
-			}
+				"tint": "#A1998F"
+			},
+			"order": -5
 		},
 		{
 			"regions": [
@@ -23,8 +24,9 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/pattern/iron_plates_sleeve.png",
-				"tint": "#8C9196"
-			}
+				"tint": "#A1998F"
+			},
+			"order": -5
 		}
 	]
 }

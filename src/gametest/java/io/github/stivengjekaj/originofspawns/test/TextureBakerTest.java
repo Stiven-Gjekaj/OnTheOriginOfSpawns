@@ -159,6 +159,23 @@ public class TextureBakerTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void geneModelPartReadsRotationAndGlow(GameTestHelper helper) {
+		String json = """
+				{ "bone": "body", "uv": [0, 0], "from": [1, -3, 2], "size": [1, 4, 1],
+				  "pivot": [1.5, 0, 2.5], "rotation": [-25, 0, 10], "glow": true }
+				""";
+		GeneModel.Part part = GeneModel.Part.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json)).getOrThrow();
+		helper.assertValueEqual(part.pivot(), List.of(1.5F, 0.0F, 2.5F), "pivot");
+		helper.assertValueEqual(part.rotation(), List.of(-25.0F, 0.0F, 10.0F), "rotation");
+		helper.assertTrue(part.glow(), "glow");
+		GeneModel.Part plain = GeneModel.Part.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(
+				"{ \"bone\": \"body\", \"uv\": [0, 0], \"from\": [0, 0, 0], \"size\": [1, 1, 1] }")).getOrThrow();
+		helper.assertValueEqual(plain.rotation(), List.of(0.0F, 0.0F, 0.0F), "no rotation by default");
+		helper.assertFalse(plain.glow(), "no glow by default");
+		helper.succeed();
+	}
+
 	private static int label(BodyRegion region, BodyMaterial material) {
 		return ARGB.color(255, region.id(), material.id(), 0);
 	}

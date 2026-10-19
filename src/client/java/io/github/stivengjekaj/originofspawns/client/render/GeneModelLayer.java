@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.ZombieRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 
 /**
  * Draws the gene models of a zombie. Each part moves with its bone.
@@ -42,13 +43,18 @@ public class GeneModelLayer extends RenderLayer<ZombieRenderState, HumanoidModel
 			if (model == null) {
 				continue;
 			}
-			model.parts().forEach((bone, part) -> {
-				poseStack.pushPose();
-				bone(bone).translateAndRotate(poseStack);
-				collector.submitModelPart(part, poseStack, RenderTypes.entityCutout(model.texture()), light, overlay, null);
-				poseStack.popPose();
-			});
+			model.parts().forEach((bone, part) -> submit(poseStack, collector, bone, part, model, light, overlay));
+			model.glowing().forEach((bone, part) ->
+					submit(poseStack, collector, bone, part, model, LightCoordsUtil.FULL_BRIGHT, overlay));
 		}
+	}
+
+	private void submit(PoseStack poseStack, SubmitNodeCollector collector, GeneModel.Bone bone, ModelPart part,
+			GeneModels.Baked model, int light, int overlay) {
+		poseStack.pushPose();
+		bone(bone).translateAndRotate(poseStack);
+		collector.submitModelPart(part, poseStack, RenderTypes.entityCutout(model.texture()), light, overlay, null);
+		poseStack.popPose();
 	}
 
 	private ModelPart bone(GeneModel.Bone bone) {

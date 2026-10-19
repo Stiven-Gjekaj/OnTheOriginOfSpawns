@@ -2,9 +2,11 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import java.util.List;
 
+import io.github.stivengjekaj.originofspawns.client.render.GeneModels;
 import io.github.stivengjekaj.originofspawns.client.render.GeneTextures;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
+import io.github.stivengjekaj.originofspawns.visual.GeneModel;
 
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
@@ -66,6 +68,16 @@ public class GeneTextureClientTest implements FabricClientGameTest {
 			Identifier again = context.computeOnClient(client -> GeneTextures.textureFor(ZOMBIE_TEXTURE, List.of(TEST_GENE)));
 			if (!again.equals(baked)) {
 				throw new AssertionError("The same genes give a second texture");
+			}
+			boolean glowSplit = context.computeOnClient(client -> {
+				GeneModels.Baked fuse = GeneModels.get(Identifier.fromNamespaceAndPath("originofspawns_test", "test_fuse"));
+				return fuse != null && fuse.parts().get(GeneModel.Bone.BODY).hasChild("part0")
+						&& !fuse.parts().get(GeneModel.Bone.BODY).hasChild("part1")
+						&& fuse.glowing().get(GeneModel.Bone.BODY).hasChild("part1")
+						&& !fuse.glowing().get(GeneModel.Bone.BODY).hasChild("part0");
+			});
+			if (!glowSplit) {
+				throw new AssertionError("The glowing part of a gene model is not apart from the other parts");
 			}
 			// The screenshot shows the real genes for a person to check. From left to right: Bonerunner,
 			// Cinder with Ironhide, Cinder, plain, and all three genes.

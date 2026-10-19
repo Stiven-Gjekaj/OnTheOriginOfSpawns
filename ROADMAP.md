@@ -21,7 +21,8 @@ Milestones 0 to 5 make the first release.
 - Add pressures that are conditions of the death, such as "unreached".
 - Add three genes: fire resistance, arrow resistance, and speed.
 - Give each new zombie genes from its pool.
-- Add mutation, pressure decay, and gene points.
+- Add mutation, pressure decay, and the limit of 5 genes for each mob.
+- Give each gene a downside and a family tag.
 - Add the humanoid region map.
 - Make the gene textures at load time from visual recipes.
 - Add the bone legs model for the speed gene.
@@ -29,6 +30,8 @@ Milestones 0 to 5 make the first release.
 
 ### Milestone 2: All hostile mobs
 
+- Add the 3 major families of each species, with tier 1 and tier 2 effects.
+- Add hybrids and neutral mobs.
 - Add pools for all vanilla hostile mobs.
 - Add behavior genes, sense genes, and life-history genes.
 - Let genes flow between neighbor categories.
@@ -75,7 +78,7 @@ Milestones 0 to 5 make the first release.
 ### Milestone 7: Population genetics
 
 - Add bottleneck, founder effect, invasive species, and genetic drift.
-- Add speciation into named variants.
+- Add minor families for gene combinations that do not match a major family.
 - Add mass extinction and adaptive radiation.
 
 ### Milestone 8: Species against species

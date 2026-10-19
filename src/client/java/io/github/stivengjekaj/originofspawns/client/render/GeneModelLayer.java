@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import io.github.stivengjekaj.originofspawns.visual.BabyLayout;
 import io.github.stivengjekaj.originofspawns.visual.GeneModel;
 import io.github.stivengjekaj.originofspawns.visual.GeneVisual;
 
@@ -47,19 +48,30 @@ public class GeneModelLayer extends RenderLayer<ZombieRenderState, HumanoidModel
 				continue;
 			}
 			Identifier texture = model.mobTexture() ? mobTexture(state) : model.texture().orElse(null);
+			if (texture != null && model.mobTexture() && state.isBaby) {
+				texture = GeneTextures.adultLayoutOf(texture);
+			}
 			if (texture == null) {
 				continue;
 			}
-			model.parts().forEach((bone, part) -> submit(poseStack, collector, bone, part, texture, light, overlay));
+			Identifier drawn = texture;
+			model.parts().forEach((bone, part) -> submit(poseStack, collector, bone, part, drawn, light, overlay, state.isBaby));
 			model.glowing().forEach((bone, part) ->
-					submit(poseStack, collector, bone, part, texture, LightCoordsUtil.FULL_BRIGHT, overlay));
+					submit(poseStack, collector, bone, part, drawn, LightCoordsUtil.FULL_BRIGHT, overlay, state.isBaby));
 		}
 	}
 
 	private void submit(PoseStack poseStack, SubmitNodeCollector collector, GeneModel.Bone bone, ModelPart part,
-			Identifier texture, int light, int overlay) {
+			Identifier texture, int light, int overlay, boolean baby) {
 		poseStack.pushPose();
 		bone(bone).translateAndRotate(poseStack);
+		if (baby) {
+			// The parts are in adult bone coordinates. This moves and scales them onto the smaller baby bone.
+			float[] change = BabyLayout.boneChange(bone);
+			poseStack.translate(change[0] / 16.0F, change[1] / 16.0F, change[2] / 16.0F);
+			poseStack.scale(change[3], change[4], change[5]);
+			poseStack.translate(-change[6] / 16.0F, -change[7] / 16.0F, -change[8] / 16.0F);
+		}
 		collector.submitModelPart(part, poseStack, RenderTypes.entityCutout(texture), light, overlay, null);
 		poseStack.popPose();
 	}

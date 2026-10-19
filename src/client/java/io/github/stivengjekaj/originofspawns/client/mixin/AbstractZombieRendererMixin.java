@@ -34,6 +34,6 @@ public abstract class AbstractZombieRendererMixin {
 	@Inject(method = "getTextureLocation(Lnet/minecraft/client/renderer/entity/state/ZombieRenderState;)Lnet/minecraft/resources/Identifier;",
 			at = @At("RETURN"), cancellable = true)
 	private void originofspawns$geneTexture(ZombieRenderState state, CallbackInfoReturnable<Identifier> info) {
-		info.setReturnValue(GeneTextures.textureFor(info.getReturnValue(), state.getData(GeneTextures.GENES)));
+		info.setReturnValue(GeneTextures.textureFor(info.getReturnValue(), state.getData(GeneTextures.GENES), state.isBaby));
 	}
 }

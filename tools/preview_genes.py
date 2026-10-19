@@ -78,6 +78,16 @@ EXTRA = {
 }
 NIGHT = (18, 22, 38, 255)
 
+# The babies of BabyGenesClientTest, for a sheet to compare with the game.
+BABIES = [
+    ("Plain baby", [], True),
+    ("Runt, Cinder, Ironhide", ["runt", "cinder", "ironhide"], True),
+    ("Lurker, Thickskull", ["lurker", "thickskull"], True),
+    ("Bloat, Frenzy", ["bloat", "frenzy"], True),
+    ("D. Throes, Bonerunner, Burrower", ["death_throes", "bonerunner", "burrower"], True),
+    ("Adult: Runt, Cinder, Ironhide", ["runt", "cinder", "ironhide"], False),
+]
+
 SCALE = 8
 WHITE = (255, 255, 255, 255)
 
@@ -183,6 +193,85 @@ def image(identifier):
     return IMAGES[identifier]
 
 
+# BabyLayout in the mod: each cube of the adult model, and the same cube of
+# the baby model. Each is (u, v, width, height, depth, x, y, z): the box UV
+# corner, the size, and the corner of the cube in its bone. The last value is
+# True where the adult cube mirrors its texture and the baby cube does not.
+BABY_PAIRS = [
+    ("head", (0, 0, 8, 8, 8, -4, -8, -4), (3, 3, 6, 6, 6, -3, -6.25, -3), False),
+    (None, (32, 0, 8, 8, 8, -4, -8, -4), (35, 3, 6, 6, 6, -3, -6.15, -3), False),
+    ("body", (16, 16, 8, 12, 4, -4, 0, -2), (16, 16, 4, 5, 2, -2, -2.5, -1), False),
+    ("right_arm", (40, 16, 4, 12, 4, -3, -2, -2), (36, 16, 2, 5, 2, -1, -0.5, -1), False),
+    ("left_arm", (40, 16, 4, 12, 4, -1, -2, -2), (28, 16, 2, 5, 2, -1, -0.5, -1), True),
+    ("right_leg", (0, 16, 4, 12, 4, -2, 0, -2), (8, 16, 2, 4, 2, -1, 0, -1), False),
+    ("left_leg", (0, 16, 4, 12, 4, -2, 0, -2), (0, 16, 2, 4, 2, -1, 0, -1), True),
+]
+# The faces that change places in a mirrored cube: side 1 and side 2.
+MIRRORED_FACE = (0, 1, 4, 3, 2, 5)
+
+
+def cube_faces(c):
+    """Return the box UV faces of a cube: top, bottom, side 1, front, side 2, back."""
+    u, v, w, h, d = c[:5]
+    return [(u + d, v, w, d), (u + d + w, v, w, d), (u, v + d, d, h), (u + d, v + d, w, h),
+            (u + d + w, v + d, d, h), (u + 2 * d + w, v + d, w, h)]
+
+
+def copy_face(source, src, target, dst, scale, flip):
+    """Copy one face to a face of another size, with the nearest pixel, like BabyLayout.copyFace."""
+    to_w, to_h = dst[2] * scale, dst[3] * scale
+    from_w, from_h = src[2] * scale, src[3] * scale
+    for y in range(to_h):
+        for x in range(to_w):
+            fx = to_w - 1 - x if flip else x
+            sx = src[0] * scale + int((fx + 0.5) * from_w / to_w)
+            sy = src[1] * scale + int((y + 0.5) * from_h / to_h)
+            tx, ty = dst[0] * scale + x, dst[1] * scale + y
+            if sx < source.width and sy < source.height and tx < target.width and ty < target.height:
+                target.putpixel((tx, ty), source.getpixel((sx, sy)))
+
+
+def to_baby(adult):
+    """Move an image in the adult layout to the baby layout, like BabyLayout.toBaby."""
+    scale = max(adult.width // 64, 1)
+    out = Image.new("RGBA", adult.size, (0, 0, 0, 0))
+    for _, a, b, mirror in BABY_PAIRS:
+        adult_faces, baby_faces = cube_faces(a), cube_faces(b)
+        for face in range(6):
+            src = adult_faces[MIRRORED_FACE[face] if mirror else face]
+            copy_face(adult, src, out, baby_faces[face], scale, mirror)
+    return out
+
+
+def to_adult(baby):
+    """Move an image in the baby layout to the adult layout, like BabyLayout.toAdult."""
+    scale = max(baby.width // 64, 1)
+    out = Image.new("RGBA", baby.size, (0, 0, 0, 0))
+    for _, a, b, mirror in BABY_PAIRS:
+        if mirror:
+            continue
+        for src, dst in zip(cube_faces(b), cube_faces(a)):
+            copy_face(baby, src, out, dst, scale, False)
+    return out
+
+
+BABY_IMAGES = {}
+
+
+def baby_image(identifier):
+    if identifier not in BABY_IMAGES:
+        BABY_IMAGES[identifier] = to_baby(image(identifier))
+    return BABY_IMAGES[identifier]
+
+
+def bone_change(bone):
+    """Return (move, scale, adult) for a bone, like BabyLayout.boneChange."""
+    for name, a, b, _ in BABY_PAIRS:
+        if name == bone:
+            return b[5:8], (b[2] / a[2], b[3] / a[3], b[4] / a[4]), a[5:8]
+    raise ValueError(bone)
+
+
 def desaturate(color, amount, darken):
     r, g, b, a = color
     gray = (r * 299 + g * 587 + b * 114) // 1000
@@ -190,7 +279,7 @@ def desaturate(color, amount, darken):
     return tuple(int((c + (gray - c) * amount) * keep) for c in (r, g, b)) + (a,)
 
 
-def apply(effect, color, x, y, seed):
+def apply(effect, color, x, y, seed, baby=False):
     kind = effect["type"]
     if kind == "desaturate":
         return desaturate(color, effect["amount"], effect.get("darken", 0.0))
@@ -202,6 +291,9 @@ def apply(effect, color, x, y, seed):
         return (*spot, color[3])
     if kind == "pattern":
         pattern = image(effect["texture"])
+        if baby and pattern.width >= 64 and pattern.height >= 64:
+            # A whole-texture mark moves to the baby layout. A tile stays.
+            pattern = baby_image(effect["texture"])
         tint = rgb(effect.get("tint", "#FFFFFF"))
         stamp = pattern.getpixel((x % pattern.width, y % pattern.height))
         strength = stamp[3] / 255
@@ -220,10 +312,14 @@ def visual(gene):
         return json.load(fh)
 
 
-def bake_layer(out, gene, layer):
-    """Apply one visual layer of a gene to the texture, in place, like TextureBaker.bake."""
+def bake_layer(out, gene, layer, baby=False):
+    """Apply one visual layer of a gene to the texture, in place, like TextureBaker.bake.
+
+    For a baby, the region map and the whole-texture marks move to the baby layout.
+    """
     vis = visual(gene)
-    regions = image(vis.get("region_map", DEFAULT_REGION_MAP))
+    region_map = vis.get("region_map", DEFAULT_REGION_MAP)
+    regions = baby_image(region_map) if baby else image(region_map)
     seed = identifier_hash("originofspawns:" + gene)
     wanted_regions = {REGIONS[r] for r in layer.get("regions", [])}
     wanted_materials = {MATERIALS[m] for m in layer.get("materials", [])}
@@ -237,13 +333,15 @@ def bake_layer(out, gene, layer):
                 continue
             if wanted_materials and material not in wanted_materials:
                 continue
-            out.putpixel((x, y), apply(layer["effect"], out.getpixel((x, y)), x, y, seed))
+            out.putpixel((x, y), apply(layer["effect"], out.getpixel((x, y)), x, y, seed, baby))
 
 
-def gene_cubes(gene, mob_tex=None):
+def gene_cubes(gene, mob_tex=None, baby=False):
     """Return the cubes of the gene model of a gene, or an empty list.
 
-    A model with "mob_texture" uses mob_tex, the baked texture of the mob.
+    A model with "mob_texture" uses mob_tex, the baked texture of the mob. On a
+    baby, it gets that texture moved back to the adult layout, and each part
+    moves from the adult bone to the baby bone, like GeneModelLayer.
     """
     vis = visual(gene)
     if vis is None or "model" not in vis:
@@ -252,7 +350,7 @@ def gene_cubes(gene, mob_tex=None):
     with open(os.path.join(ASSETS, namespace, "gene_models", name + ".json")) as fh:
         model = json.load(fh)
     if model.get("mob_texture"):
-        tex = mob_tex
+        tex = to_adult(mob_tex) if baby else mob_tex
         scale = 1.0
     else:
         tex = image(model["texture"])
@@ -264,6 +362,7 @@ def gene_cubes(gene, mob_tex=None):
             "inflate": part.get("inflate", 0.0), "mirror": part.get("mirror", False),
             "texture": tex, "scale": scale, "pivot": part.get("pivot", (0, 0, 0)),
             "rotation": part.get("rotation", (0, 0, 0)), "glow": part.get("glow", False),
+            "bone_change": bone_change(part["bone"]) if baby else None,
         })
     return cubes
 
@@ -273,7 +372,7 @@ def cubes_of(tex, genes, baby=False):
     cubes = [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": m,
               "texture": tex, "scale": 1.0} for b, uv, f, s, m in (BABY_CUBES if baby else ZOMBIE_CUBES)]
     for gene in genes:
-        cubes += gene_cubes(gene, tex)
+        cubes += gene_cubes(gene, tex, baby)
     return cubes
 
 
@@ -290,8 +389,12 @@ def view(tex, genes, back, turn=None, tilt=0, light=1.0, opacity=1.0, baby=False
                            opacity=opacity)
 
 
-def text(draw, xy, label, size):
+def text(draw, xy, label, size, max_width=None):
+    """Draw a label centered on xy. With max_width, a long label gets a smaller font."""
     font = ImageFont.load_default(size=size)
+    while max_width and size > 8 and draw.textlength(label, font=font) > max_width:
+        size -= 1
+        font = ImageFont.load_default(size=size)
     w = draw.textlength(label, font=font)
     draw.text((xy[0] - w / 2, xy[1]), label, fill=(0, 0, 0, 255), font=font)
 
@@ -300,7 +403,7 @@ def label(gene):
     return gene.replace("_", " ").title()
 
 
-def zombie(tex, genes):
+def zombie(tex, genes, baby=False):
     """Return the baked texture of a zombie with the genes, like TextureBaker.bakeAll.
 
     The layers of all the genes go on in the order of their "order" field. The
@@ -315,7 +418,7 @@ def zombie(tex, genes):
     steps.sort(key=lambda step: step[0])
     out = tex.copy()
     for _, gene, layer in steps:
-        bake_layer(out, gene, layer)
+        bake_layer(out, gene, layer, baby)
     return out
 
 
@@ -343,7 +446,7 @@ def sheet(title, columns):
     text(draw, (im.width / 2, SCALE), title, 4 * SCALE)
     for i, (name, tex, genes, options) in enumerate(columns):
         x = gap + i * (w + gap)
-        text(draw, (x + w / 2, 6 * SCALE), name, 2 * SCALE + 4)
+        text(draw, (x + w / 2, 6 * SCALE), name, 2 * SCALE + 4, max_width=w)
         if options.get("light", 1.0) < 1:
             for y in (top, top + h + gap, top + 2 * (h + gap)):
                 draw.rectangle((x, y, x + w - 1, y + h - 1), fill=NIGHT)
@@ -376,11 +479,16 @@ def main():
             columns.append(("All " + str(len(ready)), zombie(tex, ready), ready, {}))
         for name, extra, with_family, options in EXTRA.get(family, []):
             genes_here = extra + (ready if with_family else [])
-            base = baby_tex if options.get("baby") else tex
-            columns.append((name, zombie(base, genes_here), genes_here, options))
+            baby = options.get("baby", False)
+            columns.append((name, zombie(baby_tex if baby else tex, genes_here, baby), genes_here, options))
         path = os.path.join(FAMILY_OUT, family + ".png")
         sheet(family.title(), columns).save(path)
         print(path)
+    columns = [(name, zombie(baby_tex if baby else tex, genes, baby), genes, {"baby": baby})
+               for name, genes, baby in BABIES]
+    path = os.path.join(FAMILY_OUT, "babies.png")
+    sheet("Babies", columns).save(path)
+    print(path)
 
 
 if __name__ == "__main__":

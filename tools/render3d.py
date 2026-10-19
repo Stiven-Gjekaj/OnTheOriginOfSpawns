@@ -8,7 +8,9 @@ A tilt above 0 looks down on the mob.
 Each cube is a dict with: "bone", "uv", "from", "size", "inflate",
 "mirror", "texture" (a Pillow image), and "scale" (texture pixels for each
 UV unit). It can also have "pivot" and "rotation" (degrees), as the parts
-of a gene model, and "glow": True to keep its full light in the dark. The faces use the box UV layout of the vanilla ModelPart: in the
+of a gene model, "glow": True to keep its full light in the dark, and
+"bone_change": (move, scale, adult) to fit an adult part to a baby bone. A
+point p then goes to move + (p - adult) * scale, after the part turns. The faces use the box UV layout of the vanilla ModelPart: in the
 side row, the faces are the right side (-x), the front, the left side (+x),
 and the back.
 This script needs Pillow.
@@ -52,11 +54,20 @@ def faces(cube, bone_pivot):
     if cube["mirror"]:
         rects["right"], rects["left"] = rects["left"], rects["right"]
 
+    change = cube.get("bone_change")
+
     def place(origin, du, dv, normal, rect):
         local = [origin[n] - part_pivot[n] for n in range(3)]
         moved = turn(local)
-        origin = tuple(bone_pivot[n] + part_pivot[n] + moved[n] for n in range(3))
-        return origin, turn(du), turn(dv), turn(normal), rect
+        origin = [part_pivot[n] + moved[n] for n in range(3)]
+        du, dv, normal = turn(du), turn(dv), turn(normal)
+        if change:
+            move, scale, adult = change
+            origin = [move[n] + (origin[n] - adult[n]) * scale[n] for n in range(3)]
+            du = tuple(du[n] * scale[n] for n in range(3))
+            dv = tuple(dv[n] * scale[n] for n in range(3))
+        origin = tuple(bone_pivot[n] + origin[n] for n in range(3))
+        return origin, du, dv, normal, rect
 
     return [place(*f) for f in [
         ((x0, y0, z0), (sx, 0, 0), (0, sy, 0), (0, 0, -1), rects["front"]),

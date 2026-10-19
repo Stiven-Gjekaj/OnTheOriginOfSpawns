@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.registry;
 
 import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
+import io.github.stivengjekaj.originofspawns.definition.Family;
 import io.github.stivengjekaj.originofspawns.definition.Gene;
 import io.github.stivengjekaj.originofspawns.definition.Perk;
 import io.github.stivengjekaj.originofspawns.definition.Pressure;
@@ -19,6 +20,8 @@ public final class ModRegistries {
 			ResourceKey.createRegistryKey(OriginOfSpawns.id("pressure"));
 	public static final ResourceKey<Registry<Gene>> GENE =
 			ResourceKey.createRegistryKey(OriginOfSpawns.id("gene"));
+	public static final ResourceKey<Registry<Family>> FAMILY =
+			ResourceKey.createRegistryKey(OriginOfSpawns.id("family"));
 	public static final ResourceKey<Registry<Perk>> PERK =
 			ResourceKey.createRegistryKey(OriginOfSpawns.id("perk"));
 
@@ -27,8 +30,9 @@ public final class ModRegistries {
 
 	public static void register() {
 		DynamicRegistries.register(PRESSURE, Pressure.CODEC);
-		// The client needs genes and perks for the notebook and the perk screen.
+		// The client needs genes, perks, and families for the notebook, the perk screen, and the info panel.
 		DynamicRegistries.registerSynced(GENE, Gene.CODEC);
 		DynamicRegistries.registerSynced(PERK, Perk.CODEC);
+		DynamicRegistries.registerSynced(FAMILY, Family.CODEC);
 	}
 }

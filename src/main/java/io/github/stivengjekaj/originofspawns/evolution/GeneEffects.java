@@ -2,16 +2,18 @@ package io.github.stivengjekaj.originofspawns.evolution;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
+import io.github.stivengjekaj.originofspawns.definition.Family;
 import io.github.stivengjekaj.originofspawns.definition.Gene;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 import io.github.stivengjekaj.originofspawns.registry.ModRegistries;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -29,32 +31,66 @@ public final class GeneEffects {
 	}
 
 	/**
-	 * Returns the effects of all genes that the entity carries. A gene that the data packs no longer have is skipped.
+	 * A group of effects with one source: a gene, or one tier of a family.
+	 *
+	 * @param source the name of the source. It makes the ids of the attribute modifiers
 	 */
-	public static Stream<GeneEffect> of(Entity entity) {
-		CarriedGenes carried = entity.getAttached(ModAttachments.GENES);
-		if (carried == null || carried.genes().isEmpty()) {
-			return Stream.empty();
-		}
-		Registry<Gene> genes = entity.level().registryAccess().lookupOrThrow(ModRegistries.GENE);
-		return carried.genes().stream()
-				.map(genes::getValue)
-				.filter(gene -> gene != null)
-				.flatMap(Gene::effects);
+	public record Source(String source, List<GeneEffect> effects) {
 	}
 
 	/**
-	 * Adds the attribute changes of the genes to a new mob, and fills its health to the new maximum.
+	 * Returns the effects of all genes and of the family of the entity.
+	 * A gene or a family that the data packs no longer have is skipped.
 	 */
-	public static void applyAttributes(Mob mob, Map<Identifier, Gene> genes) {
-		for (Map.Entry<Identifier, Gene> entry : genes.entrySet()) {
-			List<GeneEffect> effects = entry.getValue().effects().toList();
-			for (int index = 0; index < effects.size(); index++) {
-				if (effects.get(index) instanceof GeneEffect.AttributeChange change) {
+	public static Stream<GeneEffect> of(Entity entity) {
+		CarriedGenes carried = entity.getAttached(ModAttachments.GENES);
+		if (carried == null) {
+			return Stream.empty();
+		}
+		return sources(entity.level().registryAccess(), carried).stream().flatMap(source -> source.effects().stream());
+	}
+
+	/**
+	 * Returns the sources of effects of a mob: each gene, then the family tiers that its family result gives.
+	 */
+	public static List<Source> sources(RegistryAccess access, CarriedGenes carried) {
+		List<Source> sources = new ArrayList<>();
+		Registry<Gene> genes = access.lookupOrThrow(ModRegistries.GENE);
+		for (Identifier id : carried.genes()) {
+			Gene gene = genes.getValue(id);
+			if (gene != null) {
+				sources.add(new Source("gene/" + id.getNamespace() + "/" + id.getPath(), gene.effects().toList()));
+			}
+		}
+		Registry<Family> families = access.lookupOrThrow(ModRegistries.FAMILY);
+		FamilyResult result = carried.family();
+		addFamily(sources, families, result.first(), result.kind().firstTier());
+		addFamily(sources, families, result.second(), result.kind().secondTier());
+		return sources;
+	}
+
+	private static void addFamily(List<Source> sources, Registry<Family> families, Optional<Identifier> id, int tier) {
+		if (id.isEmpty() || tier == 0) {
+			return;
+		}
+		Family family = families.getValue(id.get());
+		if (family != null) {
+			sources.add(new Source("family/" + id.get().getNamespace() + "/" + id.get().getPath() + "/" + tier,
+					family.tier(tier).effects().toList()));
+		}
+	}
+
+	/**
+	 * Adds the attribute changes of the sources to a new mob, and fills its health to the new maximum.
+	 */
+	public static void applyAttributes(Mob mob, List<Source> sources) {
+		for (Source source : sources) {
+			for (int index = 0; index < source.effects().size(); index++) {
+				if (source.effects().get(index) instanceof GeneEffect.AttributeChange change) {
 					AttributeInstance attribute = mob.getAttribute(change.attribute());
 					if (attribute != null) {
 						attribute.addPermanentModifier(new AttributeModifier(
-								modifierId(entry.getKey(), index), change.amount(), change.operation()));
+								modifierId(source.source(), index), change.amount(), change.operation()));
 					}
 				}
 			}
@@ -62,8 +98,12 @@ public final class GeneEffects {
 		mob.setHealth(mob.getMaxHealth());
 	}
 
+	public static Identifier modifierId(String source, int index) {
+		return OriginOfSpawns.id(source + "/" + index);
+	}
+
 	public static Identifier modifierId(Identifier gene, int index) {
-		return OriginOfSpawns.id("gene/" + gene.getNamespace() + "/" + gene.getPath() + "/" + index);
+		return modifierId("gene/" + gene.getNamespace() + "/" + gene.getPath(), index);
 	}
 
 	/**

@@ -1,0 +1,103 @@
+package io.github.stivengjekaj.originofspawns.test;
+
+import java.util.List;
+import java.util.Optional;
+
+import com.google.gson.JsonParser;
+import com.mojang.serialization.JsonOps;
+
+import io.github.stivengjekaj.originofspawns.evolution.BiomeCategory;
+import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.FamilyResult;
+import io.github.stivengjekaj.originofspawns.evolution.FamilyResult.Kind;
+import io.github.stivengjekaj.originofspawns.evolution.FamilyResult.TaggedGene;
+import io.github.stivengjekaj.originofspawns.evolution.GenePools;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
+
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.skeleton.Stray;
+
+public class FamilyTest {
+	private static final Identifier A = id("a");
+	private static final Identifier B = id("b");
+	private static final Identifier C = id("c");
+
+	@GameTest
+	public void noGenesIsNeutral(GameTestHelper helper) {
+		helper.assertValueEqual(FamilyResult.of(List.of()), FamilyResult.NEUTRAL, "result");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void oneFamilyIsPure(GameTestHelper helper) {
+		FamilyResult result = FamilyResult.of(List.of(gene(A, 0.5F), gene(A, 0.2F)));
+		helper.assertValueEqual(result, new FamilyResult(Kind.PURE, Optional.of(A), Optional.empty()), "result");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void moreGenesMakeTheMajorFamily(GameTestHelper helper) {
+		FamilyResult result = FamilyResult.of(List.of(gene(B, 0.9F), gene(A, 0.1F), gene(A, 0.1F)));
+		helper.assertValueEqual(result, new FamilyResult(Kind.MINOR, Optional.of(A), Optional.of(B)), "result");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void samePointsMakeAHybridInFrequencyOrder(GameTestHelper helper) {
+		FamilyResult result = FamilyResult.of(List.of(gene(A, 0.2F), gene(B, 0.7F)));
+		helper.assertValueEqual(result, new FamilyResult(Kind.HYBRID, Optional.of(B), Optional.of(A)), "result");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void subTagGivesOnePoint(GameTestHelper helper) {
+		FamilyResult result = FamilyResult.of(List.of(new TaggedGene(A, Optional.of(B), 0.5F)));
+		helper.assertValueEqual(result, new FamilyResult(Kind.MINOR, Optional.of(A), Optional.of(B)), "result");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void frequencyBreaksATieForTheSubFamily(GameTestHelper helper) {
+		FamilyResult result = FamilyResult.of(List.of(gene(A, 0.1F), gene(A, 0.1F), gene(B, 0.3F), gene(C, 0.6F)));
+		helper.assertValueEqual(result, new FamilyResult(Kind.MINOR, Optional.of(A), Optional.of(C)), "result");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void oldSaveFormatStillLoads(GameTestHelper helper) {
+		CarriedGenes carried = CarriedGenes.CODEC.parse(JsonOps.INSTANCE,
+				JsonParser.parseString("[\"originofspawns_test:a\"]")).getOrThrow();
+		helper.assertValueEqual(carried, new CarriedGenes(List.of(A), FamilyResult.NEUTRAL), "genes");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void pureFamilyGivesTierThreeEffects(GameTestHelper helper) {
+		BlockPos pos = new BlockPos(2, 1, 2);
+		BiomeCategory category = BiomeCategory.of(helper.getLevel().getBiome(helper.absolutePos(pos)));
+		GenePools.get(helper.getLevel().getServer())
+				.setFrequency(Identifier.withDefaultNamespace("stray"), category, id("test_swift"), 1.0F);
+
+		Stray stray = helper.spawnWithNoFreeWill(EntityTypes.STRAY, pos);
+
+		CarriedGenes carried = stray.getAttached(ModAttachments.GENES);
+		helper.assertValueEqual(carried.family(),
+				new FamilyResult(Kind.PURE, Optional.of(id("predator")), Optional.empty()), "family");
+		helper.assertValueEqual(stray.getAttributeValue(Attributes.ARMOR), 3.0, "armor from tier 3");
+		helper.succeed();
+	}
+
+	private static TaggedGene gene(Identifier family, float frequency) {
+		return new TaggedGene(family, Optional.empty(), frequency);
+	}
+
+	private static Identifier id(String path) {
+		return Identifier.fromNamespaceAndPath("originofspawns_test", path);
+	}
+}

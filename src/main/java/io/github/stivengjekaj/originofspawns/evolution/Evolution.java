@@ -2,7 +2,6 @@ package io.github.stivengjekaj.originofspawns.evolution;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -76,12 +75,14 @@ public final class Evolution {
 		}
 
 		List<Identifier> rolled = GeneRoller.roll(candidates, mob.getRandom());
-		Map<Identifier, Gene> genes = new LinkedHashMap<>();
+		List<FamilyResult.TaggedGene> tagged = new ArrayList<>();
 		for (Identifier id : rolled) {
-			genes.put(id, registry.getValue(id));
+			Gene gene = registry.getValue(id);
+			tagged.add(new FamilyResult.TaggedGene(gene.family(), gene.subFamily(), pools.frequency(species, category, id)));
 		}
-		mob.setAttached(ModAttachments.GENES, new CarriedGenes(rolled));
-		GeneEffects.applyAttributes(mob, genes);
+		CarriedGenes carried = new CarriedGenes(rolled, FamilyResult.of(tagged));
+		mob.setAttached(ModAttachments.GENES, carried);
+		GeneEffects.applyAttributes(mob, GeneEffects.sources(level.registryAccess(), carried));
 	}
 
 	/**

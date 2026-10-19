@@ -1,0 +1,8 @@
+{
+	"species": "minecraft:stray",
+	"tiers": [
+		{ "buffs": [{ "type": "attribute", "attribute": "minecraft:armor", "amount": 1, "operation": "add_value" }] },
+		{ "buffs": [{ "type": "attribute", "attribute": "minecraft:armor", "amount": 2, "operation": "add_value" }] },
+		{ "buffs": [{ "type": "attribute", "attribute": "minecraft:armor", "amount": 3, "operation": "add_value" }] }
+	]
+}

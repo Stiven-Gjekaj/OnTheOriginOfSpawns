@@ -46,6 +46,8 @@ Milestones 0 to 5 and the beta stage make version 1.0.0.
 - Make the gene textures at load time from visual recipes.
 - Add the bone legs model for Bonerunner.
 - Add the Beagle Notebook with one zombie page.
+  The page shows the gene frequencies of each biome category.
+  The full notebook comes in milestone 4.
 
 ### Milestone 2: All hostile mobs
 

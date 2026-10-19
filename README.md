@@ -54,7 +54,8 @@ These features are for the first release. Some are not complete.
 - The cause of each death changes the pool: fire, arrows, melee, explosions,
   falls, and zombies that die before they reach you
 - Genes that change how mobs look, fight, sense, and spawn
-- A cost for each gene, and a fixed number of gene points for each mob
+- A downside for each gene, and a maximum of 5 genes for each mob
+- 3 families for each species, with hybrids and neutral mobs
 - Extinction of a species in a biome category
 - 30 player perks, each with a gain and a cost
 - 1 to 5 perk slots, from the knowledge percentage of your notebook

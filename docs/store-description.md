@@ -37,7 +37,7 @@ Each new mob gets its genes from the pool.
   Creepers that die before they explode get a shorter fuse.
 - **Nothing is free.** Each gene has a cost.
   A zombie that resists fire has less health.
-  A fixed number of gene points stops a species from having every defense.
+  A mob has a maximum of 5 genes, so a species cannot have every defense.
 - **Use it or lose it.** If you stop a cause of death, the gene that counters
   it fades slowly.
 - **Extinction is real.** Kill a species too much in one area, and it stops

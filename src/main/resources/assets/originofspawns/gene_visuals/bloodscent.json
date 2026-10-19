@@ -1,0 +1,11 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/bloodscent_0.png",
+				"tint": "#A41E1E"
+			}
+		}
+	]
+}

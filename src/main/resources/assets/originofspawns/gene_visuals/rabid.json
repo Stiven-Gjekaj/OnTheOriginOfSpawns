@@ -1,0 +1,11 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/rabid_0.png",
+				"tint": "#ECEFE2"
+			}
+		}
+	]
+}

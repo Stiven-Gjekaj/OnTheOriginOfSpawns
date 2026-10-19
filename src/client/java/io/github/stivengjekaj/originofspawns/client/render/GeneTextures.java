@@ -72,13 +72,15 @@ public final class GeneTextures {
 			return base;
 		}
 		TextureBaker.Image texture = new TextureBaker.Image(source.width(), source.height(), source.pixels().clone());
+		List<TextureBaker.GeneLayers> layers = new ArrayList<>();
 		for (Identifier id : genes) {
 			GeneVisual visual = GeneVisuals.get(id);
 			TextureBaker.Image regionMap = image(visual.regionMap());
 			if (regionMap != null) {
-				TextureBaker.bake(texture, regionMap, visual.layers(), id.hashCode(), GeneTextures::image);
+				layers.add(new TextureBaker.GeneLayers(regionMap, visual.layers(), id.hashCode()));
 			}
 		}
+		TextureBaker.bakeAll(texture, layers, GeneTextures::image);
 
 		NativeImage result = new NativeImage(texture.width(), texture.height(), false);
 		for (int y = 0; y < texture.height(); y++) {

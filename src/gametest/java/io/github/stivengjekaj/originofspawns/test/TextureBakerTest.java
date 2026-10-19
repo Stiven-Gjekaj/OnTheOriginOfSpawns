@@ -89,6 +89,26 @@ public class TextureBakerTest {
 	}
 
 	@GameTest
+	public void layerOrderGoesAcrossGenes(GameTestHelper helper) {
+		Image texture = texture();
+		VisualLayer red = new VisualLayer(List.of(), List.of(), new VisualEffect.Spots(List.of(0xFF0000), 1.0F), 10);
+		VisualLayer blue = new VisualLayer(List.of(), List.of(), new VisualEffect.Spots(List.of(0x0000FF), 1.0F), 0);
+		VisualLayer green = new VisualLayer(List.of(), List.of(), new VisualEffect.Spots(List.of(0x00FF00), 1.0F), 0);
+		// The first gene has the red layer on top. The second gene comes later, but its layers have a lower order.
+		TextureBaker.bakeAll(texture, List.of(
+				new TextureBaker.GeneLayers(regionMap(), List.of(red), 1),
+				new TextureBaker.GeneLayers(regionMap(), List.of(blue, green), 2)), id -> null);
+		helper.assertValueEqual(texture.get(0, 0), ARGB.color(255, 255, 0, 0), "the layer with the highest order is on top");
+
+		Image same = texture();
+		TextureBaker.bakeAll(same, List.of(
+				new TextureBaker.GeneLayers(regionMap(), List.of(blue), 1),
+				new TextureBaker.GeneLayers(regionMap(), List.of(green), 2)), id -> null);
+		helper.assertValueEqual(same.get(0, 0), ARGB.color(255, 0, 255, 0), "the same order keeps the order of the genes");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void patternStampsTheTint(GameTestHelper helper) {
 		Image texture = texture();
 		Identifier plates = Identifier.fromNamespaceAndPath("originofspawns_test", "plates");

@@ -1,5 +1,7 @@
 package io.github.stivengjekaj.originofspawns.visual;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
@@ -21,6 +23,31 @@ public final class TextureBaker {
 	public record Image(int width, int height, int[] pixels) {
 		public int get(int x, int y) {
 			return pixels[x + y * width];
+		}
+	}
+
+	/**
+	 * The visual of one gene of a mob: its region map, its layers, and its seed.
+	 */
+	public record GeneLayers(Image regionMap, List<VisualLayer> layers, int seed) {
+	}
+
+	/**
+	 * Applies the layers of all the genes of a mob to the texture, in place, in the order of the layers.
+	 */
+	public static void bakeAll(Image texture, List<GeneLayers> genes, Function<Identifier, Image> patterns) {
+		record Step(GeneLayers gene, VisualLayer layer) {
+		}
+		List<Step> steps = new ArrayList<>();
+		for (GeneLayers gene : genes) {
+			for (VisualLayer layer : gene.layers()) {
+				steps.add(new Step(gene, layer));
+			}
+		}
+		// The sort is stable, so steps with the same order keep the order of the genes.
+		steps.sort(Comparator.comparingInt(step -> step.layer().order()));
+		for (Step step : steps) {
+			bake(texture, step.gene().regionMap(), List.of(step.layer()), step.gene().seed(), patterns);
 		}
 	}
 

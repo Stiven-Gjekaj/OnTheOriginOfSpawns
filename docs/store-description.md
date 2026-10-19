@@ -4,6 +4,11 @@
 > Bonerunner. The Beagle Notebook shows their gene pools. The other features
 > on this page are the plan for version 1.0.0. Use a test world.
 
+> **Content warning: body horror.** Mobs change how they look as they evolve.
+> Some gene mixes show bare bone, open wounds, blood, rot, fungus, and veins on
+> the skin. A zombie can carry 5 genes, so a mix can look disturbing. Do not
+> play this mod if body horror upsets you.
+
 # Adapt or go extinct
 
 The mobs in your world evolve.

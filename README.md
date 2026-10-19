@@ -29,9 +29,10 @@ _A Fabric mod where the mobs evolve from how you kill them_
 ---
 
 > [!NOTE]
-> **The mod is in development.** There is no release yet. Milestone 1 is
-> done: zombies evolve Cinder, Ironhide, and Bonerunner from how they die,
-> and the Beagle Notebook shows their gene pools.
+> **The mod is in development.** Version 0.1.0-alpha is out: zombies evolve
+> Cinder, Ironhide, and Bonerunner from how they die, and the Beagle Notebook
+> shows their gene pools. Milestone 2a, the complete zombie with 30 genes and
+> 5 families, comes next in 0.2.0-alpha.
 > [ROADMAP.md](design/ROADMAP.md) lists the milestones to version 1.0.0.
 > [DESIGN.md](design/DESIGN.md) holds each decision of the design.
 

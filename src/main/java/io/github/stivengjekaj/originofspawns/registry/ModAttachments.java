@@ -5,6 +5,7 @@ import io.github.stivengjekaj.originofspawns.evolution.BehaviorState;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.CombatRecord;
 import io.github.stivengjekaj.originofspawns.evolution.DeathTrace;
+import io.github.stivengjekaj.originofspawns.notebook.DiscoveredFamilies;
 
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
@@ -39,6 +40,12 @@ public final class ModAttachments {
 	 */
 	public static final AttachmentType<net.minecraft.world.entity.EntitySpawnReason> SPAWN_REASON =
 			AttachmentRegistry.create(OriginOfSpawns.id("spawn_reason"));
+
+	/**
+	 * The families that a player found. The player keeps them after death.
+	 */
+	public static final AttachmentType<DiscoveredFamilies> DISCOVERED = AttachmentRegistry.create(
+			OriginOfSpawns.id("discovered"), builder -> builder.persistent(DiscoveredFamilies.CODEC).copyOnDeath());
 
 	private ModAttachments() {
 	}

@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns;
 
 import io.github.stivengjekaj.originofspawns.command.PoolCommand;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
+import io.github.stivengjekaj.originofspawns.notebook.Discovery;
 import io.github.stivengjekaj.originofspawns.notebook.NotebookPayload;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 import io.github.stivengjekaj.originofspawns.registry.ModItems;
@@ -27,6 +28,7 @@ public class OriginOfSpawns implements ModInitializer {
 		ModAttachments.register();
 		Evolution.register();
 		ModItems.register();
+		Discovery.register();
 		PayloadTypeRegistry.clientboundPlay().register(NotebookPayload.TYPE, NotebookPayload.STREAM_CODEC);
 		CommandRegistrationCallback.EVENT.register((dispatcher, context, selection) ->
 				PoolCommand.register(dispatcher, context));

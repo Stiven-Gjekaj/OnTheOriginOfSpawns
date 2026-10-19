@@ -501,18 +501,36 @@ def grave_call():
 
 
 def siege():
-    # The splinters and the glass are the gene model siege_splinters. The
-    # marks: sawdust on the sleeves, and scraped knuckles on the hand end.
-    # The knuckles go on top of the Cinder spots and the Grave Call earth
-    # (order 1), on only 4 pixels.
-    dust = Mark("#D8C090")
+    # Battered fists: a dark bruise over the hands (order -3, under the
+    # Blastproof soot, the Grave Call earth, and the Cinder spots), split,
+    # raw knuckles on the fist, and a few short splinters stuck flat in the
+    # hands. The knuckles and the splinters go on top of the other hand
+    # marks (order 1). All of it is in the hand rows.
+    bruise = Mark("#3A2433", alpha=170, order=-3, regions=["hands"])
     for face in SIDES:
-        dust.put(arm(face, face // 4 % 4, 0), 255).put(arm(face, (face // 4 + 2) % 4, 1), 220)
-    knuckles = Mark("#B0453A", order=1)
+        for col in range(4):
+            for row in range(8, 12):
+                bruise.put(arm(face, col, row), (255, 215, 235)[(col + row + face) % 3])
     for col in range(4):
-        for u, v in ARMS:
-            knuckles.put((u + 8 + col, v), 255 if col % 2 else 215)
-    return [dust, knuckles]
+        for row in range(4):
+            for u, v in ARMS:
+                bruise.put((u + 8 + col, v + row), 235)
+    split = Mark("#8E1E1A", order=1)
+    raw = Mark("#C76A60", order=1)
+    for u, v in ARMS:
+        # The fist: the hand end. Two rows of split knuckles.
+        for col in range(4):
+            split.put((u + 8 + col, v + 1), 255 if col % 2 else 220)
+        raw.put((u + 8, v + 2)).put((u + 11, v + 2), 225).put((u + 9, v), 220)
+    for face in (FRONT, OUTER):
+        split.put(arm(face, 1, 11)).put(arm(face, 3, 11), 220)
+    wood = Mark("#B08850", order=1)
+    tip = Mark("#5E4426", order=1)
+    wood.put(arm(FRONT, 0, 8)).put(arm(FRONT, 1, 9), 225)
+    tip.put(arm(FRONT, 2, 10))
+    wood.put(arm(OUTER, 2, 8), 225).put(arm(OUTER, 1, 9))
+    tip.put(arm(OUTER, 0, 10))
+    return [bruise, split, raw, wood, tip]
 
 
 GENES = {
@@ -546,7 +564,6 @@ MODELS = {
     "thickskull": "originofspawns:thickskull_plate",
     "bloat": "originofspawns:bloat_body",
     "packcaller": "originofspawns:packcaller_jaw",
-    "siege": "originofspawns:siege_splinters",
     "stoneblood": "originofspawns:stoneblood_shell",
 }
 

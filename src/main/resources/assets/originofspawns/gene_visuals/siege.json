@@ -1,20 +1,47 @@
 {
 	"layers": [
 		{
+			"regions": [
+				"hands"
+			],
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/siege_0.png",
-				"tint": "#D8C090"
-			}
+				"tint": "#3A2433"
+			},
+			"order": -3
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/siege_1.png",
-				"tint": "#B0453A"
+				"tint": "#8E1E1A"
+			},
+			"order": 1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/siege_2.png",
+				"tint": "#C76A60"
+			},
+			"order": 1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/siege_3.png",
+				"tint": "#B08850"
+			},
+			"order": 1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/siege_4.png",
+				"tint": "#5E4426"
 			},
 			"order": 1
 		}
-	],
-	"model": "originofspawns:siege_splinters"
+	]
 }

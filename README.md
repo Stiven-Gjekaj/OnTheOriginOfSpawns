@@ -36,6 +36,12 @@ _A Fabric mod where the mobs evolve from how you kill them_
 > [ROADMAP.md](design/ROADMAP.md) lists the milestones to version 1.0.0.
 > [DESIGN.md](design/DESIGN.md) holds each decision of the design.
 
+> [!WARNING]
+> **Content warning: body horror.** Mobs change how they look as they evolve.
+> Some gene mixes show bare bone, open wounds, blood, rot, fungus, and veins on
+> the skin. A zombie can carry 5 genes, so a mix can look disturbing. Do not
+> play this mod if body horror upsets you.
+
 ---
 
 ## Overview

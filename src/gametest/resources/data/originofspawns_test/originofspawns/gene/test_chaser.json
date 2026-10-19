@@ -1,0 +1,6 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_unreached",
+	"family": "originofspawns_test:predator",
+	"mutation_rate": 0
+}

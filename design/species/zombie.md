@@ -131,7 +131,7 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Ironhide | Tank | `projectile` | 50% less projectile damage, and 50% knockback resistance | 10% less speed, and it drowns faster | Shirt: plates that look like iron |
+| Ironhide | Tank | `projectile` | 50% less projectile damage, and 50% knockback resistance | 10% less speed, and 25% more explosion damage | Shirt: plates that look like iron |
 | Thickskull | Tank | `critical` | Critical hits do no extra damage to it | 15% less attack speed | Scalp: a bone plate |
 | Bloat | Tank, sub Blight | `melee` | 10 more maximum health, and a small cloud of Poison when it dies | 25% less speed | Shirt: swollen green blotches |
 | Stoneblood | Tank | `fall` | No fall damage, and full knockback resistance | It sinks in water and cannot swim | Feet and lower legs: gray, like stone |

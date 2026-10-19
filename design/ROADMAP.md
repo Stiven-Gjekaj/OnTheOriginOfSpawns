@@ -35,8 +35,8 @@ Milestones 0 to 5 and the beta stage make version 1.0.0.
 - Add three genes:
   - Cinder: fire resistance, and sets the player on fire. It takes damage from
     rain and water, and has less health.
-  - Ironhide: resists projectiles and knockback. It is slower, and drowns
-    faster.
+  - Ironhide: resists projectiles and knockback. It is slower, and takes more
+    explosion damage.
   - Bonerunner: faster, and chases longer. It has less armor, and takes more
     fall damage.
 - Give each new zombie genes from its pool.

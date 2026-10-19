@@ -209,11 +209,105 @@ def rabid():
     return [rim, fever, foam, bubbles]
 
 
+def hush():
+    # The mouth is sewn shut: pale stitches across the dark line of the lips.
+    thread = Mark("#A88B5C")
+    thread.put((10, 14)).put((12, 14), 225)
+    seam = Mark("#1A100A")
+    seam.put((11, 14)).put((13, 14))
+    return [thread, seam]
+
+
+# The shapes of the Shade patches, as (col, row) offsets.
+PATCH_SHAPES = (((0, 0), (1, 0), (0, 1)), ((0, 0), (1, 0), (1, 1), (0, 1)),
+                ((0, 0), (0, 1), (1, 1)), ((0, 0), (1, 0)), ((1, 0), (0, 1), (1, 1), (2, 1)))
+
+
+def patches(faces, rows, count, seed):
+    """Yield (face, col, row, gray) for small patches on the faces of a limb.
+
+    Each face gets count patches of 2 to 4 pixels, in the given rows.
+    """
+    first, last = rows[0], rows[-1]
+    for f, face in enumerate(faces):
+        for n in range(count):
+            h = (seed * 31 + f * 7 + n * 13) * 2654435761 % 4294967296
+            shape = PATCH_SHAPES[h % len(PATCH_SHAPES)]
+            col = (h >> 8) % 3
+            row = first + (h >> 12) % (last - first)
+            for dc, dr in shape:
+                if col + dc < 4 and row + dr <= last:
+                    yield face, col + dc, row + dr, 255 if (h >> 20) % 3 else 215
+
+
+def shade():
+    # Dark, mottled patches on the arms and the legs. They are near black and
+    # opaque, so that they keep the most contrast when the zombie is
+    # translucent at night. They go under the marks of other genes (order -2).
+    dark = Mark("#0E1014", order=-2)
+    for face, col, row, gray in patches(SIDES, range(4, 8), 2, 3):
+        dark.put(arm(face, col, row), gray)
+    for face, col, row, gray in patches(SIDES, range(0, 10), 4, 11):
+        dark.put(leg(face, col, row), gray)
+    return [dark]
+
+
+def burrower():
+    # Dirt from the ground, caked on the shins and the shoes. It is thickest
+    # at the bottom. It goes under the marks of other genes (order -1).
+    dirt = Mark("#6A4A2C", alpha=235, order=-1)
+    chance = {6: 15, 7: 30, 8: 50, 9: 70, 10: 65, 11: 80}
+    for face in SIDES:
+        for row, percent in chance.items():
+            for col in range(4):
+                h = (face * 17 + row * 31 + col * 7) % 100
+                if h < percent:
+                    dirt.put(leg(face, col, row), (255, 200, 160)[h % 3])
+    return [dirt]
+
+
+def lurker():
+    # A dark shadow over the scalp, like a hood, with a brim over the
+    # forehead. It goes under the marks of other genes (order -1).
+    hood = Mark("#15180F", alpha=205, order=-1)
+    soft = Mark("#15180F", alpha=120, order=-1)
+    for y in range(0, 8):
+        for x in range(8, 16):
+            hood.put((x, y))
+    for y in range(8, 16):
+        for x in range(24, 32):
+            hood.put((x, y))
+        for col in range(8):
+            for side in (0, 1):
+                (hood if y < 14 else soft).put(head_side(side, col, y - 8))
+    for x in range(8, 16):
+        hood.put((x, 8))
+    soft.put((8, 9)).put((15, 9))
+    return [hood, soft]
+
+
+def nightborn():
+    # A pale face, under the marks of other genes (order -1). The bright eyes
+    # are in the gene model nightborn_eyes, which glows in the dark.
+    pale = Mark("#D2DCC0", alpha=110, order=-1, regions=["face"], materials=["skin"], size=16).fill()
+    return [pale]
+
+
 GENES = {
     "lunger": lunger,
     "frenzy": frenzy,
     "bloodscent": bloodscent,
     "rabid": rabid,
+    "hush": hush,
+    "shade": shade,
+    "burrower": burrower,
+    "lurker": lurker,
+    "nightborn": nightborn,
+}
+
+# The gene models of the genes in GENES.
+MODELS = {
+    "nightborn": "originofspawns:nightborn_eyes",
 }
 
 
@@ -246,8 +340,11 @@ def write(gene, marks):
         if mark.order:
             layer["order"] = mark.order
         layers.append(layer)
+    visual = {"layers": layers}
+    if gene in MODELS:
+        visual["model"] = MODELS[gene]
     with open(os.path.join(VISUAL_DIR, gene + ".json"), "w") as fh:
-        json.dump({"layers": layers}, fh, indent="\t")
+        json.dump(visual, fh, indent="\t")
         fh.write("\n")
 
 

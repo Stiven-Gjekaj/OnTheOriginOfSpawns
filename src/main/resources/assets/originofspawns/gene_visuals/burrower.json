@@ -1,0 +1,12 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/burrower_0.png",
+				"tint": "#6A4A2C"
+			},
+			"order": -1
+		}
+	]
+}

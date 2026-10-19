@@ -1,0 +1,19 @@
+{
+	"layers": [
+		{
+			"regions": [
+				"face"
+			],
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/nightborn_0.png",
+				"tint": "#D2DCC0"
+			},
+			"order": -1
+		}
+	],
+	"model": "originofspawns:nightborn_eyes"
+}

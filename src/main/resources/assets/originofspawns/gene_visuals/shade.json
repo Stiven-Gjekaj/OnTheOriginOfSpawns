@@ -1,0 +1,12 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shade_0.png",
+				"tint": "#0E1014"
+			},
+			"order": -2
+		}
+	]
+}

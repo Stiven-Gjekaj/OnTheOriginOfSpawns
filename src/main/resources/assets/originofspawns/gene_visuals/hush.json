@@ -1,0 +1,18 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/hush_0.png",
+				"tint": "#A88B5C"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/hush_1.png",
+				"tint": "#1A100A"
+			}
+		}
+	]
+}

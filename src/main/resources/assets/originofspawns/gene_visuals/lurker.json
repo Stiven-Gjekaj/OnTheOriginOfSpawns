@@ -1,0 +1,20 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/lurker_0.png",
+				"tint": "#15180F"
+			},
+			"order": -1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/lurker_1.png",
+				"tint": "#15180F"
+			},
+			"order": -1
+		}
+	]
+}

@@ -1,0 +1,67 @@
+{
+	"species": "minecraft:zombie",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "loud",
+					"multiplier": 0.5
+				},
+				{
+					"type": "damage_dealt_when",
+					"when": "ambush",
+					"multiplier": 1.5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "bright",
+					"multiplier": 1.25
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "silence",
+					"steps": true
+				},
+				{
+					"type": "damage_dealt_when",
+					"when": "ambush",
+					"multiplier": 2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "bright",
+					"multiplier": 1.2
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "silence",
+					"idle": true,
+					"hurt": true,
+					"steps": true
+				},
+				{
+					"type": "damage_dealt_when",
+					"when": "ambush",
+					"multiplier": 3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "bright",
+					"multiplier": 1.1
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,67 @@
+{
+	"species": "minecraft:zombie",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:hunger",
+					"seconds": 5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:attack_damage",
+					"amount": -0.3,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:hunger",
+					"seconds": 10
+				},
+				{
+					"type": "convert_villagers"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:attack_damage",
+					"amount": -0.25,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:hunger",
+					"seconds": 15
+				},
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:weakness",
+					"seconds": 5
+				},
+				{
+					"type": "convert_villagers"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:attack_damage",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

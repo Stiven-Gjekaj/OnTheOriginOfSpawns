@@ -2006,7 +2006,51 @@ window.SITE_DATA = {
     "decay": 0.01
    },
    "status": "development",
-   "visual": null
+   "visual": {
+    "layers": [],
+    "regionMap": null,
+    "model": {
+     "texture": "originofspawns:textures/entity/thickskull_plate.png",
+     "texture_width": 32,
+     "texture_height": 16,
+     "parts": [
+      {
+       "bone": "head",
+       "uv": [
+        0,
+        0
+       ],
+       "from": [
+        -3,
+        -10,
+        -3
+       ],
+       "size": [
+        6,
+        2,
+        6
+       ]
+      },
+      {
+       "bone": "head",
+       "uv": [
+        0,
+        8
+       ],
+       "from": [
+        -3,
+        -8,
+        -4.6
+       ],
+       "size": [
+        6,
+        2,
+        1
+       ]
+      }
+     ]
+    }
+   }
   },
   {
    "id": "bloat",
@@ -2051,7 +2095,26 @@ window.SITE_DATA = {
     "decay": 0.01
    },
    "status": "development",
-   "visual": null
+   "visual": {
+    "layers": [
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/bloat_0.png",
+       "tint": "#9DB64C"
+      }
+     },
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/bloat_1.png",
+       "tint": "#6A852A"
+      }
+     }
+    ],
+    "regionMap": null,
+    "model": null
+   }
   },
   {
    "id": "stoneblood",
@@ -2094,7 +2157,79 @@ window.SITE_DATA = {
     "decay": 0.01
    },
    "status": "development",
-   "visual": null
+   "visual": {
+    "layers": [
+     {
+      "regions": [
+       "lower_legs",
+       "feet"
+      ],
+      "effect": {
+       "type": "desaturate",
+       "amount": 1,
+       "darken": 0.1
+      },
+      "order": -3
+     },
+     {
+      "regions": [
+       "lower_legs",
+       "feet"
+      ],
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/stoneblood_0.png",
+       "tint": "#9A9A9A"
+      },
+      "order": -3
+     }
+    ],
+    "regionMap": null,
+    "model": {
+     "texture": "originofspawns:textures/entity/stoneblood_shell.png",
+     "texture_width": 16,
+     "texture_height": 16,
+     "parts": [
+      {
+       "bone": "right_leg",
+       "uv": [
+        0,
+        0
+       ],
+       "from": [
+        -2,
+        6,
+        -2
+       ],
+       "size": [
+        4,
+        6,
+        4
+       ],
+       "inflate": 0.15
+      },
+      {
+       "bone": "left_leg",
+       "uv": [
+        0,
+        0
+       ],
+       "from": [
+        -2,
+        6,
+        -2
+       ],
+       "size": [
+        4,
+        6,
+        4
+       ],
+       "inflate": 0.15,
+       "mirror": true
+      }
+     ]
+    }
+   }
   },
   {
    "id": "blastproof",
@@ -2131,7 +2266,26 @@ window.SITE_DATA = {
     "decay": 0.01
    },
    "status": "development",
-   "visual": null
+   "visual": {
+    "layers": [
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/blastproof_0.png",
+       "tint": "#2B2520"
+      }
+     },
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/blastproof_1.png",
+       "tint": "#2B2520"
+      }
+     }
+    ],
+    "regionMap": null,
+    "model": null
+   }
   },
   {
    "id": "mender",
@@ -2170,7 +2324,26 @@ window.SITE_DATA = {
     "decay": 0.01
    },
    "status": "development",
-   "visual": null
+   "visual": {
+    "layers": [
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/mender_0.png",
+       "tint": "#3A1E16"
+      }
+     },
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/mender_1.png",
+       "tint": "#C8B890"
+      }
+     }
+    ],
+    "regionMap": null,
+    "model": null
+   }
   },
   {
    "id": "packcaller",

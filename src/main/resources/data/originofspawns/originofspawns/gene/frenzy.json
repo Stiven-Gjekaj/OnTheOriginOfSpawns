@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:zombie/predator",
+	"gains": [
+		{
+			"type": "attack_interval",
+			"multiplier": 0.7
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

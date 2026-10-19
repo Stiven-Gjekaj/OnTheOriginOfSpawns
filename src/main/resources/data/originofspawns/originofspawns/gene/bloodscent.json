@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:zombie/predator",
+	"sub_family": "originofspawns:zombie/stalker",
+	"gains": [
+		{
+			"type": "hunt",
+			"invisible_radius": 8,
+			"wounded_range_multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken_when",
+			"when": "hunting_wounded",
+			"multiplier": 1.25
+		}
+	]
+}

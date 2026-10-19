@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:zombie/predator",
+	"gains": [
+		{
+			"type": "death_burst",
+			"damage": 4,
+			"radius": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

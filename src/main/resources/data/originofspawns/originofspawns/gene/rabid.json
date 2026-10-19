@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:zombie/predator",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:nausea",
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "frenzied_targeting",
+			"chance": 0.1,
+			"interval_seconds": 10,
+			"radius": 8
+		}
+	]
+}

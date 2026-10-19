@@ -1,0 +1,235 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Icon from "../components/Icon.astro";
+import site from "../data/site.json";
+import { url } from "../lib/site.js";
+import { brandIcon } from "../lib/icons.js";
+
+const { links, version, minecraft, fabric, tagline, overview, features, roadmap } = site;
+const v1 = roadmap.filter((r) => !r.after1 && r.items.length);
+const v1Done = v1.filter((r) => r.done).length;
+const next = v1.find((r) => !r.done);
+
+const stats = [
+  [site.genes.length, "Zombie genes", "blight"],
+  [site.families.length, "Major families", "predator"],
+  [site.minors.length, "Minor families", "stalker"],
+  [site.hybrids.length, "Hybrids", "horde"],
+  [site.pressures.length, "Pressures", "tank"],
+  [site.evolution.categories.length, "Biome categories", "temperate"],
+];
+
+const loop = [
+  ["You kill a zombie", `The mod records the cause of the death. Fire, arrows, melee, and falls are some of the ${site.pressures.length} pressures.`],
+  ["The pool selects", "The gene that counters the cause gets stronger in the pool of that biome category."],
+  ["New zombies spawn", "Each new zombie gets genes from its pool. A zombie carries a maximum of 5 genes."],
+  ["You read the signs", "Each gene puts a mark on the body. The Beagle Notebook records the species."],
+];
+
+const explore = [
+  ["evolution/", "Evolution", "Gene pools, pressures, selection, and a pool simulator.", "temperate"],
+  ["families/", "Families", "The 5 major families, the 20 minor families, and the 10 hybrids.", "stalker"],
+  ["genes/", "Genes", `All ${site.genes.length} zombie genes, with their gains, downsides, and marks.`, "blight"],
+  ["lab/", "Gene Lab", "Put genes on a zombie and see the marks of the game.", "predator"],
+  ["notebook/", "Beagle Notebook", "The notebook, the mob info panel, and the perks.", "tank"],
+  ["data-packs/", "Data packs", "Add your own genes, families, and pressures.", "horde"],
+];
+---
+<Layout description={`${tagline}. ${overview[0]}`}>
+  <section class="hero">
+    <canvas id="hero-particles" class="particles" aria-hidden="true"></canvas>
+    <div class="container hero-grid">
+      <div class="copy">
+        <div class="eyebrow">A Fabric mod for Minecraft {minecraft}</div>
+        <h1>On the Origin <span>of Spawns</span></h1>
+        <p class="tagline">{tagline}.</p>
+        <p class="intro">{overview[0]}</p>
+        <div class="row actions">
+          <a class="mc-btn modrinth" href={links.modrinth}><Fragment set:html={brandIcon.modrinth} />Modrinth</a>
+          <a class="mc-btn curseforge" href={links.curseforge}><Fragment set:html={brandIcon.curseforge} />CurseForge</a>
+          <a class="btn hero-link" href={url("evolution/")}>How it works</a>
+        </div>
+        <div class="row meta">
+          <span class="badge ok"><span class="dot"></span>{version}</span>
+          <span class="badge">Minecraft {minecraft}</span>
+          <span class="badge">Fabric Loader {fabric}</span>
+        </div>
+      </div>
+      <div class="stage">
+        <div class="glow" aria-hidden="true"></div>
+        <canvas id="hero-zombie" role="img" aria-label="A zombie that turns slowly. Its genes change every few seconds."></canvas>
+        <div class="mob-info" id="hero-label" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="page">
+    <div class="container">
+      <section class="stats" aria-label="The mod in numbers">
+        {stats.map(([n, name, ic]) => (
+          <div class="stat">
+            <span class="mc-slot sm"><Icon name={ic} /></span>
+            <div><b>{n}</b><span>{name}</span></div>
+          </div>
+        ))}
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="eyebrow">The loop</div>
+          <h2>Each kill changes the next generation</h2>
+          <p>{overview[1]}</p>
+        </div>
+        <ol class="loop">
+          {loop.map(([title, text], i) => (
+            <li class="card">
+              <span class="step">{i + 1}</span>
+              <h3>{title}</h3>
+              <p class="muted">{text}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="eyebrow">Explore</div>
+          <h2>Read the wiki</h2>
+        </div>
+        <div class="grid grid-3">
+          {explore.map(([path, title, text, ic]) => (
+            <a class="card explore" href={url(path)}>
+              <span class="mc-slot"><Icon name={ic} /></span>
+              <div>
+                <h3>{title}</h3>
+                <p class="muted small">{text}</p>
+              </div>
+              <span class="arrow" aria-hidden="true">&rarr;</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section class="section grid grid-2">
+        <div class="card">
+          <h3>Features for version 1.0.0</h3>
+          <p class="muted small" style="margin-top:4px">The roadmap shows the state of each one.</p>
+          <ul class="features">{features.map((f) => <li>{f}</li>)}</ul>
+        </div>
+        <div class="stack">
+          <div class="card">
+            <h3>Progress to version 1.0.0</h3>
+            <div class="xp-row">
+              <div class="xp"><span style={`--w:${(v1Done / v1.length) * 100}%`}></span></div>
+              <span class="xp-level">{v1Done}/{v1.length}</span>
+            </div>
+            <p class="muted small">{v1Done} of {v1.length} milestones are done.{next && ` Next: ${next.key}, ${next.title.toLowerCase()}.`}</p>
+            <div class="actions"><a class="btn sm" href={url("roadmap/")}>See the roadmap</a></div>
+          </div>
+          <div class="card">
+            <h3>Players adapt too</h3>
+            <p class="muted">You choose small adaptations, each with a trade-off. Then the mobs adapt to counter you. Milestone 3 adds the perks.</p>
+            <div class="actions"><a class="btn sm" href={url("notebook/#perks")}>See the perks</a></div>
+          </div>
+          <div class="card notebook-card">
+            <span class="mc-slot"><img src={url("img/beagle_notebook.png")} alt="" width="30" height="30" /></span>
+            <div>
+              <h3>The Beagle Notebook</h3>
+              <p class="muted">The notebook records each species, its genes, and the families that you find.</p>
+              <div class="actions"><a class="btn sm" href={url("notebook/")}>Open the notebook</a></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import "../scripts/hero.js";
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    background:
+      radial-gradient(50% 70% at 75% 45%, rgba(69, 211, 197, 0.16), transparent 70%),
+      radial-gradient(45% 60% at 15% 85%, rgba(139, 211, 70, 0.14), transparent 70%),
+      linear-gradient(180deg, #071013, #0b1a1e 60%, #0d2024);
+    border-bottom: 1px solid #1d2c33;
+  }
+  .particles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: var(--s-6);
+    align-items: center;
+    min-height: min(78vh, 680px);
+    padding-top: var(--s-7);
+    padding-bottom: var(--s-7);
+  }
+  .copy { display: grid; gap: var(--s-4); }
+  .hero .eyebrow { color: #8bd346; }
+  .hero h1 { color: #fff; font-size: var(--fs-hero); line-height: 0.98; text-shadow: 0 4px 0 #000; }
+  .hero h1 span { display: block; color: #8bd346; text-shadow: 0 4px 0 #1e420a, 0 7px 0 #000; }
+  .tagline { font-family: var(--font-display); font-size: var(--fs-lg); color: #45d3c5; }
+  .intro { color: #c7d6d1; font-size: var(--fs-md); max-width: 54ch; }
+  .actions { margin-top: var(--s-2); gap: var(--s-3); }
+  .hero-link { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.18); color: #fff; min-height: 48px; }
+  .hero-link:hover { background: rgba(255, 255, 255, 0.12); }
+  .meta .badge { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.14); color: #c7d6d1; }
+  .meta .badge.ok { color: #8bd346; }
+  .stage { position: relative; display: grid; justify-items: center; gap: var(--s-2); }
+  .stage canvas { width: min(100%, 320px); aspect-ratio: 300 / 380; image-rendering: pixelated; }
+  .glow {
+    position: absolute; bottom: 82px; width: 60%; height: 26px; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(139, 211, 70, 0.45), transparent);
+    filter: blur(4px); animation: breathe 3.2s ease-in-out infinite;
+  }
+  @keyframes breathe { 50% { opacity: 0.55; transform: scaleX(0.9); } }
+  .stage .mob-info { min-height: 76px; }
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; min-height: 0; gap: var(--s-4); }
+    .stage canvas { width: min(58vw, 240px); }
+    .glow { bottom: 78px; }
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--s-3);
+    margin-top: calc(var(--s-6) * -1);
+    position: relative;
+  }
+  .stat {
+    display: flex; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4);
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow);
+  }
+  .stat b { display: block; font-family: var(--font-display); font-size: var(--fs-xl); line-height: 1; }
+  .stat span { font-size: var(--fs-xs); color: var(--text-muted); }
+  @media (max-width: 1000px) { .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: var(--s-5); } }
+
+  .loop { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+  .loop li { margin: 0; }
+  .step {
+    display: grid; place-items: center; width: 32px; height: 32px; margin-bottom: var(--s-3);
+    font-family: var(--font-display); font-weight: 600; color: var(--accent-ink); background: var(--accent); border-radius: 8px;
+  }
+  .loop h3 + p { margin-top: var(--s-2); }
+
+  .explore { display: grid; grid-template-columns: auto 1fr auto; gap: var(--s-4); align-items: center; text-decoration: none; color: inherit; transition: border-color 140ms ease, transform 140ms ease; }
+  .explore:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .explore p { margin-top: 2px; }
+  .arrow { color: var(--text-faint); font-size: var(--fs-lg); transition: transform 140ms ease, color 140ms ease; }
+  .explore:hover .arrow { color: var(--accent); transform: translateX(3px); }
+
+  .features { margin-top: var(--s-4); padding: 0; list-style: none; display: grid; gap: var(--s-2); }
+  .features li { display: flex; gap: var(--s-3); margin: 0; }
+  .features li::before { content: ""; flex: none; width: 8px; height: 8px; margin-top: 8px; background: var(--accent); }
+  .xp-row { display: grid; grid-template-columns: 1fr auto; gap: var(--s-3); align-items: center; margin: var(--s-4) 0 var(--s-2); }
+  .notebook-card { display: flex; gap: var(--s-4); align-items: flex-start; }
+</style>

@@ -51,7 +51,7 @@ public record Gene(
 			GeneEffect.CODEC.listOf().optionalFieldOf("gains", List.of()).forGetter(Gene::gains),
 			GeneEffect.CODEC.listOf().optionalFieldOf("downsides", List.of()).forGetter(Gene::downsides),
 			Codec.floatRange(0.0F, 1.0F).optionalFieldOf("selection_rate", 0.02F).forGetter(Gene::selectionRate),
-			Codec.floatRange(0.0F, 1.0F).optionalFieldOf("mutation_rate", 0.01F).forGetter(Gene::mutationRate),
+			Codec.floatRange(0.0F, 1.0F).optionalFieldOf("mutation_rate", 0.003F).forGetter(Gene::mutationRate),
 			Codec.floatRange(0.0F, 1.0F).optionalFieldOf("decay_rate", 0.01F).forGetter(Gene::decayRate),
 			GeneVisual.CODEC.optionalFieldOf("visual").forGetter(Gene::visual)
 	).apply(instance, Gene::new));

@@ -19,6 +19,7 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.Registry;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.EntityType;
@@ -79,6 +80,17 @@ public class DefinitionTest {
 		DataResult<GeneEffect> result = GeneEffect.CODEC.parse(JsonOps.INSTANCE, json);
 		helper.assertTrue(result.error().isPresent(), "the result is an error");
 		helper.assertTrue(result.error().get().message().contains("no_such_effect"), "the error names the type");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void mutationRateDefaultsToALowValue(GameTestHelper helper) {
+		JsonObject json = JsonParser.parseString(
+				"{\"species\": \"minecraft:zombie\", \"counters\": \"originofspawns_test:test_heat\","
+						+ " \"family\": \"originofspawns_test:tank\"}").getAsJsonObject();
+		Gene gene = Gene.CODEC.parse(RegistryOps.create(JsonOps.INSTANCE, helper.getLevel().registryAccess()), json)
+				.getOrThrow();
+		helper.assertValueEqual(gene.mutationRate(), 0.003F, "default mutation rate");
 		helper.succeed();
 	}
 

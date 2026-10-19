@@ -86,6 +86,7 @@ Times are in seconds, and distances are in blocks.
 | `damage_taken_when` | `when`, `multiplier` | Multiplies the damage that the mob takes while the state is true |
 | `damage_dealt_when` | `when`, `multiplier` | Multiplies the damage that the mob deals while the state is true |
 | `damage_from` | `attackers`, `multiplier` | Multiplies the damage from these entity types, for example `minecraft:iron_golem` |
+| `sunburn` | `multiplier` | Multiplies the fire damage while the sun burns the mob. Other fire does normal damage |
 | `critical_immunity` | | A critical hit of a player does no extra damage to the mob |
 | `speed_when` | `when`, `multiplier` | Multiplies the speed of the mob while the state is true |
 | `attack_interval` | `multiplier` | Multiplies the time between two melee attacks. `0.7` attacks faster |
@@ -136,6 +137,7 @@ The states for `when` are:
 | `burrow` | `player_radius` (`24`), `rise_seconds` (`2`) | At night, the mob can spawn under the ground near a player and rise. It rises only through the blocks in the tag `#originofspawns:burrowable` |
 | `siege` | `break_seconds` (`10`) | The mob breaks doors on each difficulty, and breaks the blocks in the tag `#originofspawns:siege_breakable`. It obeys the `mobGriefing` gamerule |
 | `raise_victim` | | A player that the mob kills rises as a mob of its species, with its genes |
+| `attract_golems` | `radius` (`16`) | Iron golems in the radius attack the mob before other targets |
 
 #### Senses
 

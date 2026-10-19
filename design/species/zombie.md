@@ -173,7 +173,7 @@ These rules make the gene table exact.
 | Rabid | Each 10 seconds, it has a 10% chance to target the nearest mob in 8 blocks that is not a zombie |
 | Death Throes | The 4 damage hits players only, not mobs or blocks. A small burst of particles shows it |
 | Hush | It keeps its death sound |
-| Shade | The client draws it translucent at night. It is not the invisibility effect, so other mobs still see it. The sun burn is fire damage, so Shade takes double damage from all fire |
+| Shade | The client draws it translucent at night. It is not the invisibility effect, so other mobs still see it |
 | Burrower | When it spawns at night in 24 blocks of a player, it starts 2 blocks under the surface, and rises in 2 seconds with dirt particles. It rises only through dirt, grass, sand, and gravel. It breaks no blocks |
 | Lurker | It moves only where the player does not face. The camera mode does not change this |
 | Packcaller | When it first sees a player, all zombies in 24 blocks target that player. It can call again after 30 seconds |
@@ -181,7 +181,6 @@ These rules make the gene table exact.
 | Grave Call | The new zombie has no genes. Each Grave Call zombie calls a maximum of 2 zombies |
 | Siege | It breaks glass blocks and glass panes only, in 10 seconds for each block. It obeys the gamerule that stops mobs from breaking blocks |
 | Runt | Runt babies can ride chickens at the vanilla chance |
-| Contagion | Iron golems do 50% more damage to it. Golems do not target it first yet |
 | Leech | Each hit takes 3 XP points. When it dies, it drops the XP that it took, and no other XP |
 | Miasma | It has the Glowing effect all the time. Its aura gives Weakness I to players in 3 blocks, renewed each 2 seconds |
 | Plague Carrier | A zombie with the genes of the killer spawns where the player died, and wears the head of the player. The items of the player drop on the ground as in vanilla |

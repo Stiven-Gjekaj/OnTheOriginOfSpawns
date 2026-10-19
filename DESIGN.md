@@ -38,6 +38,35 @@ Change this document when a decision changes.
 - Each gene changes how the mob looks.
   The player can see the threat before the fight.
 
+## Kinds of genes
+
+- Resistance genes decrease damage from one cause.
+  Examples are fire, water, and arrows.
+- Behavior genes change the AI of the mob.
+  - Mobs that die in the open start to attack from cover.
+  - Mobs that die alone start to move in groups.
+  - Creepers that die before they explode get a shorter fuse.
+- Sense genes change how the mob finds the player.
+  - Mobs that die in the dark get night vision.
+  - Mobs get good hearing, so the player cannot sneak past them.
+  - Mobs that are easy to see in daylight get camouflage.
+- Life-history genes change the number of spawns.
+  A pool can make a small number of strong mobs or a large number of weak
+  mobs.
+- Mimicry is a rare zombie mutation.
+  The zombie looks like a villager until the player comes near.
+
+## Balance
+
+- Pressure decays.
+  If players stop a cause of death, the gene that counters it fades slowly.
+- Each mob has a fixed number of gene points.
+  Thus, a species cannot have all defenses at the same time.
+- The difficulty sets the speed of evolution.
+  Peaceful has no evolution.
+  Hard has the fastest evolution.
+- A gamerule overrides the speed.
+
 ## Extinction and speciation
 
 - If players kill a species too much in a category, the species goes extinct
@@ -58,6 +87,28 @@ Change this document when a decision changes.
 - The player can change a perk.
   A change has a small cost.
 
+These are the first perks:
+
+| Perk | Gain | Cost |
+|---|---|---|
+| Thick hide | 10% less damage taken | 10% less speed |
+| Night eyes | The player sees in the dark | The sun blinds the player |
+| Cold blood | Hunger decreases more slowly | The player is weak in snow biomes |
+| Gills | The player breathes longer under water | The player loses air slowly on land |
+| Lean frame | More sprint speed | 2 fewer hearts |
+| Scent mask | Mobs notice the player later | Animals run from the player |
+
+## Breeding
+
+- Passive mobs carry genes.
+  Examples are cows, sheep, wolves, and horses.
+- The player selects the parents.
+  This is artificial selection.
+- The player breeds for traits.
+  Examples are wool color, wool density, milk yield, wolf loyalty, and horse
+  stamina.
+- Each bred line gets a pedigree page in the notebook.
+
 ## Beagle Notebook
 
 - The Beagle Notebook is an item.
@@ -66,6 +117,32 @@ Change this document when a decision changes.
   a family tree.
 - A page opens when the player first observes or kills a mob of that species.
 - Notebook progress is the source of Insight.
+- A phylogenetic tree shows when each variant split from its species.
+- Field sketches show each mob with its current genes.
+  The sketch changes when the genes change.
+- The notebook gives predictions.
+  For example: "Zombies in hot biomes move toward fire immunity."
+
+## Darwin content
+
+- Finches are a new small bird.
+  The shape of the beak changes with the biome.
+  Finches are a collectible in the notebook.
+- The Galapagos is a rare island structure.
+  Its gene pools are isolated, and they evolve quickly.
+- The HMS Beagle is a shipwreck variant.
+  Its loot holds the first Beagle Notebook.
+- Advancement names come from the chapters of Darwin's book.
+  Examples are "Struggle for Existence", "Variation Under Domestication", and
+  "Extinction".
+
+## World events
+
+- A mass extinction resets the pools of one category to their base genes.
+  It is a rare event.
+  A boss kill can also cause it.
+- Adaptive radiation follows a mass extinction.
+  The next species in that category evolves two times faster for a period.
 
 ## Multiplayer
 

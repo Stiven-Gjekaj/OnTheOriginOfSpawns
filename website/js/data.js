@@ -2007,7 +2007,24 @@ window.SITE_DATA = {
    },
    "status": "development",
    "visual": {
-    "layers": [],
+    "layers": [
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/thickskull_0.png",
+       "tint": "#CEC4A8"
+      },
+      "order": -1
+     },
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/thickskull_1.png",
+       "tint": "#7A2E24"
+      },
+      "order": -1
+     }
+    ],
     "regionMap": null,
     "model": {
      "texture": "originofspawns:textures/entity/thickskull_plate.png",
@@ -2291,18 +2308,70 @@ window.SITE_DATA = {
    "visual": {
     "layers": [
      {
+      "regions": [
+       "torso",
+       "arms",
+       "legs",
+       "lower_legs"
+      ],
+      "materials": [
+       "cloth"
+      ],
+      "effect": {
+       "type": "desaturate",
+       "amount": 0.75,
+       "darken": 0.2
+      },
+      "order": -7
+     },
+     {
+      "regions": [
+       "torso",
+       "arms",
+       "legs",
+       "lower_legs"
+      ],
+      "materials": [
+       "cloth"
+      ],
       "effect": {
        "type": "pattern",
        "texture": "originofspawns:textures/gene_marks/blastproof_0.png",
-       "tint": "#2B2520"
-      }
+       "tint": "#2A1E16"
+      },
+      "order": -6
      },
      {
       "effect": {
        "type": "pattern",
        "texture": "originofspawns:textures/gene_marks/blastproof_1.png",
-       "tint": "#2B2520"
+       "tint": "#120E0C"
       }
+     },
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/blastproof_2.png",
+       "tint": "#4A3020"
+      }
+     },
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/blastproof_3.png",
+       "tint": "#A04A1E"
+      }
+     },
+     {
+      "regions": [
+       "hands"
+      ],
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/blastproof_4.png",
+       "tint": "#1E1A17"
+      },
+      "order": -2
      }
     ],
     "regionMap": null,
@@ -2359,7 +2428,28 @@ window.SITE_DATA = {
       "effect": {
        "type": "pattern",
        "texture": "originofspawns:textures/gene_marks/mender_1.png",
-       "tint": "#C8B890"
+       "tint": "#E0D2A8"
+      }
+     },
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/mender_2.png",
+       "tint": "#C98A84"
+      }
+     },
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/mender_3.png",
+       "tint": "#DCD5C2"
+      }
+     },
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/mender_4.png",
+       "tint": "#8A2A22"
       }
      }
     ],
@@ -2574,231 +2664,24 @@ window.SITE_DATA = {
    },
    "status": "development",
    "visual": {
-    "layers": [],
-    "regionMap": null,
-    "model": {
-     "texture": "originofspawns:textures/entity/runt_tufts.png",
-     "texture_width": 16,
-     "texture_height": 16,
-     "parts": [
-      {
-       "bone": "head",
-       "uv": [
-        0,
-        0
-       ],
-       "from": [
-        -3.6,
-        -10.5,
-        -3
-       ],
-       "size": [
-        1,
-        2,
-        0
-       ],
-       "pivot": [
-        -3.1,
-        -8.5,
-        -3
-       ],
-       "rotation": [
-        0,
-        0,
-        30
-       ]
-      },
-      {
-       "bone": "head",
-       "uv": [
-        0,
-        0
-       ],
-       "from": [
-        -3.6,
-        -9.5,
-        0.5
-       ],
-       "size": [
-        1,
-        1,
-        0
-       ],
-       "pivot": [
-        -3.1,
-        -8.5,
-        0.5
-       ],
-       "rotation": [
-        0,
-        0,
-        -25
-       ]
-      },
-      {
-       "bone": "head",
-       "uv": [
-        0,
-        0
-       ],
-       "from": [
-        -3.4,
-        -10.5,
-        3
-       ],
-       "size": [
-        1,
-        2,
-        0
-       ],
-       "pivot": [
-        -2.9,
-        -8.5,
-        3
-       ],
-       "rotation": [
-        0,
-        0,
-        20
-       ]
-      },
-      {
-       "bone": "head",
-       "uv": [
-        0,
-        0
-       ],
-       "from": [
-        2.6,
-        -9.5,
-        -2.5
-       ],
-       "size": [
-        1,
-        1,
-        0
-       ],
-       "pivot": [
-        3.1,
-        -8.5,
-        -2.5
-       ],
-       "rotation": [
-        0,
-        0,
-        -30
-       ]
-      },
-      {
-       "bone": "head",
-       "uv": [
-        0,
-        0
-       ],
-       "from": [
-        2.6,
-        -10.5,
-        1
-       ],
-       "size": [
-        1,
-        2,
-        0
-       ],
-       "pivot": [
-        3.1,
-        -8.5,
-        1
-       ],
-       "rotation": [
-        0,
-        0,
-        25
-       ]
-      },
-      {
-       "bone": "head",
-       "uv": [
-        0,
-        0
-       ],
-       "from": [
-        2.4,
-        -9.5,
-        3.2
-       ],
-       "size": [
-        1,
-        1,
-        0
-       ],
-       "pivot": [
-        2.9,
-        -8.5,
-        3.2
-       ],
-       "rotation": [
-        0,
-        0,
-        -20
-       ]
-      },
-      {
-       "bone": "head",
-       "uv": [
-        0,
-        0
-       ],
-       "from": [
-        -1,
-        -10.5,
-        3.4
-       ],
-       "size": [
-        1,
-        2,
-        0
-       ],
-       "pivot": [
-        -0.5,
-        -8.5,
-        3.4
-       ],
-       "rotation": [
-        0,
-        0,
-        15
-       ]
-      },
-      {
-       "bone": "head",
-       "uv": [
-        0,
-        0
-       ],
-       "from": [
-        0.5,
-        -9.5,
-        -3.5
-       ],
-       "size": [
-        1,
-        1,
-        0
-       ],
-       "pivot": [
-        1,
-        -8.5,
-        -3.5
-       ],
-       "rotation": [
-        0,
-        0,
-        -15
-       ]
+    "layers": [
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/runt_0.png",
+       "tint": "#3E3128"
       }
-     ]
-    }
+     },
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/runt_1.png",
+       "tint": "#5A4838"
+      }
+     }
+    ],
+    "regionMap": null,
+    "model": null
    }
   },
   {
@@ -2889,11 +2772,27 @@ window.SITE_DATA = {
    },
    "status": "development",
    "visual": {
-    "layers": [],
+    "layers": [
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/siege_0.png",
+       "tint": "#D8C090"
+      }
+     },
+     {
+      "effect": {
+       "type": "pattern",
+       "texture": "originofspawns:textures/gene_marks/siege_1.png",
+       "tint": "#B0453A"
+      },
+      "order": 1
+     }
+    ],
     "regionMap": null,
     "model": {
      "texture": "originofspawns:textures/entity/siege_splinters.png",
-     "texture_width": 16,
+     "texture_width": 32,
      "texture_height": 16,
      "parts": [
       {
@@ -2902,35 +2801,134 @@ window.SITE_DATA = {
         0,
         0
        ],
+       "from": [
+        -2.5,
+        -6,
+        -0.5
+       ],
        "size": [
-        2,
+        1,
+        4,
+        1
+       ],
+       "pivot": [
+        -2,
+        -2,
+        0
+       ],
+       "rotation": [
+        10,
+        0,
+        -35
+       ]
+      },
+      {
+       "bone": "right_arm",
+       "uv": [
+        8,
+        0
+       ],
+       "from": [
+        -7,
+        5,
+        -0.5
+       ],
+       "size": [
+        4,
         1,
         1
        ],
-       "from": [
-        -5,
-        7,
-        -0.5
+       "pivot": [
+        -3,
+        5.5,
+        0
        ],
-       "mirror": false
+       "rotation": [
+        0,
+        15,
+        20
+       ]
       },
       {
        "bone": "right_arm",
        "uv": [
         0,
-        4
+        8
+       ],
+       "from": [
+        -1.5,
+        6.5,
+        -6
        ],
        "size": [
         1,
         1,
-        2
+        4
+       ],
+       "pivot": [
+        -1,
+        7,
+        -2
+       ],
+       "rotation": [
+        25,
+        -15,
+        0
+       ]
+      },
+      {
+       "bone": "right_arm",
+       "uv": [
+        20,
+        0
        ],
        "from": [
-        -1.5,
-        8.5,
-        -4
+        -4,
+        2,
+        0.5
        ],
-       "mirror": false
+       "size": [
+        1,
+        1,
+        0
+       ],
+       "pivot": [
+        -3,
+        2.5,
+        0.5
+       ],
+       "rotation": [
+        0,
+        0,
+        25
+       ]
+      },
+      {
+       "bone": "right_arm",
+       "uv": [
+        20,
+        0
+       ],
+       "from": [
+        -4,
+        3.5,
+        -1
+       ],
+       "size": [
+        1,
+        1,
+        0
+       ],
+       "pivot": [
+        -3,
+        4,
+        -1
+       ],
+       "rotation": [
+        0,
+        30,
+        -20
+       ]
       },
       {
        "bone": "left_arm",
@@ -2938,15 +2936,53 @@ window.SITE_DATA = {
         0,
         0
        ],
+       "from": [
+        1.5,
+        -6,
+        -0.5
+       ],
        "size": [
-        2,
         1,
+        4,
         1
+       ],
+       "pivot": [
+        2,
+        -2,
+        0
+       ],
+       "rotation": [
+        10,
+        0,
+        35
+       ],
+       "mirror": true
+      },
+      {
+       "bone": "left_arm",
+       "uv": [
+        8,
+        0
        ],
        "from": [
         3,
-        7,
+        5,
         -0.5
+       ],
+       "size": [
+        4,
+        1,
+        1
+       ],
+       "pivot": [
+        3,
+        5.5,
+        0
+       ],
+       "rotation": [
+        0,
+        -15,
+        -20
        ],
        "mirror": true
       },
@@ -2954,17 +2990,83 @@ window.SITE_DATA = {
        "bone": "left_arm",
        "uv": [
         0,
-        4
+        8
+       ],
+       "from": [
+        0.5,
+        6.5,
+        -6
        ],
        "size": [
         1,
         1,
-        2
+        4
+       ],
+       "pivot": [
+        1,
+        7,
+        -2
+       ],
+       "rotation": [
+        25,
+        15,
+        0
+       ],
+       "mirror": true
+      },
+      {
+       "bone": "left_arm",
+       "uv": [
+        20,
+        0
        ],
        "from": [
-        0.5,
-        8.5,
-        -4
+        3,
+        2,
+        0.5
+       ],
+       "size": [
+        1,
+        1,
+        0
+       ],
+       "pivot": [
+        3,
+        2.5,
+        0.5
+       ],
+       "rotation": [
+        0,
+        0,
+        -25
+       ],
+       "mirror": true
+      },
+      {
+       "bone": "left_arm",
+       "uv": [
+        20,
+        0
+       ],
+       "from": [
+        3,
+        3.5,
+        -1
+       ],
+       "size": [
+        1,
+        1,
+        0
+       ],
+       "pivot": [
+        3,
+        4,
+        -1
+       ],
+       "rotation": [
+        0,
+        -30,
+        20
        ],
        "mirror": true
       }
@@ -3509,7 +3611,7 @@ window.SITE_DATA = {
   }
  ],
  "dataPacks": {
-  "html": "<p>Data packs define the pressures, the genes, the families, and the perks of the mod. Each entry is a JSON file at this path:</p>\n<pre class=\"code\"><code>data/&lt;namespace&gt;/originofspawns/&lt;registry&gt;/&lt;name&gt;.json</code></pre>\n<p>The registries are <code>pressure</code>, <code>gene</code>, <code>family</code>, and <code>perk</code>. The world reads these files when it loads. A file with an error stops the world from loading, and the log names the file.</p>\n<h3 id=\"dp-pressure\">Pressure</h3>\n<p>A pressure is a cause of death. A death counts for a pressure when it matches all the parts of the pressure.</p>\n<pre class=\"code\"><code>{ \"damage_types\": \"#minecraft:is_fire\" }\n{ \"conditions\": [\"unreached\"] }</code></pre>\n<div class=\"table-wrap\"><table><thead><tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>damage_types</code></td><td>damage type tag, with <code>#</code></td><td>none</td><td>The damage types that count for this pressure</td></tr><tr><td><code>conditions</code></td><td>list of conditions</td><td><code>[]</code></td><td>The conditions of the death that must all be true</td></tr></tbody></table></div>\n<p>A pressure needs <code>damage_types</code>, <code>conditions</code>, or both.</p>\n<div class=\"table-wrap\"><table><thead><tr><th>Condition</th><th>True when</th></tr></thead><tbody><tr><td><code>unreached</code></td><td>The mob targeted a player, but did not damage a player before it died</td></tr><tr><td><code>sunlight</code></td><td>The sun set the mob on fire, and the fire killed it</td></tr><tr><td><code>spotted</code></td><td>The killer saw the mob from more than 8 blocks, for 2 seconds or more before the death</td></tr><tr><td><code>alone</code></td><td>No other mob of the same species was in 8 blocks</td></tr><tr><td><code>crowd</code></td><td>3 or more mobs of the same species died in 8 blocks in 5 seconds. The condition is true for each of them</td></tr><tr><td><code>critical</code></td><td>A critical hit of a player killed the mob</td></tr><tr><td><code>golem</code></td><td>An iron golem killed the mob</td></tr><tr><td><code>player_death</code></td><td>The mob killed a player. This is not a death of the mob. Each gene of the killer gets stronger</td></tr></tbody></table></div>\n<p>The mod has these pressures: <code>fire</code>, <code>projectile</code>, <code>melee</code>, <code>explosion</code>, <code>fall</code>, <code>unreached</code>, <code>sunlight</code>, <code>spotted</code>, <code>alone</code>, <code>crowd</code>, <code>critical</code>, <code>golem</code>, and <code>player_death</code>. The <code>melee</code> pressure uses the tag <code>#originofspawns:melee</code>.</p>\n<h3 id=\"dp-gene\">Gene</h3>\n<p>A gene is a trait that a species can carry. It has gains and downsides, like a player perk.</p>\n<pre class=\"code\"><code>{\n    \"species\": \"minecraft:zombie\",\n    \"counters\": \"originofspawns:fire\",\n    \"family\": \"originofspawns:zombie/stalker\",\n    \"sub_family\": \"originofspawns:zombie/predator\",\n    \"gains\": [\n        { \"type\": \"damage_taken\", \"damage_types\": \"#minecraft:is_fire\", \"multiplier\": 0 }\n    ],\n    \"downsides\": [\n        { \"type\": \"attribute\", \"attribute\": \"minecraft:max_health\", \"amount\": -4, \"operation\": \"add_value\" }\n    ]\n}</code></pre>\n<div class=\"table-wrap\"><table><thead><tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>species</code></td><td>entity type, list, or tag</td><td></td><td>The mobs that can carry the gene</td></tr><tr><td><code>counters</code></td><td>pressure id</td><td></td><td>The pressure that makes the gene stronger</td></tr><tr><td><code>family</code></td><td>family id</td><td></td><td>The main family tag. It gives 2 points</td></tr><tr><td><code>sub_family</code></td><td>family id</td><td>none</td><td>The sub family tag. It gives 1 point. Only a few genes have one</td></tr><tr><td><code>gains</code></td><td>list of effects</td><td><code>[]</code></td><td>The effects that help the mob</td></tr><tr><td><code>downsides</code></td><td>list of effects</td><td><code>[]</code></td><td>The effects that hurt the mob</td></tr><tr><td><code>selection_rate</code></td><td>number, 0 to 1</td><td><code>0.02</code></td><td>The rise for each death, as a part of the distance to 100%</td></tr><tr><td><code>mutation_rate</code></td><td>number, 0 to 1</td><td><code>0.003</code></td><td>The smallest chance that a new mob gets the gene</td></tr><tr><td><code>decay_rate</code></td><td>number, 0 to 1</td><td><code>0.01</code></td><td>The loss for each Minecraft day, as a part of the frequency</td></tr></tbody></table></div>\n<h4 id=\"dp-effects\">Effects</h4>\n<p>Each effect has a <code>type</code> field. A field with a value in parentheses is optional, and the value is its default. Times are in seconds, and distances are in blocks.</p>\n<h5 id=\"dp-body-and-damage\">Body and damage</h5>\n<div class=\"table-wrap\"><table><thead><tr><th>Type</th><th>Fields</th><th>Result</th></tr></thead><tbody><tr><td><code>attribute</code></td><td><code>attribute</code>, <code>amount</code>, <code>operation</code></td><td>Changes an attribute of the mob. <code>operation</code> is <code>add_value</code>, <code>add_multiplied_base</code>, or <code>add_multiplied_total</code></td></tr><tr><td><code>damage_taken</code></td><td><code>damage_types</code>, <code>multiplier</code></td><td>Multiplies the damage from these damage types. <code>0</code> makes the mob immune</td></tr><tr><td><code>damage_taken_when</code></td><td><code>when</code>, <code>multiplier</code></td><td>Multiplies the damage that the mob takes while the state is true</td></tr><tr><td><code>damage_dealt_when</code></td><td><code>when</code>, <code>multiplier</code></td><td>Multiplies the damage that the mob deals while the state is true</td></tr><tr><td><code>damage_from</code></td><td><code>attackers</code>, <code>multiplier</code></td><td>Multiplies the damage from these entity types, for example <code>minecraft:iron_golem</code></td></tr><tr><td><code>sunburn</code></td><td><code>multiplier</code></td><td>Multiplies the fire damage while the sun burns the mob. Other fire does normal damage</td></tr><tr><td><code>critical_immunity</code></td><td></td><td>A critical hit of a player does no extra damage to the mob</td></tr><tr><td><code>speed_when</code></td><td><code>when</code>, <code>multiplier</code></td><td>Multiplies the speed of the mob while the state is true</td></tr><tr><td><code>attack_interval</code></td><td><code>multiplier</code></td><td>Multiplies the time between two melee attacks. <code>0.7</code> attacks faster</td></tr><tr><td><code>water_damage</code></td><td><code>amount</code>, <code>interval</code> (<code>20</code>)</td><td>Damages the mob each <code>interval</code> ticks in water or rain</td></tr><tr><td><code>air_loss</code></td><td><code>extra</code></td><td>The mob loses this much more air each tick under water. Mobs that breathe under water, such as zombies, do not drown</td></tr><tr><td><code>regenerate</code></td><td><code>amount</code>, <code>interval_seconds</code> (<code>3</code>), <code>idle_seconds</code> (<code>5</code>)</td><td>Heals the mob after it was out of combat for <code>idle_seconds</code></td></tr></tbody></table></div>\n<p>The states for <code>when</code> are:</p>\n<div class=\"table-wrap\"><table><thead><tr><th>State</th><th>True when</th></tr></thead><tbody><tr><td><code>always</code></td><td>Always</td></tr><tr><td><code>alone</code></td><td>No other mob of the same species is in 8 blocks</td></tr><tr><td><code>ambush</code></td><td>The mob was not in combat for 10 seconds</td></tr><tr><td><code>dark</code></td><td>The light level at the mob is 6 or less</td></tr><tr><td><code>bright</code></td><td>The light level at the mob is 12 or more</td></tr><tr><td><code>hunting_wounded</code></td><td>The mob targets a player under half health</td></tr><tr><td><code>in_water</code></td><td>The mob is in water</td></tr></tbody></table></div>\n<h5 id=\"dp-hits\">Hits</h5>\n<div class=\"table-wrap\"><table><thead><tr><th>Type</th><th>Fields</th><th>Result</th></tr></thead><tbody><tr><td><code>ignite_target</code></td><td><code>chance</code>, <code>seconds</code></td><td>Each hit has this chance to set the target on fire</td></tr><tr><td><code>effect_on_hit</code></td><td><code>effect</code>, <code>seconds</code>, <code>amplifier</code> (<code>0</code>), <code>chance</code> (<code>1</code>)</td><td>Each hit gives the target a status effect</td></tr><tr><td><code>leech_xp</code></td><td><code>amount</code></td><td>Each hit takes XP points from a player. The mob drops the XP that it took when it dies, and no other XP</td></tr><tr><td><code>rally</code></td><td><code>per_ally</code>, <code>max</code>, <code>radius</code> (<code>6</code>)</td><td>Adds damage for each mob of the same species in the radius, up to <code>max</code>. <code>0.1</code> is 10%</td></tr><tr><td><code>convert_villagers</code></td><td></td><td>A villager that the mob kills always becomes a zombie villager</td></tr></tbody></table></div>\n<h5 id=\"dp-groups\">Groups</h5>\n<div class=\"table-wrap\"><table><thead><tr><th>Type</th><th>Fields</th><th>Result</th></tr></thead><tbody><tr><td><code>call_on_hurt</code></td><td><code>radius</code></td><td>When the mob is hurt, the mobs of its species in the radius attack the attacker</td></tr><tr><td><code>call_on_sight</code></td><td><code>radius</code>, <code>cooldown_seconds</code> (<code>30</code>)</td><td>When the mob first targets a player, the mobs of its species in the radius target that player</td></tr><tr><td><code>grave_call</code></td><td><code>chance</code>, <code>max_calls</code> (<code>2</code>), <code>radius</code> (<code>8</code>)</td><td>When the mob is hurt, it has a chance to call a new mob of its species, with no genes</td></tr><tr><td><code>brood</code></td><td><code>extra</code></td><td>When the mob spawns in a natural way, this many more mobs with the same genes spawn near it</td></tr><tr><td><code>runt</code></td><td><code>chance</code>, <code>baby_health_multiplier</code> (<code>0.5</code>)</td><td>The mob has a chance to spawn as a baby. Baby zombies spawn only through this effect</td></tr></tbody></table></div>\n<h5 id=\"dp-behavior\">Behavior</h5>\n<div class=\"table-wrap\"><table><thead><tr><th>Type</th><th>Fields</th><th>Result</th></tr></thead><tbody><tr><td><code>leap</code></td><td><code>min_distance</code> (<code>3</code>), <code>max_distance</code> (<code>5</code>), <code>cooldown_seconds</code> (<code>5</code>), <code>miss_stun_seconds</code> (<code>1</code>)</td><td>The mob leaps at its target. After a missed leap, it cannot move for a short time</td></tr><tr><td><code>hunt</code></td><td><code>invisible_radius</code> (<code>0</code>), <code>wounded_range_multiplier</code> (<code>1</code>)</td><td>The mob finds invisible players in the radius, and players under half health farther away</td></tr><tr><td><code>frenzied_targeting</code></td><td><code>chance</code>, <code>interval_seconds</code> (<code>10</code>), <code>radius</code> (<code>8</code>)</td><td>Now and then, the mob targets the nearest mob of a different species</td></tr><tr><td><code>lurk</code></td><td><code>radius</code> (<code>6</code>)</td><td>The mob does not move while its target player faces it, until the player is in the radius</td></tr><tr><td><code>burrow</code></td><td><code>player_radius</code> (<code>24</code>), <code>rise_seconds</code> (<code>2</code>)</td><td>At night, the mob can spawn under the ground near a player and rise. It rises only through the blocks in the tag <code>#originofspawns:burrowable</code></td></tr><tr><td><code>siege</code></td><td><code>break_seconds</code> (<code>10</code>)</td><td>The mob breaks doors on each difficulty, and breaks the blocks in the tag <code>#originofspawns:siege_breakable</code>. It obeys the <code>mobGriefing</code> gamerule</td></tr><tr><td><code>raise_victim</code></td><td></td><td>A player that the mob kills rises as a mob of its species, with its genes</td></tr><tr><td><code>attract_golems</code></td><td><code>radius</code> (<code>16</code>)</td><td>Iron golems in the radius attack the mob before other targets</td></tr></tbody></table></div>\n<h5 id=\"dp-senses\">Senses</h5>\n<div class=\"table-wrap\"><table><thead><tr><th>Type</th><th>Fields</th><th>Result</th></tr></thead><tbody><tr><td><code>silence</code></td><td><code>idle</code> (<code>false</code>), <code>hurt</code> (<code>false</code>), <code>steps</code> (<code>false</code>), <code>death</code> (<code>false</code>)</td><td>Stops these sounds of the mob</td></tr><tr><td><code>loud</code></td><td><code>multiplier</code></td><td>Multiplies the volume of the sounds of the mob</td></tr><tr><td><code>translucent</code></td><td><code>max_light</code> (<code>7</code>), <code>opacity</code> (<code>0.1</code>)</td><td>The client draws the mob translucent at this light level or lower. Other mobs still see it</td></tr><tr><td><code>glowing</code></td><td></td><td>The mob glows all the time, so that players see it through walls</td></tr><tr><td><code>aura</code></td><td><code>effect</code>, <code>amplifier</code> (<code>0</code>), <code>radius</code>, <code>interval_seconds</code> (<code>2</code>), <code>particles</code> (<code>false</code>)</td><td>Gives a status effect to the players near the mob</td></tr></tbody></table></div>\n<h5 id=\"dp-death\">Death</h5>\n<div class=\"table-wrap\"><table><thead><tr><th>Type</th><th>Fields</th><th>Result</th></tr></thead><tbody><tr><td><code>death_burst</code></td><td><code>damage</code>, <code>radius</code></td><td>When the mob dies, it damages the players in the radius</td></tr><tr><td><code>death_cloud</code></td><td><code>effect</code>, <code>seconds</code>, <code>amplifier</code> (<code>0</code>), <code>radius</code>, <code>cloud_seconds</code> (<code>5</code>)</td><td>When the mob dies, it leaves a cloud that gives a status effect</td></tr></tbody></table></div>\n<h4 id=\"dp-gene-visuals\">Gene visuals</h4>\n<p>The look of a gene is in the resource packs, not in the data packs. The file <code>assets/&lt;namespace&gt;/gene_visuals/&lt;name&gt;.json</code> is the visual of the gene <code>&lt;namespace&gt;:&lt;name&gt;</code>. A resource pack can change the look of any gene.</p>\n<pre class=\"code\"><code>{\n    \"region_map\": \"originofspawns:textures/region/humanoid.png\",\n    \"layers\": [\n        { \"materials\": [\"skin\"], \"effect\": { \"type\": \"desaturate\", \"amount\": 0.4, \"darken\": 0.15 } },\n        { \"regions\": [\"hands\", \"feet\"], \"effect\": { \"type\": \"spots\", \"colors\": [\"#1A1A1A\", \"#8B2E1F\"], \"density\": 0.35 } }\n    ],\n    \"model\": \"originofspawns:bone_legs\"\n}</code></pre>\n<div class=\"table-wrap\"><table><thead><tr><th>Field</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>region_map</code></td><td><code>originofspawns:textures/region/humanoid.png</code></td><td>The map that labels the pixels of the mob texture</td></tr><tr><td><code>layers</code></td><td></td><td>The changes to the texture, in order. A layer with no <code>regions</code> or no <code>materials</code> covers all of them. A layer can have an <code>order</code>, an integer with the default <code>0</code></td></tr><tr><td><code>model</code></td><td>none</td><td>A gene model that adds cubes to the mob, for example <code>originofspawns:bone_legs</code></td></tr></tbody></table></div>\n<p>The layers of all the genes of a mob go on in sequence of their <code>order</code>. A layer with a lower order goes on first, so a higher order puts a mark on top of the marks of other genes. Layers with the same order keep the order of the gene ids, and the order in their recipe.</p>\n<p>The regions are <code>face</code>, <code>scalp</code>, <code>torso</code>, <code>arms</code>, <code>hands</code>, <code>legs</code>, <code>lower_legs</code>, and <code>feet</code>. The materials are <code>skin</code>, <code>cloth</code>, and <code>eyes</code>.</p>\n<div class=\"table-wrap\"><table><thead><tr><th>Effect</th><th>Fields</th><th>Result</th></tr></thead><tbody><tr><td><code>desaturate</code></td><td><code>amount</code>, <code>darken</code></td><td>Moves the color toward gray, and makes it darker</td></tr><tr><td><code>spots</code></td><td><code>colors</code>, <code>density</code></td><td>Puts spots of the colors on a part of the pixels</td></tr><tr><td><code>pattern</code></td><td><code>texture</code>, <code>tint</code></td><td>Stamps a tiled grayscale texture in the tint color</td></tr><tr><td><code>erase</code></td><td></td><td>Makes the pixels transparent</td></tr></tbody></table></div>\n<h4 id=\"dp-gene-models\">Gene models</h4>\n<p>A gene model adds cubes to the model of a mob. The file <code>assets/&lt;namespace&gt;/gene_models/&lt;name&gt;.json</code> is the model <code>&lt;namespace&gt;:&lt;name&gt;</code>. Each cube moves with one bone: <code>head</code>, <code>body</code>, <code>right_arm</code>, <code>left_arm</code>, <code>right_leg</code>, or <code>left_leg</code>. The coordinates are in pixels, in the coordinates of the bone, as in the vanilla models.</p>\n<pre class=\"code\"><code>{\n    \"texture\": \"originofspawns:textures/entity/bone_leg.png\",\n    \"texture_width\": 16,\n    \"texture_height\": 16,\n    \"parts\": [\n        { \"bone\": \"right_leg\", \"uv\": [0, 0], \"from\": [-1.5, 6, -1.5], \"size\": [3, 6, 3] }\n    ]\n}</code></pre>\n<div class=\"table-wrap\"><table><thead><tr><th>Field</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>texture</code></td><td></td><td>The texture of the cubes. It is optional when <code>mob_texture</code> is <code>true</code></td></tr><tr><td><code>mob_texture</code></td><td><code>false</code></td><td>The cubes use the texture of the mob, with the marks of all its genes. A swollen copy of a body part keeps the marks of the other genes this way</td></tr><tr><td><code>texture_width</code>, <code>texture_height</code></td><td><code>64</code></td><td>The size of the texture</td></tr><tr><td><code>parts</code></td><td></td><td>The cubes</td></tr></tbody></table></div>\n<div class=\"table-wrap\"><table><thead><tr><th>Part field</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>bone</code></td><td></td><td>The bone that the cube moves with</td></tr><tr><td><code>uv</code></td><td></td><td>The top left corner of the box UV in the texture</td></tr><tr><td><code>from</code></td><td></td><td>The corner of the cube with the smallest coordinates</td></tr><tr><td><code>size</code></td><td></td><td>The size of the cube</td></tr><tr><td><code>inflate</code></td><td><code>0</code></td><td>Makes the cube larger on each side, with no change to its UV</td></tr><tr><td><code>mirror</code></td><td><code>false</code></td><td>Mirrors the UV</td></tr><tr><td><code>pivot</code></td><td><code>[0, 0, 0]</code></td><td>The point that the cube turns around, in the coordinates of the bone</td></tr><tr><td><code>rotation</code></td><td><code>[0, 0, 0]</code></td><td>The angles around the X, Y, and Z axes of the pivot, in degrees</td></tr><tr><td><code>glow</code></td><td><code>false</code></td><td>Gives the cube full light, so that it is bright in the dark</td></tr></tbody></table></div>\n<h4 id=\"dp-genes-on-mobs\">Genes on mobs</h4>\n<ul><li>A mob gets its genes one time, when it first joins a world.</li><li>Each gene has a chance equal to its frequency in the pool of the biome category, or its mutation rate if that is higher.</li><li>A mob carries a maximum of 5 genes. The genes with the highest frequency stay.</li></ul>\n<h3 id=\"dp-family\">Family</h3>\n<p>A family is a major family of a species. The genes of a mob give points to families, and the points decide the family of the mob.</p>\n<pre class=\"code\"><code>{\n    \"species\": \"minecraft:zombie\",\n    \"tiers\": [\n        { \"buffs\": [...], \"debuffs\": [...] },\n        { \"buffs\": [...], \"debuffs\": [...] },\n        { \"buffs\": [...], \"debuffs\": [...] }\n    ]\n}</code></pre>\n<div class=\"table-wrap\"><table><thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td><code>species</code></td><td>entity type, list, or tag</td><td>The mobs that the family is for</td></tr><tr><td><code>tiers</code></td><td>list of 3 tiers</td><td>The effects of tier 1, tier 2, and tier 3. Each tier has <code>buffs</code> and <code>debuffs</code>, which are lists of effects</td></tr></tbody></table></div>\n<p>A main family tag gives 2 points, and a sub family tag gives 1 point.</p>\n<div class=\"table-wrap\"><table><thead><tr><th>Result</th><th>Rule</th><th>Effects</th></tr></thead><tbody><tr><td>Neutral</td><td>No family has 4 points</td><td>None</td></tr><tr><td>Major</td><td>One family has 4 points or more, and no other family has 2</td><td>Tier 2 of the major</td></tr><tr><td>Pure</td><td>One family has 6 points or more, and no other family has points</td><td>Tier 3 of the family</td></tr><tr><td>Minor</td><td>The major has 4 points or more, and a sub family has 2 or more</td><td>Tier 2 of the major, and tier 1 of the sub</td></tr><tr><td>Hybrid</td><td>Two families have the same points, 4 or more</td><td>Tier 2 of each</td></tr></tbody></table></div>\n<p>The names of the families are in the language files:</p>\n<div class=\"table-wrap\"><table><thead><tr><th>Result</th><th>Key</th></tr></thead><tbody><tr><td>Pure or major</td><td><code>family.&lt;namespace&gt;.&lt;path&gt;</code>, for example <code>family.originofspawns.zombie.predator</code></td></tr><tr><td>Minor</td><td>The key of the major, then the last part of the sub, for example <code>family.originofspawns.zombie.predator.stalker</code></td></tr><tr><td>Hybrid</td><td>The key of the first family by id, then <code>and</code>, then the last part of the second, for example <code>family.originofspawns.zombie.predator.and.stalker</code></td></tr><tr><td>Neutral</td><td><code>family.originofspawns.neutral</code></td></tr></tbody></table></div>\n<h3 id=\"dp-perk\">Perk</h3>\n<p>A perk is a player adaptation.</p>\n<pre class=\"code\"><code>{ \"xp_cost\": 5, \"incompatible_with\": [\"originofspawns:carnivore\"] }</code></pre>\n<div class=\"table-wrap\"><table><thead><tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>xp_cost</code></td><td>integer, 0 or more</td><td></td><td>The XP levels that the player pays</td></tr><tr><td><code>incompatible_with</code></td><td>list of perk ids</td><td><code>[]</code></td><td>The perks that the player cannot have at the same time</td></tr></tbody></table></div>\n<h3 id=\"dp-debug-commands\">Debug commands</h3>\n<p>The commands need permission level 2.</p>\n<div class=\"table-wrap\"><table><thead><tr><th>Command</th><th>Result</th></tr></thead><tbody><tr><td><code>/originofspawns pool get &lt;species&gt; &lt;category&gt;</code></td><td>Shows the gene frequencies of a pool</td></tr><tr><td><code>/originofspawns pool set &lt;species&gt; &lt;category&gt; &lt;gene&gt; &lt;frequency&gt;</code></td><td>Sets one gene frequency, from 0 to 1</td></tr></tbody></table></div>\n<p>The categories are <code>hot</code>, <code>cold</code>, <code>wet</code>, <code>temperate</code>, <code>nether</code>, and <code>end</code>. The world saves the pools in <code>data/originofspawns/gene_pools.dat</code>.</p>",
+  "html": "<p>Data packs define the pressures, the genes, the families, and the perks of the mod. Each entry is a JSON file at this path:</p>\n<pre class=\"code\"><code>data/&lt;namespace&gt;/originofspawns/&lt;registry&gt;/&lt;name&gt;.json</code></pre>\n<p>The registries are <code>pressure</code>, <code>gene</code>, <code>family</code>, and <code>perk</code>. The world reads these files when it loads. A file with an error stops the world from loading, and the log names the file.</p>\n<h3 id=\"dp-pressure\">Pressure</h3>\n<p>A pressure is a cause of death. A death counts for a pressure when it matches all the parts of the pressure.</p>\n<pre class=\"code\"><code>{ \"damage_types\": \"#minecraft:is_fire\" }\n{ \"conditions\": [\"unreached\"] }</code></pre>\n<div class=\"table-wrap\"><table><thead><tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>damage_types</code></td><td>damage type tag, with <code>#</code></td><td>none</td><td>The damage types that count for this pressure</td></tr><tr><td><code>conditions</code></td><td>list of conditions</td><td><code>[]</code></td><td>The conditions of the death that must all be true</td></tr></tbody></table></div>\n<p>A pressure needs <code>damage_types</code>, <code>conditions</code>, or both.</p>\n<div class=\"table-wrap\"><table><thead><tr><th>Condition</th><th>True when</th></tr></thead><tbody><tr><td><code>unreached</code></td><td>The mob targeted a player, but did not damage a player before it died</td></tr><tr><td><code>sunlight</code></td><td>The sun set the mob on fire, and the fire killed it</td></tr><tr><td><code>spotted</code></td><td>The killer saw the mob from more than 8 blocks, for 2 seconds or more before the death</td></tr><tr><td><code>alone</code></td><td>No other mob of the same species was in 8 blocks</td></tr><tr><td><code>crowd</code></td><td>3 or more mobs of the same species died in 8 blocks in 5 seconds. The condition is true for each of them</td></tr><tr><td><code>critical</code></td><td>A critical hit of a player killed the mob</td></tr><tr><td><code>golem</code></td><td>An iron golem killed the mob</td></tr><tr><td><code>player_death</code></td><td>The mob killed a player. This is not a death of the mob. Each gene of the killer gets stronger</td></tr></tbody></table></div>\n<p>The mod has these pressures: <code>fire</code>, <code>projectile</code>, <code>melee</code>, <code>explosion</code>, <code>fall</code>, <code>unreached</code>, <code>sunlight</code>, <code>spotted</code>, <code>alone</code>, <code>crowd</code>, <code>critical</code>, <code>golem</code>, and <code>player_death</code>. The <code>melee</code> pressure uses the tag <code>#originofspawns:melee</code>.</p>\n<h3 id=\"dp-gene\">Gene</h3>\n<p>A gene is a trait that a species can carry. It has gains and downsides, like a player perk.</p>\n<pre class=\"code\"><code>{\n    \"species\": \"minecraft:zombie\",\n    \"counters\": \"originofspawns:fire\",\n    \"family\": \"originofspawns:zombie/stalker\",\n    \"sub_family\": \"originofspawns:zombie/predator\",\n    \"gains\": [\n        { \"type\": \"damage_taken\", \"damage_types\": \"#minecraft:is_fire\", \"multiplier\": 0 }\n    ],\n    \"downsides\": [\n        { \"type\": \"attribute\", \"attribute\": \"minecraft:max_health\", \"amount\": -4, \"operation\": \"add_value\" }\n    ]\n}</code></pre>\n<div class=\"table-wrap\"><table><thead><tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>species</code></td><td>entity type, list, or tag</td><td></td><td>The mobs that can carry the gene</td></tr><tr><td><code>counters</code></td><td>pressure id</td><td></td><td>The pressure that makes the gene stronger</td></tr><tr><td><code>family</code></td><td>family id</td><td></td><td>The main family tag. It gives 2 points</td></tr><tr><td><code>sub_family</code></td><td>family id</td><td>none</td><td>The sub family tag. It gives 1 point. Only a few genes have one</td></tr><tr><td><code>gains</code></td><td>list of effects</td><td><code>[]</code></td><td>The effects that help the mob</td></tr><tr><td><code>downsides</code></td><td>list of effects</td><td><code>[]</code></td><td>The effects that hurt the mob</td></tr><tr><td><code>selection_rate</code></td><td>number, 0 to 1</td><td><code>0.02</code></td><td>The rise for each death, as a part of the distance to 100%</td></tr><tr><td><code>mutation_rate</code></td><td>number, 0 to 1</td><td><code>0.003</code></td><td>The smallest chance that a new mob gets the gene</td></tr><tr><td><code>decay_rate</code></td><td>number, 0 to 1</td><td><code>0.01</code></td><td>The loss for each Minecraft day, as a part of the frequency</td></tr></tbody></table></div>\n<h4 id=\"dp-effects\">Effects</h4>\n<p>Each effect has a <code>type</code> field. A field with a value in parentheses is optional, and the value is its default. Times are in seconds, and distances are in blocks.</p>\n<h5 id=\"dp-body-and-damage\">Body and damage</h5>\n<div class=\"table-wrap\"><table><thead><tr><th>Type</th><th>Fields</th><th>Result</th></tr></thead><tbody><tr><td><code>attribute</code></td><td><code>attribute</code>, <code>amount</code>, <code>operation</code></td><td>Changes an attribute of the mob. <code>operation</code> is <code>add_value</code>, <code>add_multiplied_base</code>, or <code>add_multiplied_total</code></td></tr><tr><td><code>damage_taken</code></td><td><code>damage_types</code>, <code>multiplier</code></td><td>Multiplies the damage from these damage types. <code>0</code> makes the mob immune</td></tr><tr><td><code>damage_taken_when</code></td><td><code>when</code>, <code>multiplier</code></td><td>Multiplies the damage that the mob takes while the state is true</td></tr><tr><td><code>damage_dealt_when</code></td><td><code>when</code>, <code>multiplier</code></td><td>Multiplies the damage that the mob deals while the state is true</td></tr><tr><td><code>damage_from</code></td><td><code>attackers</code>, <code>multiplier</code></td><td>Multiplies the damage from these entity types, for example <code>minecraft:iron_golem</code></td></tr><tr><td><code>sunburn</code></td><td><code>multiplier</code></td><td>Multiplies the fire damage while the sun burns the mob. Other fire does normal damage</td></tr><tr><td><code>critical_immunity</code></td><td></td><td>A critical hit of a player does no extra damage to the mob</td></tr><tr><td><code>speed_when</code></td><td><code>when</code>, <code>multiplier</code></td><td>Multiplies the speed of the mob while the state is true</td></tr><tr><td><code>attack_interval</code></td><td><code>multiplier</code></td><td>Multiplies the time between two melee attacks. <code>0.7</code> attacks faster</td></tr><tr><td><code>water_damage</code></td><td><code>amount</code>, <code>interval</code> (<code>20</code>)</td><td>Damages the mob each <code>interval</code> ticks in water or rain</td></tr><tr><td><code>air_loss</code></td><td><code>extra</code></td><td>The mob loses this much more air each tick under water. Mobs that breathe under water, such as zombies, do not drown</td></tr><tr><td><code>regenerate</code></td><td><code>amount</code>, <code>interval_seconds</code> (<code>3</code>), <code>idle_seconds</code> (<code>5</code>)</td><td>Heals the mob after it was out of combat for <code>idle_seconds</code></td></tr></tbody></table></div>\n<p>The states for <code>when</code> are:</p>\n<div class=\"table-wrap\"><table><thead><tr><th>State</th><th>True when</th></tr></thead><tbody><tr><td><code>always</code></td><td>Always</td></tr><tr><td><code>alone</code></td><td>No other mob of the same species is in 8 blocks</td></tr><tr><td><code>ambush</code></td><td>The mob was not in combat for 10 seconds</td></tr><tr><td><code>dark</code></td><td>The light level at the mob is 6 or less</td></tr><tr><td><code>bright</code></td><td>The light level at the mob is 12 or more</td></tr><tr><td><code>hunting_wounded</code></td><td>The mob targets a player under half health</td></tr><tr><td><code>in_water</code></td><td>The mob is in water</td></tr></tbody></table></div>\n<h5 id=\"dp-hits\">Hits</h5>\n<div class=\"table-wrap\"><table><thead><tr><th>Type</th><th>Fields</th><th>Result</th></tr></thead><tbody><tr><td><code>ignite_target</code></td><td><code>chance</code>, <code>seconds</code></td><td>Each hit has this chance to set the target on fire</td></tr><tr><td><code>effect_on_hit</code></td><td><code>effect</code>, <code>seconds</code>, <code>amplifier</code> (<code>0</code>), <code>chance</code> (<code>1</code>)</td><td>Each hit gives the target a status effect</td></tr><tr><td><code>leech_xp</code></td><td><code>amount</code></td><td>Each hit takes XP points from a player. The mob drops the XP that it took when it dies, and no other XP</td></tr><tr><td><code>rally</code></td><td><code>per_ally</code>, <code>max</code>, <code>radius</code> (<code>6</code>)</td><td>Adds damage for each mob of the same species in the radius, up to <code>max</code>. <code>0.1</code> is 10%</td></tr><tr><td><code>convert_villagers</code></td><td></td><td>A villager that the mob kills always becomes a zombie villager</td></tr></tbody></table></div>\n<h5 id=\"dp-groups\">Groups</h5>\n<div class=\"table-wrap\"><table><thead><tr><th>Type</th><th>Fields</th><th>Result</th></tr></thead><tbody><tr><td><code>call_on_hurt</code></td><td><code>radius</code></td><td>When the mob is hurt, the mobs of its species in the radius attack the attacker</td></tr><tr><td><code>call_on_sight</code></td><td><code>radius</code>, <code>cooldown_seconds</code> (<code>30</code>)</td><td>When the mob first targets a player, the mobs of its species in the radius target that player</td></tr><tr><td><code>grave_call</code></td><td><code>chance</code>, <code>max_calls</code> (<code>2</code>), <code>radius</code> (<code>8</code>)</td><td>When the mob is hurt, it has a chance to call a new mob of its species, with no genes</td></tr><tr><td><code>brood</code></td><td><code>extra</code></td><td>When the mob spawns in a natural way, this many more mobs with the same genes spawn near it</td></tr><tr><td><code>runt</code></td><td><code>chance</code>, <code>baby_health_multiplier</code> (<code>0.5</code>)</td><td>The mob has a chance to spawn as a baby. Baby zombies spawn only through this effect</td></tr></tbody></table></div>\n<h5 id=\"dp-behavior\">Behavior</h5>\n<div class=\"table-wrap\"><table><thead><tr><th>Type</th><th>Fields</th><th>Result</th></tr></thead><tbody><tr><td><code>leap</code></td><td><code>min_distance</code> (<code>3</code>), <code>max_distance</code> (<code>5</code>), <code>cooldown_seconds</code> (<code>5</code>), <code>miss_stun_seconds</code> (<code>1</code>)</td><td>The mob leaps at its target. After a missed leap, it cannot move for a short time</td></tr><tr><td><code>hunt</code></td><td><code>invisible_radius</code> (<code>0</code>), <code>wounded_range_multiplier</code> (<code>1</code>)</td><td>The mob finds invisible players in the radius, and players under half health farther away</td></tr><tr><td><code>frenzied_targeting</code></td><td><code>chance</code>, <code>interval_seconds</code> (<code>10</code>), <code>radius</code> (<code>8</code>)</td><td>Now and then, the mob targets the nearest mob of a different species</td></tr><tr><td><code>lurk</code></td><td><code>radius</code> (<code>6</code>)</td><td>The mob does not move while its target player faces it, until the player is in the radius</td></tr><tr><td><code>burrow</code></td><td><code>player_radius</code> (<code>24</code>), <code>rise_seconds</code> (<code>2</code>)</td><td>At night, the mob can spawn under the ground near a player and rise. It rises only through the blocks in the tag <code>#originofspawns:burrowable</code></td></tr><tr><td><code>siege</code></td><td><code>break_seconds</code> (<code>10</code>)</td><td>The mob breaks doors on each difficulty, and breaks the blocks in the tag <code>#originofspawns:siege_breakable</code>. It obeys the <code>mobGriefing</code> gamerule</td></tr><tr><td><code>raise_victim</code></td><td></td><td>A player that the mob kills rises as a mob of its species, with its genes</td></tr><tr><td><code>attract_golems</code></td><td><code>radius</code> (<code>16</code>)</td><td>Iron golems in the radius attack the mob before other targets</td></tr></tbody></table></div>\n<h5 id=\"dp-senses\">Senses</h5>\n<div class=\"table-wrap\"><table><thead><tr><th>Type</th><th>Fields</th><th>Result</th></tr></thead><tbody><tr><td><code>silence</code></td><td><code>idle</code> (<code>false</code>), <code>hurt</code> (<code>false</code>), <code>steps</code> (<code>false</code>), <code>death</code> (<code>false</code>)</td><td>Stops these sounds of the mob</td></tr><tr><td><code>loud</code></td><td><code>multiplier</code></td><td>Multiplies the volume of the sounds of the mob</td></tr><tr><td><code>translucent</code></td><td><code>max_light</code> (<code>7</code>), <code>opacity</code> (<code>0.1</code>)</td><td>The client draws the mob translucent at this light level or lower. Other mobs still see it</td></tr><tr><td><code>glowing</code></td><td></td><td>The mob glows all the time, so that players see it through walls</td></tr><tr><td><code>aura</code></td><td><code>effect</code>, <code>amplifier</code> (<code>0</code>), <code>radius</code>, <code>interval_seconds</code> (<code>2</code>), <code>particles</code> (<code>false</code>)</td><td>Gives a status effect to the players near the mob</td></tr></tbody></table></div>\n<h5 id=\"dp-death\">Death</h5>\n<div class=\"table-wrap\"><table><thead><tr><th>Type</th><th>Fields</th><th>Result</th></tr></thead><tbody><tr><td><code>death_burst</code></td><td><code>damage</code>, <code>radius</code></td><td>When the mob dies, it damages the players in the radius</td></tr><tr><td><code>death_cloud</code></td><td><code>effect</code>, <code>seconds</code>, <code>amplifier</code> (<code>0</code>), <code>radius</code>, <code>cloud_seconds</code> (<code>5</code>)</td><td>When the mob dies, it leaves a cloud that gives a status effect</td></tr></tbody></table></div>\n<h4 id=\"dp-gene-visuals\">Gene visuals</h4>\n<p>The look of a gene is in the resource packs, not in the data packs. The file <code>assets/&lt;namespace&gt;/gene_visuals/&lt;name&gt;.json</code> is the visual of the gene <code>&lt;namespace&gt;:&lt;name&gt;</code>. A resource pack can change the look of any gene.</p>\n<pre class=\"code\"><code>{\n    \"region_map\": \"originofspawns:textures/region/humanoid.png\",\n    \"layers\": [\n        { \"materials\": [\"skin\"], \"effect\": { \"type\": \"desaturate\", \"amount\": 0.4, \"darken\": 0.15 } },\n        { \"regions\": [\"hands\", \"feet\"], \"effect\": { \"type\": \"spots\", \"colors\": [\"#1A1A1A\", \"#8B2E1F\"], \"density\": 0.35 } }\n    ],\n    \"model\": \"originofspawns:bone_legs\"\n}</code></pre>\n<div class=\"table-wrap\"><table><thead><tr><th>Field</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>region_map</code></td><td><code>originofspawns:textures/region/humanoid.png</code></td><td>The map that labels the pixels of the mob texture</td></tr><tr><td><code>layers</code></td><td></td><td>The changes to the texture, in order. A layer with no <code>regions</code> or no <code>materials</code> covers all of them. A layer can have an <code>order</code>, an integer with the default <code>0</code></td></tr><tr><td><code>model</code></td><td>none</td><td>A gene model that adds cubes to the mob, for example <code>originofspawns:bone_legs</code></td></tr></tbody></table></div>\n<p>The layers of all the genes of a mob go on in sequence of their <code>order</code>. A layer with a lower order goes on first, so a higher order puts a mark on top of the marks of other genes. Layers with the same order keep the order of the gene ids, and the order in their recipe.</p>\n<p>The regions are <code>face</code>, <code>scalp</code>, <code>torso</code>, <code>arms</code>, <code>hands</code>, <code>legs</code>, <code>lower_legs</code>, and <code>feet</code>. The materials are <code>skin</code>, <code>cloth</code>, and <code>eyes</code>.</p>\n<div class=\"table-wrap\"><table><thead><tr><th>Effect</th><th>Fields</th><th>Result</th></tr></thead><tbody><tr><td><code>desaturate</code></td><td><code>amount</code>, <code>darken</code></td><td>Moves the color toward gray, and makes it darker</td></tr><tr><td><code>spots</code></td><td><code>colors</code>, <code>density</code></td><td>Puts spots of the colors on a part of the pixels</td></tr><tr><td><code>pattern</code></td><td><code>texture</code>, <code>tint</code></td><td>Stamps a tiled grayscale texture in the tint color</td></tr><tr><td><code>erase</code></td><td></td><td>Makes the pixels transparent</td></tr></tbody></table></div>\n<h4 id=\"dp-gene-models\">Gene models</h4>\n<p>A gene model adds cubes to the model of a mob. The file <code>assets/&lt;namespace&gt;/gene_models/&lt;name&gt;.json</code> is the model <code>&lt;namespace&gt;:&lt;name&gt;</code>. Each cube moves with one bone: <code>head</code>, <code>body</code>, <code>right_arm</code>, <code>left_arm</code>, <code>right_leg</code>, or <code>left_leg</code>. The coordinates are in pixels, in the coordinates of the bone, as in the vanilla models.</p>\n<pre class=\"code\"><code>{\n    \"texture\": \"originofspawns:textures/entity/bone_leg.png\",\n    \"texture_width\": 16,\n    \"texture_height\": 16,\n    \"parts\": [\n        { \"bone\": \"right_leg\", \"uv\": [0, 0], \"from\": [-1.5, 6, -1.5], \"size\": [3, 6, 3] }\n    ]\n}</code></pre>\n<div class=\"table-wrap\"><table><thead><tr><th>Field</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>texture</code></td><td></td><td>The texture of the cubes. It is optional when <code>mob_texture</code> is <code>true</code></td></tr><tr><td><code>mob_texture</code></td><td><code>false</code></td><td>The cubes use the texture of the mob, with the marks of all its genes. A swollen copy of a body part keeps the marks of the other genes this way</td></tr><tr><td><code>texture_width</code>, <code>texture_height</code></td><td><code>64</code></td><td>The size of the texture</td></tr><tr><td><code>parts</code></td><td></td><td>The cubes</td></tr></tbody></table></div>\n<div class=\"table-wrap\"><table><thead><tr><th>Part field</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>bone</code></td><td></td><td>The bone that the cube moves with</td></tr><tr><td><code>uv</code></td><td></td><td>The top left corner of the box UV in the texture</td></tr><tr><td><code>from</code></td><td></td><td>The corner of the cube with the smallest coordinates</td></tr><tr><td><code>size</code></td><td></td><td>The size of the cube</td></tr><tr><td><code>inflate</code></td><td><code>0</code></td><td>Makes the cube larger on each side, with no change to its UV</td></tr><tr><td><code>mirror</code></td><td><code>false</code></td><td>Mirrors the UV</td></tr><tr><td><code>pivot</code></td><td><code>[0, 0, 0]</code></td><td>The point that the cube turns around, in the coordinates of the bone</td></tr><tr><td><code>rotation</code></td><td><code>[0, 0, 0]</code></td><td>The angles around the X, Y, and Z axes of the pivot, in degrees</td></tr><tr><td><code>glow</code></td><td><code>false</code></td><td>Gives the cube full light, so that it is bright in the dark</td></tr></tbody></table></div>\n<h4 id=\"dp-baby-zombies\">Baby zombies</h4>\n<p>Baby zombies use a smaller model with another texture layout. Draw the marks and the models for the adult only. The game moves each adult face of the region map and of the marks to the same baby face, and it moves and scales the cubes of gene models from the adult bones to the baby bones. A pattern smaller than 64 x 64 is a tile, and it stays as it is. Thin marks can lose detail, because an adult limb of 12 rows becomes 5 rows.</p>\n<h4 id=\"dp-genes-on-mobs\">Genes on mobs</h4>\n<ul><li>A mob gets its genes one time, when it first joins a world.</li><li>Each gene has a chance equal to its frequency in the pool of the biome category, or its mutation rate if that is higher.</li><li>A mob carries a maximum of 5 genes. The genes with the highest frequency stay.</li></ul>\n<h3 id=\"dp-family\">Family</h3>\n<p>A family is a major family of a species. The genes of a mob give points to families, and the points decide the family of the mob.</p>\n<pre class=\"code\"><code>{\n    \"species\": \"minecraft:zombie\",\n    \"tiers\": [\n        { \"buffs\": [...], \"debuffs\": [...] },\n        { \"buffs\": [...], \"debuffs\": [...] },\n        { \"buffs\": [...], \"debuffs\": [...] }\n    ]\n}</code></pre>\n<div class=\"table-wrap\"><table><thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td><code>species</code></td><td>entity type, list, or tag</td><td>The mobs that the family is for</td></tr><tr><td><code>tiers</code></td><td>list of 3 tiers</td><td>The effects of tier 1, tier 2, and tier 3. Each tier has <code>buffs</code> and <code>debuffs</code>, which are lists of effects</td></tr></tbody></table></div>\n<p>A main family tag gives 2 points, and a sub family tag gives 1 point.</p>\n<div class=\"table-wrap\"><table><thead><tr><th>Result</th><th>Rule</th><th>Effects</th></tr></thead><tbody><tr><td>Neutral</td><td>No family has 4 points</td><td>None</td></tr><tr><td>Major</td><td>One family has 4 points or more, and no other family has 2</td><td>Tier 2 of the major</td></tr><tr><td>Pure</td><td>One family has 6 points or more, and no other family has points</td><td>Tier 3 of the family</td></tr><tr><td>Minor</td><td>The major has 4 points or more, and a sub family has 2 or more</td><td>Tier 2 of the major, and tier 1 of the sub</td></tr><tr><td>Hybrid</td><td>Two families have the same points, 4 or more</td><td>Tier 2 of each</td></tr></tbody></table></div>\n<p>The names of the families are in the language files:</p>\n<div class=\"table-wrap\"><table><thead><tr><th>Result</th><th>Key</th></tr></thead><tbody><tr><td>Pure or major</td><td><code>family.&lt;namespace&gt;.&lt;path&gt;</code>, for example <code>family.originofspawns.zombie.predator</code></td></tr><tr><td>Minor</td><td>The key of the major, then the last part of the sub, for example <code>family.originofspawns.zombie.predator.stalker</code></td></tr><tr><td>Hybrid</td><td>The key of the first family by id, then <code>and</code>, then the last part of the second, for example <code>family.originofspawns.zombie.predator.and.stalker</code></td></tr><tr><td>Neutral</td><td><code>family.originofspawns.neutral</code></td></tr></tbody></table></div>\n<h3 id=\"dp-perk\">Perk</h3>\n<p>A perk is a player adaptation.</p>\n<pre class=\"code\"><code>{ \"xp_cost\": 5, \"incompatible_with\": [\"originofspawns:carnivore\"] }</code></pre>\n<div class=\"table-wrap\"><table><thead><tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>xp_cost</code></td><td>integer, 0 or more</td><td></td><td>The XP levels that the player pays</td></tr><tr><td><code>incompatible_with</code></td><td>list of perk ids</td><td><code>[]</code></td><td>The perks that the player cannot have at the same time</td></tr></tbody></table></div>\n<h3 id=\"dp-debug-commands\">Debug commands</h3>\n<p>The commands need permission level 2.</p>\n<div class=\"table-wrap\"><table><thead><tr><th>Command</th><th>Result</th></tr></thead><tbody><tr><td><code>/originofspawns pool get &lt;species&gt; &lt;category&gt;</code></td><td>Shows the gene frequencies of a pool</td></tr><tr><td><code>/originofspawns pool set &lt;species&gt; &lt;category&gt; &lt;gene&gt; &lt;frequency&gt;</code></td><td>Sets one gene frequency, from 0 to 1</td></tr></tbody></table></div>\n<p>The categories are <code>hot</code>, <code>cold</code>, <code>wet</code>, <code>temperate</code>, <code>nether</code>, and <code>end</code>. The world saves the pools in <code>data/originofspawns/gene_pools.dat</code>.</p>",
   "toc": [
    {
     "level": 3,
@@ -3535,6 +3637,11 @@ window.SITE_DATA = {
     "level": 4,
     "id": "dp-gene-models",
     "title": "Gene models"
+   },
+   {
+    "level": 4,
+    "id": "dp-baby-zombies",
+    "title": "Baby zombies"
    },
    {
     "level": 4,

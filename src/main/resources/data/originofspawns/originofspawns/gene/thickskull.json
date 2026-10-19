@@ -1,0 +1,16 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:zombie/tank",
+	"gains": [
+		{
+			"type": "critical_immunity"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attack_interval",
+			"multiplier": 1.15
+		}
+	]
+}

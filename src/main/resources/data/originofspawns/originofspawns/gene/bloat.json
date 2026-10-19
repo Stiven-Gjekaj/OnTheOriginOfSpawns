@@ -1,0 +1,28 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:zombie/tank",
+	"sub_family": "originofspawns:zombie/blight",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": 10,
+			"operation": "add_value"
+		},
+		{
+			"type": "death_cloud",
+			"effect": "minecraft:poison",
+			"seconds": 4,
+			"radius": 1.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.25,
+			"operation": "add_multiplied_base"
+		}
+	]
+}

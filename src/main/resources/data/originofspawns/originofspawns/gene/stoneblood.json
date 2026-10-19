@@ -1,0 +1,25 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:zombie/tank",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fall",
+			"multiplier": 0
+		},
+		{
+			"type": "attribute",
+			"attribute": "minecraft:knockback_resistance",
+			"amount": 1,
+			"operation": "add_value"
+		}
+	],
+	"downsides": [
+		{
+			"type": "speed_when",
+			"when": "in_water",
+			"multiplier": 0.5
+		}
+	]
+}

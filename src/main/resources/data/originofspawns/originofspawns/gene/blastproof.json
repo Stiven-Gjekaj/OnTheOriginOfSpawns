@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:zombie/tank",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_explosion",
+			"multiplier": 0.4
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 1.5
+		}
+	]
+}

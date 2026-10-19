@@ -9,5 +9,14 @@
 	"downsides": [
 		{ "type": "attribute", "attribute": "minecraft:movement_speed", "amount": -0.1, "operation": "add_multiplied_base" },
 		{ "type": "damage_taken", "damage_types": "#minecraft:is_explosion", "multiplier": 1.25 }
-	]
+	],
+	"visual": {
+		"layers": [
+			{
+				"regions": ["torso"],
+				"materials": ["cloth"],
+				"effect": { "type": "pattern", "texture": "originofspawns:textures/pattern/iron_plates.png", "tint": "#8C9196" }
+			}
+		]
+	}
 }

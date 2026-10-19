@@ -232,6 +232,16 @@ vanilla models.
 | `rotation` | `[0, 0, 0]` | The angles around the X, Y, and Z axes of the pivot, in degrees |
 | `glow` | `false` | Gives the cube full light, so that it is bright in the dark |
 
+### Baby zombies
+
+Baby zombies use a smaller model with another texture layout.
+Draw the marks and the models for the adult only.
+The game moves each adult face of the region map and of the marks to the same
+baby face, and it moves and scales the cubes of gene models from the adult
+bones to the baby bones.
+A pattern smaller than 64 x 64 is a tile, and it stays as it is.
+Thin marks can lose detail, because an adult limb of 12 rows becomes 5 rows.
+
 ### Genes on mobs
 
 - A mob gets its genes one time, when it first joins a world.

@@ -89,7 +89,6 @@ def char_pixel(x, y, s):
 def fire():
     im = new()
     areas = []
-    areas += list(rect(HEAD["top"]))
     areas += list(rect(HEAD["back"]))
     areas += list(rect(HEAD["right"], rows=(0, 2)))
     areas += list(rect(HEAD["left"], rows=(0, 2)))
@@ -127,16 +126,26 @@ def arrow():
     # A brow plate over the eyes, in two parts.
     plate(im, u, v, 4, 3)
     plate(im, u + 4, v, 4, 3)
+    # A cap of four plates on the top of the head.
+    u, v, w, hh = HEAD["top"]
+    for dx in (0, 4):
+        for dy in (0, 4):
+            plate(im, u + dx, v + dy, 4, 4)
     u, v, w, hh = BODY["front"]
-    plate(im, u + 1, v + 1, 3, 4)
-    plate(im, u + 4, v + 1, 3, 4)
-    plate(im, u + 2, v + 5, 4, 3)
-    u, v, w, hh = ARM["top"]
+    plate(im, u, v, 4, 4)
+    plate(im, u + 4, v, 4, 4)
+    plate(im, u + 1, v + 4, 6, 3)
+    for side in ("right", "left"):
+        u, v, w, hh = BODY[side]
+        plate(im, u, v, w, 4)
     for p in rect(ARM["top"]):
         im.putpixel(p, PLATE)
     for side in SIDES:
         u, v, w, hh = ARM[side]
         plate(im, u, v, w, 3)
+    # The zombie holds its arms forward. Thus the front of the arm points up.
+    u, v, w, hh = ARM["front"]
+    plate(im, u, v + 3, w, 3)
     return im
 
 os.makedirs(OUT, exist_ok=True)

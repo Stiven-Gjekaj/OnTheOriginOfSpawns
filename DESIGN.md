@@ -29,7 +29,7 @@ Change this document when a decision changes.
 - A small part of each pool flows to the pools of neighbor categories.
   Thus, genes move slowly across the world.
 - A configuration option sets the pool scope to "global" or "per biome".
-  This option comes after the first release.
+  This option comes after version 1.0.0.
 
 ## Selection
 
@@ -64,7 +64,7 @@ Change this document when a decision changes.
 | The mob sometimes sets the player on fire | Less health, because the mob is burnt |
 
 - The kinds below are the parts that a gene can use.
-- Each species has 30 genes at the first release.
+- Each species has 30 genes at version 1.0.0.
   Some genes are for one species only, and some are for more species.
 - Resistance genes decrease damage from one cause.
   Examples are fire and arrows.
@@ -262,7 +262,7 @@ Thus, the bones look worn, not undead.
 - Some perks cannot be used together.
   For example, the player cannot have Ruminant and Carnivore at the same time.
 
-The first release has these 30 perks:
+Version 1.0.0 has these 30 perks:
 
 | Perk | Gain | Cost |
 |---|---|---|

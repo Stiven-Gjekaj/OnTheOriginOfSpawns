@@ -29,7 +29,7 @@ _A Fabric mod where the mobs evolve from how you kill them_
 > [!NOTE]
 > **The mod is in development.** There is no release yet. The project
 > builds, but it has no gameplay.
-> [ROADMAP.md](ROADMAP.md) lists the milestones of the first release.
+> [ROADMAP.md](ROADMAP.md) lists the milestones to version 1.0.0.
 > [DESIGN.md](DESIGN.md) holds each decision of the design.
 
 ---
@@ -47,7 +47,7 @@ each other.
 
 ## Features
 
-These features are for the first release. Some are not complete.
+These features are for version 1.0.0. Some are not complete.
 
 - A gene pool for each species in each biome category: hot, cold, wet,
   temperate, nether, and end

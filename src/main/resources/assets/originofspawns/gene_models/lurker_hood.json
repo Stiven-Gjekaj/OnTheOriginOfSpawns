@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/lurker_hood.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4,
+				-8,
+				-4
+			],
+			"size": [
+				8,
+				10,
+				8
+			],
+			"inflate": 0.4
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				20
+			],
+			"from": [
+				-4,
+				-8.4,
+				-6.4
+			],
+			"size": [
+				8,
+				1,
+				2
+			],
+			"inflate": 0.1
+		}
+	]
+}

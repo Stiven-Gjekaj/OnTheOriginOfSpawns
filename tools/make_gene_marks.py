@@ -260,23 +260,16 @@ def burrower():
 
 
 def lurker():
-    # A dark shadow over the scalp, like a hood, with a brim over the
-    # forehead. It goes under the marks of other genes (order -1).
-    hood = Mark("#15180F", alpha=205, order=-1)
-    soft = Mark("#15180F", alpha=120, order=-1)
-    for y in range(0, 8):
-        for x in range(8, 16):
-            hood.put((x, y))
-    for y in range(8, 16):
-        for x in range(24, 32):
-            hood.put((x, y))
-        for col in range(8):
-            for side in (0, 1):
-                (hood if y < 14 else soft).put(head_side(side, col, y - 8))
+    # The shade under the brim of the hood, on the upper half of the face. The
+    # hood itself is the gene model lurker_hood. The shade goes under the
+    # marks of other genes (order -1), and it leaves the eyes as they are.
+    shade = Mark("#0E100B", alpha=170, order=-1)
+    soft = Mark("#0E100B", alpha=90, order=-1)
     for x in range(8, 16):
-        hood.put((x, 8))
-    soft.put((8, 9)).put((15, 9))
-    return [hood, soft]
+        for y in (8, 9, 10):
+            shade.put((x, y))
+        soft.put((x, 11))
+    return [shade, soft]
 
 
 def nightborn():
@@ -301,6 +294,7 @@ GENES = {
 # The gene models of the genes in GENES.
 MODELS = {
     "burrower": "originofspawns:burrower_dirt",
+    "lurker": "originofspawns:lurker_hood",
     "nightborn": "originofspawns:nightborn_eyes",
 }
 

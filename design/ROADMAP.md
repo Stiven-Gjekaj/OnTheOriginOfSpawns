@@ -7,6 +7,7 @@ Milestones 0 to 5 and the beta stage make version 1.0.0.
 ## Releases
 
 - Each finished milestone from 1 to 5 makes an alpha release.
+  Each part of milestone 2 also makes an alpha release.
   An alpha release has the systems, but not all of the content.
 - After milestone 5, the beta stage starts.
   Beta releases add the content, the balance, and the fixes.
@@ -51,13 +52,38 @@ Milestones 0 to 5 and the beta stage make version 1.0.0.
 
 ### Milestone 2: All hostile mobs
 
-- Add the 5 major families of each species, with tier 1 and tier 2 effects.
-- Add minor families from the major family and the sub family.
-- Add hybrids and neutral mobs.
-- Add pools for all vanilla hostile mobs.
-- Add behavior genes, sense genes, and life-history genes.
-- Let genes flow between neighbor categories.
+Milestone 2 has four parts. Each part makes its own alpha release.
+
+#### Milestone 2a: Complete zombie
+
+- Add the family system: family points, the major family, the sub family,
+  hybrids, pure families, and neutral mobs.
+- Add the tier 1, tier 2, and tier 3 effects of the 5 zombie families.
+- Add the names of the 20 minor families and the 10 hybrids.
+- Add the effect types that the other 27 zombie genes need, for example
+  leaps, sounds, auras, and clouds on death.
+- Add the new pressures: sunlight, spotted, alone, crowd, critical, golem,
+  and player death.
 - Count the deaths of the player as data.
+- Add the other 27 zombie genes, with their visuals.
+- Make Runt the only source of baby zombies.
+- Show the family of a zombie in the notebook.
+
+#### Milestone 2b: Husk and drowned
+
+- Write the design files of the husk and the drowned.
+- Add their 30 genes, their families, and their visuals.
+
+#### Milestone 2c: The other hostile mobs
+
+- For each species, one at a time:
+  - Write its design file.
+  - Make the region map of its body type, if it is a new body type.
+  - Add its genes, its families, and its visuals.
+
+#### Milestone 2d: Systems between pools
+
+- Let genes flow between neighbor categories.
 - Add convergent evolution.
 - Add extinction in a category.
 - Set the speed of evolution from the difficulty and a gamerule.

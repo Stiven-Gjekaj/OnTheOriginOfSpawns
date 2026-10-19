@@ -1,8 +1,10 @@
 package io.github.stivengjekaj.originofspawns;
 
+import io.github.stivengjekaj.originofspawns.command.PoolCommand;
 import io.github.stivengjekaj.originofspawns.registry.ModRegistries;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 
 import net.minecraft.resources.Identifier;
 
@@ -17,6 +19,8 @@ public class OriginOfSpawns implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ModRegistries.register();
+		CommandRegistrationCallback.EVENT.register((dispatcher, context, selection) ->
+				PoolCommand.register(dispatcher, context));
 		LOGGER.info("On the Origin of Spawns starts.");
 	}
 

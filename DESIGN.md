@@ -112,12 +112,12 @@ These are the visuals of the first zombie genes:
 
 | Gene | Region | Visual |
 |---|---|---|
-| Fire resistance | Skin | The skin is more gray |
-| Fire resistance | Hands and feet | Dark spots and red spots |
-| Arrow resistance | Shirt | Plates that look like iron |
-| Speed | Lower legs | Bare bone, thicker than the legs of a skeleton |
+| Cinder | Skin | The skin is more gray |
+| Cinder | Hands and feet | Dark spots and red spots |
+| Ironhide | Shirt | Plates that look like iron |
+| Bonerunner | Lower legs | Bare bone, thicker than the legs of a skeleton |
 
-The speed gene changes the model.
+The Bonerunner gene changes the model.
 The bone legs are narrower than the zombie legs, but wider than the legs of
 a skeleton.
 Thus, the bones look worn, not undead.
@@ -135,7 +135,7 @@ Thus, the bones look worn, not undead.
   Hard has the fastest evolution.
 - A gamerule overrides the speed.
 
-## Extinction and speciation
+## Extinction
 
 - If players kill a species too much in a category, the species goes extinct
   in that category.
@@ -429,7 +429,8 @@ Version 1.0.0 has these 30 perks:
 
 - The Wither and the Ender Dragon read the gene pools when they spawn.
   They get the strongest genes in the world.
-- The player completes the notebook when it records a full speciation.
+- The player completes the notebook when it records all families of one
+  species.
   This opens the last perk tier.
 - The Red Queen meter shows who leads the arms race: the players or the mobs.
   It is one value for the world.
@@ -448,6 +449,6 @@ Version 1.0.0 has these 30 perks:
 
 - The first milestone is a small test of the full loop.
 - It has zombies only, in one biome category.
-- It has three genes: fire resistance, arrow resistance, and speed.
+- It has three genes: Cinder, Ironhide, and Bonerunner.
 - Each gene changes how the zombie looks.
 - It has one notebook page for zombies.

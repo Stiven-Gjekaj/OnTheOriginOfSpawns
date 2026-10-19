@@ -27,7 +27,8 @@
 		"fabric-client-gametest": [
 			"io.github.stivengjekaj.originofspawns.test.GeneTextureClientTest",
 			"io.github.stivengjekaj.originofspawns.test.NotebookClientTest",
-			"io.github.stivengjekaj.originofspawns.test.MobInfoClientTest"
+			"io.github.stivengjekaj.originofspawns.test.MobInfoClientTest",
+			"io.github.stivengjekaj.originofspawns.test.NightGenesClientTest"
 		]
 	},
 	"depends": {

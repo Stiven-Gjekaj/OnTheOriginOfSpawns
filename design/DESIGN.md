@@ -203,10 +203,14 @@ Thus, the bones look worn, not undead.
 
 | Points of the genes | Result |
 |---|---|
-| One family has all points | Pure family: tier 3 effects from the major |
-| One family has the most points, and a second family is next | Minor family: tier 2 effects from the major, tier 1 effects from the sub |
-| Two families have the most points, with the same number | Hybrid: tier 2 effects from each of the two |
-| No family points | Neutral: no family effects |
+| One family has 6 or more points (3 genes), and no other family has points | Pure family: tier 3 effects from the major |
+| The major family has 4 or more points (2 genes), and a second family has 2 or more | Minor family: tier 2 effects from the major, tier 1 effects from the sub |
+| Two families have the same points, 4 or more each | Hybrid: tier 2 effects from each of the two |
+| The major family has 4 or more points, and no second family has 2 or more | Major family alone: tier 2 effects from the major |
+| The major family has fewer than 4 points | Neutral: no family effects |
+
+- Thus, a mob with 0 or 1 gene is neutral.
+  A mob with genes of 3 different families, one gene each, is also neutral.
 
 - For example, a pure Predator gets the tier 3 Predator effects.
   A Predator with a Tank sub family gets the tier 2 Predator effects and the

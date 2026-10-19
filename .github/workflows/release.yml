@@ -1,0 +1,40 @@
+# This workflow builds the mod when a GitHub release is published.
+# It uploads the mod file to Modrinth, CurseForge, and the GitHub release.
+
+name: release
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+      - name: validate gradle wrapper
+        uses: gradle/actions/wrapper-validation@v6
+      - name: setup jdk
+        uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: 'microsoft'
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+      - name: build
+        run: ./gradlew build
+      - name: publish
+        uses: Kir-Antipov/mc-publish@v3.3.1
+        with:
+          modrinth-id: tvKIdALe
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: 1754344
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          files: build/libs/!(*-sources).jar
+          loaders: fabric
+          game-versions: 26.3
+          dependencies: fabric-api(required)

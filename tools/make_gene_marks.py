@@ -260,7 +260,7 @@ def burrower():
 
 
 def lurker():
-    # The shade under the brim of the hood, on the upper half of the face. The
+    # The shade under the edge of the hood, on the upper half of the face. The
     # hood itself is the gene model lurker_hood. The shade goes under the
     # marks of other genes (order -1), and it leaves the eyes as they are.
     shade = Mark("#0E100B", alpha=170, order=-1)

@@ -6,8 +6,8 @@ A ragged hood of dark cloth on the head bone. It covers the top, the sides,
 and the back of the head, and hangs 2 pixels below the head over the back
 of the neck, with a torn lower edge. The front is open under the forehead, so
 that the marks of other genes on the face stay visible: the cloth hangs
-only over the top 2 rows of the face, which no other gene uses. A brim
-juts out over the forehead.
+only over the top 2 rows of the face, which no other gene uses. No part
+juts out in front of the face: the hood lies flat around the head.
 The hood is thin (inflate 0.4), so that the head models of other genes can
 sit on top of it.
 This script needs Pillow.
@@ -27,9 +27,8 @@ FOLD = (31, 28, 24, 255)
 WORN = (60, 55, 46, 255)
 EDGE = (24, 22, 19, 255)
 
-# The hood: 8x10x8 at uv (0, 0). The brim: 8x1x2 at uv (0, 20).
+# The hood: 8x10x8 at uv (0, 0).
 HOOD_W, HOOD_H, HOOD_D = 8, 10, 8
-BRIM_W, BRIM_H, BRIM_D = 8, 1, 2
 INFLATE = 0.4
 
 
@@ -72,14 +71,6 @@ def texture():
         im.putpixel((x, d + 1), cloth(x, d + 1))
         if noise(x, d + 2) % 100 < 40:
             im.putpixel((x, d + 2), EDGE)
-    # The brim: all its faces are cloth, a little lighter on top.
-    bw, bh, bd = BRIM_W, BRIM_H, BRIM_D
-    for y in range(20, 20 + bd + bh):
-        for x in range(0, 2 * (bd + bw)):
-            im.putpixel((x, y), cloth(x, y))
-    for x in range(bd, bd + bw):
-        if noise(x, 20) % 100 < 50:
-            im.putpixel((x, 20), WORN)
     return im
 
 
@@ -92,9 +83,6 @@ def model():
         "parts": [
             {"bone": "head", "uv": [0, 0], "from": [-4, -8, -4], "size": [HOOD_W, HOOD_H, HOOD_D],
              "inflate": i},
-            # The brim sits on the top front edge of the hood and juts out.
-            {"bone": "head", "uv": [0, 20], "from": [-4, -8 - i, -4 - i - BRIM_D],
-             "size": [BRIM_W, BRIM_H, BRIM_D], "inflate": 0.1},
         ],
     }
 

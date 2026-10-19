@@ -1,0 +1,9 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:predator",
+	"gains": [
+		{ "type": "attribute", "attribute": "minecraft:movement_speed", "amount": 0.0, "operation": "add_multiplied_base" }
+	],
+	"mutation_rate": 0
+}

@@ -35,9 +35,29 @@ public class FamilyTest {
 	}
 
 	@GameTest
-	public void oneFamilyIsPure(GameTestHelper helper) {
+	public void oneGeneIsNeutral(GameTestHelper helper) {
+		helper.assertValueEqual(FamilyResult.of(List.of(gene(A, 0.5F))), FamilyResult.NEUTRAL, "result");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void twoGenesOfOneFamilyAreAMajorAlone(GameTestHelper helper) {
 		FamilyResult result = FamilyResult.of(List.of(gene(A, 0.5F), gene(A, 0.2F)));
+		helper.assertValueEqual(result, new FamilyResult(Kind.MAJOR, Optional.of(A), Optional.empty()), "result");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void threeGenesOfOneFamilyArePure(GameTestHelper helper) {
+		FamilyResult result = FamilyResult.of(List.of(gene(A, 0.5F), gene(A, 0.2F), gene(A, 0.1F)));
 		helper.assertValueEqual(result, new FamilyResult(Kind.PURE, Optional.of(A), Optional.empty()), "result");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void threeDifferentFamiliesAreNeutral(GameTestHelper helper) {
+		FamilyResult result = FamilyResult.of(List.of(gene(A, 0.5F), gene(B, 0.2F), gene(C, 0.1F)));
+		helper.assertValueEqual(result, FamilyResult.NEUTRAL, "result");
 		helper.succeed();
 	}
 
@@ -50,15 +70,20 @@ public class FamilyTest {
 
 	@GameTest
 	public void samePointsMakeAHybridInFrequencyOrder(GameTestHelper helper) {
-		FamilyResult result = FamilyResult.of(List.of(gene(A, 0.2F), gene(B, 0.7F)));
+		FamilyResult result = FamilyResult.of(List.of(gene(A, 0.2F), gene(A, 0.1F), gene(B, 0.7F), gene(B, 0.1F)));
 		helper.assertValueEqual(result, new FamilyResult(Kind.HYBRID, Optional.of(B), Optional.of(A)), "result");
 		helper.succeed();
 	}
 
 	@GameTest
 	public void subTagGivesOnePoint(GameTestHelper helper) {
-		FamilyResult result = FamilyResult.of(List.of(new TaggedGene(A, Optional.of(B), 0.5F)));
-		helper.assertValueEqual(result, new FamilyResult(Kind.MINOR, Optional.of(A), Optional.of(B)), "result");
+		FamilyResult oneSubTag = FamilyResult.of(List.of(new TaggedGene(A, Optional.of(B), 0.5F), gene(A, 0.4F)));
+		helper.assertValueEqual(oneSubTag, new FamilyResult(Kind.MAJOR, Optional.of(A), Optional.empty()),
+				"one sub tag is not enough for a sub family");
+		FamilyResult twoSubTags = FamilyResult.of(List.of(new TaggedGene(A, Optional.of(B), 0.5F),
+				new TaggedGene(A, Optional.of(B), 0.4F)));
+		helper.assertValueEqual(twoSubTags, new FamilyResult(Kind.MINOR, Optional.of(A), Optional.of(B)),
+				"two sub tags make a sub family");
 		helper.succeed();
 	}
 
@@ -81,8 +106,10 @@ public class FamilyTest {
 	public void pureFamilyGivesTierThreeEffects(GameTestHelper helper) {
 		BlockPos pos = new BlockPos(2, 1, 2);
 		BiomeCategory category = BiomeCategory.of(helper.getLevel().getBiome(helper.absolutePos(pos)));
-		GenePools.get(helper.getLevel().getServer())
-				.setFrequency(Identifier.withDefaultNamespace("stray"), category, id("test_swift"), 1.0F);
+		GenePools pools = GenePools.get(helper.getLevel().getServer());
+		for (String gene : List.of("test_swift", "test_swift_2", "test_swift_3")) {
+			pools.setFrequency(Identifier.withDefaultNamespace("stray"), category, id(gene), 1.0F);
+		}
 
 		Stray stray = helper.spawnWithNoFreeWill(EntityTypes.STRAY, pos);
 

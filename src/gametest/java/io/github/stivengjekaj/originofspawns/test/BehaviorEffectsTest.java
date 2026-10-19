@@ -5,6 +5,8 @@ import java.util.List;
 import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.MobInfo;
+import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
@@ -282,14 +284,54 @@ public class BehaviorEffectsTest {
 	@GameTest
 	public void summonReadsGenesFromEntityData(GameTestHelper helper) {
 		Vec3 pos = helper.absoluteVec(new Vec3(1.5, 1.0, 1.5));
-		helper.getLevel().getServer().getCommands().performPrefixedCommand(
-				helper.getLevel().getServer().createCommandSourceStack().withSuppressedOutput(),
-				"summon minecraft:zombie " + pos.x + " " + pos.y + " " + pos.z
-						+ " {NoAI:1b,Tags:[\"oos_summon_test\"],\"fabric:attachments\":{\"originofspawns:genes\":[\"originofspawns:death_throes\"]}}");
-		Zombie zombie = helper.getLevel().getEntitiesOfClass(Zombie.class, new net.minecraft.world.phys.AABB(pos, pos).inflate(1.0),
-				z -> z.entityTags().contains("oos_summon_test")).stream().findFirst().orElseThrow();
+		List<String> feedback = new java.util.ArrayList<>();
+		var source = helper.getLevel().getServer().createCommandSourceStack()
+				.withLevel(helper.getLevel()).withPosition(pos)
+				.withSource(new net.minecraft.commands.CommandSource() {
+					@Override
+					public void sendSystemMessage(net.minecraft.network.chat.Component message) {
+						feedback.add(message.getString());
+					}
+
+					@Override
+					public boolean acceptsSuccess() {
+						return true;
+					}
+
+					@Override
+					public boolean acceptsFailure() {
+						return true;
+					}
+
+					@Override
+					public boolean shouldInformAdmins() {
+						return false;
+					}
+				});
+		helper.getLevel().getServer().getCommands().performPrefixedCommand(source,
+				"summon minecraft:zombie ~ ~ ~ {NoAI:1b,PersistenceRequired:1b,Tags:[\"oos_summon_test\"],"
+						+ "\"fabric:attachments\":{\"originofspawns:genes\":[\"originofspawns:death_throes\"]}}");
+		Zombie zombie = helper.getLevel().getEntities(net.minecraft.world.level.entity.EntityTypeTest.forClass(Zombie.class),
+				z -> z.entityTags().contains("oos_summon_test")).stream().findFirst().orElse(null);
+		helper.assertTrue(zombie != null, "the summon made no zombie: " + feedback);
+		zombie.discard();
 		helper.assertValueEqual(zombie.getAttached(ModAttachments.GENES).genes(),
 				List.of(Identifier.fromNamespaceAndPath("originofspawns", "death_throes")), "the genes from the command");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void translucentMobsHideTheirPanelFromAfar(GameTestHelper helper) {
+		Zombie shade = zombieWith(helper, new BlockPos(1, 1, 1), "test_always_translucent");
+		Zombie plain = zombieWith(helper, new BlockPos(1, 1, 3));
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		helper.assertTrue(GeneEffects.translucentOpacity(shade).isPresent(), "the test mob is translucent");
+		helper.assertTrue(GeneEffects.translucentOpacity(plain).isEmpty(), "a plain mob is not translucent");
+		player.setPos(shade.position().add(5.0, 0.0, 0.0));
+		helper.assertFalse(MobInfo.shows(shade, player), "the panel of a translucent mob at 5 blocks");
+		helper.assertTrue(MobInfo.shows(plain, player), "the panel of a plain mob at 5 blocks");
+		player.setPos(shade.position().add(1.5, 0.0, 0.0));
+		helper.assertTrue(MobInfo.shows(shade, player), "the panel of a translucent mob at 1.5 blocks");
 		helper.succeed();
 	}
 

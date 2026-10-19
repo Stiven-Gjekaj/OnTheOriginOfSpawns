@@ -53,6 +53,18 @@ public final class GeneEffects {
 	/**
 	 * Returns the sources of effects of a mob: each gene, then the family tiers that its family result gives.
 	 */
+	/**
+	 * Returns the opacity of the mob when it is translucent now, from the light at the mob. A mob that is not
+	 * translucent now gives nothing. The client uses it to draw the mob.
+	 */
+	public static Optional<Float> translucentOpacity(Entity entity) {
+		int light = entity.level().getMaxLocalRawBrightness(entity.blockPosition());
+		return of(entity)
+				.filter(effect -> effect instanceof GeneEffect.Translucent translucent && light <= translucent.maxLight())
+				.map(effect -> ((GeneEffect.Translucent) effect).opacity())
+				.min(Float::compare);
+	}
+
 	public static List<Source> sources(RegistryAccess access, CarriedGenes carried) {
 		List<Source> sources = new ArrayList<>();
 		Registry<Gene> genes = access.lookupOrThrow(ModRegistries.GENE);

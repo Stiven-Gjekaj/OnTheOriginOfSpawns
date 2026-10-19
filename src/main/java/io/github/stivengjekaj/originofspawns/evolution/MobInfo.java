@@ -10,6 +10,7 @@ import io.github.stivengjekaj.originofspawns.definition.Gene;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Entity;
 
 /**
  * The text of the info panel of one mob: its family, the kind of its family, and its genes.
@@ -23,6 +24,18 @@ public record MobInfo(Component family, Optional<Component> kind, List<Line> gen
 	 * One gene of the mob. A dominant gene has a family tag of the family of the mob.
 	 */
 	public record Line(Identifier gene, Component name, boolean dominant) {
+	}
+
+	/**
+	 * A player sees the panel of a translucent mob only in this distance.
+	 */
+	public static final double TRANSLUCENT_RANGE = 2.0;
+
+	/**
+	 * Tells if the viewer can see the panel of the mob. A mob that is translucent now hides its panel from afar.
+	 */
+	public static boolean shows(Entity mob, Entity viewer) {
+		return GeneEffects.translucentOpacity(mob).isEmpty() || mob.distanceTo(viewer) <= TRANSLUCENT_RANGE;
 	}
 
 	/**

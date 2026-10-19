@@ -32,7 +32,8 @@ public class MobInfoHud implements HudElement {
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
 		Minecraft minecraft = Minecraft.getInstance();
-		if (minecraft.level == null || !(minecraft.crosshairPickEntity instanceof Mob mob)) {
+		if (minecraft.level == null || minecraft.player == null || !(minecraft.crosshairPickEntity instanceof Mob mob)
+				|| !MobInfo.shows(mob, minecraft.player)) {
 			return;
 		}
 		CarriedGenes carried = mob.getAttached(ModAttachments.GENES);

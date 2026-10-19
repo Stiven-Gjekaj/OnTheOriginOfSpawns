@@ -3,7 +3,6 @@ package io.github.stivengjekaj.originofspawns.client.mixin;
 import java.util.List;
 
 import io.github.stivengjekaj.originofspawns.client.render.GeneTextures;
-import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -28,12 +27,7 @@ public abstract class AbstractZombieRendererMixin {
 		state.setData(GeneTextures.GENES, genes == null ? List.of() : genes.genes());
 		state.setData(GeneTextures.OPACITY, null);
 		if (genes != null) {
-			int light = zombie.level().getMaxLocalRawBrightness(zombie.blockPosition());
-			GeneEffects.of(zombie)
-					.filter(effect -> effect instanceof GeneEffect.Translucent translucent && light <= translucent.maxLight())
-					.map(effect -> ((GeneEffect.Translucent) effect).opacity())
-					.min(Float::compare)
-					.ifPresent(opacity -> state.setData(GeneTextures.OPACITY, opacity));
+			GeneEffects.translucentOpacity(zombie).ifPresent(opacity -> state.setData(GeneTextures.OPACITY, opacity));
 		}
 	}
 

@@ -55,18 +55,22 @@ These features are for version 1.0.0. Some are not complete.
 - A gene pool for each species in each biome category: hot, cold, wet,
   temperate, nether, and end
 - The cause of each death changes the pool: fire, arrows, melee, explosions,
-  falls, and zombies that die before they reach you
+  falls, sunlight, critical hits, iron golems, mobs that die alone or in a
+  crowd, and mobs that die before they reach you
 - Genes that change how mobs look, fight, sense, and spawn
 - A downside for each gene, and a maximum of 5 genes for each mob
 - 5 major families and 20 minor families for each species, with hybrids
 - Extinction of a species in a biome category
 - 30 player perks, each with a gain and a cost
 - 1 to 5 perk slots, from the knowledge percentage of your notebook
-- The Beagle Notebook, with charts, family trees, and predictions
+- A panel that shows the family and the genes of the mob that you look at
+- The Beagle Notebook, with a tab for each species, a page of genes, a page
+  of the families that you found, and later charts, family trees, and
+  predictions
 - The Royal Society block and the Naturalist villager, to share notebook
   pages for XP
 - Gene pools that all players in a world share
-- Genes, perks, and pressures in data packs
+- Genes, families, perks, and pressures in data packs
 
 ## Build
 

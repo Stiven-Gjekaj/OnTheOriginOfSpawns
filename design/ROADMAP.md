@@ -67,7 +67,10 @@ Milestone 2 has four parts. Each part makes its own alpha release.
 - Count the deaths of the player as data.
 - Add the other 27 zombie genes, with their visuals.
 - Make Runt the only source of baby zombies.
-- Show the family of a zombie in the notebook.
+- Add the notebook tabs: a tab for each species, with family tabs and gene
+  tabs.
+- Add the mob info panel that shows when the player looks at a mob.
+- Add the model changes of Bloat, Thickskull, and Sporebearer.
 
 #### Milestone 2b: Husk and drowned
 

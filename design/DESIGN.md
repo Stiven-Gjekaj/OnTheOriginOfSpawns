@@ -240,6 +240,7 @@ Thus, the bones look worn, not undead.
   Then wolves evolve more speed.
   The world evolves when the player is not near.
 - Mobs that kill the player get more of the genes that did the kill.
+  Each gene of the killer rises by its selection rate.
   The deaths of the player are data too.
 - Convergent evolution: two species under the same pressure can grow the same
   trait.

@@ -17,9 +17,13 @@ All values are first drafts. The beta stage balances them.
 
 ## Major families
 
-Each major family has one big buff and one big debuff.
-The major family of a mob gives the tier 2 effects.
-The sub family of a mob gives the tier 1 effects.
+Each major family has one big buff and one big debuff, at 3 tiers.
+
+| Result | Effects |
+|---|---|
+| Pure family | Tier 3 from the major |
+| Minor family | Tier 2 from the major, and tier 1 from the sub |
+| Hybrid | Tier 2 from each of the two families |
 
 ### Predators
 
@@ -27,6 +31,7 @@ Predators chase and hit hard. They are fast and fragile.
 
 | Tier | Buff | Debuff |
 |---|---|---|
+| Tier 3 | 30% more speed, and 4 more attack damage | 30% less maximum health |
 | Tier 2 | 20% more speed, and 2 more attack damage | 20% less maximum health |
 | Tier 1 | 10% more speed | 10% less maximum health |
 
@@ -36,6 +41,7 @@ Stalkers hide and attack first. They are weak in the light.
 
 | Tier | Buff | Debuff |
 |---|---|---|
+| Tier 3 | No sounds at all, and the first hit on a player does triple damage | 40% more damage taken at light level 12 or more |
 | Tier 2 | No step sounds, and the first hit on a player does double damage | 25% more damage taken at light level 12 or more |
 | Tier 1 | Quieter steps, and the first hit does 50% more damage | 10% more damage taken at light level 12 or more |
 
@@ -45,6 +51,7 @@ Tanks take hits and hold ground. They are slow.
 
 | Tier | Buff | Debuff |
 |---|---|---|
+| Tier 3 | 75% more maximum health, full knockback resistance, and 2 more armor | 40% less speed |
 | Tier 2 | 50% more maximum health, and full knockback resistance | 25% less speed |
 | Tier 1 | 25% more maximum health | 10% less speed |
 
@@ -54,6 +61,7 @@ Hordes fight in groups. A zombie of a horde is weak alone.
 
 | Tier | Buff | Debuff |
 |---|---|---|
+| Tier 3 | When the zombie is hit, all zombies in 24 blocks attack the attacker | 40% less damage with no zombie in 8 blocks |
 | Tier 2 | When the zombie is hit, all zombies in 16 blocks attack the attacker | 25% less damage with no zombie in 8 blocks |
 | Tier 1 | When the zombie is hit, all zombies in 8 blocks attack the attacker | 10% less damage with no zombie in 8 blocks |
 
@@ -63,6 +71,7 @@ Blights carry disease. Their hits are weak, but their effects last.
 
 | Tier | Buff | Debuff |
 |---|---|---|
+| Tier 3 | Each hit gives Hunger for 15 seconds and Weakness for 5 seconds, and a killed villager always becomes a zombie villager | 45% less attack damage |
 | Tier 2 | Each hit gives Hunger for 10 seconds, and a killed villager always becomes a zombie villager | 30% less attack damage |
 | Tier 1 | Each hit gives Hunger for 5 seconds | 15% less attack damage |
 
@@ -179,12 +188,12 @@ The major family comes first, and the sub family comes second.
 
 A pure family has all its points in one major family.
 It has the name of its major family, for example "Predators".
-It gives the tier 2 effects of that family only.
+It gives the tier 3 effects of that family.
 
 ## Hybrids
 
 A hybrid has the same points in two families.
-It gives the tier 1 effects of each of the two families.
+It gives the tier 2 effects of each of the two families.
 Each hybrid has its own name.
 
 | Hybrid | Families | Play style |

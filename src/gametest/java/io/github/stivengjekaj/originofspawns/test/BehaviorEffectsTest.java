@@ -279,6 +279,20 @@ public class BehaviorEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void summonReadsGenesFromEntityData(GameTestHelper helper) {
+		Vec3 pos = helper.absoluteVec(new Vec3(1.5, 1.0, 1.5));
+		helper.getLevel().getServer().getCommands().performPrefixedCommand(
+				helper.getLevel().getServer().createCommandSourceStack().withSuppressedOutput(),
+				"summon minecraft:zombie " + pos.x + " " + pos.y + " " + pos.z
+						+ " {NoAI:1b,Tags:[\"oos_summon_test\"],\"fabric:attachments\":{\"originofspawns:genes\":[\"originofspawns:death_throes\"]}}");
+		Zombie zombie = helper.getLevel().getEntitiesOfClass(Zombie.class, new net.minecraft.world.phys.AABB(pos, pos).inflate(1.0),
+				z -> z.entityTags().contains("oos_summon_test")).stream().findFirst().orElseThrow();
+		helper.assertValueEqual(zombie.getAttached(ModAttachments.GENES).genes(),
+				List.of(Identifier.fromNamespaceAndPath("originofspawns", "death_throes")), "the genes from the command");
+		helper.succeed();
+	}
+
 	private static Zombie zombieWith(GameTestHelper helper, BlockPos pos, String... genes) {
 		// The genes go on before the zombie enters the level, so it gets no genes from the pool.
 		Zombie zombie = EntityTypes.ZOMBIE.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);

@@ -91,7 +91,7 @@ Each one is a condition of the death, like "unreached".
 | `melee` | A melee attack kills the zombie | In the mod |
 | `explosion` | An explosion kills the zombie | In the mod |
 | `fall` | A fall kills the zombie | In the mod |
-| `unreached` | The zombie dies before it hits the player | New |
+| `unreached` | The zombie targeted a player and did not damage a player before it died | New |
 | `sunlight` | The sun burns the zombie to death | New |
 | `spotted` | The player sees the zombie from more than 8 blocks before the kill | New |
 | `alone` | The zombie dies with no other zombie in 8 blocks | New |
@@ -219,5 +219,4 @@ It is a plain zombie, with no family effects.
 
 ## Open questions
 
-- Does Runt need a visual mark, or is the baby model enough?
-- Which genes need a change to the model? Bonerunner does. Others may.
+- Do Runt babies replace the vanilla baby zombies?

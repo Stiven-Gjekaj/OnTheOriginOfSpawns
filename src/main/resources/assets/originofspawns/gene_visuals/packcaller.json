@@ -1,0 +1,12 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/packcaller_0.png",
+				"tint": "#1A0F0C"
+			}
+		}
+	],
+	"model": "originofspawns:packcaller_jaw"
+}

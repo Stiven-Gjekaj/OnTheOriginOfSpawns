@@ -370,6 +370,75 @@ def mender():
     return [seam, thread]
 
 
+def packcaller():
+    # The jaw hangs open: the jaw row of the face is the dark inside of the
+    # mouth. The lower jaw is the gene model packcaller_jaw.
+    mouth = Mark("#1A0F0C")
+    for x in range(10, 14):
+        mouth.put((x, 15), 255 if x in (11, 12) else 200)
+    return [mouth]
+
+
+def brood():
+    # The ribs show through: a spine and two ribs on the upper back, and one
+    # rib on each side of the shirt, with dark gaps between the bones.
+    bone = Mark("#D8D0B8")
+    gap = Mark("#2A2420")
+    for x in (35, 36):
+        bone.put((x, 20)).put((x, 22))
+    for x in (34, 37):
+        gap.put((x, 22))
+    for x in range(34, 38):
+        bone.put((x, 21), 235).put((x, 23), 215)
+    for face in (RIGHT_SIDE, LEFT_SIDE):
+        for col in range(4):
+            gap.put(body(face, col, 1))
+            bone.put(body(face, col, 2), 235 if col % 2 else 215)
+    return [bone, gap]
+
+
+def rally():
+    # A red band of cloth around each forearm, in the last row of the arm,
+    # with two loose ends on the back. It stops where the Mender seam is.
+    band = Mark("#9B2D23")
+    for face in SIDES:
+        for col in range(4):
+            if (face, col) != (OUTER, 1):
+                band.put(arm(face, col, 7), 255 if col % 2 else 200)
+    band.put(arm(BACK, 1, 6), 220).put(arm(BACK, 2, 6), 180)
+    return [band]
+
+
+def runt():
+    # Runt has no marks on the texture. Its tufts of hair are the gene model
+    # runt_tufts. The baby model shows the gene too.
+    return []
+
+
+def grave_call():
+    # Dark grave earth caked on the hands. It goes under the Cinder spots
+    # (order -1), so both show on one zombie.
+    earth = Mark("#3B2A1C", alpha=230, order=-1)
+    for face in SIDES:
+        for col in range(4):
+            for row in range(8, 12):
+                n = (face * 13 + col * 7 + row * 29) % 10
+                if n < 3 + (row - 8) * 2:
+                    earth.put(arm(face, col, row), (255, 200, 160)[n % 3])
+    for col in range(4):
+        for row in range(4):
+            if (col + row) % 3:
+                for u, v in ARMS:
+                    earth.put((u + 8 + col, v + row), 220)
+    return [earth]
+
+
+def siege():
+    # Siege has no marks on the texture. Its splinters of wood are the gene
+    # model siege_splinters.
+    return []
+
+
 GENES = {
     "lunger": lunger,
     "frenzy": frenzy,
@@ -385,6 +454,12 @@ GENES = {
     "stoneblood": stoneblood,
     "blastproof": blastproof,
     "mender": mender,
+    "packcaller": packcaller,
+    "brood": brood,
+    "rally": rally,
+    "runt": runt,
+    "grave_call": grave_call,
+    "siege": siege,
 }
 
 # The gene models of the genes in GENES.
@@ -394,6 +469,9 @@ MODELS = {
     "nightborn": "originofspawns:nightborn_eyes",
     "thickskull": "originofspawns:thickskull_plate",
     "bloat": "originofspawns:bloat_body",
+    "packcaller": "originofspawns:packcaller_jaw",
+    "runt": "originofspawns:runt_tufts",
+    "siege": "originofspawns:siege_splinters",
     "stoneblood": "originofspawns:stoneblood_shell",
 }
 

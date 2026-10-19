@@ -1,0 +1,11 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/rally_0.png",
+				"tint": "#9B2D23"
+			}
+		}
+	]
+}

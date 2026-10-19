@@ -1,0 +1,12 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/grave_call_0.png",
+				"tint": "#3B2A1C"
+			},
+			"order": -1
+		}
+	]
+}

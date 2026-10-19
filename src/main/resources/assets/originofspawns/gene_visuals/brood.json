@@ -1,0 +1,18 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/brood_0.png",
+				"tint": "#D8D0B8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/brood_1.png",
+				"tint": "#2A2420"
+			}
+		}
+	]
+}

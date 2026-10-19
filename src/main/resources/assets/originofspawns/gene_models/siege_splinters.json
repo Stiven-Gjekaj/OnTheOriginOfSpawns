@@ -1,0 +1,79 @@
+{
+	"texture": "originofspawns:textures/entity/siege_splinters.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"size": [
+				2,
+				1,
+				1
+			],
+			"from": [
+				-5,
+				7,
+				-0.5
+			],
+			"mirror": false
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				4
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"from": [
+				-1.5,
+				8.5,
+				-4
+			],
+			"mirror": false
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"size": [
+				2,
+				1,
+				1
+			],
+			"from": [
+				3,
+				7,
+				-0.5
+			],
+			"mirror": true
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				4
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"from": [
+				0.5,
+				8.5,
+				-4
+			],
+			"mirror": true
+		}
+	]
+}

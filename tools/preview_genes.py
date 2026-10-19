@@ -49,9 +49,11 @@ FAMILIES = {
     "blights": ["rotgut", "contagion", "sporebearer", "leech", "miasma", "plague_carrier"],
 }
 
-# More zombies for a family sheet: a label and the genes before the family.
+# More zombies for a family sheet: a label, the genes, and True to add all
+# the genes of the family.
 EXTRA = {
-    "predators": [("Cinder + all 6", ["cinder"])],
+    "predators": [("Cinder + all 6", ["cinder"], True),
+                  ("Ironhide + D. Throes", ["ironhide", "death_throes"], False)],
 }
 
 SCALE = 8
@@ -181,30 +183,24 @@ def visual(gene):
         return json.load(fh)
 
 
-def bake(tex, gene):
-    """Apply the visual layers of one gene, like TextureBaker.bake."""
+def bake_layer(out, gene, layer):
+    """Apply one visual layer of a gene to the texture, in place, like TextureBaker.bake."""
     vis = visual(gene)
-    if vis is None:
-        return tex
     regions = image(vis.get("region_map", DEFAULT_REGION_MAP))
-    layers = vis.get("layers", [])
     seed = identifier_hash("originofspawns:" + gene)
-    out = tex.copy()
+    wanted_regions = {REGIONS[r] for r in layer.get("regions", [])}
+    wanted_materials = {MATERIALS[m] for m in layer.get("materials", [])}
     for y in range(out.height):
         for x in range(out.width):
             region, material, _, alpha = regions.getpixel((x * regions.width // out.width,
                                                            y * regions.height // out.height))
             if not alpha:
                 continue
-            for layer in layers:
-                wanted_regions = {REGIONS[r] for r in layer.get("regions", [])}
-                wanted_materials = {MATERIALS[m] for m in layer.get("materials", [])}
-                if wanted_regions and region not in wanted_regions:
-                    continue
-                if wanted_materials and material not in wanted_materials:
-                    continue
-                out.putpixel((x, y), apply(layer["effect"], out.getpixel((x, y)), x, y, seed))
-    return out
+            if wanted_regions and region not in wanted_regions:
+                continue
+            if wanted_materials and material not in wanted_materials:
+                continue
+            out.putpixel((x, y), apply(layer["effect"], out.getpixel((x, y)), x, y, seed))
 
 
 def gene_cubes(gene):
@@ -280,10 +276,22 @@ def label(gene):
 
 
 def zombie(tex, genes):
-    """Return the baked texture of a zombie with the genes, in order."""
-    for gene in genes:
-        tex = bake(tex, gene)
-    return tex
+    """Return the baked texture of a zombie with the genes, like TextureBaker.bakeAll.
+
+    The layers of all the genes go on in the order of their "order" field. The
+    sort is stable: layers with the same order keep the order of the genes, by
+    id, and the order in their recipe.
+    """
+    steps = []
+    for gene in sorted(genes):
+        vis = visual(gene)
+        if vis is not None:
+            steps += [(layer.get("order", 0), gene, layer) for layer in vis.get("layers", [])]
+    steps.sort(key=lambda step: step[0])
+    out = tex.copy()
+    for _, gene, layer in steps:
+        bake_layer(out, gene, layer)
+    return out
 
 
 def gene_image(name, tex, genes):
@@ -334,8 +342,8 @@ def main():
             gene_image(label(gene), baked, [gene]).save(path)
         if len(ready) > 1:
             columns.append(("All " + str(len(ready)), zombie(tex, ready), ready))
-        for name, before in EXTRA.get(family, []):
-            genes_here = before + ready
+        for name, extra, with_family in EXTRA.get(family, []):
+            genes_here = extra + (ready if with_family else [])
             columns.append((name, zombie(tex, genes_here), genes_here))
         path = os.path.join(FAMILY_OUT, family + ".png")
         sheet(family.title(), columns).save(path)

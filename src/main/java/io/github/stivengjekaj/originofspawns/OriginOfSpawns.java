@@ -1,5 +1,7 @@
 package io.github.stivengjekaj.originofspawns;
 
+import io.github.stivengjekaj.originofspawns.registry.ModRegistries;
+
 import net.fabricmc.api.ModInitializer;
 
 import net.minecraft.resources.Identifier;
@@ -14,6 +16,7 @@ public class OriginOfSpawns implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		ModRegistries.register();
 		LOGGER.info("On the Origin of Spawns starts.");
 	}
 

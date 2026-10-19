@@ -75,6 +75,38 @@ Each effect has a `type` field.
 | `water_damage` | `amount`, `interval` (default `20`) | Damages the mob each `interval` ticks in water or rain |
 | `air_loss` | `extra` | The mob loses this much more air each tick under water. Mobs that breathe under water, such as zombies, do not drown |
 
+### Gene visuals
+
+The look of a gene is in the resource packs, not in the data packs.
+The file `assets/<namespace>/gene_visuals/<name>.json` is the visual of the
+gene `<namespace>:<name>`.
+A resource pack can change the look of any gene.
+
+    {
+        "region_map": "originofspawns:textures/region/humanoid.png",
+        "layers": [
+            { "materials": ["skin"], "effect": { "type": "desaturate", "amount": 0.4, "darken": 0.15 } },
+            { "regions": ["hands", "feet"], "effect": { "type": "spots", "colors": ["#1A1A1A", "#8B2E1F"], "density": 0.35 } }
+        ],
+        "model": "originofspawns:bone_legs"
+    }
+
+| Field | Default | Description |
+|---|---|---|
+| `region_map` | `originofspawns:textures/region/humanoid.png` | The map that labels the pixels of the mob texture |
+| `layers` | | The changes to the texture, in order. A layer with no `regions` or no `materials` covers all of them |
+| `model` | none | A model change. `originofspawns:bone_legs` is the only one now |
+
+The regions are `face`, `scalp`, `torso`, `arms`, `hands`, `legs`,
+`lower_legs`, and `feet`. The materials are `skin`, `cloth`, and `eyes`.
+
+| Effect | Fields | Result |
+|---|---|---|
+| `desaturate` | `amount`, `darken` | Moves the color toward gray, and makes it darker |
+| `spots` | `colors`, `density` | Puts spots of the colors on a part of the pixels |
+| `pattern` | `texture`, `tint` | Stamps a tiled grayscale texture in the tint color |
+| `erase` | | Makes the pixels transparent |
+
 ### Genes on mobs
 
 - A mob gets its genes one time, when it first joins a world.

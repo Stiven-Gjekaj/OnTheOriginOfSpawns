@@ -51,13 +51,18 @@ FAMILIES = {
     "blights": ["rotgut", "contagion", "sporebearer", "leech", "miasma", "plague_carrier"],
 }
 
-# More zombies for a family sheet: a label, the genes, and True to add all
-# the genes of the family.
+# More zombies for a family sheet: a label, the genes, True to add all the
+# genes of the family, and the light (1 is day). A night column has a dark
+# background. "opacity" draws the zombie translucent, as Shade at night.
 EXTRA = {
-    "predators": [("Cinder + all 6", ["cinder"], True),
-                  ("Ironhide + D. Throes", ["ironhide", "death_throes"], False),
-                  ("Ironhide + all 6", ["ironhide"], True)],
+    "predators": [("Cinder + all 6", ["cinder"], True, {}),
+                  ("Ironhide + D. Throes", ["ironhide", "death_throes"], False, {}),
+                  ("Ironhide + all 6", ["ironhide"], True, {})],
+    "stalkers": [("All 6 at night", [], True, {"light": 0.18}),
+                 ("Shade at 10%", ["shade"], False, {"opacity": 0.1}),
+                 ("Ironhide + all 6", ["ironhide"], True, {})],
 }
+NIGHT = (18, 22, 38, 255)
 
 SCALE = 8
 WHITE = (255, 255, 255, 255)
@@ -236,12 +241,12 @@ def cubes_of(tex, genes):
     return cubes
 
 
-def view(tex, genes, back, turn=None, tilt=0, light=1.0):
+def view(tex, genes, back, turn=None, tilt=0, light=1.0, opacity=1.0):
     """Draw the zombie with the gene models: the front, the back, or any turn."""
     if turn is None:
         turn = 180 if back else 0
     return render3d.render(cubes_of(tex, genes), PIVOTS, turn, tilt, SCALE, (VIEW_W, VIEW_H),
-                           center=(0, VIEW_H / 2 - VIEW_Y), light=light)
+                           center=(0, VIEW_H / 2 - VIEW_Y), light=light, opacity=opacity)
 
 
 def text(draw, xy, label, size):
@@ -294,11 +299,14 @@ def sheet(title, columns):
     im = Image.new("RGBA", (len(columns) * (w + gap) + gap, top + 2 * h + 3 * gap), WHITE)
     draw = ImageDraw.Draw(im)
     text(draw, (im.width / 2, SCALE), title, 4 * SCALE)
-    for i, (name, tex, genes) in enumerate(columns):
+    for i, (name, tex, genes, options) in enumerate(columns):
         x = gap + i * (w + gap)
         text(draw, (x + w / 2, 6 * SCALE), name, 2 * SCALE + 4)
-        im.alpha_composite(view(tex, genes, False), (x, top))
-        im.alpha_composite(view(tex, genes, True), (x, top + h + gap))
+        if options.get("light", 1.0) < 1:
+            for y in (top, top + h + gap):
+                draw.rectangle((x, y, x + w - 1, y + h - 1), fill=NIGHT)
+        im.alpha_composite(view(tex, genes, False, **options), (x, top))
+        im.alpha_composite(view(tex, genes, True, **options), (x, top + h + gap))
     return im
 
 
@@ -313,17 +321,17 @@ def main():
             print(family + ": no visual yet for " + ", ".join(missing))
         if not ready:
             continue
-        columns = [("Plain", tex, [])]
+        columns = [("Plain", tex, [], {})]
         for gene in ready:
             baked = zombie(tex, [gene])
-            columns.append((label(gene), baked, [gene]))
+            columns.append((label(gene), baked, [gene], {}))
             path = os.path.join(GENE_OUT, "zombie_" + gene + ".png")
             gene_image(label(gene), baked, [gene]).save(path)
         if len(ready) > 1:
-            columns.append(("All " + str(len(ready)), zombie(tex, ready), ready))
-        for name, extra, with_family in EXTRA.get(family, []):
+            columns.append(("All " + str(len(ready)), zombie(tex, ready), ready, {}))
+        for name, extra, with_family, options in EXTRA.get(family, []):
             genes_here = extra + (ready if with_family else [])
-            columns.append((name, zombie(tex, genes_here), genes_here))
+            columns.append((name, zombie(tex, genes_here), genes_here, options))
         path = os.path.join(FAMILY_OUT, family + ".png")
         sheet(family.title(), columns).save(path)
         print(path)

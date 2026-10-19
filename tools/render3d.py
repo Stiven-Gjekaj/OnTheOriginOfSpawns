@@ -78,11 +78,13 @@ def rotation(turn, tilt):
     return rotate
 
 
-def render(cubes, pivots, turn=0, tilt=0, scale=8, size=(24, 40), center=(0, 6), light=1.0):
+def render(cubes, pivots, turn=0, tilt=0, scale=8, size=(24, 40), center=(0, 6), light=1.0,
+           opacity=1.0):
     """Return an image of the cubes. size and center are in model pixels.
 
     light from 0 to 1 makes the cubes darker, as at night. A cube with
-    "glow" keeps its full light.
+    "glow" keeps its full light. opacity from 0 to 1 fades the whole image,
+    as a translucent mob. The far faces do not show through.
     """
     rotate = rotation(turn, tilt)
     width, height = size
@@ -122,4 +124,7 @@ def render(cubes, pivots, turn=0, tilt=0, scale=8, size=(24, 40), center=(0, 6),
                 quads.append((rotate(*middle)[2], [screen(p) for p in points], color))
     for _, corners, color in sorted(quads, key=lambda q: -q[0]):
         draw.polygon(corners, fill=color, outline=color)
+    if opacity < 1:
+        alpha = im.getchannel("A").point(lambda a: int(a * opacity))
+        im.putalpha(alpha)
     return im

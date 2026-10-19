@@ -22,8 +22,11 @@ import net.minecraft.util.LightCoordsUtil;
  * Draws the gene models of a zombie. Each part moves with its bone.
  */
 public class GeneModelLayer extends RenderLayer<ZombieRenderState, HumanoidModel<ZombieRenderState>> {
+	private final RenderLayerParent<ZombieRenderState, HumanoidModel<ZombieRenderState>> parent;
+
 	public GeneModelLayer(RenderLayerParent<ZombieRenderState, HumanoidModel<ZombieRenderState>> parent) {
 		super(parent);
+		this.parent = parent;
 	}
 
 	@Override
@@ -43,18 +46,32 @@ public class GeneModelLayer extends RenderLayer<ZombieRenderState, HumanoidModel
 			if (model == null) {
 				continue;
 			}
-			model.parts().forEach((bone, part) -> submit(poseStack, collector, bone, part, model, light, overlay));
+			Identifier texture = model.mobTexture() ? mobTexture(state) : model.texture().orElse(null);
+			if (texture == null) {
+				continue;
+			}
+			model.parts().forEach((bone, part) -> submit(poseStack, collector, bone, part, texture, light, overlay));
 			model.glowing().forEach((bone, part) ->
-					submit(poseStack, collector, bone, part, model, LightCoordsUtil.FULL_BRIGHT, overlay));
+					submit(poseStack, collector, bone, part, texture, LightCoordsUtil.FULL_BRIGHT, overlay));
 		}
 	}
 
 	private void submit(PoseStack poseStack, SubmitNodeCollector collector, GeneModel.Bone bone, ModelPart part,
-			GeneModels.Baked model, int light, int overlay) {
+			Identifier texture, int light, int overlay) {
 		poseStack.pushPose();
 		bone(bone).translateAndRotate(poseStack);
-		collector.submitModelPart(part, poseStack, RenderTypes.entityCutout(model.texture()), light, overlay, null);
+		collector.submitModelPart(part, poseStack, RenderTypes.entityCutout(texture), light, overlay, null);
 		poseStack.popPose();
+	}
+
+	/**
+	 * Returns the texture that the mob uses now, with the marks of its genes.
+	 */
+	@SuppressWarnings("unchecked")
+	private Identifier mobTexture(ZombieRenderState state) {
+		return parent instanceof LivingEntityRenderer<?, ?, ?> renderer
+				? ((LivingEntityRenderer<?, ZombieRenderState, ?>) renderer).getTextureLocation(state)
+				: null;
 	}
 
 	private ModelPart bone(GeneModel.Bone bone) {

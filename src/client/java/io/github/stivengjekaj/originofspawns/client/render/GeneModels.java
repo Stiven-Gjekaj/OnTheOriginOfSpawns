@@ -4,6 +4,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import io.github.stivengjekaj.originofspawns.visual.GeneModel;
 
@@ -27,7 +28,8 @@ public class GeneModels extends SimpleJsonResourceReloadListener<GeneModel> {
 	/**
 	 * A gene model, ready to draw. The glowing parts are apart from the other parts, because they get full light.
 	 */
-	public record Baked(Identifier texture, Map<GeneModel.Bone, ModelPart> parts, Map<GeneModel.Bone, ModelPart> glowing) {
+	public record Baked(Optional<Identifier> texture, boolean mobTexture, Map<GeneModel.Bone, ModelPart> parts,
+			Map<GeneModel.Bone, ModelPart> glowing) {
 	}
 
 	private static Map<Identifier, Baked> models = Map.of();
@@ -68,7 +70,7 @@ public class GeneModels extends SimpleJsonResourceReloadListener<GeneModel> {
 			(part.glow() ? glowingMeshes : meshes).computeIfAbsent(part.bone(), bone -> new MeshDefinition())
 					.getRoot().addOrReplaceChild("part" + index, cube, pose);
 		}
-		return new Baked(model.texture(), bakeAll(meshes, model), bakeAll(glowingMeshes, model));
+		return new Baked(model.texture(), model.mobTexture(), bakeAll(meshes, model), bakeAll(glowingMeshes, model));
 	}
 
 	private static Map<GeneModel.Bone, ModelPart> bakeAll(Map<GeneModel.Bone, MeshDefinition> meshes, GeneModel model) {

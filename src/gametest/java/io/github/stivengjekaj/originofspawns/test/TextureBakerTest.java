@@ -176,6 +176,18 @@ public class TextureBakerTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void geneModelCanUseTheMobTexture(GameTestHelper helper) {
+		String parts = "\"parts\": [{ \"bone\": \"body\", \"uv\": [16, 16], \"from\": [-4, 0, -2], \"size\": [8, 12, 4] }]";
+		GeneModel model = GeneModel.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(
+				"{ \"mob_texture\": true, " + parts + " }")).getOrThrow();
+		helper.assertTrue(model.mobTexture(), "mob texture");
+		helper.assertTrue(model.texture().isEmpty(), "no own texture");
+		helper.assertTrue(GeneModel.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("{ " + parts + " }")).isError(),
+				"a model with no texture and no mob texture is an error");
+		helper.succeed();
+	}
+
 	private static int label(BodyRegion region, BodyMaterial material) {
 		return ARGB.color(255, region.id(), material.id(), 0);
 	}

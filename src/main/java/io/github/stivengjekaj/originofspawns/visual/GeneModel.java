@@ -2,8 +2,10 @@ package io.github.stivengjekaj.originofspawns.visual;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.resources.Identifier;
@@ -13,18 +15,26 @@ import net.minecraft.util.StringRepresentable;
  * Extra cubes that a gene adds to the model of a mob. Each cube moves with one bone of the model.
  * The file {@code assets/<namespace>/gene_models/<name>.json} is the model {@code <namespace>:<name>}.
  *
- * @param texture the texture of the cubes
+ * @param texture the texture of the cubes. A model with {@code mobTexture} needs no texture
+ * @param mobTexture if true, the cubes use the texture of the mob, with the marks of its genes. A swollen copy of a body
+ *        part keeps the marks of the other genes this way
  * @param textureWidth the width of the texture, in pixels
  * @param textureHeight the height of the texture, in pixels
  * @param parts the cubes
  */
-public record GeneModel(Identifier texture, int textureWidth, int textureHeight, List<Part> parts) {
-	public static final Codec<GeneModel> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Identifier.CODEC.fieldOf("texture").forGetter(GeneModel::texture),
+public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int textureWidth, int textureHeight,
+		List<Part> parts) {
+	private static final Codec<GeneModel> RAW_CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			Identifier.CODEC.optionalFieldOf("texture").forGetter(GeneModel::texture),
+			Codec.BOOL.optionalFieldOf("mob_texture", false).forGetter(GeneModel::mobTexture),
 			Codec.intRange(1, 4096).optionalFieldOf("texture_width", 64).forGetter(GeneModel::textureWidth),
 			Codec.intRange(1, 4096).optionalFieldOf("texture_height", 64).forGetter(GeneModel::textureHeight),
 			Part.CODEC.listOf().fieldOf("parts").forGetter(GeneModel::parts)
 	).apply(instance, GeneModel::new));
+
+	public static final Codec<GeneModel> CODEC = RAW_CODEC.validate(model -> model.texture().isPresent() || model.mobTexture()
+			? DataResult.success(model)
+			: DataResult.error(() -> "A gene model needs a texture, or mob_texture set to true"));
 
 	/**
 	 * A bone of a humanoid model.

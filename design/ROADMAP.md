@@ -110,6 +110,11 @@ Milestone 2 has four parts. Each part makes its own alpha release.
 - Add field sketches that change with the genes.
 - Add predictions.
 - Add the advancements with names from Darwin's book.
+- Draw the notebook as an open book: two facing pages with a leather edge.
+- Use bookmark ribbons as the species tabs.
+  Put the tabs for the gene page and the family page on the edge of the page.
+- Show a small sketch of the mob on its page, with its real gene textures.
+- Play a page-turn sound when the player changes a tab.
 
 ### Milestone 5: Multiplayer and the Royal Society
 

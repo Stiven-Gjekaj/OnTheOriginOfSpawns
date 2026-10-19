@@ -63,6 +63,9 @@ EXTRA = {
                  ("Burrower + Bonerunner", ["burrower", "bonerunner"], False, {}),
                  ("Lurker + Nightborn", ["lurker", "nightborn"], False, {}),
                  ("Ironhide + all 6", ["ironhide"], True, {})],
+    "tanks": [("Stoneblood + Bonerunner", ["stoneblood", "bonerunner"], False, {}),
+              ("Thickskull + Lurker", ["thickskull", "lurker"], False, {}),
+              ("Tanks + Burrower", ["burrower"], True, {})],
 }
 NIGHT = (18, 22, 38, 255)
 
@@ -295,20 +298,23 @@ def gene_image(name, tex, genes):
 
 
 def sheet(title, columns):
-    """Return a row of zombies: the front views on top, the back views under them."""
+    """Return a row of zombies: the front views on top, the back views under
+    them, and a 3/4 view from the front right at the bottom."""
     gap, top = 2 * SCALE, 11 * SCALE
     w, h = VIEW_W * SCALE, VIEW_H * SCALE
-    im = Image.new("RGBA", (len(columns) * (w + gap) + gap, top + 2 * h + 3 * gap), WHITE)
+    im = Image.new("RGBA", (len(columns) * (w + gap) + gap, top + 3 * h + 4 * gap), WHITE)
     draw = ImageDraw.Draw(im)
     text(draw, (im.width / 2, SCALE), title, 4 * SCALE)
     for i, (name, tex, genes, options) in enumerate(columns):
         x = gap + i * (w + gap)
         text(draw, (x + w / 2, 6 * SCALE), name, 2 * SCALE + 4)
         if options.get("light", 1.0) < 1:
-            for y in (top, top + h + gap):
+            for y in (top, top + h + gap, top + 2 * (h + gap)):
                 draw.rectangle((x, y, x + w - 1, y + h - 1), fill=NIGHT)
         im.alpha_composite(view(tex, genes, False, **options), (x, top))
         im.alpha_composite(view(tex, genes, True, **options), (x, top + h + gap))
+        im.alpha_composite(view(tex, genes, False, turn=-35, tilt=15, **options),
+                           (x, top + 2 * (h + gap)))
     return im
 
 

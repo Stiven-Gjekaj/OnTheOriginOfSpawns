@@ -215,7 +215,8 @@ vanilla models.
 
 | Field | Default | Description |
 |---|---|---|
-| `texture` | | The texture of the cubes |
+| `texture` | | The texture of the cubes. It is optional when `mob_texture` is `true` |
+| `mob_texture` | `false` | The cubes use the texture of the mob, with the marks of all its genes. A swollen copy of a body part keeps the marks of the other genes this way |
 | `texture_width`, `texture_height` | `64` | The size of the texture |
 | `parts` | | The cubes |
 

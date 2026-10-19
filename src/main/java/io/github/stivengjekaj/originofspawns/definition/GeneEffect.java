@@ -42,7 +42,25 @@ public sealed interface GeneEffect {
 			Map.entry("grave_call", GraveCall.CODEC),
 			Map.entry("death_burst", DeathBurst.CODEC),
 			Map.entry("death_cloud", DeathCloud.CODEC),
-			Map.entry("convert_villagers", ConvertVillagers.CODEC)
+			Map.entry("convert_villagers", ConvertVillagers.CODEC),
+			Map.entry("silence", Silence.CODEC),
+			Map.entry("loud", Loud.CODEC),
+			Map.entry("attack_interval", AttackInterval.CODEC),
+			Map.entry("leap", Leap.CODEC),
+			Map.entry("hunt", Hunt.CODEC),
+			Map.entry("frenzied_targeting", FrenziedTargeting.CODEC),
+			Map.entry("translucent", Translucent.CODEC),
+			Map.entry("burrow", Burrow.CODEC),
+			Map.entry("lurk", Lurk.CODEC),
+			Map.entry("speed_when", SpeedWhen.CODEC),
+			Map.entry("regenerate", Regenerate.CODEC),
+			Map.entry("call_on_sight", CallOnSight.CODEC),
+			Map.entry("brood", Brood.CODEC),
+			Map.entry("runt", Runt.CODEC),
+			Map.entry("siege", Siege.CODEC),
+			Map.entry("aura", Aura.CODEC),
+			Map.entry("glowing", Glowing.CODEC),
+			Map.entry("raise_victim", RaiseVictim.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -159,7 +177,11 @@ public sealed interface GeneEffect {
 		/**
 		 * The mob targets a player under half health.
 		 */
-		HUNTING_WOUNDED;
+		HUNTING_WOUNDED,
+		/**
+		 * The mob is in water.
+		 */
+		IN_WATER;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 
@@ -349,6 +371,288 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "convert_villagers";
+		}
+	}
+
+	/**
+	 * Stops some sounds of the mob.
+	 */
+	record Silence(boolean idle, boolean hurt, boolean steps, boolean death) implements GeneEffect {
+		public static final MapCodec<Silence> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.BOOL.optionalFieldOf("idle", false).forGetter(Silence::idle),
+				Codec.BOOL.optionalFieldOf("hurt", false).forGetter(Silence::hurt),
+				Codec.BOOL.optionalFieldOf("steps", false).forGetter(Silence::steps),
+				Codec.BOOL.optionalFieldOf("death", false).forGetter(Silence::death)
+		).apply(instance, Silence::new));
+
+		@Override
+		public String type() {
+			return "silence";
+		}
+	}
+
+	/**
+	 * Multiplies the volume of the sounds of the mob. A higher volume can be heard from farther away.
+	 */
+	record Loud(float multiplier) implements GeneEffect {
+		public static final MapCodec<Loud> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 16.0F).fieldOf("multiplier").forGetter(Loud::multiplier)
+		).apply(instance, Loud::new));
+
+		@Override
+		public String type() {
+			return "loud";
+		}
+	}
+
+	/**
+	 * Multiplies the time between two melee attacks.
+	 */
+	record AttackInterval(float multiplier) implements GeneEffect {
+		public static final MapCodec<AttackInterval> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 20.0F).fieldOf("multiplier").forGetter(AttackInterval::multiplier)
+		).apply(instance, AttackInterval::new));
+
+		@Override
+		public String type() {
+			return "attack_interval";
+		}
+	}
+
+	/**
+	 * The mob leaps at its target. After a missed leap, it cannot move for a short time.
+	 */
+	record Leap(float minDistance, float maxDistance, float cooldownSeconds, float missStunSeconds)
+			implements GeneEffect {
+		public static final MapCodec<Leap> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 32.0F).optionalFieldOf("min_distance", 3.0F).forGetter(Leap::minDistance),
+				Codec.floatRange(0.0F, 32.0F).optionalFieldOf("max_distance", 5.0F).forGetter(Leap::maxDistance),
+				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("cooldown_seconds", 5.0F).forGetter(Leap::cooldownSeconds),
+				Codec.floatRange(0.0F, 60.0F).optionalFieldOf("miss_stun_seconds", 1.0F).forGetter(Leap::missStunSeconds)
+		).apply(instance, Leap::new));
+
+		@Override
+		public String type() {
+			return "leap";
+		}
+	}
+
+	/**
+	 * The mob looks for players that other mobs miss: invisible players near it, and wounded players far away.
+	 *
+	 * @param invisibleRadius the range in which it finds invisible players. 0 turns it off
+	 * @param woundedRangeMultiplier the follow range multiplier for players under half health
+	 */
+	record Hunt(float invisibleRadius, float woundedRangeMultiplier) implements GeneEffect {
+		public static final MapCodec<Hunt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("invisible_radius", 0.0F).forGetter(Hunt::invisibleRadius),
+				Codec.floatRange(1.0F, 8.0F).optionalFieldOf("wounded_range_multiplier", 1.0F)
+						.forGetter(Hunt::woundedRangeMultiplier)
+		).apply(instance, Hunt::new));
+
+		@Override
+		public String type() {
+			return "hunt";
+		}
+	}
+
+	/**
+	 * Now and then, the mob targets the nearest mob of a different species.
+	 */
+	record FrenziedTargeting(float chance, float intervalSeconds, float radius) implements GeneEffect {
+		public static final MapCodec<FrenziedTargeting> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(FrenziedTargeting::chance),
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("interval_seconds", 10.0F)
+						.forGetter(FrenziedTargeting::intervalSeconds),
+				Codec.floatRange(1.0F, 32.0F).optionalFieldOf("radius", 8.0F).forGetter(FrenziedTargeting::radius)
+		).apply(instance, FrenziedTargeting::new));
+
+		@Override
+		public String type() {
+			return "frenzied_targeting";
+		}
+	}
+
+	/**
+	 * The client draws the mob translucent when the light at it is low. Other mobs still see it.
+	 */
+	record Translucent(int maxLight, float opacity) implements GeneEffect {
+		public static final MapCodec<Translucent> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(0, 15).optionalFieldOf("max_light", 7).forGetter(Translucent::maxLight),
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("opacity", 0.1F).forGetter(Translucent::opacity)
+		).apply(instance, Translucent::new));
+
+		@Override
+		public String type() {
+			return "translucent";
+		}
+	}
+
+	/**
+	 * When the mob spawns in a natural way at night near a player, it rises out of the ground.
+	 * It rises only through the blocks in the tag {@code originofspawns:burrowable}, and breaks none.
+	 */
+	record Burrow(float playerRadius, float riseSeconds) implements GeneEffect {
+		public static final MapCodec<Burrow> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 128.0F).optionalFieldOf("player_radius", 24.0F).forGetter(Burrow::playerRadius),
+				Codec.floatRange(0.05F, 60.0F).optionalFieldOf("rise_seconds", 2.0F).forGetter(Burrow::riseSeconds)
+		).apply(instance, Burrow::new));
+
+		@Override
+		public String type() {
+			return "burrow";
+		}
+	}
+
+	/**
+	 * The mob does not move while its target player faces it, until the player is in the radius.
+	 * The camera mode of the player does not change this.
+	 */
+	record Lurk(float radius) implements GeneEffect {
+		public static final MapCodec<Lurk> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("radius", 6.0F).forGetter(Lurk::radius)
+		).apply(instance, Lurk::new));
+
+		@Override
+		public String type() {
+			return "lurk";
+		}
+	}
+
+	/**
+	 * Multiplies the speed of the mob when the state is true.
+	 */
+	record SpeedWhen(When when, float multiplier) implements GeneEffect {
+		public static final MapCodec<SpeedWhen> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				When.CODEC.fieldOf("when").forGetter(SpeedWhen::when),
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(SpeedWhen::multiplier)
+		).apply(instance, SpeedWhen::new));
+
+		@Override
+		public String type() {
+			return "speed_when";
+		}
+	}
+
+	/**
+	 * The mob heals when it was not in combat for a time.
+	 */
+	record Regenerate(float amount, float intervalSeconds, float idleSeconds) implements GeneEffect {
+		public static final MapCodec<Regenerate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1000.0F).fieldOf("amount").forGetter(Regenerate::amount),
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("interval_seconds", 3.0F)
+						.forGetter(Regenerate::intervalSeconds),
+				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("idle_seconds", 5.0F).forGetter(Regenerate::idleSeconds)
+		).apply(instance, Regenerate::new));
+
+		@Override
+		public String type() {
+			return "regenerate";
+		}
+	}
+
+	/**
+	 * When the mob first targets a player, all mobs of its species in the radius target that player.
+	 */
+	record CallOnSight(float radius, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<CallOnSight> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 128.0F).fieldOf("radius").forGetter(CallOnSight::radius),
+				Codec.floatRange(0.0F, 3600.0F).optionalFieldOf("cooldown_seconds", 30.0F)
+						.forGetter(CallOnSight::cooldownSeconds)
+		).apply(instance, CallOnSight::new));
+
+		@Override
+		public String type() {
+			return "call_on_sight";
+		}
+	}
+
+	/**
+	 * When the mob spawns in a natural way, more mobs with the same genes spawn near it.
+	 */
+	record Brood(int extra) implements GeneEffect {
+		public static final MapCodec<Brood> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 8).fieldOf("extra").forGetter(Brood::extra)
+		).apply(instance, Brood::new));
+
+		@Override
+		public String type() {
+			return "brood";
+		}
+	}
+
+	/**
+	 * The mob has a chance to spawn as a baby, with less health. A baby can ride a chicken at the vanilla chance.
+	 * Babies of the zombie spawn only through this effect.
+	 */
+	record Runt(float chance, float babyHealthMultiplier) implements GeneEffect {
+		public static final MapCodec<Runt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(Runt::chance),
+				Codec.floatRange(0.05F, 10.0F).optionalFieldOf("baby_health_multiplier", 0.5F)
+						.forGetter(Runt::babyHealthMultiplier)
+		).apply(instance, Runt::new));
+
+		@Override
+		public String type() {
+			return "runt";
+		}
+	}
+
+	/**
+	 * The mob breaks doors on each difficulty, and breaks the blocks in the tag {@code originofspawns:siege_breakable}
+	 * slowly. It obeys the gamerule that stops mobs from breaking blocks.
+	 */
+	record Siege(float breakSeconds) implements GeneEffect {
+		public static final MapCodec<Siege> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("break_seconds", 10.0F).forGetter(Siege::breakSeconds)
+		).apply(instance, Siege::new));
+
+		@Override
+		public String type() {
+			return "siege";
+		}
+	}
+
+	/**
+	 * Gives a status effect to the players near the mob, renewed after each interval.
+	 */
+	record Aura(Holder<MobEffect> effect, int amplifier, float radius, float intervalSeconds, boolean particles)
+			implements GeneEffect {
+		public static final MapCodec<Aura> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(Aura::effect),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(Aura::amplifier),
+				Codec.floatRange(0.5F, 32.0F).fieldOf("radius").forGetter(Aura::radius),
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("interval_seconds", 2.0F).forGetter(Aura::intervalSeconds),
+				Codec.BOOL.optionalFieldOf("particles", false).forGetter(Aura::particles)
+		).apply(instance, Aura::new));
+
+		@Override
+		public String type() {
+			return "aura";
+		}
+	}
+
+	/**
+	 * The mob glows all the time, so that players see it through walls.
+	 */
+	record Glowing() implements GeneEffect {
+		public static final MapCodec<Glowing> CODEC = MapCodec.unit(new Glowing());
+
+		@Override
+		public String type() {
+			return "glowing";
+		}
+	}
+
+	/**
+	 * A player that the mob kills rises as a mob of its species, with its genes, and wears the head of the player.
+	 */
+	record RaiseVictim() implements GeneEffect {
+		public static final MapCodec<RaiseVictim> CODEC = MapCodec.unit(new RaiseVictim());
+
+		@Override
+		public String type() {
+			return "raise_victim";
 		}
 	}
 }

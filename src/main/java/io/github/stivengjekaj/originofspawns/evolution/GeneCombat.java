@@ -52,6 +52,7 @@ public final class GeneCombat {
 			case BRIGHT -> entity.level().getMaxLocalRawBrightness(entity.blockPosition()) >= BRIGHT_LIGHT;
 			case HUNTING_WOUNDED -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
 					&& player.getHealth() < player.getMaxHealth() / 2.0F;
+			case IN_WATER -> entity.isInWater();
 		};
 	}
 

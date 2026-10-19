@@ -6,7 +6,11 @@ import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +32,12 @@ public abstract class MobMixin {
 				self.setAttached(ModAttachments.COMBAT, record.withTargetedPlayer());
 			}
 		}
+	}
+
+	@Inject(method = "finalizeSpawn", at = @At("HEAD"))
+	private void originofspawns$recordSpawnReason(ServerLevelAccessor level, DifficultyInstance difficulty,
+			EntitySpawnReason reason, SpawnGroupData data, CallbackInfoReturnable<SpawnGroupData> info) {
+		((Mob) (Object) this).setAttached(ModAttachments.SPAWN_REASON, reason);
 	}
 
 	@Inject(method = "burnUndead", at = @At("HEAD"))

@@ -29,6 +29,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.golem.IronGolem;
@@ -68,8 +69,18 @@ public final class Evolution {
 	}
 
 	private static void onLoad(Entity entity, ServerLevel level) {
-		if (entity instanceof Mob mob && !mob.hasAttached(ModAttachments.GENES)) {
+		if (!(entity instanceof Mob mob)) {
+			return;
+		}
+		if (!mob.hasAttached(ModAttachments.GENES)) {
 			rollGenes(mob, level);
+			if (mob.hasAttached(ModAttachments.GENES)) {
+				EntitySpawnReason reason = mob.getAttachedOrElse(ModAttachments.SPAWN_REASON, EntitySpawnReason.LOAD);
+				GeneBehaviors.onSpawn(mob, level, reason);
+			}
+		}
+		if (mob.hasAttached(ModAttachments.GENES)) {
+			GeneBehaviors.installGoals(mob);
 		}
 	}
 
@@ -117,6 +128,7 @@ public final class Evolution {
 		}
 		if (entity instanceof Player && source.getEntity() instanceof Mob killer) {
 			onPlayerKilled(level, killer, source);
+			raiseVictim(entity, source);
 		}
 		if (!(entity instanceof Mob mob)) {
 			return;
@@ -151,6 +163,13 @@ public final class Evolution {
 			}
 		}
 		select(level, killer.getType(), category, new DeathContext(source, Set.of(DeathCondition.PLAYER_DEATH)));
+	}
+
+	private static void raiseVictim(LivingEntity entity, DamageSource source) {
+		if (entity instanceof Player player && source.getEntity() instanceof Mob killer
+				&& player.level() instanceof ServerLevel level) {
+			GeneBehaviors.raiseVictim(killer, player, level);
+		}
 	}
 
 	/**

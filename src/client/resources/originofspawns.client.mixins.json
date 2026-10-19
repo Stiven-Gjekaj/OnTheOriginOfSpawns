@@ -3,7 +3,8 @@
 	"package": "io.github.stivengjekaj.originofspawns.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
-		"AbstractZombieRendererMixin"
+		"AbstractZombieRendererMixin",
+		"LivingEntityRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -19,7 +19,8 @@
 			"io.github.stivengjekaj.originofspawns.test.NotebookPagesTest",
 			"io.github.stivengjekaj.originofspawns.test.FamilyTest",
 			"io.github.stivengjekaj.originofspawns.test.DeathFactsTest",
-			"io.github.stivengjekaj.originofspawns.test.CombatEffectsTest"
+			"io.github.stivengjekaj.originofspawns.test.CombatEffectsTest",
+			"io.github.stivengjekaj.originofspawns.test.BehaviorEffectsTest"
 		],
 		"fabric-client-gametest": [
 			"io.github.stivengjekaj.originofspawns.test.GeneTextureClientTest",

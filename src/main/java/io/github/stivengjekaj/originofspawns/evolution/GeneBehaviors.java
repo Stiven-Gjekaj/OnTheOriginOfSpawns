@@ -1,0 +1,336 @@
+package io.github.stivengjekaj.originofspawns.evolution;
+
+import java.util.List;
+
+import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
+import io.github.stivengjekaj.originofspawns.evolution.goal.LeapGoal;
+import io.github.stivengjekaj.originofspawns.evolution.goal.LurkGoal;
+import io.github.stivengjekaj.originofspawns.evolution.goal.SiegeGoal;
+import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
+import net.minecraft.world.entity.animal.chicken.Chicken;
+import net.minecraft.world.entity.monster.zombie.Zombie;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.AABB;
+
+/**
+ * The effects of genes and families that change behavior: goals, effects each tick, spawns, and sounds.
+ */
+public final class GeneBehaviors {
+	/**
+	 * The blocks that a burrowing mob can rise through.
+	 */
+	public static final TagKey<Block> BURROWABLE = TagKey.create(Registries.BLOCK, OriginOfSpawns.id("burrowable"));
+
+	private static final int BURROW_DEPTH = 2;
+	private static final float CHICKEN_JOCKEY_CHANCE = 0.05F;
+	private static final int TICK_INTERVAL = 20;
+
+	private GeneBehaviors() {
+	}
+
+	/**
+	 * Adds the goals of the effects to a mob. The game does not save goals, so this runs each time the mob loads.
+	 */
+	public static void installGoals(Mob mob) {
+		var goals = ((MobAccessor) mob).originofspawns$goalSelector();
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			switch (effect) {
+				case GeneEffect.Leap leap -> goals.addGoal(1, new LeapGoal(mob, leap));
+				case GeneEffect.Lurk lurk -> goals.addGoal(0, new LurkGoal(mob, lurk));
+				case GeneEffect.Siege siege -> {
+					if (mob instanceof Zombie zombie) {
+						zombie.setCanBreakDoors(true);
+					}
+					goals.addGoal(1, new BreakDoorGoal(mob, difficulty -> true));
+					goals.addGoal(1, new SiegeGoal(mob, siege));
+				}
+				case GeneEffect.Glowing glowing -> mob.setGlowingTag(true);
+				default -> {
+				}
+			}
+		}
+	}
+
+	/**
+	 * Runs the effects that act one time, when a mob first spawns with its genes.
+	 */
+	public static void onSpawn(Mob mob, ServerLevel level, EntitySpawnReason reason) {
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			switch (effect) {
+				case GeneEffect.Runt runt when mob instanceof Zombie zombie && mob.getRandom().nextFloat() < runt.chance() ->
+						makeRunt(zombie, level, runt);
+				case GeneEffect.Brood brood when reason == EntitySpawnReason.NATURAL -> spawnBrood(mob, level, brood);
+				case GeneEffect.Burrow burrow when reason == EntitySpawnReason.NATURAL -> burrow(mob, level, burrow);
+				default -> {
+				}
+			}
+		}
+	}
+
+	private static final Identifier RUNT_HEALTH = OriginOfSpawns.id("runt_health");
+
+	private static void makeRunt(Zombie zombie, ServerLevel level, GeneEffect.Runt runt) {
+		zombie.setBaby(true);
+		AttributeInstance health = zombie.getAttribute(Attributes.MAX_HEALTH);
+		if (health != null && !health.hasModifier(RUNT_HEALTH)) {
+			health.addPermanentModifier(new AttributeModifier(RUNT_HEALTH,
+					runt.babyHealthMultiplier() - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+			zombie.setHealth(zombie.getMaxHealth());
+		}
+		if (zombie.getRandom().nextFloat() < CHICKEN_JOCKEY_CHANCE) {
+			Chicken chicken = EntityTypes.CHICKEN.create(level, EntitySpawnReason.JOCKEY);
+			if (chicken != null) {
+				chicken.snapTo(zombie.getX(), zombie.getY(), zombie.getZ(), zombie.getYRot(), 0.0F);
+				chicken.setChickenJockey(true);
+				level.addFreshEntity(chicken);
+				zombie.startRiding(chicken);
+			}
+		}
+	}
+
+	private static void spawnBrood(Mob mob, ServerLevel level, GeneEffect.Brood brood) {
+		CarriedGenes genes = mob.getAttached(ModAttachments.GENES);
+		for (int i = 0; i < brood.extra(); i++) {
+			if (!(mob.getType().create(level, EntitySpawnReason.REINFORCEMENT) instanceof Mob extra)) {
+				return;
+			}
+			extra.snapTo(mob.getX() + mob.getRandom().nextInt(3) - 1, mob.getY(), mob.getZ() + mob.getRandom().nextInt(3) - 1,
+					mob.getRandom().nextFloat() * 360.0F, 0.0F);
+			// The brood has the genes of the first mob. Its genes are set before it joins, so it does not roll new ones.
+			extra.setAttached(ModAttachments.GENES, genes);
+			GeneEffects.applyAttributes(extra, GeneEffects.sources(level.registryAccess(), genes));
+			level.addFreshEntity(extra);
+		}
+	}
+
+	private static void burrow(Mob mob, ServerLevel level, GeneEffect.Burrow burrow) {
+		if (level.isBrightOutside() || level.getNearestPlayer(mob, burrow.playerRadius()) == null) {
+			return;
+		}
+		BlockPos feet = mob.blockPosition();
+		for (int depth = 1; depth <= BURROW_DEPTH; depth++) {
+			if (!level.getBlockState(feet.below(depth)).is(BURROWABLE)) {
+				return;
+			}
+		}
+		mob.setPos(mob.getX(), mob.getY() - BURROW_DEPTH, mob.getZ());
+		mob.noPhysics = true;
+		mob.setNoGravity(true);
+		mob.setAttached(ModAttachments.STATE, mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE)
+				.withRiseTicks(Math.max(1, Math.round(burrow.riseSeconds() * 20.0F))));
+	}
+
+	/**
+	 * Runs the behavior effects each tick, on the server.
+	 */
+	public static void tick(Mob mob, ServerLevel level) {
+		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+		if (state.riseTicks() > 0) {
+			rise(mob, level, state);
+			return;
+		}
+		if (level.getGameTime() < state.stunUntil()) {
+			mob.getNavigation().stop();
+			mob.setDeltaMovement(0.0, mob.getDeltaMovement().y, 0.0);
+		}
+		List<GeneEffect> effects = GeneEffects.of(mob).toList();
+		updateSpeed(mob, effects);
+		if (mob.tickCount % TICK_INTERVAL != 0) {
+			return;
+		}
+		long now = level.getGameTime();
+		for (GeneEffect effect : effects) {
+			switch (effect) {
+				case GeneEffect.Regenerate regenerate -> {
+					long combat = mob.getAttachedOrElse(ModAttachments.TRACE, DeathTrace.NONE).combatTime();
+					boolean idle = combat < 0L || now - combat >= Math.round(regenerate.idleSeconds() * 20.0F);
+					if (idle && now % Math.max(1, Math.round(regenerate.intervalSeconds() * 20.0F)) < TICK_INTERVAL) {
+						mob.heal(regenerate.amount());
+					}
+				}
+				case GeneEffect.Aura aura when now % Math.max(1, Math.round(aura.intervalSeconds() * 20.0F)) < TICK_INTERVAL -> {
+					AABB area = mob.getBoundingBox().inflate(aura.radius());
+					for (Player player : level.getEntitiesOfClass(Player.class, area)) {
+						player.addEffect(new MobEffectInstance(aura.effect(),
+								Math.round(aura.intervalSeconds() * 20.0F) + TICK_INTERVAL, aura.amplifier()), mob);
+					}
+					if (aura.particles()) {
+						level.sendParticles(ParticleTypes.ITEM_SLIME, mob.getX(), mob.getY(0.5), mob.getZ(),
+								4, 0.4, 0.5, 0.4, 0.0);
+					}
+				}
+				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
+				case GeneEffect.FrenziedTargeting frenzy
+						when now % Math.max(1, Math.round(frenzy.intervalSeconds() * 20.0F)) < TICK_INTERVAL
+								&& mob.getRandom().nextFloat() < frenzy.chance() -> {
+					AABB area = mob.getBoundingBox().inflate(frenzy.radius());
+					level.getEntitiesOfClass(Mob.class, area, other -> other.getType() != mob.getType() && other.isAlive())
+							.stream().min((a, b) -> Double.compare(a.distanceToSqr(mob), b.distanceToSqr(mob)))
+							.ifPresent(mob::setTarget);
+				}
+				case GeneEffect.Hunt hunt -> hunt(mob, level, hunt);
+				default -> {
+				}
+			}
+		}
+	}
+
+	private static void callOnSight(Mob mob, ServerLevel level, GeneEffect.CallOnSight call, Player player) {
+		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+		long now = level.getGameTime();
+		if (state.callTime() >= 0L && now - state.callTime() < Math.round(call.cooldownSeconds() * 20.0F)) {
+			return;
+		}
+		AABB area = mob.getBoundingBox().inflate(call.radius());
+		for (Mob ally : level.getEntitiesOfClass(Mob.class, area, other -> other.getType() == mob.getType())) {
+			ally.setTarget(player);
+		}
+		mob.setAttached(ModAttachments.STATE, state.withCallTime(now));
+	}
+
+	private static void rise(Mob mob, ServerLevel level, BehaviorState state) {
+		int left = state.riseTicks() - 1;
+		mob.setPos(mob.getX(), mob.getY() + (double) BURROW_DEPTH / Math.max(1, state.riseTicks() + left + 1) * 2.0,
+				mob.getZ());
+		mob.setDeltaMovement(0.0, 0.0, 0.0);
+		BlockPos surface = BlockPos.containing(mob.getX(), mob.getY() + BURROW_DEPTH - 0.5, mob.getZ());
+		level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(surface.below())),
+				mob.getX(), surface.getY(), mob.getZ(), 4, 0.3, 0.1, 0.3, 0.0);
+		if (left <= 0) {
+			mob.noPhysics = false;
+			mob.setNoGravity(false);
+			mob.setPos(mob.getX(), Math.ceil(mob.getY()), mob.getZ());
+		}
+		mob.setAttached(ModAttachments.STATE, state.withRiseTicks(left));
+	}
+
+	private static void hunt(Mob mob, ServerLevel level, GeneEffect.Hunt hunt) {
+		if (mob.getTarget() instanceof Player) {
+			return;
+		}
+		double follow = mob.getAttributeValue(Attributes.FOLLOW_RANGE);
+		double range = Math.max(hunt.invisibleRadius(), follow * hunt.woundedRangeMultiplier());
+		AABB area = mob.getBoundingBox().inflate(range);
+		for (Player player : level.getEntitiesOfClass(Player.class, area, Player::isAlive)) {
+			if (!player.isCreative() && !player.isSpectator() && isHunted(mob, player, hunt)) {
+				mob.setTarget(player);
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Tells if a hunting mob finds the player: invisible near it, or wounded in its range.
+	 */
+	public static boolean isHunted(Mob mob, Player player, GeneEffect.Hunt hunt) {
+		double follow = mob.getAttributeValue(Attributes.FOLLOW_RANGE);
+		double distance = player.distanceTo(mob);
+		boolean invisible = player.isInvisible() && distance <= hunt.invisibleRadius();
+		boolean wounded = player.getHealth() < player.getMaxHealth() / 2.0F
+				&& distance <= follow * hunt.woundedRangeMultiplier();
+		return invisible || wounded;
+	}
+
+	private static void updateSpeed(Mob mob, List<GeneEffect> effects) {
+		AttributeInstance speed = mob.getAttribute(Attributes.MOVEMENT_SPEED);
+		if (speed == null) {
+			return;
+		}
+		int index = 0;
+		for (GeneEffect effect : effects) {
+			if (effect instanceof GeneEffect.SpeedWhen when) {
+				Identifier id = OriginOfSpawns.id("speed_when/" + index++);
+				boolean active = GeneCombat.test(mob, when.when());
+				if (active && !speed.hasModifier(id)) {
+					speed.addTransientModifier(new AttributeModifier(id, when.multiplier() - 1.0,
+							AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+				} else if (!active && speed.hasModifier(id)) {
+					speed.removeModifier(id);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Returns the product of the attack interval multipliers of the mob.
+	 */
+	public static float attackIntervalMultiplier(LivingEntity mob) {
+		float multiplier = 1.0F;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.AttackInterval interval) {
+				multiplier *= interval.multiplier();
+			}
+		}
+		return multiplier;
+	}
+
+	/**
+	 * Returns the silence effect of the mob, or null if it has none. Two silence effects join.
+	 */
+	public static GeneEffect.Silence silence(LivingEntity mob) {
+		GeneEffect.Silence result = null;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.Silence silence) {
+				result = result == null ? silence : new GeneEffect.Silence(result.idle() || silence.idle(),
+						result.hurt() || silence.hurt(), result.steps() || silence.steps(), result.death() || silence.death());
+			}
+		}
+		return result;
+	}
+
+	public static float volumeMultiplier(LivingEntity mob) {
+		float multiplier = 1.0F;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.Loud loud) {
+				multiplier *= loud.multiplier();
+			}
+		}
+		return multiplier;
+	}
+
+	/**
+	 * A player that a mob with raise victim killed rises as a mob of its species, with its genes and the head of
+	 * the player.
+	 */
+	public static void raiseVictim(Mob killer, Player victim, ServerLevel level) {
+		if (!GeneCombat.has(killer, GeneEffect.RaiseVictim.class)
+				|| !(killer.getType().create(level, EntitySpawnReason.CONVERSION) instanceof Mob raised)) {
+			return;
+		}
+		CarriedGenes genes = killer.getAttachedOrElse(ModAttachments.GENES, CarriedGenes.NONE);
+		raised.snapTo(victim.getX(), victim.getY(), victim.getZ(), victim.getYRot(), 0.0F);
+		raised.setAttached(ModAttachments.GENES, genes);
+		GeneEffects.applyAttributes(raised, GeneEffects.sources(level.registryAccess(), genes));
+		ItemStack head = new ItemStack(Items.PLAYER_HEAD);
+		head.set(DataComponents.PROFILE, ResolvableProfile.createResolved(victim.getGameProfile()));
+		raised.setItemSlot(EquipmentSlot.HEAD, head);
+		raised.setDropChance(EquipmentSlot.HEAD, 0.0F);
+		raised.setPersistenceRequired();
+		level.addFreshEntity(raised);
+	}
+}

@@ -28,6 +28,11 @@ public final class GeneTextures {
 	 */
 	public static final RenderStateDataKey<List<Identifier>> GENES = RenderStateDataKey.create(() -> "originofspawns:genes");
 
+	/**
+	 * The opacity of a translucent mob in a render state, from 0 to 1. It is not set for a normal mob.
+	 */
+	public static final RenderStateDataKey<Float> OPACITY = RenderStateDataKey.create(() -> "originofspawns:opacity");
+
 	private static final Map<String, Identifier> BAKED = new HashMap<>();
 	private static final Map<Identifier, TextureBaker.Image> IMAGES = new HashMap<>();
 	private static int nextId;

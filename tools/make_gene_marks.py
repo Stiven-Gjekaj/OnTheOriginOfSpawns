@@ -451,9 +451,22 @@ def rally():
 
 
 def runt():
-    # Runt has no marks on the texture. Its tufts of hair are the gene model
-    # runt_tufts. The baby model shows the gene too.
-    return []
+    # Thin tufts of hair that lie flat on the scalp: short strands on the top
+    # and on the upper rows of the sides and the back of the head. Most
+    # strands are in x 9 to 14 and y 3 to 7: there the top of the adult head
+    # and the top of the baby head (BabyZombieModel) share their pixels, so
+    # the hair shows on Runt babies too.
+    hair = Mark("#3E3128")
+    light = Mark("#5A4838")
+    strands = [(9, 3), (11, 4), (13, 3), (10, 6), (12, 6), (14, 5), (9, 1), (13, 0), (15, 2)]
+    for x, y in strands:
+        hair.put((x, y))
+        light.put((x + 1 if x < 15 else x - 1, y + 1 if y < 7 else y - 1), 230)
+    for x in (1, 4, 6, 17, 19, 22, 25, 28, 30):
+        hair.put((x, 8))
+        if x % 3:
+            light.put((x, 9), 220)
+    return [hair, light]
 
 
 def grave_call():
@@ -475,9 +488,18 @@ def grave_call():
 
 
 def siege():
-    # Siege has no marks on the texture. Its splinters of wood are the gene
-    # model siege_splinters.
-    return []
+    # The splinters and the glass are the gene model siege_splinters. The
+    # marks: sawdust on the sleeves, and scraped knuckles on the hand end.
+    # The knuckles go on top of the Cinder spots and the Grave Call earth
+    # (order 1), on only 4 pixels.
+    dust = Mark("#D8C090")
+    for face in SIDES:
+        dust.put(arm(face, face // 4 % 4, 0), 255).put(arm(face, (face // 4 + 2) % 4, 1), 220)
+    knuckles = Mark("#B0453A", order=1)
+    for col in range(4):
+        for u, v in ARMS:
+            knuckles.put((u + 8 + col, v), 255 if col % 2 else 215)
+    return [dust, knuckles]
 
 
 GENES = {
@@ -511,7 +533,6 @@ MODELS = {
     "thickskull": "originofspawns:thickskull_plate",
     "bloat": "originofspawns:bloat_body",
     "packcaller": "originofspawns:packcaller_jaw",
-    "runt": "originofspawns:runt_tufts",
     "siege": "originofspawns:siege_splinters",
     "stoneblood": "originofspawns:stoneblood_shell",
 }

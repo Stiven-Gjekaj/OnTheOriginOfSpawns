@@ -1,4 +1,20 @@
 {
-	"layers": [],
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/siege_0.png",
+				"tint": "#D8C090"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/siege_1.png",
+				"tint": "#B0453A"
+			},
+			"order": 1
+		}
+	],
 	"model": "originofspawns:siege_splinters"
 }

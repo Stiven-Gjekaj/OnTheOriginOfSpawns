@@ -1,4 +1,18 @@
 {
-	"layers": [],
-	"model": "originofspawns:runt_tufts"
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/runt_0.png",
+				"tint": "#3E3128"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/runt_1.png",
+				"tint": "#5A4838"
+			}
+		}
+	]
 }

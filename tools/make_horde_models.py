@@ -1,16 +1,14 @@
-"""Make the gene models of the Horde genes: Packcaller, Runt, and Siege.
+"""Make the gene models of the Horde genes: Packcaller and Siege.
 
 Usage: python3 tools/make_horde_models.py
 
 Packcaller: a lower jaw that hangs open under the front of the face. The
 open mouth shows over the chin, with two fangs.
 
-Runt: thin tufts of hair at the corners of the scalp. They stand higher
-than the Lurker hood, and away from the middle, where the Thickskull crown
-is.
-
-Siege: splinters of wood that stick out of the hands: one from the outer
-side and one from the front of each hand.
+Siege: big splinters of wood stuck in each arm: one in the shoulder, one
+in the outer side of the forearm, and one in the front of the forearm, each
+at its own angle. Two small shards of glass are stuck in the outer side of
+each forearm.
 This script needs Pillow.
 """
 import json
@@ -84,62 +82,63 @@ def packcaller():
     save("packcaller_jaw", im, model)
 
 
-def runt():
-    # Each tuft: a flat plane 1 pixel wide (1xHx0) at uv (0, 0), on the head
-    # bone, on the scalp. Many short tufts, each with its own lean, read as
-    # thin hair. They stand away from the middle of the scalp, where the
-    # Thickskull crown is, and start above the Lurker hood (y -8.4).
-    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
-    f = box_faces(0, 0, 1, 2, 0)
-    fill(im, f["front"], lambda x, y: HAIR[y])
-    fill(im, f["back"], lambda x, y: HAIR[y])
-    # x, z, height, lean
-    tufts = [(-3.6, -3.0, 2, 30), (-3.6, 0.5, 1, -25), (-3.4, 3.0, 2, 20),
-             (2.6, -2.5, 1, -30), (2.6, 1.0, 2, 25), (2.4, 3.2, 1, -20),
-             (-1.0, 3.4, 2, 15), (0.5, -3.5, 1, -15)]
-    parts = []
-    for x, z, height, lean in tufts:
-        y = -8.5 - height
-        parts.append({"bone": "head", "uv": [0, 0], "from": [x, y, z], "size": [1, height, 0],
-                      "pivot": [x + 0.5, -8.5, z], "rotation": [0, 0, lean]})
-    model = {
-        "texture": "originofspawns:textures/entity/runt_tufts.png",
-        "texture_width": 16,
-        "texture_height": 16,
-        "parts": parts,
-    }
-    save("runt_tufts", im, model)
+GLASS = (200, 236, 244, 255)
+GLASS_GLINT = (250, 254, 255, 255)
+
+
+def mirror_part(part):
+    """Return the part for the left arm: the same part, mirrored in x."""
+    left = dict(part, bone="left_arm", mirror=True)
+    left["from"] = [-(part["from"][0] + part["size"][0])] + part["from"][1:]
+    if "pivot" in part:
+        left["pivot"] = [-part["pivot"][0]] + part["pivot"][1:]
+    if "rotation" in part:
+        x, y, z = part["rotation"]
+        left["rotation"] = [x, -y, -z]
+    return left
 
 
 def siege():
-    # A sideways splinter (2x1x1 at uv (0, 0)) and a forward splinter (1x1x2
-    # at uv (0, 4)) on each hand. The arm box is 4x12x4, from y -2 to 10.
-    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
-    for area in box_faces(0, 0, 2, 1, 1).values():
+    # Each splinter is 1x1x4 (or 4x1x1, or 1x4x1), with a dark tip at its
+    # outer end. Glass shards are flat 1x1 squares. All on the right arm
+    # first, in arm coordinates: the arm box is from x -3 to 1, y -2 to 10,
+    # and z -2 to 2. The outer side is at x -3.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+    for area in box_faces(0, 0, 1, 4, 1).values():
         fill(im, area, lambda x, y: WOOD[(x + y) % 2])
-    for area in box_faces(0, 4, 1, 1, 2).values():
+    for area in box_faces(8, 0, 4, 1, 1).values():
         fill(im, area, lambda x, y: WOOD[(x + y) % 2])
-    # The tips are dark: the outer end of each splinter.
-    for p in ((0, 1), (0, 5), (1, 4)):
+    for area in box_faces(0, 8, 1, 1, 4).values():
+        fill(im, area, lambda x, y: WOOD[(x + y) % 2])
+    # The tips: the top of the shoulder splinter, the outer end of the
+    # sideways one, and the front end of the forward one.
+    im.putpixel((1, 0), WOOD_TIP)
+    im.putpixel((8, 1), WOOD_TIP)
+    for p in ((5, 12), (4, 12)):
         im.putpixel(p, WOOD_TIP)
-    parts = []
-    for bone, side in (("right_arm", -1), ("left_arm", 1)):
-        outer = -3 if side < 0 else 3
-        parts.append({"bone": bone, "uv": [0, 0], "size": [2, 1, 1],
-                      "from": [outer - 2 if side < 0 else outer, 7, -0.5],
-                      "mirror": side > 0})
-        parts.append({"bone": bone, "uv": [0, 4], "size": [1, 1, 2],
-                      "from": [-1.5 if side < 0 else 0.5, 8.5, -4], "mirror": side > 0})
+    fill(im, box_faces(20, 0, 1, 1, 0)["front"], GLASS_GLINT)
+    fill(im, box_faces(20, 0, 1, 1, 0)["back"], GLASS)
+    right = [
+        {"bone": "right_arm", "uv": [0, 0], "from": [-2.5, -6, -0.5], "size": [1, 4, 1],
+         "pivot": [-2, -2, 0], "rotation": [10, 0, -35]},
+        {"bone": "right_arm", "uv": [8, 0], "from": [-7, 5, -0.5], "size": [4, 1, 1],
+         "pivot": [-3, 5.5, 0], "rotation": [0, 15, 20]},
+        {"bone": "right_arm", "uv": [0, 8], "from": [-1.5, 6.5, -6], "size": [1, 1, 4],
+         "pivot": [-1, 7, -2], "rotation": [25, -15, 0]},
+        {"bone": "right_arm", "uv": [20, 0], "from": [-4, 2, 0.5], "size": [1, 1, 0],
+         "pivot": [-3, 2.5, 0.5], "rotation": [0, 0, 25]},
+        {"bone": "right_arm", "uv": [20, 0], "from": [-4, 3.5, -1], "size": [1, 1, 0],
+         "pivot": [-3, 4, -1], "rotation": [0, 30, -20]},
+    ]
     model = {
         "texture": "originofspawns:textures/entity/siege_splinters.png",
-        "texture_width": 16,
+        "texture_width": 32,
         "texture_height": 16,
-        "parts": parts,
+        "parts": right + [mirror_part(p) for p in right],
     }
     save("siege_splinters", im, model)
 
 
 if __name__ == "__main__":
     packcaller()
-    runt()
     siege()

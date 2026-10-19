@@ -1,4 +1,4 @@
-![On the Origin of Spawns](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/docs/images/banner.png)
+![On the Origin of Spawns](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/brand/banner.png)
 
 # Adapt or go extinct
 

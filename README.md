@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/banner.png" alt="On the Origin of Spawns" width="100%">
+  <img src="assets/brand/banner.png" alt="On the Origin of Spawns" width="100%">
 </p>
 
 <p align="center">

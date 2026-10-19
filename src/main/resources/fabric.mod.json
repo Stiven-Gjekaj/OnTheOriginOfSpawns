@@ -22,6 +22,9 @@
 			"io.github.stivengjekaj.originofspawns.client.OriginOfSpawnsClient"
 		]
 	},
+	"mixins": [
+		"originofspawns.mixins.json"
+	],
 	"depends": {
 		"fabricloader": ">=0.19.5",
 		"minecraft": "~26.3",

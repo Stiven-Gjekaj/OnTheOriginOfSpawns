@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.test;
 
 import java.util.List;
+import java.util.Optional;
 
 import io.github.stivengjekaj.originofspawns.definition.Gene;
 import io.github.stivengjekaj.originofspawns.definition.Perk;
@@ -26,7 +27,7 @@ public class DefinitionTest {
 	@GameTest
 	public void pressureReadsDamageTag(GameTestHelper helper) {
 		Pressure pressure = get(helper, ModRegistries.PRESSURE, "test_heat");
-		helper.assertValueEqual(pressure.damageTypes(), DamageTypeTags.IS_FIRE, "damage types");
+		helper.assertValueEqual(pressure.damageTypes(), Optional.of(DamageTypeTags.IS_FIRE), "damage types");
 		helper.succeed();
 	}
 

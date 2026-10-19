@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns;
 
 import io.github.stivengjekaj.originofspawns.command.PoolCommand;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 import io.github.stivengjekaj.originofspawns.registry.ModRegistries;
 
 import net.fabricmc.api.ModInitializer;
@@ -19,6 +20,7 @@ public class OriginOfSpawns implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ModRegistries.register();
+		ModAttachments.register();
 		CommandRegistrationCallback.EVENT.register((dispatcher, context, selection) ->
 				PoolCommand.register(dispatcher, context));
 		LOGGER.info("On the Origin of Spawns starts.");

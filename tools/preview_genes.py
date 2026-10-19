@@ -65,7 +65,9 @@ EXTRA = {
                  ("Ironhide + all 6", ["ironhide"], True, {})],
     "tanks": [("Stoneblood + Bonerunner", ["stoneblood", "bonerunner"], False, {}),
               ("Thickskull + Lurker", ["thickskull", "lurker"], False, {}),
-              ("Tanks + Burrower", ["burrower"], True, {})],
+              ("Tanks + Burrower", ["burrower"], True, {}),
+              ("Bloat + others", ["bloat", "ironhide", "frenzy", "bloodscent", "death_throes",
+                                  "thickskull"], False, {})],
 }
 NIGHT = (18, 22, 38, 255)
 
@@ -216,16 +218,23 @@ def bake_layer(out, gene, layer):
             out.putpixel((x, y), apply(layer["effect"], out.getpixel((x, y)), x, y, seed))
 
 
-def gene_cubes(gene):
-    """Return the cubes of the gene model of a gene, or an empty list."""
+def gene_cubes(gene, mob_tex=None):
+    """Return the cubes of the gene model of a gene, or an empty list.
+
+    A model with "mob_texture" uses mob_tex, the baked texture of the mob.
+    """
     vis = visual(gene)
     if vis is None or "model" not in vis:
         return []
     namespace, name = vis["model"].split(":")
     with open(os.path.join(ASSETS, namespace, "gene_models", name + ".json")) as fh:
         model = json.load(fh)
-    tex = image(model["texture"])
-    scale = tex.width / model.get("texture_width", 64)
+    if model.get("mob_texture"):
+        tex = mob_tex
+        scale = 1.0
+    else:
+        tex = image(model["texture"])
+        scale = tex.width / model.get("texture_width", 64)
     cubes = []
     for part in model["parts"]:
         cubes.append({
@@ -242,7 +251,7 @@ def cubes_of(tex, genes):
     cubes = [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": m,
               "texture": tex, "scale": 1.0} for b, uv, f, s, m in ZOMBIE_CUBES]
     for gene in genes:
-        cubes += gene_cubes(gene)
+        cubes += gene_cubes(gene, tex)
     return cubes
 
 

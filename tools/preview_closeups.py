@@ -1,0 +1,101 @@
+"""Make close-up previews of the gene models and of some marks.
+
+Usage: python3 tools/preview_closeups.py
+
+Each close-up shows a few zombies from several sides, on a white
+background. A view "at night" has a dark background and low light, so that
+the parts that glow show. The script writes PNG files to
+build/previews/closeups/. Git ignores build/.
+Each preview uses the vanilla texture. Do not commit a preview.
+This script needs Pillow.
+"""
+import os
+
+from PIL import Image, ImageDraw
+
+import preview_genes as pg
+
+OUT_DIR = os.path.join(pg.ROOT, "build/previews/closeups")
+NIGHT = (18, 22, 38, 255)
+
+FRONT = ("front", 0, 0, 1.0)
+BACK = ("back", 180, 0, 1.0)
+SIDE = ("right side", -90, 0, 1.0)
+THREE_QUARTER = ("3/4", -35, 20, 1.0)
+BEHIND = ("3/4 from behind", -145, 15, 1.0)
+NIGHT_VIEW = ("3/4 at night", -35, 20, 0.18)
+
+# Each close-up: a title, the rows (a label, the genes, True for a baby),
+# and the views.
+CLOSEUPS = {
+    "death_throes_fuse": ("Death Throes fuse",
+                          [("Death Throes", ["death_throes"], False),
+                           ("All 6 Predators", pg.FAMILIES["predators"], False)],
+                          [FRONT, BACK, SIDE, THREE_QUARTER, NIGHT_VIEW]),
+    "lurker_hood": ("Lurker hood",
+                    [("Lurker", ["lurker"], False),
+                     ("Lurker, Nightborn, Hush, Cinder", ["lurker", "nightborn", "hush", "cinder"], False)],
+                    [FRONT, THREE_QUARTER, SIDE, BEHIND]),
+    "thickskull": ("Thickskull",
+                   [("Thickskull", ["thickskull"], False),
+                    ("Thickskull, Lurker, Runt", ["thickskull", "lurker", "runt"], False),
+                    ("Thickskull, Rabid, Nightborn", ["thickskull", "rabid", "nightborn"], False)],
+                   [FRONT, BACK, THREE_QUARTER, BEHIND]),
+    "runt": ("Runt",
+             [("Runt", ["runt"], False), ("Runt baby", ["runt"], True), ("Plain baby", [], True)],
+             [FRONT, THREE_QUARTER, ("3/4 from above", -35, 35, 1.0)]),
+    "siege": ("Siege",
+              [("Siege", ["siege"], False),
+               ("Siege, Cinder, Grave Call", ["siege", "cinder", "grave_call"], False),
+               ("Siege, Rally, Blastproof", ["siege", "rally", "blastproof"], False)],
+              [FRONT, THREE_QUARTER]),
+    "leech_miasma": ("Leech and Miasma",
+                     [("Leech", ["leech"], False), ("Miasma", ["miasma"], False),
+                      ("Leech, Miasma, Contagion, Rally, Mender",
+                       ["leech", "miasma", "contagion", "rally", "mender"], False)],
+                     [FRONT, THREE_QUARTER, SIDE]),
+    "nightborn_shade": ("Nightborn and Shade at night",
+                        [("Nightborn", ["nightborn"], False), ("Shade", ["shade"], False)],
+                        [FRONT, NIGHT_VIEW]),
+}
+
+
+def closeup(title, rows, views, adult_tex, baby_tex):
+    scale, size = pg.SCALE, (26, 40)
+    cell_w, cell_h = size[0] * scale, size[1] * scale
+    pad, top, label_h = 16, 70, 40
+    out = Image.new("RGBA", (pad + len(views) * (cell_w + pad), top + len(rows) * (cell_h + label_h + pad)),
+                    pg.WHITE)
+    draw = ImageDraw.Draw(out)
+    pg.text(draw, (out.width / 2, 12), title, 32)
+    for r, (name, genes, baby) in enumerate(rows):
+        y = top + r * (cell_h + label_h + pad)
+        draw.text((pad, y), name, fill=(0, 0, 0, 255), font=pg.ImageFont.load_default(size=20))
+        tex = pg.zombie(baby_tex if baby else adult_tex, genes, baby)
+        cubes = pg.cubes_of(tex, genes, baby)
+        pivots = pg.BABY_PIVOTS if baby else pg.PIVOTS
+        for c, (view, turn, tilt, light) in enumerate(views):
+            x = pad + c * (cell_w + pad)
+            if light < 1:
+                draw.rectangle((x, y + label_h, x + cell_w, y + label_h + cell_h), fill=NIGHT)
+            im = pg.render3d.render(cubes, pivots, turn, tilt, scale, size, center=(0, 5), light=light)
+            out.alpha_composite(im, (x, y + label_h))
+            color = (255, 255, 255, 255) if light < 1 else (0, 0, 0, 255)
+            font = pg.ImageFont.load_default(size=18)
+            w = draw.textlength(view, font=font)
+            draw.text((x + cell_w / 2 - w / 2, y + label_h + cell_h - 26), view, fill=color, font=font)
+    return out
+
+
+def main():
+    os.makedirs(OUT_DIR, exist_ok=True)
+    adult = pg.find_zombie_texture()
+    baby = pg.find_zombie_texture(pg.BABY_PATH)
+    for name, (title, rows, views) in CLOSEUPS.items():
+        path = os.path.join(OUT_DIR, name + ".png")
+        closeup(title, rows, views, adult, baby).save(path)
+        print(path)
+
+
+if __name__ == "__main__":
+    main()

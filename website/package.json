@@ -1,0 +1,20 @@
+{
+  "name": "originofspawns-wiki",
+  "private": true,
+  "type": "module",
+  "description": "The wiki of On the Origin of Spawns.",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "data": "node build.mjs",
+    "dev": "node build.mjs && astro dev",
+    "build": "node build.mjs && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "5.2.8",
+    "@fontsource/pixelify-sans": "5.2.7",
+    "astro": "7.3.5"
+  }
+}

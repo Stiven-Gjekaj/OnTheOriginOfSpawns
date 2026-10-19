@@ -149,6 +149,8 @@ Thus, the bones look worn, not undead.
 - The major family and the sub family make a minor family.
   For example, a Predator with a Tank sub family is a different minor family
   from a Predator with a Stalker sub family.
+- Each minor family has its own name.
+  The name is not only the names of its major and sub family.
 
 | Tags of the genes | Result |
 |---|---|

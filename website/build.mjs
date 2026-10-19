@@ -4,9 +4,10 @@
 //
 // The script reads the gene, family, and pressure JSON files, the language
 // file, the gene visuals and models, the design files, and the data pack
-// guide. It writes website/js/data.js and copies the mod textures that the
-// gene viewer uses into website/mod/. Run it again when the data changes.
-// The script needs Node 18 or later, and no packages.
+// guide. It writes website/src/data/site.json for the Astro pages, and copies
+// the mod textures that the Gene Lab uses into website/public/mod/.
+// "npm run build" and "npm run dev" run it first. Git ignores its output.
+// The script needs Node 22 or later, and no packages.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -405,16 +406,13 @@ const out = {
   dataPacks,
 };
 
-fs.mkdirSync(path.join(SITE, "js"), { recursive: true });
-fs.writeFileSync(
-  path.join(SITE, "js/data.js"),
-  "// This file is made by website/build.mjs. Do not edit it.\n" +
-    "window.SITE_DATA = " + JSON.stringify(out, null, 1) + ";\n",
-);
+fs.mkdirSync(path.join(SITE, "src/data"), { recursive: true });
+fs.writeFileSync(path.join(SITE, "src/data/site.json"), JSON.stringify(out, null, 1) + "\n");
 
 // Copy the textures of the gene viewer. Remove old copies first, so that a
 // texture that the mod removes also goes from the site.
-const modDir = path.join(SITE, "mod");
+const PUBLIC = path.join(SITE, "public");
+const modDir = path.join(PUBLIC, "mod");
 fs.rmSync(modDir, { recursive: true, force: true });
 for (const id of textures) {
   const [ns, p] = id.split(":");
@@ -423,7 +421,7 @@ for (const id of textures) {
   fs.mkdirSync(path.dirname(dst), { recursive: true });
   fs.copyFileSync(src, dst);
 }
-const img = path.join(SITE, "img");
+const img = path.join(PUBLIC, "img");
 fs.mkdirSync(img, { recursive: true });
 fs.copyFileSync(path.join(ASSETS, "textures/item/beagle_notebook.png"), path.join(img, "beagle_notebook.png"));
 

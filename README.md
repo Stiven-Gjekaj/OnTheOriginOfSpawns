@@ -55,7 +55,7 @@ These features are for the first release. Some are not complete.
   falls, and zombies that die before they reach you
 - Genes that change how mobs look, fight, sense, and spawn
 - A downside for each gene, and a maximum of 5 genes for each mob
-- 3 families for each species, with hybrids and neutral mobs
+- 5 major families and 20 minor families for each species, with hybrids
 - Extinction of a species in a biome category
 - 30 player perks, each with a gain and a cost
 - 1 to 5 perk slots, from the knowledge percentage of your notebook

@@ -11,8 +11,7 @@
 	],
 	"downsides": [
 		{
-			"type": "damage_taken",
-			"damage_types": "#minecraft:is_fire",
+			"type": "sunburn",
 			"multiplier": 2
 		}
 	]

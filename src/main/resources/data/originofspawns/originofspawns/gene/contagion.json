@@ -9,6 +9,10 @@
 	],
 	"downsides": [
 		{
+			"type": "attract_golems",
+			"radius": 16
+		},
+		{
 			"type": "damage_from",
 			"attackers": "minecraft:iron_golem",
 			"multiplier": 1.5

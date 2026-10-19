@@ -14,7 +14,7 @@ dark seam, and two rivets.
 iron_plates_sleeve.png is for the sleeves. Each face of an arm is 4 pixels
 wide, and each face starts at an x that is a multiple of 4. Thus the sleeve
 pattern repeats each 4 pixels across. Rows 0 to 3 go on the top of the arm.
-Rows 4 to 7 go on the sleeve, which is the first 4 rows of each arm side.
+Rows 4 and 5 go on the first 2 rows of each arm side. Rows 6 and 7 are clear.
 The pattern repeats each 8 rows, so that it also fits the left arm of the
 drowned at y 48. The sleeve plates use the same grays as the shirt plates.
 This script needs Pillow.
@@ -33,6 +33,7 @@ EDGE_SHADE = (122, 210)
 WEAR = (136, 205)
 RIVET = (226, 255)
 RIVET_SHADOW = (92, 240)
+CLEAR = (0, 0)
 
 # Pixels in plate space that show wear. Each plate uses the same set.
 WEAR_PIXELS = {(3, 3), (4, 4), (2, 5)}
@@ -59,6 +60,8 @@ def plate_pixel(px, py):
 
 def sleeve_pixel(px, py):
     """Return (gray, alpha) for a pixel of a 4x8 sleeve cell."""
+    if py >= 6:
+        return CLEAR
     if px == 3:
         return SEAM
     if py < 4:
@@ -70,18 +73,13 @@ def sleeve_pixel(px, py):
         if (px, py) == (1, 2):
             return RIVET_SHADOW
         return PLATE
-    # The plate on the sleeve. The seam at the bottom is the hem.
-    if py == 7:
-        return SEAM
+    # The plate on the sleeve is 2 rows: a row with a rivet, and the hem.
+    # Rows 2 and 3 of the sleeve stay clear for the marks of other genes.
     if py == 4:
-        return EDGE_LIGHT
-    if (px, py) == (1, 5):
-        return RIVET
-    if (px, py) == (1, 6):
-        return RIVET_SHADOW
-    if py == 6:
-        return EDGE_SHADE
-    return PLATE
+        return RIVET if px == 1 else EDGE_LIGHT
+    if py == 5:
+        return SEAM
+    return CLEAR
 
 
 def make_shirt():

@@ -13,6 +13,7 @@
 		"issues": "https://github.com/Stiven-Gjekaj/OnTheOriginOfSpawns/issues"
 	},
 	"license": "LicenseRef-All-Rights-Reserved",
+	"icon": "assets/originofspawns/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [

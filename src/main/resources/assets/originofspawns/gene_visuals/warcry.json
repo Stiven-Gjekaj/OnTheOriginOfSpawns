@@ -5,9 +5,15 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/warcry_0.png",
-				"tint": "#140E0C"
+				"tint": "#9A1E18"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/warcry_1.png",
+				"tint": "#C8342A"
 			}
 		}
-	],
-	"model": "originofspawns:warcry_jaw"
+	]
 }

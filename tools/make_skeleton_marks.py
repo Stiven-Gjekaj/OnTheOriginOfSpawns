@@ -64,7 +64,7 @@ Pixel plan for the Ossified.
 - Holy Ward has runes on the brow: x 12 to 15, y 8 to 10, and x 8, y 9
   and 10.
 
-Pixel plan for the Legions. Five Legion genes are gene models.
+Pixel plan for the Legions. Four Legion genes are gene models.
 - Barrage: a full quiver of arrows on the back, the gene model
   barrage_quiver.
 - Bugler: a horn of bone that it blows, in front of the mouth, the gene
@@ -73,8 +73,9 @@ Pixel plan for the Legions. Five Legion genes are gene models.
   phalanx_straps.
 - Muster has two red chevrons on the ribs in the middle of the chest: x 21
   to 26, y 21 to 26.
-- Warcry has the dark mouth (x 9 to 14, y 14 and 15), and a wide, open jaw,
-  the gene model warcry_jaw.
+- Warcry has red war paint: rows 12 and 13 of the face beside the eye
+  sockets (x 8, 11, 12, and 15), column 0 of the sides of the head (rows 4
+  and 5), and stripes down the jaw (y 14 and 15).
 - Spider Rider: spider silk round the knees, the gene model
   spider_rider_silk. The spider comes from the game.
 This script needs Pillow.
@@ -690,31 +691,25 @@ def muster():
 
 
 def warcry():
-    # A wide, open jaw: the lower jaw hangs wide open under the face, with a
-    # row of teeth, and the mouth is dark. The jaw is the gene model
-    # warcry_jaw.
-    mouth = Mark("#140E0C")
-    for x in range(9, 15):
-        mouth.put((x, 14)).put((x, 15), 220)
-    return [mouth]
-
-
-def warcry_model():
-    # The lower jaw: a wide slab of bone hinged at the back of the jaw, that
-    # drops open 35 degrees, with teeth on its top. On the head bone, the
-    # bottom of the head is at y 0, and the face is at z -4.
-    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
-
-    def jaw(face, x, y):
-        if face == "top":
-            return "#F6F2E8" if x % 2 == 0 and y == 0 else "#3A2420"
-        return BONE[1] if face != "front" else BONE[0]
-
-    # The jaw: 7x1x4 at uv (0, 0).
-    paint_box(im, 0, 0, 7, 1, 4, jaw)
-    parts = [{"bone": "head", "uv": [0, 0], "from": [-3.5, -1, -4.4], "size": [7, 1, 4],
-              "pivot": [0, -0.5, -0.4], "rotation": [35, 0, 0]}]
-    save_model("warcry_jaw", im, parts)
+    # War paint on the face: a dark red band across the eye sockets (rows
+    # 12 and 13, between and beside the sockets, which keep the Eagle Eye
+    # ring), that goes on round the sides of the head (column 0, rows 4 and
+    # 5, in front of the Bonedash wings), and red stripes down the jaw. The
+    # paint is red and flat, so it does not look like the dark carved Holy
+    # Ward runes or the Hexer runes.
+    paint = Mark("#9A1E18")
+    bright = Mark("#C8342A")
+    for y in (12, 13):
+        for x in (8, 11, 12, 15):
+            (bright if y == 12 else paint).put((x, y))
+    for side in (0, 1):
+        bright.put(head_side(side, 0, 4))
+        paint.put(head_side(side, 0, 5))
+    for x in (9, 11, 12, 14):
+        paint.put((x, 15))
+    for x in (8, 15):
+        paint.put((x, 14)).put((x, 15), 230)
+    return [paint, bright]
 
 
 def spider_rider():
@@ -788,7 +783,6 @@ MODELS = {
     "barrage": "originofspawns:barrage_quiver",
     "bugler": "originofspawns:bugler_horn",
     "phalanx": "originofspawns:phalanx_straps",
-    "warcry": "originofspawns:warcry_jaw",
     "spider_rider": "originofspawns:spider_rider_silk",
 }
 
@@ -806,7 +800,6 @@ def main():
     barrage_model()
     bugler_model()
     phalanx_model()
-    warcry_model()
     spider_rider_model()
     for gene, make in GENES.items():
         marks = make()

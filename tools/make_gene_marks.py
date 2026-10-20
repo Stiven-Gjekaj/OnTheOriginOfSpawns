@@ -683,10 +683,12 @@ MODELS = {
 }
 
 
-def write(gene, marks, models=None):
+def write(gene, marks, models=None, region_map=None):
     """Write the patterns and the visual of a gene.
 
     models gives the gene model of each gene. The default is MODELS.
+    region_map is the region map of the species, if it is not the humanoid
+    map.
     """
     models = MODELS if models is None else models
     # Remove the old patterns of the gene, so that no unused file stays.
@@ -718,6 +720,8 @@ def write(gene, marks, models=None):
             layer["order"] = mark.order
         layers.append(layer)
     visual = {"layers": layers}
+    if region_map:
+        visual = {"region_map": region_map, "layers": layers}
     if gene in models:
         visual["model"] = models[gene]
     with open(os.path.join(VISUAL_DIR, gene + ".json"), "w") as fh:
@@ -726,8 +730,8 @@ def write(gene, marks, models=None):
 
 
 REGIONS = {"face": 1, "scalp": 2, "torso": 3, "arms": 4, "hands": 5, "legs": 6,
-           "lower_legs": 7, "feet": 8}
-MATERIALS = {"skin": 1, "cloth": 2, "eyes": 3}
+           "lower_legs": 7, "feet": 8, "ribs": 9, "spine": 10, "pelvis": 11, "joints": 12, "eye_sockets": 13}
+MATERIALS = {"skin": 1, "cloth": 2, "eyes": 3, "bone": 4}
 
 
 def touched(visual):
@@ -737,7 +741,8 @@ def touched(visual):
     of a whole part that goes under the marks. The check does not count it.
     A spots layer can change each pixel that it covers.
     """
-    regions = Image.open(os.path.join(ASSETS, "textures/region/humanoid.png")).convert("RGBA")
+    namespace, path = visual.get("region_map", "originofspawns:textures/region/humanoid.png").split(":")
+    regions = Image.open(os.path.join(ROOT, "src/main/resources/assets", namespace, path)).convert("RGBA")
     pixels = set()
     for layer in visual.get("layers", []):
         effect = layer["effect"]
@@ -749,8 +754,8 @@ def touched(visual):
             pattern = Image.open(os.path.join(ROOT, "src/main/resources/assets", namespace, path)).convert("RGBA")
         want_r = {REGIONS[r] for r in layer.get("regions", [])}
         want_m = {MATERIALS[m] for m in layer.get("materials", [])}
-        for y in range(64):
-            for x in range(64):
+        for y in range(regions.height):
+            for x in range(regions.width):
                 r, m, _, a = regions.getpixel((x, y))
                 if not a or (want_r and r not in want_r) or (want_m and m not in want_m):
                     continue

@@ -299,6 +299,11 @@ Thus, the bones look worn, not undead.
   It is the part of all notebook entries that the player has filled.
   Entries include species pages, observed genes, variants, mutations, and
   fossils.
+- The player gets knowledge only from a fight that ends in a death:
+  - When the player kills a mob, the player learns about that mob.
+  - When a mob kills the player, the player learns about that mob.
+  - The player learns nothing from a mob that the player only sees, or from
+    a mob that dies near the player in a different way.
 - The knowledge percentage sets the number of perk slots.
 
 | Knowledge | Perk slots |

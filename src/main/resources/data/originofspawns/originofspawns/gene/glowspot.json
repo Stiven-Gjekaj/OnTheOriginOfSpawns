@@ -8,5 +8,11 @@
 			"effect": "minecraft:glowing",
 			"seconds": 10
 		}
+	],
+	"downsides": [
+		{
+			"type": "glowing",
+			"when": "dark"
+		}
 	]
 }

@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -8,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Player.class)
@@ -19,6 +21,17 @@ public abstract class PlayerMixin {
 	private void originofspawns$recordCritical(Entity target, CallbackInfoReturnable<Boolean> info) {
 		if (info.getReturnValueZ()) {
 			Evolution.markCritical(target);
+		}
+	}
+
+	/**
+	 * A raised shield counts for the shield pressure, also when it blocks no hit.
+	 */
+	@Inject(method = "tick", at = @At("TAIL"))
+	private void originofspawns$recordRaisedShield(CallbackInfo info) {
+		Player player = (Player) (Object) this;
+		if (!player.level().isClientSide() && player.isBlocking()) {
+			player.setAttached(ModAttachments.SHIELD_BLOCK, player.level().getGameTime());
 		}
 	}
 }

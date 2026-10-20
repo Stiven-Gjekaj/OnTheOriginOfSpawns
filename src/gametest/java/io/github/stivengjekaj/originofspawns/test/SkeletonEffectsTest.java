@@ -262,6 +262,22 @@ public class SkeletonEffectsTest {
 	}
 
 	@GameTest
+	public void aRaisedShieldCountsWithNoBlock(GameTestHelper helper) {
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.SHIELD));
+		player.tick();
+		helper.assertFalse(player.hasAttached(ModAttachments.SHIELD_BLOCK), "a lowered shield does not count");
+		player.startUsingItem(net.minecraft.world.InteractionHand.MAIN_HAND);
+		for (int tick = 0; tick < 10; tick++) {
+			player.tick();
+		}
+		helper.assertTrue(player.isBlocking(), "the shield is up");
+		helper.assertValueEqual(player.getAttached(ModAttachments.SHIELD_BLOCK), helper.getLevel().getGameTime(),
+				"the time of the raised shield");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void barrageNeedsAPlayerTarget(GameTestHelper helper) {
 		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(2, 1, 6));
 		Skeleton leader = skeletonWith(helper, new BlockPos(0, 1, 0), "test_barrage");

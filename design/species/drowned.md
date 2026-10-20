@@ -94,11 +94,11 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Undertow | Riptide | `boat` | Each hit on a player in water pulls the player 2 blocks down | 2 less armor | Hair: long kelp that drifts |
-| Torrent | Riptide | `unreached` | 40% more speed in water | 15% less maximum health | Lower legs: small fins. This changes the model |
+| Undertow | Riptide | `boat` | Each hit on a player in water pulls the player 2 blocks down | 2 less armor | Head: thick strands of kelp around the head and down the back. This changes the model |
+| Torrent | Riptide | `unreached` | 40% more speed in water | 15% less maximum health | Lower legs: large fins that stick out. This changes the model |
 | Surge | Riptide, sub Harpooner | `unreached` | It dashes through water at a target 4 to 8 blocks away | It cannot move for 1 second after a missed dash | Arms: pale streaks, like foam |
 | Capsizer | Riptide | `boat` | Its hits break boats and throw the riders into the water | 20% less speed on land | Hands: webbed fingers |
-| Breacher | Riptide | `on_land` | It jumps out of the water at players on the shore, docks, or boats | 50% more fall damage | Back: driftwood that sticks out. This changes the model |
+| Breacher | Riptide | `on_land` | It jumps out of the water at players on the shore, docks, or boats | 50% more fall damage | Back: a tall fin, like the fin of a shark. This changes the model |
 | Gills | Riptide | `on_land` | It heals 1 health each 3 seconds in water | Out of water in the sun, it takes 1 damage each 4 seconds | Neck: open gills |
 
 ### Harpooner genes
@@ -106,7 +106,7 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Tridentborn | Harpooner | `melee` | 25% chance to spawn with a trident | 2 less melee damage | It holds a trident |
-| Barbed | Harpooner | `projectile` | Its trident hits give Slowness for 3 seconds | It throws 20% less often | Shoulders: barbs of bone. This changes the model |
+| Barbed | Harpooner | `projectile` | Its trident hits give Slowness for 3 seconds | It throws 20% less often | Shoulders: a round cluster of spikes on each shoulder, like a sea urchin. This changes the model |
 | Volley | Harpooner | `crowd` | It throws two times as often | 4 less maximum health | Arms: bands of rope |
 | Scavenger | Harpooner, sub Riptide | `trident` | It picks up tridents that players throw and keeps them | It drops no trident when it dies | Belt: a bag of junk |
 | Spearfisher | Harpooner | `unreached` | 30% more throw range at players in water or in boats | 30% less throw range at players on land | Body: a torn fishing net |

@@ -162,6 +162,19 @@ The visual column gives the region and the mark.
 | Salt Crust | It stops the vanilla conversion of a husk to a zombie in water |
 | Mirage Water | The false water is a client effect. It is not a block |
 
+### Limits of the first version
+
+These genes work in a simpler way than the table says, for now.
+
+| Gene | In the mod now |
+|---|---|
+| Sinkhole | The Slowness comes when the husk stands on sand, not when the target does |
+| Duststorm | Its downside is the Glowing effect, so players see it through walls |
+| Signal Fire | The husks in 32 blocks attack the attacker. They do not walk to the smoke first |
+| Nomad | The group spawns, but it does not walk in a line yet |
+| Mirage Water | It is 50% translucent at all times. The false pool of water is not in the mod yet |
+| Kilnskin | Water and rain do 1 damage each second |
+
 ## Baby husks
 
 - Baby husks do not spawn in vanilla ways.

@@ -449,6 +449,16 @@ def apply(effect, color, x, y, seed, baby=False):
         shade = stamp[0] / 255
         return tuple(int(color[i] + (tint[i] * shade - color[i]) * strength) for i in range(3)) + (color[3],)
     if kind == "erase":
+        # With a mask texture, erase only where the mask has alpha, like
+        # TextureBaker.masked.
+        if "texture" in effect:
+            mask = image(effect["texture"])
+            if baby and mask.width >= 64 and mask.height >= 64:
+                mask = baby_image(effect["texture"])
+            elif MOB["split"] and mask.width >= 64 and mask.height >= 64:
+                mask = split_image(effect["texture"])
+            if not mask.getpixel((x % mask.width, y % mask.height))[3]:
+                return color
         return (0, 0, 0, 0)
     raise ValueError("unknown effect " + kind)
 

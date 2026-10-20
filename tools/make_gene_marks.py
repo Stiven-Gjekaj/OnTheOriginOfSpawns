@@ -749,7 +749,7 @@ def touched(visual):
         if effect["type"] == "desaturate" or layer.get("order", 0) < 0:
             continue
         pattern = None
-        if effect["type"] == "pattern":
+        if effect["type"] == "pattern" or effect["type"] == "erase" and "texture" in effect:
             namespace, path = effect["texture"].split(":")
             pattern = Image.open(os.path.join(ROOT, "src/main/resources/assets", namespace, path)).convert("RGBA")
         want_r = {REGIONS[r] for r in layer.get("regions", [])}

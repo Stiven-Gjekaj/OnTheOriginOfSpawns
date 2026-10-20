@@ -1,0 +1,26 @@
+---
+// Buttons that select a species. src/scripts/species.js shows the panels of
+// the species and keeps it in the URL as ?species=<id>.
+import site from "../data/site.json";
+import Status from "./Status.astro";
+
+interface Props { disabled?: string[]; note?: Record<string, string> }
+const { disabled = [], note = {} } = Astro.props;
+---
+<div class="species-switch">
+  <div class="segmented" role="group" aria-label="Species">
+    {site.species.map((s, i) => (
+      <button class="btn sm" type="button" data-species-btn={s.id} aria-pressed={i === 0 ? "true" : "false"} disabled={disabled.includes(s.id)} data-tip={note[s.id]}>
+        {s.name}
+      </button>
+    ))}
+  </div>
+  {site.species.map((s, i) => (
+    <span class="state" data-species-panel={s.id} hidden={i !== 0}><Status status={s.status} text={s.status === "released" ? undefined : `${s.milestone}, in development`} /></span>
+  ))}
+</div>
+
+<style>
+  .species-switch { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center; margin-bottom: var(--s-5); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+</style>

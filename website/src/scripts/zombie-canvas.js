@@ -14,7 +14,8 @@ export async function drawStill(canvas, list, o = {}) {
   canvas.height = Math.round(h * dpr);
   const ctx = canvas.getContext("2d");
   ctx.imageSmoothingEnabled = false;
-  const model = await Z.bake(list.filter((g) => g.visual), o.baby ?? canvas.dataset.baby === "true");
+  const species = o.species ?? canvas.dataset.species ?? list[0]?.species ?? "zombie";
+  const model = await Z.bake(list.filter((g) => g.visual), o.baby ?? canvas.dataset.baby === "true", species);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   Z.draw(ctx, model, {
     scale: (o.scale ?? (Number(canvas.dataset.scale) || 4)) * dpr,

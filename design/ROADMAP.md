@@ -86,6 +86,11 @@ The husk and the drowned come out together in one alpha release.
   pool of the new species. It keeps none of its old genes.
 - Draw the gene marks under the outer layer of the drowned, and fit them to
   the baby drowned model.
+- Stop the random weapons, the random armor, and the item pickup of mobs
+  with genes. Keep natural weapons, such as the trident of the drowned, and
+  the items that genes give.
+- Let a long-lived mob change one gene toward its pool, only where no player
+  sees it. A mob with a name tag keeps its genes.
 
 #### Milestone 2c: The other hostile mobs
 

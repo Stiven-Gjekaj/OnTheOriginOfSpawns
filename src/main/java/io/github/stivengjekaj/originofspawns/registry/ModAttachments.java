@@ -67,6 +67,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Boolean> HEAL_ONCE_USED =
 			AttachmentRegistry.createPersistent(OriginOfSpawns.id("heal_once_used"), com.mojang.serialization.Codec.BOOL);
 
+	/**
+	 * The game time when a player last blocked a hit with a shield. The game does not save it.
+	 */
+	public static final AttachmentType<Long> SHIELD_BLOCK = AttachmentRegistry.create(OriginOfSpawns.id("shield_block"));
+
 	private ModAttachments() {
 	}
 

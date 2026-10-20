@@ -13,6 +13,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -71,6 +72,14 @@ public abstract class LivingEntityMixin {
 	private void originofspawns$senses(ServerLevel level, Entity looker, CallbackInfoReturnable<Double> info) {
 		if (looker != null && looker.hasAttached(ModAttachments.GENES)) {
 			info.setReturnValue(GeneBehaviors.visibility((LivingEntity) (Object) this, looker, info.getReturnValueD()));
+		}
+	}
+
+	@Inject(method = "applyItemBlocking", at = @At("RETURN"))
+	private void originofspawns$recordShieldBlock(ServerLevel level, DamageSource source, float amount,
+			CallbackInfoReturnable<Float> info) {
+		if (info.getReturnValueF() > 0.0F && (Object) this instanceof Player) {
+			((LivingEntity) (Object) this).setAttached(ModAttachments.SHIELD_BLOCK, level.getGameTime());
 		}
 	}
 

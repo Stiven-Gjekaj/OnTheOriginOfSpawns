@@ -61,7 +61,15 @@ public enum DeathCondition implements StringRepresentable {
 	/**
 	 * The killer was in a boat.
 	 */
-	BOAT;
+	BOAT,
+	/**
+	 * A wolf killed the mob.
+	 */
+	WOLF,
+	/**
+	 * The killer blocked a hit with a shield in the 10 seconds before the death, or holds its shield up now.
+	 */
+	SHIELD;
 
 	public static final Codec<DeathCondition> CODEC = StringRepresentable.fromEnum(DeathCondition::values);
 

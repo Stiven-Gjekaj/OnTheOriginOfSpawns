@@ -72,6 +72,35 @@ public class DeathFactsTest {
 	}
 
 	@GameTest
+	public void aWolfKillIsAWolfDeath(GameTestHelper helper) {
+		var skeleton = helper.spawnWithNoFreeWill(EntityTypes.SKELETON, new BlockPos(1, 1, 1));
+		var wolf = helper.spawnWithNoFreeWill(EntityTypes.WOLF, new BlockPos(3, 1, 3));
+		var sources = helper.getLevel().damageSources();
+		helper.assertTrue(Evolution.facts(skeleton, sources.mobAttack(wolf), helper.getLevel()).contains(DeathCondition.WOLF),
+				"a wolf kill");
+		helper.assertFalse(Evolution.facts(skeleton, sources.generic(), helper.getLevel()).contains(DeathCondition.WOLF),
+				"other damage");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aRecentShieldBlockIsAShieldDeath(GameTestHelper helper) {
+		var skeleton = helper.spawnWithNoFreeWill(EntityTypes.SKELETON, new BlockPos(1, 1, 1));
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		var source = helper.getLevel().damageSources().playerAttack(player);
+		long now = helper.getLevel().getGameTime();
+		helper.assertFalse(Evolution.facts(skeleton, source, helper.getLevel()).contains(DeathCondition.SHIELD),
+				"a player that did not block");
+		player.setAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.SHIELD_BLOCK, now - 100L);
+		helper.assertTrue(Evolution.facts(skeleton, source, helper.getLevel()).contains(DeathCondition.SHIELD),
+				"a block 5 seconds ago");
+		player.setAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.SHIELD_BLOCK, now - 300L);
+		helper.assertFalse(Evolution.facts(skeleton, source, helper.getLevel()).contains(DeathCondition.SHIELD),
+				"a block 15 seconds ago");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void cactiBerriesAndTridentsHaveTheirTags(GameTestHelper helper) {
 		var sources = helper.getLevel().damageSources();
 		var contact = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE,

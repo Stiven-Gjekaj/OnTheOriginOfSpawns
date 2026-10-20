@@ -40,6 +40,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
+import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -103,6 +104,19 @@ public final class Evolution {
 		});
 		ServerTickEvents.END_SERVER_TICK.register(Evolution::decay);
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> CROWDS.clear());
+	}
+
+	/**
+	 * The time after a block with a shield in which a kill counts for the shield pressure.
+	 */
+	private static final long SHIELD_TICKS = 200L;
+
+	/**
+	 * Returns true if the entity holds its shield up now, or blocked a hit with it in the last 10 seconds.
+	 */
+	public static boolean usedShield(LivingEntity entity, long now) {
+		long blocked = entity.getAttachedOrElse(ModAttachments.SHIELD_BLOCK, -SHIELD_TICKS - 1L);
+		return entity.isBlocking() || now - blocked <= SHIELD_TICKS;
 	}
 
 	private static void onLoad(Entity entity, ServerLevel level) {
@@ -297,6 +311,12 @@ public final class Evolution {
 		}
 		if (source.getEntity() != null && source.getEntity().getVehicle() instanceof AbstractBoat) {
 			facts.add(DeathCondition.BOAT);
+		}
+		if (source.getEntity() instanceof Wolf) {
+			facts.add(DeathCondition.WOLF);
+		}
+		if (source.getEntity() instanceof LivingEntity killer && usedShield(killer, level.getGameTime())) {
+			facts.add(DeathCondition.SHIELD);
 		}
 		AABB area = mob.getBoundingBox().inflate(CrowdTracker.RADIUS);
 		if (level.getEntities(mob.getType(), area, other -> other != mob && other.isAlive()).isEmpty()) {

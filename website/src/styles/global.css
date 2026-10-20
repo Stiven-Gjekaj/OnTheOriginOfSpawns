@@ -195,6 +195,7 @@ body {
 }
 
 img, svg, canvas { max-width: 100%; }
+[hidden] { display: none !important; }
 
 a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 3px; }
 a:hover { text-decoration-thickness: 2px; }

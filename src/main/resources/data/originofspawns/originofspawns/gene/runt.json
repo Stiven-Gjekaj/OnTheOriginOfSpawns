@@ -8,5 +8,6 @@
 			"chance": 0.2,
 			"baby_health_multiplier": 0.5
 		}
-	]
+	],
+	"mutation_rate": 0
 }

@@ -1,0 +1,14 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:husk/dunecrawler",
+	"gains": [
+		{
+			"type": "burrow",
+			"player_radius": 24,
+			"rise_seconds": 1,
+			"blocks": "#minecraft:sand",
+			"night_only": false
+		}
+	]
+}

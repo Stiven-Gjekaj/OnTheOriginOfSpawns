@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:husk/dunecrawler",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:slowness",
+			"seconds": 1,
+			"amplifier": 3,
+			"when": "on_sand"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.2,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

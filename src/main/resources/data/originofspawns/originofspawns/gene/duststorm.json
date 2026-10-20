@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:husk/dunecrawler",
+	"sub_family": "originofspawns:husk/caravan",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:darkness",
+			"radius": 5,
+			"interval_seconds": 6,
+			"particles": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "glowing"
+		}
+	]
+}

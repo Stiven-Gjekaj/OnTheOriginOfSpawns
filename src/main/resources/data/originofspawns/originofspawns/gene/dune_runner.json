@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:husk/dunecrawler",
+	"gains": [
+		{
+			"type": "speed_when",
+			"when": "on_sand",
+			"multiplier": 1.25
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

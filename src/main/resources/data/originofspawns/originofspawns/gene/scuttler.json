@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:husk/dunecrawler",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fall",
+			"multiplier": 0
+		},
+		{
+			"type": "climb"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.15,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,12 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/solar_flare_0.png",
+				"tint": "#3A2414"
+			}
+		}
+	],
+	"model": "originofspawns:solar_flare_sun"
+}

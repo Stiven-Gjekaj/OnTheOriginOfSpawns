@@ -1,0 +1,18 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sunstroke_0.png",
+				"tint": "#EED9A0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sunstroke_1.png",
+				"tint": "#B23A26"
+			}
+		}
+	]
+}

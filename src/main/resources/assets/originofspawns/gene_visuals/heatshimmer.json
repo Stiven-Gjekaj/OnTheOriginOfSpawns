@@ -1,0 +1,11 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/heatshimmer_0.png",
+				"tint": "#F2EAD6"
+			}
+		}
+	]
+}

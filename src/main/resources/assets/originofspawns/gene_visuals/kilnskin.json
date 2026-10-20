@@ -1,0 +1,26 @@
+{
+	"layers": [
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/kilnskin_0.png",
+				"tint": "#9C3A22"
+			},
+			"order": -4
+		},
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/kilnskin_1.png",
+				"tint": "#F4B088"
+			},
+			"order": -4
+		}
+	]
+}

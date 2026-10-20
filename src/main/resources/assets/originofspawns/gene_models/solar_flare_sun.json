@@ -1,0 +1,25 @@
+{
+	"texture": "originofspawns:textures/entity/solar_flare_sun.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				2,
+				-2.05
+			],
+			"size": [
+				6,
+				6,
+				0
+			],
+			"glow": true
+		}
+	]
+}

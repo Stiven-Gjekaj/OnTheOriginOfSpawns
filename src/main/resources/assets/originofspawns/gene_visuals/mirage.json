@@ -1,0 +1,18 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mirage_0.png",
+				"tint": "#D8F0F4"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mirage_1.png",
+				"tint": "#D8F0F4"
+			}
+		}
+	]
+}

@@ -94,6 +94,7 @@ public class GalleryClientTest implements FabricClientGameTest {
 				// The killed mobs drop items, which must not show in the next scene.
 				server.runCommand("kill @e[type=item]");
 			}
+			allFamilies(context, singleplayer);
 			infoPanel(context, singleplayer);
 		}
 	}
@@ -134,6 +135,77 @@ public class GalleryClientTest implements FabricClientGameTest {
 		}
 	}
 
+
+	/**
+	 * Puts all 15 families in three rows, one row for each species on its own floor, and looks down on them at 45
+	 * degrees.
+	 */
+	private static void allFamilies(ClientGameTestContext context, TestSingleplayerContext singleplayer) {
+		var server = singleplayer.getServer();
+		server.runOnServer(s -> {
+			ServerPlayer player = s.getPlayerList().getPlayers().getFirst();
+			ServerLevel level = player.level();
+			BlockPos base = BlockPos.containing(player.getX(), 120, player.getZ());
+			// A plain floor of grass covers the floors of the scenes before.
+			for (BlockPos pos : BlockPos.betweenClosed(base.offset(-30, -1, -12), base.offset(30, -1, 40))) {
+				level.setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState(), 2);
+			}
+			for (int row = 0; row < SCENES.size(); row++) {
+				Scene scene = SCENES.get(row);
+				int z = base.getZ() + 6 + row * 3;
+				for (BlockPos pos : BlockPos.betweenClosed(base.getX() - 24, base.getY() - 2, z - 1,
+						base.getX() + 24, base.getY() - 2, z + 1)) {
+					level.setBlock(pos, Blocks.STONE.defaultBlockState(), 2);
+					level.setBlock(pos.above(), scene.floor().defaultBlockState(), 2);
+				}
+				for (int i = 0; i < scene.mobs().size(); i++) {
+					List<String> genes = scene.mobs().get(i);
+					// Duststorm and Sandblast aim at the player, which is the camera here.
+					if (genes.contains("duststorm")) {
+						genes = List.of("scuttler", "sinkhole", "dune_runner");
+					}
+					Mob mob = scene.type().create(level, EntitySpawnReason.COMMAND);
+					mob.setNoAi(true);
+					mob.setPersistenceRequired();
+					mob.setItemSlot(EquipmentSlot.MAINHAND, scene.type() == EntityTypes.DROWNED && i == 1
+							? new ItemStack(Items.TRIDENT) : ItemStack.EMPTY);
+					mob.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
+					double x = (i - (scene.mobs().size() - 1) / 2.0) * 2.0;
+					mob.snapTo(base.getX() + 0.5 + x, base.getY(), z + 0.5, 180.0F, 0.0F);
+					mob.setYHeadRot(180.0F);
+					mob.setYBodyRot(180.0F);
+					mob.setAttached(ModAttachments.GENES, Evolution.carry(level, mob, genes.stream()
+							.map(gene -> Identifier.fromNamespaceAndPath("originofspawns", gene)).toList()));
+					mob.addTag("originofspawns_gallery");
+					level.setBlock(mob.blockPosition().above(30), Blocks.STONE.defaultBlockState(), 2);
+					level.addFreshEntity(mob);
+				}
+			}
+			// The camera is above and in front of the rows, and looks down at 45 degrees on their middle row.
+			// The player flies, so that the camera does not fall while the scene settles.
+			player.getAbilities().mayfly = true;
+			player.getAbilities().flying = true;
+			player.onUpdateAbilities();
+			// At 45 degrees, the camera sees the middle row as far ahead of it as it is high above it.
+			double height = 6.5;
+			player.connection.teleport(base.getX() + 0.5, base.getY() + height - 1.6, base.getZ() + 9.5 - height,
+					0.0F, 45.0F);
+		});
+		context.waitTicks(40);
+		server.runCommand("execute as @e[tag=originofspawns_gallery] run data merge entity @s {Fire:0s}");
+		server.runCommand("effect clear @a");
+		// The smoke of the put out fires clears in about 3 seconds.
+		context.waitTicks(80);
+		context.takeScreenshot(TestScreenshotOptions.of("all_families").withSize(1920, 1080)
+				.disableCounterPrefix().withDestinationDir(OUTPUT));
+		server.runCommand("kill @e[tag=originofspawns_gallery]");
+		server.runCommand("kill @e[type=item]");
+		server.runOnServer(s -> {
+			ServerPlayer player = s.getPlayerList().getPlayers().getFirst();
+			player.getAbilities().flying = false;
+			player.onUpdateAbilities();
+		});
+	}
 
 	/**
 	 * Shows the mob info panel over a husk whose family and genes the player knows.

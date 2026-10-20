@@ -49,8 +49,8 @@ Pixel plan for the Abyssals.
 - Ink has the mouth (y 14 and 15) and a spray on the chest, at order 1,
   over the Spearfisher net.
 - Deepcold has a frost tint on all the skin, under the marks (order -2).
-- Glowspot has spots on the legs (rows 1 to 3) and on rows 1 and 2 of the
-  sides of the head. The gene model glowspot_spots makes them glow.
+- Glowspot has spots on the legs (rows 1 to 3) and on rows 2 and 3 of the
+  sides of the head, under the Undertow cap. The gene model glowspot_spots makes them glow.
 This script needs Pillow.
 """
 import json
@@ -474,8 +474,8 @@ def deepcold():
 GLOWSPOTS = [
     ("right_leg", -1, 1, -2.3, leg(FRONT, 1, 1)), ("right_leg", 0, 3, -2.3, leg(FRONT, 2, 3)),
     ("right_leg", -2.3, 2, 0, leg(OUTER, 1, 2)),
-    ("head", -4.3, -6, -3, [head_side(0, 1, 2)]), ("head", -4.3, -7, -1, [head_side(0, 3, 1)]),
-    ("head", 4.3, -6, -3, [head_side(1, 1, 2)]), ("head", 4.3, -7, -1, [head_side(1, 3, 1)]),
+    ("head", -4.3, -6, -3, [head_side(0, 1, 2)]), ("head", -4.3, -5, -2, [head_side(0, 2, 3)]),
+    ("head", 4.3, -6, -3, [head_side(1, 1, 2)]), ("head", 4.3, -5, -2, [head_side(1, 2, 3)]),
 ]
 
 

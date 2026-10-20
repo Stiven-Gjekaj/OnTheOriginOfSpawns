@@ -4,15 +4,31 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/sunstroke_0.png",
-				"tint": "#EED9A0"
+				"tint": "#C83A28"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/sunstroke_1.png",
-				"tint": "#B23A26"
+				"tint": "#C83A28"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sunstroke_2.png",
+				"tint": "#3A2C20"
+			},
+			"order": 1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sunstroke_3.png",
+				"tint": "#4E3E2C"
+			},
+			"order": 1
 		}
 	]
 }

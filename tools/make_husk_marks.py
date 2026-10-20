@@ -17,16 +17,17 @@ Husk skin is a dark gray brown. The shirt and the sleeves are a light tan
 cloth. The top 2 rows of the face are tan.
 
 Pixel plan for the Scorchers.
-- Skin color: Kilnskin makes all the skin brick red (order -4). Sunbaked
-  puts a red flush on all the skin (order -3). Both go under the marks.
+- Skin color: Kilnskin makes all the skin brick red (order -4). It is the
+  only Scorcher with a color for all the skin.
 - Face, eyes: Mirage has the 4 eye pixels, and the outer pixels over the
-  eyes (x 9 and 14, y 11).
-- Face: Sunstroke has the blisters on the forehead (y 10), on the cheeks
-  (x 8 and 15, y 13 and 14), and at the chin (y 15).
-- Head sides and the back of the head: Sunbaked has the cracks.
-- Forearms: Sunbaked has the cracks on the outer and the back faces, rows 5
-  to 10, and in columns 0 and 3 of the front face. Kilnskin has the glaze
-  shine (order -4).
+  eyes (x 9 and 14, y 11). The Sunstroke lids go over them (order 1).
+- Face: Sunstroke has the flush on the cheeks and the nose (y 12 and 13),
+  and the lids (y 11, and the outer eye pixels). Sunbaked has the forehead
+  (y 10), the pixel between the eyes (x 12, y 11), x 8 of y 11, and the
+  chin (y 14 and 15).
+- Head sides, the neckline, and the hands (arm rows 8 to 11): Sunbaked has
+  the cracks and the burns (order 1).
+- Forearms and the top of the head: Kilnskin has the glaze shine (order -4).
 - Chest: Solar Flare has the sun, a gene model that glows, over the chest
   columns 1 to 6, rows 2 to 7. It burns the cloth around the sun.
 - Shirt back, shirt sides, chest rows 9 to 11, sleeves, and the top of the
@@ -36,7 +37,7 @@ This script needs Pillow.
 import json
 import os
 
-from make_gene_marks import (ASSETS, BACK, CHEST, FRONT, LEFT_SIDE, MARK_DIR, OUTER, RIGHT_SIDE,
+from make_gene_marks import (ASSETS, BACK, CHEST, FRONT, INNER, LEFT_SIDE, MARK_DIR, OUTER, RIGHT_SIDE,
                              SHIRT_BACK, VISUAL_DIR, Mark, arm, body, head_side, leg, noise100,
                              touched, write)
 
@@ -45,30 +46,32 @@ MODEL_DIR = os.path.join(ASSETS, "gene_models")
 
 
 def sunbaked():
-    # Sunburnt skin: a red flush on all the skin, under the marks. Dry cracks
-    # with a pale, dry edge on the forearms, on the sides of the head, and on
-    # the back of the head.
-    flush = Mark("#D2604A", alpha=70, order=-3, materials=["skin"], size=16).fill()
-    crack = Mark("#22170E")
-    dry = Mark("#C9AE80")
-    for face in (OUTER, BACK):
-        for col, row in ((1, 5), (2, 6), (2, 7), (1, 8), (3, 9)):
-            crack.put(arm(face, col, row), 255 if row % 2 else 220)
-        for col, row in ((2, 5), (3, 6), (1, 7), (0, 8)):
-            dry.put(arm(face, col, row), 230)
-    for col, row in ((3, 6), (3, 7), (0, 9), (0, 10)):
-        crack.put(arm(FRONT, col, row))
-    dry.put(arm(FRONT, 2, 7), 230).put(arm(FRONT, 1, 10), 230)
+    # Sunburn and dry cracks on the skin that the sun hits most: the face,
+    # the neck, and the hands. The gene has no skin color of its own, so it
+    # reads as sunburn on normal skin and as fired cracks on Kilnskin. Its
+    # marks are at order 1, over the Kilnskin color (order -4).
+    crack = Mark("#22170E", order=1)
+    burn = Mark("#6E2416", order=1)
+    peel = Mark("#D8C09A", order=1)
+    # The face: the forehead, between the eyes, and the chin.
+    crack.put((10, 10)).put((11, 10), 220).put((12, 11)).put((10, 14), 220).put((9, 15))
+    burn.put((13, 10)).put((14, 10), 220).put((8, 11), 230).put((12, 15)).put((13, 15), 220)
+    peel.put((15, 10), 230).put((11, 15), 230)
+    # The sides of the head, next to the face.
     for side in (0, 1):
-        for col, row in ((2, 3), (3, 4), (3, 5), (4, 6), (5, 6)):
-            crack.put(head_side(side, col, row))
-        for col, row in ((3, 3), (4, 5), (5, 7)):
-            dry.put(head_side(side, col, row), 230)
-    for p in ((25, 10), (26, 11), (26, 12), (29, 13), (30, 13), (30, 14)):
-        crack.put(p)
-    for p in ((25, 11), (29, 14)):
-        dry.put(p, 230)
-    return [flush, crack, dry]
+        crack.put(head_side(side, 0, 3)).put(head_side(side, 1, 4)).put(head_side(side, 1, 5), 220)
+        burn.put(head_side(side, 0, 6), 230).put(head_side(side, 1, 6))
+        peel.put(head_side(side, 2, 4), 230)
+    # The neck: the skin in the neckline of the shirt.
+    crack.put((22, 20)).put((24, 20), 220)
+    burn.put((25, 20)).put((24, 21), 230)
+    # The hands: rows 8 to 11 of the arms.
+    for face in (OUTER, FRONT, BACK):
+        crack.put(arm(face, 1, 8)).put(arm(face, 2, 9), 220).put(arm(face, 2, 10))
+        burn.put(arm(face, 0, 10), 230).put(arm(face, 3, 11)).put(arm(face, 0, 11), 220)
+        peel.put(arm(face, 3, 9), 230)
+    crack.put(arm(INNER, 2, 9)).put(arm(INNER, 1, 10), 220)
+    return [crack, burn, peel]
 
 
 def kilnskin():
@@ -90,13 +93,22 @@ def kilnskin():
 
 
 def sunstroke():
-    # Heat blisters on the face: a pale, swollen core with a red rim.
-    core = Mark("#EED9A0")
-    rim = Mark("#B23A26")
-    core.put((11, 10)).put((8, 13)).put((15, 14)).put((12, 15), 230)
-    for p in ((10, 10), (12, 10), (8, 14), (15, 13), (11, 15), (13, 15)):
-        rim.put(p, 220)
-    return [core, rim]
+    # Heat sickness: a red flush across the cheeks and the nose, and heavy,
+    # half-closed lids over the eyes. The flush is smooth, with no spots.
+    # The lids are at order 1, so that they go over the Mirage eyes.
+    flush = Mark("#C83A28", alpha=140)
+    for p in ((8, 13), (9, 13), (14, 13), (15, 13), (11, 13), (12, 13)):
+        flush.put(p)
+    soft = Mark("#C83A28", alpha=75)
+    for p in ((8, 12), (15, 12), (11, 12), (12, 12), (10, 13), (13, 13), (8, 14), (9, 14),
+              (14, 14), (15, 14)):
+        soft.put(p)
+    lid = Mark("#3A2C20", order=1)
+    for x in (9, 10, 13, 14):
+        lid.put((x, 11))
+    droop = Mark("#4E3E2C", alpha=230, order=1)
+    droop.put((9, 12)).put((14, 12))
+    return [flush, soft, lid, droop]
 
 
 def mirage():

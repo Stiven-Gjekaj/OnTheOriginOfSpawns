@@ -101,6 +101,12 @@ HUSK_EXTRA = {
                      ("All 6 + Sunbaked, Sunstroke", ["sunbaked", "sunstroke"], True, {}),
                      ("All 6 + Kilnskin", ["kilnskin"], True, {}),
                      ("All 6 baby", [], True, {"baby": True})],
+    "mummies": [("Wrapped + Embalmed", ["wrapped", "embalmed"], False, {}),
+                ("Kilnskin + Embalmed", ["kilnskin", "embalmed"], False, {}),
+                ("All 6 + Sunbaked", ["sunbaked"], True, {}),
+                ("All 6 + Solar Flare", ["solar_flare", "kilnskin"], True, {}),
+                ("All 6 + Duststorm", ["duststorm", "scuttler"], True, {}),
+                ("All 6 baby", [], True, {"baby": True})],
 }
 NIGHT = (18, 22, 38, 255)
 

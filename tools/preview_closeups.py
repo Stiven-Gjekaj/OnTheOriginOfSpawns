@@ -1,8 +1,10 @@
 """Make close-up previews of the gene models and of some marks.
 
-Usage: python3 tools/preview_closeups.py
+Usage: python3 tools/preview_closeups.py [zombie] [husk] [drowned]
 
-Each close-up shows a few zombies from several sides, on a white
+With no species, the script makes the close-ups of all three.
+
+Each close-up shows a few mobs from several sides, on a white
 background. A view "at night" has a dark background and low light, so that
 the parts that glow show. The script writes PNG files to
 previews/closeups/, which Git ignores. The folder is not in build/, so that
@@ -11,6 +13,7 @@ Each preview uses the vanilla texture. Do not commit a preview.
 This script needs Pillow.
 """
 import os
+import sys
 
 from PIL import Image, ImageDraw
 
@@ -60,6 +63,95 @@ CLOSEUPS = {
                         [FRONT, NIGHT_VIEW]),
 }
 
+LEFT_SIDE = ("left side", 90, 0, 1.0)
+ABOVE = ("from above", -150, 60, 1.0)
+NIGHT_BEHIND = ("3/4 behind, at night", -145, 15, 0.18)
+ALL_SIDES = [FRONT, BACK, LEFT_SIDE, SIDE, THREE_QUARTER, BEHIND, ABOVE]
+HUSK = pg.HUSK_FAMILIES
+DROWNED = pg.DROWNED_FAMILIES
+
+
+def gene_rows(genes, others):
+    """Return the rows of a close-up of one change: the genes alone, the genes
+    with other genes, and the genes on a baby."""
+    return [(name(genes), genes, False), (name(genes + others), genes + others, False),
+            (name(genes) + " baby", genes, True)]
+
+
+def name(genes):
+    return ", ".join(gene.replace("_", " ").title() for gene in genes)
+
+
+# The close-ups of the husk.
+HUSK_CLOSEUPS = {
+    "husk_undying": ("Undying",
+                     [("Undying", ["undying"], False),
+                      ("Undying + Wrapped + Solar Flare", ["undying", "wrapped", "solar_flare"], False)],
+                     [FRONT, BACK, THREE_QUARTER, NIGHT_VIEW]),
+    "husk_signal_fire": ("Signal Fire", gene_rows(["signal_fire"], ["packmule", "nomad"]),
+                         [FRONT, BACK, LEFT_SIDE, SIDE, ABOVE, BEHIND, NIGHT_BEHIND]),
+    "husk_nomad": ("Nomad from all sides", gene_rows(["nomad"], ["tomb_guard", "packmule"]),
+                   [FRONT, BACK, LEFT_SIDE, SIDE, ("from above", -30, 70, 1.0),
+                    ("from below", -30, -60, 1.0)]),
+    "husk_caravans": ("Caravan models",
+                      [("Packmule + Signal Fire", ["packmule", "signal_fire"], False),
+                       ("All 6 Caravans", HUSK["caravans"], False)],
+                      [FRONT, BACK, SIDE, THREE_QUARTER, BEHIND]),
+    "husk_parchers": ("Parcher faces and Salt Crust",
+                      [("Thirstbite + Dehydrator", ["thirstbite", "dehydrator"], False),
+                       ("Desiccate", ["desiccate"], False), ("Salt Crust", ["salt_crust"], False),
+                       ("Salt Crust + Packmule", ["salt_crust", "packmule", "signal_fire"], False)],
+                      [FRONT, BACK, LEFT_SIDE, THREE_QUARTER, BEHIND, ("from above", -30, 60, 1.0)]),
+}
+
+# The close-ups of the drowned.
+DROWNED_CLOSEUPS = {
+    "drowned_riptides": ("Riptide models",
+                         [("Undertow", ["undertow"], False), ("Torrent", ["torrent"], False),
+                          ("Breacher", ["breacher"], False), ("All 6", DROWNED["riptides"], False),
+                          ("All 6 baby", DROWNED["riptides"], True)], ALL_SIDES),
+    "drowned_harpooners": ("Harpooner models",
+                           [("Barbed + Volley", ["barbed", "volley"], False), ("Scavenger", ["scavenger"], False),
+                            ("Spearfisher + Stormcaller", ["spearfisher", "stormcaller"], False),
+                            ("All 6", DROWNED["harpooners"], False)],
+                           [FRONT, BACK, LEFT_SIDE, SIDE, THREE_QUARTER, ("from above", -30, 60, 1.0)]),
+    "drowned_abyssals": ("Abyssal models",
+                         [("Lure", ["lure"], False), ("Glowspot", ["glowspot"], False),
+                          ("Blind Hunter + Ink + Pressure Hide", ["blind_hunter", "ink", "pressure_hide"], False),
+                          ("All 6", DROWNED["abyssals"], False), ("All 6 baby", DROWNED["abyssals"], True)],
+                         [FRONT, LEFT_SIDE, SIDE, THREE_QUARTER, ("front at night", 0, 0, 0.18),
+                          ("left side at night", 90, 0, 0.18), NIGHT_VIEW]),
+    "drowned_barnacled": ("Barnacled models",
+                          [("Barnacle Crust", ["barnacle_crust"], False), ("Coral Growth", ["coral_growth"], False),
+                           ("Shellback", ["shellback"], False), ("Anchor + Pearlheart", ["anchor", "pearlheart"], False),
+                           ("Kelpwrapped", ["kelpwrapped"], False), ("All 6", DROWNED["barnacled"], False)],
+                          ALL_SIDES),
+    "drowned_sirens": ("Siren models",
+                       [("Fry baby", ["fry"], True), ("Fry, adult carrier", ["fry"], False),
+                        ("Drag Under + Chorus", ["drag_under", "chorus"], False),
+                        ("Siren Song + Shoal + Wreckcaller", ["siren_song", "shoal", "wreckcaller"], False),
+                        ("All 6", DROWNED["sirens"], False), ("All 6 baby", DROWNED["sirens"], True)],
+                       ALL_SIDES),
+    "drowned_torrent": ("Torrent", gene_rows(["torrent"], ["undertow", "breacher", "surge"]), ALL_SIDES),
+    "drowned_undertow": ("Undertow", gene_rows(["undertow"], ["gills", "glowspot", "lure", "pressure_hide"]),
+                         ALL_SIDES),
+    "drowned_breacher": ("Breacher", gene_rows(["breacher"], ["undertow", "torrent", "surge"]), ALL_SIDES),
+    "drowned_barbed": ("Barbed", gene_rows(["barbed"], ["volley", "undertow", "breacher"]), ALL_SIDES),
+    "drowned_anchor": ("Anchor", gene_rows(["anchor"], ["torrent", "kelpwrapped"]), ALL_SIDES),
+    "drowned_wreckcaller": ("Wreckcaller", gene_rows(["wreckcaller"], ["spearfisher", "scavenger"]), ALL_SIDES),
+    "drowned_pearlheart": ("Pearlheart", gene_rows(["pearlheart"], ["wreckcaller", "spearfisher", "ink"]),
+                           ALL_SIDES[:-1] + [NIGHT_VIEW]),
+    "drowned_drag_under": ("Drag Under", gene_rows(["drag_under"], ["surge", "capsizer"]), ALL_SIDES),
+    "drowned_chorus": ("Chorus", gene_rows(["chorus"], ["breacher", "barnacle_crust", "shellback"]), ALL_SIDES),
+}
+
+# Each species: its texture, its baby texture, and its close-ups.
+SPECIES = {
+    "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
+    "husk": (pg.HUSK_PATH, pg.HUSK_BABY_PATH, HUSK_CLOSEUPS),
+    "drowned": (pg.DROWNED_PATH, pg.DROWNED_BABY_PATH, DROWNED_CLOSEUPS),
+}
+
 
 def closeup(title, rows, views, adult_tex, baby_tex):
     scale, size = pg.SCALE, (26, 40)
@@ -88,15 +180,18 @@ def closeup(title, rows, views, adult_tex, baby_tex):
     return out
 
 
-def main():
+def main(*species):
     os.makedirs(OUT_DIR, exist_ok=True)
-    adult = pg.find_zombie_texture()
-    baby = pg.find_zombie_texture(pg.BABY_PATH)
-    for name, (title, rows, views) in CLOSEUPS.items():
-        path = os.path.join(OUT_DIR, name + ".png")
-        closeup(title, rows, views, adult, baby).save(path)
-        print(path)
+    for kind in species or SPECIES:
+        adult_path, baby_path, closeups = SPECIES[kind]
+        pg.set_mob(kind)
+        adult = pg.find_zombie_texture(adult_path)
+        baby = pg.find_zombie_texture(baby_path)
+        for file_name, (title, rows, views) in closeups.items():
+            path = os.path.join(OUT_DIR, file_name + ".png")
+            closeup(title, rows, views, adult, baby).save(path)
+            print(path)
 
 
 if __name__ == "__main__":
-    main()
+    main(*sys.argv[1:])

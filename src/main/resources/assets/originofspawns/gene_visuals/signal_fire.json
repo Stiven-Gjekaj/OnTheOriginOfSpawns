@@ -1,4 +1,12 @@
 {
-	"layers": [],
-	"model": "originofspawns:signal_fire_torch"
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/signal_fire_0.png",
+				"tint": "#2A2622"
+			}
+		}
+	],
+	"model": "originofspawns:signal_fire_pot"
 }

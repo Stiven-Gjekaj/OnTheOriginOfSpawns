@@ -65,14 +65,16 @@ Pixel plan for the Mummies.
 Pixel plan for the Caravans. Five Caravan genes are gene models.
 - Packmule: a pack and a blanket roll on the back, and straps on chest
   columns 0 and 7, rows 0 to 3.
-- Signal Fire: a torch behind the left shoulder, next to the pack.
+- Signal Fire: a smoking iron pot behind the left shoulder, next to the
+  pack, and soot on the back of the shirt (columns 0 and 1, rows 0 to 3)
+  and on the top of the left sleeve.
 - Linked: a rope loop at arm row 10, under the Tomb Guard cuff, and a rope
   end that hangs from it.
 - Nomad: a scarf round the neck, under the Tomb Guard collar, and a scarf
   end over chest columns 0 and 1. With Solar Flare, the end covers a part
   of the left ray of the sun.
 - Waterskin: a water bag on the outer side of the right thigh.
-- Sandling has the marks: a wrap on the top of the head, on rows 0 to 2 of
+- Sandling has a wrap: a wrap on the top of the head, on rows 0 to 2 of
   the sides and the back of the head, and on row 0 of the face.
 This script needs Pillow.
 """
@@ -664,28 +666,54 @@ def linked_model():
 
 
 def signal_fire():
-    # The torch is the gene model signal_fire_torch.
-    return []
+    # Soot stains on the back of the shirt and the left sleeve, next to the
+    # smoke pot. The pot is the gene model signal_fire_pot.
+    soot = Mark("#2A2622", alpha=200)
+    for col, row in ((0, 0), (1, 0), (0, 1), (0, 2), (1, 3)):
+        soot.put(body(SHIRT_BACK, col, row), 255 if row < 2 else 220)
+    soot.put(arm(BACK, 3, 0), 230).put(arm(BACK, 2, 0), 200)
+    return [soot]
 
 
 def signal_fire_model():
-    # A small torch on the back, next to the left shoulder, behind the head
-    # (the back of the head is at z 4). The stick goes past the Packmule
-    # pack (x -3 to 3). The flame glows.
+    # A small iron pot hangs on the back, behind the left shoulder, next to
+    # the Packmule pack (x -3 to 3) and under the blanket roll (to y 3).
+    # Embers glow in the pot, and a column of dark smoke rises from it,
+    # past the side of the head (the head ends at x 4). It does not look
+    # like the thin fuse of Death Throes: it is a wide pot with a thick,
+    # dark cloud.
     from PIL import Image
-    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
-    # The stick: 1x7x1 at uv (0, 0). Cloth wraps at the top.
-    paint_box(im, 0, 0, 1, 7, 1, lambda face, x, y: ("#6B4A2A" if y % 2 else "#5A3C22") if y > 1 else
-              "#3A2A1C")
-    # The flame: 1x2x1 at uv (0, 10).
-    paint_box(im, 0, 10, 1, 2, 1, lambda face, x, y: "#FFE07A" if y == 1 or face == "top" else "#FF9A2A")
+    im = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+    iron = ("#3A3634", "#2C2826", "#4A4440")
+
+    def pot(face, x, y):
+        if face == "top":
+            return None
+        if y == 0 and face != "bottom":
+            return iron[2]
+        return iron[(x + y) % 2]
+
+    # The pot: 3x3x3 at uv (0, 0), with no top. The embers: a flat 3x0x3
+    # square at uv (0, 8), a little under the rim.
+    paint_box(im, 0, 0, 3, 3, 3, pot)
+    paint_box(im, 0, 8, 3, 0, 3, lambda face, x, y: "#FFB040" if (x + y) % 2 else "#E05A1A")
+
+    def smoke(face, x, y):
+        return ("#5A5652", "#4A4642", "#6A6662")[(x + 2 * y + len(face)) % 3]
+
+    # The smoke: 1x2x1 at uv (0, 14), 2x2x2 at uv (8, 14), and 3x2x3 at
+    # uv (0, 20).
+    paint_box(im, 0, 14, 1, 2, 1, smoke)
+    paint_box(im, 8, 14, 2, 2, 2, smoke)
+    paint_box(im, 0, 20, 3, 2, 3, smoke)
     parts = [
-        {"bone": "body", "uv": [0, 0], "from": [3.2, -3, 4.5], "size": [1, 7, 1],
-         "pivot": [3.7, 4, 5], "rotation": [0, 0, 12]},
-        {"bone": "body", "uv": [0, 10], "from": [3.2, -5, 4.5], "size": [1, 2, 1],
-         "pivot": [3.7, 4, 5], "rotation": [0, 0, 12], "glow": True},
+        {"bone": "body", "uv": [0, 0], "from": [3.5, 4, 2.5], "size": [3, 3, 3]},
+        {"bone": "body", "uv": [0, 8], "from": [3.5, 4.5, 2.5], "size": [3, 0, 3], "glow": True},
+        {"bone": "body", "uv": [0, 14], "from": [4.5, 2, 3.5], "size": [1, 2, 1]},
+        {"bone": "body", "uv": [8, 14], "from": [4.5, 0, 3], "size": [2, 2, 2]},
+        {"bone": "body", "uv": [0, 20], "from": [5, -2, 3], "size": [3, 2, 3]},
     ]
-    save_model("signal_fire_torch", im, parts)
+    save_model("signal_fire_pot", im, parts)
 
 
 INDIGO = ("#4A5C8C", "#3C4C78", "#5E72A4")
@@ -816,7 +844,7 @@ MODELS = {
     "undying": "originofspawns:undying_glow",
     "packmule": "originofspawns:packmule_pack",
     "linked": "originofspawns:linked_rope",
-    "signal_fire": "originofspawns:signal_fire_torch",
+    "signal_fire": "originofspawns:signal_fire_pot",
     "nomad": "originofspawns:nomad_scarf",
     "waterskin": "originofspawns:waterskin_bag",
 }

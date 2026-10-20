@@ -1,13 +1,13 @@
-"""Make preview images of the zombie gene visuals.
+"""Make preview images of the gene visuals of the zombie or the husk.
 
-Usage: python3 tools/preview_genes.py
+Usage: python3 tools/preview_genes.py [zombie | husk]
 
-The script reads the vanilla zombie texture from the Minecraft jar in the
-Gradle cache of Loom. It reads the visual of each gene from
+The script reads the vanilla texture of the species from the Minecraft jar in
+the Gradle cache of Loom. The default species is the zombie. It reads the visual of each gene from
 assets/originofspawns/gene_visuals/, applies the layers with the region map,
 and adds the cubes of the gene model from assets/originofspawns/gene_models/.
 It writes PNG files on a white background. Git ignores build/:
-- build/previews/genes/zombie_<gene>.png: the front and the back of one gene.
+- build/previews/genes/<species>_<gene>.png: the front and the back of one gene.
 - build/previews/families/<family>.png: a plain zombie, each gene of the
   family, and one zombie with all the genes of the family. The front views
   are on top, and the back views are under them.
@@ -22,6 +22,7 @@ import glob
 import io
 import json
 import os
+import sys
 import zipfile
 
 from PIL import Image, ImageDraw, ImageFont
@@ -37,6 +38,8 @@ GENE_OUT = os.path.join(ROOT, "build/previews/genes")
 FAMILY_OUT = os.path.join(ROOT, "build/previews/families")
 ZOMBIE_PATH = "assets/minecraft/textures/entity/zombie/zombie.png"
 BABY_PATH = "assets/minecraft/textures/entity/zombie/zombie_baby.png"
+HUSK_PATH = "assets/minecraft/textures/entity/zombie/husk.png"
+HUSK_BABY_PATH = "assets/minecraft/textures/entity/zombie/husk_baby.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
 REGIONS = {"face": 1, "scalp": 2, "torso": 3, "arms": 4, "hands": 5, "legs": 6,
@@ -79,6 +82,19 @@ EXTRA = {
                ("Hordes + Lurker", ["lurker", "thickskull"], True, {}),
                ("Hordes + Cinder", ["cinder", "bloat"], True, {}),
                ("Hordes + Hush", ["hush", "rabid"], True, {})],
+}
+# The families of the husk, from design/species/husk.md.
+HUSK_FAMILIES = {
+    "scorchers": ["sunbaked", "heatshimmer", "kilnskin", "sunstroke", "mirage", "solar_flare"],
+    "dunecrawlers": ["sandswimmer", "dune_runner", "sinkhole", "scuttler", "sandblast", "duststorm"],
+    "mummies": ["wrapped", "cursetouch", "undying", "embalmed", "tomb_guard", "grave_dust"],
+    "caravans": ["packmule", "linked", "signal_fire", "sandling", "nomad", "waterskin"],
+    "parchers": ["dehydrator", "thirstbite", "desiccate", "salt_crust", "mirage_water", "dust_lung"],
+}
+
+HUSK_EXTRA = {
+    "scorchers": [("All 6 at night", [], True, {"light": 0.18}),
+                  ("All 6 baby", [], True, {"baby": True})],
 }
 NIGHT = (18, 22, 38, 255)
 
@@ -145,7 +161,7 @@ def find_zombie_texture(path=ZOMBIE_PATH):
                     return Image.open(io.BytesIO(z.read(path))).convert("RGBA")
         except zipfile.BadZipFile:
             continue
-    raise SystemExit("No Minecraft jar with the zombie texture. Run ./gradlew build first.")
+    raise SystemExit("No Minecraft jar with the texture. Run ./gradlew build first.")
 
 
 def int32(n):
@@ -461,12 +477,21 @@ def sheet(title, columns):
     return im
 
 
-def main():
+# Each species: the texture, the baby texture, the families, the extra
+# columns, and the babies sheet.
+SPECIES = {
+    "zombie": (ZOMBIE_PATH, BABY_PATH, FAMILIES, EXTRA, BABIES),
+    "husk": (HUSK_PATH, HUSK_BABY_PATH, HUSK_FAMILIES, HUSK_EXTRA, []),
+}
+
+
+def main(species="zombie"):
     os.makedirs(GENE_OUT, exist_ok=True)
     os.makedirs(FAMILY_OUT, exist_ok=True)
-    tex = find_zombie_texture()
-    baby_tex = find_zombie_texture(BABY_PATH)
-    for family, genes in FAMILIES.items():
+    adult_path, baby_path, families, extras, babies = SPECIES[species]
+    tex = find_zombie_texture(adult_path)
+    baby_tex = find_zombie_texture(baby_path)
+    for family, genes in families.items():
         ready = [g for g in genes if visual(g) is not None]
         missing = [g for g in genes if g not in ready]
         if missing:
@@ -477,23 +502,25 @@ def main():
         for gene in ready:
             baked = zombie(tex, [gene])
             columns.append((label(gene), baked, [gene], {}))
-            path = os.path.join(GENE_OUT, "zombie_" + gene + ".png")
+            path = os.path.join(GENE_OUT, species + "_" + gene + ".png")
             gene_image(label(gene), baked, [gene]).save(path)
         if len(ready) > 1:
             columns.append(("All " + str(len(ready)), zombie(tex, ready), ready, {}))
-        for name, extra, with_family, options in EXTRA.get(family, []):
+        for name, extra, with_family, options in extras.get(family, []):
             genes_here = extra + (ready if with_family else [])
             baby = options.get("baby", False)
             columns.append((name, zombie(baby_tex if baby else tex, genes_here, baby), genes_here, options))
         path = os.path.join(FAMILY_OUT, family + ".png")
         sheet(family.title(), columns).save(path)
         print(path)
+    if not babies:
+        return
     columns = [(name, zombie(baby_tex if baby else tex, genes, baby), genes, {"baby": baby})
-               for name, genes, baby in BABIES]
+               for name, genes, baby in babies]
     path = os.path.join(FAMILY_OUT, "babies.png")
     sheet("Babies", columns).save(path)
     print(path)
 
 
 if __name__ == "__main__":
-    main()
+    main(*sys.argv[1:2])

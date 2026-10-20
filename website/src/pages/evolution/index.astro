@@ -1,0 +1,200 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import Icon from "../../components/Icon.astro";
+import Status from "../../components/Status.astro";
+import GeneTips from "../../components/GeneTips.astro";
+import site from "../../data/site.json";
+import { url, label, pct } from "../../lib/site.js";
+
+const ev = site.evolution;
+const pick = (list, re) => list.filter((x) => re.test(x));
+const genesFor = (p) => site.genes.filter((g) => g.counters === p);
+---
+<Layout title="Evolution" description="How the gene pools of On the Origin of Spawns change from the causes of death.">
+  <PageHeader eyebrow="How evolution works" title="Natural selection, one kill at a time">
+    Each species has a gene pool for each biome category. The causes of death change the pool. New mobs take their genes from the pool.
+  </PageHeader>
+  <GeneTips />
+
+  <div class="page container">
+    <section>
+      <div class="section-head">
+        <h2>Gene pools</h2>
+        <p>A species is one mob type. Zombie, husk, and drowned are different species. Each species keeps one pool for each of these {ev.categories.length} biome categories.</p>
+      </div>
+      <div class="categories">
+        {ev.categories.map((c) => (
+          <div class="category">
+            <span class="mc-slot"><Icon name={c.id} /></span>
+            <span>{c.name}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Pressures</h2>
+        <p>A pressure is a cause of death, or a condition of the death. Each gene counters one pressure. When a pressure is common, the gene that counters it gets stronger.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Pressure</th><th>A zombie death counts when</th><th>Genes that it selects</th><th>State</th></tr></thead>
+          <tbody>
+            {site.pressures.map((p) => (
+              <tr>
+                <td><span class="badge pressure">{p.id}</span></td>
+                <td>{p.when}</td>
+                <td class="gene-links">
+                  {genesFor(p.id).map((g, i) => (
+                    <>{i > 0 && ", "}<a href={url(`genes/#gene-${g.id}`)} data-tip-ref={`tip-gene-${g.id}`}>{g.name}</a></>
+                  ))}
+                </td>
+                <td><Status status={p.status} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Selection, mutation, and decay</h2>
+        <p>The mod weights each death by its cause, not by its player. Thus, one player cannot control a pool alone. Data packs can change the rates of each gene.</p>
+      </div>
+      <div class="grid grid-4">
+        <div class="card">
+          <h3>Selection</h3>
+          <p class="muted">Each death raises the gene that counters its pressure by 2% of the distance to 100%.</p>
+          <code class="formula">f = f + 0.02 &times; (1 &minus; f)</code>
+          <p class="muted small">About 50 fire deaths take Cinder from 0% to about 60%.</p>
+        </div>
+        <div class="card">
+          <h3>Mutation</h3>
+          <p class="muted">Each gene has a small chance to go to a new mob, also at 0%. The default chance is {pct(0.003)}.</p>
+          <code class="formula">chance = max(f, mutation rate)</code>
+        </div>
+        <div class="card">
+          <h3>Decay</h3>
+          <p class="muted">Each Minecraft day, decay lowers each frequency by 1% of its value. When players stop a cause of death, its gene fades slowly.</p>
+          <code class="formula">f = f &times; (1 &minus; 0.01)</code>
+        </div>
+        <div class="card">
+          <h3>The 5-gene limit</h3>
+          <p class="muted">Each mob carries a maximum of 5 genes. The genes with the highest frequency stay. Thus, a species cannot have all defenses at the same time.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="simulator">
+      <div class="section-head">
+        <div class="eyebrow">Try it</div>
+        <h2>Pool simulator</h2>
+        <p>Kill zombies in a biome category, and watch the pool change. Then spawn a zombie from the pool. The simulator uses the rates of the gene files. The Beagle Notebook page reads these pools.</p>
+      </div>
+      <div class="sim">
+        <div class="card sim-controls">
+          <div class="control">
+            <div class="control-label">Biome category</div>
+            <div class="segmented" id="sim-cats" role="group" aria-label="Biome category">
+              {ev.categories.map((c) => <button class="btn sm" type="button" data-cat={c.id} aria-pressed={c.id === "temperate" ? "true" : "false"}>{c.name}</button>)}
+            </div>
+          </div>
+          <div class="control">
+            <div class="control-label">Kill 5 zombies by</div>
+            <div class="row" id="sim-pressures">
+              {site.pressures.map((p) => (
+                <button class="btn sm" type="button" data-pressure={p.id} data-tip={`${p.when}. Selects: ${genesFor(p.id).map((g) => g.name).join(", ")}`}>{label(p.id)}</button>
+              ))}
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn sm" type="button" id="sim-day">A day passes</button>
+            <button class="btn sm ghost" type="button" id="sim-reset">Reset the pool</button>
+            <span class="muted small" id="sim-deaths" aria-live="polite"></span>
+          </div>
+          <div class="pool" id="sim-pool"></div>
+        </div>
+        <div class="card spawn">
+          <h3>Spawn from the pool</h3>
+          <div class="spawn-stage"><canvas id="sim-canvas" role="img" aria-label="The zombie that spawned from the pool"></canvas></div>
+          <div class="mob-info" id="sim-result"><div class="n">No zombie yet</div><div class="g">Press the button</div></div>
+          <button class="mc-btn" type="button" id="sim-spawn">Spawn a zombie</button>
+          <p class="muted small" id="sim-log" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section grid grid-2">
+      <div class="card">
+        <h3>Genes on a mob</h3>
+        <ul class="muted">
+          <li>A mob gets its genes one time, when it first joins a world.</li>
+          <li>Each gene has a chance equal to its frequency in the pool of the biome category, or its mutation rate if that is higher.</li>
+          <li>A mob carries a maximum of 5 genes. The genes with the highest frequency stay.</li>
+          {pick(ev.babies, /Runt|start/).map((x) => <li>{x}</li>)}
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Gene marks</h3>
+        <ul class="muted">{pick(ev.visuals, /^Each gene adds|^The marks of different|^The mod does not have a texture|^Data packs define/).map((x) => <li>{x}</li>)}</ul>
+        <div class="actions"><a class="btn sm" href={url("lab/")}>Open the Gene Lab</a></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h2>Coming later</h2></div>
+      <div class="grid grid-2">
+        <div class="callout"><h4><Status status="planned" text="Milestone 2d" />Gene flow</h4><p class="muted small">{ev.pools.find((x) => /flows/.test(x))}</p></div>
+        <div class="callout"><h4><Status status="planned" text="Milestone 2d" />Extinction</h4><p class="muted small">{ev.extinction[0]}</p></div>
+        <div class="callout"><h4><Status status="planned" text="Milestone 2d" />Speed of evolution</h4><p class="muted small">{pick(ev.balance, /difficulty|gamerule/).join(" ")}</p></div>
+        <div class="callout"><h4><Status status="planned" text="Milestone 5" />Shared pools</h4><p class="muted small">{ev.multiplayer.join(" ")}</p></div>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  import "../../scripts/simulator.js";
+</script>
+
+<style>
+  .categories { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--s-3); }
+  .category {
+    display: grid; justify-items: center; gap: var(--s-2); padding: var(--s-4) var(--s-2);
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    font-weight: 600; font-size: var(--fs-sm);
+  }
+  @media (max-width: 760px) { .categories { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .gene-links a { white-space: nowrap; }
+  .formula { display: block; margin: var(--s-3) 0; padding: var(--s-2) var(--s-3); }
+  .card p + .formula { margin-top: var(--s-3); }
+
+  .sim { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr); gap: var(--s-4); align-items: start; }
+  @media (max-width: 920px) { .sim { grid-template-columns: 1fr; } }
+  .sim-controls { display: grid; gap: var(--s-4); }
+  .control { display: grid; gap: var(--s-2); }
+  .control-label { font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
+  .pool { display: grid; gap: 6px; max-height: 460px; overflow-y: auto; padding-right: 6px; border-top: 1px solid var(--border); padding-top: var(--s-3); }
+  .spawn { display: grid; gap: var(--s-3); justify-items: center; text-align: center; position: sticky; top: calc(var(--header-h) + var(--s-4)); }
+  @media (max-width: 920px) { .spawn { position: static; } }
+  .spawn h3 { justify-self: start; }
+  .spawn-stage {
+    width: 100%; display: grid; place-items: center; border-radius: var(--radius);
+    background: radial-gradient(60% 60% at 50% 40%, color-mix(in srgb, var(--accent) 10%, transparent), transparent), var(--surface-2);
+  }
+  .spawn-stage canvas { width: min(100%, 200px); aspect-ratio: 3 / 4; image-rendering: pixelated; }
+  .spawn .mob-info { width: 100%; }
+</style>
+
+<style is:global>
+  .pool-row { display: grid; grid-template-columns: 112px minmax(0, 1fr) 44px; gap: var(--s-3); align-items: center; font-size: var(--fs-sm); }
+  .pool-row .name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pool-row .val { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-muted); }
+  .pool-row .xp { height: 10px; }
+  .pool-row.top .val { color: var(--text); font-weight: 700; }
+  .pool-row.hit .xp > span { animation: hit 500ms ease; }
+  @keyframes hit { 30% { filter: brightness(1.8); } }
+</style>

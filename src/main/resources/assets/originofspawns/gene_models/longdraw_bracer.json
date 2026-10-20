@@ -1,0 +1,25 @@
+{
+	"texture": "originofspawns:textures/entity/longdraw_bracer.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				4,
+				-1
+			],
+			"size": [
+				2,
+				4,
+				2
+			],
+			"inflate": 0.3
+		}
+	]
+}

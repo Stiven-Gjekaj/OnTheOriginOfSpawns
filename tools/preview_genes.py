@@ -170,6 +170,8 @@ SKELETON_EXTRA = {
                  ("All 6 + Rattlers", ["backpedal", "fleetbone", "lightfoot"], True, {})],
     "legions": [("All 6 + Ossified", ["thickbone", "bonewall", "reassemble"], True, {}),
                 ("All 6 + Marksmen", ["longdraw", "quickdraw", "high_ground"], True, {})],
+    "hexers": [("All 6 at night", [], True, {"light": 0.18}),
+               ("All 6 + others", ["calcified", "eagle_eye", "lightfoot"], True, {})],
 }
 NIGHT = (18, 22, 38, 255)
 

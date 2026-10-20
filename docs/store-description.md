@@ -1,14 +1,15 @@
 ![On the Origin of Spawns](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/brand/banner.png)
 
-> **Alpha.** The zombie is complete: 30 genes, 5 families, 20 minor families,
-> and 10 hybrids. The other mobs, the player adaptations, and the later
-> notebook pages are the plan for version 1.0.0. Use a test world.
+> **Alpha.** The zombie, the husk, and the drowned are complete. Each one has
+> 30 genes, 5 families, 20 minor families, and 10 hybrids of its own. The
+> other mobs, the player adaptations, and the later notebook pages are the
+> plan for version 1.0.0. Use a test world.
 > The [wiki](https://stiven-gjekaj.github.io/OnTheOriginOfSpawns/) shows each
 > gene and family.
 
 > **Content warning: body horror.** Mobs change how they look as they evolve.
 > Some gene mixes show bare bone, open wounds, blood, rot, fungus, and veins on
-> the skin. A zombie can carry 5 genes, so a mix can look disturbing. Do not
+> the skin. A mob can carry 5 genes, so a mix can look disturbing. Do not
 > play this mod if body horror upsets you.
 
 # Adapt or go extinct
@@ -60,7 +61,9 @@ Each new mob gets its genes from the pool.
 ## Families
 
 The genes of a mob decide its family.
-Each species has 5 major families, such as Predators, Stalkers, and Tanks.
+Each species has 5 major families of its own. Zombies have Predators,
+Stalkers, and Tanks. Husks have Scorchers, Mummies, and Caravans. Drowned have
+Riptides, Harpooners, and Sirens.
 Each major family has 4 sub families, so each species has 20 minor families,
 each with its own name.
 A mob with all its genes in one family is a pure family, the strongest result.

@@ -78,8 +78,8 @@ Pixel plan for the Sirens. Four Siren genes are gene models.
 - Shoal has a pattern of scales on all the skin, under the marks (order
   -2).
 - Chorus: a shell earring on the right ear, the gene model chorus_earring.
-- Wreckcaller: a ship rope round the waist, with a cut end on the back of
-  the left hip, the gene model wreckcaller_rope.
+- Wreckcaller: a rusty ship's bell on a cord over the top of the chest,
+  the gene model wreckcaller_bell.
 This script needs Pillow.
 """
 import json
@@ -898,33 +898,47 @@ def chorus_model():
     save_model("chorus_earring", im, parts)
 
 
-SHIP_ROPE = ("#B49866", "#8E7448", "#D8C49A")
+BRONZE = ("#C8963E", "#A87830", "#F0C870", "#4E9A78")
+CORD = ("#D2BE8E", "#B4A070")
 
 
 def wreckcaller():
-    # The ship rope is the gene model wreckcaller_rope.
+    # The bell is the gene model wreckcaller_bell.
     return []
 
 
 def wreckcaller_model():
-    # A thick ship rope round the waist, between the Anchor chain (y 8 to 9)
-    # and the Scavenger belt (y 10 to 11), and a cut end with a frayed tuft
-    # that hangs on the back of the left hip. On the body bone, the back is
-    # at z 2, and the body ends at y 12.
+    # A small, rusty ship's bell that hangs on a cord over the top of the
+    # chest. The cord goes round the back of the neck and down to the top
+    # of the bell. The bell has a wide rim and a clapper under it. It hangs
+    # above the Pearlheart pearl (chest rows 5 to 8). On the body bone, the
+    # chest is at z -2, and the body starts at y 0.
     im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
 
-    def twist(face, x, y):
-        return SHIP_ROPE[2] if (x + y) % 3 == 0 else SHIP_ROPE[(x + y) % 2]
+    def bronze(face, x, y):
+        # Old bronze with green spots of rust.
+        if (x * 3 + y * 5) % 7 == 0:
+            return BRONZE[3]
+        return BRONZE[2] if face == "top" or y == 0 else BRONZE[(x + y) % 2]
 
-    # The rope: 8x1x4 at uv (0, 0). The end: 1x3x1 at uv (0, 8).
-    paint_box(im, 0, 0, 8, 1, 4, twist)
-    paint_box(im, 0, 8, 1, 3, 1, lambda face, x, y: SHIP_ROPE[2] if y == 2 else twist(face, x, y))
+    # The bell: 3x3x3 at uv (0, 0). The rim: 5x1x4 at uv (0, 8). The
+    # clapper: 1x1x1 at uv (16, 0). A cord: 1x2x0 at uv (16, 4). The cord
+    # on the back: 6x1x0 at uv (16, 8).
+    paint_box(im, 0, 0, 3, 3, 3, bronze)
+    paint_box(im, 0, 8, 5, 1, 4, lambda face, x, y: BRONZE[1] if face != "top" else BRONZE[2])
+    paint_box(im, 16, 0, 1, 1, 1, lambda face, x, y: "#3A3A40")
+    paint_box(im, 16, 4, 1, 2, 0, lambda face, x, y: CORD[y % 2])
+    paint_box(im, 16, 8, 6, 1, 0, lambda face, x, y: CORD[x % 2])
     parts = [
-        {"bone": "body", "uv": [0, 0], "from": [-4, 9, -2], "size": [8, 1, 4], "inflate": 0.55},
-        {"bone": "body", "uv": [0, 8], "from": [1.5, 9.5, 2.3], "size": [1, 3, 1],
-         "pivot": [2, 9.5, 2.8], "rotation": [15, 0, -10]},
+        {"bone": "body", "uv": [0, 0], "from": [-1.5, 1, -5.3], "size": [3, 3, 3]},
+        {"bone": "body", "uv": [0, 8], "from": [-2.5, 4, -5.8], "size": [5, 1, 4]},
+        {"bone": "body", "uv": [16, 0], "from": [-0.5, 5, -4.3], "size": [1, 1, 1]},
+        {"bone": "body", "uv": [16, 8], "from": [-3, 0, 2.3], "size": [6, 1, 0]},
     ]
-    save_model("wreckcaller_rope", im, parts)
+    for x, side in ((-2.5, -1), (1.5, 1)):
+        parts.append({"bone": "body", "uv": [16, 4], "from": [x, -0.2, -2.35], "size": [1, 2, 0],
+                      "pivot": [x + 0.5, 0, -2.35], "rotation": [0, 0, side * 30]})
+    save_model("wreckcaller_bell", im, parts)
 
 
 GENES = {
@@ -977,7 +991,7 @@ MODELS = {
     "drag_under": "originofspawns:drag_under_fingers",
     "fry": "originofspawns:fry_fins",
     "chorus": "originofspawns:chorus_earring",
-    "wreckcaller": "originofspawns:wreckcaller_rope",
+    "wreckcaller": "originofspawns:wreckcaller_bell",
 }
 
 

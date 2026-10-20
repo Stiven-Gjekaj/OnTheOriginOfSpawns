@@ -1,0 +1,11 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [
+		{
+			"type": "climb"
+		}
+	],
+	"mutation_rate": 0
+}

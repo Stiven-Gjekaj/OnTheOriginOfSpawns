@@ -11,6 +11,9 @@ import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.Identifier;
@@ -79,6 +82,7 @@ public final class GeneBehaviors {
 	public static void onSpawn(Mob mob, ServerLevel level, EntitySpawnReason reason) {
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
+				case GeneEffect.PickUpItems pickUp -> mob.setCanPickUpLoot(true);
 				case GeneEffect.Runt runt when mob instanceof Zombie zombie && mob.getRandom().nextFloat() < runt.chance() ->
 						makeRunt(zombie, level, runt);
 				case GeneEffect.Brood brood when reason == EntitySpawnReason.NATURAL -> spawnBrood(mob, level, brood);
@@ -183,6 +187,8 @@ public final class GeneBehaviors {
 					}
 				}
 				case GeneEffect.AttractGolems attract -> attractGolems(mob, level, attract);
+				case GeneEffect.Sidestep sidestep -> sidestep(mob, level, sidestep);
+				case GeneEffect.ThrowEffect thrown -> throwEffect(mob, level, thrown);
 				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
 				case GeneEffect.FrenziedTargeting frenzy
 						when now % Math.max(1, Math.round(frenzy.intervalSeconds() * 20.0F)) < TICK_INTERVAL
@@ -197,6 +203,71 @@ public final class GeneBehaviors {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Moves the mob to the side when a player looks at it from far away. It moves only to a safe place.
+	 */
+	public static boolean sidestep(Mob mob, ServerLevel level, GeneEffect.Sidestep sidestep) {
+		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+		long now = level.getGameTime();
+		if (state.sidestepTime() >= 0L && now - state.sidestepTime() < Math.round(sidestep.cooldownSeconds() * 20.0F)) {
+			return false;
+		}
+		for (Player player : level.players()) {
+			if (player.isSpectator() || !LurkGoal.isWatchedFromAfar(mob, player, sidestep.range())) {
+				continue;
+			}
+			// The side is at a right angle to the line from the player to the mob.
+			Vec3 toMob = mob.position().subtract(player.position()).multiply(1.0, 0.0, 1.0).normalize();
+			Vec3 side = new Vec3(-toMob.z, 0.0, toMob.x).scale(mob.getRandom().nextBoolean() ? 1.0 : -1.0);
+			for (Vec3 direction : List.of(side, side.scale(-1.0))) {
+				Vec3 target = mob.position().add(direction.scale(sidestep.distance()));
+				for (int dy = 1; dy >= -2; dy--) {
+					BlockPos feet = BlockPos.containing(target.x, mob.getY() + dy, target.z);
+					if (isSafe(mob, level, feet)) {
+						level.sendParticles(ParticleTypes.POOF, mob.getX(), mob.getY(0.5), mob.getZ(), 8, 0.3, 0.5, 0.3, 0.02);
+						mob.teleportTo(feet.getX() + 0.5, feet.getY(), feet.getZ() + 0.5);
+						mob.setAttached(ModAttachments.STATE, state.withSidestepTime(now));
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		return false;
+	}
+
+	private static boolean isSafe(Mob mob, ServerLevel level, BlockPos feet) {
+		if (!level.getBlockState(feet.below()).isFaceSturdy(level, feet.below(), Direction.UP)
+				|| !level.getFluidState(feet).isEmpty() || !level.getFluidState(feet.below()).isEmpty()) {
+			return false;
+		}
+		return level.noCollision(mob, mob.getDimensions(mob.getPose()).makeBoundingBox(
+				feet.getX() + 0.5, feet.getY(), feet.getZ() + 0.5));
+	}
+
+	/**
+	 * Throws at the target of the mob, which gives the target a status effect.
+	 */
+	public static boolean throwEffect(Mob mob, ServerLevel level, GeneEffect.ThrowEffect thrown) {
+		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+		long now = level.getGameTime();
+		LivingEntity target = mob.getTarget();
+		if (target == null || !target.isAlive() || mob.distanceTo(target) > thrown.range() || !mob.hasLineOfSight(target)
+				|| state.throwTime() >= 0L && now - state.throwTime() < Math.round(thrown.cooldownSeconds() * 20.0F)) {
+			return false;
+		}
+		target.addEffect(new MobEffectInstance(thrown.effect(), Math.round(thrown.seconds() * 20.0F), thrown.amplifier()), mob);
+		Vec3 from = mob.getEyePosition();
+		Vec3 step = target.getEyePosition().subtract(from).scale(0.1);
+		for (int i = 0; i <= 10; i++) {
+			Vec3 point = from.add(step.scale(i));
+			level.sendParticles(new BlockParticleOption(ParticleTypes.FALLING_DUST, Blocks.SAND.defaultBlockState()),
+					point.x, point.y, point.z, 2, 0.05, 0.05, 0.05, 0.0);
+		}
+		mob.setAttached(ModAttachments.STATE, state.withThrowTime(now));
+		return true;
 	}
 
 	/**

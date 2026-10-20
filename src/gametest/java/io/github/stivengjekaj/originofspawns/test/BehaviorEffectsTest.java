@@ -393,6 +393,82 @@ public class BehaviorEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void sidestepMovesAwayFromAFarWatcher(GameTestHelper helper) {
+		for (int x = 0; x < 8; x++) {
+			helper.setBlock(new BlockPos(x, 0, 1), Blocks.STONE);
+		}
+		Zombie zombie = zombieWith(helper, new BlockPos(4, 1, 1), "test_sidestep");
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		// The player stays inside the test area, so nothing blocks its view. The range in this test is short.
+		player.setPos(zombie.position().add(0.0, 0.0, 5.0));
+		player.setYRot(180.0F);
+		player.setXRot(0.0F);
+		Vec3 before = zombie.position();
+		helper.assertTrue(GeneBehaviors.sidestep(zombie, helper.getLevel(), new GeneEffect.Sidestep(4.0F, 3.0F, 10.0F)),
+				"the zombie moves");
+		helper.assertValueEqual(Math.round(Math.abs(zombie.getX() - before.x)), 3L, "the side distance");
+		helper.assertFalse(GeneBehaviors.sidestep(zombie, helper.getLevel(), new GeneEffect.Sidestep(4.0F, 3.0F, 10.0F)),
+				"a second move in the cooldown");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void climbersClimbIntoWalls(GameTestHelper helper) {
+		Zombie climber = zombieWith(helper, new BlockPos(1, 1, 1), "test_climb");
+		Zombie plain = zombieWith(helper, new BlockPos(3, 1, 3));
+		climber.horizontalCollision = true;
+		plain.horizontalCollision = true;
+		helper.assertTrue(climber.onClimbable(), "a climber at a wall");
+		helper.assertFalse(plain.onClimbable(), "a plain zombie at a wall");
+		climber.horizontalCollision = false;
+		helper.assertFalse(climber.onClimbable(), "a climber with no wall");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void throwEffectHitsTheTargetOnce(GameTestHelper helper) {
+		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_throw");
+		var pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(5, 1, 1));
+		zombie.setTarget(pig);
+		var thrown = new GeneEffect.ThrowEffect(MobEffects.BLINDNESS, 2.0F, 0, 8.0F, 8.0F);
+		helper.assertTrue(GeneBehaviors.throwEffect(zombie, helper.getLevel(), thrown), "the first throw");
+		helper.assertTrue(pig.hasEffect(MobEffects.BLINDNESS), "blindness");
+		helper.assertFalse(GeneBehaviors.throwEffect(zombie, helper.getLevel(), thrown), "a throw in the cooldown");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void pickUpItemsLetsTheMobPickUp(GameTestHelper helper) {
+		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_pick_up");
+		zombie.setCanPickUpLoot(false);
+		GeneBehaviors.onSpawn(zombie, helper.getLevel(), EntitySpawnReason.NATURAL);
+		helper.assertTrue(zombie.canPickUpLoot(), "pickup");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 40)
+	public void noConversionKeepsAHuskInWater(GameTestHelper helper) {
+		for (BlockPos pos : List.of(new BlockPos(1, 1, 1), new BlockPos(1, 2, 1), new BlockPos(4, 1, 4), new BlockPos(4, 2, 4))) {
+			helper.setBlock(pos, Blocks.WATER);
+		}
+		var salted = net.minecraft.world.entity.EntityTypes.HUSK.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
+		salted.setAttached(ModAttachments.GENES, new CarriedGenes(List.of(
+				Identifier.fromNamespaceAndPath("originofspawns_test", "test_no_conversion"))));
+		salted.setPersistenceRequired();
+		salted.snapTo(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(1, 1, 1))), 0.0F, 0.0F);
+		helper.getLevel().addFreshEntity(salted);
+		var plain = helper.spawnWithNoFreeWill(EntityTypes.HUSK, new BlockPos(4, 1, 4));
+		// A husk starts to convert after 600 ticks in water. The test starts the husks near that time.
+		salted.setInWaterTime(599);
+		plain.setInWaterTime(599);
+		helper.runAfterDelay(10, () -> {
+			helper.assertTrue(plain.isUnderWaterConverting(), "a plain husk starts to convert");
+			helper.assertFalse(salted.isUnderWaterConverting(), "a husk with no conversion");
+			helper.succeed();
+		});
+	}
+
 	private static Zombie zombieWith(GameTestHelper helper, BlockPos pos, String... genes) {
 		// The genes go on before the zombie enters the level, so it gets no genes from the pool.
 		Zombie zombie = EntityTypes.ZOMBIE.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);

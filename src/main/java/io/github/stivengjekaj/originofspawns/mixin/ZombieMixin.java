@@ -63,6 +63,16 @@ public abstract class ZombieMixin {
 		return original.call(random);
 	}
 
+	/**
+	 * A mob with the no conversion effect does not convert in water. The hook is in the tick, because the husk
+	 * has its own method for the question.
+	 */
+	@WrapOperation(method = "tick", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/monster/zombie/Zombie;convertsInWater()Z"))
+	private boolean originofspawns$noConversion(Zombie zombie, Operation<Boolean> original) {
+		return original.call(zombie) && !GeneCombat.has(zombie, GeneEffect.NoConversion.class);
+	}
+
 	@Inject(method = "getAmbientSound", at = @At("RETURN"), cancellable = true)
 	private void originofspawns$silentIdle(CallbackInfoReturnable<SoundEvent> info) {
 		GeneEffect.Silence silence = GeneBehaviors.silence((Zombie) (Object) this);

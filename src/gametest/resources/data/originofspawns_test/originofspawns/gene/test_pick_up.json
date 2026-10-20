@@ -1,0 +1,11 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [
+		{
+			"type": "pick_up_items"
+		}
+	],
+	"mutation_rate": 0
+}

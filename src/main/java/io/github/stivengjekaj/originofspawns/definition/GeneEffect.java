@@ -64,6 +64,11 @@ public sealed interface GeneEffect {
 			Map.entry("heal_multiplier", HealMultiplier.CODEC),
 			Map.entry("drain_food", DrainFood.CODEC),
 			Map.entry("death_effect", DeathEffect.CODEC),
+			Map.entry("sidestep", Sidestep.CODEC),
+			Map.entry("climb", Climb.CODEC),
+			Map.entry("throw_effect", ThrowEffect.CODEC),
+			Map.entry("pick_up_items", PickUpItems.CODEC),
+			Map.entry("no_conversion", NoConversion.CODEC),
 			Map.entry("regenerate", Regenerate.CODEC),
 			Map.entry("call_on_sight", CallOnSight.CODEC),
 			Map.entry("brood", Brood.CODEC),
@@ -869,6 +874,78 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "death_effect";
+		}
+	}
+
+	/**
+	 * When a player looks at the mob from farther than the range, the mob moves to the side, after each cooldown.
+	 */
+	record Sidestep(float range, float distance, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<Sidestep> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 12.0F).forGetter(Sidestep::range),
+				Codec.floatRange(1.0F, 16.0F).optionalFieldOf("distance", 4.0F).forGetter(Sidestep::distance),
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(Sidestep::cooldownSeconds)
+		).apply(instance, Sidestep::new));
+
+		@Override
+		public String type() {
+			return "sidestep";
+		}
+	}
+
+	/**
+	 * The mob climbs walls, like a spider.
+	 */
+	record Climb() implements GeneEffect {
+		public static final MapCodec<Climb> CODEC = MapCodec.unit(new Climb());
+
+		@Override
+		public String type() {
+			return "climb";
+		}
+	}
+
+	/**
+	 * The mob throws at its target in the range, which gives a status effect, after each cooldown.
+	 * The throw needs a clear line of sight.
+	 */
+	record ThrowEffect(Holder<MobEffect> effect, float seconds, int amplifier, float range, float cooldownSeconds)
+			implements GeneEffect {
+		public static final MapCodec<ThrowEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(ThrowEffect::effect),
+				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(ThrowEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(ThrowEffect::amplifier),
+				Codec.floatRange(1.0F, 32.0F).optionalFieldOf("range", 8.0F).forGetter(ThrowEffect::range),
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 8.0F).forGetter(ThrowEffect::cooldownSeconds)
+		).apply(instance, ThrowEffect::new));
+
+		@Override
+		public String type() {
+			return "throw_effect";
+		}
+	}
+
+	/**
+	 * The mob picks up items. A picked up item drops when the mob dies, as in vanilla.
+	 */
+	record PickUpItems() implements GeneEffect {
+		public static final MapCodec<PickUpItems> CODEC = MapCodec.unit(new PickUpItems());
+
+		@Override
+		public String type() {
+			return "pick_up_items";
+		}
+	}
+
+	/**
+	 * The mob does not convert to a different species in water, for example a husk to a zombie.
+	 */
+	record NoConversion() implements GeneEffect {
+		public static final MapCodec<NoConversion> CODEC = MapCodec.unit(new NoConversion());
+
+		@Override
+		public String type() {
+			return "no_conversion";
 		}
 	}
 }

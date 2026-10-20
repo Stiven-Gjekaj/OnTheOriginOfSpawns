@@ -1,0 +1,15 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [
+		{
+			"type": "throw_effect",
+			"effect": "minecraft:blindness",
+			"seconds": 2,
+			"range": 8,
+			"cooldown_seconds": 8
+		}
+	],
+	"mutation_rate": 0
+}

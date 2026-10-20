@@ -67,6 +67,16 @@ public abstract class LivingEntityMixin {
 		}
 	}
 
+	@Inject(method = "onClimbable", at = @At("RETURN"), cancellable = true)
+	private void originofspawns$climb(CallbackInfoReturnable<Boolean> info) {
+		LivingEntity self = (LivingEntity) (Object) this;
+		// A climber climbs while it walks into a wall, like a spider.
+		if (!info.getReturnValueZ() && self.horizontalCollision && self.hasAttached(ModAttachments.GENES)
+				&& GeneCombat.has(self, GeneEffect.Climb.class)) {
+			info.setReturnValue(true);
+		}
+	}
+
 	@Inject(method = "getExperienceReward", at = @At("RETURN"), cancellable = true)
 	private void originofspawns$leechKeepsItsXp(ServerLevel level, Entity killer, CallbackInfoReturnable<Integer> info) {
 		// A leech drops only the XP that it took, when it dies.

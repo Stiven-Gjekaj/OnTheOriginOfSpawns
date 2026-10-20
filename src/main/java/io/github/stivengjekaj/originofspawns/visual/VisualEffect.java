@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.visual;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -81,10 +82,17 @@ public sealed interface VisualEffect {
 	}
 
 	/**
-	 * Makes the pixels transparent. A model change can then show a different part there.
+	 * Makes the pixels transparent. A model change can then show a different part there. With a texture, it erases
+	 * only the pixels where the tiled texture has an alpha above 0. With no texture, it erases the whole region.
 	 */
-	record Erase() implements VisualEffect {
-		public static final MapCodec<Erase> CODEC = MapCodec.unit(new Erase());
+	record Erase(Optional<Identifier> texture) implements VisualEffect {
+		public static final MapCodec<Erase> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Identifier.CODEC.optionalFieldOf("texture").forGetter(Erase::texture)
+		).apply(instance, Erase::new));
+
+		public Erase() {
+			this(Optional.empty());
+		}
 
 		@Override
 		public String type() {

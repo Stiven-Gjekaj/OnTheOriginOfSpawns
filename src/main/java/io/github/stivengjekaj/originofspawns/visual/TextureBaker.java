@@ -85,7 +85,8 @@ public final class TextureBaker {
 			case VisualEffect.Desaturate desaturate -> desaturate(color, desaturate.amount(), desaturate.darken());
 			case VisualEffect.Spots spots -> spots(color, spots, x, y, seed);
 			case VisualEffect.Pattern pattern -> pattern(color, patterns.apply(pattern.texture()), pattern.tint(), x, y);
-			case VisualEffect.Erase erase -> 0;
+			case VisualEffect.Erase erase -> erase.texture().isEmpty() ? 0
+					: masked(patterns.apply(erase.texture().get()), x, y) ? 0 : color;
 		};
 	}
 
@@ -118,6 +119,13 @@ public final class TextureBaker {
 				(int) Mth.lerp(strength, ARGB.red(color), ARGB.red(tint) * shade),
 				(int) Mth.lerp(strength, ARGB.green(color), ARGB.green(tint) * shade),
 				(int) Mth.lerp(strength, ARGB.blue(color), ARGB.blue(tint) * shade));
+	}
+
+	/**
+	 * Returns true if the tiled mask has an alpha above 0 at the pixel. A missing mask covers nothing.
+	 */
+	private static boolean masked(Image mask, int x, int y) {
+		return mask != null && ARGB.alpha(mask.get(x % mask.width(), y % mask.height())) > 0;
 	}
 
 	private static int hash(int x, int y, int seed) {

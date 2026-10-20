@@ -75,6 +75,23 @@ public class TextureBakerTest {
 	}
 
 	@GameTest
+	public void eraseWithAMaskErasesOnlyTheMaskPixels(GameTestHelper helper) {
+		Image texture = texture();
+		Identifier holes = Identifier.fromNamespaceAndPath("originofspawns_test", "holes");
+		// The second mask pixel is white but has no alpha, so it erases nothing.
+		Image mask = new Image(2, 1, new int[] {ARGB.color(255, 0, 0, 0), ARGB.color(0, 255, 255, 255)});
+		VisualEffect erase = VisualEffect.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(
+				"{\"type\": \"erase\", \"texture\": \"originofspawns_test:holes\"}")).getOrThrow();
+		TextureBaker.bake(texture, regionMap(), List.of(new VisualLayer(List.of(), List.of(), erase)), 0,
+				id -> id.equals(holes) ? mask : null);
+
+		helper.assertValueEqual(texture.get(0, 0), 0, "a pixel under the mask is erased");
+		helper.assertValueEqual(texture.get(1, 0), BLUE, "a pixel with no mask alpha stays");
+		helper.assertValueEqual(texture.get(2, 0), 0, "the mask tiles");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void spotsAreTheSameForTheSameSeed(GameTestHelper helper) {
 		VisualLayer spots = new VisualLayer(List.of(), List.of(),
 				new VisualEffect.Spots(List.of(0x110000, 0x880000), 0.5F));

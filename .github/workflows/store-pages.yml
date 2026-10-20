@@ -14,14 +14,18 @@ jobs:
     env:
       PROJECT: tvKIdALe
       API: https://api.modrinth.com/v2
-      TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+      RAW_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
       AGENT: Stiven-Gjekaj/OnTheOriginOfSpawns (store-pages workflow)
     steps:
       - name: checkout repository
         uses: actions/checkout@v7
       - name: clean the token
         # The stored token can end with a space or a new line, which the API refuses.
-        run: echo "TOKEN=$(printf '%s' "$TOKEN" | tr -d '[:space:]')" >> "$GITHUB_ENV"
+        run: |
+          token=$(printf '%s' "$RAW_TOKEN" | tr -d '[:space:]')
+          echo "::add-mask::$token"
+          echo "The token has ${#token} characters."
+          echo "TOKEN=$token" >> "$GITHUB_ENV"
       - name: set the description
         run: |
           jq -n --rawfile body docs/store-description.md '{body: $body}' > body.json

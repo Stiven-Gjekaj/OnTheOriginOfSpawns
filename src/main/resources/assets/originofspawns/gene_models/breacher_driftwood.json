@@ -1,0 +1,61 @@
+{
+	"texture": "originofspawns:textures/entity/breacher_driftwood.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				1,
+				3,
+				0
+			],
+			"size": [
+				2,
+				2,
+				10
+			],
+			"pivot": [
+				2,
+				4,
+				1
+			],
+			"rotation": [
+				50,
+				25,
+				0
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				14
+			],
+			"from": [
+				-3,
+				8,
+				0
+			],
+			"size": [
+				1,
+				1,
+				7
+			],
+			"pivot": [
+				-2.5,
+				8.5,
+				1
+			],
+			"rotation": [
+				-10,
+				-40,
+				0
+			]
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/capsizer_0.png",
+				"tint": "#22403A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/capsizer_1.png",
+				"tint": "#86CCA8"
+			}
+		}
+	]
+}

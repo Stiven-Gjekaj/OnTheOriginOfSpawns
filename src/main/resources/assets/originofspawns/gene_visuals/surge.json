@@ -1,0 +1,18 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/surge_0.png",
+				"tint": "#E4F6F2"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/surge_1.png",
+				"tint": "#E4F6F2"
+			}
+		}
+	]
+}

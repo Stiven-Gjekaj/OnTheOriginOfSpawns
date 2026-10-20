@@ -1,0 +1,18 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/gills_0.png",
+				"tint": "#4A0E18"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/gills_1.png",
+				"tint": "#C86478"
+			}
+		}
+	]
+}

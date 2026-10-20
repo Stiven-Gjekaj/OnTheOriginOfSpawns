@@ -1,0 +1,95 @@
+{
+	"texture": "originofspawns:textures/entity/torrent_fins.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				5,
+				2.25
+			],
+			"size": [
+				0,
+				5,
+				4
+			]
+		},
+		{
+			"bone": "right_leg",
+			"uv": [
+				10,
+				0
+			],
+			"from": [
+				-2.3,
+				8,
+				-1
+			],
+			"size": [
+				0,
+				3,
+				3
+			],
+			"pivot": [
+				-2.3,
+				8,
+				0.5
+			],
+			"rotation": [
+				0,
+				0,
+				20
+			]
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				5,
+				2.25
+			],
+			"size": [
+				0,
+				5,
+				4
+			]
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				10,
+				0
+			],
+			"from": [
+				2.3,
+				8,
+				-1
+			],
+			"size": [
+				0,
+				3,
+				3
+			],
+			"pivot": [
+				2.3,
+				8,
+				0.5
+			],
+			"rotation": [
+				0,
+				0,
+				-20
+			]
+		}
+	]
+}

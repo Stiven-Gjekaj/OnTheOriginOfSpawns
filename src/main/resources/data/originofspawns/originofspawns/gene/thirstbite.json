@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:in_water",
+	"family": "originofspawns:husk/parcher",
+	"gains": [
+		{
+			"type": "drain_food",
+			"amount": 1,
+			"heal": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "water_damage",
+			"amount": 1,
+			"interval": 60
+		}
+	]
+}

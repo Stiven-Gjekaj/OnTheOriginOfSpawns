@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:husk/parcher",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:hunger",
+			"radius": 4,
+			"interval_seconds": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "glowing"
+		}
+	]
+}

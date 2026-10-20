@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:in_water",
+	"family": "originofspawns:husk/parcher",
+	"sub_family": "originofspawns:husk/mummy",
+	"gains": [
+		{
+			"type": "no_conversion"
+		}
+	],
+	"downsides": [
+		{
+			"type": "speed_when",
+			"when": "in_water",
+			"multiplier": 0.5
+		}
+	]
+}

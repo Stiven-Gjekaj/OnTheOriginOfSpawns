@@ -407,14 +407,15 @@ public sealed interface GeneEffect {
 	/**
 	 * When the mob is hurt, all mobs of the same species in the radius attack the attacker.
 	 */
-	record CallOnHurt(float radius, boolean smoke) implements GeneEffect {
+	record CallOnHurt(float radius, boolean smoke, float cooldownSeconds) implements GeneEffect {
 		public static final MapCodec<CallOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.0F, 64.0F).fieldOf("radius").forGetter(CallOnHurt::radius),
-				Codec.BOOL.optionalFieldOf("smoke", false).forGetter(CallOnHurt::smoke)
+				Codec.BOOL.optionalFieldOf("smoke", false).forGetter(CallOnHurt::smoke),
+				Codec.floatRange(0.0F, 3600.0F).optionalFieldOf("cooldown_seconds", 0.0F).forGetter(CallOnHurt::cooldownSeconds)
 		).apply(instance, CallOnHurt::new));
 
 		public CallOnHurt(float radius) {
-			this(radius, false);
+			this(radius, false, 0.0F);
 		}
 
 		@Override

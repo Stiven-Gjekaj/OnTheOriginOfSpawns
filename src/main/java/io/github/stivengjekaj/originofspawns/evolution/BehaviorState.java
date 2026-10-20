@@ -15,35 +15,36 @@ package io.github.stivengjekaj.originofspawns.evolution;
  * @param lureNearTime the last game time when a player was near the lure, or -1
  * @param lureArmed true when the next hit of the mob gets the lure damage
  * @param hurtEffectTime the game time of the last effect on hurt, or -1
+ * @param hurtCallTime the game time of the last call on hurt, or -1
  */
 public record BehaviorState(long callTime, long stunUntil, int riseTicks, long sidestepTime, long throwTime,
 		int dragTarget, long dragUntil, int boatId, int boatHits, long lureNearTime, boolean lureArmed,
-		long hurtEffectTime) {
-	public static final BehaviorState NONE = new BehaviorState(-1L, -1L, 0, -1L, -1L, -1, -1L, -1, 0, -1L, false, -1L);
+		long hurtEffectTime, long hurtCallTime) {
+	public static final BehaviorState NONE = new BehaviorState(-1L, -1L, 0, -1L, -1L, -1, -1L, -1, 0, -1L, false, -1L, -1L);
 
 	public BehaviorState withCallTime(long time) {
 		return new BehaviorState(time, stunUntil, riseTicks, sidestepTime, throwTime, dragTarget, dragUntil, boatId,
-				boatHits, lureNearTime, lureArmed, hurtEffectTime);
+				boatHits, lureNearTime, lureArmed, hurtEffectTime, hurtCallTime);
 	}
 
 	public BehaviorState withStunUntil(long time) {
 		return new BehaviorState(callTime, time, riseTicks, sidestepTime, throwTime, dragTarget, dragUntil, boatId,
-				boatHits, lureNearTime, lureArmed, hurtEffectTime);
+				boatHits, lureNearTime, lureArmed, hurtEffectTime, hurtCallTime);
 	}
 
 	public BehaviorState withRiseTicks(int ticks) {
 		return new BehaviorState(callTime, stunUntil, ticks, sidestepTime, throwTime, dragTarget, dragUntil, boatId,
-				boatHits, lureNearTime, lureArmed, hurtEffectTime);
+				boatHits, lureNearTime, lureArmed, hurtEffectTime, hurtCallTime);
 	}
 
 	public BehaviorState withSidestepTime(long time) {
 		return new BehaviorState(callTime, stunUntil, riseTicks, time, throwTime, dragTarget, dragUntil, boatId,
-				boatHits, lureNearTime, lureArmed, hurtEffectTime);
+				boatHits, lureNearTime, lureArmed, hurtEffectTime, hurtCallTime);
 	}
 
 	public BehaviorState withThrowTime(long time) {
 		return new BehaviorState(callTime, stunUntil, riseTicks, sidestepTime, time, dragTarget, dragUntil, boatId,
-				boatHits, lureNearTime, lureArmed, hurtEffectTime);
+				boatHits, lureNearTime, lureArmed, hurtEffectTime, hurtCallTime);
 	}
 
 	/**
@@ -51,21 +52,26 @@ public record BehaviorState(long callTime, long stunUntil, int riseTicks, long s
 	 */
 	public BehaviorState withDrag(int target, long until) {
 		return new BehaviorState(callTime, stunUntil, riseTicks, sidestepTime, throwTime, target, until, boatId,
-				boatHits, lureNearTime, lureArmed, hurtEffectTime);
+				boatHits, lureNearTime, lureArmed, hurtEffectTime, hurtCallTime);
 	}
 
 	public BehaviorState withBoatHits(int boat, int hits) {
 		return new BehaviorState(callTime, stunUntil, riseTicks, sidestepTime, throwTime, dragTarget, dragUntil, boat,
-				hits, lureNearTime, lureArmed, hurtEffectTime);
+				hits, lureNearTime, lureArmed, hurtEffectTime, hurtCallTime);
 	}
 
 	public BehaviorState withLure(long nearTime, boolean armed) {
 		return new BehaviorState(callTime, stunUntil, riseTicks, sidestepTime, throwTime, dragTarget, dragUntil, boatId,
-				boatHits, nearTime, armed, hurtEffectTime);
+				boatHits, nearTime, armed, hurtEffectTime, hurtCallTime);
 	}
 
 	public BehaviorState withHurtEffectTime(long time) {
 		return new BehaviorState(callTime, stunUntil, riseTicks, sidestepTime, throwTime, dragTarget, dragUntil, boatId,
-				boatHits, lureNearTime, lureArmed, time);
+				boatHits, lureNearTime, lureArmed, time, hurtCallTime);
+	}
+
+	public BehaviorState withHurtCallTime(long time) {
+		return new BehaviorState(callTime, stunUntil, riseTicks, sidestepTime, throwTime, dragTarget, dragUntil, boatId,
+				boatHits, lureNearTime, lureArmed, hurtEffectTime, time);
 	}
 }

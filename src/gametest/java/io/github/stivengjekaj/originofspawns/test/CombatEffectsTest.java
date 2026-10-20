@@ -120,6 +120,19 @@ public class CombatEffectsTest {
 	}
 
 	@GameTest
+	public void callOnHurtWaitsForItsCooldown(GameTestHelper helper) {
+		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_call_cooldown");
+		Zombie ally = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(4, 1, 4));
+		Player first = helper.makeMockPlayer(GameType.SURVIVAL);
+		Player second = helper.makeMockPlayer(GameType.SURVIVAL);
+		GeneCombat.onHurt(zombie, helper.getLevel().damageSources().playerAttack(first));
+		helper.assertTrue(ally.getTarget() == first, "the first call");
+		GeneCombat.onHurt(zombie, helper.getLevel().damageSources().playerAttack(second));
+		helper.assertTrue(ally.getTarget() == first, "no second call in the cooldown");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void graveCallStopsAtItsMaximum(GameTestHelper helper) {
 		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_grave");
 		Player player = helper.makeMockPlayer(GameType.SURVIVAL);

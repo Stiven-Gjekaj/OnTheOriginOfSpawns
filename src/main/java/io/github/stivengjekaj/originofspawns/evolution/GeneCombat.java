@@ -219,7 +219,7 @@ public final class GeneCombat {
 		}
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
-				case GeneEffect.CallOnHurt call -> {
+				case GeneEffect.CallOnHurt call when callReady(mob, level, call) -> {
 					if (call.smoke()) {
 						// A column of smoke that players can see from far away.
 						level.sendParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, mob.getX(), mob.getY() + 2.0, mob.getZ(),
@@ -239,6 +239,19 @@ public final class GeneCombat {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns true if the call on hurt of the mob is out of its cooldown, and starts the next cooldown.
+	 */
+	private static boolean callReady(Mob mob, ServerLevel level, GeneEffect.CallOnHurt call) {
+		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+		long now = level.getGameTime();
+		if (state.hurtCallTime() >= 0L && now - state.hurtCallTime() < Math.round(call.cooldownSeconds() * 20.0F)) {
+			return false;
+		}
+		mob.setAttached(ModAttachments.STATE, state.withHurtCallTime(now));
+		return true;
 	}
 
 	/**

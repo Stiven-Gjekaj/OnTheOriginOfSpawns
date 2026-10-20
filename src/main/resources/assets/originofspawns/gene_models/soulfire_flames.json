@@ -1,0 +1,151 @@
+{
+	"texture": "originofspawns:textures/entity/soulfire_flames.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				-4,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				-2,
+				-4,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2,
+				-5,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				-2,
+				-6,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				2,
+				-4,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				1,
+				-4,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				1,
+				-5,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				1,
+				-6,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		}
+	]
+}

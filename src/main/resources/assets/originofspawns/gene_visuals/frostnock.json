@@ -1,0 +1,38 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"materials": [
+				"bone"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/frostnock_0.png",
+				"tint": "#9CC8F0"
+			},
+			"order": -1
+		},
+		{
+			"materials": [
+				"bone"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/frostnock_1.png",
+				"tint": "#E8F6FF"
+			},
+			"order": -1
+		},
+		{
+			"materials": [
+				"bone"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/frostnock_2.png",
+				"tint": "#5A8CC0"
+			},
+			"order": -1
+		}
+	]
+}

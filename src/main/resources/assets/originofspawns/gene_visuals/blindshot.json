@@ -1,0 +1,33 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blindshot_0.png",
+				"tint": "#4E4A58"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blindshot_1.png",
+				"tint": "#A4A0B0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blindshot_2.png",
+				"tint": "#2E2A36"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blindshot_3.png",
+				"tint": "#6E6A7A"
+			}
+		}
+	]
+}

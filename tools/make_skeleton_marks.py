@@ -78,6 +78,21 @@ Pixel plan for the Legions. Four Legion genes are gene models.
   and 5), and stripes down the jaw (y 14 and 15).
 - Spider Rider: spider silk round the knees, the gene model
   spider_rider_silk. The spider comes from the game.
+
+Pixel plan for the Hexers. Two Hexer genes are gene models that glow.
+- Venomtip has green stains on the hands (arm rows 10 and 11, and the
+  bottom of the arm), with drips up to row 8.
+- Frostnock has a frost-blue tint on all the bone, under the marks (order
+  -1).
+- Witherhex has black tips: arm and leg rows 10 and 11, and the bottom of
+  each limb, under the marks (order -1).
+- Blindshot has dark smoke in the eye sockets: face rows 10 to 13 at the
+  sockets. It shares the socket pixels with Eagle Eye and Soulfire.
+- Soulfire has blue flames in the eye sockets (rows 10 to 12), and the
+  gene model soulfire_flames makes them glow.
+- Hexmark has violet runes on the back of the head (x 25 to 29, y 10 to
+  14) and on the outer faces of the upper arms (rows 1 to 4), and the gene
+  model hexmark_runes makes them glow.
 This script needs Pillow.
 """
 import json
@@ -764,6 +779,170 @@ def spider_rider_model():
     save_model("spider_rider_silk", im, parts)
 
 
+VENOM = ("#6FB82E", "#2E6A1C", "#A8E060")
+
+
+def venomtip():
+    # Green poison stains on the fingers: the hands (arm rows 10 and 11) and
+    # the bottom of each arm are stained, and drips run up from them to row
+    # 8 on the front and the outer faces. The stain goes over the Witherhex
+    # black.
+    stain = Mark(VENOM[0])
+    dark = Mark(VENOM[1])
+    wet = Mark(VENOM[2])
+    for face in SIDES:
+        for col in (0, 1):
+            (dark if (col + face // 2) % 2 else stain).put(arm(face, col, 11))
+        stain.put(arm(face, face // 2 % 2, 10), 235)
+        dark.put(arm(face, 1 - face // 2 % 2, 10), 220)
+    for face, col, top in ((FRONT, 0, 8), (FRONT, 1, 9), (OUTER, 1, 9), (BACK, 0, 9)):
+        wet.put(arm(face, col, top), 230)
+        for row in range(top + 1, 10):
+            stain.put(arm(face, col, row))
+    for x in (44, 45):
+        for y in (16, 17):
+            (dark if (x + y) % 2 else stain).put((x, y))
+    return [stain, dark, wet]
+
+
+FROST = ("#9CC8F0", "#E8F6FF", "#5A8CC0")
+
+
+def frostnock():
+    # A frost-blue tint on all the bone, with white frost crystals and a few
+    # deeper blue cracks. It goes under the marks of other genes (order -1),
+    # as the Calcified crust does.
+    tint = Mark(FROST[0], alpha=120, order=-1, materials=["bone"], size=16).fill()
+    rime = Mark(FROST[1], alpha=200, order=-1, materials=["bone"], size=16)
+    deep = Mark(FROST[2], alpha=150, order=-1, materials=["bone"], size=16)
+    for y in range(16):
+        for x in range(16):
+            n = noise100(x, y, 151)
+            if n < 12:
+                rime.put((x, y))
+            elif n > 94:
+                deep.put((x, y))
+    return [tint, rime, deep]
+
+
+def witherhex():
+    # The tips of the bones are black, as if the Wither burns them: the
+    # hands and the feet (rows 10 and 11 and the bottom of each limb) are
+    # black, and row 9 has dark gray specks where the black ends. The black
+    # goes under the marks of other genes (order -1), so the Venomtip stains
+    # and the Lightfoot rags go on top.
+    black = Mark("#1C1A1A", order=-1)
+    ash = Mark("#4A4444", order=-1)
+    for at in (arm, leg):
+        for face in SIDES:
+            for col in (0, 1):
+                black.put(at(face, col, 11))
+                black.put(at(face, col, 10), 240 if (col + face) % 4 else 255)
+            ash.put(at(face, face // 2 % 2, 9), 230)
+    for u, v in (ARM, LEG):
+        for x in (u + 4, u + 5):
+            for y in (v, v + 1):
+                black.put((x, y))
+    return [black, ash]
+
+
+def blindshot():
+    # Dark smoke in the eye sockets: a dark gray cloud round each socket
+    # (rows 11 and 13), a pale swirl in the outer half of the socket, and a
+    # thin wisp that rises to row 10. The smoke is gray and dull, so it does
+    # not look like the Eagle Eye ring or the Soulfire flames.
+    cloud = Mark("#4E4A58", alpha=220)
+    swirl = Mark("#A4A0B0")
+    murk = Mark("#2E2A36")
+    wisp = Mark("#6E6A7A", alpha=170)
+    for outer, inner in ((9, 10), (14, 13)):
+        swirl.put((outer, 12))
+        murk.put((inner, 12))
+        for x in (outer, inner):
+            cloud.put((x, 11)).put((x, 13), 200)
+        wisp.put((inner, 10))
+    return [cloud, swirl, murk, wisp]
+
+
+SOUL = ("#3CE0F0", "#C8FAFF", "#1E78B4")
+# The pixels of the soul flames on the face, and their colors: a bright
+# core in each socket, a flame that rises from the inner side of the socket,
+# and a dark blue tip.
+SOUL_PIXELS = (((9, 12), 0), ((10, 12), 1), ((10, 11), 0), ((10, 10), 2),
+               ((14, 12), 0), ((13, 12), 1), ((13, 11), 0), ((13, 10), 2))
+
+
+def soulfire():
+    # The flames are on the texture, so they show in the day. The gene model
+    # soulfire_flames makes them glow.
+    marks = [Mark(color) for color in SOUL]
+    for p, color in SOUL_PIXELS:
+        marks[color].put(p)
+    return marks
+
+
+def glow_texture(colors):
+    # One square of each color, at uv (4 * n, 0), as a face 1x1x0 and, at uv
+    # (4 * n, 4), as a side 0x1x1.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+    for n, color in enumerate(colors):
+        paint_box(im, 4 * n, 0, 1, 1, 0, lambda face, x, y, c=color: c)
+        paint_box(im, 4 * n, 4, 0, 1, 1, lambda face, x, y, c=color: c)
+    return im
+
+
+def soulfire_model():
+    # A square that glows on each flame pixel, on the front of the head (z
+    # -4), just in front of the face. Face pixel (x, y) is at x - 12, y - 16.
+    parts = [{"bone": "head", "uv": [4 * color, 0], "from": [x - 12, y - 16, -4.05], "size": [1, 1, 0],
+              "glow": True} for (x, y), color in SOUL_PIXELS]
+    save_model("soulfire_flames", glow_texture(SOUL), parts)
+
+
+HEX = ("#B060F0", "#E0B8FF")
+# The runes of Hexmark. On the back of the head: an arrow rune (x 25 to 27,
+# y 10 to 14) with a bright core where its arms meet, and a hook rune (x 28
+# and 29, y 12 to 14). On the outer face of each upper arm: a step rune,
+# rows 1 to 4. The runes keep clear of the Hollow Bones holes.
+HEX_SKULL = ((26, 10), (25, 11), (26, 11), (27, 11), (26, 12), (26, 13), (26, 14),
+             (29, 12), (28, 13), (29, 14))
+HEX_CORE = (26, 11)
+HEX_ARM = ((1, 1), (1, 2), (0, 3), (0, 4))
+
+
+def hexmark():
+    # Violet runes that glow, on the back of the skull and on the upper
+    # arms. They are on the texture, so they show in the day, and the gene
+    # model hexmark_runes makes them glow. They are bright violet lines, not
+    # dark cuts as the Holy Ward runes are, and they keep off the face.
+    rune = Mark(HEX[0])
+    core = Mark(HEX[1])
+    for p in HEX_SKULL:
+        (core if p == HEX_CORE else rune).put(p)
+    for col, row in HEX_ARM:
+        rune.put(arm(OUTER, col, row))
+    return [rune, core]
+
+
+def hexmark_model():
+    # A square that glows on each rune pixel. The back of the head is at z
+    # 4. Seen from the back, the texture runs from x 4 to x -4, so back face
+    # pixel (x, y) is at 27 - x, y - 16. The outer face of the right arm is
+    # at x -1, and of the left arm at x 1. Arm row r is at y r - 2, and
+    # column c of the outer face is at z -c.
+    parts = []
+    for x, y in HEX_SKULL:
+        color = 1 if (x, y) == HEX_CORE else 0
+        parts.append({"bone": "head", "uv": [4 * color, 0], "from": [27 - x, y - 16, 4.05],
+                      "size": [1, 1, 0], "glow": True})
+    for col, row in HEX_ARM:
+        parts.append({"bone": "right_arm", "uv": [0, 4], "from": [-1.05, row - 2, -col],
+                      "size": [0, 1, 1], "glow": True})
+        parts.append({"bone": "left_arm", "uv": [0, 4], "from": [1.05, row - 2, -col],
+                      "size": [0, 1, 1], "glow": True})
+    save_model("hexmark_runes", glow_texture(HEX), parts)
+
+
 GENES = {
     "eagle_eye": eagle_eye,
     "deadeye": deadeye,
@@ -789,6 +968,12 @@ GENES = {
     "muster": muster,
     "warcry": warcry,
     "spider_rider": spider_rider,
+    "venomtip": venomtip,
+    "frostnock": frostnock,
+    "witherhex": witherhex,
+    "blindshot": blindshot,
+    "soulfire": soulfire,
+    "hexmark": hexmark,
 }
 
 MODELS = {
@@ -804,6 +989,8 @@ MODELS = {
     "bugler": "originofspawns:bugler_horn",
     "phalanx": "originofspawns:phalanx_straps",
     "spider_rider": "originofspawns:spider_rider_silk",
+    "soulfire": "originofspawns:soulfire_flames",
+    "hexmark": "originofspawns:hexmark_runes",
 }
 
 
@@ -821,6 +1008,8 @@ def main():
     bugler_model()
     phalanx_model()
     spider_rider_model()
+    soulfire_model()
+    hexmark_model()
     for gene, make in GENES.items():
         marks = make()
         write(gene, marks, MODELS, REGION_MAP)

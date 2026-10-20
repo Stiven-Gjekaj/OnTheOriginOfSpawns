@@ -1,0 +1,27 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/soulfire_0.png",
+				"tint": "#3CE0F0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/soulfire_1.png",
+				"tint": "#C8FAFF"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/soulfire_2.png",
+				"tint": "#1E78B4"
+			}
+		}
+	],
+	"model": "originofspawns:soulfire_flames"
+}

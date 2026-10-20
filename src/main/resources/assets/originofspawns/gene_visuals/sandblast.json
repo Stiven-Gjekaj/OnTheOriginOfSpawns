@@ -1,0 +1,25 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sandblast_0.png",
+				"tint": "#E0C88E"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sandblast_1.png",
+				"tint": "#A08552"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sandblast_2.png",
+				"tint": "#C4A66C"
+			}
+		}
+	]
+}

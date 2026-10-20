@@ -1,0 +1,18 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/scuttler_0.png",
+				"tint": "#E0C88E"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/scuttler_1.png",
+				"tint": "#A08552"
+			}
+		}
+	]
+}

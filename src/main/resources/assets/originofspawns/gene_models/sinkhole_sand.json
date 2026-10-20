@@ -1,0 +1,109 @@
+{
+	"texture": "originofspawns:textures/entity/sinkhole_sand.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				10,
+				-0.5
+			],
+			"size": [
+				1,
+				4,
+				1
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-1.5,
+				15,
+				-0.5
+			],
+			"size": [
+				1,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-0.5,
+				17,
+				0.5
+			],
+			"size": [
+				1,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				10,
+				-0.5
+			],
+			"size": [
+				1,
+				4,
+				1
+			]
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				0.5,
+				15,
+				-0.5
+			],
+			"size": [
+				1,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-0.5,
+				17,
+				0.5
+			],
+			"size": [
+				1,
+				1,
+				1
+			]
+		}
+	]
+}

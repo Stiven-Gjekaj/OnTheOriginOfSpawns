@@ -1,0 +1,18 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sandswimmer_0.png",
+				"tint": "#E0C88E"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sandswimmer_1.png",
+				"tint": "#C4A66C"
+			}
+		}
+	]
+}

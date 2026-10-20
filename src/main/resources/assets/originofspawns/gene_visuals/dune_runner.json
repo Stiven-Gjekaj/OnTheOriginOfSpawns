@@ -1,0 +1,18 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dune_runner_0.png",
+				"tint": "#D6CBB0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dune_runner_1.png",
+				"tint": "#5E5038"
+			}
+		}
+	]
+}

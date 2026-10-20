@@ -1,0 +1,12 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sinkhole_0.png",
+				"tint": "#C4A66C"
+			}
+		}
+	],
+	"model": "originofspawns:sinkhole_sand"
+}

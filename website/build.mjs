@@ -179,7 +179,6 @@ const lang = readJson(path.join(ASSETS, "lang/en_us.json"));
 const t = (key, fallback) => lang[key] ?? fallback ?? key;
 const short = (id) => id.split(/[:/]/).pop();
 
-const zombieMd = sections(read("design/species/zombie.md"));
 const designMd = sections(read("design/DESIGN.md"));
 const roadmapMd = sections(read("design/ROADMAP.md"));
 const readme = read("README.md");
@@ -223,80 +222,13 @@ for (const s of roadmapMd) {
 }
 const milestoneOf = (key) => roadmap.find((r) => r.key === key);
 
-// Families: the JSON files, the names, and the text of zombie.md.
-const familyOrder = ["predator", "stalker", "tank", "horde", "blight"];
-const familyJson = Object.fromEntries(jsonDir(path.join(DATA, "family/zombie")).map((f) => [f.id, f.json]));
-const families = familyOrder.filter((id) => familyJson[id]).map((id) => {
-  const name = t(`family.${NS}.zombie.${id}`);
-  const sec = section(zombieMd, name);
-  const tierRows = sec ? tables(sec.lines)[0] : [];
-  return {
-    id,
-    name,
-    summary: sec ? paragraphs(sec.lines)[0] : "",
-    tiers: [1, 2, 3].map((n) => {
-      const row = tierRows.find((r) => r.Tier === `Tier ${n}`) || {};
-      const data = familyJson[id].tiers[n - 1];
-      return { buff: row.Buff || "", debuff: row.Debuff || "", buffs: data.buffs, debuffs: data.debuffs };
-    }),
-  };
-});
-for (const id of Object.keys(familyJson)) {
-  if (!familyOrder.includes(id)) throw new Error(`family ${id} is not in the order list of build.mjs`);
-}
-
-const styleTable = (title) => tables(section(zombieMd, title).lines)[0];
-const minorStyles = styleTable("Minor families");
-const minors = [];
-for (const major of familyOrder) {
-  for (const sub of familyOrder) {
-    if (major === sub) continue;
-    const name = t(`family.${NS}.zombie.${major}.${sub}`);
-    const row = minorStyles.find((r) => r["Minor family"] === name) || {};
-    minors.push({ major, sub, name, style: row["Play style"] || "" });
-  }
-}
-const hybridStyles = styleTable("Hybrids");
-const hybrids = [];
-for (let i = 0; i < familyOrder.length; i++) {
-  for (let j = i + 1; j < familyOrder.length; j++) {
-    // The language key puts the first family by id first.
-    const [a, b] = [familyOrder[i], familyOrder[j]].sort();
-    const name = t(`family.${NS}.zombie.${a}.and.${b}`);
-    const row = hybridStyles.find((r) => r.Hybrid === name) || {};
-    hybrids.push({ a: familyOrder[i], b: familyOrder[j], name, style: row["Play style"] || "" });
-  }
-}
-const resultRules = tables(section(designMd, "Families").lines)
-  .find((tb) => tb.head[0] === "Points of the genes")
-  .map((r) => ({ points: r["Points of the genes"], result: r.Result }));
-const powerOrder = (bullets(section(designMd, "Families").lines)
-  .map((b) => b.text).find((x) => /order of power/.test(x)) || "")
-  .split(/\s*\d+\.\s+/).slice(1).map((x) => x.replace(/\.$/, ""));
-
-// Pressures: the JSON files and the table in zombie.md.
-const pressureRows = tables(section(zombieMd, "Pressures").lines)[0];
-const pressures = jsonDir(path.join(DATA, "pressure")).map(({ id, json }) => {
-  const row = pressureRows.find((r) => r.Pressure === "`" + id + "`") || {};
-  return {
-    id,
-    damageTypes: json.damage_types || null,
-    conditions: json.conditions || [],
-    when: row["A zombie death counts when"] || "",
-    status: row.State === "In the mod" ? "released" : "development",
-  };
-});
-
-// Genes: the JSON files, the names, the text of zombie.md, and the visuals.
-const geneRows = {};
-for (const s of zombieMd) {
-  if (!/ genes$/.test(s.title)) continue;
-  for (const tb of tables(s.lines)) for (const r of tb) geneRows[r.Gene] = { ...r, index: Object.keys(geneRows).length };
-}
-const detailRows = Object.fromEntries(
-  tables(section(zombieMd, "Gene details").lines)[0].map((r) => [r.Gene, r.Rules]));
+// Species: each folder in family/ is a species. Its design file in
+// design/species/ gives the text, and the language file gives the names.
+const SPECIES_ORDER = ["zombie", "husk", "drowned"];
+const speciesIds = fs.readdirSync(path.join(DATA, "family"))
+  .filter((d) => fs.statSync(path.join(DATA, "family", d)).isDirectory())
+  .sort((a, b) => (SPECIES_ORDER.indexOf(a) + 1 || 99) - (SPECIES_ORDER.indexOf(b) + 1 || 99) || a.localeCompare(b));
 const doneText = roadmap.filter((r) => r.done).map((r) => r.text).join(" ");
-const m2a = milestoneOf("Milestone 2a");
 const textures = new Set();
 
 function visualOf(id) {
@@ -318,38 +250,161 @@ function visualOf(id) {
   return { layers: vis.layers || [], regionMap: vis.region_map || null, model };
 }
 
-const genes = jsonDir(path.join(DATA, "gene")).map(({ id, json }) => {
-  const name = t(`gene.${NS}.${id}`);
-  const row = geneRows[name] || {};
-  if (!geneRows[name]) console.warn(`warning: zombie.md has no row for the gene ${name}`);
-  const released = new RegExp(`\\b${name}\\b`).test(doneText);
+const geneJson = jsonDir(path.join(DATA, "gene"));
+const pressureJson = jsonDir(path.join(DATA, "pressure"));
+const species = [];
+const families = [];
+const minors = [];
+const hybrids = [];
+const genes = [];
+const pressureText = {};
+
+for (const sp of speciesIds) {
+  const mdFile = `design/species/${sp}.md`;
+  if (!fs.existsSync(path.join(ROOT, mdFile))) throw new Error(`the species ${sp} has no design file ${mdFile}`);
+  const md = sections(read(mdFile));
+  const familyJson = Object.fromEntries(jsonDir(path.join(DATA, "family", sp)).map((f) => [f.id, f.json]));
+  const entity = [].concat(Object.values(familyJson)[0]?.species ?? `minecraft:${sp}`)[0];
+
+  // The order of the families is the order of their sections in the design file.
+  const majorIndex = md.findIndex((x) => x.title === "Major families");
+  const order = [];
+  for (let i = majorIndex + 1; i < md.length && md[i].level === 3; i++) {
+    const id = Object.keys(familyJson).find((f) => t(`family.${NS}.${sp}.${f}`) === md[i].title);
+    if (id) order.push(id);
+  }
+  for (const id of Object.keys(familyJson)) if (!order.includes(id)) order.push(id);
+
+  order.forEach((id, slot) => {
+    if (families.some((f) => f.id === id)) throw new Error(`the family id ${id} is in more than one species`);
+    const name = t(`family.${NS}.${sp}.${id}`);
+    const sec = section(md, name);
+    const tierRows = sec ? tables(sec.lines)[0] || [] : [];
+    families.push({
+      id, species: sp, slot, name,
+      summary: sec ? paragraphs(sec.lines)[0] || "" : "",
+      tiers: [1, 2, 3].map((n) => {
+        const row = tierRows.find((r) => r.Tier === `Tier ${n}`) || {};
+        const data = familyJson[id].tiers[n - 1];
+        return { buff: row.Buff || "", debuff: row.Debuff || "", buffs: data.buffs, debuffs: data.debuffs };
+      }),
+    });
+  });
+
+  const styleTable = (title) => (section(md, title) ? tables(section(md, title).lines)[0] : null) || [];
+  const minorStyles = styleTable("Minor families");
+  for (const major of order) {
+    for (const sub of order) {
+      if (major === sub) continue;
+      const name = t(`family.${NS}.${sp}.${major}.${sub}`);
+      const row = minorStyles.find((r) => r["Minor family"] === name) || {};
+      minors.push({ species: sp, major, sub, name, style: row["Play style"] || "" });
+    }
+  }
+  const hybridStyles = styleTable("Hybrids");
+  for (let i = 0; i < order.length; i++) {
+    for (let j = i + 1; j < order.length; j++) {
+      // The language key puts the first family by id first.
+      const [a, b] = [order[i], order[j]].sort();
+      const name = t(`family.${NS}.${sp}.${a}.and.${b}`);
+      const row = hybridStyles.find((r) => r.Hybrid === name) || {};
+      hybrids.push({ species: sp, a: order[i], b: order[j], name, style: row["Play style"] || "" });
+    }
+  }
+
+  // The pressures table of the species: the text of each pressure.
+  const pTable = section(md, "Pressures") ? tables(section(md, "Pressures").lines)[0] || [] : [];
+  for (const r of pTable) {
+    const id = (r.Pressure || "").replace(/`/g, "");
+    const when = Object.entries(r).find(([k]) => /death counts when/.test(k))?.[1];
+    if (id && when && !pressureText[id]) pressureText[id] = when;
+  }
+
+  // The genes of the species, in the order of the design file.
+  const geneRows = {};
+  for (const s of md) {
+    if (!/ genes$/.test(s.title)) continue;
+    for (const tb of tables(s.lines)) for (const r of tb) geneRows[r.Gene] = { ...r, index: Object.keys(geneRows).length };
+  }
+  const detailTable = section(md, "Gene details") ? tables(section(md, "Gene details").lines)[0] || [] : [];
+  const details = Object.fromEntries(detailTable.map((r) => [r.Gene, r.Rules]));
+  const limitTable = tables(md.flatMap((x) => (x.title === "Limits of the first version" ? x.lines : [])))[0] || [];
+  const limits = Object.fromEntries(limitTable.map((r) => [r.Gene, r["In the mod now"]]));
+
+  // The state of the species comes from the first milestone that names it.
+  const plural = new RegExp(`\\b${sp}s?\\b`, "i");
+  const milestone = roadmap.find((r) => r.items.length && plural.test(r.title));
+  const released = milestone ? milestone.done : false;
+
+  const own = geneJson.filter(({ json }) => [].concat(json.species).includes(entity));
+  const list = own.map(({ id, json }) => {
+    const name = t(`gene.${NS}.${id}`);
+    const row = geneRows[name] || {};
+    if (!geneRows[name]) console.warn(`warning: ${mdFile} has no row for the gene ${name}`);
+    const named = new RegExp(`\\b${name}\\b`).test(doneText);
+    return {
+      id, name, species: sp,
+      family: short(json.family),
+      sub: json.sub_family ? short(json.sub_family) : null,
+      counters: short(json.counters),
+      gains: row.Gains || "",
+      downsides: row.Downsides || "",
+      look: row.Visual || "",
+      details: details[name] || "",
+      limit: limits[name] || "",
+      effects: { gains: json.gains || [], downsides: json.downsides || [] },
+      rates: {
+        selection: json.selection_rate ?? 0.02,
+        mutation: json.mutation_rate ?? 0.003,
+        decay: json.decay_rate ?? 0.01,
+      },
+      status: named || released ? "released" : "development",
+      visual: visualOf(id),
+    };
+  });
+  list.sort((a, b) => (geneRows[a.name]?.index ?? 99) - (geneRows[b.name]?.index ?? 99));
+  genes.push(...list);
+
+  // The intro is the text under the title, without the lines about the file.
+  const intro = paragraphs(md.find((x) => x.level === 1)?.lines || [])
+    .filter((x) => !/^This document|DESIGN\.md|first drafts/.test(x));
+  const babies = md.find((x) => /^Baby /.test(x.title));
+  species.push({
+    id: sp,
+    entity,
+    name: md.find((x) => x.level === 1)?.title || sp,
+    intro: intro.join(" "),
+    families: order,
+    status: released ? "released" : "development",
+    milestone: milestone ? milestone.key : null,
+    art: list.filter((g) => g.visual).length,
+    babies: babies ? bullets(babies.lines).map((x) => x.text) : [],
+  });
+}
+for (const { id } of geneJson) {
+  if (!genes.some((g) => g.id === id)) console.warn(`warning: the gene ${id} has no species with a family folder`);
+}
+
+const resultRules = tables(section(designMd, "Families").lines)
+  .find((tb) => tb.head[0] === "Points of the genes")
+  .map((r) => ({ points: r["Points of the genes"], result: r.Result }));
+const powerOrder = (bullets(section(designMd, "Families").lines)
+  .map((b) => b.text).find((x) => /order of power/.test(x)) || "")
+  .split(/\s*\d+\.\s+/).slice(1).map((x) => x.replace(/\.$/, ""));
+
+// Pressures: the JSON files and the tables of the design files. A pressure
+// that a released gene counters is in the release.
+const pressures = pressureJson.map(({ id, json }) => {
+  const users = genes.filter((g) => g.counters === id);
   return {
     id,
-    name,
-    species: [].concat(json.species),
-    family: short(json.family),
-    sub: json.sub_family ? short(json.sub_family) : null,
-    counters: short(json.counters),
-    gains: row.Gains || "",
-    downsides: row.Downsides || "",
-    look: row.Visual || "",
-    details: detailRows[name] || "",
-    effects: { gains: json.gains || [], downsides: json.downsides || [] },
-    rates: {
-      selection: json.selection_rate ?? 0.02,
-      mutation: json.mutation_rate ?? 0.003,
-      decay: json.decay_rate ?? 0.01,
-    },
-    status: released ? "released" : m2a && !m2a.done ? "development" : "released",
-    visual: visualOf(id),
+    damageTypes: json.damage_types || null,
+    conditions: json.conditions || [],
+    when: pressureText[id] || "",
+    species: [...new Set(users.map((g) => g.species))],
+    status: users.some((g) => g.status === "released") ? "released" : "development",
   };
 });
-genes.sort((a, b) => (geneRows[a.name]?.index ?? 99) - (geneRows[b.name]?.index ?? 99));
-
-// A pressure that a released gene counters is in the release too.
-for (const p of pressures) {
-  if (genes.some((g) => g.status === "released" && g.counters === p.id)) p.status = "released";
-}
 
 // The text of DESIGN.md for the evolution page.
 const designBullets = (title) => bullets(section(designMd, title).lines).map((b) => b.text);
@@ -363,7 +418,6 @@ const evolution = {
   categories: ["hot", "cold", "wet", "temperate", "nether", "end"].map((id) => ({
     id, name: t(`biome_category.${NS}.${id}`),
   })),
-  babies: bullets(section(zombieMd, "Baby zombies").lines).map((b) => b.text),
 };
 const notebook = {
   design: designBullets("Beagle Notebook"),
@@ -393,13 +447,14 @@ const out = {
   overview: plainDeep(overview),
   features: plainDeep(features),
   roadmap: plainDeep(roadmap.map(({ text, ...r }) => r)),
+  species: plainDeep(species),
   families,
   minors,
   hybrids,
   resultRules,
   powerOrder,
   pressures: plainDeep(pressures),
-  genes: genes.map((g) => ({ ...g, gains: plain(g.gains), downsides: plain(g.downsides), look: plain(g.look), details: plain(g.details) })),
+  genes: genes.map((g) => ({ ...g, gains: plain(g.gains), downsides: plain(g.downsides), look: plain(g.look), details: plain(g.details), limit: plain(g.limit) })),
   evolution: plainDeep(evolution),
   notebook: { ...plainDeep(notebook), lang: notebook.lang },
   perks: plainDeep(perks),
@@ -426,6 +481,6 @@ fs.mkdirSync(img, { recursive: true });
 fs.copyFileSync(path.join(ASSETS, "textures/item/beagle_notebook.png"), path.join(img, "beagle_notebook.png"));
 
 const withVisual = genes.filter((g) => g.visual).length;
-console.log(`genes: ${genes.length} (${withVisual} with a visual), families: ${families.length}, ` +
+console.log(`species: ${species.map((x) => x.id).join(", ")}, genes: ${genes.length} (${withVisual} with a visual), families: ${families.length}, ` +
   `minor families: ${minors.length}, hybrids: ${hybrids.length}, pressures: ${pressures.length}, ` +
   `textures: ${textures.size}, milestones: ${roadmap.length}`);

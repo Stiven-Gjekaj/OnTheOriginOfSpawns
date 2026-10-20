@@ -50,7 +50,7 @@ Milestones 0 to 5 and the beta stage make version 1.0.0.
   The page shows the gene frequencies of each biome category.
   The full notebook comes in milestone 4.
 
-### Milestone 2: All hostile mobs
+### Milestone 2: All hostile and neutral mobs
 
 Milestone 2 has four parts. Each part makes its own alpha release.
 
@@ -92,7 +92,16 @@ The husk and the drowned come out together in one alpha release.
 - Let a long-lived mob change one gene toward its pool, only where no player
   sees it. A mob with a name tag keeps its genes.
 
-#### Milestone 2c: The other hostile mobs
+#### Milestone 2c: The other hostile and neutral mobs
+
+- The order is: skeletons (skeleton, stray, bogged, wither skeleton), the
+  creeper, spiders (spider, cave spider), illagers (pillager, vindicator,
+  evoker, witch), endermen (enderman, endermite), slimes (slime, magma cube),
+  the Nether mobs (zombified piglin, piglin, piglin brute, hoglin, zoglin),
+  the flyers (phantom, vex, ghast, blaze, breeze), the guardian, and the
+  others (silverfish, shulker, ravager, creaking).
+- The neutral mobs that fight the player come after the hostile mobs: polar
+  bear, bee, wolf, goat, dolphin, panda, llama, and iron golem.
 
 - For each species, one at a time:
   - Write its design file.
@@ -154,9 +163,14 @@ The husk and the drowned come out together in one alpha release.
 
 ## After version 1.0.0
 
-### Milestone 6: Breeding
+### Milestone 6: Breeding, habitats, villages, and bosses
 
-- Give genes to cows, sheep, wolves, and horses.
+- Give genes to each mob that the player can breed, and add artificial
+  selection.
+- Give genes to the wild mobs, and add habitat selection.
+- Give genes to the villagers and the wandering trader, and add social
+  selection.
+- Give genes to the bosses, and add lineage.
 - Add selected traits and pedigree pages.
 - Add hybrids in border biomes.
 

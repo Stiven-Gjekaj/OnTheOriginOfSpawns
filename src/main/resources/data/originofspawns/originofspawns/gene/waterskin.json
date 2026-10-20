@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:in_water",
+	"family": "originofspawns:husk/caravan",
+	"gains": [
+		{
+			"type": "share_healing",
+			"radius": 6
+		}
+	],
+	"downsides": [
+		{
+			"type": "heal_multiplier",
+			"multiplier": 0.75
+		}
+	]
+}

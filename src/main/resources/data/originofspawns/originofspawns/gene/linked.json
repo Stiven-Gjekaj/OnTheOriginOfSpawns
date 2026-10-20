@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:husk/caravan",
+	"gains": [
+		{
+			"type": "damage_taken_when",
+			"when": "grouped",
+			"multiplier": 0.7
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken_when",
+			"when": "alone",
+			"multiplier": 1.3
+		}
+	]
+}

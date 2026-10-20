@@ -1,0 +1,12 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:husk/caravan",
+	"gains": [
+		{
+			"type": "runt",
+			"chance": 0.2,
+			"baby_health_multiplier": 0.5
+		}
+	]
+}

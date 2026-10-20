@@ -1,0 +1,10 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:husk/caravan",
+	"gains": [
+		{
+			"type": "pick_up_items"
+		}
+	]
+}

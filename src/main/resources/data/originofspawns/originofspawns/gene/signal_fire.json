@@ -1,0 +1,12 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:husk/caravan",
+	"gains": [
+		{
+			"type": "call_on_hurt",
+			"radius": 32,
+			"smoke": true
+		}
+	]
+}

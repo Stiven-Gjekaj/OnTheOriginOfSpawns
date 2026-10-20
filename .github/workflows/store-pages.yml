@@ -1,0 +1,48 @@
+# This workflow updates the Modrinth page from the files in this repository.
+# It sets the description from docs/store-description.md, and adds the pictures
+# in assets/gallery to the gallery. A picture that is already in the gallery,
+# with the same title, is not added again.
+# Start it by hand from the Actions tab.
+
+name: store-pages
+on:
+  workflow_dispatch:
+
+jobs:
+  modrinth:
+    runs-on: ubuntu-24.04
+    env:
+      PROJECT: tvKIdALe
+      API: https://api.modrinth.com/v2
+      TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+      AGENT: Stiven-Gjekaj/OnTheOriginOfSpawns (store-pages workflow)
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v7
+      - name: set the description
+        run: |
+          jq -n --rawfile body docs/store-description.md '{body: $body}' > body.json
+          curl --fail-with-body -sS -X PATCH "$API/project/$PROJECT" \
+            -H "Authorization: $TOKEN" -H "User-Agent: $AGENT" -H "Content-Type: application/json" \
+            --data @body.json
+      - name: add the gallery pictures
+        run: |
+          existing=$(curl --fail-with-body -sS "$API/project/$PROJECT" \
+            -H "Authorization: $TOKEN" -H "User-Agent: $AGENT" | jq -r '.gallery[].title')
+          add() {
+            file="$1"; title="$2"; description="$3"; featured="$4"
+            if printf '%s\n' "$existing" | grep -qxF "$title"; then
+              echo "The gallery already has: $title"
+              return
+            fi
+            curl --fail-with-body -sS -X POST -G "$API/project/$PROJECT/gallery" \
+              --data-urlencode "ext=png" --data-urlencode "featured=$featured" \
+              --data-urlencode "title=$title" --data-urlencode "description=$description" \
+              -H "Authorization: $TOKEN" -H "User-Agent: $AGENT" -H "Content-Type: image/png" \
+              --data-binary "@$file"
+            echo "Added: $title"
+          }
+          add assets/gallery/zombies.png "Zombies" "Predators, Stalkers, Tanks, Hordes, and Blights, each with three genes" true
+          add assets/gallery/husks.png "Husks" "Scorchers, Dunecrawlers, Mummies, Caravans, and Parchers, each with three genes" false
+          add assets/gallery/drowned.png "Drowned" "Riptides, Harpooners, Abyssals, Barnacled, and Sirens, each with three genes" false
+          add assets/gallery/info_panel.png "Mob info panel" "The panel shows what you know of the family and the genes of a mob" false

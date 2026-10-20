@@ -299,11 +299,18 @@ Thus, the bones look worn, not undead.
   It is the part of all notebook entries that the player has filled.
   Entries include species pages, observed genes, variants, mutations, and
   fossils.
-- The player gets knowledge only from a fight that ends in a death:
+- The player gets full knowledge only from a fight that ends in a death:
   - When the player kills a mob, the player learns about that mob.
   - When a mob kills the player, the player learns about that mob.
-  - The player learns nothing from a mob that the player only sees, or from
-    a mob that dies near the player in a different way.
+  - A mob that dies near the player in a different way teaches nothing.
+- The player gets partial knowledge from a mob that is near:
+  - The mob is in 16 blocks, and the player has a clear line of sight to it.
+  - After 8 seconds near the mob, in total, the player sees its family.
+  - A seen family shows its name, but not its genes.
+- The mob info panel shows only what the player knows:
+  - An unknown family shows "???", and its genes show "???".
+  - A seen family shows its name. Its genes show "???".
+  - A known family shows its name and its genes.
 - The knowledge percentage sets the number of perk slots.
 
 | Knowledge | Perk slots |

@@ -32,7 +32,8 @@ Pixel plan for the Riptides.
 
 Pixel plan for the Harpooners.
 - Tridentborn has no marks. It holds a trident, an item from the mod.
-- Barbed: barbs of bone on the shoulders, the gene model barbed_barbs.
+- Barbed: a round cluster of bone spikes on each shoulder, like a sea
+  urchin, the gene model barbed_barbs.
 - Volley: two bands of rope round each arm, the gene model volley_rope.
 - Scavenger: a belt and a bag of junk on the left hip, the gene model
   scavenger_bag.
@@ -259,28 +260,34 @@ def barbed():
 
 
 def barbed_model():
-    # Three barbs of bone on each shoulder: on the top of the arm, toward
-    # the outer side, each a little turned out and back. Each barb starts
-    # inside the arm, so it comes out of the outer layer with no gap. On an
-    # arm bone, the top of the arm is at y -2. The right arm is from x -3 to
-    # 1, and the left arm from x -1 to 3.
+    # A round cluster of bone spikes on each shoulder, like a sea urchin: a
+    # dark core on the top of the arm, at the outer side, and twelve spikes
+    # that point out from it in all directions, up, out, to the front, and
+    # to the back. No spike points into the arm or the head. On an arm
+    # bone, the top of the arm is at y -2. The right arm is from x -3 to 1,
+    # and the left arm from x -1 to 3.
     im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
 
-    def barb(face, x, y):
-        if face == "top":
+    def spike(face, x, y):
+        if face == "top" or y == 0:
             return BONE[0]
-        return BONE[2] if y == 2 else BONE[1] if face in ("right", "left") else BONE[0]
+        return BONE[1] if y == 1 else BONE[2]
 
-    # A barb: 1x3x1 at uv (0, 0). A small barb: 1x2x1 at uv (4, 0).
-    paint_box(im, 0, 0, 1, 3, 1, barb)
-    paint_box(im, 4, 0, 1, 2, 1, barb)
+    # A spike: 1x3x1 at uv (0, 0). It points up (-y) before it turns. The
+    # core: 2x2x2 at uv (4, 0).
+    paint_box(im, 0, 0, 1, 3, 1, spike)
+    paint_box(im, 4, 0, 2, 2, 2, lambda face, x, y: "#5A4A5E" if (x + y) % 2 else "#463848")
+    # The directions of the spikes, as turns round x (to the front) and
+    # round z (out, for the left arm).
+    turns = ((0, 0), (0, 40), (0, 80), (0, 115), (40, 0), (-40, 0), (40, 55), (-40, 55),
+             (75, 25), (-75, 25), (30, 100), (-30, 100))
     parts = []
     for bone, side in (("right_arm", -1), ("left_arm", 1)):
-        outer = -2 if side < 0 else 1
-        for (x, z, size, uv, tilt) in ((outer, -1, 3, [0, 0], 20), (outer + side * 0, 0.5, 2, [4, 0], 30),
-                                       (outer - side, -0.2, 2, [4, 0], 10)):
-            parts.append({"bone": bone, "uv": uv, "from": [x, -1 - size, z], "size": [1, size, 1],
-                          "pivot": [x + 0.5, -1, z + 0.5], "rotation": [-12, 0, side * tilt]})
+        cx, cy, cz = side * 2.0, -2.5, 0
+        parts.append({"bone": bone, "uv": [4, 0], "from": [cx - 1, cy - 1, cz - 1], "size": [2, 2, 2]})
+        for ax, az in turns:
+            parts.append({"bone": bone, "uv": [0, 0], "from": [cx - 0.5, cy - 4, cz - 0.5], "size": [1, 3, 1],
+                          "pivot": [cx, cy, cz], "rotation": [ax, 0, side * az]})
     save_model("barbed_barbs", im, parts)
 
 

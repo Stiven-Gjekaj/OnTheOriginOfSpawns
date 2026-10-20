@@ -19,8 +19,8 @@ The script prints the pixels that two drowned genes share.
 Pixel plan for the Riptides.
 - Undertow: long kelp that drifts back from the back and the sides of the
   head, the gene model undertow_kelp.
-- Torrent: a small fin on the back of each calf and on the outer side of
-  each ankle, the gene model torrent_fins.
+- Torrent: a large orange fin on the back of each calf and on the outer
+  side of each lower leg, the gene model torrent_fins.
 - Surge has foam streaks on the outer, the front, and the back faces of the
   arms, rows 1 to 8.
 - Capsizer has webbed fingers: the hands, arm rows 9 to 11, and the bottom
@@ -106,7 +106,7 @@ def undertow_model():
     save_model("undertow_kelp", im, parts)
 
 
-FIN = ("#A8DCE4", "#7CB8C8", "#2E5E6E")
+FIN = ("#F08A4A", "#D86A32", "#8A3418", "#FFC08A")
 
 
 def torrent():
@@ -115,34 +115,39 @@ def torrent():
 
 
 def torrent_model():
-    # A small fin on the back of each calf, and a smaller fin on the outer
-    # side of each ankle. Each fin is a flat shape that starts at the outer
-    # layer, so it touches the leg. On the leg bone, the leg is from x -2 to
-    # 2 and from y 0 to 12, and the back of the leg is at z 2.
+    # Large orange fins, like the fins of a fish, that stand out against the
+    # teal skin: a tall fin that sweeps back from each calf, and a fin that
+    # sticks out to the outer side of each lower leg, turned back. Each fin
+    # starts at the outer layer, so it touches the leg. On the leg bone, the
+    # leg is from x -2 to 2 and from y 0 to 12, and the back of the leg is
+    # at z 2.
     im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
 
-    def calf(face, x, y):
-        # x counts from the leg out to the back. The fin is tall next to the
-        # leg and short at its tip, and it has light rays.
-        if x > [3, 3, 2, 1, 0][y]:
-            return None
-        return FIN[2] if x == y % 2 + 1 and y < 4 else FIN[x % 2]
+    def fin(height, reach):
+        # x counts from the leg out. The fin is tall next to the leg and
+        # sweeps up and out to a point. Dark rays run out from the leg, and
+        # the edge is light.
+        def color(face, x, y):
+            if x > reach[y]:
+                return None
+            if x == reach[y]:
+                return FIN[3]
+            return FIN[2] if y % 2 == 1 and x > 0 else FIN[0] if x < 2 else FIN[1]
+        return color
 
-    def ankle(face, x, y):
-        if x > [2, 1, 0][y]:
-            return None
-        return FIN[2] if x == 1 else FIN[0]
-
-    # The calf fin: 0x5x4 at uv (0, 0). The ankle fin: 0x3x3 at uv (10, 0).
-    # The light fin, with dark rays, shows against the teal skin.
-    paint_box(im, 0, 0, 0, 5, 4, calf)
-    paint_box(im, 10, 0, 0, 3, 3, ankle)
+    # The calf fin: 0x7x6 at uv (0, 0). The side fin: 0x5x4 at uv (14, 0).
+    paint_box(im, 0, 0, 0, 7, 6, fin(7, [5, 5, 4, 3, 2, 1, 0]))
+    paint_box(im, 14, 0, 0, 5, 4, fin(5, [3, 3, 2, 1, 0]))
     parts = []
     for bone, side in (("right_leg", -1), ("left_leg", 1)):
-        parts.append({"bone": bone, "uv": [0, 0], "from": [0, 5, 2.25], "size": [0, 5, 4]})
+        parts.append({"bone": bone, "uv": [0, 0], "from": [0, 4, 2.25], "size": [0, 7, 6],
+                      "pivot": [0, 11, 2.25], "rotation": [-12, 0, 0]})
         x = side * (2 + OUT)
-        parts.append({"bone": bone, "uv": [10, 0], "from": [x, 8, -1], "size": [0, 3, 3],
-                      "pivot": [x, 8, 0.5], "rotation": [0, 0, -side * 20]})
+        # The side fin is a plane across the leg, turned out: 0x5x4 turned
+        # 90 degrees round y, so it sticks out to the side, then 30 degrees
+        # back.
+        parts.append({"bone": bone, "uv": [14, 0], "from": [x, 6, 0], "size": [0, 5, 4],
+                      "pivot": [x, 8, 0], "rotation": [0, side * 60, 0]})
     save_model("torrent_fins", im, parts)
 
 

@@ -5,7 +5,7 @@
 	"gains": [
 		{
 			"type": "keep_distance",
-			"blocks": 8
+			"blocks": 12
 		}
 	],
 	"downsides": [

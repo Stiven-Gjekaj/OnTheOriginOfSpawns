@@ -224,7 +224,7 @@ const milestoneOf = (key) => roadmap.find((r) => r.key === key);
 
 // Species: each folder in family/ is a species. Its design file in
 // design/species/ gives the text, and the language file gives the names.
-const SPECIES_ORDER = ["zombie", "husk", "drowned"];
+const SPECIES_ORDER = ["zombie", "husk", "drowned", "skeleton"];
 const speciesIds = fs.readdirSync(path.join(DATA, "family"))
   .filter((d) => fs.statSync(path.join(DATA, "family", d)).isDirectory())
   .sort((a, b) => (SPECIES_ORDER.indexOf(a) + 1 || 99) - (SPECIES_ORDER.indexOf(b) + 1 || 99) || a.localeCompare(b));
@@ -333,7 +333,10 @@ for (const sp of speciesIds) {
 
   // The state of the species comes from the first milestone that names it.
   const plural = new RegExp(`\\b${sp}s?\\b`, "i");
-  const milestone = roadmap.find((r) => r.items.length && plural.test(r.title));
+  // A milestone that names the species in its title comes first. Else the
+  // first milestone that names it in its text, for example in a list of mobs.
+  const milestone = roadmap.find((r) => r.items.length && plural.test(r.title))
+    || roadmap.find((r) => r.items.length && plural.test(r.text));
   const released = milestone ? milestone.done : false;
 
   const own = geneJson.filter(({ json }) => [].concat(json.species).includes(entity));
@@ -368,7 +371,11 @@ for (const sp of speciesIds) {
   // The intro is the text under the title, without the lines about the file.
   const intro = paragraphs(md.find((x) => x.level === 1)?.lines || [])
     .filter((x) => !/^This document|DESIGN\.md|first drafts/.test(x));
-  const babies = md.find((x) => /^Baby /.test(x.title));
+  const babies = md.find((x) => /^Bab(y|ies)\b/.test(x.title));
+  const jockeys = md.find((x) => /jockeys$/i.test(x.title));
+  // The region map of the body: the map that most gene visuals of the species name.
+  const maps = list.map((g) => g.visual?.regionMap).filter(Boolean);
+  const regionMap = maps.sort((a, b) => maps.filter((m) => m === b).length - maps.filter((m) => m === a).length)[0] || null;
   species.push({
     id: sp,
     entity,
@@ -379,6 +386,9 @@ for (const sp of speciesIds) {
     milestone: milestone ? milestone.key : null,
     art: list.filter((g) => g.visual).length,
     babies: babies ? bullets(babies.lines).map((x) => x.text) : [],
+    hasBabies: babies ? bullets(babies.lines).some((x) => /^Only the .* gene makes/.test(x.text)) : false,
+    jockeys: jockeys ? bullets(jockeys.lines).map((x) => x.text) : [],
+    regionMap,
   });
 }
 for (const { id } of geneJson) {

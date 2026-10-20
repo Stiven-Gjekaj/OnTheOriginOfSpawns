@@ -1,0 +1,61 @@
+{
+	"species": "minecraft:skeleton",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 1.1,
+					"hits": "projectile"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#originofspawns:melee",
+					"multiplier": 1.25
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 1.2,
+					"hits": "projectile"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#originofspawns:melee",
+					"multiplier": 1.2
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 1.3,
+					"hits": "projectile"
+				},
+				{
+					"type": "throw_range",
+					"multiplier": 1.25,
+					"target": "any"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#originofspawns:melee",
+					"multiplier": 1.1
+				}
+			]
+		}
+	]
+}

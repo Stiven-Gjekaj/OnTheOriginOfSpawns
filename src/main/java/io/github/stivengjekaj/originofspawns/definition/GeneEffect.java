@@ -622,12 +622,15 @@ public sealed interface GeneEffect {
 	/**
 	 * The client draws the mob translucent when the light at it is low. Other mobs still see it.
 	 * With {@code blocks}, the mob is translucent only when its feet or its eyes are in one of these blocks.
+	 * With {@code night_only}, the mob is translucent only while it is dark outside.
 	 */
-	record Translucent(int maxLight, float opacity, Optional<TagKey<Block>> blocks) implements GeneEffect {
+	record Translucent(int maxLight, float opacity, Optional<TagKey<Block>> blocks, boolean nightOnly)
+			implements GeneEffect {
 		public static final MapCodec<Translucent> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.intRange(0, 15).optionalFieldOf("max_light", 7).forGetter(Translucent::maxLight),
 				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("opacity", 0.1F).forGetter(Translucent::opacity),
-				TagKey.hashedCodec(Registries.BLOCK).optionalFieldOf("blocks").forGetter(Translucent::blocks)
+				TagKey.hashedCodec(Registries.BLOCK).optionalFieldOf("blocks").forGetter(Translucent::blocks),
+				Codec.BOOL.optionalFieldOf("night_only", false).forGetter(Translucent::nightOnly)
 		).apply(instance, Translucent::new));
 
 		@Override

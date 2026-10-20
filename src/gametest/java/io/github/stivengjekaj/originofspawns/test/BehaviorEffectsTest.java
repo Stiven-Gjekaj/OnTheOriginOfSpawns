@@ -516,6 +516,24 @@ public class BehaviorEffectsTest {
 	}
 
 	@GameTest
+	public void nightTranslucencyFollowsTheSky(GameTestHelper helper) throws ReflectiveOperationException {
+		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_night_shade");
+		var level = helper.getLevel();
+		// The test sets the sky darkness for one check and puts it back in the same tick.
+		var field = net.minecraft.world.level.Level.class.getDeclaredField("skyDarken");
+		field.setAccessible(true);
+		int before = field.getInt(level);
+		field.setInt(level, 11);
+		boolean night = GeneEffects.translucentOpacity(zombie).isPresent();
+		field.setInt(level, 0);
+		boolean day = GeneEffects.translucentOpacity(zombie).isPresent();
+		field.setInt(level, before);
+		helper.assertTrue(night, "translucent at night");
+		helper.assertFalse(day, "solid by day");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void throwEffectHitsTheTargetOnce(GameTestHelper helper) {
 		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_throw");
 		var pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(5, 1, 1));

@@ -61,7 +61,8 @@ public final class GeneEffects {
 		int light = entity.level().getMaxLocalRawBrightness(entity.blockPosition());
 		return of(entity)
 				.filter(effect -> effect instanceof GeneEffect.Translucent translucent && light <= translucent.maxLight()
-						&& translucent.blocks().map(blocks -> inBlocks(entity, blocks)).orElse(true))
+						&& translucent.blocks().map(blocks -> inBlocks(entity, blocks)).orElse(true)
+						&& (!translucent.nightOnly() || entity.level().isDarkOutside()))
 				.map(effect -> ((GeneEffect.Translucent) effect).opacity())
 				.min(Float::compare);
 	}

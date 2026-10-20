@@ -131,10 +131,10 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Barrage | Legion | `crowd` | When 3 or more skeletons in 16 blocks target the same player, they shoot at the same time | It shoots 10% less often | Back: a quiver of many arrows. This changes the model |
-| Bugler | Legion | `spotted` | When it sees a player, the skeletons in 24 blocks target that player. It can call again after 30 seconds | Players hear it from two times farther | Mouth: a bone horn at the jaw. This changes the model |
+| Bugler | Legion | `spotted` | When it sees a player, the skeletons in 24 blocks target that player. It can call again after 30 seconds | Players hear it from two times farther | Body: a slim bone signal horn on a leather cord across the chest, which hangs at the hip. This changes the model |
 | Phalanx | Legion | `alone` | 30% less damage taken with another skeleton in 4 blocks | 30% more damage taken with no skeleton in 4 blocks | Arms: a shield strap on the left arm |
 | Muster | Legion | `alone` | Its spawn groups have 1 more skeleton | Each skeleton of the group has 15% less maximum health | Chest: a painted rank mark |
-| Warcry | Legion, sub Ossified | `melee` | When it is hurt, the skeletons in 12 blocks get Speed for 4 seconds, each 15 seconds | 2 less armor | Skull: a wide, open jaw |
+| Warcry | Legion, sub Ossified | `melee` | When it is hurt, the skeletons in 12 blocks get Speed for 4 seconds, each 15 seconds | 2 less armor | Face: dark red war paint across the eye sockets and down the jaw |
 | Spider Rider | Legion | `unreached` | 10% chance to spawn on a spider | 10% less maximum health | Legs: spider silk around the knees |
 
 ### Hexer genes

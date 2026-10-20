@@ -67,7 +67,7 @@ A mob with all its genes in one family is a pure family, the strongest result.
 A mob with two families in balance is a hybrid.
 Each family has three tiers. A stronger family result gives a bigger buff and a
 smaller debuff.
-Look at a mob to see its family and its genes.
+Look at a mob to see what you know about its family and its genes.
 
 ## Artificial selection
 
@@ -98,8 +98,8 @@ If you take fire perks, the mobs evolve to ignore fire.
 Your notebook has a tab for each species.
 
 - Gene frequencies for each biome.
-- The families that you found. You learn a family when you kill a mob of
-  that family, or when a mob of that family kills you.
+- The families that you found. Stay near a mob for 8 seconds to see the
+  name of its family. Kill it, or die to it, to learn its genes too.
 - Charts of change over time (planned).
 - Family trees and a phylogenetic tree (planned).
 - Field sketches that change when the genes change (planned).

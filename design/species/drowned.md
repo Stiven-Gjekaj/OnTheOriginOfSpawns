@@ -94,8 +94,8 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Undertow | Riptide | `boat` | Each hit on a player in water pulls the player 2 blocks down | 2 less armor | Head: thick strands of kelp around the head and down the back. This changes the model |
-| Torrent | Riptide | `unreached` | 40% more speed in water | 15% less maximum health | Lower legs: large fins that stick out. This changes the model |
+| Undertow | Riptide | `boat` | Each hit on a player in water pulls the player 2 blocks down | 2 less armor | Head and back: long kelp, drawn on the skin |
+| Torrent | Riptide | `unreached` | 40% more speed in water | 15% less maximum health | Lower legs: large fins on the body that face outward on both legs. This changes the model |
 | Surge | Riptide, sub Harpooner | `unreached` | It dashes through water at a target 4 to 8 blocks away | It cannot move for 1 second after a missed dash | Arms: pale streaks, like foam |
 | Capsizer | Riptide | `boat` | Its hits break boats and throw the riders into the water | 20% less speed on land | Hands: webbed fingers |
 | Breacher | Riptide | `on_land` | It jumps out of the water at players on the shore, docks, or boats | 50% more fall damage | Back: a tall fin, like the fin of a shark. This changes the model |

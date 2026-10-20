@@ -8,8 +8,12 @@
 // Then it draws the cubes of the zombie and of the gene models on a canvas.
 
 
-const REGIONS = { face: 1, scalp: 2, torso: 3, arms: 4, hands: 5, legs: 6, lower_legs: 7, feet: 8 };
-const MATERIALS = { skin: 1, cloth: 2, eyes: 3 };
+// The ids of the region maps. The skeleton map adds the bone regions.
+const REGIONS = {
+  face: 1, scalp: 2, torso: 3, arms: 4, hands: 5, legs: 6, lower_legs: 7, feet: 8,
+  ribs: 9, spine: 10, pelvis: 11, joints: 12, eye_sockets: 13,
+};
+const MATERIALS = { skin: 1, cloth: 2, eyes: 3, bone: 4 };
 const DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png";
 
 // The colors of the base texture: region id, material id -> color.
@@ -30,6 +34,50 @@ const PALETTES = {
     skin: { 1: [96, 160, 150], 2: [62, 118, 112], 4: [90, 152, 142], 5: [80, 140, 130], 6: [86, 148, 138], 7: [86, 148, 138], 8: [66, 120, 112], 3: [98, 162, 152] },
     cloth: { 3: [92, 126, 82], 4: [92, 126, 82], 6: [60, 92, 110], 7: [60, 92, 110], 8: [44, 66, 80] },
     eyes: [150, 230, 240],
+  },
+  // The skeleton has the material bone. A bone pixel takes the skin color of
+  // its region.
+  skeleton: {
+    skin: {
+      1: [214, 210, 198], 2: [200, 196, 184], 3: [206, 202, 190], 4: [204, 200, 188], 5: [186, 182, 170],
+      6: [204, 200, 188], 7: [196, 192, 180], 8: [180, 176, 164], 9: [212, 208, 196], 10: [170, 166, 154],
+      11: [190, 186, 174], 12: [160, 156, 146], 13: [40, 40, 40],
+    },
+    cloth: {},
+    eyes: [36, 36, 36],
+    // Every second row of the ribs is dark, so the rib cage shows.
+    stripes: { 9: [128, 124, 116] },
+  },
+};
+
+// The body of each species: the region map, the cubes, and the pivots, as in
+// tools/preview_genes.py. The drowned has its own UV for the left limbs. The
+// skeleton has thin arms and legs, and its map is 64 x 32.
+const BODIES = {
+  skeleton: {
+    map: "originofspawns:textures/region/skeleton.png",
+    pivots: {
+      head: [0, 0, 0], body: [0, 0, 0], right_arm: [-5, 2, 0], left_arm: [5, 2, 0],
+      right_leg: [-2, 12, 0], left_leg: [2, 12, 0],
+    },
+    cubes: [
+      ["head", [0, 0], [-4, -8, -4], [8, 8, 8], false],
+      ["body", [16, 16], [-4, 0, -2], [8, 12, 4], false],
+      ["right_arm", [40, 16], [-1, -2, -1], [2, 12, 2], false],
+      ["left_arm", [40, 16], [-1, -2, -1], [2, 12, 2], true],
+      ["right_leg", [0, 16], [-1, 0, -1], [2, 12, 2], false],
+      ["left_leg", [0, 16], [-1, 0, -1], [2, 12, 2], true],
+    ],
+  },
+  drowned: {
+    cubes: [
+      ["head", [0, 0], [-4, -8, -4], [8, 8, 8], false],
+      ["body", [16, 16], [-4, 0, -2], [8, 12, 4], false],
+      ["right_arm", [40, 16], [-3, -2, -2], [4, 12, 4], false],
+      ["left_arm", [32, 48], [-1, -2, -2], [4, 12, 4], false],
+      ["right_leg", [0, 16], [-2, 0, -2], [4, 12, 4], false],
+      ["left_leg", [16, 48], [-2, 0, -2], [4, 12, 4], false],
+    ],
   },
 };
 
@@ -178,7 +226,7 @@ const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
 // Textures
 
 function baseTexture(map, species = "zombie") {
-  const { skin: SKIN, cloth: CLOTH, eyes: EYES } = PALETTES[species] || PALETTES.zombie;
+  const { skin: SKIN, cloth: CLOTH, eyes: EYES, stripes = {} } = PALETTES[species] || PALETTES.zombie;
   const out = new ImageData(map.width, map.height);
   const d = map.data;
   for (let y = 0; y < map.height; y++) {
@@ -188,6 +236,7 @@ function baseTexture(map, species = "zombie") {
       const region = d[i];
       const material = d[i + 1];
       let c = material === MATERIALS.eyes ? EYES : material === MATERIALS.cloth ? CLOTH[region] || [90, 90, 90] : SKIN[region] || [90, 130, 60];
+      if (stripes[region] && y % 2 === 0) c = stripes[region];
       // A small noise, so that the flat colors look like a texture.
       const n = ((spotHash(x, y, 1234) & 0xff) / 255 - 0.5) * 0.22;
       out.data[i] = Math.max(0, Math.min(255, c[0] * (1 + n)));
@@ -247,10 +296,12 @@ async function bake(genes, baby = false, species = genes[0]?.species ?? "zombie"
   if (baked.has(key)) return baked.get(key);
   const job = (async () => {
     const maps = {};
-    const mapIds = new Set([DEFAULT_REGION_MAP]);
+    const bodyOf = BODIES[species] || {};
+    const baseMap = bodyOf.map || DEFAULT_REGION_MAP;
+    const mapIds = new Set([baseMap]);
     for (const g of genes) if (g.visual && g.visual.regionMap) mapIds.add(g.visual.regionMap);
     for (const id of mapIds) maps[id] = baby ? toBaby(await loadImage(id)) : await loadImage(id);
-    const base = baseTexture(maps[DEFAULT_REGION_MAP], species);
+    const base = baseTexture(maps[baseMap], species);
     // A pattern with the size of a whole mob texture is a mark in the adult
     // layout, so it moves to the baby layout. A smaller pattern is a tile.
     const patternOf = async (id) => {
@@ -266,7 +317,7 @@ async function bake(genes, baby = false, species = genes[0]?.species ?? "zombie"
     for (const s of steps) await applyLayer(base, s.gene, s.layer, maps, patternOf);
     const body = baby
       ? BABY_PAIRS.filter((p) => p[0]).map(([bone, , b]) => [bone, [b[0], b[1]], [b[5], b[6], b[7]], [b[2], b[3], b[4]], false])
-      : ZOMBIE_CUBES;
+      : bodyOf.cubes || ZOMBIE_CUBES;
     const cubes = body.map(([bone, uv, from, size, mirror]) => ({
       bone, uv, from, size, mirror, inflate: 0, tex: base, scale: 1, pivot: [0, 0, 0], rotation: [0, 0, 0], glow: false,
     }));
@@ -288,7 +339,7 @@ async function bake(genes, baby = false, species = genes[0]?.species ?? "zombie"
         });
       }
     }
-    return { texture: base, cubes, faces: buildFaces(cubes), pivots: baby ? BABY_PIVOTS : PIVOTS };
+    return { texture: base, cubes, faces: buildFaces(cubes), pivots: baby ? BABY_PIVOTS : bodyOf.pivots || PIVOTS };
   })();
   baked.set(key, job);
   return job;

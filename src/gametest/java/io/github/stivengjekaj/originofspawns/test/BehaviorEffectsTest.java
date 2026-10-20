@@ -175,7 +175,9 @@ public class BehaviorEffectsTest {
 	@GameTest(maxTicks = 100)
 	public void frenzyTargetsAnotherSpecies(GameTestHelper helper) {
 		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_frenzy_target");
-		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 3));
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(4, 1, 4));
+		// A husk is nearer, but it is zombie kin, so the zombie does not target it.
+		helper.spawnWithNoFreeWill(EntityTypes.HUSK, new BlockPos(2, 1, 1));
 		helper.runAfterDelay(45, () -> {
 			helper.assertTrue(zombie.getTarget() instanceof Pig, "the zombie targets the pig");
 			helper.succeed();

@@ -262,7 +262,9 @@ public final class GeneBehaviors {
 						when now % Math.max(1, Math.round(frenzy.intervalSeconds() * 20.0F)) < TICK_INTERVAL
 								&& mob.getRandom().nextFloat() < frenzy.chance() -> {
 					AABB area = mob.getBoundingBox().inflate(frenzy.radius());
-					level.getEntitiesOfClass(Mob.class, area, other -> other.getType() != mob.getType() && other.isAlive())
+					// A zombie does not target its kin, such as husks and drowned.
+					level.getEntitiesOfClass(Mob.class, area, other -> other.getType() != mob.getType() && other.isAlive()
+							&& !(mob instanceof Zombie && other instanceof Zombie))
 							.stream().min((a, b) -> Double.compare(a.distanceToSqr(mob), b.distanceToSqr(mob)))
 							.ifPresent(mob::setTarget);
 				}

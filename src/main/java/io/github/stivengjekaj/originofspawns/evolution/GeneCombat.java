@@ -7,7 +7,9 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect.When;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -476,7 +478,8 @@ public final class GeneCombat {
 		entity.setHealth(Math.min(undying.get().health(), entity.getMaxHealth()));
 		entity.setAttached(ModAttachments.UNDYING_USED, true);
 		if (entity.level() instanceof ServerLevel level) {
-			level.sendParticles(ParticleTypes.CLOUD, entity.getX(), entity.getY(0.5), entity.getZ(), 20, 0.3, 0.5, 0.3, 0.05);
+			level.sendParticles(new BlockParticleOption(ParticleTypes.FALLING_DUST, Blocks.SAND.defaultBlockState()),
+					entity.getX(), entity.getY(0.5), entity.getZ(), 30, 0.3, 0.5, 0.3, 0.05);
 		}
 		return true;
 	}

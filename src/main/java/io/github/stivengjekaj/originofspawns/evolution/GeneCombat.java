@@ -113,6 +113,12 @@ public final class GeneCombat {
 			for (GeneEffect effect : GeneEffects.of(attacker).toList()) {
 				switch (effect) {
 					case GeneEffect.DamageDealtWhen dealt when test(attacker, dealt.when()) -> result *= dealt.multiplier();
+					case GeneEffect.Lure lure when attacker.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE)
+							.lureArmed() -> {
+						result *= lure.multiplier();
+						BehaviorState state = attacker.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+						attacker.setAttached(ModAttachments.STATE, state.withLure(state.lureNearTime(), false));
+					}
 					case GeneEffect.Rally rally ->
 							result *= 1.0F + Math.min(rally.max(), rally.perAlly() * sameSpeciesNear(attacker, rally.radius()));
 					default -> {

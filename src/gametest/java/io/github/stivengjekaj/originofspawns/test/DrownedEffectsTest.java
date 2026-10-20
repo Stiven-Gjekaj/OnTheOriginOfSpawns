@@ -21,6 +21,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.pig.Pig;
@@ -386,6 +387,42 @@ public class DrownedEffectsTest {
 		GeneCombat.onHit(drowned, rower);
 		helper.assertTrue(boat.isRemoved(), "the boat breaks on the third hit");
 		helper.assertFalse(rower.isPassenger(), "the rider falls out");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void sensesChangeWhatTheDrownedSees(GameTestHelper helper) {
+		Drowned hunter = drownedWith(helper, new BlockPos(1, 1, 1), "test_blind_hunter");
+		Drowned plain = drownedWith(helper, new BlockPos(1, 1, 2));
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		var level = helper.getLevel();
+		player.setPos(hunter.position().add(5.0, 0.0, 0.0));
+		player.setInvisible(true);
+		helper.assertValueEqual(player.getVisibilityPercent(level, hunter), 1.0, "an invisible player in 8 blocks");
+		helper.assertTrue(player.getVisibilityPercent(level, plain) < 1.0, "a plain drowned");
+		player.setInvisible(false);
+		player.setPose(Pose.CROUCHING);
+		helper.assertValueEqual(player.getVisibilityPercent(level, hunter), 0.0, "a sneaking player at 5 blocks");
+		player.setPos(hunter.position().add(3.0, 0.0, 0.0));
+		helper.assertTrue(player.getVisibilityPercent(level, hunter) > 0.0, "a sneaking player at 3 blocks");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void lureArmsOneHitWhenAPlayerComes(GameTestHelper helper) {
+		Drowned drowned = drownedWith(helper, new BlockPos(1, 1, 1), "test_lure");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(2, 1, 1));
+		var lure = new GeneEffect.Lure(6.0F, 20.0F, 2.0F);
+		var source = helper.getLevel().damageSources().mobAttack(drowned);
+		GeneBehaviors.lure(drowned, helper.getLevel(), lure);
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, source, 3.0F), 3.0F, "no player came");
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		player.setPos(drowned.position().add(2.0, 0.0, 0.0));
+		GeneBehaviors.lure(drowned, helper.getLevel(), lure);
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, source, 3.0F), 6.0F, "the first hit after the light goes out");
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, source, 3.0F), 3.0F, "the second hit");
+		GeneBehaviors.lure(drowned, helper.getLevel(), lure);
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, source, 3.0F), 3.0F, "the light stays out");
 		helper.succeed();
 	}
 

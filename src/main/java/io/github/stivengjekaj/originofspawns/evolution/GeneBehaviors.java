@@ -19,6 +19,8 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -221,6 +223,7 @@ public final class GeneBehaviors {
 							.ifPresent(mob::setTarget);
 				}
 				case GeneEffect.Hunt hunt -> hunt(mob, level, hunt);
+				case GeneEffect.Lure lure -> lure(mob, level, lure);
 				case GeneEffect.HarmWhen harm when now % Math.max(1, Math.round(harm.intervalSeconds() * 20.0F)) < TICK_INTERVAL
 						&& GeneCombat.test(mob, harm.when()) -> mob.hurtServer(level, level.damageSources().dryOut(), harm.amount());
 				case GeneEffect.ScavengeTridents scavenge when mob.getMainHandItem().isEmpty() ->
@@ -283,6 +286,46 @@ public final class GeneBehaviors {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Puts the lure of the mob out when a player comes near, and shows it again after the reset time.
+	 * The lure that goes out arms the next hit of the mob.
+	 */
+	public static void lure(Mob mob, ServerLevel level, GeneEffect.Lure lure) {
+		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+		long now = level.getGameTime();
+		boolean lit = state.lureNearTime() < 0L || now - state.lureNearTime() >= Math.round(lure.resetSeconds() * 20.0F);
+		boolean near = level.getNearestPlayer(mob.getX(), mob.getY(), mob.getZ(), lure.radius(),
+				EntitySelector.NO_SPECTATORS) != null;
+		if (near) {
+			mob.setAttached(ModAttachments.STATE, state.withLure(now, state.lureArmed() || lit));
+		} else if (lit) {
+			Vec3 light = mob.getEyePosition().add(mob.getLookAngle().scale(0.6)).add(0.0, 0.3, 0.0);
+			level.sendParticles(ParticleTypes.GLOW, light.x, light.y, light.z, 3, 0.05, 0.05, 0.05, 0.0);
+		}
+	}
+
+	/**
+	 * Returns how well the looker sees the target, after the senses of the looker.
+	 *
+	 * @param visibility the visibility in vanilla, from 0 to 1
+	 */
+	public static double visibility(LivingEntity target, Entity looker, double visibility) {
+		double result = visibility;
+		double distance = target.distanceTo(looker);
+		for (GeneEffect effect : GeneEffects.of(looker).toList()) {
+			switch (effect) {
+				case GeneEffect.SeeInvisible see when target.isInvisible() && distance <= see.radius() ->
+						result = Math.max(result, 1.0);
+				case GeneEffect.SneakBlind blind when target.isCrouching() && distance > blind.radius() -> {
+					return 0.0;
+				}
+				default -> {
+				}
+			}
+		}
+		return result;
 	}
 
 	/**

@@ -67,6 +67,13 @@ public abstract class LivingEntityMixin {
 		}
 	}
 
+	@Inject(method = "getVisibilityPercent", at = @At("RETURN"), cancellable = true)
+	private void originofspawns$senses(ServerLevel level, Entity looker, CallbackInfoReturnable<Double> info) {
+		if (looker != null && looker.hasAttached(ModAttachments.GENES)) {
+			info.setReturnValue(GeneBehaviors.visibility((LivingEntity) (Object) this, looker, info.getReturnValueD()));
+		}
+	}
+
 	@Inject(method = "onClimbable", at = @At("RETURN"), cancellable = true)
 	private void originofspawns$climb(CallbackInfoReturnable<Boolean> info) {
 		LivingEntity self = (LivingEntity) (Object) this;

@@ -95,7 +95,10 @@ public sealed interface GeneEffect {
 			Map.entry("heal_once", HealOnce.CODEC),
 			Map.entry("effect_on_hurt", EffectOnHurt.CODEC),
 			Map.entry("harm_when", HarmWhen.CODEC),
-			Map.entry("break_boats", BreakBoats.CODEC)
+			Map.entry("break_boats", BreakBoats.CODEC),
+			Map.entry("see_invisible", SeeInvisible.CODEC),
+			Map.entry("sneak_blind", SneakBlind.CODEC),
+			Map.entry("lure", Lure.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -1309,6 +1312,51 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "break_boats";
+		}
+	}
+
+	/**
+	 * The mob sees invisible entities in the radius as if they were visible.
+	 */
+	record SeeInvisible(float radius) implements GeneEffect {
+		public static final MapCodec<SeeInvisible> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 64.0F).fieldOf("radius").forGetter(SeeInvisible::radius)
+		).apply(instance, SeeInvisible::new));
+
+		@Override
+		public String type() {
+			return "see_invisible";
+		}
+	}
+
+	/**
+	 * The mob does not see a sneaking entity farther than the radius.
+	 */
+	record SneakBlind(float radius) implements GeneEffect {
+		public static final MapCodec<SneakBlind> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 64.0F).fieldOf("radius").forGetter(SneakBlind::radius)
+		).apply(instance, SneakBlind::new));
+
+		@Override
+		public String type() {
+			return "sneak_blind";
+		}
+	}
+
+	/**
+	 * A light hangs in front of the mob. When a player comes into the radius, the light goes out, and the next hit
+	 * of the mob does more damage. The light shows again after some seconds with no player in the radius.
+	 */
+	record Lure(float radius, float resetSeconds, float multiplier) implements GeneEffect {
+		public static final MapCodec<Lure> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 64.0F).optionalFieldOf("radius", 6.0F).forGetter(Lure::radius),
+				Codec.floatRange(0.0F, 3600.0F).optionalFieldOf("reset_seconds", 20.0F).forGetter(Lure::resetSeconds),
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("multiplier", 2.0F).forGetter(Lure::multiplier)
+		).apply(instance, Lure::new));
+
+		@Override
+		public String type() {
+			return "lure";
 		}
 	}
 }

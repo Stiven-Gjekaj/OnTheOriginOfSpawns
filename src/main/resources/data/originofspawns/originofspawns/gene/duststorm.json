@@ -9,7 +9,8 @@
 			"effect": "minecraft:darkness",
 			"radius": 5,
 			"interval_seconds": 6,
-			"particles": true
+			"particles": true,
+			"seconds": 2
 		}
 	],
 	"downsides": [

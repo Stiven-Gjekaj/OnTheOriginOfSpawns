@@ -10,6 +10,7 @@ import io.github.stivengjekaj.originofspawns.mixin.AbstractSkeletonAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.RangedBowAttackGoalAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import net.minecraft.core.BlockPos;
@@ -20,7 +21,9 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.skeleton.Skeleton;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -242,6 +245,19 @@ public class SkeletonEffectsTest {
 		helper.assertTrue(ally.getTarget() == null, "a hit on a pig does not call");
 		GeneCombat.onProjectileHit(marker, player);
 		helper.assertTrue(ally.getTarget() == player, "the ally targets the player");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aBlockedArrowGivesNoEffect(GameTestHelper helper) {
+		Skeleton skeleton = skeletonWith(helper, new BlockPos(1, 1, 1), "test_arrow_weakness");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(4, 1, 4));
+		Arrow arrow = new Arrow(helper.getLevel(), skeleton, new ItemStack(Items.ARROW), null);
+		var source = helper.getLevel().damageSources().arrow(arrow, skeleton);
+		ServerLivingEntityEvents.AFTER_DAMAGE.invoker().afterDamage(pig, source, 4.0F, 0.0F, true);
+		helper.assertFalse(pig.hasEffect(MobEffects.WEAKNESS), "a shield stops the effect");
+		ServerLivingEntityEvents.AFTER_DAMAGE.invoker().afterDamage(pig, source, 4.0F, 4.0F, false);
+		helper.assertTrue(pig.hasEffect(MobEffects.WEAKNESS), "an arrow that hits gives the effect");
 		helper.succeed();
 	}
 

@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "effect_on_hit", "effect": "minecraft:weakness", "seconds": 4, "hits": "projectile" }],
+	"mutation_rate": 0
+}

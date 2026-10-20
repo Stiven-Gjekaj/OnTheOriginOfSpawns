@@ -5,7 +5,8 @@ Usage: python3 tools/preview_closeups.py
 Each close-up shows a few zombies from several sides, on a white
 background. A view "at night" has a dark background and low light, so that
 the parts that glow show. The script writes PNG files to
-build/previews/closeups/. Git ignores build/.
+previews/closeups/, which Git ignores. The folder is not in build/, so that
+"gradlew clean" does not delete it.
 Each preview uses the vanilla texture. Do not commit a preview.
 This script needs Pillow.
 """
@@ -15,7 +16,7 @@ from PIL import Image, ImageDraw
 
 import preview_genes as pg
 
-OUT_DIR = os.path.join(pg.ROOT, "build/previews/closeups")
+OUT_DIR = os.path.join(pg.ROOT, "previews/closeups")
 NIGHT = (18, 22, 38, 255)
 
 FRONT = ("front", 0, 0, 1.0)

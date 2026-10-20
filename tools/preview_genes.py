@@ -6,9 +6,10 @@ The script reads the vanilla texture of the species from the Minecraft jar in
 the Gradle cache of Loom. The default species is the zombie. It reads the visual of each gene from
 assets/originofspawns/gene_visuals/, applies the layers with the region map,
 and adds the cubes of the gene model from assets/originofspawns/gene_models/.
-It writes PNG files on a white background. Git ignores build/:
-- build/previews/genes/<species>_<gene>.png: the front and the back of one gene.
-- build/previews/families/<family>.png: a plain zombie, each gene of the
+It writes PNG files on a white background to previews/, which Git ignores.
+The folder is not in build/, so that "gradlew clean" does not delete it:
+- previews/genes/<species>_<gene>.png: the front and the back of one gene.
+- previews/families/<family>.png: a plain zombie, each gene of the
   family, and one zombie with all the genes of the family. The front views
   are on top, and the back views are under them.
 Each preview uses the vanilla texture. Do not commit a preview.
@@ -34,8 +35,8 @@ RESOURCES = os.path.join(ROOT, "src/main/resources")
 ASSETS = os.path.join(RESOURCES, "assets")
 VISUAL_DIR = os.path.join(ASSETS, "originofspawns/gene_visuals")
 MODEL_DIR = os.path.join(ASSETS, "originofspawns/gene_models")
-GENE_OUT = os.path.join(ROOT, "build/previews/genes")
-FAMILY_OUT = os.path.join(ROOT, "build/previews/families")
+GENE_OUT = os.path.join(ROOT, "previews/genes")
+FAMILY_OUT = os.path.join(ROOT, "previews/families")
 ZOMBIE_PATH = "assets/minecraft/textures/entity/zombie/zombie.png"
 BABY_PATH = "assets/minecraft/textures/entity/zombie/zombie_baby.png"
 HUSK_PATH = "assets/minecraft/textures/entity/zombie/husk.png"

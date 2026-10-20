@@ -109,7 +109,7 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Skitter | Rattler | `melee` | 25% more speed | 15% less maximum health | Legs: thin, cracked bones |
-| Backpedal | Rattler | `melee` | It walks back to keep 8 blocks from its target while it shoots | It shoots 15% less often | Spine: a bent, curved back |
+| Backpedal | Rattler | `melee` | It walks back to keep 12 blocks from its target while it shoots | It shoots 15% less often | Spine: a bent, curved back |
 | Bonedash | Rattler | `projectile` | When a player draws a bow at it, it moves 3 blocks to the side, each 8 seconds | 2 less armor | Pelvis: a cracked hip |
 | Hollow Bones | Rattler | `fall` | No fall damage, and it jumps 50% higher | 50% more damage from explosions | Bones: small holes, as in bird bones |
 | Lightfoot | Rattler | `spotted` | No step sounds and no idle sounds | 10% less arrow damage | Feet: wrapped in rags |

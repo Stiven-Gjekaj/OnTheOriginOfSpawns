@@ -1,5 +1,9 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
+import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import java.util.List;
 
 import io.github.stivengjekaj.originofspawns.evolution.BiomeCategory;
@@ -74,6 +78,36 @@ public class LivingEvolutionTest {
 		helper.assertFalse(speed.hasModifier(GeneEffects.modifierId("gene/originofspawns/bonerunner", 0)),
 				"the speed of the old gene goes");
 		pools.setFrequency(ZOMBIE, category, FAVORED, 0.0F);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aLostSiegeStopsTheDoorBreaking(GameTestHelper helper) {
+		Identifier siege = Identifier.fromNamespaceAndPath("originofspawns_test", "test_siege");
+		Zombie zombie = zombie(helper, List.of(siege), 0L);
+		GeneBehaviors.installGoals(zombie);
+		helper.assertTrue(zombie.canBreakDoors(), "a siege zombie breaks doors");
+		var access = helper.getLevel().registryAccess();
+		GeneBehaviors.onLoss(zombie, GeneEffects.sources(access, new CarriedGenes(List.of(siege))),
+				GeneEffects.sources(access, new CarriedGenes(List.of())));
+		helper.assertFalse(zombie.canBreakDoors(), "no door breaking after the loss");
+		boolean goal = ((MobAccessor) zombie).originofspawns$goalSelector().getAvailableGoals().stream()
+				.anyMatch(wrapped -> wrapped.getGoal() instanceof BreakDoorGoal);
+		helper.assertFalse(goal, "no door goal after the loss");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aGainedGeneRunsItsSpawnEffects(GameTestHelper helper) {
+		Zombie zombie = zombie(helper, List.of(), 0L);
+		zombie.setCanPickUpLoot(false);
+		GeneBehaviors.onGain(zombie, List.of(new GeneEffect.PickUpItems()));
+		helper.assertTrue(zombie.canPickUpLoot(), "the zombie picks up items");
+		var access = helper.getLevel().registryAccess();
+		Identifier pickUp = Identifier.fromNamespaceAndPath("originofspawns_test", "test_pick_up");
+		GeneBehaviors.onLoss(zombie, GeneEffects.sources(access, new CarriedGenes(List.of(pickUp))),
+				GeneEffects.sources(access, new CarriedGenes(List.of())));
+		helper.assertFalse(zombie.canPickUpLoot(), "no pickup after the loss");
 		helper.succeed();
 	}
 }

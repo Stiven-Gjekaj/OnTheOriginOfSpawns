@@ -133,6 +133,10 @@ public final class LivingEvolution {
 		List<Identifier> genes = new ArrayList<>(old.genes());
 		genes.set(genes.indexOf(weakest), best.get());
 		replace(mob, level, old, Evolution.carry(level, mob, genes));
+		Gene gained = level.registryAccess().lookupOrThrow(ModRegistries.GENE).getValue(best.get());
+		if (gained != null) {
+			GeneBehaviors.onGain(mob, gained.effects().toList());
+		}
 		return true;
 	}
 
@@ -149,6 +153,8 @@ public final class LivingEvolution {
 		((MobAccessor) mob).originofspawns$goalSelector().removeAllGoals(
 				goal -> goal instanceof LeapGoal || goal instanceof LurkGoal || goal instanceof SiegeGoal);
 		mob.setGlowingTag(false);
+		GeneBehaviors.onLoss(mob, GeneEffects.sources(level.registryAccess(), old), 
+				GeneEffects.sources(level.registryAccess(), next));
 		GeneBehaviors.installGoals(mob);
 	}
 }

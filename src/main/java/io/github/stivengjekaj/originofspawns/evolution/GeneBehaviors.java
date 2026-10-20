@@ -116,6 +116,41 @@ public final class GeneBehaviors {
 		}
 	}
 
+	/**
+	 * Runs the spawn effects of a gene that a living mob gains, when they also fit a mob that already lives.
+	 * Effects that only fit a new mob, such as a baby, a brood, or a burrow, do not run.
+	 */
+	public static void onGain(Mob mob, List<GeneEffect> effects) {
+		for (GeneEffect effect : effects) {
+			switch (effect) {
+				case GeneEffect.PickUpItems pickUp -> mob.setCanPickUpLoot(true);
+				case GeneEffect.TridentChance trident -> rollTrident(mob, trident);
+				default -> {
+				}
+			}
+		}
+	}
+
+	/**
+	 * Undoes the lasting changes of the effects that a mob loses: door breaking and item pickup.
+	 */
+	public static void onLoss(Mob mob, List<GeneEffects.Source> before, List<GeneEffects.Source> after) {
+		if (has(before, GeneEffect.Siege.class) && !has(after, GeneEffect.Siege.class)) {
+			((MobAccessor) mob).originofspawns$goalSelector().removeAllGoals(goal -> goal instanceof BreakDoorGoal);
+			if (mob instanceof Zombie zombie) {
+				zombie.setCanBreakDoors(false);
+			}
+		}
+		if (has(before, GeneEffect.PickUpItems.class) && !has(after, GeneEffect.PickUpItems.class)
+				&& mob.getType().builtInRegistryHolder().is(Evolution.NO_ITEM_PICKUP)) {
+			mob.setCanPickUpLoot(false);
+		}
+	}
+
+	private static boolean has(List<GeneEffects.Source> sources, Class<? extends GeneEffect> type) {
+		return sources.stream().flatMap(source -> source.effects().stream()).anyMatch(type::isInstance);
+	}
+
 	private static final Identifier RUNT_HEALTH = OriginOfSpawns.id("runt_health");
 
 	private static void makeRunt(Zombie zombie, ServerLevel level, GeneEffect.Runt runt) {

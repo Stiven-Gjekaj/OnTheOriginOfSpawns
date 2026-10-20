@@ -41,6 +41,16 @@ public class TextureBakerTest {
 	}
 
 	@GameTest
+	public void skeletonRegionsAndBoneReadFromJson(GameTestHelper helper) {
+		var regions = BodyRegion.CODEC.listOf().parse(JsonOps.INSTANCE,
+				JsonParser.parseString("[\"ribs\", \"spine\", \"pelvis\", \"joints\", \"eye_sockets\"]")).getOrThrow();
+		helper.assertValueEqual(regions.stream().map(BodyRegion::id).toList(), List.of(9, 10, 11, 12, 13), "region ids");
+		var bone = BodyMaterial.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString("\"bone\"")).getOrThrow();
+		helper.assertValueEqual(bone.id(), 4, "the bone material id");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void layerChangesOnlyItsRegionsAndMaterials(GameTestHelper helper) {
 		Image texture = texture();
 		VisualLayer skinOnly = new VisualLayer(List.of(), List.of(BodyMaterial.SKIN), new VisualEffect.Desaturate(1.0F, 0.0F));

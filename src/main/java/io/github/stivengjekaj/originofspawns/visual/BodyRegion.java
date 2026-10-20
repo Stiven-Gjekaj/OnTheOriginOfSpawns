@@ -17,7 +17,12 @@ public enum BodyRegion implements StringRepresentable {
 	HANDS(5),
 	LEGS(6),
 	LOWER_LEGS(7),
-	FEET(8);
+	FEET(8),
+	RIBS(9),
+	SPINE(10),
+	PELVIS(11),
+	JOINTS(12),
+	EYE_SOCKETS(13);
 
 	public static final Codec<BodyRegion> CODEC = StringRepresentable.fromEnum(BodyRegion::values);
 

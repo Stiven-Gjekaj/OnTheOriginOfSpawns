@@ -12,7 +12,8 @@ import net.minecraft.util.StringRepresentable;
 public enum BodyMaterial implements StringRepresentable {
 	SKIN(1),
 	CLOTH(2),
-	EYES(3);
+	EYES(3),
+	BONE(4);
 
 	public static final Codec<BodyMaterial> CODEC = StringRepresentable.fromEnum(BodyMaterial::values);
 

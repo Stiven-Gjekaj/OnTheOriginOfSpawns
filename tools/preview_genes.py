@@ -112,6 +112,11 @@ HUSK_EXTRA = {
                  ("All 6 + Tomb Guard", ["tomb_guard", "wrapped"], True, {}),
                  ("All 6 + Solar Flare", ["solar_flare", "sinkhole"], True, {}),
                  ("All 6 at night", [], True, {"light": 0.18})],
+    "parchers": [("Dehydrator + Sandblast", ["dehydrator", "sandblast", "thirstbite"], False, {}),
+                 ("Mirage Water + Dune Runner", ["mirage_water", "dune_runner"], False, {}),
+                 ("All 6 + Wrapped", ["wrapped", "embalmed"], True, {}),
+                 ("All 6 + Solar Flare", ["solar_flare", "packmule", "nomad"], True, {}),
+                 ("All 6 baby", [], True, {"baby": True})],
 }
 NIGHT = (18, 22, 38, 255)
 

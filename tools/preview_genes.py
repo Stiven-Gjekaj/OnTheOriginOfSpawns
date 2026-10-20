@@ -1,6 +1,6 @@
 """Make preview images of the gene visuals of the zombie or the husk.
 
-Usage: python3 tools/preview_genes.py [zombie | husk]
+Usage: python3 tools/preview_genes.py [zombie | husk | drowned]
 
 The script reads the vanilla texture of the species from the Minecraft jar in
 the Gradle cache of Loom. The default species is the zombie. It reads the visual of each gene from
@@ -40,6 +40,10 @@ ZOMBIE_PATH = "assets/minecraft/textures/entity/zombie/zombie.png"
 BABY_PATH = "assets/minecraft/textures/entity/zombie/zombie_baby.png"
 HUSK_PATH = "assets/minecraft/textures/entity/zombie/husk.png"
 HUSK_BABY_PATH = "assets/minecraft/textures/entity/zombie/husk_baby.png"
+DROWNED_PATH = "assets/minecraft/textures/entity/zombie/drowned.png"
+DROWNED_BABY_PATH = "assets/minecraft/textures/entity/zombie/drowned_baby.png"
+DROWNED_OUTER_PATH = "assets/minecraft/textures/entity/zombie/drowned_outer_layer.png"
+DROWNED_OUTER_BABY_PATH = "assets/minecraft/textures/entity/zombie/drowned_outer_layer_baby.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
 REGIONS = {"face": 1, "scalp": 2, "torso": 3, "arms": 4, "hands": 5, "legs": 6,
@@ -118,6 +122,18 @@ HUSK_EXTRA = {
                  ("All 6 + Solar Flare", ["solar_flare", "packmule", "nomad"], True, {}),
                  ("All 6 baby", [], True, {"baby": True})],
 }
+# The families of the drowned, from design/species/drowned.md.
+DROWNED_FAMILIES = {
+    "riptides": ["undertow", "torrent", "surge", "capsizer", "breacher", "gills"],
+    "harpooners": ["tridentborn", "barbed", "volley", "scavenger", "spearfisher", "stormcaller"],
+    "abyssals": ["lure", "pressure_hide", "blind_hunter", "ink", "deepcold", "glowspot"],
+    "barnacled": ["barnacle_crust", "coral_growth", "shellback", "anchor", "pearlheart", "kelpwrapped"],
+    "sirens": ["siren_song", "drag_under", "fry", "shoal", "chorus", "wreckcaller"],
+}
+
+DROWNED_EXTRA = {
+    "riptides": [("All 6 baby", [], True, {"baby": True})],
+}
 NIGHT = (18, 22, 38, 255)
 
 # The babies of BabyGenesClientTest, for a sheet to compare with the game.
@@ -148,6 +164,14 @@ ZOMBIE_CUBES = [
     ("left_arm", (40, 16), (-1, -2, -2), (4, 12, 4), True),
     ("right_leg", (0, 16), (-2, 0, -2), (4, 12, 4), False),
     ("left_leg", (0, 16), (-2, 0, -2), (4, 12, 4), True),
+]
+
+# The cubes of the drowned: the left limbs have their own UV.
+DROWNED_CUBES = ZOMBIE_CUBES[:2] + [
+    ("right_arm", (40, 16), (-3, -2, -2), (4, 12, 4), False),
+    ("left_arm", (32, 48), (-1, -2, -2), (4, 12, 4), False),
+    ("right_leg", (0, 16), (-2, 0, -2), (4, 12, 4), False),
+    ("left_leg", (16, 48), (-2, 0, -2), (4, 12, 4), False),
 ]
 
 # The baby zombie has its own model (BabyZombieModel) and its own texture
@@ -297,6 +321,38 @@ def to_adult(baby):
     return out
 
 
+# BabyLayout.SPLIT_LIMBS in the mod: the right limb of the zombie layout, and
+# the left limb of a model with split limbs, such as the drowned.
+SPLIT_PAIRS = [
+    ((40, 16, 4, 12, 4), (32, 48, 4, 12, 4)),
+    ((0, 16, 4, 12, 4), (16, 48, 4, 12, 4)),
+]
+
+
+def to_split_limbs(image_in):
+    """Copy the right limbs, mirrored, to the left limbs, like BabyLayout.toSplitLimbs."""
+    scale = max(image_in.width // 64, 1)
+    out = image_in.copy()
+    for a, b in SPLIT_PAIRS:
+        from_faces, to_faces = cube_faces(a), cube_faces(b)
+        for face in range(6):
+            copy_face(image_in, from_faces[MIRRORED_FACE[face]], out, to_faces[face], scale, True)
+    return out
+
+
+SPLIT_IMAGES = {}
+
+
+def split_image(identifier):
+    if identifier not in SPLIT_IMAGES:
+        SPLIT_IMAGES[identifier] = to_split_limbs(image(identifier))
+    return SPLIT_IMAGES[identifier]
+
+
+# The look of the current species: True for split limbs, and the outer layer
+# textures (adult, baby) of the drowned, or None. main() sets it.
+MOB = {"split": False, "outer": None}
+
 BABY_IMAGES = {}
 
 
@@ -336,6 +392,8 @@ def apply(effect, color, x, y, seed, baby=False):
         if baby and pattern.width >= 64 and pattern.height >= 64:
             # A whole-texture mark moves to the baby layout. A tile stays.
             pattern = baby_image(effect["texture"])
+        elif MOB["split"] and pattern.width >= 64 and pattern.height >= 64:
+            pattern = split_image(effect["texture"])
         tint = rgb(effect.get("tint", "#FFFFFF"))
         stamp = pattern.getpixel((x % pattern.width, y % pattern.height))
         strength = stamp[3] / 255
@@ -361,7 +419,8 @@ def bake_layer(out, gene, layer, baby=False):
     """
     vis = visual(gene)
     region_map = vis.get("region_map", DEFAULT_REGION_MAP)
-    regions = baby_image(region_map) if baby else image(region_map)
+    regions = (baby_image(region_map) if baby else split_image(region_map) if MOB["split"]
+               else image(region_map))
     seed = identifier_hash("originofspawns:" + gene)
     wanted_regions = {REGIONS[r] for r in layer.get("regions", [])}
     wanted_materials = {MATERIALS[m] for m in layer.get("materials", [])}
@@ -410,9 +469,19 @@ def gene_cubes(gene, mob_tex=None, baby=False):
 
 
 def cubes_of(tex, genes, baby=False):
-    """Return the cubes of the zombie and of the gene models of the genes."""
+    """Return the cubes of the zombie and of the gene models of the genes.
+
+    The drowned has split limbs, and an outer layer: the same cubes, 0.25
+    pixel larger, with the outer layer texture. The genes do not change the
+    outer layer.
+    """
+    body = BABY_CUBES if baby else DROWNED_CUBES if MOB["split"] else ZOMBIE_CUBES
     cubes = [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": m,
-              "texture": tex, "scale": 1.0} for b, uv, f, s, m in (BABY_CUBES if baby else ZOMBIE_CUBES)]
+              "texture": tex, "scale": 1.0} for b, uv, f, s, m in body]
+    if MOB["outer"]:
+        outer = MOB["outer"][1 if baby else 0]
+        cubes += [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.25, "mirror": m,
+                   "texture": outer, "scale": 1.0} for b, uv, f, s, m in body]
     for gene in genes:
         cubes += gene_cubes(gene, tex, baby)
     return cubes
@@ -504,13 +573,22 @@ def sheet(title, columns):
 SPECIES = {
     "zombie": (ZOMBIE_PATH, BABY_PATH, FAMILIES, EXTRA, BABIES),
     "husk": (HUSK_PATH, HUSK_BABY_PATH, HUSK_FAMILIES, HUSK_EXTRA, []),
+    "drowned": (DROWNED_PATH, DROWNED_BABY_PATH, DROWNED_FAMILIES, DROWNED_EXTRA, []),
 }
+
+
+def set_mob(species):
+    """Set the look of the species for the bake and the cubes."""
+    MOB["split"] = species == "drowned"
+    MOB["outer"] = ((find_zombie_texture(DROWNED_OUTER_PATH), find_zombie_texture(DROWNED_OUTER_BABY_PATH))
+                    if species == "drowned" else None)
 
 
 def main(species="zombie"):
     os.makedirs(GENE_OUT, exist_ok=True)
     os.makedirs(FAMILY_OUT, exist_ok=True)
     adult_path, baby_path, families, extras, babies = SPECIES[species]
+    set_mob(species)
     tex = find_zombie_texture(adult_path)
     baby_tex = find_zombie_texture(baby_path)
     for family, genes in families.items():

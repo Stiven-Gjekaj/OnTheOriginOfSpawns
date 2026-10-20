@@ -195,10 +195,10 @@ def high_ground_model():
     def toe(face, x, y):
         return TALON[2] if face == "top" else TALON[1]
 
-    # A toe: 1x1x3 at uv (0, 0). A hook: 1x1x1 at uv (8, 0). A half of the
-    # brow: 5x1x2 at uv (0, 4).
-    paint_box(im, 0, 0, 1, 1, 3, toe)
-    paint_box(im, 8, 0, 1, 1, 1, lambda face, x, y: TALON[0])
+    # A toe: 1x1x4 at uv (0, 0). A hook: 1x1x1 at uv (10, 0). A half of
+    # the brow: 5x1x2 at uv (0, 4).
+    paint_box(im, 0, 0, 1, 1, 4, toe)
+    paint_box(im, 10, 0, 1, 1, 1, lambda face, x, y: TALON[0])
     paint_box(im, 0, 4, 5, 1, 2, lambda face, x, y: BONE[0] if face == "top" else BONE[2] if face == "bottom"
               else BONE[1])
     parts = []
@@ -206,17 +206,17 @@ def high_ground_model():
         for x, turn in ((-1, 15), (0, -15)):
             # The toes go to the front and a little out, and the hook bends
             # down at the tip.
-            parts.append({"bone": bone, "uv": [0, 0], "from": [x, 10, -4], "size": [1, 1, 3],
+            parts.append({"bone": bone, "uv": [0, 0], "from": [x, 10, -5], "size": [1, 1, 4],
                           "pivot": [x + 0.5, 10.5, -1], "rotation": [0, turn, 0]})
-            parts.append({"bone": bone, "uv": [8, 0], "from": [x, 11, -4.5], "size": [1, 1, 1],
+            parts.append({"bone": bone, "uv": [10, 0], "from": [x, 11, -5.5], "size": [1, 1, 1],
                           "pivot": [x + 0.5, 10.5, -1], "rotation": [0, turn, 0]})
-        parts.append({"bone": bone, "uv": [0, 0], "from": [-0.5, 10, 1], "size": [1, 1, 3]})
-        parts.append({"bone": bone, "uv": [8, 0], "from": [-0.5, 11, 3.5], "size": [1, 1, 1]})
+        parts.append({"bone": bone, "uv": [0, 0], "from": [-0.5, 10, 1], "size": [1, 1, 4]})
+        parts.append({"bone": bone, "uv": [10, 0], "from": [-0.5, 11, 4.5], "size": [1, 1, 1]})
     # The brow: two halves that meet low over the nose and rise to the
     # temples.
     for x, side in ((-4.5, -1), (-0.5, 1)):
         parts.append({"bone": "head", "uv": [0, 4], "from": [x, -5.5, -5.5], "size": [5, 1, 2],
-                      "pivot": [0, -5, -4.5], "rotation": [0, 0, side * 12]})
+                      "pivot": [0, -5, -4.5], "rotation": [0, 0, -side * 14]})
     save_model("high_ground_talons", im, parts)
 
 

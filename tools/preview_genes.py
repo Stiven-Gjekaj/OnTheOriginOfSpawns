@@ -146,6 +146,10 @@ DROWNED_EXTRA = {
                   ("All 6 + Breacher", ["breacher", "scavenger"], True, {}),
                   ("All 6 + Spearfisher", ["spearfisher", "barbed"], True, {}),
                   ("All 6 baby", [], True, {"baby": True})],
+    "sirens": [("Fry baby", ["fry"], False, {"baby": True}),
+               ("All 6 baby", [], True, {"baby": True}),
+               ("Siren Song + Ink", ["siren_song", "ink", "blind_hunter"], False, {}),
+               ("All 6 + Barnacled", ["anchor", "scavenger", "undertow"], True, {})],
 }
 NIGHT = (18, 22, 38, 255)
 

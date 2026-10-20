@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:drowned/harpooner",
+	"gains": [
+		{
+			"type": "throw_range",
+			"multiplier": 1.3,
+			"target": "wet"
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_range",
+			"multiplier": 0.7,
+			"target": "dry"
+		}
+	]
+}

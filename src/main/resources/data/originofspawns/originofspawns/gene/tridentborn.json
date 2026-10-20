@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:drowned/harpooner",
+	"gains": [
+		{
+			"type": "trident_chance",
+			"chance": 0.25
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

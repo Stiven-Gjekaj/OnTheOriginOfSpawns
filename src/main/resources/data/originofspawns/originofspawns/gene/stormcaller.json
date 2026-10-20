@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:drowned/harpooner",
+	"gains": [
+		{
+			"type": "lightning_on_hit"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_lightning",
+			"multiplier": 1.5
+		},
+		{
+			"type": "glowing",
+			"when": "storm"
+		}
+	]
+}

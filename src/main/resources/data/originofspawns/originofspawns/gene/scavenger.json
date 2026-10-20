@@ -1,0 +1,16 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:trident",
+	"family": "originofspawns:drowned/harpooner",
+	"sub_family": "originofspawns:drowned/riptide",
+	"gains": [
+		{
+			"type": "scavenge_tridents"
+		}
+	],
+	"downsides": [
+		{
+			"type": "no_weapon_drop"
+		}
+	]
+}

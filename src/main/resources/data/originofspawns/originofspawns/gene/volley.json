@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:drowned/harpooner",
+	"gains": [
+		{
+			"type": "throw_rate",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

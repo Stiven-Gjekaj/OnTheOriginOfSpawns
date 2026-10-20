@@ -74,8 +74,18 @@ Milestone 2 has four parts. Each part makes its own alpha release.
 
 #### Milestone 2b: Husk and drowned
 
+The husk and the drowned come out together in one alpha release.
+
 - Write the design files of the husk and the drowned.
+- Give each one 5 new families, with their own names and themes.
+  They do not copy the 5 zombie families.
 - Add their 30 genes, their families, and their visuals.
+- Give each one its own gene for babies, like Runt.
+  Baby husks and baby drowned spawn only through that gene.
+- When a mob converts to a different species, it gets new genes from the
+  pool of the new species. It keeps none of its old genes.
+- Draw the gene marks under the outer layer of the drowned, and fit them to
+  the baby drowned model.
 
 #### Milestone 2c: The other hostile mobs
 

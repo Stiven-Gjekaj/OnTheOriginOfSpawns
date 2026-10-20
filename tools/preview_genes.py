@@ -132,7 +132,9 @@ DROWNED_FAMILIES = {
 }
 
 DROWNED_EXTRA = {
-    "riptides": [("All 6 baby", [], True, {"baby": True})],
+    "riptides": [("All 6 + Cinder", ["cinder"], True, {}),
+                 ("All 6 + Ironhide", ["ironhide"], True, {}),
+                 ("All 6 baby", [], True, {"baby": True})],
 }
 NIGHT = (18, 22, 38, 255)
 

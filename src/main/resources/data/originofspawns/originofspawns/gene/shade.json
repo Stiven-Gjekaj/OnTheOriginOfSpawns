@@ -5,8 +5,9 @@
 	"gains": [
 		{
 			"type": "translucent",
-			"max_light": 7,
-			"opacity": 0.1
+			"max_light": 15,
+			"opacity": 0.1,
+			"night_only": true
 		}
 	],
 	"downsides": [

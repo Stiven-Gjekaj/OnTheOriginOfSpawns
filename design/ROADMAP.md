@@ -72,7 +72,7 @@ Milestone 2 has four parts. Each part makes its own alpha release.
 - Add the mob info panel that shows when the player looks at a mob.
 - Add the model changes of Bloat, Thickskull, and Sporebearer.
 
-#### Milestone 2b: Husk and drowned
+#### Milestone 2b: Husk and drowned (done)
 
 The husk and the drowned come out together in one alpha release.
 

@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:husk",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "share_damage",
+					"fraction": 0.15,
+					"radius": 8
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "alone",
+					"multiplier": 1.25
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "share_damage",
+					"fraction": 0.3,
+					"radius": 8
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "alone",
+					"multiplier": 1.2
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "share_damage",
+					"fraction": 0.5,
+					"radius": 8
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "alone",
+					"multiplier": 1.1
+				}
+			]
+		}
+	]
+}

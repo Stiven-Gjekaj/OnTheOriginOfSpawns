@@ -1,0 +1,59 @@
+{
+	"species": "minecraft:husk",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:hunger",
+					"seconds": 10
+				}
+			],
+			"debuffs": [
+				{
+					"type": "water_damage",
+					"amount": 1,
+					"interval": 40
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:hunger",
+					"seconds": 10,
+					"amplifier": 1
+				}
+			],
+			"debuffs": [
+				{
+					"type": "water_damage",
+					"amount": 1,
+					"interval": 60
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:hunger",
+					"seconds": 10,
+					"amplifier": 1
+				},
+				{
+					"type": "drain_food",
+					"amount": 2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "water_damage",
+					"amount": 1,
+					"interval": 80
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,50 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import site from "../../data/site.json";
+const { toc, html } = site.dataPacks;
+---
+<Layout title="Data packs" description="How to add genes, families, pressures, and perks to On the Origin of Spawns with a data pack.">
+  <PageHeader eyebrow="For pack makers" title="Data packs">
+    Data packs define the pressures, the genes, the families, and the perks of the mod. This page shows the guide <a href={`${site.repo}/blob/main/docs/data-packs.md`}>docs/data-packs.md</a> of the repository.
+  </PageHeader>
+
+  <div class="page container docs">
+    <nav class="toc" aria-label="Contents">
+      <div class="toc-head">On this page</div>
+      {toc.map((x) => <a class={`l${x.level}`} href={`#${x.id}`}>{x.title}</a>)}
+    </nav>
+    <article class="doc" set:html={html} />
+  </div>
+</Layout>
+
+<style>
+  .docs { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: var(--s-7); align-items: start; }
+  .toc { position: sticky; top: calc(var(--header-h) + var(--s-5)); display: grid; gap: 2px; max-height: calc(100vh - var(--header-h) - 48px); overflow-y: auto; }
+  .toc-head { font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); margin-bottom: var(--s-2); }
+  .toc a { color: var(--text-muted); text-decoration: none; font-size: var(--fs-sm); padding: 4px 0 4px 10px; border-left: 2px solid var(--border); }
+  .toc a:hover { color: var(--text); border-left-color: var(--accent); }
+  .toc .l4 { padding-left: 22px; font-size: var(--fs-xs); }
+  @media (max-width: 900px) {
+    .docs { grid-template-columns: minmax(0, 1fr); gap: var(--s-5); }
+    .toc { position: static; max-height: none; padding: var(--s-4); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+  }
+</style>
+
+<style is:global>
+  .doc { max-width: 78ch; }
+  .doc h2 { font-size: var(--fs-xl); margin: var(--s-7) 0 var(--s-3); padding-bottom: var(--s-2); border-bottom: 1px solid var(--border); }
+  .doc h2:first-of-type { margin-top: var(--s-5); }
+  .doc h3 { font-size: var(--fs-lg); margin: var(--s-6) 0 var(--s-3); }
+  .doc h4 { font-size: var(--fs-md); margin: var(--s-5) 0 var(--s-2); }
+  .doc p { margin: 0 0 var(--s-3); }
+  .doc ul { margin: 0 0 var(--s-3); }
+  .doc .table-wrap { margin: var(--s-3) 0 var(--s-5); }
+  .doc td code { white-space: nowrap; }
+  .doc pre.code {
+    margin: var(--s-3) 0 var(--s-5); padding: var(--s-4); overflow-x: auto;
+    background: #0b1013; color: #d4f3c4; border: 1px solid var(--border); border-radius: var(--radius);
+    font: 0.85rem / 1.55 var(--font-mono);
+  }
+  .doc pre.code code { padding: 0; background: none; border: 0; color: inherit; word-break: normal; }
+</style>

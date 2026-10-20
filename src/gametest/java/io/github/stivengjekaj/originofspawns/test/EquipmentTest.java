@@ -1,5 +1,7 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import net.minecraft.core.BlockPos;
@@ -80,7 +82,9 @@ public class EquipmentTest {
 			Mob zombie = spawned(helper, EntityTypes.ZOMBIE);
 			zombie.setPersistenceRequired();
 			helper.getLevel().addFreshEntity(zombie);
-			helper.assertFalse(zombie.canPickUpLoot(), "a zombie that picks up items");
+			// Other tests raise the test genes in the pool, so a zombie can roll a gene that gives pickup.
+			boolean geneGivesPickup = GeneCombat.has(zombie, GeneEffect.PickUpItems.class);
+			helper.assertFalse(zombie.canPickUpLoot() && !geneGivesPickup, "a zombie that picks up items with no gene");
 			zombie.discard();
 		}
 		helper.succeed();

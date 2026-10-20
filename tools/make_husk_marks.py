@@ -731,7 +731,10 @@ def nomad():
 def nomad_model():
     # A long scarf round the neck, just under the Tomb Guard collar (y 0 to
     # 1.3), and a long end that hangs down the front, on chest columns 0
-    # and 1. The end hangs in front of the Packmule strap.
+    # and 1. The end hangs in front of the Packmule strap. The end lies flat
+    # on the chest: its back is 0.6 pixel inside the body, and its top is
+    # inside the loop, so no gap shows. It does not go past x -4, so the
+    # right arm does not go through it.
     from PIL import Image
     im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
 
@@ -745,8 +748,7 @@ def nomad_model():
               "#E0C890" if y == 4 else cloth(face, x, y))
     parts = [
         {"bone": "body", "uv": [0, 0], "from": [-4, 2, -2], "size": [8, 1, 4], "inflate": 0.45},
-        {"bone": "body", "uv": [0, 8], "from": [-4.2, 2.5, -3.1], "size": [2, 7, 1],
-         "pivot": [-3.2, 2.5, -2.6], "rotation": [-6, 0, 4]},
+        {"bone": "body", "uv": [0, 8], "from": [-4, 2, -2.6], "size": [2, 7, 1]},
     ]
     save_model("nomad_scarf", im, parts)
 

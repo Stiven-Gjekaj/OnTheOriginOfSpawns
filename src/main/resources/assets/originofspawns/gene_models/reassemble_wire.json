@@ -1,0 +1,97 @@
+{
+	"texture": "originofspawns:textures/entity/reassemble_wire.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				4
+			],
+			"from": [
+				-4,
+				0,
+				-2
+			],
+			"size": [
+				8,
+				1,
+				4
+			],
+			"inflate": 0.3
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				5,
+				-1
+			],
+			"size": [
+				2,
+				1,
+				2
+			],
+			"inflate": 0.45
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				5,
+				-1
+			],
+			"size": [
+				2,
+				1,
+				2
+			],
+			"inflate": 0.45
+		},
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				7,
+				-1
+			],
+			"size": [
+				2,
+				1,
+				2
+			],
+			"inflate": 0.45
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				7,
+				-1
+			],
+			"size": [
+				2,
+				1,
+				2
+			],
+			"inflate": 0.45
+		}
+	]
+}

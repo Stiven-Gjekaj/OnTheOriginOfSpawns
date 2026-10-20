@@ -1,0 +1,27 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"materials": [
+				"bone"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/calcified_0.png",
+				"tint": "#FAF8F0"
+			},
+			"order": -1
+		},
+		{
+			"materials": [
+				"bone"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/calcified_1.png",
+				"tint": "#B8B4A8"
+			},
+			"order": -1
+		}
+	]
+}

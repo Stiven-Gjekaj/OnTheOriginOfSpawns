@@ -49,6 +49,18 @@ Pixel plan for the Rattlers.
   the leg.
 - Fleetbone: a loose, broken jaw, the gene model fleetbone_jaw, and the
   dark mouth, y 14.
+
+Pixel plan for the Ossified.
+- Thickbone: thicker arms and legs with a knob at each elbow and knee, the
+  gene model thickbone_bones. It uses the texture of the mob.
+- Calcified has a chalk crust on all the bone, under the marks (order -1).
+- Marrowmend has the joints: limb row 0 and the top of each limb, and the
+  front and the back faces of row 5.
+- Reassemble: loops of wire under the elbows, under the knees, and round
+  the neck, the gene model reassemble_wire.
+- Bonewall: a second rib cage over the chest, the gene model bonewall_ribs.
+- Holy Ward has runes on the brow: x 12 to 15, y 8 to 10, and x 8, y 9
+  and 10.
 This script needs Pillow.
 """
 import json
@@ -56,7 +68,7 @@ import os
 
 from PIL import Image
 
-from make_gene_marks import MARK_DIR, VISUAL_DIR, Mark, touched, write
+from make_gene_marks import ASSETS, MARK_DIR, VISUAL_DIR, Mark, noise100, touched, write
 from make_husk_marks import paint_box, save_model
 
 REGION_MAP = "originofspawns:textures/region/skeleton.png"
@@ -323,6 +335,142 @@ def fleetbone_model():
     save_model("fleetbone_jaw", im, parts)
 
 
+def thickbone():
+    # The thick bones are the gene model thickbone_bones.
+    return []
+
+
+def thickbone_model():
+    # Thick, knobbed bones: each arm and leg is thicker (a shell 0.35 pixel
+    # out, with the texture of the mob, so the marks of other genes show on
+    # it), with a round knob of bone at each elbow and each knee. The knobs
+    # also use the texture of the mob: their box UV at (16, 8) takes the
+    # bone of the left side and the back of the head, where each pixel is
+    # drawn. On an arm bone, the elbow (rows 5 and 6) is at y 3 to 5. On a
+    # leg bone, the knee is at y 5 to 7.
+    model = {"mob_texture": True, "parts": []}
+    parts = model["parts"]
+    for bone, mirror in (("right_arm", False), ("left_arm", True)):
+        part = {"bone": bone, "uv": [40, 16], "from": [-1, -2, -1], "size": [2, 12, 2], "inflate": 0.35}
+        knob = {"bone": bone, "uv": [16, 8], "from": [-1.5, 3, -1.5], "size": [3, 2, 3]}
+        if mirror:
+            part["mirror"] = True
+        parts += [part, knob]
+    for bone, mirror in (("right_leg", False), ("left_leg", True)):
+        part = {"bone": bone, "uv": [0, 16], "from": [-1, 0, -1], "size": [2, 12, 2], "inflate": 0.35}
+        knob = {"bone": bone, "uv": [16, 8], "from": [-1.5, 5, -1.5], "size": [3, 2, 3]}
+        if mirror:
+            part["mirror"] = True
+        parts += [part, knob]
+    path = os.path.join(ASSETS, "gene_models", "thickbone_bones.json")
+    with open(path, "w") as fh:
+        json.dump(model, fh, indent="\t")
+        fh.write("\n")
+
+
+def calcified():
+    # A crust of chalk-white mineral on all the bone: rough white patches
+    # with light gray specks. They go under the marks of other genes
+    # (order -1).
+    crust = Mark("#FAF8F0", alpha=210, order=-1, materials=["bone"], size=16)
+    speck = Mark("#B8B4A8", alpha=180, order=-1, materials=["bone"], size=16)
+    for y in range(16):
+        for x in range(16):
+            n = noise100(x // 2, y // 2, 141)
+            if n < 30:
+                crust.put((x, y), 255 if noise100(x, y, 142) < 70 else 230)
+            elif n < 36:
+                speck.put((x, y))
+    return [crust, speck]
+
+
+def marrowmend():
+    # Red marrow at each joint: dark red marrow and bright red drops at the
+    # shoulders and the hips (row 0 and the top of each limb) and at the
+    # elbows and the knees (row 5), on the front and the back faces.
+    marrow = Mark("#8A1E1E")
+    bright = Mark("#D2443A")
+    for at in (arm, leg):
+        for face in SIDES:
+            marrow.put(at(face, 0, 0)).put(at(face, 1, 0), 230)
+        for face in (FRONT, BACK):
+            marrow.put(at(face, 0, 5))
+            bright.put(at(face, 1, 5))
+    for u, v in (ARM, LEG):
+        bright.put((u + 2, v)).put((u + 3, v + 1))
+        marrow.put((u + 3, v)).put((u + 2, v + 1))
+    return [marrow, bright]
+
+
+WIRE = ("#9AA0A8", "#6A7078", "#D8DEE4")
+
+
+def reassemble():
+    # The wire is the gene model reassemble_wire.
+    return []
+
+
+def reassemble_model():
+    # Wire that ties the joints together: twisted loops of wire round each
+    # arm under the elbow (row 7) and round each leg under the knee (row 7),
+    # and round the neck, on the top of the body. The loops are outside the
+    # Thickbone shell (0.35 pixel), and under its knobs.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def wire(face, x, y):
+        return WIRE[2] if (x + y) % 3 == 0 else WIRE[(x + y) % 2]
+
+    # A limb loop: 2x1x2 at uv (0, 0). The neck loop: 8x1x4 at uv (0, 4).
+    paint_box(im, 0, 0, 2, 1, 2, wire)
+    paint_box(im, 0, 4, 8, 1, 4, wire)
+    parts = [{"bone": "body", "uv": [0, 4], "from": [-4, 0, -2], "size": [8, 1, 4], "inflate": 0.3}]
+    for bone in ("right_arm", "left_arm"):
+        parts.append({"bone": bone, "uv": [0, 0], "from": [-1, 5, -1], "size": [2, 1, 2], "inflate": 0.45})
+    for bone in ("right_leg", "left_leg"):
+        parts.append({"bone": bone, "uv": [0, 0], "from": [-1, 7, -1], "size": [2, 1, 2], "inflate": 0.45})
+    save_model("reassemble_wire", im, parts)
+
+
+def bonewall():
+    # The rib cage is the gene model bonewall_ribs.
+    return []
+
+
+def bonewall_model():
+    # A second rib cage that grows over the chest: four thick bars of bone
+    # across the front of the body, that bend round to the sides, and a
+    # breastbone down the middle. It lies on the front of the body. On the
+    # body bone, the chest is at z -2, and the body is from x -4 to 4.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def bar(face, x, y):
+        return BONE[0] if face in ("top", "front") else BONE[2] if face == "bottom" else BONE[1]
+
+    # A bar: 9x1x1 at uv (0, 0). A side of a bar: 1x1x3 at uv (0, 4). The
+    # breastbone: 2x8x1 at uv (16, 4).
+    paint_box(im, 0, 0, 9, 1, 1, bar)
+    paint_box(im, 0, 4, 1, 1, 3, bar)
+    paint_box(im, 16, 4, 2, 8, 1, lambda face, x, y: BONE[2] if y % 2 else BONE[0])
+    parts = [{"bone": "body", "uv": [16, 4], "from": [-1, 1, -3.3], "size": [2, 8, 1]}]
+    for y in (2, 4, 6, 8):
+        parts.append({"bone": "body", "uv": [0, 0], "from": [-4.5, y, -3], "size": [9, 1, 1]})
+        for x in (-4.5, 3.5):
+            parts.append({"bone": "body", "uv": [0, 4], "from": [x, y, -2], "size": [1, 1, 3]})
+    save_model("bonewall_ribs", im, parts)
+
+
+def holy_ward():
+    # Carved runes on the brow: two glyphs of dark carved lines on the left
+    # side of the forehead (an L at x 12 and 13, and a hook at x 14 and 15,
+    # y 8 to 10), and a short line at the right temple (x 8). Bone shows
+    # between the lines, so each glyph reads. The cuts keep away from the
+    # Deadeye crack (x 9 to 11) and the Eagle Eye ring (y 11).
+    cut = Mark("#3E3A32")
+    for p in ((12, 8), (12, 9), (12, 10), (13, 10), (15, 8), (14, 9), (15, 10), (8, 9), (8, 10)):
+        cut.put(p)
+    return [cut]
+
+
 GENES = {
     "eagle_eye": eagle_eye,
     "deadeye": deadeye,
@@ -336,6 +484,12 @@ GENES = {
     "hollow_bones": hollow_bones,
     "lightfoot": lightfoot,
     "fleetbone": fleetbone,
+    "thickbone": thickbone,
+    "calcified": calcified,
+    "marrowmend": marrowmend,
+    "reassemble": reassemble,
+    "bonewall": bonewall,
+    "holy_ward": holy_ward,
 }
 
 MODELS = {
@@ -343,6 +497,9 @@ MODELS = {
     "high_ground": "originofspawns:high_ground_claws",
     "backpedal": "originofspawns:backpedal_spine",
     "fleetbone": "originofspawns:fleetbone_jaw",
+    "thickbone": "originofspawns:thickbone_bones",
+    "reassemble": "originofspawns:reassemble_wire",
+    "bonewall": "originofspawns:bonewall_ribs",
 }
 
 
@@ -352,6 +509,9 @@ def main():
     high_ground_model()
     backpedal_model()
     fleetbone_model()
+    thickbone_model()
+    reassemble_model()
+    bonewall_model()
     for gene, make in GENES.items():
         marks = make()
         write(gene, marks, MODELS, REGION_MAP)

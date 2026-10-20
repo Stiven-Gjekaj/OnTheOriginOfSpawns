@@ -483,6 +483,23 @@ public class BehaviorEffectsTest {
 	}
 
 	@GameTest
+	public void climbersDoNotClimbGlass(GameTestHelper helper) {
+		helper.setBlock(new BlockPos(2, 1, 1), Blocks.GLASS);
+		helper.setBlock(new BlockPos(2, 1, 3), Blocks.STONE);
+		Zombie atGlass = zombieWith(helper, new BlockPos(1, 1, 1), "test_climb");
+		Zombie atStone = zombieWith(helper, new BlockPos(1, 1, 3), "test_climb");
+		// The zombies stand against the east wall, so that their boxes touch it.
+		double wall = helper.absoluteVec(new Vec3(2.0, 0.0, 0.0)).x;
+		atGlass.setPos(wall - 0.3, atGlass.getY(), atGlass.getZ());
+		atStone.setPos(wall - 0.3, atStone.getY(), atStone.getZ());
+		atGlass.horizontalCollision = true;
+		atStone.horizontalCollision = true;
+		helper.assertFalse(atGlass.onClimbable(), "a climber at glass");
+		helper.assertTrue(atStone.onClimbable(), "a climber at stone");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void leapHitsTheTargetItReaches(GameTestHelper helper) {
 		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_leap");
 		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(2, 1, 1));

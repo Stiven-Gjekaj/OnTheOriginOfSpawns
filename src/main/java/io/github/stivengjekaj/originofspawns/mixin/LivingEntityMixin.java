@@ -79,7 +79,7 @@ public abstract class LivingEntityMixin {
 		LivingEntity self = (LivingEntity) (Object) this;
 		// A climber climbs while it walks into a wall, like a spider.
 		if (!info.getReturnValueZ() && self.horizontalCollision && self.hasAttached(ModAttachments.GENES)
-				&& GeneCombat.has(self, GeneEffect.Climb.class)) {
+				&& GeneCombat.has(self, GeneEffect.Climb.class) && !GeneCombat.touchesGlass(self)) {
 			info.setReturnValue(true);
 		}
 	}

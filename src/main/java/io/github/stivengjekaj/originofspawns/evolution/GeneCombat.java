@@ -19,6 +19,7 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.item.Items;
@@ -430,6 +431,22 @@ public final class GeneCombat {
 		}
 		return GeneEffects.of(entity).anyMatch(effect -> effect instanceof GeneEffect.DodgeProjectiles dodge
 				&& test(entity, dodge.when()) && entity.getRandom().nextFloat() < dodge.chance());
+	}
+
+
+	/**
+	 * Returns true if a block of glass touches the side of the entity. A climber cannot climb glass.
+	 */
+	public static boolean touchesGlass(LivingEntity entity) {
+		AABB box = entity.getBoundingBox().inflate(0.1, -0.1, 0.1);
+		for (BlockPos pos : BlockPos.betweenClosed(BlockPos.containing(box.minX, box.minY, box.minZ),
+				BlockPos.containing(box.maxX, box.maxY, box.maxZ))) {
+			var state = entity.level().getBlockState(pos);
+			if (state.is(ConventionalBlockTags.GLASS_BLOCKS) || state.is(ConventionalBlockTags.GLASS_PANES)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

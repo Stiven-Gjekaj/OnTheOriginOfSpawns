@@ -17,6 +17,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.zombie.Drowned;
@@ -209,6 +212,67 @@ public class DrownedEffectsTest {
 			helper.assertTrue(Math.abs(drowned.getDeltaMovement().y + 0.12) < 1.0E-6, "a faster sink");
 			helper.succeed();
 		});
+	}
+
+	@GameTest
+	public void tridentChanceFillsOnlyAnEmptyHand(GameTestHelper helper) {
+		Drowned empty = drownedWith(helper, new BlockPos(1, 1, 1), "test_trident_chance");
+		Drowned holding = drownedWith(helper, new BlockPos(3, 1, 3), "test_trident_chance");
+		empty.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+		holding.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.FISHING_ROD));
+		GeneBehaviors.onSpawn(empty, helper.getLevel(), EntitySpawnReason.NATURAL);
+		GeneBehaviors.onSpawn(holding, helper.getLevel(), EntitySpawnReason.NATURAL);
+		helper.assertTrue(empty.getMainHandItem().is(Items.TRIDENT), "a trident in the empty hand");
+		helper.assertTrue(holding.getMainHandItem().is(Items.FISHING_ROD), "the rod stays");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void throwRateShortensTheInterval(GameTestHelper helper) {
+		Drowned volley = drownedWith(helper, new BlockPos(1, 1, 1), "test_volley");
+		Drowned plain = drownedWith(helper, new BlockPos(3, 1, 3));
+		helper.assertValueEqual(GeneBehaviors.scaleThrowInterval(volley, 40), 20, "two times as often");
+		helper.assertValueEqual(GeneBehaviors.scaleThrowInterval(plain, 40), 40, "no throw rate");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void throwRangeFollowsTheTarget(GameTestHelper helper) {
+		Drowned drowned = drownedWith(helper, new BlockPos(1, 1, 1), "test_spearfisher");
+		Pig walker = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 1));
+		Pig rower = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 3));
+		var boat = helper.spawn(EntityTypes.OAK_BOAT, new BlockPos(3, 1, 3));
+		rower.startRiding(boat);
+		helper.assertValueEqual(GeneBehaviors.throwRangeMultiplier(drowned, walker), 0.7F, "a target on land");
+		helper.assertValueEqual(GeneBehaviors.throwRangeMultiplier(drowned, rower), 1.3F, "a target in a boat");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void scavengerKeepsAPlayerTrident(GameTestHelper helper) {
+		Drowned drowned = drownedWith(helper, new BlockPos(1, 1, 1), "test_scavenger");
+		drowned.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		ThrownTrident trident = new ThrownTrident(helper.getLevel(), player, new ItemStack(Items.TRIDENT));
+		trident.setPos(drowned.position().add(1.0, 0.0, 0.0));
+		helper.getLevel().addFreshEntity(trident);
+		helper.assertTrue(GeneBehaviors.scavengeTrident(drowned, helper.getLevel(),
+				new GeneEffect.ScavengeTridents(2.0F)), "the drowned takes the trident");
+		helper.assertTrue(drowned.getMainHandItem().is(Items.TRIDENT), "the trident in its hand");
+		helper.assertTrue(trident.isRemoved(), "the thrown trident is gone");
+		helper.assertValueEqual(drowned.getDropChances().byEquipment(EquipmentSlot.MAINHAND), 0.0F, "no drop");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 20)
+	public void lightningFollowsTheTridentHit(GameTestHelper helper) {
+		Drowned drowned = drownedWith(helper, new BlockPos(1, 1, 1), "test_storm_spear");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 3));
+		ThrownTrident trident = new ThrownTrident(helper.getLevel(), drowned, new ItemStack(Items.TRIDENT));
+		pig.hurtServer(helper.getLevel(), helper.getLevel().damageSources().trident(trident, drowned), 1.0F);
+		helper.assertFalse(helper.getLevel().getEntitiesOfClass(LightningBolt.class, pig.getBoundingBox().inflate(2.0))
+				.isEmpty(), "a lightning bolt at the pig");
+		helper.succeed();
 	}
 
 	/**

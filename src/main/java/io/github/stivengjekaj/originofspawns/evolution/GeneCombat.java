@@ -19,6 +19,8 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
@@ -170,6 +172,14 @@ public final class GeneCombat {
 						&& mob.getRandom().nextFloat() < onHit.chance() && test(mob, onHit.when()) ->
 						target.addEffect(new MobEffectInstance(onHit.effect(), Math.round(onHit.seconds() * 20.0F),
 								onHit.amplifier()), mob);
+				case GeneEffect.LightningOnHit lightning when mob.level() instanceof ServerLevel level
+						&& (!lightning.stormOnly() || level.isThundering()) && level.canSeeSky(target.blockPosition()) -> {
+					LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
+					if (bolt != null) {
+						bolt.snapTo(target.getX(), target.getY(), target.getZ());
+						level.addFreshEntity(bolt);
+					}
+				}
 				default -> {
 				}
 			}

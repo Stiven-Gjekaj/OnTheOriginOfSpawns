@@ -37,6 +37,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 
 /**
  * The effects of genes and families that change behavior: goals, effects each tick, spawns, and sounds.
@@ -76,6 +78,7 @@ public final class GeneBehaviors {
 					goals.addGoal(1, new SiegeGoal(mob, siege));
 				}
 				case GeneEffect.Glowing glowing when glowing.when() == GeneEffect.When.ALWAYS -> mob.setGlowingTag(true);
+				case GeneEffect.NoWeaponDrop noDrop -> mob.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
 				default -> {
 				}
 			}
@@ -89,6 +92,9 @@ public final class GeneBehaviors {
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
 				case GeneEffect.PickUpItems pickUp -> mob.setCanPickUpLoot(true);
+				case GeneEffect.TridentChance trident when mob.getMainHandItem().isEmpty()
+						&& mob.getRandom().nextFloat() < trident.chance() ->
+						mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.TRIDENT));
 				case GeneEffect.Runt runt when mob instanceof Zombie zombie && mob.getRandom().nextFloat() < runt.chance() ->
 						makeRunt(zombie, level, runt);
 				case GeneEffect.Brood brood when reason == EntitySpawnReason.NATURAL -> spawnBrood(mob, level, brood);
@@ -215,6 +221,8 @@ public final class GeneBehaviors {
 							.ifPresent(mob::setTarget);
 				}
 				case GeneEffect.Hunt hunt -> hunt(mob, level, hunt);
+				case GeneEffect.ScavengeTridents scavenge when mob.getMainHandItem().isEmpty() ->
+						scavengeTrident(mob, level, scavenge);
 				case GeneEffect.Glowing glowing when glowing.when() != GeneEffect.When.ALWAYS ->
 						mob.setGlowingTag(GeneCombat.test(mob, glowing.when()));
 				default -> {
@@ -249,6 +257,61 @@ public final class GeneBehaviors {
 		Vec3 speed = mob.getDeltaMovement();
 		double y = speed.y > 0.0 ? speed.y * Math.min(swim.up(), 1.0F) : speed.y - SINK_STEP * Math.max(swim.down() - 1.0F, 0.0F);
 		mob.setDeltaMovement(speed.x, y, speed.z);
+	}
+
+	/**
+	 * Takes a trident that a player threw near the mob into its empty hand.
+	 *
+	 * @return true if the mob took a trident
+	 */
+	public static boolean scavengeTrident(Mob mob, ServerLevel level, GeneEffect.ScavengeTridents scavenge) {
+		AABB area = mob.getBoundingBox().inflate(scavenge.radius());
+		for (ThrownTrident trident : level.getEntitiesOfClass(ThrownTrident.class, area,
+				trident -> trident.isAlive() && trident.getOwner() instanceof Player)) {
+			ItemStack stack = trident.getPickupItemStackOrigin().copy();
+			if (!stack.isEmpty()) {
+				mob.setItemSlot(EquipmentSlot.MAINHAND, stack);
+				// The mob keeps the trident of a player, so it must not despawn.
+				mob.setPersistenceRequired();
+				if (GeneCombat.has(mob, GeneEffect.NoWeaponDrop.class)) {
+					mob.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
+				}
+				trident.discard();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns the attack interval of a ranged goal after the throw rates of the mob.
+	 */
+	public static int scaleThrowInterval(Mob mob, int ticks) {
+		float rate = 1.0F;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.ThrowRate throwRate) {
+				rate *= throwRate.multiplier();
+			}
+		}
+		return rate == 1.0F ? ticks : Math.max(1, Math.round(ticks / rate));
+	}
+
+	/**
+	 * Returns the product of the throw range multipliers of the mob for the target.
+	 */
+	public static float throwRangeMultiplier(Mob mob, LivingEntity target) {
+		if (target == null) {
+			return 1.0F;
+		}
+		boolean wet = target.isInWater() || target.getVehicle() instanceof AbstractBoat;
+		GeneEffect.ThrowRange.Target kind = wet ? GeneEffect.ThrowRange.Target.WET : GeneEffect.ThrowRange.Target.DRY;
+		float multiplier = 1.0F;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.ThrowRange range && range.target() == kind) {
+				multiplier *= range.multiplier();
+			}
+		}
+		return multiplier;
 	}
 
 	/**

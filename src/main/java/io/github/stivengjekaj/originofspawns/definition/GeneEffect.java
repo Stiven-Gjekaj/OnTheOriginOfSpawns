@@ -83,7 +83,13 @@ public sealed interface GeneEffect {
 			Map.entry("water_pull", WaterPull.CODEC),
 			Map.entry("pull_down_on_hit", PullDownOnHit.CODEC),
 			Map.entry("drag_under", DragUnder.CODEC),
-			Map.entry("swim_vertical", SwimVertical.CODEC)
+			Map.entry("swim_vertical", SwimVertical.CODEC),
+			Map.entry("trident_chance", TridentChance.CODEC),
+			Map.entry("throw_rate", ThrowRate.CODEC),
+			Map.entry("throw_range", ThrowRange.CODEC),
+			Map.entry("scavenge_tridents", ScavengeTridents.CODEC),
+			Map.entry("no_weapon_drop", NoWeaponDrop.CODEC),
+			Map.entry("lightning_on_hit", LightningOnHit.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -1074,6 +1080,106 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "swim_vertical";
+		}
+	}
+
+	/**
+	 * Gives the mob a chance to spawn with a trident in its hand. This adds to the vanilla chance.
+	 */
+	record TridentChance(float chance) implements GeneEffect {
+		public static final MapCodec<TridentChance> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(TridentChance::chance)
+		).apply(instance, TridentChance::new));
+
+		@Override
+		public String type() {
+			return "trident_chance";
+		}
+	}
+
+	/**
+	 * Multiplies how often the mob throws or shoots. The multiplier 2 throws two times as often.
+	 */
+	record ThrowRate(float multiplier) implements GeneEffect {
+		public static final MapCodec<ThrowRate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 20.0F).fieldOf("multiplier").forGetter(ThrowRate::multiplier)
+		).apply(instance, ThrowRate::new));
+
+		@Override
+		public String type() {
+			return "throw_rate";
+		}
+	}
+
+	/**
+	 * Multiplies the throw range of the mob at a target: a wet target is in water or in a boat, and a dry target
+	 * is not.
+	 */
+	record ThrowRange(float multiplier, Target target) implements GeneEffect {
+		public static final MapCodec<ThrowRange> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 10.0F).fieldOf("multiplier").forGetter(ThrowRange::multiplier),
+				Target.CODEC.fieldOf("target").forGetter(ThrowRange::target)
+		).apply(instance, ThrowRange::new));
+
+		@Override
+		public String type() {
+			return "throw_range";
+		}
+
+		/**
+		 * The targets of a throw range.
+		 */
+		public enum Target implements StringRepresentable {
+			WET,
+			DRY;
+
+			public static final Codec<Target> CODEC = StringRepresentable.fromEnum(Target::values);
+
+			@Override
+			public String getSerializedName() {
+				return name().toLowerCase(Locale.ROOT);
+			}
+		}
+	}
+
+	/**
+	 * The mob picks up the tridents that players throw near it, when its hand is empty, and keeps them.
+	 */
+	record ScavengeTridents(float radius) implements GeneEffect {
+		public static final MapCodec<ScavengeTridents> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 8.0F).optionalFieldOf("radius", 2.0F).forGetter(ScavengeTridents::radius)
+		).apply(instance, ScavengeTridents::new));
+
+		@Override
+		public String type() {
+			return "scavenge_tridents";
+		}
+	}
+
+	/**
+	 * The item in the hand of the mob does not drop when the mob dies.
+	 */
+	record NoWeaponDrop() implements GeneEffect {
+		public static final MapCodec<NoWeaponDrop> CODEC = MapCodec.unit(new NoWeaponDrop());
+
+		@Override
+		public String type() {
+			return "no_weapon_drop";
+		}
+	}
+
+	/**
+	 * A projectile hit of the mob calls lightning on the target, if the target is under the open sky.
+	 * With {@code storm_only}, this works only in a thunderstorm.
+	 */
+	record LightningOnHit(boolean stormOnly) implements GeneEffect {
+		public static final MapCodec<LightningOnHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.BOOL.optionalFieldOf("storm_only", true).forGetter(LightningOnHit::stormOnly)
+		).apply(instance, LightningOnHit::new));
+
+		@Override
+		public String type() {
+			return "lightning_on_hit";
 		}
 	}
 }

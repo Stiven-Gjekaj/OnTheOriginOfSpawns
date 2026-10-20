@@ -10,7 +10,8 @@
 				{
 					"type": "damage_dealt_when",
 					"when": "ambush",
-					"multiplier": 1.5
+					"multiplier": 1.5,
+					"players_only": true
 				}
 			],
 			"debuffs": [
@@ -30,7 +31,8 @@
 				{
 					"type": "damage_dealt_when",
 					"when": "ambush",
-					"multiplier": 2
+					"multiplier": 2,
+					"players_only": true
 				}
 			],
 			"debuffs": [
@@ -53,7 +55,8 @@
 				{
 					"type": "damage_dealt_when",
 					"when": "ambush",
-					"multiplier": 3
+					"multiplier": 3,
+					"players_only": true
 				}
 			],
 			"debuffs": [

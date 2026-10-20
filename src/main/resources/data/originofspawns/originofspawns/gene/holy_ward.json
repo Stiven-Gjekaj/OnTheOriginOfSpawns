@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:wolf",
+	"family": "originofspawns:skeleton/ossified",
+	"gains": [
+		{
+			"type": "damage_from_enchantment",
+			"enchantment": "minecraft:smite",
+			"multiplier": 0.5
+		},
+		{
+			"type": "ignored_by",
+			"mobs": "minecraft:wolf"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 1.25
+		}
+	]
+}

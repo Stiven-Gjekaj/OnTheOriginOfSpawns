@@ -79,7 +79,8 @@ Pixel plan for the Sirens. Three Siren genes are gene models.
   gene, so the fins show on the baby drowned too.
 - Shoal has a pattern of scales on all the skin, under the marks (order
   -2).
-- Chorus: a shell earring on the right ear, the gene model chorus_earring.
+- Chorus: a shell earring on the right ear, and small shells on the arms,
+  the shoulders, and the back, the gene model chorus_earring.
 - Wreckcaller: a rusty ship's bell on a cord over the top of the chest,
   the gene model wreckcaller_bell.
 This script needs Pillow.
@@ -874,26 +875,59 @@ def shoal():
 
 
 def chorus():
-    # The shell earring is the gene model chorus_earring.
+    # The shell earring and the shells on the body are the gene model
+    # chorus_earring.
     return []
 
 
 def chorus_model():
     # A shell earring on the right ear: a small ring through the ear, and a
     # pink spiral shell that hangs from it. It hangs in front of the Gills
-    # slits (columns 3 to 6 of the side of the head). On the head bone, the
-    # right side of the head is at x -4, and column c of the side is at z
-    # c - 4.
-    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    # slits (columns 3 to 6 of the side of the head). Small shells cling to
+    # the body too: scallops and spirals on the arms, on the tops of the
+    # shoulders, and on the back, away from the Breacher fin in the middle
+    # of the back. Each shell is half inside the outer layer, so it sits on
+    # the body. On the head bone, the right side of the head is at x -4, and
+    # column c of the side is at z c - 4.
+    im = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
     shell = ("#F2C8C8", "#D89A9E", "#FFF0EC")
-    # The ring: 1x1x1 at uv (0, 0). The shell: 1x3x2 at uv (4, 0).
+
+    def scallop(face, x, y):
+        # Light ridges on the face that points out, and a darker edge.
+        return shell[2] if (x + y) % 2 == 0 else shell[0] if face in ("top", "back", "front") else shell[1]
+
+    def spiral(face, x, y):
+        return shell[1] if (x + y) % 2 else shell[2]
+
+    # The ring: 1x1x1 at uv (0, 0). The earring shell: 1x3x2 at uv (4, 0).
     paint_box(im, 0, 0, 1, 1, 1, lambda face, x, y: "#C8A040")
     paint_box(im, 4, 0, 1, 3, 2, lambda face, x, y: shell[2] if y == 0 else
               shell[1] if (x + y) % 2 else shell[0])
+    # The shells on the body: 1x2x2 at uv (0, 8), 2x2x1 at uv (8, 8), 2x1x2
+    # at uv (16, 8), 1x1x2 at uv (0, 16), and 1x1x1 at uv (8, 16).
+    paint_box(im, 0, 8, 1, 2, 2, scallop)
+    paint_box(im, 8, 8, 2, 2, 1, scallop)
+    paint_box(im, 16, 8, 2, 1, 2, scallop)
+    paint_box(im, 0, 16, 1, 1, 2, spiral)
+    paint_box(im, 8, 16, 1, 1, 1, spiral)
     parts = [
         {"bone": "head", "uv": [0, 0], "from": [-4.75, -4, -2], "size": [1, 1, 1]},
         {"bone": "head", "uv": [4, 0], "from": [-5, -3, -2.5], "size": [1, 3, 2],
          "pivot": [-4.5, -3, -1.5], "rotation": [0, 0, 8]},
+        # The arms: a scallop on the outer side of the right upper arm, a
+        # spiral on the front of the left upper arm, and a scallop on the
+        # back of the left forearm.
+        {"bone": "right_arm", "uv": [0, 8], "from": [-3.6, 2, -1], "size": [1, 2, 2]},
+        {"bone": "left_arm", "uv": [8, 16], "from": [1.5, 2.5, -2.6], "size": [1, 1, 1]},
+        {"bone": "left_arm", "uv": [8, 8], "from": [0, 5, 1.6], "size": [2, 2, 1]},
+        # The tops of the shoulders.
+        {"bone": "right_arm", "uv": [0, 16], "from": [-1.5, -2.6, -0.5], "size": [1, 1, 2],
+         "pivot": [-1, -2.1, 0.5], "rotation": [0, 30, 0]},
+        {"bone": "left_arm", "uv": [16, 8], "from": [0.5, -2.6, -1], "size": [2, 1, 2]},
+        # The back.
+        {"bone": "body", "uv": [8, 8], "from": [-3, 3, 1.6], "size": [2, 2, 1]},
+        {"bone": "body", "uv": [8, 16], "from": [2, 8, 1.8], "size": [1, 1, 1]},
+        {"bone": "body", "uv": [8, 8], "from": [1, 10, 1.6], "size": [2, 2, 1]},
     ]
     save_model("chorus_earring", im, parts)
 

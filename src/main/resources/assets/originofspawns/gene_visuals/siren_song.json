@@ -1,0 +1,20 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/siren_song_0.png",
+				"tint": "#140A10"
+			},
+			"order": 2
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/siren_song_1.png",
+				"tint": "#B8E0D8"
+			},
+			"order": 2
+		}
+	]
+}

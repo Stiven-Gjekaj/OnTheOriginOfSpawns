@@ -67,6 +67,19 @@ Pixel plan for the Barnacled. Five Barnacled genes are gene models.
   model pearlheart_pearl.
 - Kelpwrapped has strips of kelp round the body, the arms, and the legs,
   under the marks (order -1).
+
+Pixel plan for the Sirens. Four Siren genes are gene models.
+- Siren Song has the mouth (x 10 to 13, y 13 to 15), at order 2, over the
+  Ink stains.
+- Drag Under: long, thin fingers on each hand, the gene model
+  drag_under_fingers.
+- Fry: small fins on the head, the gene model fry_fins. Fry is the baby
+  gene, so the fins show on the baby drowned too.
+- Shoal has a pattern of scales on all the skin, under the marks (order
+  -2).
+- Chorus: a shell earring on the right ear, the gene model chorus_earring.
+- Wreckcaller: a ship rope round the waist, with a cut end on the back of
+  the left hip, the gene model wreckcaller_rope.
 This script needs Pillow.
 """
 import json
@@ -759,6 +772,151 @@ def kelpwrapped():
     return [kelp, light, edge, pod]
 
 
+def siren_song():
+    # An open mouth, as if it sings: a dark, round mouth with a pale rim.
+    # The marks are at order 2, over the Ink stains on the mouth.
+    inside = Mark("#140A10", order=2)
+    rim = Mark("#B8E0D8", order=2)
+    for p in ((11, 14), (12, 14), (11, 15), (12, 15)):
+        inside.put(p)
+    for p in ((10, 14), (13, 14), (10, 15), (13, 15)):
+        rim.put(p, 230)
+    rim.put((11, 13), 210).put((12, 13), 210)
+    return [inside, rim]
+
+
+FINGER = ("#6E9A90", "#5A8278", "#2A3A36")
+
+
+def drag_under():
+    # The fingers are the gene model drag_under_fingers.
+    return []
+
+
+def drag_under_model():
+    # Long, thin fingers that hang from each hand and curl a little to the
+    # front, with dark nails. On an arm bone, the hand ends at y 10. The
+    # right arm is from x -3 to 1, and the left arm from x -1 to 3.
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    # A finger: 1x5x1 at uv (0, 0).
+    paint_box(im, 0, 0, 1, 5, 1, lambda face, x, y: FINGER[2] if y == 4 or face == "bottom" else
+              FINGER[y % 2])
+    parts = []
+    for bone, xs in (("right_arm", (-3, -1.5, 0)), ("left_arm", (-1, 0.5, 2))):
+        for n, x in enumerate(xs):
+            parts.append({"bone": bone, "uv": [0, 0], "from": [x, 9.5, -1.5], "size": [1, 5, 1],
+                          "pivot": [x + 0.5, 10, -1], "rotation": [-15 - 5 * n, 0, 0]})
+    save_model("drag_under_fingers", im, parts)
+
+
+FRY_FIN = ("#B488E8", "#9468D0", "#EADCFF")
+
+
+def fry():
+    # The fins are the gene model fry_fins. They also show on a baby.
+    return []
+
+
+def fry_model():
+    # Small fins on the head: one on each side, where the ears are, turned
+    # back, and a low fin along the top of the head. On the head bone, the
+    # head is from y -8 to 0, from z -4 to 4, and from x -4 to 4.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def fin(reach):
+        def color(face, x, y):
+            if x > reach[y]:
+                return None
+            return FRY_FIN[2] if x == reach[y] else FRY_FIN[y % 2]
+        return color
+
+    # A side fin: 0x4x4 at uv (0, 0). The top fin: 0x3x6 at uv (10, 0).
+    # The violet fins show against the teal skin and the orange Torrent
+    # fins.
+    paint_box(im, 0, 0, 0, 4, 4, fin((3, 3, 2, 0)))
+    paint_box(im, 10, 0, 0, 3, 6, lambda face, x, y: None if y < 2 and x < 2 * (2 - y) else
+              FRY_FIN[2] if y == 0 or x == 5 else FRY_FIN[(x + y) % 2])
+    parts = [{"bone": "head", "uv": [10, 0], "from": [0, -11, -1], "size": [0, 3, 6]}]
+    # Each side fin starts at the front edge, on the outer layer, and turns
+    # out and back, so it stands away from the head.
+    for x, side in ((-4.3, -1), (4.3, 1)):
+        parts.append({"bone": "head", "uv": [0, 0], "from": [x, -6, -2], "size": [0, 4, 4],
+                      "pivot": [x, -4, -2], "rotation": [0, side * 50, 0]})
+    save_model("fry_fins", im, parts)
+
+
+def shoal():
+    # A pattern of fish scales on all the skin: rows of small arcs, with a
+    # dark lower edge and a light top, offset in each row. They go under the
+    # marks (order -2), and the skin shows through them.
+    edge = Mark("#1E4A48", alpha=150, order=-2, materials=["skin"], size=16)
+    shine = Mark("#9AE0D0", alpha=120, order=-2, materials=["skin"], size=16)
+    for y in range(16):
+        for x in range(16):
+            # Each scale is 4 wide and 3 tall. The rows shift by 2.
+            sx = (x + (2 if (y // 3) % 2 else 0)) % 4
+            sy = y % 3
+            if sy == 2 and sx in (1, 2) or sy == 1 and sx in (0, 3):
+                edge.put((x, y))
+            elif sy == 0 and sx in (1, 2):
+                shine.put((x, y))
+    return [edge, shine]
+
+
+def chorus():
+    # The shell earring is the gene model chorus_earring.
+    return []
+
+
+def chorus_model():
+    # A shell earring on the right ear: a small ring through the ear, and a
+    # pink spiral shell that hangs from it. It hangs in front of the Gills
+    # slits (columns 3 to 6 of the side of the head). On the head bone, the
+    # right side of the head is at x -4, and column c of the side is at z
+    # c - 4.
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    shell = ("#F2C8C8", "#D89A9E", "#FFF0EC")
+    # The ring: 1x1x1 at uv (0, 0). The shell: 1x3x2 at uv (4, 0).
+    paint_box(im, 0, 0, 1, 1, 1, lambda face, x, y: "#C8A040")
+    paint_box(im, 4, 0, 1, 3, 2, lambda face, x, y: shell[2] if y == 0 else
+              shell[1] if (x + y) % 2 else shell[0])
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-4.75, -4, -2], "size": [1, 1, 1]},
+        {"bone": "head", "uv": [4, 0], "from": [-5, -3, -2.5], "size": [1, 3, 2],
+         "pivot": [-4.5, -3, -1.5], "rotation": [0, 0, 8]},
+    ]
+    save_model("chorus_earring", im, parts)
+
+
+SHIP_ROPE = ("#B49866", "#8E7448", "#D8C49A")
+
+
+def wreckcaller():
+    # The ship rope is the gene model wreckcaller_rope.
+    return []
+
+
+def wreckcaller_model():
+    # A thick ship rope round the waist, between the Anchor chain (y 8 to 9)
+    # and the Scavenger belt (y 10 to 11), and a cut end with a frayed tuft
+    # that hangs on the back of the left hip. On the body bone, the back is
+    # at z 2, and the body ends at y 12.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def twist(face, x, y):
+        return SHIP_ROPE[2] if (x + y) % 3 == 0 else SHIP_ROPE[(x + y) % 2]
+
+    # The rope: 8x1x4 at uv (0, 0). The end: 1x3x1 at uv (0, 8).
+    paint_box(im, 0, 0, 8, 1, 4, twist)
+    paint_box(im, 0, 8, 1, 3, 1, lambda face, x, y: SHIP_ROPE[2] if y == 2 else twist(face, x, y))
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [-4, 9, -2], "size": [8, 1, 4], "inflate": 0.55},
+        {"bone": "body", "uv": [0, 8], "from": [1.5, 9.5, 2.3], "size": [1, 3, 1],
+         "pivot": [2, 9.5, 2.8], "rotation": [15, 0, -10]},
+    ]
+    save_model("wreckcaller_rope", im, parts)
+
+
 GENES = {
     "undertow": undertow,
     "torrent": torrent,
@@ -784,6 +942,12 @@ GENES = {
     "anchor": anchor,
     "pearlheart": pearlheart,
     "kelpwrapped": kelpwrapped,
+    "siren_song": siren_song,
+    "drag_under": drag_under,
+    "fry": fry,
+    "shoal": shoal,
+    "chorus": chorus,
+    "wreckcaller": wreckcaller,
 }
 
 MODELS = {
@@ -800,6 +964,10 @@ MODELS = {
     "shellback": "originofspawns:shellback_shell",
     "anchor": "originofspawns:anchor_chain",
     "pearlheart": "originofspawns:pearlheart_pearl",
+    "drag_under": "originofspawns:drag_under_fingers",
+    "fry": "originofspawns:fry_fins",
+    "chorus": "originofspawns:chorus_earring",
+    "wreckcaller": "originofspawns:wreckcaller_rope",
 }
 
 
@@ -818,6 +986,10 @@ def main():
     shellback_model()
     anchor_model()
     pearlheart_model()
+    drag_under_model()
+    fry_model()
+    chorus_model()
+    wreckcaller_model()
     for gene, make in GENES.items():
         marks = make()
         write(gene, marks, MODELS)

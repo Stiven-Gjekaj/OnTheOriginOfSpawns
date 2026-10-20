@@ -1,0 +1,78 @@
+{
+	"texture": "originofspawns:textures/entity/fry_fins.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				10,
+				0
+			],
+			"from": [
+				0,
+				-11,
+				-1
+			],
+			"size": [
+				0,
+				3,
+				6
+			]
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4.3,
+				-6,
+				-2
+			],
+			"size": [
+				0,
+				4,
+				4
+			],
+			"pivot": [
+				-4.3,
+				-4,
+				-2
+			],
+			"rotation": [
+				0,
+				-50,
+				0
+			]
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				4.3,
+				-6,
+				-2
+			],
+			"size": [
+				0,
+				4,
+				4
+			],
+			"pivot": [
+				4.3,
+				-4,
+				-2
+			],
+			"rotation": [
+				0,
+				50,
+				0
+			]
+		}
+	]
+}

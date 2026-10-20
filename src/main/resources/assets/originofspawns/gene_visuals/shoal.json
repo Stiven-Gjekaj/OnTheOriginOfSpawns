@@ -1,0 +1,26 @@
+{
+	"layers": [
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shoal_0.png",
+				"tint": "#1E4A48"
+			},
+			"order": -2
+		},
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shoal_1.png",
+				"tint": "#9AE0D0"
+			},
+			"order": -2
+		}
+	]
+}

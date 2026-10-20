@@ -1,0 +1,169 @@
+{
+	"texture": "originofspawns:textures/entity/drag_under_fingers.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				9.5,
+				-1.5
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"pivot": [
+				-2.5,
+				10,
+				-1
+			],
+			"rotation": [
+				-15,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				9.5,
+				-1.5
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"pivot": [
+				-1.0,
+				10,
+				-1
+			],
+			"rotation": [
+				-20,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				9.5,
+				-1.5
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"pivot": [
+				0.5,
+				10,
+				-1
+			],
+			"rotation": [
+				-25,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				9.5,
+				-1.5
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"pivot": [
+				-0.5,
+				10,
+				-1
+			],
+			"rotation": [
+				-15,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				9.5,
+				-1.5
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"pivot": [
+				1.0,
+				10,
+				-1
+			],
+			"rotation": [
+				-20,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				2,
+				9.5,
+				-1.5
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"pivot": [
+				2.5,
+				10,
+				-1
+			],
+			"rotation": [
+				-25,
+				0,
+				0
+			]
+		}
+	]
+}

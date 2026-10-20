@@ -11,8 +11,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AbstractSkeleton.class)
@@ -40,5 +42,17 @@ public abstract class AbstractSkeletonMixin {
 		if (silence != null && silence.steps()) {
 			info.cancel();
 		}
+	}
+
+	@ModifyConstant(method = "playStepSound", constant = @Constant(floatValue = 0.15F))
+	private float originofspawns$stepVolume(float volume) {
+		return volume * GeneBehaviors.volumeMultiplier((AbstractSkeleton) (Object) this);
+	}
+
+	@ModifyArg(method = "performRangedAttack", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/monster/skeleton/AbstractSkeleton;playSound(Lnet/minecraft/sounds/SoundEvent;FF)V"),
+			index = 1)
+	private float originofspawns$shotVolume(float volume) {
+		return volume * GeneBehaviors.volumeMultiplier((AbstractSkeleton) (Object) this);
 	}
 }

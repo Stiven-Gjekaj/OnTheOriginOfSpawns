@@ -25,8 +25,8 @@ Pixel plan for the Riptides.
   arms, rows 1 to 8.
 - Capsizer has webbed fingers: the hands, arm rows 9 to 11, and the bottom
   of the arms.
-- Breacher: two pieces of driftwood that stick out of the back, the gene
-  model breacher_driftwood.
+- Breacher: a tall shark fin in the middle of the back, the gene model
+  breacher_fin.
 - Gills has open gill slits on the sides of the head, columns 3 to 6, rows
   3 to 7.
 
@@ -193,38 +193,41 @@ def capsizer():
     return [finger, web]
 
 
-WOOD = ("#8A7A66", "#6E604E", "#B4A48C")
+SHARK = ("#5E6E7A", "#8A9AA6", "#3E4A54")
 
 
 def breacher():
-    # The driftwood is the gene model breacher_driftwood.
+    # The fin is the gene model breacher_fin.
     return []
 
 
 def breacher_model():
-    # Two pieces of gray driftwood stuck in the back: a long one high on the
-    # left that points up and back, and a short one low on the right that
-    # points back and out. Each starts inside the body, so it comes out of
-    # the back with no gap. On the body bone, the back is at z 2.
-    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+    # One tall fin in the middle of the back, like the fin of a shark. It
+    # sweeps back: its tip points down toward the feet, as the fin of a
+    # shark points to its tail when the drowned swims. Its base starts at
+    # the outer layer of the back, so it touches the body. It is gray-blue,
+    # so it shows against the teal skin and the brown clothes. On the body
+    # bone, the back is at z 2, and the body is from y 0 to 12.
+    im = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+    # For each column out from the back, the first and the last row of the
+    # fin. Column 0 is the base on the back. The fin is 1 pixel thick, so it
+    # also shows from the back: each column is a box of its own.
+    top = (0, 1, 2, 4, 5, 7)
+    bottom = (7, 6, 6, 6, 7, 8)
+    parts = []
+    for c in range(6):
+        h = bottom[c] - top[c] + 1
+        u = 5 * c
 
-    def wood(face, x, y):
-        if face in ("front", "back"):
-            return WOOD[2]
-        return WOOD[1] if (x + 2 * y) % 5 == 0 else WOOD[0]
+        def fin(face, x, y, c=c):
+            if face == "top" or y == 0:
+                return SHARK[1]
+            return SHARK[2] if top[c] + y > 5 or face == "bottom" else SHARK[0]
 
-    # The long piece: 2x2x10 at uv (0, 0). The short piece: 1x1x7 at uv (0,
-    # 14). The long piece rises past the left shoulder, so it also shows
-    # from the front.
-    paint_box(im, 0, 0, 2, 2, 10, wood)
-    paint_box(im, 0, 14, 1, 1, 7, wood)
-    parts = [
-        {"bone": "body", "uv": [0, 0], "from": [1, 3, 0], "size": [2, 2, 10],
-         "pivot": [2, 4, 1], "rotation": [50, 25, 0]},
-        {"bone": "body", "uv": [0, 14], "from": [-3, 8, 0], "size": [1, 1, 7],
-         "pivot": [-2.5, 8.5, 1], "rotation": [-10, -40, 0]},
-    ]
-    save_model("breacher_driftwood", im, parts)
+        # Column c: 1xhx1 at uv (5c, 0).
+        paint_box(im, u, 0, 1, h, 1, fin)
+        parts.append({"bone": "body", "uv": [u, 0], "from": [-0.5, 1 + top[c], 2.25 + c], "size": [1, h, 1]})
+    save_model("breacher_fin", im, parts)
 
 
 def gills():
@@ -532,7 +535,7 @@ GENES = {
 MODELS = {
     "undertow": "originofspawns:undertow_kelp",
     "torrent": "originofspawns:torrent_fins",
-    "breacher": "originofspawns:breacher_driftwood",
+    "breacher": "originofspawns:breacher_fin",
     "barbed": "originofspawns:barbed_barbs",
     "volley": "originofspawns:volley_rope",
     "scavenger": "originofspawns:scavenger_bag",

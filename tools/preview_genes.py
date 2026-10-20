@@ -163,7 +163,9 @@ SKELETON_FAMILIES = {
     "hexers": ["venomtip", "frostnock", "witherhex", "blindshot", "soulfire", "hexmark"],
 }
 
-SKELETON_EXTRA = {}
+SKELETON_EXTRA = {
+    "marksmen": [("All 6 at night", [], True, {"light": 0.18})],
+}
 NIGHT = (18, 22, 38, 255)
 
 # The babies of BabyGenesClientTest, for a sheet to compare with the game.

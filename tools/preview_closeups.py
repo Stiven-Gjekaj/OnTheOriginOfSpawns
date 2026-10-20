@@ -146,7 +146,14 @@ DROWNED_CLOSEUPS = {
 }
 
 # The close-ups of the skeleton. The skeleton has no babies.
-SKELETON_CLOSEUPS = {}
+SKELETON = pg.SKELETON_FAMILIES
+SKELETON_CLOSEUPS = {
+    "skeleton_marksmen": ("Marksman marks and models",
+                          [("Eagle Eye + Deadeye", ["eagle_eye", "deadeye"], False),
+                           ("Longdraw + Quickdraw", ["longdraw", "quickdraw"], False),
+                           ("Shieldbreaker + High Ground", ["shieldbreaker", "high_ground"], False),
+                           ("All 6", SKELETON["marksmen"], False)], ALL_SIDES),
+}
 
 # Each species: its texture, its baby texture, and its close-ups.
 SPECIES = {

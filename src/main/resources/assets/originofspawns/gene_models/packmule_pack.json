@@ -1,0 +1,75 @@
+{
+	"texture": "originofspawns:textures/entity/packmule_pack.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				3,
+				2
+			],
+			"size": [
+				6,
+				6,
+				3
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				12
+			],
+			"from": [
+				-4,
+				1,
+				2.5
+			],
+			"size": [
+				8,
+				2,
+				2
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				20
+			],
+			"from": [
+				-4,
+				0,
+				-2.1
+			],
+			"size": [
+				1,
+				4,
+				0
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				20
+			],
+			"from": [
+				3,
+				0,
+				-2.1
+			],
+			"size": [
+				1,
+				4,
+				0
+			]
+		}
+	]
+}

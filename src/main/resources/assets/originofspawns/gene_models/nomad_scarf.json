@@ -1,0 +1,52 @@
+{
+	"texture": "originofspawns:textures/entity/nomad_scarf.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4,
+				2,
+				-2
+			],
+			"size": [
+				8,
+				1,
+				4
+			],
+			"inflate": 0.45
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-4.2,
+				2.5,
+				-3.1
+			],
+			"size": [
+				2,
+				7,
+				1
+			],
+			"pivot": [
+				-3.2,
+				2.5,
+				-2.6
+			],
+			"rotation": [
+				-6,
+				0,
+				4
+			]
+		}
+	]
+}

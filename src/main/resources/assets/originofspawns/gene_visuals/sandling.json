@@ -1,0 +1,25 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sandling_0.png",
+				"tint": "#4A5C8C"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sandling_1.png",
+				"tint": "#3C4C78"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sandling_2.png",
+				"tint": "#5E72A4"
+			}
+		}
+	]
+}

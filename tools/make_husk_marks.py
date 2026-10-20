@@ -61,6 +61,19 @@ Pixel plan for the Mummies.
   of the gene model undying_glow glow in the gashes.
 - Tomb Guard has no marks. Its gold collar and cuffs are the gene model
   tomb_guard_gold.
+
+Pixel plan for the Caravans. Five Caravan genes are gene models.
+- Packmule: a pack and a blanket roll on the back, and straps on chest
+  columns 0 and 7, rows 0 to 3.
+- Signal Fire: a torch behind the left shoulder, next to the pack.
+- Linked: a rope loop at arm row 10, under the Tomb Guard cuff, and a rope
+  end that hangs from it.
+- Nomad: a scarf round the neck, under the Tomb Guard collar, and a scarf
+  end over chest columns 0 and 1. With Solar Flare, the end covers a part
+  of the left ray of the sun.
+- Waterskin: a water bag on the outer side of the right thigh.
+- Sandling has the marks: a wrap on the top of the head, on rows 0 to 2 of
+  the sides and the back of the head, and on row 0 of the face.
 This script needs Pillow.
 """
 import json
@@ -545,6 +558,228 @@ def tomb_guard_model():
         fh.write("\n")
 
 
+def rgb(hex_color):
+    return tuple(int(hex_color[i:i + 2], 16) for i in (1, 3, 5)) + (255,)
+
+
+def paint_box(im, u, v, w, h, d, color):
+    """Paint the box UV area of a w x h x d box at uv (u, v).
+
+    color(face, x, y) gives the color of pixel (x, y) of a face, or None
+    for a clear pixel. The faces are top, bottom, right, front, left, and
+    back.
+    """
+    faces = {"top": (u + d, v, w, d), "bottom": (u + d + w, v, w, d),
+             "right": (u, v + d, d, h), "front": (u + d, v + d, w, h),
+             "left": (u + d + w, v + d, d, h), "back": (u + 2 * d + w, v + d, w, h)}
+    for face, (x0, y0, fw, fh) in faces.items():
+        for y in range(fh):
+            for x in range(fw):
+                c = color(face, x, y)
+                if c:
+                    im.putpixel((x0 + x, y0 + y), rgb(c) if isinstance(c, str) else c)
+
+
+def save_model(name, im, parts):
+    model = {
+        "texture": f"originofspawns:textures/entity/{name}.png",
+        "texture_width": im.width,
+        "texture_height": im.height,
+        "parts": parts,
+    }
+    im.save(os.path.join(TEXTURE_DIR, name + ".png"))
+    with open(os.path.join(MODEL_DIR, name + ".json"), "w") as fh:
+        json.dump(model, fh, indent="\t")
+        fh.write("\n")
+
+
+CANVAS = ("#6E5C3E", "#5E4E34", "#4A3C28")
+LEATHER = ("#7A4A2A", "#653B20", "#4E2D18")
+STRAP = "#3E2A1A"
+
+
+def packmule():
+    # The pack is the gene model packmule_pack.
+    return []
+
+
+def packmule_model():
+    # A canvas pack on the back, with a rolled blanket on top of it, and two
+    # straps over the front of the shoulders. On the body bone, the back is
+    # at z 2. The head ends at y 0, so the blanket starts at y 1.
+    from PIL import Image
+    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+
+    def pack(face, x, y):
+        # A leather flap over the top 2 rows of the back, with a buckle.
+        if face == "back" and y < 2 or face == "top":
+            return "#C8A048" if face == "back" and y == 1 and x in (2, 3) else LEATHER[(x + y) % 2]
+        if face == "back" and x in (1, 4):
+            return STRAP
+        return CANVAS[(x + 2 * y + len(face)) % 3]
+
+    # The pack: 6x6x3 at uv (0, 0).
+    paint_box(im, 0, 0, 6, 6, 3, pack)
+    # The blanket roll: 8x2x2 at uv (0, 12). Red stripes on a brown roll.
+    paint_box(im, 0, 12, 8, 2, 2, lambda face, x, y: "#8E3428" if x % 4 == 1 else
+              ("#6E5A44" if (x + y) % 2 else "#5C4A38") if face not in ("right", "left") else
+              ("#4A3A2C" if (x + y) % 2 else "#6E5A44"))
+    # A strap: 1x4x0 at uv (0, 20).
+    paint_box(im, 0, 20, 1, 4, 0, lambda face, x, y: STRAP if y % 3 else "#8A7A5A")
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [-3, 3, 2], "size": [6, 6, 3]},
+        {"bone": "body", "uv": [0, 12], "from": [-4, 1, 2.5], "size": [8, 2, 2]},
+        {"bone": "body", "uv": [0, 20], "from": [-4, 0, -2.1], "size": [1, 4, 0]},
+        {"bone": "body", "uv": [0, 20], "from": [3, 0, -2.1], "size": [1, 4, 0]},
+    ]
+    save_model("packmule_pack", im, parts)
+
+
+ROPE = ("#C8AE78", "#9C8250")
+
+
+def linked():
+    # The rope is the gene model linked_rope.
+    return []
+
+
+def linked_model():
+    # A loop of rope round each wrist, at arm row 10 (y 8 on the arm bone),
+    # and a cut end of rope that hangs from the outer side of the wrist.
+    from PIL import Image
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+    twist = lambda face, x, y: ROPE[(x + y) % 2]
+    # The loop: 4x1x4 at uv (0, 0). The end: 1x4x1 at uv (0, 8).
+    paint_box(im, 0, 0, 4, 1, 4, twist)
+    paint_box(im, 0, 8, 1, 4, 1, lambda face, x, y: "#E0CFA0" if face == "bottom" else ROPE[y % 2])
+    parts = []
+    for bone, x, end_x, mirror in (("right_arm", -3, -3.6, False), ("left_arm", -1, 2.6, True)):
+        loop = {"bone": bone, "uv": [0, 0], "from": [x, 8, -2], "size": [4, 1, 4], "inflate": 0.3}
+        if mirror:
+            loop["mirror"] = True
+        parts.append(loop)
+        parts.append({"bone": bone, "uv": [0, 8], "from": [end_x, 9, 0.5], "size": [1, 4, 1],
+                      "pivot": [end_x + 0.5, 9, 1], "rotation": [10, 0, 0]})
+    save_model("linked_rope", im, parts)
+
+
+def signal_fire():
+    # The torch is the gene model signal_fire_torch.
+    return []
+
+
+def signal_fire_model():
+    # A small torch on the back, next to the left shoulder, behind the head
+    # (the back of the head is at z 4). The stick goes past the Packmule
+    # pack (x -3 to 3). The flame glows.
+    from PIL import Image
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    # The stick: 1x7x1 at uv (0, 0). Cloth wraps at the top.
+    paint_box(im, 0, 0, 1, 7, 1, lambda face, x, y: ("#6B4A2A" if y % 2 else "#5A3C22") if y > 1 else
+              "#3A2A1C")
+    # The flame: 1x2x1 at uv (0, 10).
+    paint_box(im, 0, 10, 1, 2, 1, lambda face, x, y: "#FFE07A" if y == 1 or face == "top" else "#FF9A2A")
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [3.2, -3, 4.5], "size": [1, 7, 1],
+         "pivot": [3.7, 4, 5], "rotation": [0, 0, 12]},
+        {"bone": "body", "uv": [0, 10], "from": [3.2, -5, 4.5], "size": [1, 2, 1],
+         "pivot": [3.7, 4, 5], "rotation": [0, 0, 12], "glow": True},
+    ]
+    save_model("signal_fire_torch", im, parts)
+
+
+INDIGO = ("#4A5C8C", "#3C4C78", "#5E72A4")
+
+
+def sandling():
+    # A small cloth wrap on the head, faded indigo: on the top of the head,
+    # the top 3 rows of the sides and the back, and the top row of the
+    # face. A baby keeps the wrap.
+    wrap = Mark(INDIGO[0])
+    fold = Mark(INDIGO[1])
+    light = Mark(INDIGO[2])
+
+    def put(pixel, col, row):
+        n = noise100(col, row, 71)
+        (fold if n < 25 else light if n > 88 else wrap).put(pixel, 255 if (col + row) % 2 else 235)
+
+    x0, y0, w, h = HEAD_FACES["top"]
+    for row in range(h):
+        for col in range(w):
+            put((x0 + col, y0 + row), col, row)
+    for name in ("right", "left", "back"):
+        x0, y0, w, h = HEAD_FACES[name]
+        for col in range(w):
+            for row in range(3):
+                # The lower edge is uneven.
+                if row == 2 and noise100(col, row, 72 + len(name)) < 35:
+                    continue
+                put((x0 + col, y0 + row), col, row + 8)
+    for x in range(8, 16):
+        put((x, 8), x, 20)
+    return [wrap, fold, light]
+
+
+RUST = ("#A04A2E", "#8A3C24", "#C8A060")
+
+
+def nomad():
+    # The long scarf is the gene model nomad_scarf.
+    return []
+
+
+def nomad_model():
+    # A long scarf round the neck, just under the Tomb Guard collar (y 0 to
+    # 1.3), and a long end that hangs down the front, on chest columns 0
+    # and 1. The end hangs in front of the Packmule strap.
+    from PIL import Image
+    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+
+    def cloth(face, x, y):
+        return RUST[2] if (x + 2 * y) % 7 == 0 else RUST[(x // 2 + y) % 2]
+
+    # The loop: 8x1x4 at uv (0, 0). The end: 2x7x1 at uv (0, 8), with a
+    # fringe at the bottom.
+    paint_box(im, 0, 0, 8, 1, 4, cloth)
+    paint_box(im, 0, 8, 2, 7, 1, lambda face, x, y: RUST[2] if y == 6 else
+              "#E0C890" if y == 4 else cloth(face, x, y))
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [-4, 2, -2], "size": [8, 1, 4], "inflate": 0.45},
+        {"bone": "body", "uv": [0, 8], "from": [-4.2, 2.5, -3.1], "size": [2, 7, 1],
+         "pivot": [-3.2, 2.5, -2.6], "rotation": [-6, 0, 4]},
+    ]
+    save_model("nomad_scarf", im, parts)
+
+
+def waterskin():
+    # The water bag is the gene model waterskin_bag.
+    return []
+
+
+def waterskin_model():
+    # A leather water bag tied to the outer side of the right thigh, under
+    # the hand, with a strap round the thigh. On the leg bone, the leg is
+    # from x -2 to 2 and from y 0 to 12.
+    from PIL import Image
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def bag(face, x, y):
+        if y == 0 and face != "top":
+            return "#C8B088"
+        if face == "top":
+            return "#C8B088" if x == 0 and y == 1 else LEATHER[2]
+        return LEATHER[0] if (x + y) % 3 else LEATHER[1]
+
+    # The bag: 2x5x3 at uv (0, 0). The strap: 4x1x4 at uv (0, 8).
+    paint_box(im, 0, 0, 2, 5, 3, bag)
+    paint_box(im, 0, 8, 4, 1, 4, lambda face, x, y: STRAP)
+    parts = [
+        {"bone": "right_leg", "uv": [0, 0], "from": [-4, 1, -1.5], "size": [2, 5, 3]},
+        {"bone": "right_leg", "uv": [0, 8], "from": [-2, 1, -2], "size": [4, 1, 4], "inflate": 0.2},
+    ]
+    save_model("waterskin_bag", im, parts)
+
+
 GENES = {
     "sunbaked": sunbaked,
     "heatshimmer": heatshimmer,
@@ -564,6 +799,12 @@ GENES = {
     "embalmed": embalmed,
     "tomb_guard": tomb_guard,
     "grave_dust": grave_dust,
+    "packmule": packmule,
+    "linked": linked,
+    "signal_fire": signal_fire,
+    "sandling": sandling,
+    "nomad": nomad,
+    "waterskin": waterskin,
 }
 
 MODELS = {
@@ -571,6 +812,11 @@ MODELS = {
     "sinkhole": "originofspawns:sinkhole_sand",
     "tomb_guard": "originofspawns:tomb_guard_gold",
     "undying": "originofspawns:undying_glow",
+    "packmule": "originofspawns:packmule_pack",
+    "linked": "originofspawns:linked_rope",
+    "signal_fire": "originofspawns:signal_fire_torch",
+    "nomad": "originofspawns:nomad_scarf",
+    "waterskin": "originofspawns:waterskin_bag",
 }
 
 
@@ -580,6 +826,11 @@ def main():
     sinkhole_model()
     tomb_guard_model()
     undying_model()
+    packmule_model()
+    linked_model()
+    signal_fire_model()
+    nomad_model()
+    waterskin_model()
     for gene, make in GENES.items():
         marks = make()
         write(gene, marks, MODELS)

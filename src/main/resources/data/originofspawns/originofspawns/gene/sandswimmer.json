@@ -6,9 +6,11 @@
 		{
 			"type": "burrow",
 			"player_radius": 24,
-			"rise_seconds": 1,
+			"rise_seconds": 2,
 			"blocks": "#minecraft:sand",
-			"night_only": false
+			"night_only": false,
+			"stun_seconds": 1,
+			"near_player": true
 		}
 	]
 }

@@ -406,13 +406,16 @@ Version 1.0.0 has these 30 perks:
 - The mod records the activity of the player in categories.
   These are the first categories:
 
-| Class | Activity |
-|---|---|
-| Builder | Blocks placed |
-| Fighter | Kills and damage dealt |
-| Explorer | Distance traveled, new biomes, and new structures |
-| Miner | Blocks mined under the surface |
-| Farmer | Crops harvested and animals bred |
+| Family | Old class name | Activity |
+|---|---|---|
+| Fabers | Builder | Blocks placed |
+| Warriors | Fighter | Kills and damage dealt |
+| Nomads | Explorer | Distance traveled, new biomes, and new structures |
+| Fossors | Miner | Blocks mined under the surface |
+| Cultors | Farmer | Crops harvested and animals bred |
+
+- The family names fit lineages, not jobs. A single player of a family is a
+  Faber, a Warrior, a Nomad, a Fossor, or a Cultor.
 
 - More categories can come later.
 - Each category has a percentage of the total activity of the player.
@@ -428,8 +431,8 @@ Version 1.0.0 has these 30 perks:
   gives its family effects at tier 1, like the sub family of a mob.
 - The other categories give no effects.
 - The mobs counter the classes of the players.
-  For example, a world of Fighters selects for tougher mobs.
-  A world of Explorers selects for faster mobs.
+  For example, a world of Warriors selects for tougher mobs.
+  A world of Nomads selects for faster mobs.
 - The notebook shows the percentage of each category and the current classes.
 - Data packs define the classes, their activities, and their effects.
 

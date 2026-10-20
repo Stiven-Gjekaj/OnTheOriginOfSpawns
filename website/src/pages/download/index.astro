@@ -1,0 +1,66 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import site from "../../data/site.json";
+import { url } from "../../lib/site.js";
+import { brandIcon } from "../../lib/icons.js";
+const { links, version, minecraft, fabric, repo } = site;
+---
+<Layout title="Download" description={`Download On the Origin of Spawns ${version} for Minecraft ${minecraft}.`}>
+  <PageHeader eyebrow="Download" title="Get the mod">
+    The newest release is {version}. It is an alpha release. An alpha release has the systems, but not all of the content.
+  </PageHeader>
+
+  <div class="page container">
+    <img class="banner" src={url("img/banner.jpg")} alt="On the Origin of Spawns: an open notebook in front of a strand of DNA" width="1400" height="788" loading="lazy" />
+
+    <section class="section downloads">
+      <div class="card dl">
+        <h3>Modrinth</h3>
+        <p class="muted small">The main page of the mod, with each release.</p>
+        <a class="mc-btn modrinth" href={links.modrinth}><Fragment set:html={brandIcon.modrinth} />Download</a>
+      </div>
+      <div class="card dl">
+        <h3>CurseForge</h3>
+        <p class="muted small">The same files, for the CurseForge app.</p>
+        <a class="mc-btn curseforge" href={links.curseforge}><Fragment set:html={brandIcon.curseforge} />Download</a>
+      </div>
+      <div class="card dl">
+        <h3>GitHub</h3>
+        <p class="muted small">The release notes and the source code.</p>
+        <a class="mc-btn stone" href={links.releases}><Fragment set:html={brandIcon.github} />Releases</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h2>What you need</h2></div>
+      <div class="grid grid-3">
+        <div class="card req"><span class="muted small">Minecraft</span><b>{minecraft}</b></div>
+        <div class="card req"><span class="muted small">Fabric Loader</span><b>{fabric} or later</b></div>
+        <div class="card req"><span class="muted small">Newest release</span><b>{version}</b></div>
+      </div>
+    </section>
+
+    <section class="section grid grid-2">
+      <div class="card">
+        <h3>Support the project</h3>
+        <p class="muted">If you like On the Origin of Spawns, you can support its development.</p>
+        <div class="actions"><a class="btn" href={links.kofi}><Fragment set:html={brandIcon.kofi} />Support on Ko-fi</a></div>
+      </div>
+      <div class="card">
+        <h3>Licence</h3>
+        <p class="muted">All rights reserved. The <a href={`${repo}/blob/main/LICENSE`}>LICENSE</a> file tells what you can do with this work.</p>
+        <p class="muted small">This is not an official Minecraft product. Mojang and Microsoft do not approve it, and it has no connection with them.</p>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .banner { display: block; width: 100%; height: auto; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow); }
+  .downloads { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+  .dl { display: grid; gap: var(--s-3); justify-items: start; }
+  .dl .mc-btn { margin-top: var(--s-2); }
+  .req { display: grid; gap: 2px; }
+  .req b { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-xl); }
+</style>

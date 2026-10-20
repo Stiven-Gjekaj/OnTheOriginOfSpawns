@@ -1,0 +1,75 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import Icon from "../../components/Icon.astro";
+import site from "../../data/site.json";
+
+const parts = site.roadmap.filter((r) => r.items.length);
+const next = parts.find((r) => !r.done);
+const v1 = parts.filter((r) => !r.after1);
+const done = v1.filter((r) => r.done).length;
+const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+const groups = [["Version 1.0.0", parts.filter((r) => !r.after1)], ["After version 1.0.0", parts.filter((r) => r.after1)]];
+---
+<Layout title="Roadmap" description="The milestones of On the Origin of Spawns to version 1.0.0 and after.">
+  <PageHeader eyebrow="Roadmap" title="The road to version 1.0.0">
+    Each milestone needs the milestones before it. Each finished milestone makes an alpha release. This page reads <a href={`${site.repo}/blob/main/design/ROADMAP.md`}>design/ROADMAP.md</a>.
+  </PageHeader>
+
+  <div class="page container">
+    <div class="card progress">
+      <div>
+        <h3>Progress to version 1.0.0</h3>
+        <p class="muted small">{done} of {v1.length} parts are done.{next && ` Next: ${next.key}.`}</p>
+      </div>
+      <div class="xp-row"><div class="xp"><span style={`--w:${(done / v1.length) * 100}%`}></span></div><span class="xp-level">{done}/{v1.length}</span></div>
+    </div>
+
+    {groups.map(([title, list]) => (
+      <section class="section">
+        <div class="section-head"><h2>{title}</h2></div>
+        <ol class="timeline">
+          {list.map((r) => {
+            const state = r.done ? "done" : r === next ? "next" : "plan";
+            return (
+              <li class={`ms ${state}`}>
+                <span class="node mc-slot sm"><Icon name={r.done ? "check" : r === next ? "clock" : "lock"} /></span>
+                <div class="card tight">
+                  <div class="ms-head">
+                    <div>
+                      <div class="key">{r.key}</div>
+                      <h3>{cap(r.title)}</h3>
+                    </div>
+                    <span class={`badge ${r.done ? "ok" : r === next ? "warn" : "plan"}`}><span class="dot"></span>{r.done ? "Done" : r === next ? "Next" : "Planned"}</span>
+                  </div>
+                  <details open={r === next}>
+                    <summary>{r.items.length} items</summary>
+                    <ul class="muted small">{r.items.map((x) => <li>{x}</li>)}</ul>
+                  </details>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+    ))}
+  </div>
+</Layout>
+
+<style>
+  .progress { display: grid; grid-template-columns: 1fr minmax(0, 1.2fr); gap: var(--s-5); align-items: center; }
+  .progress p { margin-top: 2px; }
+  @media (max-width: 720px) { .progress { grid-template-columns: 1fr; } }
+  .xp-row { display: grid; grid-template-columns: 1fr auto; gap: var(--s-3); align-items: center; }
+  .timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-3); position: relative; }
+  .timeline::before { content: ""; position: absolute; left: 17px; top: 8px; bottom: 8px; width: 2px; background: var(--border); }
+  .ms { display: grid; grid-template-columns: 36px 1fr; gap: var(--s-4); margin: 0; position: relative; }
+  .node { margin-top: var(--s-3); }
+  .ms.done .card { border-color: color-mix(in srgb, var(--ok) 25%, var(--border)); }
+  .ms.next .card { border-color: var(--warn); box-shadow: 0 0 0 3px color-mix(in srgb, var(--warn) 15%, transparent), var(--shadow); }
+  .ms-head { display: flex; justify-content: space-between; gap: var(--s-3); align-items: flex-start; }
+  .key { font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
+  details { margin-top: var(--s-2); }
+  summary { cursor: pointer; font-size: var(--fs-sm); font-weight: 600; color: var(--text-muted); }
+  details ul { margin-top: var(--s-2); }
+</style>

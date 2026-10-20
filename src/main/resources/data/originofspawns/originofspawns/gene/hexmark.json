@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:skeleton/hexer",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:glowing",
+			"seconds": 10,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "glowing",
+			"when": "dark"
+		}
+	]
+}

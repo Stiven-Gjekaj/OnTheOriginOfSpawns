@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:skeleton/hexer",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:poison",
+			"seconds": 4,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9,
+			"hits": "projectile"
+		}
+	]
+}

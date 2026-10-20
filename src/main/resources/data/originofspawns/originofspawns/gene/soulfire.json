@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:in_water",
+	"family": "originofspawns:skeleton/hexer",
+	"sub_family": "originofspawns:skeleton/marksman",
+	"gains": [
+		{
+			"type": "ignite_target",
+			"chance": 1,
+			"seconds": 4,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "sunburn",
+			"multiplier": 2
+		}
+	]
+}

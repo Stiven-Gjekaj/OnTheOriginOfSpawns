@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:skeleton/hexer",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:blindness",
+			"seconds": 2,
+			"hits": "projectile",
+			"chance": 0.25
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

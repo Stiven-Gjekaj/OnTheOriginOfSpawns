@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:fire",
+	"family": "originofspawns:skeleton/hexer",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:slowness",
+			"seconds": 3,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 1.25
+		}
+	]
+}

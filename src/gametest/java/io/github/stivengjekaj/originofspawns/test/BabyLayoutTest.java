@@ -51,6 +51,18 @@ public class BabyLayoutTest {
 	}
 
 	@GameTest
+	public void splitLimbsGetTheMirroredRightLimbs(GameTestHelper helper) {
+		Image split = BabyLayout.toSplitLimbs(adult());
+		// The left arm of the drowned is 4 x 12 x 4 at UV (32, 48). Its side 1 is at (32, 52), and gets side 2 of the
+		// right arm, as a mirrored arm does.
+		helper.assertValueEqual(split.get(32, 52), ARM_SIDE_TWO, "side 1 of the left arm");
+		helper.assertValueEqual(split.get(40, 52), ARM_SIDE_ONE, "side 2 of the left arm");
+		helper.assertValueEqual(split.get(40, 20), ARM_SIDE_ONE, "the right arm stays");
+		helper.assertValueEqual(split.get(8, 8), HEAD_FRONT, "the head stays");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void adultBonesFitTheBabyBones(GameTestHelper helper) {
 		float[] head = BabyLayout.boneChange(GeneModel.Bone.HEAD);
 		helper.assertValueEqual(move(head, 0, -4.0F), -3.0F, "the head corner x");

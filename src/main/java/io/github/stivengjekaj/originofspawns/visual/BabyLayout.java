@@ -79,6 +79,31 @@ public final class BabyLayout {
 	}
 
 	/**
+	 * The left arm and the left leg of a model with split limbs, such as the drowned. They have their own texture
+	 * areas, where the zombie mirrors its right limbs.
+	 */
+	private static final List<Pair> SPLIT_LIMBS = List.of(
+			new Pair(GeneModel.Bone.LEFT_ARM, new Cube(40, 16, 4, 12, 4, -1, -2, -2), new Cube(32, 48, 4, 12, 4, -1, -2, -2), true),
+			new Pair(GeneModel.Bone.LEFT_LEG, new Cube(0, 16, 4, 12, 4, -2, 0, -2), new Cube(16, 48, 4, 12, 4, -2, 0, -2), true));
+
+	/**
+	 * Copies the right arm and the right leg of an image in the zombie layout, mirrored, to the left arm and the left
+	 * leg of a model with split limbs. The other pixels stay as they are.
+	 */
+	public static TextureBaker.Image toSplitLimbs(TextureBaker.Image image) {
+		int scale = Math.max(image.width() / 64, 1);
+		int[] pixels = image.pixels().clone();
+		for (Pair pair : SPLIT_LIMBS) {
+			int[][] from = pair.adult().faces();
+			int[][] to = pair.baby().faces();
+			for (int face = 0; face < to.length; face++) {
+				copyFace(image, from[MIRRORED_FACE[face]], pixels, image.width(), to[face], scale, true);
+			}
+		}
+		return new TextureBaker.Image(image.width(), image.height(), pixels);
+	}
+
+	/**
 	 * Moves an image in the baby layout to the adult layout, so that a gene model with adult UVs can use the texture of
 	 * a baby. Pixels that no adult face covers become transparent.
 	 */

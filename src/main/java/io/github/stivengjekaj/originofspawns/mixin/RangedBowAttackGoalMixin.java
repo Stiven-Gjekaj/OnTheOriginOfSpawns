@@ -14,6 +14,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Inject;
 
 /**
  * Applies the throw rate, the throw range, and the keep distance effects of the genes to the bow attack of a mob,
@@ -24,6 +26,9 @@ public abstract class RangedBowAttackGoalMixin {
 	@Shadow
 	@Final
 	private Monster mob;
+
+	@Shadow
+	private int attackTime;
 
 	@ModifyExpressionValue(method = "tick", at = @At(value = "FIELD",
 			target = "Lnet/minecraft/world/entity/ai/goal/RangedBowAttackGoal;attackIntervalMin:I", opcode = Opcodes.GETFIELD))
@@ -48,5 +53,12 @@ public abstract class RangedBowAttackGoalMixin {
 			target = "Lnet/minecraft/world/entity/ai/goal/RangedBowAttackGoal;strafingBackwards:Z", opcode = Opcodes.GETFIELD))
 	private boolean originofspawns$keepDistance(boolean backwards) {
 		return backwards || GeneBehaviors.keepsDistance(mob);
+	}
+
+	// The first write of the attack time in the tick comes after a shot. The second write counts the time down.
+	@Inject(method = "tick", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, ordinal = 0, shift = At.Shift.AFTER,
+			target = "Lnet/minecraft/world/entity/ai/goal/RangedBowAttackGoal;attackTime:I"))
+	private void originofspawns$barrage(CallbackInfo info) {
+		GeneBehaviors.barrage(mob, mob.getTarget(), attackTime);
 	}
 }

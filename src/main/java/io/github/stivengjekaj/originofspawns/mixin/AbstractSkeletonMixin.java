@@ -34,11 +34,6 @@ public abstract class AbstractSkeletonMixin {
 		}
 	}
 
-	@Inject(method = "performRangedAttack", at = @At("TAIL"))
-	private void originofspawns$barrage(LivingEntity target, float power, CallbackInfo info) {
-		GeneBehaviors.barrage((AbstractSkeleton) (Object) this, target);
-	}
-
 	@Inject(method = "playStepSound", at = @At("HEAD"), cancellable = true)
 	private void originofspawns$silentSteps(BlockPos pos, BlockState state, CallbackInfo info) {
 		GeneEffect.Silence silence = GeneBehaviors.silence((AbstractSkeleton) (Object) this);

@@ -7,7 +7,9 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.goal.LeapGoal;
 import io.github.stivengjekaj.originofspawns.evolution.goal.LurkGoal;
 import io.github.stivengjekaj.originofspawns.evolution.goal.SiegeGoal;
+import io.github.stivengjekaj.originofspawns.mixin.AbstractSkeletonAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
+import io.github.stivengjekaj.originofspawns.mixin.RangedBowAttackGoalAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.core.BlockPos;
@@ -32,6 +34,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
 import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -508,16 +511,12 @@ public final class GeneBehaviors {
 	}
 
 	/**
-	 * True while the mobs of a barrage shoot, so that their shots do not start a new barrage.
+	 * When a skeleton with barrage shoots at a player, the skeletons near it that target the same player and can see
+	 * the player get the same wait to the next shot. Then the group draws and shoots at the same time. A skeleton
+	 * that releases its own arrow in this tick keeps its shot.
 	 */
-	private static final ThreadLocal<Boolean> VOLLEY = ThreadLocal.withInitial(() -> false);
-
-	/**
-	 * When a mob with barrage shoots, the mobs of its species near it that target the same entity shoot too, if the
-	 * group is large enough.
-	 */
-	public static void barrage(Mob mob, LivingEntity target) {
-		if (VOLLEY.get() || target == null) {
+	public static void barrage(Mob mob, LivingEntity target, int attackTime) {
+		if (!(target instanceof Player)) {
 			return;
 		}
 		var barrage = GeneEffects.of(mob).filter(GeneEffect.Barrage.class::isInstance)
@@ -525,19 +524,20 @@ public final class GeneBehaviors {
 		if (barrage.isEmpty()) {
 			return;
 		}
-		List<Mob> group = mob.level().getEntitiesOfClass(Mob.class, mob.getBoundingBox().inflate(barrage.get().radius()),
+		List<AbstractSkeleton> group = mob.level().getEntitiesOfClass(AbstractSkeleton.class,
+				mob.getBoundingBox().inflate(barrage.get().radius()),
 				other -> other != mob && other.getType() == mob.getType() && other.getTarget() == target
-						&& other instanceof RangedAttackMob && other.hasLineOfSight(target) && !GeneCombat.collapsed(other));
+						&& other.hasLineOfSight(target) && !GeneCombat.collapsed(other));
 		if (group.size() + 1 < barrage.get().group()) {
 			return;
 		}
-		VOLLEY.set(true);
-		try {
-			for (Mob other : group) {
-				((RangedAttackMob) other).performRangedAttack(target, 1.0F);
+		for (AbstractSkeleton other : group) {
+			if (other.isUsingItem() && other.getTicksUsingItem() >= drawTicks(other, 20) - 1) {
+				continue;
 			}
-		} finally {
-			VOLLEY.set(false);
+			other.stopUsingItem();
+			((RangedBowAttackGoalAccessor) ((AbstractSkeletonAccessor) other).originofspawns$bowGoal())
+					.originofspawns$setAttackTime(attackTime);
 		}
 	}
 

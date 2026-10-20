@@ -6,6 +6,8 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect.When;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.mixin.AbstractSkeletonAccessor;
+import io.github.stivengjekaj.originofspawns.mixin.RangedBowAttackGoalAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -19,8 +21,10 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.skeleton.Skeleton;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -209,15 +213,37 @@ public class SkeletonEffectsTest {
 	}
 
 	@GameTest
-	public void barrageMakesTheGroupShootTogether(GameTestHelper helper) {
+	public void barrageLinesUpTheShotsAtAPlayer(GameTestHelper helper) {
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		player.snapTo(helper.absoluteVec(new Vec3(2.5, 1.0, 6.5)));
+		Skeleton leader = skeletonWith(helper, new BlockPos(0, 1, 0), "test_barrage");
+		List<Skeleton> others = List.of(skeletonWith(helper, new BlockPos(2, 1, 0)),
+				skeletonWith(helper, new BlockPos(4, 1, 0)));
+		leader.setTarget(player);
+		others.forEach(skeleton -> skeleton.setTarget(player));
+		GeneBehaviors.barrage(leader, player, 37);
+		for (Skeleton other : others) {
+			int time = ((RangedBowAttackGoalAccessor) ((AbstractSkeletonAccessor) other).originofspawns$bowGoal())
+					.originofspawns$attackTime();
+			helper.assertValueEqual(time, 37, "the wait of a skeleton in the group");
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void barrageNeedsAPlayerTarget(GameTestHelper helper) {
 		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(2, 1, 6));
-		List<Skeleton> group = List.of(skeletonWith(helper, new BlockPos(0, 1, 0), "test_barrage"),
-				skeletonWith(helper, new BlockPos(2, 1, 0), "test_barrage"),
-				skeletonWith(helper, new BlockPos(4, 1, 0), "test_barrage"));
-		group.forEach(skeleton -> skeleton.setTarget(pig));
-		group.getFirst().performRangedAttack(pig, 1.0F);
-		int arrows = helper.getLevel().getEntitiesOfClass(AbstractArrow.class, pig.getBoundingBox().inflate(16.0)).size();
-		helper.assertValueEqual(arrows, 3, "arrows from one shot of the group");
+		Skeleton leader = skeletonWith(helper, new BlockPos(0, 1, 0), "test_barrage");
+		List<Skeleton> others = List.of(skeletonWith(helper, new BlockPos(2, 1, 0)),
+				skeletonWith(helper, new BlockPos(4, 1, 0)));
+		leader.setTarget(pig);
+		others.forEach(skeleton -> skeleton.setTarget(pig));
+		GeneBehaviors.barrage(leader, pig, 37);
+		for (Skeleton other : others) {
+			int time = ((RangedBowAttackGoalAccessor) ((AbstractSkeletonAccessor) other).originofspawns$bowGoal())
+					.originofspawns$attackTime();
+			helper.assertFalse(time == 37, "a group that targets a pig keeps its own wait");
+		}
 		helper.succeed();
 	}
 

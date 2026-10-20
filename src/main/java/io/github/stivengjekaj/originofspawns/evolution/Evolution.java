@@ -11,6 +11,7 @@ import io.github.stivengjekaj.originofspawns.definition.DeathCondition;
 import io.github.stivengjekaj.originofspawns.definition.DeathContext;
 import io.github.stivengjekaj.originofspawns.definition.Gene;
 import io.github.stivengjekaj.originofspawns.definition.Pressure;
+import io.github.stivengjekaj.originofspawns.notebook.Discovery;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 import io.github.stivengjekaj.originofspawns.registry.ModRegistries;
 
@@ -25,6 +26,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -127,11 +129,17 @@ public final class Evolution {
 			return;
 		}
 		if (entity instanceof Player && source.getEntity() instanceof Mob killer) {
+			if (entity instanceof ServerPlayer victim) {
+				Discovery.learn(victim, killer);
+			}
 			onPlayerKilled(level, killer, source);
 			raiseVictim(entity, source);
 		}
 		if (!(entity instanceof Mob mob)) {
 			return;
+		}
+		if (source.getEntity() instanceof ServerPlayer killer) {
+			Discovery.learn(killer, mob);
 		}
 		GeneCombat.onDeath(mob, level);
 		Identifier species = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());

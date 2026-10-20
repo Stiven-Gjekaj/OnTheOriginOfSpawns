@@ -231,6 +231,21 @@ public class SkeletonEffectsTest {
 	}
 
 	@GameTest
+	public void anArrowHitCallsTheSkeletonsNear(GameTestHelper helper) {
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		Skeleton marker = skeletonWith(helper, new BlockPos(1, 1, 1), "test_call_on_hit");
+		Skeleton ally = skeletonWith(helper, new BlockPos(5, 1, 5));
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 3));
+		GeneCombat.onHit(marker, player);
+		helper.assertTrue(ally.getTarget() == null, "a melee hit does not call");
+		GeneCombat.onProjectileHit(marker, pig);
+		helper.assertTrue(ally.getTarget() == null, "a hit on a pig does not call");
+		GeneCombat.onProjectileHit(marker, player);
+		helper.assertTrue(ally.getTarget() == player, "the ally targets the player");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void barrageNeedsAPlayerTarget(GameTestHelper helper) {
 		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(2, 1, 6));
 		Skeleton leader = skeletonWith(helper, new BlockPos(0, 1, 0), "test_barrage");

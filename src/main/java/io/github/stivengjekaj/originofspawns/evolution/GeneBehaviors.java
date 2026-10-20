@@ -721,11 +721,18 @@ public final class GeneBehaviors {
 		if (state.callTime() >= 0L && now - state.callTime() < Math.round(call.cooldownSeconds() * 20.0F)) {
 			return;
 		}
-		AABB area = mob.getBoundingBox().inflate(call.radius());
-		for (Mob ally : level.getEntitiesOfClass(Mob.class, area, other -> other.getType() == mob.getType())) {
+		callAllies(mob, call.radius(), player);
+		mob.setAttached(ModAttachments.STATE, state.withCallTime(now));
+	}
+
+	/**
+	 * Makes all mobs of the species of the mob in the radius target the player.
+	 */
+	public static void callAllies(Mob mob, float radius, Player player) {
+		AABB area = mob.getBoundingBox().inflate(radius);
+		for (Mob ally : mob.level().getEntitiesOfClass(Mob.class, area, other -> other.getType() == mob.getType())) {
 			ally.setTarget(player);
 		}
-		mob.setAttached(ModAttachments.STATE, state.withCallTime(now));
 	}
 
 	private static void rise(Mob mob, ServerLevel level, BehaviorState state) {

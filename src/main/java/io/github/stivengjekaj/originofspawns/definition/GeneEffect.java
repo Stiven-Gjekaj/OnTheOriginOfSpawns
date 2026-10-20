@@ -73,6 +73,7 @@ public sealed interface GeneEffect {
 			Map.entry("pick_up_items", PickUpItems.CODEC),
 			Map.entry("no_conversion", NoConversion.CODEC),
 			Map.entry("regenerate", Regenerate.CODEC),
+			Map.entry("call_on_hit", CallOnHit.CODEC),
 			Map.entry("call_on_sight", CallOnSight.CODEC),
 			Map.entry("brood", Brood.CODEC),
 			Map.entry("runt", Runt.CODEC),
@@ -781,6 +782,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "call_on_sight";
+		}
+	}
+
+	/**
+	 * When the mob hits a player, all mobs of its species in the radius target that player.
+	 */
+	record CallOnHit(float radius, Hits hits) implements GeneEffect {
+		public static final MapCodec<CallOnHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 128.0F).fieldOf("radius").forGetter(CallOnHit::radius),
+				Hits.CODEC.optionalFieldOf("hits", Hits.MELEE).forGetter(CallOnHit::hits)
+		).apply(instance, CallOnHit::new));
+
+		@Override
+		public String type() {
+			return "call_on_hit";
 		}
 	}
 

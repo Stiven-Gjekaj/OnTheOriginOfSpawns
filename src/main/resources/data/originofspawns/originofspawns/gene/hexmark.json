@@ -8,6 +8,11 @@
 			"effect": "minecraft:glowing",
 			"seconds": 10,
 			"hits": "projectile"
+		},
+		{
+			"type": "call_on_hit",
+			"radius": 24,
+			"hits": "projectile"
 		}
 	],
 	"downsides": [

@@ -527,14 +527,44 @@ public sealed interface GeneEffect {
 	/**
 	 * The mob leaps at its target. After a missed leap, it cannot move for a short time.
 	 */
-	record Leap(float minDistance, float maxDistance, float cooldownSeconds, float missStunSeconds)
+	record Leap(float minDistance, float maxDistance, float cooldownSeconds, float missStunSeconds, Medium medium)
 			implements GeneEffect {
 		public static final MapCodec<Leap> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.0F, 32.0F).optionalFieldOf("min_distance", 3.0F).forGetter(Leap::minDistance),
 				Codec.floatRange(0.0F, 32.0F).optionalFieldOf("max_distance", 5.0F).forGetter(Leap::maxDistance),
 				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("cooldown_seconds", 5.0F).forGetter(Leap::cooldownSeconds),
-				Codec.floatRange(0.0F, 60.0F).optionalFieldOf("miss_stun_seconds", 1.0F).forGetter(Leap::missStunSeconds)
+				Codec.floatRange(0.0F, 60.0F).optionalFieldOf("miss_stun_seconds", 1.0F).forGetter(Leap::missStunSeconds),
+				Medium.CODEC.optionalFieldOf("medium", Medium.GROUND).forGetter(Leap::medium)
 		).apply(instance, Leap::new));
+
+		public Leap(float minDistance, float maxDistance, float cooldownSeconds, float missStunSeconds) {
+			this(minDistance, maxDistance, cooldownSeconds, missStunSeconds, Medium.GROUND);
+		}
+
+		/**
+		 * Where the leap starts and how it moves.
+		 */
+		public enum Medium implements StringRepresentable {
+			/**
+			 * A jump from the ground at the target.
+			 */
+			GROUND,
+			/**
+			 * A dash through water at a target in water.
+			 */
+			WATER,
+			/**
+			 * A jump out of the water at a target on land, a little above the mob.
+			 */
+			BREACH;
+
+			public static final Codec<Medium> CODEC = StringRepresentable.fromEnum(Medium::values);
+
+			@Override
+			public String getSerializedName() {
+				return name().toLowerCase(Locale.ROOT);
+			}
+		}
 
 		@Override
 		public String type() {

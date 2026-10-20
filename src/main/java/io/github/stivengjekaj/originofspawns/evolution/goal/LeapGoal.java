@@ -12,15 +12,24 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Makes the mob leap at its target from a distance. A missed leap stuns the mob.
+ * Makes the mob leap at its target from a distance: a jump from the ground, a dash through water, or a jump out of
+ * the water. A missed leap stuns the mob.
  */
 public class LeapGoal extends Goal {
 	private static final double HIT_DISTANCE = 2.0;
+	/**
+	 * A breach reaches a target that is up to this height above the mob.
+	 */
+	private static final double BREACH_HEIGHT = 3.0;
+	private static final int DASH_TICKS = 8;
+	private static final double DASH_SPEED = 0.6;
 
 	private final Mob mob;
 	private final GeneEffect.Leap leap;
 	private long readyTime;
 	private boolean airborne;
+	private int dashTicks;
+	private Vec3 dashDirection = Vec3.ZERO;
 
 	public LeapGoal(Mob mob, GeneEffect.Leap leap) {
 		this.mob = mob;
@@ -31,30 +40,52 @@ public class LeapGoal extends Goal {
 	@Override
 	public boolean canUse() {
 		LivingEntity target = mob.getTarget();
-		if (target == null || !mob.onGround() || mob.level().getGameTime() < readyTime) {
+		if (target == null || mob.level().getGameTime() < readyTime) {
 			return false;
 		}
+		boolean ready = switch (leap.medium()) {
+			case GROUND -> mob.onGround();
+			case WATER -> mob.isInWater() && target.isInWater();
+			case BREACH -> {
+				double height = target.getY() - mob.getY();
+				yield mob.isInWater() && !target.isInWater() && height >= 0.0 && height <= BREACH_HEIGHT;
+			}
+		};
 		double distance = mob.distanceTo(target);
-		return distance >= leap.minDistance() && distance <= leap.maxDistance();
+		return ready && distance >= leap.minDistance() && distance <= leap.maxDistance();
 	}
 
 	@Override
 	public boolean canContinueToUse() {
-		return !airborne || !mob.onGround();
+		if (leap.medium() == GeneEffect.Leap.Medium.WATER) {
+			return dashTicks > 0;
+		}
+		return !airborne || !mob.onGround() && !mob.isInWater();
 	}
 
 	@Override
 	public void start() {
 		LivingEntity target = mob.getTarget();
-		Vec3 direction = new Vec3(target.getX() - mob.getX(), 0.0, target.getZ() - mob.getZ()).normalize();
-		mob.setDeltaMovement(direction.x * 0.9, 0.42, direction.z * 0.9);
+		Vec3 flat = new Vec3(target.getX() - mob.getX(), 0.0, target.getZ() - mob.getZ()).normalize();
+		switch (leap.medium()) {
+			case GROUND -> mob.setDeltaMovement(flat.x * 0.9, 0.42, flat.z * 0.9);
+			case WATER -> {
+				dashDirection = target.position().subtract(mob.position()).normalize();
+				dashTicks = DASH_TICKS;
+			}
+			case BREACH -> mob.setDeltaMovement(flat.x * 0.7, 0.9, flat.z * 0.7);
+		}
 		airborne = false;
 		readyTime = mob.level().getGameTime() + Math.round(leap.cooldownSeconds() * 20.0F);
 	}
 
 	@Override
 	public void tick() {
-		if (!mob.onGround()) {
+		if (dashTicks > 0) {
+			mob.setDeltaMovement(dashDirection.scale(DASH_SPEED));
+			dashTicks--;
+		}
+		if (!mob.onGround() && !mob.isInWater()) {
 			airborne = true;
 		}
 	}
@@ -67,6 +98,7 @@ public class LeapGoal extends Goal {
 			mob.setAttached(ModAttachments.STATE,
 					mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE).withStunUntil(stunUntil));
 		}
+		dashTicks = 0;
 	}
 
 	@Override

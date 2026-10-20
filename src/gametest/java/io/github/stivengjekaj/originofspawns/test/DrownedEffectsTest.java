@@ -7,6 +7,7 @@ import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
+import io.github.stivengjekaj.originofspawns.evolution.goal.LeapGoal;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -273,6 +274,45 @@ public class DrownedEffectsTest {
 		helper.assertFalse(helper.getLevel().getEntitiesOfClass(LightningBolt.class, pig.getBoundingBox().inflate(2.0))
 				.isEmpty(), "a lightning bolt at the pig");
 		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 40)
+	public void waterDashNeedsTwoSwimmers(GameTestHelper helper) {
+		BlockPos start = new BlockPos(1, 1, 1);
+		for (int x = 1; x <= 6; x++) {
+			fill(helper, new BlockPos(x, 1, 1), 2);
+		}
+		Drowned drowned = drownedWith(helper, start);
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(6, 1, 1));
+		drowned.setTarget(pig);
+		LeapGoal dash = new LeapGoal(drowned, new GeneEffect.Leap(4.0F, 8.0F, 5.0F, 1.0F, GeneEffect.Leap.Medium.WATER));
+		helper.runAfterDelay(5, () -> {
+			helper.assertTrue(dash.canUse(), "a dash at a target 5 blocks away in water");
+			dash.start();
+			dash.tick();
+			helper.assertTrue(drowned.getDeltaMovement().x > 0.5, "the dash moves to the target");
+			dash.stop();
+			helper.assertFalse(dash.canUse(), "the cooldown");
+			helper.succeed();
+		});
+	}
+
+	@GameTest(maxTicks = 40)
+	public void breachReachesATargetOnTheShore(GameTestHelper helper) {
+		fill(helper, new BlockPos(1, 1, 1), 2);
+		helper.setBlock(new BlockPos(4, 1, 1), Blocks.STONE);
+		Drowned drowned = drownedWith(helper, new BlockPos(1, 1, 1));
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(4, 2, 1));
+		drowned.setTarget(pig);
+		LeapGoal breach = new LeapGoal(drowned, new GeneEffect.Leap(0.0F, 6.0F, 5.0F, 1.0F, GeneEffect.Leap.Medium.BREACH));
+		LeapGoal ground = new LeapGoal(drowned, new GeneEffect.Leap(0.0F, 6.0F, 5.0F, 1.0F));
+		helper.runAfterDelay(5, () -> {
+			helper.assertTrue(breach.canUse(), "a breach at a target on the shore");
+			helper.assertFalse(ground.canUse(), "no ground leap from the water");
+			breach.start();
+			helper.assertTrue(drowned.getDeltaMovement().y > 0.8, "the breach jumps up");
+			helper.succeed();
+		});
 	}
 
 	/**

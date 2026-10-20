@@ -164,6 +164,8 @@ Thus, the bones look worn, not undead.
   For example, a zombie does not spawn with a sword, a shovel, or armor.
 - A mob keeps the weapons and armor that are natural to it.
   For example, a drowned keeps its trident, and a skeleton keeps its bow.
+  A husk that rides a camel husk keeps its iron spear, because the rider and
+  its spear are one vanilla mob design.
 - A gene can give a weapon, armor, or item pickup when that is its effect.
   For example, Tridentborn gives a trident, and Packmule picks up items and
   wears armor.

@@ -1,0 +1,24 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:drowned/abyssal",
+	"gains": [
+		{
+			"type": "see_invisible",
+			"radius": 16
+		},
+		{
+			"type": "attribute_when",
+			"when": "in_water",
+			"attribute": "minecraft:follow_range",
+			"amount": 0.5,
+			"operation": "add_multiplied_total"
+		}
+	],
+	"downsides": [
+		{
+			"type": "sneak_blind",
+			"radius": 4
+		}
+	]
+}

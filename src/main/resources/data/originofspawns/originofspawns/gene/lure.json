@@ -1,0 +1,13 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:drowned/abyssal",
+	"gains": [
+		{
+			"type": "lure",
+			"radius": 6,
+			"reset_seconds": 20,
+			"multiplier": 2
+		}
+	]
+}

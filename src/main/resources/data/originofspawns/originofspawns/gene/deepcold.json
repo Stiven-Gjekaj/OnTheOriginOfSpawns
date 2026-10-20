@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:fire",
+	"family": "originofspawns:drowned/abyssal",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:mining_fatigue",
+			"seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "speed_when",
+			"when": "on_land",
+			"multiplier": 0.8
+		}
+	]
+}

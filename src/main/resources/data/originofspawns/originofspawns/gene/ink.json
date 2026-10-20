@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:drowned/abyssal",
+	"sub_family": "originofspawns:drowned/siren",
+	"gains": [
+		{
+			"type": "effect_on_hurt",
+			"effect": "minecraft:blindness",
+			"seconds": 3,
+			"cooldown_seconds": 15,
+			"ink": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

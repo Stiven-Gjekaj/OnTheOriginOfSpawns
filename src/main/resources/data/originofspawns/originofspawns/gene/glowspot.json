@@ -1,0 +1,12 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:drowned/abyssal",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:glowing",
+			"seconds": 10
+		}
+	]
+}

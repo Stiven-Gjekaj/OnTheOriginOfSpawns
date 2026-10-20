@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:drowned/abyssal",
+	"gains": [
+		{
+			"type": "damage_taken_when",
+			"when": "deep",
+			"multiplier": 0.6
+		}
+	],
+	"downsides": [
+		{
+			"type": "speed_when",
+			"when": "above_sea_level",
+			"multiplier": 0.8
+		}
+	]
+}

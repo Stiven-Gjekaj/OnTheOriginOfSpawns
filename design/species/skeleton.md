@@ -161,7 +161,7 @@ The visual column gives the region and the mark.
 | Bonewall | The front is the half of the space in front of the skeleton |
 | Holy Ward | Wolves also do not run at it. It still runs from wolves |
 | Barrage | The volley needs a clear line of sight from each skeleton |
-| Spider Rider | This adds to the vanilla chance of a spider jockey |
+| Spider Rider | Skeleton jockeys come only from this gene. A spider does not spawn with a skeleton in vanilla ways |
 | Soulfire | It works only with its bow. Its arrows do not set blocks on fire |
 
 ## Equipment
@@ -176,6 +176,12 @@ The visual column gives the region and the mark.
 
 - A skeleton that freezes in powder snow converts to a stray. The stray gets
   new genes from the stray pool. It keeps none of its skeleton genes.
+
+## Spider jockeys
+
+- Spider jockeys do not spawn in vanilla ways.
+- Only the Spider Rider gene makes a skeleton ride a spider.
+- At the start of a world, no spider jockeys spawn.
 
 ## Babies
 
@@ -252,6 +258,6 @@ These genes and families need parts that the mod does not have yet.
 | Damage taken from the front, and damage from Smite weapons | Bonewall, Holy Ward |
 | Wolves that do not attack the mob | Holy Ward |
 | A shared volley of a group | Barrage |
-| A spawn on a spider | Spider Rider |
+| A spawn on a spider, and no spider jockeys in vanilla ways | Spider Rider |
 | Arrows that set the target on fire | Soulfire |
 | The pressures `wolf` and `shield` | Holy Ward, Shieldbreaker |

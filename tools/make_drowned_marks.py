@@ -61,8 +61,8 @@ Pixel plan for the Barnacled. Five Barnacled genes are gene models.
   coral_growth_coral.
 - Shellback: a large clam shell on the back, the gene model
   shellback_shell. It covers the barnacles on the back.
-- Anchor: a rusty chain round the waist, with a small anchor on the right
-  hip, the gene model anchor_chain.
+- Anchor: rusty shackles on the ankles, with broken links of chain, the
+  gene model anchor_chain.
 - Pearlheart: an open clam on the chest with a pearl that glows, the gene
   model pearlheart_pearl.
 - Kelpwrapped has strips of kelp round the body, the arms, and the legs,
@@ -678,37 +678,47 @@ def shellback_model():
 
 
 RUST = ("#8A4A2A", "#6A3A22", "#A8642E", "#5A5A5E")
+IRON = ("#8A8A90", "#5A5A60", "#46464C")
 
 
 def anchor():
-    # The chain is the gene model anchor_chain.
+    # The shackles are the gene model anchor_chain.
     return []
 
 
 def anchor_model():
-    # A rusty chain round the waist, above the Scavenger belt (y 10 to 11),
-    # and a short end of chain that hangs on the front of the right hip,
-    # with a small anchor at its end. On the body bone, the front is at z
-    # -2, and the body ends at y 12.
+    # A rusty iron shackle round each ankle, with a few broken links of
+    # chain that hang from it and lie on the ground at the outer side, so
+    # the drowned looks weighed down. On the leg bone, the leg is from x -2
+    # to 2 and ends at y 12.
     im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
 
-    def links(face, x, y):
-        return RUST[(x + y) % 2] if (x + y) % 3 else RUST[2]
+    def iron(face, x, y):
+        # Dark gray iron with spots of rust, so it shows on the brown
+        # clothes and the teal skin.
+        if (x * 3 + y) % 5 == 0:
+            return RUST[2]
+        return IRON[0] if y == 0 or face == "top" else IRON[(x + y) % 2 + 1]
 
-    # The chain: 8x1x4 at uv (0, 0). The end: 1x3x1 at uv (0, 8). The bar
-    # of the anchor: 3x1x1 at uv (4, 8). An arm of the anchor: 1x2x1 at uv
-    # (12, 8).
-    paint_box(im, 0, 0, 8, 1, 4, links)
-    paint_box(im, 0, 8, 1, 3, 1, links)
-    paint_box(im, 4, 8, 3, 1, 1, lambda face, x, y: RUST[3] if x == 1 else RUST[0])
-    paint_box(im, 12, 8, 1, 2, 1, lambda face, x, y: RUST[3] if y else RUST[1])
-    parts = [
-        {"bone": "body", "uv": [0, 0], "from": [-4, 8, -2], "size": [8, 1, 4], "inflate": 0.45},
-        {"bone": "body", "uv": [0, 8], "from": [-3, 9, -2.8], "size": [1, 3, 1]},
-        {"bone": "body", "uv": [4, 8], "from": [-4, 12, -2.8], "size": [3, 1, 1]},
-        {"bone": "body", "uv": [12, 8], "from": [-4, 11, -2.8], "size": [1, 2, 1]},
-        {"bone": "body", "uv": [12, 8], "from": [-2, 11, -2.8], "size": [1, 2, 1]},
-    ]
+    # The shackle: 4x2x4 at uv (0, 0). A link: 1x1x2 at uv (0, 8). A
+    # broken link: 1x1x1 at uv (8, 8).
+    paint_box(im, 0, 0, 4, 2, 4, iron)
+    paint_box(im, 0, 8, 1, 1, 2, lambda face, x, y: IRON[0] if face == "top" else IRON[2])
+    paint_box(im, 8, 8, 1, 1, 1, lambda face, x, y: RUST[2])
+    parts = []
+    for bone, side, mirror in (("right_leg", -1, False), ("left_leg", 1, True)):
+        shackle = {"bone": bone, "uv": [0, 0], "from": [-2, 9, -2], "size": [4, 2, 4], "inflate": 0.4}
+        if mirror:
+            shackle["mirror"] = True
+        parts.append(shackle)
+        out = side * 2.4
+        # The links go out from the shackle and down to the ground.
+        parts.append({"bone": bone, "uv": [0, 8], "from": [out - 0.5 + side * 0.5, 10, -1], "size": [1, 1, 2],
+                      "pivot": [out, 10.5, 0], "rotation": [0, 0, side * 40]})
+        parts.append({"bone": bone, "uv": [0, 8], "from": [out - 0.5 + side * 1.6, 11, -0.5], "size": [1, 1, 2],
+                      "pivot": [out + side * 1.6, 11.5, 0.5], "rotation": [0, side * 30, 0]})
+        parts.append({"bone": bone, "uv": [8, 8], "from": [out - 0.5 + side * 2.6, 11, 0.8], "size": [1, 1, 1],
+                      "pivot": [out + side * 2.6, 11.5, 1.3], "rotation": [0, 20, side * 15]})
     save_model("anchor_chain", im, parts)
 
 

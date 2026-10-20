@@ -1,29 +1,28 @@
 {
 	"layers": [
 		{
-			"materials": [
-				"skin"
-			],
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/sunbaked_0.png",
-				"tint": "#D2604A"
+				"tint": "#22170E"
 			},
-			"order": -3
+			"order": 1
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/sunbaked_1.png",
-				"tint": "#22170E"
-			}
+				"tint": "#6E2416"
+			},
+			"order": 1
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/sunbaked_2.png",
-				"tint": "#C9AE80"
-			}
+				"tint": "#D8C09A"
+			},
+			"order": 1
 		}
 	]
 }

@@ -12,6 +12,7 @@ can read the evolution of your world on the bodies of its mobs.
 - **6** biome pools for each species
 - **523,308** possible gene mixes
 
+![All 15 families from above](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/all_families.png)
 ![Five zombies, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/zombies.png)
 ![Five husks, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/husks.png)
 ![Five drowned, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/drowned.png)

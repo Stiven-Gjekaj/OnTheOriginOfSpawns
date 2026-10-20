@@ -71,6 +71,8 @@ each other.
 
 ## Gallery
 
+![All 15 families from above: zombies on grass, husks on sand, and drowned on prismarine](assets/gallery/all_families.png)
+
 | | |
 |:---:|:---:|
 | ![Five zombies, one of each family, each with three genes](assets/gallery/zombies.png) | ![Five husks, one of each family, each with three genes](assets/gallery/husks.png) |

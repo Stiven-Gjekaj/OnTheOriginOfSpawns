@@ -16,6 +16,9 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import net.minecraft.sounds.SoundEvent;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -34,7 +37,8 @@ public abstract class LivingEntityMixin {
 	private void originofspawns$dodge(ServerLevel level, DamageSource source, float amount,
 			CallbackInfoReturnable<Boolean> info) {
 		LivingEntity self = (LivingEntity) (Object) this;
-		if (self.hasAttached(ModAttachments.GENES) && GeneCombat.dodges(self, source)) {
+		if (self.hasAttached(ModAttachments.GENES)
+				&& (GeneCombat.dodges(self, source) || GeneCombat.protectedWhileDown(self, source))) {
 			info.setReturnValue(false);
 		}
 	}
@@ -42,7 +46,7 @@ public abstract class LivingEntityMixin {
 	@Inject(method = "checkTotemDeathProtection", at = @At("HEAD"), cancellable = true)
 	private void originofspawns$undying(DamageSource source, CallbackInfoReturnable<Boolean> info) {
 		LivingEntity self = (LivingEntity) (Object) this;
-		if (self.hasAttached(ModAttachments.GENES) && GeneCombat.undying(self)) {
+		if (self.hasAttached(ModAttachments.GENES) && (GeneCombat.undying(self) || GeneCombat.reassemble(self, source))) {
 			info.setReturnValue(true);
 		}
 	}
@@ -91,6 +95,20 @@ public abstract class LivingEntityMixin {
 		if (info.getReturnValueF() > 0.0F && (Object) this instanceof Player) {
 			((LivingEntity) (Object) this).setAttached(ModAttachments.SHIELD_BLOCK, level.getGameTime());
 		}
+	}
+
+	@ModifyExpressionValue(method = "hurtServer", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/LivingEntity;getDeathSound()Lnet/minecraft/sounds/SoundEvent;"))
+	private SoundEvent originofspawns$silentDeath(SoundEvent sound) {
+		GeneEffect.Silence silence = GeneBehaviors.silence((LivingEntity) (Object) this);
+		return silence != null && silence.death() ? null : sound;
+	}
+
+	@ModifyExpressionValue(method = "playHurtSound", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/LivingEntity;getHurtSound(Lnet/minecraft/world/damagesource/DamageSource;)Lnet/minecraft/sounds/SoundEvent;"))
+	private SoundEvent originofspawns$silentHurt(SoundEvent sound) {
+		GeneEffect.Silence silence = GeneBehaviors.silence((LivingEntity) (Object) this);
+		return silence != null && silence.hurt() ? null : sound;
 	}
 
 	@Inject(method = "onClimbable", at = @At("RETURN"), cancellable = true)

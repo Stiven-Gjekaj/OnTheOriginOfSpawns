@@ -1,12 +1,19 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
+import net.minecraft.world.level.block.state.BlockState;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AbstractSkeleton.class)
 public abstract class AbstractSkeletonMixin {
@@ -18,5 +25,25 @@ public abstract class AbstractSkeletonMixin {
 			index = 7)
 	private float originofspawns$arrowSpread(float spread) {
 		return spread * GeneBehaviors.arrowSpreadMultiplier((AbstractSkeleton) (Object) this);
+	}
+
+	@Inject(method = "performRangedAttack", at = @At("HEAD"), cancellable = true)
+	private void originofspawns$noShotWhileDown(LivingEntity target, float power, CallbackInfo info) {
+		if (GeneCombat.collapsed((AbstractSkeleton) (Object) this)) {
+			info.cancel();
+		}
+	}
+
+	@Inject(method = "performRangedAttack", at = @At("TAIL"))
+	private void originofspawns$barrage(LivingEntity target, float power, CallbackInfo info) {
+		GeneBehaviors.barrage((AbstractSkeleton) (Object) this, target);
+	}
+
+	@Inject(method = "playStepSound", at = @At("HEAD"), cancellable = true)
+	private void originofspawns$silentSteps(BlockPos pos, BlockState state, CallbackInfo info) {
+		GeneEffect.Silence silence = GeneBehaviors.silence((AbstractSkeleton) (Object) this);
+		if (silence != null && silence.steps()) {
+			info.cancel();
+		}
 	}
 }

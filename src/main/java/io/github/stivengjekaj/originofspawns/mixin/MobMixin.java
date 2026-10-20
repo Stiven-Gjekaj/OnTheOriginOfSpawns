@@ -74,6 +74,21 @@ public abstract class MobMixin {
 		Evolution.markSunBurn((Mob) (Object) this);
 	}
 
+	@Inject(method = "doHurtTarget", at = @At("HEAD"), cancellable = true)
+	private void originofspawns$noHitWhileDown(ServerLevel level, Entity target, CallbackInfoReturnable<Boolean> info) {
+		if (GeneCombat.collapsed((Mob) (Object) this)) {
+			info.setReturnValue(false);
+		}
+	}
+
+	@Inject(method = "playAmbientSound", at = @At("HEAD"), cancellable = true)
+	private void originofspawns$silentIdle(CallbackInfo info) {
+		var silence = io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.silence((Mob) (Object) this);
+		if (silence != null && silence.idle()) {
+			info.cancel();
+		}
+	}
+
 	@Inject(method = "doHurtTarget", at = @At("RETURN"))
 	private void originofspawns$recordHit(ServerLevel level, Entity target, CallbackInfoReturnable<Boolean> info) {
 		if (!info.getReturnValueZ()) {

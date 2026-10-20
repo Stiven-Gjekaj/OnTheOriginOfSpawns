@@ -25,6 +25,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.util.RandomSource;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
@@ -356,8 +358,16 @@ public final class GeneCombat {
 		if (state.hurtEffectTime() >= 0L && now - state.hurtEffectTime() < Math.round(onHurt.cooldownSeconds() * 20.0F)) {
 			return;
 		}
-		attacker.addEffect(new MobEffectInstance(onHurt.effect(), Math.round(onHurt.seconds() * 20.0F),
-				onHurt.amplifier()), mob);
+		MobEffectInstance instance = new MobEffectInstance(onHurt.effect(), Math.round(onHurt.seconds() * 20.0F),
+				onHurt.amplifier());
+		if (onHurt.allyRadius() > 0.0F) {
+			AABB area = mob.getBoundingBox().inflate(onHurt.allyRadius());
+			for (Mob ally : level.getEntitiesOfClass(Mob.class, area, other -> other.getType() == mob.getType())) {
+				ally.addEffect(new MobEffectInstance(instance), mob);
+			}
+		} else {
+			attacker.addEffect(instance, mob);
+		}
 		if (onHurt.ink()) {
 			level.sendParticles(ParticleTypes.SQUID_INK, mob.getX(), mob.getY(0.6), mob.getZ(), 30, 0.5, 0.5, 0.5, 0.05);
 		}
@@ -500,6 +510,48 @@ public final class GeneCombat {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns true if the mob fell apart and waits to stand up again.
+	 */
+	public static boolean collapsed(LivingEntity entity) {
+		long until = entity.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE).collapseUntil();
+		return until >= 0L && entity.level().getGameTime() < until;
+	}
+
+	/**
+	 * Lets a mob with the reassemble effect fall apart in place of its death, one time in its life. A weapon with
+	 * Smite stops it.
+	 *
+	 * @return true if the mob does not die now
+	 */
+	public static boolean reassemble(LivingEntity entity, DamageSource source) {
+		if (!(entity instanceof Mob mob) || !(mob.level() instanceof ServerLevel level)
+				|| mob.getAttachedOrElse(ModAttachments.REASSEMBLE_USED, false)
+				|| hasEnchantment(source, Enchantments.SMITE)) {
+			return false;
+		}
+		var reassemble = GeneEffects.of(mob).filter(GeneEffect.Reassemble.class::isInstance)
+				.map(GeneEffect.Reassemble.class::cast).findFirst();
+		if (reassemble.isEmpty()) {
+			return false;
+		}
+		long until = level.getGameTime() + Math.round(reassemble.get().seconds() * 20.0F);
+		mob.setHealth(1.0F);
+		mob.setAttached(ModAttachments.REASSEMBLE_USED, true);
+		mob.setAttached(ModAttachments.STATE, mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE)
+				.withCollapseUntil(until).withStunUntil(until));
+		level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, Items.BONE),
+				mob.getX(), mob.getY(0.5), mob.getZ(), 30, 0.3, 0.5, 0.3, 0.1);
+		return true;
+	}
+
+	/**
+	 * Returns true if the mob ignores this damage while it is down: only a weapon with Smite hurts it then.
+	 */
+	public static boolean protectedWhileDown(LivingEntity entity, DamageSource source) {
+		return collapsed(entity) && !hasEnchantment(source, Enchantments.SMITE);
 	}
 
 	/**

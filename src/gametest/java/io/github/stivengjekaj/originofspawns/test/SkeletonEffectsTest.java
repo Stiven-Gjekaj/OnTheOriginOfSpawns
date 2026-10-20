@@ -175,6 +175,88 @@ public class SkeletonEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(maxTicks = 80)
+	public void reassembleStandsUpOnce(GameTestHelper helper) {
+		Skeleton skeleton = skeletonWith(helper, new BlockPos(1, 1, 1), "test_reassemble");
+		// The sun must not burn the skeleton while the test waits.
+		skeleton.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+				net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE, 400));
+		var level = helper.getLevel();
+		skeleton.hurtServer(level, level.damageSources().generic(), 1000.0F);
+		helper.assertTrue(skeleton.isAlive(), "the skeleton falls apart, and does not die");
+		helper.assertTrue(GeneCombat.collapsed(skeleton), "the skeleton is down");
+		helper.runAfterDelay(40, () -> {
+			helper.assertFalse(GeneCombat.collapsed(skeleton), "the skeleton stands up");
+			helper.assertValueEqual(skeleton.getHealth(), skeleton.getMaxHealth() / 2.0F, "half health");
+			skeleton.hurtServer(level, level.damageSources().generic(), 1000.0F);
+			helper.assertFalse(skeleton.isAlive(), "the second death is final");
+			helper.succeed();
+		});
+	}
+
+	@GameTest
+	public void smiteStopsTheReturn(GameTestHelper helper) {
+		Skeleton skeleton = skeletonWith(helper, new BlockPos(1, 1, 1), "test_reassemble");
+		Skeleton attacker = skeletonWith(helper, new BlockPos(3, 1, 1));
+		var level = helper.getLevel();
+		ItemStack sword = new ItemStack(Items.IRON_SWORD);
+		sword.enchant(level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+				.getOrThrow(net.minecraft.world.item.enchantment.Enchantments.SMITE), 3);
+		attacker.setItemSlot(EquipmentSlot.MAINHAND, sword);
+		skeleton.hurtServer(level, level.damageSources().mobAttack(attacker), 1000.0F);
+		helper.assertFalse(skeleton.isAlive(), "a Smite hit is final");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void barrageMakesTheGroupShootTogether(GameTestHelper helper) {
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(2, 1, 6));
+		List<Skeleton> group = List.of(skeletonWith(helper, new BlockPos(0, 1, 0), "test_barrage"),
+				skeletonWith(helper, new BlockPos(2, 1, 0), "test_barrage"),
+				skeletonWith(helper, new BlockPos(4, 1, 0), "test_barrage"));
+		group.forEach(skeleton -> skeleton.setTarget(pig));
+		group.getFirst().performRangedAttack(pig, 1.0F);
+		int arrows = helper.getLevel().getEntitiesOfClass(AbstractArrow.class, pig.getBoundingBox().inflate(16.0)).size();
+		helper.assertValueEqual(arrows, 3, "arrows from one shot of the group");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void warcrySpeedsUpTheAllies(GameTestHelper helper) {
+		Skeleton crier = skeletonWith(helper, new BlockPos(1, 1, 1), "test_warcry");
+		Skeleton ally = skeletonWith(helper, new BlockPos(4, 1, 4));
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(2, 1, 1));
+		GeneCombat.onHurt(crier, helper.getLevel().damageSources().mobAttack(pig));
+		helper.assertTrue(ally.hasEffect(net.minecraft.world.effect.MobEffects.SPEED), "the ally gets Speed");
+		helper.assertFalse(pig.hasEffect(net.minecraft.world.effect.MobEffects.SPEED), "the attacker does not");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void spiderRiderSpawnsOnASpider(GameTestHelper helper) {
+		Skeleton skeleton = skeletonWith(helper, new BlockPos(2, 1, 2), "test_spider_rider");
+		GeneBehaviors.onSpawn(skeleton, helper.getLevel(), EntitySpawnReason.NATURAL);
+		helper.assertTrue(skeleton.getVehicle() instanceof net.minecraft.world.entity.monster.spider.Spider,
+				"the skeleton rides a spider");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aDrawnBowAimedAtTheMobCounts(GameTestHelper helper) {
+		Skeleton skeleton = skeletonWith(helper, new BlockPos(2, 1, 6));
+		var player = helper.makeMockServerPlayerInLevel();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(2, 1, 1))));
+		player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, skeleton.getEyePosition());
+		helper.assertFalse(GeneBehaviors.isAimedAt(skeleton, player, 12.0F), "a player with no bow drawn");
+		player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+		player.startUsingItem(net.minecraft.world.InteractionHand.MAIN_HAND);
+		helper.assertTrue(GeneBehaviors.isAimedAt(skeleton, player, 12.0F), "a player that draws a bow at it");
+		player.setYRot(player.getYRot() + 90.0F);
+		player.setYHeadRot(player.getYRot());
+		helper.assertFalse(GeneBehaviors.isAimedAt(skeleton, player, 12.0F), "a player that looks away");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes a skeleton with a bow, test genes, and no AI. The genes go on before the skeleton enters the level, so it
 	 * gets nothing from the pool.

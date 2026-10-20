@@ -106,7 +106,10 @@ public sealed interface GeneEffect {
 			Map.entry("pierce_shields", PierceShields.CODEC),
 			Map.entry("damage_from_front", DamageFromFront.CODEC),
 			Map.entry("damage_from_enchantment", DamageFromEnchantment.CODEC),
-			Map.entry("ignored_by", IgnoredBy.CODEC)
+			Map.entry("ignored_by", IgnoredBy.CODEC),
+			Map.entry("reassemble", Reassemble.CODEC),
+			Map.entry("barrage", Barrage.CODEC),
+			Map.entry("jockey", Jockey.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -1027,12 +1030,17 @@ public sealed interface GeneEffect {
 	/**
 	 * When a player looks at the mob from farther than the range, the mob moves to the side, after each cooldown.
 	 */
-	record Sidestep(float range, float distance, float cooldownSeconds) implements GeneEffect {
+	record Sidestep(float range, float distance, float cooldownSeconds, boolean aimed) implements GeneEffect {
 		public static final MapCodec<Sidestep> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 12.0F).forGetter(Sidestep::range),
 				Codec.floatRange(1.0F, 16.0F).optionalFieldOf("distance", 4.0F).forGetter(Sidestep::distance),
-				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(Sidestep::cooldownSeconds)
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(Sidestep::cooldownSeconds),
+				Codec.BOOL.optionalFieldOf("aimed", false).forGetter(Sidestep::aimed)
 		).apply(instance, Sidestep::new));
+
+		public Sidestep(float range, float distance, float cooldownSeconds) {
+			this(range, distance, cooldownSeconds, false);
+		}
 
 		@Override
 		public String type() {
@@ -1303,16 +1311,18 @@ public sealed interface GeneEffect {
 
 	/**
 	 * When an attacker hurts the mob, the attacker gets a status effect. The effect waits for its cooldown.
-	 * With {@code ink}, the mob sprays a cloud of ink.
+	 * With {@code ink}, the mob sprays a cloud of ink. With an {@code ally_radius} above 0, the mobs of its species
+	 * in the radius get the effect, and the attacker does not.
 	 */
-	record EffectOnHurt(Holder<MobEffect> effect, float seconds, int amplifier, float cooldownSeconds, boolean ink)
-			implements GeneEffect {
+	record EffectOnHurt(Holder<MobEffect> effect, float seconds, int amplifier, float cooldownSeconds, boolean ink,
+			float allyRadius) implements GeneEffect {
 		public static final MapCodec<EffectOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				MobEffect.CODEC.fieldOf("effect").forGetter(EffectOnHurt::effect),
 				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(EffectOnHurt::seconds),
 				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(EffectOnHurt::amplifier),
 				Codec.floatRange(0.0F, 3600.0F).optionalFieldOf("cooldown_seconds", 0.0F).forGetter(EffectOnHurt::cooldownSeconds),
-				Codec.BOOL.optionalFieldOf("ink", false).forGetter(EffectOnHurt::ink)
+				Codec.BOOL.optionalFieldOf("ink", false).forGetter(EffectOnHurt::ink),
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("ally_radius", 0.0F).forGetter(EffectOnHurt::allyRadius)
 		).apply(instance, EffectOnHurt::new));
 
 		@Override
@@ -1478,6 +1488,53 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "ignored_by";
+		}
+	}
+
+	/**
+	 * One time in its life, the mob falls apart when it dies, and stands up again after some seconds with a part of
+	 * its health. While it is down, it takes no damage, except from a weapon with Smite, which stops the return.
+	 */
+	record Reassemble(float seconds, float health) implements GeneEffect {
+		public static final MapCodec<Reassemble> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 60.0F).optionalFieldOf("seconds", 3.0F).forGetter(Reassemble::seconds),
+				Codec.floatRange(0.01F, 1.0F).optionalFieldOf("health", 0.5F).forGetter(Reassemble::health)
+		).apply(instance, Reassemble::new));
+
+		@Override
+		public String type() {
+			return "reassemble";
+		}
+	}
+
+	/**
+	 * When the mob shoots, and enough mobs of its species in the radius target the same entity with a clear line of
+	 * sight, they all shoot at the same time.
+	 */
+	record Barrage(int group, float radius) implements GeneEffect {
+		public static final MapCodec<Barrage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(2, 32).optionalFieldOf("group", 3).forGetter(Barrage::group),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("radius", 16.0F).forGetter(Barrage::radius)
+		).apply(instance, Barrage::new));
+
+		@Override
+		public String type() {
+			return "barrage";
+		}
+	}
+
+	/**
+	 * When the mob spawns in a natural way, it has a chance to spawn on the back of a mob of the mount type.
+	 */
+	record Jockey(float chance, EntityType<?> mount) implements GeneEffect {
+		public static final MapCodec<Jockey> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(Jockey::chance),
+				EntityType.CODEC.fieldOf("mount").forGetter(Jockey::mount)
+		).apply(instance, Jockey::new));
+
+		@Override
+		public String type() {
+			return "jockey";
 		}
 	}
 }

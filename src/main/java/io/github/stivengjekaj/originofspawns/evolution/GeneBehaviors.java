@@ -39,6 +39,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 
@@ -53,6 +54,10 @@ public final class GeneBehaviors {
 	private static final int BURROW_DEPTH = 2;
 	private static final float CHICKEN_JOCKEY_CHANCE = 0.05F;
 	private static final int TICK_INTERVAL = 20;
+	/**
+	 * A player aims at a mob when its view is in about 14 degrees of the mob.
+	 */
+	private static final double AIM_COS = 0.97;
 	/**
 	 * The speed that swim vertical adds for each point of its down multiplier above 1, each tick.
 	 */
@@ -99,6 +104,8 @@ public final class GeneBehaviors {
 				case GeneEffect.Runt runt when mob instanceof Zombie zombie && mob.getRandom().nextFloat() < runt.chance() ->
 						makeRunt(zombie, level, runt);
 				case GeneEffect.Brood brood when reason == EntitySpawnReason.NATURAL -> spawnBrood(mob, level, brood);
+				case GeneEffect.Jockey jockey when reason == EntitySpawnReason.NATURAL
+						&& mob.getRandom().nextFloat() < jockey.chance() -> mount(mob, level, jockey);
 				case GeneEffect.Burrow burrow when reason == EntitySpawnReason.NATURAL -> burrow(mob, level, burrow);
 				default -> {
 				}
@@ -274,6 +281,10 @@ public final class GeneBehaviors {
 	 */
 	public static void tick(Mob mob, ServerLevel level) {
 		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+		if (state.collapseUntil() >= 0L && level.getGameTime() >= state.collapseUntil()) {
+			standUp(mob, level, state);
+			state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+		}
 		if (state.riseTicks() > 0) {
 			rise(mob, level, state);
 			return;
@@ -468,6 +479,75 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns true if the player draws a bow, a crossbow, or a trident in the range, and looks at the mob.
+	 */
+	public static boolean isAimedAt(Mob mob, Player player, float range) {
+		if (!player.isUsingItem() || player.distanceTo(mob) > range || !player.hasLineOfSight(mob)) {
+			return false;
+		}
+		ItemStack item = player.getUseItem();
+		if (!(item.is(Items.BOW) || item.is(Items.CROSSBOW) || item.is(Items.TRIDENT))) {
+			return false;
+		}
+		Vec3 toMob = mob.getEyePosition().subtract(player.getEyePosition()).normalize();
+		return player.getViewVector(1.0F).dot(toMob) > AIM_COS;
+	}
+
+	/**
+	 * Puts the mob on the back of a new mob of the mount type.
+	 */
+	public static void mount(Mob mob, ServerLevel level, GeneEffect.Jockey jockey) {
+		if (jockey.mount().create(level, EntitySpawnReason.JOCKEY) instanceof Mob mount) {
+			mount.snapTo(mob.getX(), mob.getY(), mob.getZ(), mob.getYRot(), 0.0F);
+			level.addFreshEntity(mount);
+			mob.startRiding(mount);
+		}
+	}
+
+	/**
+	 * True while the mobs of a barrage shoot, so that their shots do not start a new barrage.
+	 */
+	private static final ThreadLocal<Boolean> VOLLEY = ThreadLocal.withInitial(() -> false);
+
+	/**
+	 * When a mob with barrage shoots, the mobs of its species near it that target the same entity shoot too, if the
+	 * group is large enough.
+	 */
+	public static void barrage(Mob mob, LivingEntity target) {
+		if (VOLLEY.get() || target == null) {
+			return;
+		}
+		var barrage = GeneEffects.of(mob).filter(GeneEffect.Barrage.class::isInstance)
+				.map(GeneEffect.Barrage.class::cast).findFirst();
+		if (barrage.isEmpty()) {
+			return;
+		}
+		List<Mob> group = mob.level().getEntitiesOfClass(Mob.class, mob.getBoundingBox().inflate(barrage.get().radius()),
+				other -> other != mob && other.getType() == mob.getType() && other.getTarget() == target
+						&& other instanceof RangedAttackMob && other.hasLineOfSight(target) && !GeneCombat.collapsed(other));
+		if (group.size() + 1 < barrage.get().group()) {
+			return;
+		}
+		VOLLEY.set(true);
+		try {
+			for (Mob other : group) {
+				((RangedAttackMob) other).performRangedAttack(target, 1.0F);
+			}
+		} finally {
+			VOLLEY.set(false);
+		}
+	}
+
+	private static void standUp(Mob mob, ServerLevel level, BehaviorState state) {
+		float health = GeneEffects.of(mob).filter(GeneEffect.Reassemble.class::isInstance)
+				.map(effect -> ((GeneEffect.Reassemble) effect).health()).findFirst().orElse(0.5F);
+		mob.setHealth(Math.max(1.0F, mob.getMaxHealth() * health));
+		mob.setAttached(ModAttachments.STATE, state.withCollapseUntil(-1L));
+		level.sendParticles(new net.minecraft.core.particles.ItemParticleOption(ParticleTypes.ITEM,
+				Items.BONE), mob.getX(), mob.getY(0.5), mob.getZ(), 20, 0.3, 0.5, 0.3, 0.05);
+	}
+
+	/**
 	 * Returns the attack interval of a ranged goal after the throw rates of the mob.
 	 */
 	public static int scaleThrowInterval(Mob mob, int ticks) {
@@ -545,7 +625,9 @@ public final class GeneBehaviors {
 			return false;
 		}
 		for (Player player : level.players()) {
-			if (player.isSpectator() || !LurkGoal.isWatchedFromAfar(mob, player, sidestep.range())) {
+			boolean seen = sidestep.aimed() ? isAimedAt(mob, player, sidestep.range())
+					: LurkGoal.isWatchedFromAfar(mob, player, sidestep.range());
+			if (player.isSpectator() || !seen) {
 				continue;
 			}
 			// The side is at a right angle to the line from the player to the mob.

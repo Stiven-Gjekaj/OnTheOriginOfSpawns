@@ -72,6 +72,12 @@ public final class ModAttachments {
 	 */
 	public static final AttachmentType<Long> SHIELD_BLOCK = AttachmentRegistry.create(OriginOfSpawns.id("shield_block"));
 
+	/**
+	 * True when a mob used its one fall apart and return.
+	 */
+	public static final AttachmentType<Boolean> REASSEMBLE_USED =
+			AttachmentRegistry.createPersistent(OriginOfSpawns.id("reassemble_used"), com.mojang.serialization.Codec.BOOL);
+
 	private ModAttachments() {
 	}
 

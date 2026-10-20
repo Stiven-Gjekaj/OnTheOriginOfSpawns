@@ -26,6 +26,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.damagesource.DamageSource;
@@ -101,21 +102,17 @@ public class BehaviorEffectsTest {
 	}
 
 	@GameTest
-	public void zombiesHaveNoVanillaBabies(GameTestHelper helper) {
-		int zombieBabies = 0;
-		int huskBabies = 0;
-		for (int i = 0; i < 200; i++) {
-			Zombie zombie = EntityTypes.ZOMBIE.create(helper.getLevel(), EntitySpawnReason.NATURAL);
-			zombie.finalizeSpawn(helper.getLevel(), helper.getLevel().getCurrentDifficultyAt(helper.absolutePos(BlockPos.ZERO)),
-					EntitySpawnReason.NATURAL, null);
-			zombieBabies += zombie.isBaby() ? 1 : 0;
-			Husk husk = EntityTypes.HUSK.create(helper.getLevel(), EntitySpawnReason.NATURAL);
-			husk.finalizeSpawn(helper.getLevel(), helper.getLevel().getCurrentDifficultyAt(helper.absolutePos(BlockPos.ZERO)),
-					EntitySpawnReason.NATURAL, null);
-			huskBabies += husk.isBaby() ? 1 : 0;
+	public void zombiesHusksAndDrownedHaveNoVanillaBabies(GameTestHelper helper) {
+		for (EntityType<? extends Zombie> type : List.of(EntityTypes.ZOMBIE, EntityTypes.HUSK, EntityTypes.DROWNED)) {
+			int babies = 0;
+			for (int i = 0; i < 200; i++) {
+				Zombie zombie = type.create(helper.getLevel(), EntitySpawnReason.NATURAL);
+				zombie.finalizeSpawn(helper.getLevel(), helper.getLevel().getCurrentDifficultyAt(helper.absolutePos(BlockPos.ZERO)),
+						EntitySpawnReason.NATURAL, null);
+				babies += zombie.isBaby() ? 1 : 0;
+			}
+			helper.assertValueEqual(babies, 0, "vanilla babies of " + type);
 		}
-		helper.assertValueEqual(zombieBabies, 0, "zombie babies");
-		helper.assertTrue(huskBabies > 0, "husks still have babies");
 		helper.succeed();
 	}
 

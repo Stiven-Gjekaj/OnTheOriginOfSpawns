@@ -14,7 +14,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.npc.villager.Villager;
@@ -52,12 +51,13 @@ public abstract class ZombieMixin {
 	}
 
 	/**
-	 * Baby zombies come only from the Runt gene. The husk and the drowned keep the vanilla babies.
+	 * A species in the tag {@code originofspawns:no_vanilla_babies} spawns no babies in vanilla ways. Its babies come
+	 * only from its baby gene, for example Runt for the zombie.
 	 */
 	@WrapOperation(method = "finalizeSpawn", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/world/entity/monster/zombie/Zombie;getSpawnAsBabyOdds(Lnet/minecraft/util/RandomSource;)Z"))
 	private boolean originofspawns$noVanillaBabies(RandomSource random, Operation<Boolean> original) {
-		if (((Zombie) (Object) this).getType() == EntityTypes.ZOMBIE) {
+		if (((Zombie) (Object) this).getType().builtInRegistryHolder().is(Evolution.NO_VANILLA_BABIES)) {
 			return false;
 		}
 		return original.call(random);

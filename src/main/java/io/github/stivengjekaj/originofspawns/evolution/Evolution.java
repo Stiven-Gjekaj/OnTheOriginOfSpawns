@@ -54,6 +54,12 @@ public final class Evolution {
 			TagKey.create(Registries.ENTITY_TYPE, OriginOfSpawns.id("no_random_equipment"));
 
 	/**
+	 * The species that spawn no babies in vanilla ways. Their babies come only from a gene, such as Runt.
+	 */
+	public static final TagKey<EntityType<?>> NO_VANILLA_BABIES =
+			TagKey.create(Registries.ENTITY_TYPE, OriginOfSpawns.id("no_vanilla_babies"));
+
+	/**
 	 * The species that do not pick up items, unless a gene lets them.
 	 */
 	public static final TagKey<EntityType<?>> NO_ITEM_PICKUP =

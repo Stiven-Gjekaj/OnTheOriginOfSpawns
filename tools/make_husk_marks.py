@@ -66,8 +66,8 @@ Pixel plan for the Caravans. Five Caravan genes are gene models.
 - Packmule: a pack and a blanket roll on the back, and straps on chest
   columns 0 and 7, rows 0 to 3.
 - Signal Fire: a smoking iron pot on the left shoulder blade, next to
-  the pack, on a leather strap over the left shoulder, and soot on the back of the shirt (columns 0 and 1, rows 0 to 3)
-  and on the top of the left sleeve.
+  the pack, on a chain over both shoulders. Soot is on the back of the
+  shirt (columns 0 and 1, rows 0 to 3) and on the top of the left sleeve.
 - Linked: a rope loop at arm row 10, under the Tomb Guard cuff, and a rope
   end that hangs from it.
 - Nomad: a scarf round the neck, under the Tomb Guard collar, and a scarf
@@ -678,12 +678,13 @@ def signal_fire():
 def signal_fire_model():
     # A small iron pot on the back, at the left shoulder blade, next to the
     # Packmule pack (x -3 to 3). Its front face lies on the back of the body
-    # (z 2), so no gap shows. A leather strap goes from the rim of the pot
-    # up the back, over the left shoulder (under the head), and down the
-    # front of the chest. A belt goes across the back to the pot. Embers glow in the pot, and a column of dark smoke rises
-    # from it, past the side of the head (the head ends at x 4). It does not
-    # look like the thin fuse of Death Throes: it is a wide pot with a
-    # thick, dark cloud.
+    # (z 2), so no gap shows. An iron chain goes from the rim of the pot
+    # across the back and up over both shoulders (under the head), and
+    # hangs down the front of the chest on the left and on the right. All
+    # the chain lies flat on the body. Embers glow in the pot, and a column
+    # of dark smoke rises from it, past the side of the head (the head ends
+    # at x 4). It does not look like the thin fuse of Death Throes: it is a
+    # wide pot with a thick, dark cloud.
     from PIL import Image
     im = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
     iron = ("#3A3634", "#2C2826", "#4A4440")
@@ -707,24 +708,27 @@ def signal_fire_model():
         return ("#5A5652", "#4A4642", "#6A6662")[(x + 2 * y + len(face)) % 3]
 
     # The smoke: 1x2x1 at uv (0, 14), 2x2x2 at uv (8, 14), and 3x2x3 at
-    # uv (0, 20). The strap: 1x4x0 at uv (16, 0). The belt: 7x1x0 at uv
-    # (16, 8).
+    # uv (0, 20). A side of the chain: 1x5x0 at uv (16, 0). The chain
+    # across the back: 7x1x0 at uv (16, 8).
     paint_box(im, 0, 14, 1, 2, 1, smoke)
     paint_box(im, 8, 14, 2, 2, 2, smoke)
     paint_box(im, 0, 20, 3, 2, 3, smoke)
-    paint_box(im, 16, 0, 1, 4, 0, lambda face, x, y: STRAP if y % 3 else LEATHER[0])
-    paint_box(im, 16, 8, 7, 1, 0, lambda face, x, y: STRAP if x % 3 else LEATHER[0])
+    links = ("#7A7A80", "#3C3C42")
+    paint_box(im, 16, 0, 1, 5, 0, lambda face, x, y: links[y % 2])
+    paint_box(im, 16, 8, 7, 1, 0, lambda face, x, y: links[x % 2])
     parts = [
         {"bone": "body", "uv": [0, 0], "from": [3, 4, 2], "size": [3, 3, 3]},
         {"bone": "body", "uv": [0, 8], "from": [3, 4.5, 2], "size": [3, 0, 3], "glow": True},
         {"bone": "body", "uv": [0, 14], "from": [4, 2, 3], "size": [1, 2, 1]},
         {"bone": "body", "uv": [8, 14], "from": [4, 0, 2.5], "size": [2, 2, 2]},
         {"bone": "body", "uv": [0, 20], "from": [4.5, -2, 2.5], "size": [3, 2, 3]},
-        # The strap on the back and on the front. The front strap is a
-        # little in front of the Packmule strap (z -2.1).
-        {"bone": "body", "uv": [16, 0], "from": [3, 0, 2.05], "size": [1, 4, 0]},
-        {"bone": "body", "uv": [16, 0], "from": [3, 0, -2.15], "size": [1, 4, 0]},
-        # A belt across the back, from the right side to the pot.
+        # The chain: up the back and down the front on each side, and
+        # across the back to the pot. The front chain is a little in front
+        # of the Packmule strap (z -2.1).
+        {"bone": "body", "uv": [16, 0], "from": [3, 0, 2.05], "size": [1, 5, 0]},
+        {"bone": "body", "uv": [16, 0], "from": [-4, 0, 2.05], "size": [1, 5, 0]},
+        {"bone": "body", "uv": [16, 0], "from": [3, 0, -2.15], "size": [1, 5, 0]},
+        {"bone": "body", "uv": [16, 0], "from": [-4, 0, -2.15], "size": [1, 5, 0]},
         {"bone": "body", "uv": [16, 8], "from": [-4, 5, 2.05], "size": [7, 1, 0]},
     ]
     save_model("signal_fire_pot", im, parts)

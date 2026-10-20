@@ -63,6 +63,20 @@ Pixel plan for the Ossified.
 - Bonewall: a second rib cage over the chest, the gene model bonewall_ribs.
 - Holy Ward has runes on the brow: x 12 to 15, y 8 to 10, and x 8, y 9
   and 10.
+
+Pixel plan for the Legions. Five Legion genes are gene models.
+- Barrage: a full quiver of arrows on the back, the gene model
+  barrage_quiver.
+- Bugler: a horn of bone that it blows, in front of the mouth, the gene
+  model bugler_horn.
+- Phalanx: the straps of a shield on the left arm, the gene model
+  phalanx_straps.
+- Muster has two red chevrons on the ribs in the middle of the chest: x 21
+  to 26, y 21 to 26.
+- Warcry has the dark mouth (x 9 to 14, y 14 and 15), and a wide, open jaw,
+  the gene model warcry_jaw.
+- Spider Rider: spider silk round the knees, the gene model
+  spider_rider_silk. The spider comes from the game.
 This script needs Pillow.
 """
 import json
@@ -553,6 +567,188 @@ def holy_ward():
     return [cut]
 
 
+QUIVER = ("#6E4A2C", "#5A3A22", "#8A6440")
+
+
+def barrage():
+    # The quiver is the gene model barrage_quiver.
+    return []
+
+
+def barrage_model():
+    # A full quiver on the back, over the left shoulder: a leather tube that
+    # leans to the side, with many arrows that stick out of its top, their
+    # red and white fletchings at different heights. Its front lies on the
+    # back of the body, beside the spine (x -1 to 1). On the body bone, the
+    # back is at z 2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def quiver(face, x, y):
+        if face == "top":
+            return "#2A1A10"
+        if y in (1, 6):
+            return QUIVER[1]
+        return QUIVER[2] if (x + y) % 4 == 0 else QUIVER[0]
+
+    def arrow(face, x, y):
+        if y == 0:
+            return ARROW[0]
+        return ARROW[1] if y == 1 else ARROW[2]
+
+    # The quiver: 3x8x2 at uv (0, 0). An arrow: 1x3x1 at uv (12, 0).
+    paint_box(im, 0, 0, 3, 8, 2, quiver)
+    paint_box(im, 12, 0, 1, 3, 1, arrow)
+    lean = {"pivot": [2.5, 5, 3], "rotation": [0, 0, 25]}
+    parts = [dict({"bone": "body", "uv": [0, 0], "from": [1, 1, 2.1], "size": [3, 8, 2]}, **lean)]
+    for x, z, y in ((1, 2.1, -1.5), (2, 3.1, -2.2), (3, 2.1, -1.8), (1.5, 3.1, -1), (2.5, 2.6, -2.6)):
+        parts.append(dict({"bone": "body", "uv": [12, 0], "from": [x, y, z], "size": [1, 3, 1]}, **lean))
+    save_model("barrage_quiver", im, parts)
+
+
+IVORY = ("#EAE2C8", "#C8BC98", "#8E8264", "#3A3428")
+
+
+def bugler():
+    # The horn is the gene model bugler_horn.
+    return []
+
+
+def bugler_model():
+    # A horn of bone at the jaw, as if it blows a call: a mouthpiece in the
+    # middle of the mouth, a tube that runs forward and bends down, and a
+    # wide bell at its end that opens to the front. On the head bone, the
+    # face is at z -4, and the mouth is at y -2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def tube(face, x, y):
+        return IVORY[0] if face == "top" else IVORY[1] if (x + y) % 3 else IVORY[2]
+
+    def bell(face, x, y):
+        if face == "front":
+            return IVORY[3] if 0 < x < 2 and 0 < y < 2 else IVORY[0]
+        return IVORY[1]
+
+    # A tube: 1x1x2 at uv (0, 0). The bell: 3x3x1 at uv (8, 0).
+    paint_box(im, 0, 0, 1, 1, 2, tube)
+    paint_box(im, 8, 0, 3, 3, 1, bell)
+    # The tube from the mouth to z -6, a tube that bends down 25 degrees from
+    # there (its end is at y -0.65, z -7.8), and the bell on that end.
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-0.5, -2, -6], "size": [1, 1, 2]},
+        {"bone": "head", "uv": [0, 0], "from": [-0.5, -2, -8], "size": [1, 1, 2],
+         "pivot": [0, -1.5, -6], "rotation": [25, 0, 0]},
+        {"bone": "head", "uv": [8, 0], "from": [-1.5, -2.15, -8.6], "size": [3, 3, 1]},
+    ]
+    save_model("bugler_horn", im, parts)
+
+
+STRAP = ("#5A3A22", "#7A5230", "#B8B0A0")
+
+
+def phalanx():
+    # The shield straps are the gene model phalanx_straps.
+    return []
+
+
+def phalanx_model():
+    # The straps of a shield on the left arm: a leather band round the upper
+    # arm (arm rows 1 and 2) and a band round the wrist (row 10), each with
+    # an iron buckle, and a strap that joins them down the outer side of the
+    # arm, where the shield would hang. They keep clear of the Longdraw
+    # bracer (rows 6 to 9). On an arm bone, the left arm is from x -1 to 1,
+    # its outer side is at x 1, and row r is at y r - 2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def band(face, x, y):
+        if face == "left" and x == 0:
+            return STRAP[2]
+        return STRAP[0] if face in ("top", "bottom") else STRAP[1]
+
+    # A band: 2x1x2 at uv (0, 0). The side strap: 0x10x1 at uv (8, 0).
+    paint_box(im, 0, 0, 2, 1, 2, band)
+    paint_box(im, 8, 0, 0, 10, 1, lambda face, x, y: STRAP[0] if y % 3 else STRAP[1])
+    parts = [
+        {"bone": "left_arm", "uv": [0, 0], "from": [-1, -1, -1], "size": [2, 1, 2], "inflate": 0.35},
+        {"bone": "left_arm", "uv": [0, 0], "from": [-1, 8, -1], "size": [2, 1, 2], "inflate": 0.35},
+        {"bone": "left_arm", "uv": [8, 0], "from": [1.4, -1, -0.5], "size": [0, 10, 1]},
+    ]
+    save_model("phalanx_straps", im, parts)
+
+
+def muster():
+    # A painted rank mark on the chest: two red chevrons, one over the
+    # other, painted on the ribs in the middle of the chest. The paint is at
+    # order 1, over the Shieldbreaker cut edges and the Fleetbone cracks.
+    paint = Mark("#B8322A", order=1)
+    edge = Mark("#6E1A16", order=1)
+    for p in ((21, 21), (22, 22), (23, 23), (24, 23), (25, 22), (26, 21)):
+        paint.put(p)
+    for p in ((21, 23), (22, 24), (23, 25), (24, 25), (25, 24), (26, 23)):
+        paint.put(p, 230)
+    edge.put((23, 26)).put((24, 26))
+    return [paint, edge]
+
+
+def warcry():
+    # A wide, open jaw: the lower jaw hangs wide open under the face, with a
+    # row of teeth, and the mouth is dark. The jaw is the gene model
+    # warcry_jaw.
+    mouth = Mark("#140E0C")
+    for x in range(9, 15):
+        mouth.put((x, 14)).put((x, 15), 220)
+    return [mouth]
+
+
+def warcry_model():
+    # The lower jaw: a wide slab of bone hinged at the back of the jaw, that
+    # drops open 35 degrees, with teeth on its top. On the head bone, the
+    # bottom of the head is at y 0, and the face is at z -4.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def jaw(face, x, y):
+        if face == "top":
+            return "#F6F2E8" if x % 2 == 0 and y == 0 else "#3A2420"
+        return BONE[1] if face != "front" else BONE[0]
+
+    # The jaw: 7x1x4 at uv (0, 0).
+    paint_box(im, 0, 0, 7, 1, 4, jaw)
+    parts = [{"bone": "head", "uv": [0, 0], "from": [-3.5, -1, -4.4], "size": [7, 1, 4],
+              "pivot": [0, -0.5, -0.4], "rotation": [35, 0, 0]}]
+    save_model("warcry_jaw", im, parts)
+
+
+def spider_rider():
+    # The silk is the gene model spider_rider_silk.
+    return []
+
+
+def spider_rider_model():
+    # Spider silk wound round each knee: a loose wrap of white threads with
+    # gaps, out past the Thickbone knob (1.5 pixels out), and a thread that
+    # hangs from it. On a leg bone, the knee is at y 5 to 7, and the leg is
+    # from x -1 to 1.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def silk(face, x, y):
+        if face in ("top", "bottom"):
+            return None
+        # Threads at a slant, with gaps between them.
+        if (x + y) % 3 == 0:
+            return "#F4F4F0"
+        if (x - y) % 4 == 0:
+            return "#D8D8D0"
+        return None
+
+    # The wrap: 2x4x2 at uv (0, 0). A thread: 0x3x1 at uv (16, 0).
+    paint_box(im, 0, 0, 2, 4, 2, silk)
+    paint_box(im, 16, 0, 0, 3, 1, lambda face, x, y: "#E8E8E2")
+    parts = []
+    for bone, side in (("right_leg", -1), ("left_leg", 1)):
+        parts.append({"bone": bone, "uv": [0, 0], "from": [-1, 4, -1], "size": [2, 4, 2], "inflate": 0.6})
+        parts.append({"bone": bone, "uv": [16, 0], "from": [side * 1.6, 8.6, 0], "size": [0, 3, 1]})
+    save_model("spider_rider_silk", im, parts)
+
+
 GENES = {
     "eagle_eye": eagle_eye,
     "deadeye": deadeye,
@@ -572,6 +768,12 @@ GENES = {
     "reassemble": reassemble,
     "bonewall": bonewall,
     "holy_ward": holy_ward,
+    "barrage": barrage,
+    "bugler": bugler,
+    "phalanx": phalanx,
+    "muster": muster,
+    "warcry": warcry,
+    "spider_rider": spider_rider,
 }
 
 MODELS = {
@@ -583,6 +785,11 @@ MODELS = {
     "thickbone": "originofspawns:thickbone_bones",
     "reassemble": "originofspawns:reassemble_wire",
     "bonewall": "originofspawns:bonewall_ribs",
+    "barrage": "originofspawns:barrage_quiver",
+    "bugler": "originofspawns:bugler_horn",
+    "phalanx": "originofspawns:phalanx_straps",
+    "warcry": "originofspawns:warcry_jaw",
+    "spider_rider": "originofspawns:spider_rider_silk",
 }
 
 
@@ -596,6 +803,11 @@ def main():
     thickbone_model()
     reassemble_model()
     bonewall_model()
+    barrage_model()
+    bugler_model()
+    phalanx_model()
+    warcry_model()
+    spider_rider_model()
     for gene, make in GENES.items():
         marks = make()
         write(gene, marks, MODELS, REGION_MAP)

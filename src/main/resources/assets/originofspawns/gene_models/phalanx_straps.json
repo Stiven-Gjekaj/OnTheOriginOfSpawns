@@ -1,0 +1,60 @@
+{
+	"texture": "originofspawns:textures/entity/phalanx_straps.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-1,
+				-1
+			],
+			"size": [
+				2,
+				1,
+				2
+			],
+			"inflate": 0.35
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				8,
+				-1
+			],
+			"size": [
+				2,
+				1,
+				2
+			],
+			"inflate": 0.35
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				1.4,
+				-1,
+				-0.5
+			],
+			"size": [
+				0,
+				10,
+				1
+			]
+		}
+	]
+}

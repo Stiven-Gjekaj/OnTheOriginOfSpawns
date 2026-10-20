@@ -1,0 +1,13 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/warcry_0.png",
+				"tint": "#140E0C"
+			}
+		}
+	],
+	"model": "originofspawns:warcry_jaw"
+}

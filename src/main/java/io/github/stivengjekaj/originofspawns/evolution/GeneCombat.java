@@ -79,6 +79,8 @@ public final class GeneCombat {
 		List<GeneEffect> victimEffects = GeneEffects.of(victim).toList();
 		for (GeneEffect effect : victimEffects) {
 			switch (effect) {
+				case GeneEffect.ShareDamage share when !SHARING.get() && victim.level() instanceof ServerLevel level ->
+						result -= shareDamage(victim, level, share, result);
 				case GeneEffect.DamageTaken taken when source.is(taken.damageTypes()) -> result *= taken.multiplier();
 				case GeneEffect.Sunburn sunburn when source.is(DamageTypeTags.IS_FIRE)
 						&& Evolution.isSunBurning(victim, victim.level().getGameTime()) -> result *= sunburn.multiplier();
@@ -128,6 +130,10 @@ public final class GeneCombat {
 						&& mob.getRandom().nextFloat() < onHit.chance() && test(mob, onHit.when()) ->
 						living.addEffect(new MobEffectInstance(onHit.effect(), Math.round(onHit.seconds() * 20.0F),
 								onHit.amplifier()), mob);
+				case GeneEffect.DrainFood drain when target instanceof Player player -> {
+					player.getFoodData().setFoodLevel(Math.max(0, player.getFoodData().getFoodLevel() - drain.amount()));
+					mob.heal(drain.heal());
+				}
 				case GeneEffect.LeechXp leech when target instanceof Player player -> {
 					int taken = Math.min(leech.amount(), player.totalExperience);
 					if (taken > 0) {
@@ -214,6 +220,14 @@ public final class GeneCombat {
 							cloud.amplifier()));
 					level.addFreshEntity(area);
 				}
+				case GeneEffect.DeathEffect death when test(mob, death.when()) -> {
+					AABB area = mob.getBoundingBox().inflate(death.radius());
+					for (Player player : level.getEntitiesOfClass(Player.class, area)) {
+						player.addEffect(new MobEffectInstance(death.effect(), Math.round(death.seconds() * 20.0F),
+								death.amplifier()), mob);
+					}
+					level.sendParticles(ParticleTypes.END_ROD, mob.getX(), mob.getY(0.5), mob.getZ(), 20, death.radius() / 2.0, 0.5, death.radius() / 2.0, 0.05);
+				}
 				case GeneEffect.LeechXp leech -> {
 					int leeched = mob.getAttachedOrElse(ModAttachments.COMBAT, CombatRecord.NONE).leechedXp();
 					if (leeched > 0) {
@@ -231,5 +245,110 @@ public final class GeneCombat {
 	 */
 	public static boolean has(Entity entity, Class<? extends GeneEffect> type) {
 		return GeneEffects.of(entity).anyMatch(type::isInstance);
+	}
+
+	/**
+	 * True while the mod passes shared damage or shared healing to other mobs, so that the share does not repeat.
+	 */
+	private static final ThreadLocal<Boolean> SHARING = ThreadLocal.withInitial(() -> false);
+
+	/**
+	 * Gives a part of the damage to the mobs of the same species near the victim.
+	 *
+	 * @return the damage that went to the other mobs
+	 */
+	private static float shareDamage(LivingEntity victim, ServerLevel level, GeneEffect.ShareDamage share, float amount) {
+		List<LivingEntity> allies = level.getEntitiesOfClass(LivingEntity.class, victim.getBoundingBox().inflate(share.radius()),
+				other -> other != victim && other.isAlive() && other.getType() == victim.getType());
+		if (allies.isEmpty() || amount <= 0.0F) {
+			return 0.0F;
+		}
+		float shared = amount * share.fraction();
+		SHARING.set(true);
+		try {
+			for (LivingEntity ally : allies) {
+				ally.hurtServer(level, level.damageSources().generic(), shared / allies.size());
+			}
+		} finally {
+			SHARING.set(false);
+		}
+		return shared;
+	}
+
+	/**
+	 * Tells if a projectile misses the mob.
+	 */
+	public static boolean dodges(LivingEntity entity, DamageSource source) {
+		if (!source.is(DamageTypeTags.IS_PROJECTILE)) {
+			return false;
+		}
+		return GeneEffects.of(entity).anyMatch(effect -> effect instanceof GeneEffect.DodgeProjectiles dodge
+				&& test(entity, dodge.when()) && entity.getRandom().nextFloat() < dodge.chance());
+	}
+
+	/**
+	 * Saves a mob from a lethal hit one time in its life, if it has the undying effect.
+	 *
+	 * @return true if the mob survives
+	 */
+	public static boolean undying(LivingEntity entity) {
+		if (entity.getAttachedOrElse(ModAttachments.UNDYING_USED, false)) {
+			return false;
+		}
+		var undying = GeneEffects.of(entity).filter(GeneEffect.Undying.class::isInstance)
+				.map(GeneEffect.Undying.class::cast).findFirst();
+		if (undying.isEmpty()) {
+			return false;
+		}
+		entity.setHealth(Math.min(undying.get().health(), entity.getMaxHealth()));
+		entity.setAttached(ModAttachments.UNDYING_USED, true);
+		if (entity.level() instanceof ServerLevel level) {
+			level.sendParticles(ParticleTypes.CLOUD, entity.getX(), entity.getY(0.5), entity.getZ(), 20, 0.3, 0.5, 0.3, 0.05);
+		}
+		return true;
+	}
+
+	/**
+	 * Tells if a status effect does not affect the mob.
+	 */
+	public static boolean immune(LivingEntity entity, MobEffectInstance instance) {
+		return GeneEffects.of(entity).anyMatch(effect -> effect instanceof GeneEffect.EffectImmunity immunity
+				&& immunity.effects().contains(instance.getEffect()));
+	}
+
+	/**
+	 * Returns a heal after the heal multipliers of the mob.
+	 */
+	public static float healAmount(LivingEntity entity, float amount) {
+		float result = amount;
+		for (GeneEffect effect : GeneEffects.of(entity).toList()) {
+			if (effect instanceof GeneEffect.HealMultiplier multiplier) {
+				result *= multiplier.multiplier();
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Gives the same heal to the mobs of the same species near a mob with shared healing.
+	 */
+	public static void shareHealing(LivingEntity entity, float amount) {
+		if (SHARING.get() || amount <= 0.0F || !(entity.level() instanceof ServerLevel level)) {
+			return;
+		}
+		for (GeneEffect effect : GeneEffects.of(entity).toList()) {
+			if (effect instanceof GeneEffect.ShareHealing share) {
+				SHARING.set(true);
+				try {
+					for (LivingEntity ally : level.getEntitiesOfClass(LivingEntity.class,
+							entity.getBoundingBox().inflate(share.radius()),
+							other -> other != entity && other.isAlive() && other.getType() == entity.getType())) {
+						ally.heal(amount);
+					}
+				} finally {
+					SHARING.set(false);
+				}
+			}
+		}
 	}
 }

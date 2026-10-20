@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntityTypes;
@@ -163,6 +164,104 @@ public class CombatEffectsTest {
 		helper.assertTrue(!helper.getLevel().getEntitiesOfClass(ZombieVillager.class,
 				new AABB(villager.blockPosition()).inflate(2)).isEmpty(), "a zombie villager exists");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void aDodgedProjectileDoesNoDamage(GameTestHelper helper) {
+		Zombie zombie = clean(helper, new BlockPos(1, 1, 1), "test_dodge");
+		float health = zombie.getHealth();
+		helper.assertFalse(zombie.hurtServer(helper.getLevel(), helper.getLevel().damageSources().thrown(zombie, null), 4.0F),
+				"the projectile hits");
+		helper.assertValueEqual(zombie.getHealth(), health, "health after a dodge");
+		zombie.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 4.0F);
+		helper.assertValueEqual(zombie.getHealth(), health - 4.0F, "other damage still hits");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void undyingSurvivesOneLethalHit(GameTestHelper helper) {
+		Zombie zombie = clean(helper, new BlockPos(1, 1, 1), "test_undying");
+		zombie.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 1000.0F);
+		helper.assertTrue(zombie.isAlive(), "the first lethal hit");
+		helper.assertValueEqual(zombie.getHealth(), 4.0F, "health after the first lethal hit");
+		// Shortly after a hit, a mob takes only the part of a new hit that is bigger than the last hit.
+		zombie.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 2000.0F);
+		helper.assertFalse(zombie.isAlive(), "the second lethal hit");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void effectImmunityStopsTheEffect(GameTestHelper helper) {
+		Zombie zombie = clean(helper, new BlockPos(1, 1, 1), "test_poison_immune");
+		zombie.addEffect(new MobEffectInstance(MobEffects.POISON, 100));
+		zombie.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100));
+		helper.assertFalse(zombie.hasEffect(MobEffects.POISON), "poison");
+		helper.assertTrue(zombie.hasEffect(MobEffects.SLOWNESS), "an effect that is not in the list");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void sharedDamageSplitsBetweenTheGroup(GameTestHelper helper) {
+		Zombie hit = clean(helper, new BlockPos(1, 1, 1), "test_share_damage");
+		Zombie ally = clean(helper, new BlockPos(3, 1, 1), "test_share_damage");
+		float full = hit.getHealth();
+		hit.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 10.0F);
+		helper.assertValueEqual(hit.getHealth(), full - 5.0F, "the hit zombie takes half");
+		helper.assertValueEqual(ally.getHealth(), full - 5.0F, "the ally takes the other half");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void healsAreMultipliedAndShared(GameTestHelper helper) {
+		Zombie half = clean(helper, new BlockPos(1, 1, 1), "test_half_heal");
+		half.setHealth(10.0F);
+		half.heal(4.0F);
+		helper.assertValueEqual(half.getHealth(), 12.0F, "a heal at half strength");
+		Zombie healer = clean(helper, new BlockPos(1, 1, 3), "test_share_heal");
+		Zombie ally = clean(helper, new BlockPos(3, 1, 3), "test_share_heal");
+		healer.setHealth(10.0F);
+		ally.setHealth(10.0F);
+		healer.heal(2.0F);
+		helper.assertValueEqual(ally.getHealth(), 12.0F, "the ally gets the same heal");
+		helper.assertValueEqual(healer.getHealth(), 12.0F, "the healer does not get a second heal back");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void drainFoodTakesFoodAndHeals(GameTestHelper helper) {
+		Zombie zombie = clean(helper, new BlockPos(1, 1, 1), "test_drain");
+		zombie.setHealth(10.0F);
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		player.getFoodData().setFoodLevel(20);
+		GeneCombat.onHit(zombie, player);
+		helper.assertValueEqual(player.getFoodData().getFoodLevel(), 18, "food");
+		helper.assertValueEqual(zombie.getHealth(), 11.0F, "health of the zombie");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void deathEffectReachesThePlayersNear(GameTestHelper helper) {
+		Zombie zombie = clean(helper, new BlockPos(1, 1, 1), "test_death_blind");
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		player.setPos(zombie.position().add(2.0, 0.0, 0.0));
+		zombie.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 1000.0F);
+		helper.assertTrue(player.hasEffect(MobEffects.BLINDNESS), "blindness");
+		helper.succeed();
+	}
+
+	/**
+	 * Makes a zombie with one test gene. The gene goes on before the zombie enters the level, so it gets nothing from
+	 * the pool.
+	 */
+	private static Zombie clean(GameTestHelper helper, BlockPos pos, String gene) {
+		Zombie zombie = EntityTypes.ZOMBIE.create(helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+		zombie.setAttached(ModAttachments.GENES,
+				new CarriedGenes(List.of(Identifier.fromNamespaceAndPath("originofspawns_test", gene))));
+		zombie.setNoAi(true);
+		zombie.setPersistenceRequired();
+		zombie.snapTo(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(pos)), 0.0F, 0.0F);
+		helper.getLevel().addFreshEntity(zombie);
+		return zombie;
 	}
 
 	private static Zombie zombieWith(GameTestHelper helper, BlockPos pos, String gene) {

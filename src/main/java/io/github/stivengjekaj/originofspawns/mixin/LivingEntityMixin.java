@@ -9,6 +9,7 @@ import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -25,6 +26,45 @@ public abstract class LivingEntityMixin {
 	@ModifyVariable(method = "hurtServer", at = @At("HEAD"), argsOnly = true)
 	private float originofspawns$modifyDamageTaken(float amount, ServerLevel level, DamageSource source) {
 		return GeneCombat.modifyDamage((LivingEntity) (Object) this, source, amount);
+	}
+
+	@Inject(method = "hurtServer", at = @At("HEAD"), cancellable = true)
+	private void originofspawns$dodge(ServerLevel level, DamageSource source, float amount,
+			CallbackInfoReturnable<Boolean> info) {
+		LivingEntity self = (LivingEntity) (Object) this;
+		if (self.hasAttached(ModAttachments.GENES) && GeneCombat.dodges(self, source)) {
+			info.setReturnValue(false);
+		}
+	}
+
+	@Inject(method = "checkTotemDeathProtection", at = @At("HEAD"), cancellable = true)
+	private void originofspawns$undying(DamageSource source, CallbackInfoReturnable<Boolean> info) {
+		LivingEntity self = (LivingEntity) (Object) this;
+		if (self.hasAttached(ModAttachments.GENES) && GeneCombat.undying(self)) {
+			info.setReturnValue(true);
+		}
+	}
+
+	@Inject(method = "canBeAffected", at = @At("HEAD"), cancellable = true)
+	private void originofspawns$effectImmunity(MobEffectInstance instance, CallbackInfoReturnable<Boolean> info) {
+		LivingEntity self = (LivingEntity) (Object) this;
+		if (self.hasAttached(ModAttachments.GENES) && GeneCombat.immune(self, instance)) {
+			info.setReturnValue(false);
+		}
+	}
+
+	@ModifyVariable(method = "heal", at = @At("HEAD"), argsOnly = true)
+	private float originofspawns$healMultiplier(float amount) {
+		LivingEntity self = (LivingEntity) (Object) this;
+		return self.hasAttached(ModAttachments.GENES) ? GeneCombat.healAmount(self, amount) : amount;
+	}
+
+	@Inject(method = "heal", at = @At("TAIL"))
+	private void originofspawns$shareHealing(float amount, CallbackInfo info) {
+		LivingEntity self = (LivingEntity) (Object) this;
+		if (self.hasAttached(ModAttachments.GENES)) {
+			GeneCombat.shareHealing(self, amount);
+		}
 	}
 
 	@Inject(method = "getExperienceReward", at = @At("RETURN"), cancellable = true)

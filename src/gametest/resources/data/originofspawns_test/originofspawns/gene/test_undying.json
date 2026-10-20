@@ -1,0 +1,12 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [
+		{
+			"type": "undying",
+			"health": 4
+		}
+	],
+	"mutation_rate": 0
+}

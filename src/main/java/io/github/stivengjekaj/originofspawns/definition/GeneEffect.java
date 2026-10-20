@@ -56,6 +56,14 @@ public sealed interface GeneEffect {
 			Map.entry("lurk", Lurk.CODEC),
 			Map.entry("speed_when", SpeedWhen.CODEC),
 			Map.entry("attribute_when", AttributeWhen.CODEC),
+			Map.entry("dodge_projectiles", DodgeProjectiles.CODEC),
+			Map.entry("undying", Undying.CODEC),
+			Map.entry("effect_immunity", EffectImmunity.CODEC),
+			Map.entry("share_damage", ShareDamage.CODEC),
+			Map.entry("share_healing", ShareHealing.CODEC),
+			Map.entry("heal_multiplier", HealMultiplier.CODEC),
+			Map.entry("drain_food", DrainFood.CODEC),
+			Map.entry("death_effect", DeathEffect.CODEC),
 			Map.entry("regenerate", Regenerate.CODEC),
 			Map.entry("call_on_sight", CallOnSight.CODEC),
 			Map.entry("brood", Brood.CODEC),
@@ -741,6 +749,126 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "attract_golems";
+		}
+	}
+
+	/**
+	 * Each projectile has a chance to miss the mob while the state is true. A miss does no damage.
+	 */
+	record DodgeProjectiles(float chance, When when) implements GeneEffect {
+		public static final MapCodec<DodgeProjectiles> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(DodgeProjectiles::chance),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(DodgeProjectiles::when)
+		).apply(instance, DodgeProjectiles::new));
+
+		@Override
+		public String type() {
+			return "dodge_projectiles";
+		}
+	}
+
+	/**
+	 * One time in its life, a hit that kills the mob leaves it with this much health.
+	 */
+	record Undying(float health) implements GeneEffect {
+		public static final MapCodec<Undying> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 1000.0F).optionalFieldOf("health", 4.0F).forGetter(Undying::health)
+		).apply(instance, Undying::new));
+
+		@Override
+		public String type() {
+			return "undying";
+		}
+	}
+
+	/**
+	 * These status effects do not affect the mob.
+	 */
+	record EffectImmunity(HolderSet<MobEffect> effects) implements GeneEffect {
+		public static final MapCodec<EffectImmunity> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				RegistryCodecs.holderSet(Registries.MOB_EFFECT).fieldOf("effects").forGetter(EffectImmunity::effects)
+		).apply(instance, EffectImmunity::new));
+
+		@Override
+		public String type() {
+			return "effect_immunity";
+		}
+	}
+
+	/**
+	 * A part of the damage that the mob takes goes to the mobs of its species in the radius, split between them.
+	 */
+	record ShareDamage(float fraction, float radius) implements GeneEffect {
+		public static final MapCodec<ShareDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("fraction").forGetter(ShareDamage::fraction),
+				Codec.floatRange(0.5F, 32.0F).optionalFieldOf("radius", 8.0F).forGetter(ShareDamage::radius)
+		).apply(instance, ShareDamage::new));
+
+		@Override
+		public String type() {
+			return "share_damage";
+		}
+	}
+
+	/**
+	 * When the mob heals, the mobs of its species in the radius heal by the same amount.
+	 */
+	record ShareHealing(float radius) implements GeneEffect {
+		public static final MapCodec<ShareHealing> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 32.0F).optionalFieldOf("radius", 6.0F).forGetter(ShareHealing::radius)
+		).apply(instance, ShareHealing::new));
+
+		@Override
+		public String type() {
+			return "share_healing";
+		}
+	}
+
+	/**
+	 * Multiplies each heal of the mob.
+	 */
+	record HealMultiplier(float multiplier) implements GeneEffect {
+		public static final MapCodec<HealMultiplier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(HealMultiplier::multiplier)
+		).apply(instance, HealMultiplier::new));
+
+		@Override
+		public String type() {
+			return "heal_multiplier";
+		}
+	}
+
+	/**
+	 * Each hit on a player takes food points, and heals the mob.
+	 */
+	record DrainFood(int amount, float heal) implements GeneEffect {
+		public static final MapCodec<DrainFood> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 20).fieldOf("amount").forGetter(DrainFood::amount),
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("heal", 0.0F).forGetter(DrainFood::heal)
+		).apply(instance, DrainFood::new));
+
+		@Override
+		public String type() {
+			return "drain_food";
+		}
+	}
+
+	/**
+	 * When the mob dies while the state is true, the players in the radius get a status effect.
+	 */
+	record DeathEffect(Holder<MobEffect> effect, float seconds, int amplifier, float radius, When when)
+			implements GeneEffect {
+		public static final MapCodec<DeathEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(DeathEffect::effect),
+				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(DeathEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(DeathEffect::amplifier),
+				Codec.floatRange(0.5F, 32.0F).fieldOf("radius").forGetter(DeathEffect::radius),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(DeathEffect::when)
+		).apply(instance, DeathEffect::new));
+
+		@Override
+		public String type() {
+			return "death_effect";
 		}
 	}
 }

@@ -1,0 +1,13 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [
+		{
+			"type": "share_damage",
+			"fraction": 0.5,
+			"radius": 8
+		}
+	],
+	"mutation_rate": 0
+}

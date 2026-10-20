@@ -55,6 +55,12 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> BORN =
 			AttachmentRegistry.createPersistent(OriginOfSpawns.id("born"), com.mojang.serialization.Codec.LONG);
 
+	/**
+	 * True when a mob used its one survival of a lethal hit.
+	 */
+	public static final AttachmentType<Boolean> UNDYING_USED =
+			AttachmentRegistry.createPersistent(OriginOfSpawns.id("undying_used"), com.mojang.serialization.Codec.BOOL);
+
 	private ModAttachments() {
 	}
 

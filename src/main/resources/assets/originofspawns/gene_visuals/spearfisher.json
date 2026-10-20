@@ -1,0 +1,18 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/spearfisher_0.png",
+				"tint": "#C8B88C"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/spearfisher_1.png",
+				"tint": "#8A7650"
+			}
+		}
+	]
+}

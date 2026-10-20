@@ -1,0 +1,26 @@
+{
+	"layers": [
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/stormcaller_0.png",
+				"tint": "#B46A3C"
+			},
+			"order": -3
+		},
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/stormcaller_1.png",
+				"tint": "#5ED0A8"
+			},
+			"order": -3
+		}
+	]
+}

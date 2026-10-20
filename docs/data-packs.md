@@ -35,10 +35,18 @@ A pressure needs `damage_types`, `conditions`, or both.
 | `critical` | A critical hit of a player killed the mob |
 | `golem` | An iron golem killed the mob |
 | `player_death` | The mob killed a player. This is not a death of the mob. Each gene of the killer gets stronger |
+| `in_water` | The mob died in water |
+| `on_land` | The mob died out of water |
+| `cold` | The mob died in a cold biome, or freezing killed it |
+| `night` | The mob died while it was dark outside |
+| `boat` | The killer was in a boat |
 
 The mod has these pressures: `fire`, `projectile`, `melee`, `explosion`,
 `fall`, `unreached`, `sunlight`, `spotted`, `alone`, `crowd`, `critical`,
-`golem`, and `player_death`.
+`golem`, `player_death`, `in_water`, `on_land`, `cold`, `night`, `boat`,
+`contact`, and `trident`.
+The `contact` pressure uses the tag `#originofspawns:contact`: cacti and sweet
+berry bushes. The `trident` pressure uses the tag `#originofspawns:trident`.
 The `melee` pressure uses the tag `#originofspawns:melee`.
 
 ## Gene

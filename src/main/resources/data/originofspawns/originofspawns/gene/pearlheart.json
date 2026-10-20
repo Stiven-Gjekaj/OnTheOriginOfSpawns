@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:drowned/barnacled",
+	"gains": [
+		{
+			"type": "heal_once",
+			"threshold": 0.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

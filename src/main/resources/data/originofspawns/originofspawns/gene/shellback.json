@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:drowned/barnacled",
+	"gains": [
+		{
+			"type": "damage_from_behind",
+			"multiplier": 0.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attack_interval",
+			"multiplier": 1.15
+		}
+	]
+}

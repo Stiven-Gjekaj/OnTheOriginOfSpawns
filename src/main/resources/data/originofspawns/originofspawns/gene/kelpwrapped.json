@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:drowned/barnacled",
+	"sub_family": "originofspawns:drowned/abyssal",
+	"gains": [
+		{
+			"type": "translucent",
+			"max_light": 15,
+			"opacity": 0.25,
+			"blocks": "#originofspawns:kelp"
+		}
+	],
+	"downsides": [
+		{
+			"type": "sunburn",
+			"multiplier": 2
+		}
+	]
+}

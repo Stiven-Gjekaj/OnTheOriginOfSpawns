@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:boat",
+	"family": "originofspawns:drowned/barnacled",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:knockback_resistance",
+			"amount": 1,
+			"operation": "add_value"
+		},
+		{
+			"type": "swim_vertical",
+			"down": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "swim_vertical",
+			"up": 0.5
+		}
+	]
+}

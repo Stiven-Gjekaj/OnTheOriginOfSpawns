@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:drowned/barnacled",
+	"gains": [
+		{
+			"type": "thorns",
+			"damage": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

@@ -6,6 +6,7 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.BehaviorState;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -29,6 +30,7 @@ public class LeapGoal extends Goal {
 	private long readyTime;
 	private boolean airborne;
 	private int dashTicks;
+	private boolean hit;
 	private Vec3 dashDirection = Vec3.ZERO;
 
 	public LeapGoal(Mob mob, GeneEffect.Leap leap) {
@@ -76,6 +78,7 @@ public class LeapGoal extends Goal {
 			case BREACH -> mob.setDeltaMovement(flat.x * 0.7, 0.9, flat.z * 0.7);
 		}
 		airborne = false;
+		hit = false;
 		readyTime = mob.level().getGameTime() + Math.round(leap.cooldownSeconds() * 20.0F);
 	}
 
@@ -87,6 +90,12 @@ public class LeapGoal extends Goal {
 		}
 		if (!mob.onGround() && !mob.isInWater()) {
 			airborne = true;
+		}
+		// A leap that reaches the target does a normal hit, one time.
+		LivingEntity target = mob.getTarget();
+		if (!hit && target != null && mob.level() instanceof ServerLevel level && mob.isWithinMeleeAttackRange(target)) {
+			hit = true;
+			mob.doHurtTarget(level, target);
 		}
 	}
 

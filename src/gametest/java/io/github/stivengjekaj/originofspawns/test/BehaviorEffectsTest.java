@@ -483,6 +483,22 @@ public class BehaviorEffectsTest {
 	}
 
 	@GameTest
+	public void leapHitsTheTargetItReaches(GameTestHelper helper) {
+		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_leap");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(2, 1, 1));
+		zombie.setTarget(pig);
+		float health = pig.getHealth();
+		LeapGoal goal = new LeapGoal(zombie, new GeneEffect.Leap(0.0F, 5.0F, 5.0F, 1.0F));
+		goal.start();
+		goal.tick();
+		helper.assertTrue(pig.getHealth() < health, "the leap hits the pig");
+		float after = pig.getHealth();
+		goal.tick();
+		helper.assertValueEqual(pig.getHealth(), after, "one hit for each leap");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void throwEffectHitsTheTargetOnce(GameTestHelper helper) {
 		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_throw");
 		var pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(5, 1, 1));

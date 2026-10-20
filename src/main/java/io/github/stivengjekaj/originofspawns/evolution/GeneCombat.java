@@ -125,7 +125,8 @@ public final class GeneCombat {
 		if (source.getEntity() instanceof LivingEntity attacker && attacker != victim) {
 			for (GeneEffect effect : GeneEffects.of(attacker).toList()) {
 				switch (effect) {
-					case GeneEffect.DamageDealtWhen dealt when test(attacker, dealt.when()) -> result *= dealt.multiplier();
+					case GeneEffect.DamageDealtWhen dealt when (!dealt.playersOnly() || victim instanceof Player)
+							&& test(attacker, dealt.when()) -> result *= dealt.multiplier();
 					case GeneEffect.Lure lure when attacker.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE)
 							.lureArmed() -> {
 						result *= lure.multiplier();

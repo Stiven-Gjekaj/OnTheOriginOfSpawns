@@ -40,6 +40,19 @@ public class CombatEffectsTest {
 	}
 
 	@GameTest
+	public void playersOnlyBonusSkipsOtherTargets(GameTestHelper helper) {
+		Zombie atPig = zombieWith(helper, new BlockPos(1, 1, 1), "test_ambush_players");
+		Zombie atPlayer = zombieWith(helper, new BlockPos(1, 1, 3), "test_ambush_players");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 1));
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		var sources = helper.getLevel().damageSources();
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, sources.mobAttack(atPig), 4.0F), 4.0F, "the first hit on a pig");
+		helper.assertValueEqual(GeneCombat.modifyDamage(player, sources.mobAttack(atPlayer), 4.0F), 8.0F,
+				"the first hit on a player");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void aloneWeakensTheDamage(GameTestHelper helper) {
 		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_alone_weak");
 		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 3));

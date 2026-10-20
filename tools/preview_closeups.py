@@ -163,6 +163,10 @@ SKELETON_CLOSEUPS = {
                            ("Bonewall + Holy Ward", ["bonewall", "holy_ward"], False),
                            ("Calcified + Marrowmend", ["calcified", "marrowmend"], False),
                            ("All 6", SKELETON["ossified"], False)], ALL_SIDES),
+    "skeleton_redesigns": ("Bonedash, Fleetbone, High Ground, and Quickdraw",
+                           [("Bonedash", ["bonedash"], False), ("Fleetbone", ["fleetbone"], False),
+                            ("High Ground", ["high_ground"], False), ("Quickdraw", ["quickdraw"], False)],
+                           [FRONT, SIDE, BACK, THREE_QUARTER]),
 }
 
 # Each species: its texture, its baby texture, and its close-ups.

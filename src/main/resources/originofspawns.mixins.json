@@ -10,6 +10,7 @@
 		"PlayerMixin",
 		"ProjectileMixin",
 		"RangedAttackGoalMixin",
+		"SpiderMixin",
 		"ZombieMixin"
 	],
 	"injectors": {

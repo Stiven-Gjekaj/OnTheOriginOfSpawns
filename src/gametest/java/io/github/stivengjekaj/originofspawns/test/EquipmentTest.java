@@ -97,6 +97,17 @@ public class EquipmentTest {
 	}
 
 	@GameTest
+	public void spidersCarryNoSkeletons(GameTestHelper helper) {
+		// In vanilla, 1 spider in 100 spawns with a skeleton, so 500 spiders would give about 5.
+		for (int i = 0; i < 500; i++) {
+			Mob spider = spawned(helper, EntityTypes.SPIDER);
+			helper.assertTrue(spider.getPassengers().isEmpty(), "a spider with a rider");
+			spider.discard();
+		}
+		helper.succeed();
+	}
+
+	@GameTest
 	public void mobsWithGenesPickUpNoItems(GameTestHelper helper) {
 		for (int i = 0; i < 50; i++) {
 			Mob zombie = spawned(helper, EntityTypes.ZOMBIE);

@@ -58,6 +58,13 @@ public final class Evolution {
 	/**
 	 * The species that spawn no babies in vanilla ways. Their babies come only from a gene, such as Runt.
 	 */
+	/**
+	 * The species that ride no mob in vanilla ways, for example the spider that carries a skeleton. A gene can still
+	 * make a jockey.
+	 */
+	public static final TagKey<EntityType<?>> NO_VANILLA_JOCKEYS =
+			TagKey.create(Registries.ENTITY_TYPE, OriginOfSpawns.id("no_vanilla_jockeys"));
+
 	public static final TagKey<EntityType<?>> NO_VANILLA_BABIES =
 			TagKey.create(Registries.ENTITY_TYPE, OriginOfSpawns.id("no_vanilla_babies"));
 

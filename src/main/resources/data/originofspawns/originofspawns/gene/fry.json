@@ -1,0 +1,12 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:drowned/siren",
+	"gains": [
+		{
+			"type": "runt",
+			"chance": 0.2,
+			"baby_health_multiplier": 0.5
+		}
+	]
+}

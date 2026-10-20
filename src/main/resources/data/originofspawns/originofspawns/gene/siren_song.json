@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:drowned/siren",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:slowness",
+			"radius": 12,
+			"interval_seconds": 2,
+			"in_water_only": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

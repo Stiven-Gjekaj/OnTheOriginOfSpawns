@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:boat",
+	"family": "originofspawns:drowned/siren",
+	"gains": [
+		{
+			"type": "drag_under",
+			"seconds": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

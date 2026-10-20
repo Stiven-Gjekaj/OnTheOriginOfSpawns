@@ -130,8 +130,8 @@ The visual column gives the region and the mark.
 | Barnacle Crust | Barnacled | `projectile` | 4 more armor | 15% less speed | Shoulders and back: barnacles. This changes the model |
 | Coral Growth | Barnacled | `melee` | Melee attackers take 1 damage when they hit it | 4 less maximum health | Arms: coral branches. This changes the model |
 | Shellback | Barnacled | `critical` | 50% less damage from behind | 15% less attack speed | Back: a shell. This changes the model |
-| Anchor | Barnacled | `boat` | Full knockback resistance, and it sinks fast | It swims up 50% slower | Waist: a rusty chain. This changes the model |
-| Pearlheart | Barnacled | `player_death` | One time in its life, it heals to full health when it drops under half health | 10% less speed | Chest: a pearl that glows |
+| Anchor | Barnacled | `boat` | Full knockback resistance, and it sinks fast | It swims up 50% slower | Ankles: iron shackles with broken chain links. This changes the model |
+| Pearlheart | Barnacled | `player_death` | One time in its life, it heals to full health when it drops under half health | 10% less speed | Chest: a glowing pearl in a ring of barnacle crust |
 | Kelpwrapped | Barnacled, sub Abyssal | `spotted` | It is almost invisible in kelp and seagrass | The sun burns it two times faster | Body: wrapped in kelp |
 
 ### Siren genes
@@ -139,11 +139,11 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Siren Song | Siren | `alone` | Players in water in 12 blocks get Slowness, renewed each 2 seconds | Players hear it from two times farther | Mouth: open, as if it sings |
-| Drag Under | Siren | `boat` | When it hits a player in water, it holds on, and both sink for 2 seconds | 2 less attack damage | Arms: long, thin fingers |
+| Drag Under | Siren | `boat` | When it hits a player in water, it holds on, and both sink for 2 seconds | 2 less attack damage | Forearms and palms: rows of octopus suction cups |
 | Fry | Siren | `projectile` | 20% chance to spawn as a baby drowned | Its babies have 50% less maximum health | The baby model, and head: small fins |
 | Shoal | Siren | `crowd` | Its spawn groups have 1 more drowned | Each drowned of the group has 15% less maximum health | Skin: a pattern of scales |
-| Chorus | Siren | `critical` | When it sees a player, the drowned in 24 blocks target that player. It can call again after 30 seconds | Players hear it from two times farther | Ear: a shell earring |
-| Wreckcaller | Siren, sub Barnacled | `explosion` | When it dies, the drowned in 16 blocks get Resistance for 10 seconds | 4 less maximum health | Waist: a length of ship rope |
+| Chorus | Siren | `critical` | When it sees a player, the drowned in 24 blocks target that player. It can call again after 30 seconds | Players hear it from two times farther | Ear and body: a shell earring, and small shells latched onto the arms, shoulders, and back |
+| Wreckcaller | Siren, sub Barnacled | `explosion` | When it dies, the drowned in 16 blocks get Resistance for 10 seconds | 4 less maximum health | Chest: a small rusty ship's bell on a cord. This changes the model |
 
 ## Gene details
 

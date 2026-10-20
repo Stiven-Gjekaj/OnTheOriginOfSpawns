@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:skeleton/rattler",
+	"sub_family": "originofspawns:skeleton/legion",
+	"gains": [
+		{
+			"type": "speed_when",
+			"when": "wounded",
+			"multiplier": 1.4
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "wounded",
+			"multiplier": 0.8
+		}
+	]
+}

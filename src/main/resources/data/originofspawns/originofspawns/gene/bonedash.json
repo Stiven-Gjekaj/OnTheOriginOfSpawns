@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:skeleton/rattler",
+	"gains": [
+		{
+			"type": "sidestep",
+			"range": 24,
+			"distance": 3,
+			"cooldown_seconds": 8,
+			"aimed": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

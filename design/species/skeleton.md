@@ -102,7 +102,7 @@ The visual column gives the region and the mark.
 | Longdraw | Marksman | `projectile` | Its arrows do 30% more damage | It shoots 20% less often | Arms: a leather bracer on the left forearm. This changes the model |
 | Quickdraw | Marksman, sub Rattler | `crowd` | It shoots 50% more often | Its arrows do 25% less damage | Fingers: worn, white tips |
 | Shieldbreaker | Marksman | `shield` | Its arrows go through shields | 4 less maximum health | Ribs: a notch cut in each rib |
-| High Ground | Marksman | `fall` | 30% more arrow damage at a target lower than it | 20% less arrow damage at a target higher than it | Feet: claws of bone |
+| High Ground | Marksman | `fall` | 30% more arrow damage at a target lower than it | 20% less arrow damage at a target higher than it | Head: a wide-brim ranger hat. This changes the model |
 
 ### Rattler genes
 

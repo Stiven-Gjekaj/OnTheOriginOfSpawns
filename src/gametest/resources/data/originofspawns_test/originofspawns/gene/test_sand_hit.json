@@ -1,0 +1,14 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:slowness",
+			"seconds": 2,
+			"when": "on_sand"
+		}
+	],
+	"mutation_rate": 0
+}

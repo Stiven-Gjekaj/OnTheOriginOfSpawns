@@ -12,6 +12,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.codec.RegistryCodecs;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.damagesource.DamageType;
@@ -19,6 +20,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.level.block.Block;
 
 /**
  * One part of what a gene does. A gene lists its gains and its downsides as effects.
@@ -53,6 +55,7 @@ public sealed interface GeneEffect {
 			Map.entry("burrow", Burrow.CODEC),
 			Map.entry("lurk", Lurk.CODEC),
 			Map.entry("speed_when", SpeedWhen.CODEC),
+			Map.entry("attribute_when", AttributeWhen.CODEC),
 			Map.entry("regenerate", Regenerate.CODEC),
 			Map.entry("call_on_sight", CallOnSight.CODEC),
 			Map.entry("brood", Brood.CODEC),
@@ -183,7 +186,19 @@ public sealed interface GeneEffect {
 		/**
 		 * The mob is in water.
 		 */
-		IN_WATER;
+		IN_WATER,
+		/**
+		 * The mob stands on a block in the tag {@code minecraft:sand}.
+		 */
+		ON_SAND,
+		/**
+		 * The mob does not stand on a block in the tag {@code minecraft:sand}.
+		 */
+		OFF_SAND,
+		/**
+		 * Another mob of the same species is in 8 blocks. This is the opposite of {@code alone}.
+		 */
+		GROUPED;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 
@@ -269,13 +284,19 @@ public sealed interface GeneEffect {
 	/**
 	 * Gives the target a status effect when the mob hits it.
 	 */
-	record EffectOnHit(Holder<MobEffect> effect, float seconds, int amplifier, float chance) implements GeneEffect {
+	record EffectOnHit(Holder<MobEffect> effect, float seconds, int amplifier, float chance, When when)
+			implements GeneEffect {
 		public static final MapCodec<EffectOnHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				MobEffect.CODEC.fieldOf("effect").forGetter(EffectOnHit::effect),
 				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(EffectOnHit::seconds),
 				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(EffectOnHit::amplifier),
-				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("chance", 1.0F).forGetter(EffectOnHit::chance)
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("chance", 1.0F).forGetter(EffectOnHit::chance),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(EffectOnHit::when)
 		).apply(instance, EffectOnHit::new));
+
+		public EffectOnHit(Holder<MobEffect> effect, float seconds, int amplifier, float chance) {
+			this(effect, seconds, amplifier, chance, When.ALWAYS);
+		}
 
 		@Override
 		public String type() {
@@ -300,10 +321,15 @@ public sealed interface GeneEffect {
 	/**
 	 * When the mob is hurt, all mobs of the same species in the radius attack the attacker.
 	 */
-	record CallOnHurt(float radius) implements GeneEffect {
+	record CallOnHurt(float radius, boolean smoke) implements GeneEffect {
 		public static final MapCodec<CallOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				Codec.floatRange(0.0F, 64.0F).fieldOf("radius").forGetter(CallOnHurt::radius)
+				Codec.floatRange(0.0F, 64.0F).fieldOf("radius").forGetter(CallOnHurt::radius),
+				Codec.BOOL.optionalFieldOf("smoke", false).forGetter(CallOnHurt::smoke)
 		).apply(instance, CallOnHurt::new));
+
+		public CallOnHurt(float radius) {
+			this(radius, false);
+		}
 
 		@Override
 		public String type() {
@@ -494,11 +520,20 @@ public sealed interface GeneEffect {
 	 * When the mob spawns in a natural way at night near a player, it rises out of the ground.
 	 * It rises only through the blocks in the tag {@code originofspawns:burrowable}, and breaks none.
 	 */
-	record Burrow(float playerRadius, float riseSeconds) implements GeneEffect {
+	record Burrow(float playerRadius, float riseSeconds, TagKey<Block> blocks, boolean nightOnly) implements GeneEffect {
+		public static final TagKey<Block> DEFAULT_BLOCKS =
+				TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("originofspawns", "burrowable"));
+
 		public static final MapCodec<Burrow> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(1.0F, 128.0F).optionalFieldOf("player_radius", 24.0F).forGetter(Burrow::playerRadius),
-				Codec.floatRange(0.05F, 60.0F).optionalFieldOf("rise_seconds", 2.0F).forGetter(Burrow::riseSeconds)
+				Codec.floatRange(0.05F, 60.0F).optionalFieldOf("rise_seconds", 2.0F).forGetter(Burrow::riseSeconds),
+				TagKey.hashedCodec(Registries.BLOCK).optionalFieldOf("blocks", DEFAULT_BLOCKS).forGetter(Burrow::blocks),
+				Codec.BOOL.optionalFieldOf("night_only", true).forGetter(Burrow::nightOnly)
 		).apply(instance, Burrow::new));
+
+		public Burrow(float playerRadius, float riseSeconds) {
+			this(playerRadius, riseSeconds, DEFAULT_BLOCKS, true);
+		}
 
 		@Override
 		public String type() {
@@ -522,6 +557,24 @@ public sealed interface GeneEffect {
 	}
 
 	/**
+	 * Changes an attribute of the mob while the state is true.
+	 */
+	record AttributeWhen(When when, Holder<Attribute> attribute, double amount, AttributeModifier.Operation operation)
+			implements GeneEffect {
+		public static final MapCodec<AttributeWhen> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				When.CODEC.fieldOf("when").forGetter(AttributeWhen::when),
+				Attribute.CODEC.fieldOf("attribute").forGetter(AttributeWhen::attribute),
+				Codec.DOUBLE.fieldOf("amount").forGetter(AttributeWhen::amount),
+				AttributeModifier.Operation.CODEC.fieldOf("operation").forGetter(AttributeWhen::operation)
+		).apply(instance, AttributeWhen::new));
+
+		@Override
+		public String type() {
+			return "attribute_when";
+		}
+	}
+
+	/**
 	 * Multiplies the speed of the mob when the state is true.
 	 */
 	record SpeedWhen(When when, float multiplier) implements GeneEffect {
@@ -539,13 +592,18 @@ public sealed interface GeneEffect {
 	/**
 	 * The mob heals when it was not in combat for a time.
 	 */
-	record Regenerate(float amount, float intervalSeconds, float idleSeconds) implements GeneEffect {
+	record Regenerate(float amount, float intervalSeconds, float idleSeconds, When when) implements GeneEffect {
 		public static final MapCodec<Regenerate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.0F, 1000.0F).fieldOf("amount").forGetter(Regenerate::amount),
 				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("interval_seconds", 3.0F)
 						.forGetter(Regenerate::intervalSeconds),
-				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("idle_seconds", 5.0F).forGetter(Regenerate::idleSeconds)
+				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("idle_seconds", 5.0F).forGetter(Regenerate::idleSeconds),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(Regenerate::when)
 		).apply(instance, Regenerate::new));
+
+		public Regenerate(float amount, float intervalSeconds, float idleSeconds) {
+			this(amount, intervalSeconds, idleSeconds, When.ALWAYS);
+		}
 
 		@Override
 		public String type() {

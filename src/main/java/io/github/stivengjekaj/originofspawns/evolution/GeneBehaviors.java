@@ -13,10 +13,8 @@ import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
@@ -35,7 +33,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 
 /**
@@ -45,7 +42,6 @@ public final class GeneBehaviors {
 	/**
 	 * The blocks that a burrowing mob can rise through.
 	 */
-	public static final TagKey<Block> BURROWABLE = TagKey.create(Registries.BLOCK, OriginOfSpawns.id("burrowable"));
 
 	private static final int BURROW_DEPTH = 2;
 	private static final float CHICKEN_JOCKEY_CHANCE = 0.05F;
@@ -130,12 +126,12 @@ public final class GeneBehaviors {
 	}
 
 	private static void burrow(Mob mob, ServerLevel level, GeneEffect.Burrow burrow) {
-		if (level.isBrightOutside() || level.getNearestPlayer(mob, burrow.playerRadius()) == null) {
+		if (burrow.nightOnly() && level.isBrightOutside() || level.getNearestPlayer(mob, burrow.playerRadius()) == null) {
 			return;
 		}
 		BlockPos feet = mob.blockPosition();
 		for (int depth = 1; depth <= BURROW_DEPTH; depth++) {
-			if (!level.getBlockState(feet.below(depth)).is(BURROWABLE)) {
+			if (!level.getBlockState(feet.below(depth)).is(burrow.blocks())) {
 				return;
 			}
 		}
@@ -170,7 +166,8 @@ public final class GeneBehaviors {
 				case GeneEffect.Regenerate regenerate -> {
 					long combat = mob.getAttachedOrElse(ModAttachments.TRACE, DeathTrace.NONE).combatTime();
 					boolean idle = combat < 0L || now - combat >= Math.round(regenerate.idleSeconds() * 20.0F);
-					if (idle && now % Math.max(1, Math.round(regenerate.intervalSeconds() * 20.0F)) < TICK_INTERVAL) {
+					if (idle && GeneCombat.test(mob, regenerate.when())
+							&& now % Math.max(1, Math.round(regenerate.intervalSeconds() * 20.0F)) < TICK_INTERVAL) {
 						mob.heal(regenerate.amount());
 					}
 				}
@@ -273,22 +270,32 @@ public final class GeneBehaviors {
 	}
 
 	private static void updateSpeed(Mob mob, List<GeneEffect> effects) {
-		AttributeInstance speed = mob.getAttribute(Attributes.MOVEMENT_SPEED);
-		if (speed == null) {
-			return;
-		}
-		int index = 0;
+		int speedIndex = 0;
+		int attributeIndex = 0;
 		for (GeneEffect effect : effects) {
 			if (effect instanceof GeneEffect.SpeedWhen when) {
-				Identifier id = OriginOfSpawns.id("speed_when/" + index++);
-				boolean active = GeneCombat.test(mob, when.when());
-				if (active && !speed.hasModifier(id)) {
-					speed.addTransientModifier(new AttributeModifier(id, when.multiplier() - 1.0,
-							AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-				} else if (!active && speed.hasModifier(id)) {
-					speed.removeModifier(id);
-				}
+				toggle(mob, mob.getAttribute(Attributes.MOVEMENT_SPEED), OriginOfSpawns.id("speed_when/" + speedIndex++),
+						GeneCombat.test(mob, when.when()), when.multiplier() - 1.0,
+						AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+			} else if (effect instanceof GeneEffect.AttributeWhen when) {
+				toggle(mob, mob.getAttribute(when.attribute()), OriginOfSpawns.id("attribute_when/" + attributeIndex++),
+						GeneCombat.test(mob, when.when()), when.amount(), when.operation());
 			}
+		}
+	}
+
+	/**
+	 * Adds a short-lived modifier while a state is true, and removes it when the state is false.
+	 */
+	private static void toggle(Mob mob, AttributeInstance attribute, Identifier id, boolean active, double amount,
+			AttributeModifier.Operation operation) {
+		if (attribute == null) {
+			return;
+		}
+		if (active && !attribute.hasModifier(id)) {
+			attribute.addTransientModifier(new AttributeModifier(id, amount, operation));
+		} else if (!active && attribute.hasModifier(id)) {
+			attribute.removeModifier(id);
 		}
 	}
 

@@ -8,6 +8,7 @@ import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -41,6 +42,10 @@ public final class GeneCombat {
 	/**
 	 * Returns true if the state is true for the entity now.
 	 */
+	private static boolean onSand(LivingEntity entity) {
+		return entity.level().getBlockState(entity.getBlockPosBelowThatAffectsMyMovement()).is(BlockTags.SAND);
+	}
+
 	public static boolean test(LivingEntity entity, When when) {
 		return switch (when) {
 			case ALWAYS -> true;
@@ -54,6 +59,9 @@ public final class GeneCombat {
 			case HUNTING_WOUNDED -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
 					&& player.getHealth() < player.getMaxHealth() / 2.0F;
 			case IN_WATER -> entity.isInWater();
+			case ON_SAND -> onSand(entity);
+			case OFF_SAND -> !onSand(entity);
+			case GROUPED -> sameSpeciesNear(entity, ALONE_RADIUS) > 0;
 		};
 	}
 
@@ -117,7 +125,7 @@ public final class GeneCombat {
 				case GeneEffect.IgniteTarget ignite when mob.getRandom().nextFloat() < ignite.chance() ->
 						target.igniteForSeconds(ignite.seconds());
 				case GeneEffect.EffectOnHit onHit when target instanceof LivingEntity living
-						&& mob.getRandom().nextFloat() < onHit.chance() ->
+						&& mob.getRandom().nextFloat() < onHit.chance() && test(mob, onHit.when()) ->
 						living.addEffect(new MobEffectInstance(onHit.effect(), Math.round(onHit.seconds() * 20.0F),
 								onHit.amplifier()), mob);
 				case GeneEffect.LeechXp leech when target instanceof Player player -> {
@@ -145,6 +153,11 @@ public final class GeneCombat {
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
 				case GeneEffect.CallOnHurt call -> {
+					if (call.smoke()) {
+						// A column of smoke that players can see from far away.
+						level.sendParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, mob.getX(), mob.getY() + 2.0, mob.getZ(),
+								6, 0.2, 1.5, 0.2, 0.01);
+					}
 					AABB area = mob.getBoundingBox().inflate(call.radius());
 					for (Mob ally : level.getEntitiesOfClass(Mob.class, area, other -> other.getType() == mob.getType())) {
 						ally.setTarget(attacker);

@@ -347,6 +347,52 @@ public class BehaviorEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(maxTicks = 100)
+	public void attributeWhenFollowsTheSand(GameTestHelper helper) {
+		BlockPos ground = new BlockPos(1, 0, 1);
+		helper.setBlock(ground, Blocks.SAND);
+		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_sand_armor");
+		double base = zombie.getAttribute(Attributes.ARMOR).getBaseValue();
+		helper.runAfterDelay(25, () -> {
+			helper.assertValueEqual(zombie.getAttributeValue(Attributes.ARMOR), base + 4.0, "armor on sand");
+			helper.setBlock(ground, Blocks.STONE);
+		});
+		helper.runAfterDelay(50, () -> {
+			helper.assertValueEqual(zombie.getAttributeValue(Attributes.ARMOR), base, "armor off sand");
+			helper.succeed();
+		});
+	}
+
+	@GameTest
+	public void effectOnHitWaitsForItsState(GameTestHelper helper) {
+		BlockPos ground = new BlockPos(1, 0, 1);
+		helper.setBlock(ground, Blocks.STONE);
+		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_sand_hit");
+		var pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 3));
+		GeneCombat.onHit(zombie, pig);
+		helper.assertFalse(pig.hasEffect(MobEffects.SLOWNESS), "a hit off sand");
+		helper.setBlock(ground, Blocks.SAND);
+		GeneCombat.onHit(zombie, pig);
+		helper.assertTrue(pig.hasEffect(MobEffects.SLOWNESS), "a hit on sand");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void newOptionsReadFromJson(GameTestHelper helper) {
+		var ops = com.mojang.serialization.JsonOps.INSTANCE;
+		var burrow = (GeneEffect.Burrow) GeneEffect.CODEC.parse(ops, com.google.gson.JsonParser.parseString(
+				"{ \"type\": \"burrow\", \"blocks\": \"#minecraft:sand\", \"night_only\": false }")).getOrThrow();
+		helper.assertValueEqual(burrow.blocks(), net.minecraft.tags.BlockTags.SAND, "burrow blocks");
+		helper.assertFalse(burrow.nightOnly(), "burrow at day");
+		var call = (GeneEffect.CallOnHurt) GeneEffect.CODEC.parse(ops, com.google.gson.JsonParser.parseString(
+				"{ \"type\": \"call_on_hurt\", \"radius\": 32, \"smoke\": true }")).getOrThrow();
+		helper.assertTrue(call.smoke(), "smoke");
+		var plain = (GeneEffect.Burrow) GeneEffect.CODEC.parse(ops, com.google.gson.JsonParser.parseString(
+				"{ \"type\": \"burrow\" }")).getOrThrow();
+		helper.assertTrue(plain.nightOnly(), "a burrow is at night by default");
+		helper.succeed();
+	}
+
 	private static Zombie zombieWith(GameTestHelper helper, BlockPos pos, String... genes) {
 		// The genes go on before the zombie enters the level, so it gets no genes from the pool.
 		Zombie zombie = EntityTypes.ZOMBIE.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);

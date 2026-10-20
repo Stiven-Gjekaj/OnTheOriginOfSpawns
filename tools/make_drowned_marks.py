@@ -17,8 +17,9 @@ For each gene in GENES, the script writes:
 The script prints the pixels that two drowned genes share.
 
 Pixel plan for the Riptides.
-- Undertow: a thick mane of kelp round the head, with strands that drift
-  back, the gene model undertow_kelp.
+- Undertow has kelp on the top and the back of the head, rows 0 and 1 and
+  column 7 of the sides of the head, the top row of the face, and strands
+  on the upper back, at order 1.
 - Torrent: a large orange fin on the back of each calf and on the outer
   side of each lower leg, the gene model torrent_fins.
 - Surge has foam streaks on the outer, the front, and the back faces of the
@@ -51,7 +52,7 @@ Pixel plan for the Abyssals.
   over the Spearfisher net.
 - Deepcold has a frost tint on all the skin, under the marks (order -2).
 - Glowspot has spots on the legs (rows 1 to 3) and on rows 2 and 3 of the
-  sides of the head, under the Undertow cap. The gene model glowspot_spots
+  sides of the head, under the Undertow kelp. The gene model glowspot_spots
   makes them glow.
 
 Pixel plan for the Barnacled. Five Barnacled genes are gene models.
@@ -103,46 +104,50 @@ BLADDER = "#A8943E"
 
 
 def undertow():
-    # The kelp is the gene model undertow_kelp.
-    return []
+    # A thick mane of kelp, painted on the head and the upper back: kelp on
+    # all the top of the head and the back of the head, a ragged fringe on
+    # the top row of the face, the top 2 rows of the sides of the head, the
+    # back edge of each side, and strands that hang down the upper back. The
+    # mod paints it on both layers. The sides stay free under row 1 for the
+    # Gills slits (columns 3 to 6), the Glowspot spots (columns 1 and 2),
+    # and the Pressure Hide folds (columns 0 to 2, rows 6 and 7). The marks
+    # are at order 1, so the kelp on the back lies over the Spearfisher net.
+    kelp = Mark(KELP[1], order=1)
+    light = Mark(KELP[2], order=1)
+    dark = Mark("#1E3818", order=1)
+    pod = Mark(BLADDER, order=1)
 
+    def put(pixel, col, row, seed):
+        n = noise100(col, row, seed)
+        if n < 8:
+            pod.put(pixel)
+        elif n < 30:
+            dark.put(pixel, 230)
+        elif n < 45:
+            light.put(pixel)
+        else:
+            kelp.put(pixel, 255 if (col + row) % 2 else 230)
 
-def undertow_model():
-    # A thick mane of kelp round the head: a cap of kelp on the top of the
-    # head, with ragged bangs over the forehead, a heavy mass that hangs
-    # down the back of the head and is wider than the head, so it shows at
-    # the sides, and long strands that drift back from the mass, as in a
-    # current. Each part stands out from the head, so the hair has volume.
-    # The sides of the head stay free under the cap (from y -6.4), for the
-    # Gills slits and the Glowspot spots. On the head bone, the head is
-    # from y -8 to 0, from z -4 to 4, and from x -4 to 4.
-    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
-
-    def kelp(height, ragged=True):
-        def color(face, x, y):
-            # The lowest row of each side face is ragged.
-            if ragged and face not in ("top", "bottom") and y == height - 1 and (x * 7 + y) % 3 == 0:
-                return None
-            if face not in ("top", "bottom") and (x * 5 + y * 3) % 11 == 0:
-                return BLADDER
-            return KELP[2] if (x + 2 * y) % 5 == 0 else KELP[(x + y) % 2]
-        return color
-
-    # The cap: 8x1x8 at uv (0, 0). The mass on the back: 10x7x2 at uv (32,
-    # 0). A strand: 1x5x1 at uv (0, 12).
-    paint_box(im, 0, 0, 8, 1, 8, kelp(1))
-    paint_box(im, 32, 0, 10, 7, 2, kelp(7))
-    paint_box(im, 0, 12, 1, 5, 1, kelp(5, ragged=False))
-    parts = [
-        {"bone": "head", "uv": [0, 0], "from": [-4, -8, -4], "size": [8, 1, 8], "inflate": 0.6},
-        {"bone": "head", "uv": [32, 0], "from": [-5, -7, 4], "size": [10, 7, 2], "inflate": 0.4,
-         "pivot": [0, -7, 4.5], "rotation": [10, 0, 0]},
-    ]
-    for x, rot in ((-5, [22, 0, 14]), (-3, [28, 0, 8]), (-0.5, [34, 0, 0]), (2, [26, 0, -8]),
-                   (4, [20, 0, -14])):
-        parts.append({"bone": "head", "uv": [0, 12], "from": [x, -0.5, 5.4], "size": [1, 5, 1],
-                      "pivot": [x + 0.5, -0.5, 5.9], "rotation": rot})
-    save_model("undertow_kelp", im, parts)
+    for row in range(8):
+        for col in range(8):
+            put((8 + col, row), col, row, 121)
+            # The back of the head: the lowest row is ragged.
+            if row < 7 or noise100(col, row, 122) < 60:
+                put((24 + col, 8 + row), col, row, 123)
+    for side in (0, 1):
+        for col in range(8):
+            for row in (0, 1):
+                put(head_side(side, col, row), col, row, 124 + side)
+        for row in range(2, 7):
+            put(head_side(side, 7, row), 7, row, 126 + side)
+    for x in range(8, 16):
+        if noise100(x, 8, 128) < 70:
+            put((x, 8), x, 8, 129)
+    # Strands down the upper back, of uneven length.
+    for col, length in ((0, 4), (1, 6), (2, 3), (4, 5), (5, 2), (6, 6), (7, 4)):
+        for row in range(length):
+            put(body(SHIRT_BACK, col, row), col, row, 130)
+    return [kelp, light, dark, pod]
 
 
 FIN = ("#F08A4A", "#D86A32", "#8A3418", "#FFC08A")
@@ -1019,7 +1024,6 @@ GENES = {
 }
 
 MODELS = {
-    "undertow": "originofspawns:undertow_kelp",
     "torrent": "originofspawns:torrent_fins",
     "breacher": "originofspawns:breacher_fin",
     "barbed": "originofspawns:barbed_barbs",
@@ -1040,7 +1044,6 @@ MODELS = {
 
 def main():
     os.makedirs(MARK_DIR, exist_ok=True)
-    undertow_model()
     torrent_model()
     breacher_model()
     barbed_model()

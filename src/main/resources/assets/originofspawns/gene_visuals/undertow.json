@@ -1,4 +1,36 @@
 {
-	"layers": [],
-	"model": "originofspawns:undertow_kelp"
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/undertow_0.png",
+				"tint": "#2E5E22"
+			},
+			"order": 1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/undertow_1.png",
+				"tint": "#5A9A3A"
+			},
+			"order": 1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/undertow_2.png",
+				"tint": "#1E3818"
+			},
+			"order": 1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/undertow_3.png",
+				"tint": "#A8943E"
+			},
+			"order": 1
+		}
+	]
 }

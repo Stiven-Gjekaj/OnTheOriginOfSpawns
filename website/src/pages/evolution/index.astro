@@ -5,7 +5,8 @@ import Icon from "../../components/Icon.astro";
 import Status from "../../components/Status.astro";
 import GeneTips from "../../components/GeneTips.astro";
 import site from "../../data/site.json";
-import { url, label, pct } from "../../lib/site.js";
+import SpeciesSwitch from "../../components/SpeciesSwitch.astro";
+import { url, label, pct, speciesById } from "../../lib/site.js";
 
 const ev = site.evolution;
 const pick = (list, re) => list.filter((x) => re.test(x));
@@ -21,7 +22,7 @@ const genesFor = (p) => site.genes.filter((g) => g.counters === p);
     <section>
       <div class="section-head">
         <h2>Gene pools</h2>
-        <p>A species is one mob type. Zombie, husk, and drowned are different species. Each species keeps one pool for each of these {ev.categories.length} biome categories.</p>
+        <p>A species is one mob type. Zombie, husk, and drowned are different species, with their own genes and families. Each species keeps one pool for each of these {ev.categories.length} biome categories.</p>
       </div>
       <div class="categories">
         {ev.categories.map((c) => (
@@ -40,12 +41,13 @@ const genesFor = (p) => site.genes.filter((g) => g.counters === p);
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Pressure</th><th>A zombie death counts when</th><th>Genes that it selects</th><th>State</th></tr></thead>
+          <thead><tr><th>Pressure</th><th>A death counts when</th><th>Species</th><th>Genes that it selects</th><th>State</th></tr></thead>
           <tbody>
             {site.pressures.map((p) => (
               <tr>
                 <td><span class="badge pressure">{p.id}</span></td>
                 <td>{p.when}</td>
+                <td class="nowrap">{p.species.map((id) => speciesById[id].name).join(", ")}</td>
                 <td class="gene-links">
                   {genesFor(p.id).map((g, i) => (
                     <>{i > 0 && ", "}<a href={url(`genes/#gene-${g.id}`)} data-tip-ref={`tip-gene-${g.id}`}>{g.name}</a></>
@@ -92,8 +94,9 @@ const genesFor = (p) => site.genes.filter((g) => g.counters === p);
       <div class="section-head">
         <div class="eyebrow">Try it</div>
         <h2>Pool simulator</h2>
-        <p>Kill zombies in a biome category, and watch the pool change. Then spawn a zombie from the pool. The simulator uses the rates of the gene files. The Beagle Notebook page reads these pools.</p>
+        <p>Kill mobs of a species in a biome category, and watch the pool change. Then spawn a mob from the pool. The simulator uses the rates of the gene files. The Beagle Notebook page reads these pools.</p>
       </div>
+      <SpeciesSwitch />
       <div class="sim">
         <div class="card sim-controls">
           <div class="control">
@@ -103,12 +106,14 @@ const genesFor = (p) => site.genes.filter((g) => g.counters === p);
             </div>
           </div>
           <div class="control">
-            <div class="control-label">Kill 5 zombies by</div>
-            <div class="row" id="sim-pressures">
-              {site.pressures.map((p) => (
-                <button class="btn sm" type="button" data-pressure={p.id} data-tip={`${p.when}. Selects: ${genesFor(p.id).map((g) => g.name).join(", ")}`}>{label(p.id)}</button>
-              ))}
-            </div>
+            <div class="control-label">Kill 5 mobs by</div>
+            {site.species.map((sp, i) => (
+              <div class="row sim-pressures" data-species-panel={sp.id} hidden={i !== 0}>
+                {site.pressures.filter((p) => p.species.includes(sp.id)).map((p) => (
+                  <button class="btn sm" type="button" data-pressure={p.id} data-tip={`${p.when}. Selects: ${genesFor(p.id).filter((g) => g.species === sp.id).map((g) => g.name).join(", ")}`}>{label(p.id)}</button>
+                ))}
+              </div>
+            ))}
           </div>
           <div class="row">
             <button class="btn sm" type="button" id="sim-day">A day passes</button>
@@ -119,9 +124,10 @@ const genesFor = (p) => site.genes.filter((g) => g.counters === p);
         </div>
         <div class="card spawn">
           <h3>Spawn from the pool</h3>
+          <p class="muted small" id="sim-art" hidden>The gene art of this species comes later. The picture shows a plain mob.</p>
           <div class="spawn-stage"><canvas id="sim-canvas" role="img" aria-label="The zombie that spawned from the pool"></canvas></div>
-          <div class="mob-info" id="sim-result"><div class="n">No zombie yet</div><div class="g">Press the button</div></div>
-          <button class="mc-btn" type="button" id="sim-spawn">Spawn a zombie</button>
+          <div class="mob-info" id="sim-result"><div class="n">No mob yet</div><div class="g">Press the button</div></div>
+          <button class="mc-btn" type="button" id="sim-spawn">Spawn a mob</button>
           <p class="muted small" id="sim-log" aria-live="polite"></p>
         </div>
       </div>
@@ -134,7 +140,7 @@ const genesFor = (p) => site.genes.filter((g) => g.counters === p);
           <li>A mob gets its genes one time, when it first joins a world.</li>
           <li>Each gene has a chance equal to its frequency in the pool of the biome category, or its mutation rate if that is higher.</li>
           <li>A mob carries a maximum of 5 genes. The genes with the highest frequency stay.</li>
-          {pick(ev.babies, /Runt|start/).map((x) => <li>{x}</li>)}
+          {site.species.map((sp) => sp.babies.filter((x) => /^Only/.test(x)).map((x) => <li>{x}</li>))}
         </ul>
       </div>
       <div class="card">
@@ -168,7 +174,7 @@ const genesFor = (p) => site.genes.filter((g) => g.counters === p);
     font-weight: 600; font-size: var(--fs-sm);
   }
   @media (max-width: 760px) { .categories { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  .gene-links a { white-space: nowrap; }
+  .gene-links a, .nowrap { white-space: nowrap; }
   .formula { display: block; margin: var(--s-3) 0; padding: var(--s-2) var(--s-3); }
   .card p + .formula { margin-top: var(--s-3); }
 

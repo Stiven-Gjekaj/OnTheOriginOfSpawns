@@ -41,8 +41,8 @@ Pixel plan for the Rattlers.
   outer and the inner faces of the legs.
 - Backpedal: a bent spine that bows out of the back, the gene model
   backpedal_spine. The real spine is darker (order 0, the spine region).
-- Bonedash has a crack on the pelvis: x 24 to 29 and x 20 and 21, y 30
-  and 31.
+- Bonedash: bone spurs out of the sides of the pelvis and the knees, like a
+  crab, the gene model bonedash_outriggers.
 - Hollow Bones has holes on the arms (rows 1 to 4, 7, and 8) and on the
   back of the head.
 - Lightfoot has rags round the feet: leg rows 9 to 11, and the bottom of
@@ -253,17 +253,43 @@ def backpedal_model():
 
 
 def bonedash():
-    # A cracked hip: a dark crack across the pelvis on the left hip, from
-    # the front to the side, with pale chips, and a chip gone from the
-    # right hip.
-    crack = Mark("#2E2C28")
-    chip = Mark("#F4F0E6")
-    for p in ((26, 30), (27, 31), (25, 31), (28, 30), (29, 31)):
-        crack.put(p)
-    chip.put((27, 30), 230).put((24, 30), 210)
-    crack.put((20, 31), 220)
-    chip.put((21, 31), 220)
-    return [crack, chip]
+    # The outriggers are the gene model bonedash_outriggers.
+    return []
+
+
+def bonedash_model():
+    # Bone outriggers that stick out to the sides, like the legs of a crab,
+    # so the body says "moves to the side": a long spur out of each side of
+    # the pelvis, and a short spur out of the outer side of each knee. Each
+    # spur slopes down to a point. The pelvis spurs are behind the arms
+    # (the arms are from z -1 to 1), so the arms do not go through them. On
+    # the body bone, the pelvis is at y 10 to 12, and the body is from x -4
+    # to 4. On a leg bone, the knee (rows 5 and 6) is at y 5 to 7, and the
+    # leg is from x -1 to 1.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def spur(length):
+        def color(face, x, y):
+            # The tip end is darker.
+            c = x if face in ("top", "bottom", "front") else (length - 1 - x if face == "back" else x)
+            if face in ("right", "left"):
+                return BONE[1]
+            return BONE[2] if c >= length - 1 else BONE[0] if face == "top" else BONE[1]
+        return color
+
+    # A pelvis spur: 4x1x1 at uv (0, 0). A knee spur: 3x1x1 at uv (0, 4).
+    paint_box(im, 0, 0, 4, 1, 1, spur(4))
+    paint_box(im, 0, 4, 3, 1, 1, spur(3))
+    parts = []
+    for side in (-1, 1):
+        x0 = 4 if side > 0 else -8
+        parts.append({"bone": "body", "uv": [0, 0], "from": [x0, 10, 1.2], "size": [4, 1, 1],
+                      "pivot": [side * 4, 10.5, 1.7], "rotation": [0, 0, side * 20]})
+    for bone, side in (("right_leg", -1), ("left_leg", 1)):
+        x0 = 1 if side > 0 else -4
+        parts.append({"bone": bone, "uv": [0, 4], "from": [x0, 5, -0.5], "size": [3, 1, 1],
+                      "pivot": [side * 1, 5.5, 0], "rotation": [0, 0, side * 25]})
+    save_model("bonedash_outriggers", im, parts)
 
 
 def hollow_bones():
@@ -497,6 +523,7 @@ MODELS = {
     "high_ground": "originofspawns:high_ground_claws",
     "backpedal": "originofspawns:backpedal_spine",
     "fleetbone": "originofspawns:fleetbone_jaw",
+    "bonedash": "originofspawns:bonedash_outriggers",
     "thickbone": "originofspawns:thickbone_bones",
     "reassemble": "originofspawns:reassemble_wire",
     "bonewall": "originofspawns:bonewall_ribs",
@@ -508,6 +535,7 @@ def main():
     longdraw_model()
     high_ground_model()
     backpedal_model()
+    bonedash_model()
     fleetbone_model()
     thickbone_model()
     reassemble_model()

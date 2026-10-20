@@ -47,7 +47,8 @@
 					"type": "silence",
 					"idle": true,
 					"hurt": true,
-					"steps": true
+					"steps": true,
+					"death": true
 				},
 				{
 					"type": "damage_dealt_when",

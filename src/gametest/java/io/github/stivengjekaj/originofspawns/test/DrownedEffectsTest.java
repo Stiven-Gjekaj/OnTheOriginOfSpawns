@@ -426,6 +426,24 @@ public class DrownedEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(maxTicks = 40)
+	public void breachMeasuresFromTheWaterSurface(GameTestHelper helper) {
+		fill(helper, new BlockPos(1, 1, 1), 5);
+		for (int y = 1; y <= 5; y++) {
+			helper.setBlock(new BlockPos(3, y, 1), Blocks.STONE);
+		}
+		Drowned drowned = drownedWith(helper, new BlockPos(1, 1, 1));
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 6, 1));
+		drowned.setTarget(pig);
+		LeapGoal breach = new LeapGoal(drowned, new GeneEffect.Leap(0.0F, 8.0F, 5.0F, 0.0F, GeneEffect.Leap.Medium.BREACH));
+		helper.runAfterDelay(5, () -> {
+			helper.assertTrue(breach.canUse(), "a target at the water surface, 5 blocks above the drowned");
+			pig.setPos(pig.getX(), pig.getY() + 3.0, pig.getZ());
+			helper.assertFalse(breach.canUse(), "a target 3 blocks above the water surface");
+			helper.succeed();
+		});
+	}
+
 	/**
 	 * Fills a column of water from the position up.
 	 */

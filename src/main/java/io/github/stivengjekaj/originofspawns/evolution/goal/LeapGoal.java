@@ -6,7 +6,9 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.BehaviorState;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -49,12 +51,23 @@ public class LeapGoal extends Goal {
 			case GROUND -> mob.onGround();
 			case WATER -> mob.isInWater() && target.isInWater();
 			case BREACH -> {
-				double height = target.getY() - mob.getY();
-				yield mob.isInWater() && !target.isInWater() && height >= 0.0 && height <= BREACH_HEIGHT;
+				double height = target.getY() - waterSurface();
+				yield mob.isInWater() && !target.isInWater() && height >= -1.0 && height < BREACH_HEIGHT;
 			}
 		};
 		double distance = mob.distanceTo(target);
 		return ready && distance >= leap.minDistance() && distance <= leap.maxDistance();
+	}
+
+	/**
+	 * Returns the height of the top of the water above the mob.
+	 */
+	private double waterSurface() {
+		BlockPos pos = mob.blockPosition();
+		while (mob.level().getFluidState(pos).is(FluidTags.WATER) && pos.getY() < mob.level().getMaxY()) {
+			pos = pos.above();
+		}
+		return pos.getY();
 	}
 
 	@Override

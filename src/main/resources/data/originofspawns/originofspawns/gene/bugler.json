@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:skeleton/legion",
+	"gains": [
+		{
+			"type": "call_on_sight",
+			"radius": 24,
+			"cooldown_seconds": 30
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

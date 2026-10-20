@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:skeleton/legion",
+	"gains": [
+		{
+			"type": "brood",
+			"extra": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.15,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

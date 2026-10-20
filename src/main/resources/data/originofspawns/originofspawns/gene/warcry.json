@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:skeleton/legion",
+	"sub_family": "originofspawns:skeleton/ossified",
+	"gains": [
+		{
+			"type": "effect_on_hurt",
+			"effect": "minecraft:speed",
+			"seconds": 4,
+			"cooldown_seconds": 15,
+			"ally_radius": 12
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

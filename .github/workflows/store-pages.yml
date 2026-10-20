@@ -19,6 +19,9 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v7
+      - name: clean the token
+        # The stored token can end with a space or a new line, which the API refuses.
+        run: echo "TOKEN=$(printf '%s' "$TOKEN" | tr -d '[:space:]')" >> "$GITHUB_ENV"
       - name: set the description
         run: |
           jq -n --rawfile body docs/store-description.md '{body: $body}' > body.json

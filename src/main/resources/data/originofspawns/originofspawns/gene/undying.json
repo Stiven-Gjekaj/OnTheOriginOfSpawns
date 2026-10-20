@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:husk/mummy",
+	"gains": [
+		{
+			"type": "undying",
+			"health": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.2,
+			"operation": "add_multiplied_base"
+		}
+	]
+}

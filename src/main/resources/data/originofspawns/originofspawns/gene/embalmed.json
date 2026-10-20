@@ -1,0 +1,30 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:husk/mummy",
+	"sub_family": "originofspawns:husk/parcher",
+	"gains": [
+		{
+			"type": "effect_immunity",
+			"effects": [
+				"minecraft:poison",
+				"minecraft:wither",
+				"minecraft:hunger"
+			]
+		},
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 3,
+			"idle_seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

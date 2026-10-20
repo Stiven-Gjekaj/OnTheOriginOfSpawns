@@ -1,0 +1,24 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:husk/mummy",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_projectile",
+			"multiplier": 0.75
+		},
+		{
+			"type": "damage_taken",
+			"damage_types": "#originofspawns:melee",
+			"multiplier": 0.75
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 1.5
+		}
+	]
+}

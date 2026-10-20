@@ -41,7 +41,27 @@ public enum DeathCondition implements StringRepresentable {
 	/**
 	 * The mob killed a player. This is not a death of the mob.
 	 */
-	PLAYER_DEATH;
+	PLAYER_DEATH,
+	/**
+	 * The mob died in water.
+	 */
+	IN_WATER,
+	/**
+	 * The mob died out of water.
+	 */
+	ON_LAND,
+	/**
+	 * The mob died in a cold biome, or freezing killed it.
+	 */
+	COLD,
+	/**
+	 * The mob died while it was dark outside, between dusk and dawn.
+	 */
+	NIGHT,
+	/**
+	 * The killer was in a boat.
+	 */
+	BOAT;
 
 	public static final Codec<DeathCondition> CODEC = StringRepresentable.fromEnum(DeathCondition::values);
 

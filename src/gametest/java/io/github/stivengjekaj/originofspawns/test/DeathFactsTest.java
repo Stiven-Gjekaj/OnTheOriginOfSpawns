@@ -28,6 +28,65 @@ import net.minecraft.world.phys.Vec3;
 
 public class DeathFactsTest {
 	@GameTest
+	public void aDeathInWaterIsInWaterAndNotOnLand(GameTestHelper helper) {
+		helper.setBlock(new BlockPos(1, 1, 1), net.minecraft.world.level.block.Blocks.WATER);
+		Zombie wet = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(1, 1, 1));
+		Zombie dry = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(4, 1, 4));
+		helper.runAfterDelay(2, () -> {
+			Set<DeathCondition> inWater = Evolution.facts(wet, helper.getLevel().damageSources().generic(), helper.getLevel());
+			Set<DeathCondition> onLand = Evolution.facts(dry, helper.getLevel().damageSources().generic(), helper.getLevel());
+			helper.assertTrue(inWater.contains(DeathCondition.IN_WATER) && !inWater.contains(DeathCondition.ON_LAND), "in water");
+			helper.assertTrue(onLand.contains(DeathCondition.ON_LAND) && !onLand.contains(DeathCondition.IN_WATER), "on land");
+			helper.succeed();
+		});
+	}
+
+	@GameTest
+	public void freezingIsACold(GameTestHelper helper) {
+		Zombie zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(1, 1, 1));
+		Set<DeathCondition> facts = Evolution.facts(zombie, helper.getLevel().damageSources().freeze(), helper.getLevel());
+		helper.assertTrue(facts.contains(DeathCondition.COLD), "freezing is cold");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void nightFollowsTheDarkSky(GameTestHelper helper) {
+		Zombie zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(1, 1, 1));
+		Set<DeathCondition> facts = Evolution.facts(zombie, helper.getLevel().damageSources().generic(), helper.getLevel());
+		helper.assertValueEqual(facts.contains(DeathCondition.NIGHT), helper.getLevel().isDarkOutside(), "night");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aKillerInABoatIsABoatDeath(GameTestHelper helper) {
+		Zombie zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(1, 1, 1));
+		var boat = helper.spawn(EntityTypes.OAK_BOAT, new BlockPos(4, 1, 4));
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		player.setPos(boat.position());
+		player.startRiding(boat, true, false);
+		Set<DeathCondition> facts = Evolution.facts(zombie, helper.getLevel().damageSources().playerAttack(player),
+				helper.getLevel());
+		helper.assertTrue(player.getVehicle() == boat, "the player rides the boat");
+		helper.assertTrue(facts.contains(DeathCondition.BOAT), "boat");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void cactiBerriesAndTridentsHaveTheirTags(GameTestHelper helper) {
+		var sources = helper.getLevel().damageSources();
+		var contact = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE,
+				Identifier.fromNamespaceAndPath("originofspawns", "contact"));
+		var trident = net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.DAMAGE_TYPE,
+				Identifier.fromNamespaceAndPath("originofspawns", "trident"));
+		helper.assertTrue(sources.cactus().is(contact), "a cactus is contact");
+		helper.assertTrue(sources.sweetBerryBush().is(contact), "a berry bush is contact");
+		helper.assertFalse(sources.generic().is(contact), "generic damage is not contact");
+		Zombie zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(1, 1, 1));
+		helper.assertTrue(sources.trident(zombie, zombie).is(trident), "a trident is a trident");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void loneZombieIsAlone(GameTestHelper helper) {
 		Zombie zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(1, 1, 1));
 		Set<DeathCondition> facts = Evolution.facts(zombie, helper.getLevel().damageSources().generic(), helper.getLevel());

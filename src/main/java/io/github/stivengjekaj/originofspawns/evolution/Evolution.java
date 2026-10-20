@@ -38,6 +38,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -272,6 +273,17 @@ public final class Evolution {
 		}
 		if (source.getEntity() instanceof IronGolem) {
 			facts.add(DeathCondition.GOLEM);
+		}
+		facts.add(mob.isInWater() ? DeathCondition.IN_WATER : DeathCondition.ON_LAND);
+		if (BiomeCategory.of(level.getBiome(mob.blockPosition())) == BiomeCategory.COLD
+				|| source.is(DamageTypeTags.IS_FREEZING)) {
+			facts.add(DeathCondition.COLD);
+		}
+		if (level.isDarkOutside()) {
+			facts.add(DeathCondition.NIGHT);
+		}
+		if (source.getEntity() != null && source.getEntity().getVehicle() instanceof AbstractBoat) {
+			facts.add(DeathCondition.BOAT);
 		}
 		AABB area = mob.getBoundingBox().inflate(CrowdTracker.RADIUS);
 		if (level.getEntities(mob.getType(), area, other -> other != mob && other.isAlive()).isEmpty()) {

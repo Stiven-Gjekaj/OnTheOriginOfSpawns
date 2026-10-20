@@ -34,9 +34,32 @@ public final class GeneTextures {
 	 */
 	public static final RenderStateDataKey<Float> OPACITY = RenderStateDataKey.create(() -> "originofspawns:opacity");
 
+	/**
+	 * True in the render state of a mob with split limbs, such as the drowned.
+	 */
+	public static final RenderStateDataKey<Boolean> SPLIT_LIMBS = RenderStateDataKey.create(() -> "originofspawns:split_limbs");
+
+	/**
+	 * The texture layouts that the gene marks fit.
+	 */
+	public enum Layout {
+		/**
+		 * The zombie layout. The left limbs mirror the right limbs.
+		 */
+		ADULT,
+		/**
+		 * The left limbs have their own texture areas, as for the drowned.
+		 */
+		SPLIT_LIMBS,
+		/**
+		 * The baby zombie layout.
+		 */
+		BABY
+	}
+
 	private static final Map<String, Identifier> BAKED = new HashMap<>();
 	private static final Map<Identifier, TextureBaker.Image> IMAGES = new HashMap<>();
-	private static final Map<Identifier, TextureBaker.Image> BABY_IMAGES = new HashMap<>();
+	private static final Map<String, TextureBaker.Image> LAYOUT_IMAGES = new HashMap<>();
 	private static final Map<Identifier, TextureBaker.Image> BAKED_IMAGES = new HashMap<>();
 	private static final Map<Identifier, Identifier> ADULT_LAYOUT = new HashMap<>();
 	private static int nextId;
@@ -55,6 +78,13 @@ public final class GeneTextures {
 	 * Returns the texture for a mob with these genes. A baby gets the marks moved to the baby layout of its texture.
 	 */
 	public static Identifier textureFor(Identifier base, List<Identifier> genes, boolean baby) {
+		return textureFor(base, genes, baby ? Layout.BABY : Layout.ADULT);
+	}
+
+	/**
+	 * Returns the texture for a mob with these genes, with the marks moved to the layout of its texture.
+	 */
+	public static Identifier textureFor(Identifier base, List<Identifier> genes, Layout layout) {
 		if (genes == null || genes.isEmpty()) {
 			return base;
 		}
@@ -68,16 +98,16 @@ public final class GeneTextures {
 			return base;
 		}
 		visible.sort(null);
-		String key = base + "|" + baby + "|" + visible;
+		String key = base + "|" + layout + "|" + visible;
 		Identifier baked = BAKED.get(key);
 		if (baked == null) {
-			baked = bake(base, visible, baby);
+			baked = bake(base, visible, layout);
 			BAKED.put(key, baked);
 		}
 		return baked;
 	}
 
-	private static Identifier bake(Identifier base, List<Identifier> genes, boolean baby) {
+	private static Identifier bake(Identifier base, List<Identifier> genes, Layout layout) {
 		TextureBaker.Image source = image(base);
 		if (source == null) {
 			return base;
@@ -86,12 +116,12 @@ public final class GeneTextures {
 		List<TextureBaker.GeneLayers> layers = new ArrayList<>();
 		for (Identifier id : genes) {
 			GeneVisual visual = GeneVisuals.get(id);
-			TextureBaker.Image regionMap = baby ? babyImage(visual.regionMap()) : image(visual.regionMap());
+			TextureBaker.Image regionMap = layoutImage(visual.regionMap(), layout);
 			if (regionMap != null) {
 				layers.add(new TextureBaker.GeneLayers(regionMap, visual.layers(), id.hashCode()));
 			}
 		}
-		TextureBaker.bakeAll(texture, layers, baby ? GeneTextures::babyPattern : GeneTextures::image);
+		TextureBaker.bakeAll(texture, layers, id -> layoutPattern(id, layout));
 		return register(texture);
 	}
 
@@ -106,18 +136,25 @@ public final class GeneTextures {
 		});
 	}
 
-	private static TextureBaker.Image babyImage(Identifier texture) {
+	/**
+	 * Returns an image in the zombie layout, moved to a different layout.
+	 */
+	private static TextureBaker.Image layoutImage(Identifier texture, Layout layout) {
 		TextureBaker.Image adult = image(texture);
-		return adult == null ? null : BABY_IMAGES.computeIfAbsent(texture, id -> BabyLayout.toBaby(adult));
+		if (adult == null || layout == Layout.ADULT) {
+			return adult;
+		}
+		return LAYOUT_IMAGES.computeIfAbsent(texture + "|" + layout,
+				key -> layout == Layout.BABY ? BabyLayout.toBaby(adult) : BabyLayout.toSplitLimbs(adult));
 	}
 
 	/**
-	 * Returns a pattern for a baby. A pattern with the size of a whole mob texture is a mark in the adult layout, so it
-	 * moves to the baby layout. A smaller pattern is a tile, and it stays as it is.
+	 * Returns a pattern for a layout. A pattern with the size of a whole mob texture is a mark in the zombie layout, so
+	 * it moves to the layout. A smaller pattern is a tile, and it stays as it is.
 	 */
-	private static TextureBaker.Image babyPattern(Identifier texture) {
+	private static TextureBaker.Image layoutPattern(Identifier texture, Layout layout) {
 		TextureBaker.Image pattern = image(texture);
-		return pattern != null && pattern.width() >= 64 && pattern.height() >= 64 ? babyImage(texture) : pattern;
+		return pattern != null && pattern.width() >= 64 && pattern.height() >= 64 ? layoutImage(texture, layout) : pattern;
 	}
 
 	/**
@@ -189,7 +226,7 @@ public final class GeneTextures {
 		}
 		BAKED.clear();
 		IMAGES.clear();
-		BABY_IMAGES.clear();
+		LAYOUT_IMAGES.clear();
 		BAKED_IMAGES.clear();
 		ADULT_LAYOUT.clear();
 	}

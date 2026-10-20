@@ -43,10 +43,26 @@ public class BabyGenesClientTest implements FabricClientGameTest {
 				spawn(player, front.add(-1.5, 0.0, 0.0), true,
 						List.of(gene("death_throes"), gene("bonerunner"), gene("burrower")));
 				spawn(player, front.add(-2.7, 0.0, 0.6), false, List.of(gene("runt"), gene("cinder"), gene("ironhide")));
+				// A drowned has split limbs, so the marks on its left arm and left leg need their own copy.
+				spawnDrowned(player, front.add(0.9, 0.0, 2.6), false, List.of(gene("cinder"), gene("ironhide")));
+				spawnDrowned(player, front.add(-0.9, 0.0, 2.2), true, List.of(gene("cinder"), gene("ironhide")));
 			});
 			context.waitTicks(40);
 			context.takeScreenshot("baby_genes");
 		}
+	}
+
+	private static void spawnDrowned(ServerPlayer player, Vec3 pos, boolean baby, List<Identifier> genes) {
+		var drowned = EntityTypes.DROWNED.create(player.level(), EntitySpawnReason.COMMAND);
+		drowned.setNoAi(true);
+		drowned.setPersistenceRequired();
+		drowned.setBaby(baby);
+		drowned.setPos(pos);
+		drowned.setYRot(150.0F);
+		drowned.setYHeadRot(150.0F);
+		drowned.setYBodyRot(150.0F);
+		drowned.setAttached(ModAttachments.GENES, new CarriedGenes(genes));
+		player.level().addFreshEntity(drowned);
 	}
 
 	private static void spawn(ServerPlayer player, Vec3 pos, boolean baby, List<Identifier> genes) {

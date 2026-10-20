@@ -10,6 +10,7 @@ import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 import net.minecraft.client.renderer.entity.AbstractZombieRenderer;
 import net.minecraft.client.renderer.entity.state.ZombieRenderState;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.monster.zombie.Drowned;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,6 +27,7 @@ public abstract class AbstractZombieRendererMixin {
 		CarriedGenes genes = zombie.getAttached(ModAttachments.GENES);
 		state.setData(GeneTextures.GENES, genes == null ? List.of() : genes.genes());
 		state.setData(GeneTextures.OPACITY, null);
+		state.setData(GeneTextures.SPLIT_LIMBS, zombie instanceof Drowned);
 		if (genes != null) {
 			GeneEffects.translucentOpacity(zombie).ifPresent(opacity -> state.setData(GeneTextures.OPACITY, opacity));
 		}
@@ -34,6 +36,9 @@ public abstract class AbstractZombieRendererMixin {
 	@Inject(method = "getTextureLocation(Lnet/minecraft/client/renderer/entity/state/ZombieRenderState;)Lnet/minecraft/resources/Identifier;",
 			at = @At("RETURN"), cancellable = true)
 	private void originofspawns$geneTexture(ZombieRenderState state, CallbackInfoReturnable<Identifier> info) {
-		info.setReturnValue(GeneTextures.textureFor(info.getReturnValue(), state.getData(GeneTextures.GENES), state.isBaby));
+		GeneTextures.Layout layout = state.isBaby ? GeneTextures.Layout.BABY
+				: Boolean.TRUE.equals(state.getData(GeneTextures.SPLIT_LIMBS)) ? GeneTextures.Layout.SPLIT_LIMBS
+				: GeneTextures.Layout.ADULT;
+		info.setReturnValue(GeneTextures.textureFor(info.getReturnValue(), state.getData(GeneTextures.GENES), layout));
 	}
 }

@@ -2,15 +2,22 @@
 import Layout from "../../layouts/Layout.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import GeneTips from "../../components/GeneTips.astro";
+import SpeciesSwitch from "../../components/SpeciesSwitch.astro";
 import site from "../../data/site.json";
+import { familiesOf } from "../../lib/site.js";
+// A species with no gene art cannot go in the lab yet.
+const noArt = site.species.filter((s) => !s.art).map((s) => s.id);
+const note = Object.fromEntries(noArt.map((id) => [id, "The art of this species comes later"]));
 ---
-<Layout title="Gene Lab" description="Put genes on a zombie and see the gene marks and models of On the Origin of Spawns.">
-  <PageHeader eyebrow="Gene Lab" title="Put genes on a zombie">
+<Layout title="Gene Lab" description="Put genes on a mob and see the gene marks and models of On the Origin of Spawns.">
+  <PageHeader eyebrow="Gene Lab" title="Put genes on a mob">
     The lab uses the real gene marks and gene models of the mod, and applies them in the same order as the game. The base skin is a flat drawing of the wiki, not the texture of the game.
   </PageHeader>
   <GeneTips />
 
-  <div class="page container lab">
+  <div class="page container">
+  <SpeciesSwitch disabled={noArt} note={note} />
+  <div class="lab">
     <div class="stage-col">
       <div class="card stage-card">
         <div class="stage" id="lab-stage">
@@ -19,7 +26,7 @@ import site from "../../data/site.json";
         <div class="row controls">
           <button class="btn sm" type="button" id="lab-spin" aria-pressed="true">Turn</button>
           <button class="btn sm" type="button" id="lab-walk" aria-pressed="false">Walk</button>
-          <button class="btn sm" type="button" id="lab-baby" aria-pressed="false" data-tip="Only the Runt gene makes baby zombies">Baby</button>
+          <button class="btn sm" type="button" id="lab-baby" aria-pressed="false" data-tip="Only one gene of each species makes babies">Baby</button>
           <button class="btn sm" type="button" id="lab-night" aria-pressed="false">Night</button>
           <button class="btn sm ghost" type="button" id="lab-clear">Remove all</button>
         </div>
@@ -34,22 +41,28 @@ import site from "../../data/site.json";
           <h2 class="h3">Genes</h2>
           <span class="badge" id="lab-count">0 of 5</span>
         </div>
-        <p class="muted small">A zombie carries a maximum of 5 genes. The family result uses the rules of the mod. The Baby button fits the marks to a baby zombie, as the game does. Only the Runt gene makes baby zombies.</p>
+        <p class="muted small">A mob carries a maximum of 5 genes. The family result uses the rules of the mod. The Baby button fits the marks to a baby, as the game does.</p>
+        {site.species.map((sp, i) => <p class="muted small" data-species-panel={sp.id} hidden={i !== 0}>{sp.babies.find((b) => /^Only/.test(b))}</p>)}
         <p class="warn small" id="lab-msg" aria-live="polite"></p>
-        {site.families.map((f) => (
+        {site.species.map((sp, i) => (
+        <div data-species-panel={sp.id} hidden={i !== 0}>
+        {familiesOf(sp.id).map((f) => (
           <fieldset class="fam-group" style={`--fam:var(--${f.id})`}>
             <legend>{f.name}</legend>
             <div class="toggles">
               {site.genes.filter((g) => g.family === f.id).map((g) => (
                 <button class="toggle" type="button" data-gene={g.id} aria-pressed="false" data-tip-ref={`tip-gene-${g.id}`}>
-                  <span class="check" aria-hidden="true"></span>{g.name}
+                  <span class="check" aria-hidden="true"></span>{g.name}{!g.visual && <span class="no-art">no art yet</span>}
                 </button>
               ))}
             </div>
           </fieldset>
         ))}
+        </div>
+        ))}
       </div>
     </div>
+  </div>
   </div>
 </Layout>
 
@@ -87,6 +100,7 @@ import site from "../../data/site.json";
   }
   .toggle:hover { border-color: var(--border-strong); }
   .toggle[aria-pressed="true"] { border-color: var(--fam); background: color-mix(in srgb, var(--fam) 10%, var(--surface)); }
+  .no-art { margin-left: auto; font-size: var(--fs-xs); font-weight: 500; color: var(--text-faint); }
   .check { flex: none; width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid var(--border-strong); }
   .toggle[aria-pressed="true"] .check { background: var(--fam); border-color: var(--fam); box-shadow: inset 0 0 0 2px var(--surface); }
 </style>

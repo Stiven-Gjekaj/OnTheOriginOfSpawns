@@ -3,12 +3,25 @@
 import { genes } from "../data/site.json";
 import { familyOf, kindName, famName, recordFound } from "../lib/site.js";
 import * as Z from "./zombie.js";
+import { getSpecies } from "./species.js";
 
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const byId = Object.fromEntries(genes.map((g) => [g.id, g]));
 const $ = (id) => document.getElementById(id);
 
-const start = (new URLSearchParams(location.search).get("genes") || "cinder,ironhide,bonerunner").split(",").filter((id) => byId[id]);
+// The first genes: three genes of three families, or a fixed set.
+const DEFAULTS = { zombie: "cinder,ironhide,bonerunner" };
+function defaultsFor(sp) {
+  if (DEFAULTS[sp]) return DEFAULTS[sp];
+  // Two genes of one family and one of a second family make a minor family.
+  const withArt = genes.filter((g) => g.species === sp && g.visual);
+  const fams = [...new Set(withArt.map((g) => g.family))];
+  const pick = [...withArt.filter((g) => g.family === fams[0]).slice(0, 2), ...withArt.filter((g) => g.family === fams[1]).slice(0, 1)];
+  return pick.map((g) => g.id).join(",");
+}
+let species = getSpecies();
+const start = (new URLSearchParams(location.search).get("genes") || defaultsFor(species))
+  .split(",").filter((id) => byId[id]?.species === species);
 const chosen = new Set(start.slice(0, 5));
 let spin = !reduced;
 let walk = false;
@@ -29,14 +42,14 @@ function update() {
   document.querySelectorAll("[data-gene]").forEach((b) => press(b, chosen.has(b.dataset.gene)));
   $("lab-count").textContent = `${chosen.size} of 5`;
   const list = [...chosen].map((id) => byId[id]);
-  const r = familyOf(list);
+  const r = familyOf(list, species);
   if (list.length) recordFound(r);
   $("lab-result").innerHTML = `
     <div class="mob-info"><div class="n" style="color:${r.color}">${r.name}</div>
     <div class="k">${r.kind === "neutral" ? "No family effects" : kindName(r.kind)}</div></div>
     ${r.style ? `<div class="muted small">${r.style}</div>` : ""}
     <div class="row" style="justify-content:center">${r.points.map((p) => `<span class="badge fam" style="--fam:var(--${p.id})">${famName(p.id)} ${p.points}</span>`).join("")}</div>`;
-  Z.bake(list.filter((g) => g.visual), baby).then((m) => { model = m; });
+  Z.bake(list.filter((g) => g.visual), baby, species).then((m) => { model = m; });
   const u = new URL(location.href);
   u.searchParams.set("genes", [...chosen].join(","));
   history.replaceState(null, "", u);
@@ -49,6 +62,14 @@ function syncAngle() {
   $("lab-angle").value = String(deg);
 }
 const stopSpin = () => { spin = false; press($("lab-spin"), false); };
+
+document.addEventListener("species", (e) => {
+  species = e.detail;
+  chosen.clear();
+  for (const id of defaultsFor(species).split(",")) if (byId[id]) chosen.add(id);
+  $("lab-msg").textContent = "";
+  update();
+});
 
 $("lab-spin").addEventListener("click", () => { spin = !spin; press($("lab-spin"), spin); });
 $("lab-walk").addEventListener("click", () => { walk = !walk; press($("lab-walk"), walk); });

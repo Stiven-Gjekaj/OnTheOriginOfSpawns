@@ -67,8 +67,8 @@ Pixel plan for the Ossified.
 Pixel plan for the Legions. Four Legion genes are gene models.
 - Barrage: a full quiver of arrows on the back, the gene model
   barrage_quiver.
-- Bugler: a horn of bone that it blows, in front of the mouth, the gene
-  model bugler_horn.
+- Bugler: a slim signal horn of bone on a leather cord across the chest,
+  which hangs at the left hip, the gene model bugler_horn.
 - Phalanx: the straps of a shield on the left arm, the gene model
   phalanx_straps.
 - Muster has two red chevrons on the ribs in the middle of the chest: x 21
@@ -615,30 +615,50 @@ def bugler():
 
 
 def bugler_model():
-    # A horn of bone at the jaw, as if it blows a call: a mouthpiece in the
-    # middle of the mouth, a tube that runs forward and bends down, and a
-    # wide bell at its end that opens to the front. On the head bone, the
-    # face is at z -4, and the mouth is at y -2.
+    # A slim signal horn of bone on a leather cord. The cord goes from the
+    # right shoulder, across the chest to the left hip, and the same way on
+    # the back, over the top of the shoulder. The horn hangs flat on the
+    # front of the pelvis at the left hip: a thin tube that curves up to a
+    # dark mouthpiece at one end, and a small bell at the other end, where
+    # the cord ends. All parts touch the body, and they keep clear of the
+    # left arm (x 4 to 6). On the body bone, the front is at z -2, the back
+    # is at z 2, and the body is from x -4 to 4 and from y 0 to 12.
     im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
 
+    def cord(face, x, y):
+        return LEATHER[1] if y % 4 == 3 else LEATHER[0]
+
     def tube(face, x, y):
-        return IVORY[0] if face == "top" else IVORY[1] if (x + y) % 3 else IVORY[2]
+        if face == "front":
+            return IVORY[2] if x % 3 == 2 else IVORY[0]
+        return IVORY[1] if face != "bottom" else IVORY[2]
+
+    def tip(face, x, y):
+        return IVORY[3] if face == "top" else IVORY[2]
 
     def bell(face, x, y):
-        if face == "front":
-            return IVORY[3] if 0 < x < 2 and 0 < y < 2 else IVORY[0]
-        return IVORY[1]
+        if face == "right":
+            return IVORY[3]
+        return IVORY[0] if face in ("front", "top") else IVORY[1]
 
-    # A tube: 1x1x2 at uv (0, 0). The bell: 3x3x1 at uv (8, 0).
-    paint_box(im, 0, 0, 1, 1, 2, tube)
-    paint_box(im, 8, 0, 3, 3, 1, bell)
-    # The tube from the mouth to z -6, a tube that bends down 25 degrees from
-    # there (its end is at y -0.65, z -7.8), and the bell on that end.
+    # The cord: 1x13x0 at uv (0, 0), and 1x0x4 at uv (4, 0). The tube: 3x1x1
+    # at uv (0, 14). The tip: 1x1x1 at uv (10, 0). The bell: 1x2x1 at uv
+    # (14, 0).
+    paint_box(im, 0, 0, 1, 13, 0, cord)
+    paint_box(im, 4, 0, 1, 0, 4, cord)
+    paint_box(im, 0, 14, 3, 1, 1, tube)
+    paint_box(im, 10, 0, 1, 1, 1, tip)
+    paint_box(im, 14, 0, 1, 2, 1, bell)
+    # The cord turns round the right shoulder by 30 degrees, so that its
+    # lower end comes to x 3, y 11.
+    sling = {"pivot": [-3, 0, 0], "rotation": [0, 0, -30]}
     parts = [
-        {"bone": "head", "uv": [0, 0], "from": [-0.5, -2, -6], "size": [1, 1, 2]},
-        {"bone": "head", "uv": [0, 0], "from": [-0.5, -2, -8], "size": [1, 1, 2],
-         "pivot": [0, -1.5, -6], "rotation": [25, 0, 0]},
-        {"bone": "head", "uv": [8, 0], "from": [-1.5, -2.15, -8.6], "size": [3, 3, 1]},
+        dict({"bone": "body", "uv": [0, 0], "from": [-3.5, 0, -2.15], "size": [1, 13, 0]}, **sling),
+        dict({"bone": "body", "uv": [0, 0], "from": [-3.5, 0, 2.15], "size": [1, 13, 0]}, **sling),
+        {"bone": "body", "uv": [4, 0], "from": [-3.5, -0.15, -2], "size": [1, 0, 4]},
+        {"bone": "body", "uv": [0, 14], "from": [0, 10, -3], "size": [3, 1, 1]},
+        {"bone": "body", "uv": [10, 0], "from": [-1, 9, -3], "size": [1, 1, 1]},
+        {"bone": "body", "uv": [14, 0], "from": [3, 9.5, -3], "size": [1, 2, 1]},
     ]
     save_model("bugler_horn", im, parts)
 

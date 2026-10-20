@@ -8,7 +8,7 @@
 			"min_distance": 0,
 			"max_distance": 6,
 			"cooldown_seconds": 5,
-			"miss_stun_seconds": 1,
+			"miss_stun_seconds": 0,
 			"medium": "breach"
 		}
 	],

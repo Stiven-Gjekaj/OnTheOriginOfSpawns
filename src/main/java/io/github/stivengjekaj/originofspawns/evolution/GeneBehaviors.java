@@ -551,6 +551,22 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the draw time of a bow after the draw time and the throw rate of the mob. The throw rate changes the
+	 * draw and the wait after a shot together, so that the full time of a shot changes by the rate.
+	 */
+	public static int drawTicks(Mob mob, int ticks) {
+		float multiplier = 1.0F;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.DrawTime draw) {
+				multiplier *= draw.multiplier();
+			} else if (effect instanceof GeneEffect.ThrowRate rate) {
+				multiplier /= rate.multiplier();
+			}
+		}
+		return multiplier == 1.0F ? ticks : Math.max(1, Math.round(ticks * multiplier));
+	}
+
+	/**
 	 * Returns the attack interval of a ranged goal after the throw rates of the mob.
 	 */
 	public static int scaleThrowInterval(Mob mob, int ticks) {

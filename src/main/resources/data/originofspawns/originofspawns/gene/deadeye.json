@@ -10,8 +10,8 @@
 	],
 	"downsides": [
 		{
-			"type": "throw_rate",
-			"multiplier": 0.8
+			"type": "draw_time",
+			"multiplier": 1.25
 		}
 	]
 }

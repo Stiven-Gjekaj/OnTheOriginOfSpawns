@@ -268,6 +268,17 @@ public class SkeletonEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void drawTimeFollowsTheRateAndTheDrawGenes(GameTestHelper helper) {
+		Skeleton plain = skeletonWith(helper, new BlockPos(1, 1, 1));
+		Skeleton fast = skeletonWith(helper, new BlockPos(3, 1, 1), "test_volley");
+		Skeleton slow = skeletonWith(helper, new BlockPos(1, 1, 3), "test_slow_draw");
+		helper.assertValueEqual(GeneBehaviors.drawTicks(plain, 20), 20, "a plain draw");
+		helper.assertValueEqual(GeneBehaviors.drawTicks(fast, 20), 10, "two times the rate draws in half the time");
+		helper.assertValueEqual(GeneBehaviors.drawTicks(slow, 20), 25, "a draw 25% slower");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes a skeleton with a bow, test genes, and no AI. The genes go on before the skeleton enters the level, so it
 	 * gets nothing from the pool.

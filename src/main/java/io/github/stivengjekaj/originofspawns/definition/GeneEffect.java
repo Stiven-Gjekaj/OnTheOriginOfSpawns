@@ -109,7 +109,8 @@ public sealed interface GeneEffect {
 			Map.entry("ignored_by", IgnoredBy.CODEC),
 			Map.entry("reassemble", Reassemble.CODEC),
 			Map.entry("barrage", Barrage.CODEC),
-			Map.entry("jockey", Jockey.CODEC)
+			Map.entry("jockey", Jockey.CODEC),
+			Map.entry("draw_time", DrawTime.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -1535,6 +1536,20 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "jockey";
+		}
+	}
+
+	/**
+	 * Multiplies the time that the mob draws its bow before it shoots. The multiplier 1.25 draws 25% slower.
+	 */
+	record DrawTime(float multiplier) implements GeneEffect {
+		public static final MapCodec<DrawTime> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 10.0F).fieldOf("multiplier").forGetter(DrawTime::multiplier)
+		).apply(instance, DrawTime::new));
+
+		@Override
+		public String type() {
+			return "draw_time";
 		}
 	}
 }

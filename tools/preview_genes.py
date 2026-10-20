@@ -107,6 +107,11 @@ HUSK_EXTRA = {
                 ("All 6 + Solar Flare", ["solar_flare", "kilnskin"], True, {}),
                 ("All 6 + Duststorm", ["duststorm", "scuttler"], True, {}),
                 ("All 6 baby", [], True, {"baby": True})],
+    "caravans": [("Sandling baby", ["sandling"], False, {"baby": True}),
+                 ("All 6 baby", [], True, {"baby": True}),
+                 ("All 6 + Tomb Guard", ["tomb_guard", "wrapped"], True, {}),
+                 ("All 6 + Solar Flare", ["solar_flare", "sinkhole"], True, {}),
+                 ("All 6 at night", [], True, {"light": 0.18})],
 }
 NIGHT = (18, 22, 38, 255)
 

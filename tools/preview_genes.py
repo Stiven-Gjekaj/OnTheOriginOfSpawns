@@ -472,14 +472,14 @@ def cubes_of(tex, genes, baby=False):
     """Return the cubes of the zombie and of the gene models of the genes.
 
     The drowned has split limbs, and an outer layer: the same cubes, 0.25
-    pixel larger, with the outer layer texture. The genes do not change the
-    outer layer.
+    pixel larger, with the outer layer texture. The genes put their marks on
+    the outer layer too, as DrownedOuterLayerMixin does.
     """
     body = BABY_CUBES if baby else DROWNED_CUBES if MOB["split"] else ZOMBIE_CUBES
     cubes = [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": m,
               "texture": tex, "scale": 1.0} for b, uv, f, s, m in body]
     if MOB["outer"]:
-        outer = MOB["outer"][1 if baby else 0]
+        outer = zombie(MOB["outer"][1 if baby else 0], genes, baby)
         cubes += [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.25, "mirror": m,
                    "texture": outer, "scale": 1.0} for b, uv, f, s, m in body]
     for gene in genes:

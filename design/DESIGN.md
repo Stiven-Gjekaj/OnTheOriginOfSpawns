@@ -56,6 +56,11 @@ Change this document when a decision changes.
   - At a check about once each minute, a small chance swaps one gene.
     The mob drops its weakest gene for a gene that its pool now favors.
     Then its family is found again.
+  - The new gene gives its effects at once, for example item pickup or a
+    trident. Effects that fit only a new mob, such as a baby, a brood, or
+    a burrow, do not occur.
+  - The lost gene takes its effects away, for example door breaking and
+    item pickup.
   - A mob with a name tag never changes its genes.
   - This changes only the mob. It does not change the pool.
 - Random mutation makes small changes to the pool.

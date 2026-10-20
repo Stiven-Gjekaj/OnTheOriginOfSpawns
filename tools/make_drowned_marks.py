@@ -17,8 +17,8 @@ For each gene in GENES, the script writes:
 The script prints the pixels that two drowned genes share.
 
 Pixel plan for the Riptides.
-- Undertow: long kelp that drifts back from the back and the sides of the
-  head, the gene model undertow_kelp.
+- Undertow: a thick mane of kelp round the head, with strands that drift
+  back, the gene model undertow_kelp.
 - Torrent: a large orange fin on the back of each calf and on the outer
   side of each lower leg, the gene model torrent_fins.
 - Surge has foam streaks on the outer, the front, and the back faces of the
@@ -76,33 +76,40 @@ def undertow():
 
 
 def undertow_model():
-    # Long, flat blades of kelp. Three hang from the back of the head, and
-    # one from each side. They hang below the head and drift back, as in a
-    # current. On the head bone, the head is from y -8 to 0, and the back of
-    # the head is at z 4.
-    im = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+    # A thick mane of kelp round the head: a cap of kelp on the top of the
+    # head, with ragged bangs over the forehead, a heavy mass that hangs
+    # down the back of the head and is wider than the head, so it shows at
+    # the sides, and long strands that drift back from the mass, as in a
+    # current. Each part stands out from the head, so the hair has volume.
+    # The sides of the head stay free under the cap (from y -6.4), for the
+    # Gills slits and the Glowspot spots. On the head bone, the head is
+    # from y -8 to 0, from z -4 to 4, and from x -4 to 4.
+    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
 
-    def blade(length):
+    def kelp(height, ragged=True):
         def color(face, x, y):
-            # The lowest rows are ragged.
-            if y >= length - 2 and (x + y) % 2:
+            # The lowest row of each side face is ragged.
+            if ragged and face not in ("top", "bottom") and y == height - 1 and (x * 7 + y) % 3 == 0:
                 return None
-            if y % 4 == 2 and x == 0:
+            if face not in ("top", "bottom") and (x * 5 + y * 3) % 11 == 0:
                 return BLADDER
-            return KELP[2] if x == 1 and y % 3 == 0 else KELP[(x + y) % 2]
+            return KELP[2] if (x + 2 * y) % 5 == 0 else KELP[(x + y) % 2]
         return color
 
-    # A back blade: 2x10x0 at uv (0, 0). A side blade: 0x7x2 at uv (0, 12).
-    paint_box(im, 0, 0, 2, 10, 0, blade(10))
-    paint_box(im, 0, 12, 0, 7, 2, blade(7))
-    back_z = 4 + OUT
-    parts = []
-    for x, rot in ((-3.5, [18, 0, 6]), (-0.5, [24, 0, 0]), (2, [16, 0, -6])):
-        parts.append({"bone": "head", "uv": [0, 0], "from": [x, -6, back_z], "size": [2, 10, 0],
-                      "pivot": [x + 1, -6, back_z], "rotation": rot})
-    for x, rot in ((-4 - OUT, [12, 0, 10]), (4 + OUT, [12, 0, -10])):
-        parts.append({"bone": "head", "uv": [0, 12], "from": [x, -5, 1], "size": [0, 7, 2],
-                      "pivot": [x, -5, 2], "rotation": rot})
+    # The cap: 8x1x8 at uv (0, 0). The mass on the back: 10x7x2 at uv (32,
+    # 0). A strand: 1x5x1 at uv (0, 12).
+    paint_box(im, 0, 0, 8, 1, 8, kelp(1))
+    paint_box(im, 32, 0, 10, 7, 2, kelp(7))
+    paint_box(im, 0, 12, 1, 5, 1, kelp(5, ragged=False))
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-4, -8, -4], "size": [8, 1, 8], "inflate": 0.6},
+        {"bone": "head", "uv": [32, 0], "from": [-5, -7, 4], "size": [10, 7, 2], "inflate": 0.4,
+         "pivot": [0, -7, 4.5], "rotation": [10, 0, 0]},
+    ]
+    for x, rot in ((-5, [22, 0, 14]), (-3, [28, 0, 8]), (-0.5, [34, 0, 0]), (2, [26, 0, -8]),
+                   (4, [20, 0, -14])):
+        parts.append({"bone": "head", "uv": [0, 12], "from": [x, -0.5, 5.4], "size": [1, 5, 1],
+                      "pivot": [x + 0.5, -0.5, 5.9], "rotation": rot})
     save_model("undertow_kelp", im, parts)
 
 

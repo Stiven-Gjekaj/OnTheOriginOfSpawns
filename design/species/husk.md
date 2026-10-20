@@ -120,7 +120,7 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Wrapped | Mummy | `projectile` | 25% less damage from projectiles and melee | 50% more fire damage | Body: bandages |
 | Cursetouch | Mummy | `melee` | Each hit gives Weakness for 5 seconds | 15% less attack speed | Hands: dark wraps |
-| Undying | Mummy | `critical` | One time in its life, a hit that kills it leaves it with 4 health | 20% less speed | Chest: a sealed jar mark |
+| Undying | Mummy | `critical` | One time in its life, a hit that kills it leaves it with 4 health | 20% less speed | Chest and back: stitched gashes with a faint glow |
 | Embalmed | Mummy, sub Parcher | `player_death` | Poison, Wither, and Hunger do not affect it, and it heals out of combat | 4 less maximum health | Skin: dark resin |
 | Tomb Guard | Mummy | `explosion` | Full knockback resistance, and 40% less explosion damage | 20% less speed | Neck and wrists: gold trinkets |
 | Grave Dust | Mummy | `crowd` | When it dies, it leaves a cloud of Slowness, 3 blocks wide | 4 less maximum health | Wraps: torn and dusty |
@@ -131,7 +131,7 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Packmule | Caravan | `alone` | It picks up items and wears armor more often | It drops all of its items when it dies | Back: a pack. This changes the model |
 | Linked | Caravan | `alone` | 30% less damage taken with another husk in 4 blocks | 30% more damage taken with no husk in 4 blocks | Wrists: a length of rope |
-| Signal Fire | Caravan | `spotted` | When it is hurt, it makes a column of smoke, and the husks in 32 blocks come to it | Players see the smoke from far away | Back: a small torch. This changes the model |
+| Signal Fire | Caravan | `spotted` | When it is hurt, it makes a column of smoke, and the husks in 32 blocks come to it | Players see the smoke from far away | Back: a smoking pot. This changes the model |
 | Sandling | Caravan | `projectile` | 20% chance to spawn as a baby husk | Its babies have 50% less maximum health | The baby model, and head: a small wrap |
 | Nomad | Caravan, sub Dunecrawler | `crowd` | Its spawn groups have 1 more husk, and the group follows the first husk in a line | Each husk of the group has 15% less maximum health | Neck: a long scarf |
 | Waterskin | Caravan | `in_water` | When it heals, the husks in 6 blocks heal by the same amount | It heals 25% slower | Hip: a leather water bag. This changes the model |

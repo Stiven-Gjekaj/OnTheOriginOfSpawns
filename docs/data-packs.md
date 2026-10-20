@@ -97,10 +97,15 @@ Times are in seconds, and distances are in blocks.
 | `sunburn` | `multiplier` | Multiplies the fire damage while the sun burns the mob. Other fire does normal damage |
 | `critical_immunity` | | A critical hit of a player does no extra damage to the mob |
 | `speed_when` | `when`, `multiplier` | Multiplies the speed of the mob while the state is true |
+| `attribute_when` | `when`, `attribute`, `amount`, `operation` | Changes an attribute of the mob while the state is true |
+| `dodge_projectiles` | `chance`, `when` (`always`) | Each projectile has this chance to miss the mob |
+| `undying` | `health` (`4`) | One time in its life, a lethal hit leaves the mob with this health |
+| `effect_immunity` | `effects` | These status effects do not affect the mob |
+| `heal_multiplier` | `multiplier` | Multiplies each heal of the mob |
 | `attack_interval` | `multiplier` | Multiplies the time between two melee attacks. `0.7` attacks faster |
 | `water_damage` | `amount`, `interval` (`20`) | Damages the mob each `interval` ticks in water or rain |
 | `air_loss` | `extra` | The mob loses this much more air each tick under water. Mobs that breathe under water, such as zombies, do not drown |
-| `regenerate` | `amount`, `interval_seconds` (`3`), `idle_seconds` (`5`) | Heals the mob after it was out of combat for `idle_seconds` |
+| `regenerate` | `amount`, `interval_seconds` (`3`), `idle_seconds` (`5`), `when` (`always`) | Heals the mob after it was out of combat for `idle_seconds`, while the state is true |
 
 The states for `when` are:
 
@@ -113,13 +118,17 @@ The states for `when` are:
 | `bright` | The light level at the mob is 12 or more |
 | `hunting_wounded` | The mob targets a player under half health |
 | `in_water` | The mob is in water |
+| `on_sand` | The mob stands on a block in the tag `#minecraft:sand` |
+| `off_sand` | The mob does not stand on sand |
+| `grouped` | Another mob of the same species is in 8 blocks |
 
 #### Hits
 
 | Type | Fields | Result |
 |---|---|---|
 | `ignite_target` | `chance`, `seconds` | Each hit has this chance to set the target on fire |
-| `effect_on_hit` | `effect`, `seconds`, `amplifier` (`0`), `chance` (`1`) | Each hit gives the target a status effect |
+| `effect_on_hit` | `effect`, `seconds`, `amplifier` (`0`), `chance` (`1`), `when` (`always`) | Each hit gives the target a status effect, while the state is true |
+| `drain_food` | `amount`, `heal` (`0`) | Each hit on a player takes food points, and heals the mob |
 | `leech_xp` | `amount` | Each hit takes XP points from a player. The mob drops the XP that it took when it dies, and no other XP |
 | `rally` | `per_ally`, `max`, `radius` (`6`) | Adds damage for each mob of the same species in the radius, up to `max`. `0.1` is 10% |
 | `convert_villagers` | | A villager that the mob kills always becomes a zombie villager |
@@ -128,7 +137,9 @@ The states for `when` are:
 
 | Type | Fields | Result |
 |---|---|---|
-| `call_on_hurt` | `radius` | When the mob is hurt, the mobs of its species in the radius attack the attacker |
+| `call_on_hurt` | `radius`, `smoke` (`false`) | When the mob is hurt, the mobs of its species in the radius attack the attacker. `smoke` also makes a column of smoke |
+| `share_damage` | `fraction`, `radius` (`8`) | A part of the damage that the mob takes goes to the mobs of its species in the radius |
+| `share_healing` | `radius` (`6`) | When the mob heals, the mobs of its species in the radius heal by the same amount |
 | `call_on_sight` | `radius`, `cooldown_seconds` (`30`) | When the mob first targets a player, the mobs of its species in the radius target that player |
 | `grave_call` | `chance`, `max_calls` (`2`), `radius` (`8`) | When the mob is hurt, it has a chance to call a new mob of its species, with no genes |
 | `brood` | `extra` | When the mob spawns in a natural way, this many more mobs with the same genes spawn near it |
@@ -142,7 +153,12 @@ The states for `when` are:
 | `hunt` | `invisible_radius` (`0`), `wounded_range_multiplier` (`1`) | The mob finds invisible players in the radius, and players under half health farther away |
 | `frenzied_targeting` | `chance`, `interval_seconds` (`10`), `radius` (`8`) | Now and then, the mob targets the nearest mob of a different species |
 | `lurk` | `radius` (`6`) | The mob does not move while its target player faces it, until the player is in the radius |
-| `burrow` | `player_radius` (`24`), `rise_seconds` (`2`) | At night, the mob can spawn under the ground near a player and rise. It rises only through the blocks in the tag `#originofspawns:burrowable` |
+| `burrow` | `player_radius` (`24`), `rise_seconds` (`2`), `blocks` (`#originofspawns:burrowable`), `night_only` (`true`) | The mob can spawn under the ground near a player and rise. It rises only through the blocks in the tag |
+| `sidestep` | `range` (`12`), `distance` (`4`), `cooldown_seconds` (`10`) | When a player looks at the mob from farther than the range, the mob moves to the side |
+| `climb` | | The mob climbs walls, like a spider |
+| `throw_effect` | `effect`, `seconds`, `amplifier` (`0`), `range` (`8`), `cooldown_seconds` (`8`) | The mob throws at its target, which gives a status effect |
+| `pick_up_items` | | The mob picks up items |
+| `no_conversion` | | The mob does not convert to a different species in water |
 | `siege` | `break_seconds` (`10`) | The mob breaks doors on each difficulty, and breaks the blocks in the tag `#originofspawns:siege_breakable`. It obeys the `mobGriefing` gamerule |
 | `raise_victim` | | A player that the mob kills rises as a mob of its species, with its genes |
 | `attract_golems` | `radius` (`16`) | Iron golems in the radius attack the mob before other targets |
@@ -163,6 +179,7 @@ The states for `when` are:
 |---|---|---|
 | `death_burst` | `damage`, `radius` | When the mob dies, it damages the players in the radius |
 | `death_cloud` | `effect`, `seconds`, `amplifier` (`0`), `radius`, `cloud_seconds` (`5`) | When the mob dies, it leaves a cloud that gives a status effect |
+| `death_effect` | `effect`, `seconds`, `amplifier` (`0`), `radius`, `when` (`always`) | When the mob dies while the state is true, the players in the radius get a status effect |
 
 ### Gene visuals
 

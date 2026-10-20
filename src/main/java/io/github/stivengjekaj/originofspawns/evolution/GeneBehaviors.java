@@ -94,9 +94,7 @@ public final class GeneBehaviors {
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
 				case GeneEffect.PickUpItems pickUp -> mob.setCanPickUpLoot(true);
-				case GeneEffect.TridentChance trident when mob.getMainHandItem().isEmpty()
-						&& mob.getRandom().nextFloat() < trident.chance() ->
-						mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.TRIDENT));
+				case GeneEffect.TridentChance trident -> rollTrident(mob, trident);
 				case GeneEffect.Runt runt when mob instanceof Zombie zombie && mob.getRandom().nextFloat() < runt.chance() ->
 						makeRunt(zombie, level, runt);
 				case GeneEffect.Brood brood when reason == EntitySpawnReason.NATURAL -> spawnBrood(mob, level, brood);
@@ -104,6 +102,17 @@ public final class GeneBehaviors {
 				default -> {
 				}
 			}
+		}
+	}
+
+	/**
+	 * Gives the mob a trident with the chance of the effect. A trident takes the place of an empty hand or of a
+	 * fishing rod, so that the chance adds to the vanilla chance.
+	 */
+	private static void rollTrident(Mob mob, GeneEffect.TridentChance trident) {
+		ItemStack hand = mob.getMainHandItem();
+		if ((hand.isEmpty() || hand.is(Items.FISHING_ROD)) && mob.getRandom().nextFloat() < trident.chance()) {
+			mob.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.TRIDENT));
 		}
 	}
 

@@ -218,15 +218,19 @@ public class DrownedEffectsTest {
 	}
 
 	@GameTest
-	public void tridentChanceFillsOnlyAnEmptyHand(GameTestHelper helper) {
+	public void tridentChanceReplacesAnEmptyHandOrARod(GameTestHelper helper) {
 		Drowned empty = drownedWith(helper, new BlockPos(1, 1, 1), "test_trident_chance");
+		Drowned fisher = drownedWith(helper, new BlockPos(3, 1, 1), "test_trident_chance");
 		Drowned holding = drownedWith(helper, new BlockPos(3, 1, 3), "test_trident_chance");
 		empty.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-		holding.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.FISHING_ROD));
+		fisher.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.FISHING_ROD));
+		holding.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.NAUTILUS_SHELL));
 		GeneBehaviors.onSpawn(empty, helper.getLevel(), EntitySpawnReason.NATURAL);
+		GeneBehaviors.onSpawn(fisher, helper.getLevel(), EntitySpawnReason.NATURAL);
 		GeneBehaviors.onSpawn(holding, helper.getLevel(), EntitySpawnReason.NATURAL);
 		helper.assertTrue(empty.getMainHandItem().is(Items.TRIDENT), "a trident in the empty hand");
-		helper.assertTrue(holding.getMainHandItem().is(Items.FISHING_ROD), "the rod stays");
+		helper.assertTrue(fisher.getMainHandItem().is(Items.TRIDENT), "a trident in place of the rod");
+		helper.assertTrue(holding.getMainHandItem().is(Items.NAUTILUS_SHELL), "other items stay");
 		helper.succeed();
 	}
 

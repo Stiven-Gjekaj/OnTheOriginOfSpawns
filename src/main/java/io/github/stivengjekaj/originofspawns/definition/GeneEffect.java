@@ -100,7 +100,8 @@ public sealed interface GeneEffect {
 			Map.entry("sneak_blind", SneakBlind.CODEC),
 			Map.entry("lure", Lure.CODEC),
 			Map.entry("keep_distance", KeepDistance.CODEC),
-			Map.entry("arrow_spread", ArrowSpread.CODEC)
+			Map.entry("arrow_spread", ArrowSpread.CODEC),
+			Map.entry("pierce_shields", PierceShields.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -146,11 +147,16 @@ public sealed interface GeneEffect {
 	/**
 	 * Gives each hit of the mob a chance to set the target on fire.
 	 */
-	record IgniteTarget(float chance, float seconds) implements GeneEffect {
+	record IgniteTarget(float chance, float seconds, Hits hits) implements GeneEffect {
 		public static final MapCodec<IgniteTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(IgniteTarget::chance),
-				Codec.floatRange(0.0F, Float.MAX_VALUE).fieldOf("seconds").forGetter(IgniteTarget::seconds)
+				Codec.floatRange(0.0F, Float.MAX_VALUE).fieldOf("seconds").forGetter(IgniteTarget::seconds),
+				Hits.CODEC.optionalFieldOf("hits", Hits.MELEE).forGetter(IgniteTarget::hits)
 		).apply(instance, IgniteTarget::new));
+
+		public IgniteTarget(float chance, float seconds) {
+			this(chance, seconds, Hits.MELEE);
+		}
 
 		@Override
 		public String type() {
@@ -298,11 +304,12 @@ public sealed interface GeneEffect {
 	/**
 	 * Multiplies the damage that the mob deals when the state is true.
 	 */
-	record DamageDealtWhen(When when, float multiplier, boolean playersOnly) implements GeneEffect {
+	record DamageDealtWhen(When when, float multiplier, boolean playersOnly, Hits hits) implements GeneEffect {
 		public static final MapCodec<DamageDealtWhen> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				When.CODEC.fieldOf("when").forGetter(DamageDealtWhen::when),
 				Codec.floatRange(0.0F, Float.MAX_VALUE).fieldOf("multiplier").forGetter(DamageDealtWhen::multiplier),
-				Codec.BOOL.optionalFieldOf("players_only", false).forGetter(DamageDealtWhen::playersOnly)
+				Codec.BOOL.optionalFieldOf("players_only", false).forGetter(DamageDealtWhen::playersOnly),
+				Hits.CODEC.optionalFieldOf("hits", Hits.ANY).forGetter(DamageDealtWhen::hits)
 		).apply(instance, DamageDealtWhen::new));
 
 		@Override
@@ -1398,6 +1405,18 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "arrow_spread";
+		}
+	}
+
+	/**
+	 * The projectiles of the mob go through shields, and do their full damage.
+	 */
+	record PierceShields() implements GeneEffect {
+		public static final MapCodec<PierceShields> CODEC = MapCodec.unit(new PierceShields());
+
+		@Override
+		public String type() {
+			return "pierce_shields";
 		}
 	}
 }

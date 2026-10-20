@@ -21,6 +21,7 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.util.RandomSource;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -126,6 +127,7 @@ public final class GeneCombat {
 			for (GeneEffect effect : GeneEffects.of(attacker).toList()) {
 				switch (effect) {
 					case GeneEffect.DamageDealtWhen dealt when (!dealt.playersOnly() || victim instanceof Player)
+							&& dealt.hits().includes(source.getDirectEntity() instanceof Projectile)
 							&& test(attacker, dealt.when()) -> result *= dealt.multiplier();
 					case GeneEffect.Lure lure when attacker.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE)
 							.lureArmed() -> {
@@ -158,7 +160,8 @@ public final class GeneCombat {
 	public static void onHit(Mob mob, Entity target) {
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
-				case GeneEffect.IgniteTarget ignite when mob.getRandom().nextFloat() < ignite.chance() ->
+				case GeneEffect.IgniteTarget ignite when ignite.hits().includes(false)
+						&& mob.getRandom().nextFloat() < ignite.chance() ->
 						target.igniteForSeconds(ignite.seconds());
 				case GeneEffect.EffectOnHit onHit when onHit.hits().includes(false) && target instanceof LivingEntity living
 						&& mob.getRandom().nextFloat() < onHit.chance() && test(mob, onHit.when()) ->
@@ -201,6 +204,8 @@ public final class GeneCombat {
 						&& mob.getRandom().nextFloat() < onHit.chance() && test(mob, onHit.when()) ->
 						target.addEffect(new MobEffectInstance(onHit.effect(), Math.round(onHit.seconds() * 20.0F),
 								onHit.amplifier()), mob);
+				case GeneEffect.IgniteTarget ignite when ignite.hits().includes(true)
+						&& mob.getRandom().nextFloat() < ignite.chance() -> target.igniteForSeconds(ignite.seconds());
 				case GeneEffect.LightningOnHit lightning when mob.level() instanceof ServerLevel level
 						&& (!lightning.stormOnly() || level.isThundering()) && level.canSeeSky(target.blockPosition()) -> {
 					LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);

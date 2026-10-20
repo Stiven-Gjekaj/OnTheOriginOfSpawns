@@ -14,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -72,6 +73,15 @@ public abstract class LivingEntityMixin {
 	private void originofspawns$senses(ServerLevel level, Entity looker, CallbackInfoReturnable<Double> info) {
 		if (looker != null && looker.hasAttached(ModAttachments.GENES)) {
 			info.setReturnValue(GeneBehaviors.visibility((LivingEntity) (Object) this, looker, info.getReturnValueD()));
+		}
+	}
+
+	@Inject(method = "applyItemBlocking", at = @At("HEAD"), cancellable = true)
+	private void originofspawns$pierceShields(ServerLevel level, DamageSource source, float amount,
+			CallbackInfoReturnable<Float> info) {
+		if (source.getDirectEntity() instanceof Projectile && source.getEntity() instanceof LivingEntity shooter
+				&& GeneCombat.has(shooter, GeneEffect.PierceShields.class)) {
+			info.setReturnValue(0.0F);
 		}
 	}
 

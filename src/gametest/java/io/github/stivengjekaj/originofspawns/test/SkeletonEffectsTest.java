@@ -4,6 +4,7 @@ import java.util.List;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -55,6 +56,62 @@ public class SkeletonEffectsTest {
 		helper.assertValueEqual(arrows.size(), 2, "arrows");
 		helper.assertTrue(arrows.get(0).getDeltaMovement().distanceTo(arrows.get(1).getDeltaMovement()) < 1.0E-6,
 				"the two arrows fly the same way");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void arrowDamageCountsOnlyForArrows(GameTestHelper helper) {
+		Skeleton skeleton = skeletonWith(helper, new BlockPos(1, 1, 1), "test_longdraw");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(4, 1, 1));
+		var sources = helper.getLevel().damageSources();
+		var arrow = new net.minecraft.world.entity.projectile.arrow.Arrow(helper.getLevel(), skeleton,
+				new ItemStack(Items.ARROW), new ItemStack(Items.BOW));
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, sources.arrow(arrow, skeleton), 4.0F), 6.0F, "an arrow");
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, sources.mobAttack(skeleton), 4.0F), 4.0F, "a punch");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void fireArrowsSetTheTargetOnFire(GameTestHelper helper) {
+		Skeleton skeleton = skeletonWith(helper, new BlockPos(1, 1, 1), "test_soulfire");
+		Pig shot = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(4, 1, 1));
+		Pig punched = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(4, 1, 4));
+		var arrow = new net.minecraft.world.entity.projectile.arrow.Arrow(helper.getLevel(), skeleton,
+				new ItemStack(Items.ARROW), new ItemStack(Items.BOW));
+		shot.hurtServer(helper.getLevel(), helper.getLevel().damageSources().arrow(arrow, skeleton), 1.0F);
+		GeneCombat.onHit(skeleton, punched);
+		helper.assertTrue(shot.isOnFire(), "the shot pig burns");
+		helper.assertFalse(punched.isOnFire(), "the punched pig does not burn");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 40)
+	public void piercingArrowsGoThroughAShield(GameTestHelper helper) {
+		Skeleton plain = skeletonWith(helper, new BlockPos(1, 1, 4));
+		Skeleton breaker = skeletonWith(helper, new BlockPos(3, 1, 4), "test_shieldbreaker");
+		var player = helper.makeMockServerPlayerInLevel();
+		player.gameMode.changeGameModeForPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(2, 1, 1))));
+		player.setYRot(0.0F);
+		player.setYHeadRot(0.0F);
+		player.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, new ItemStack(Items.SHIELD));
+		player.startUsingItem(net.minecraft.world.InteractionHand.OFF_HAND);
+		// A shield blocks only after it is up for a short time. A mock player is not ticked by the server.
+		for (int i = 0; i < 10; i++) {
+			player.doTick();
+		}
+		helper.assertTrue(player.isBlocking(), "the player holds the shield up");
+		var level = helper.getLevel();
+		var plainArrow = new net.minecraft.world.entity.projectile.arrow.Arrow(level, plain, new ItemStack(Items.ARROW),
+				new ItemStack(Items.BOW));
+		var breakerArrow = new net.minecraft.world.entity.projectile.arrow.Arrow(level, breaker,
+				new ItemStack(Items.ARROW), new ItemStack(Items.BOW));
+		helper.assertTrue(player.applyItemBlocking(level, level.damageSources().arrow(plainArrow, plain), 4.0F) > 0.0F,
+				"the shield blocks a plain arrow");
+		helper.assertValueEqual(player.getAttached(ModAttachments.SHIELD_BLOCK), level.getGameTime(),
+				"the block counts for the shield pressure");
+		helper.assertValueEqual(player.applyItemBlocking(level, level.damageSources().arrow(breakerArrow, breaker), 4.0F),
+				0.0F, "the shield does not block a piercing arrow");
 		helper.succeed();
 	}
 

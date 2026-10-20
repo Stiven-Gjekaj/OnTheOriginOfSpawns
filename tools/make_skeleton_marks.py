@@ -31,8 +31,8 @@ Pixel plan for the Marksmen.
   the top of the head over it.
 - Longdraw: a leather bracer on the left forearm, the gene model
   longdraw_bracer.
-- Quickdraw: three arrows strapped on the right forearm, and long fingers
-  on the right hand, the gene model quickdraw_arrows.
+- Quickdraw: three arrows strapped on the right forearm, the gene model
+  quickdraw_arrows.
 - Shieldbreaker has a notch in each rib, at y 22 and y 24.
 - High Ground: a wide-brim ranger hat, the gene model high_ground_hat, and
   a soft shade on the upper face under it (y 8 to 11, order -1).
@@ -146,7 +146,7 @@ def longdraw_model():
 
 
 def quickdraw():
-    # The arrows and the fingers are the gene model quickdraw_arrows.
+    # The arrows are the gene model quickdraw_arrows.
     return []
 
 
@@ -154,10 +154,9 @@ ARROW = ("#F2F0EA", "#B83A2E", "#8A6A44", "#6E7078")
 
 
 def quickdraw_model():
-    # Ready arrows and long fingers on the right arm: a leather band round
-    # the forearm (arm rows 5 to 7) with three arrows strapped on its outer
-    # side, head down, so they are ready to draw, and two long, thin bone
-    # fingers on the right hand. The left forearm keeps the Longdraw
+    # Ready arrows on the right arm: a leather band round the forearm (arm
+    # rows 5 to 7) with three arrows strapped on its outer side, head down,
+    # so they are ready to draw. The left forearm keeps the Longdraw
     # bracer. On an arm bone, the right arm is from x -1 to 1 and from y -2,
     # and the hand ends at y 10.
     im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
@@ -167,14 +166,9 @@ def quickdraw_model():
             return ARROW[0] if (y + x) % 2 == 0 else ARROW[1]
         return ARROW[3] if y == 7 else ARROW[2] if (x + y) % 2 else "#A6845A"
 
-    def finger(face, x, y):
-        return BONE[2] if y == 4 else BONE[0] if face in ("front", "top") else BONE[1]
-
-    # The band: 2x3x2 at uv (0, 0). An arrow: 1x8x1 at uv (8, 0). A finger:
-    # 1x5x1 at uv (16, 0).
+    # The band: 2x3x2 at uv (0, 0). An arrow: 1x8x1 at uv (8, 0).
     paint_box(im, 0, 0, 2, 3, 2, lambda face, x, y: LEATHER[1] if y == 1 else LEATHER[0])
     paint_box(im, 8, 0, 1, 8, 1, arrow)
-    paint_box(im, 16, 0, 1, 5, 1, finger)
     parts = [{"bone": "right_arm", "uv": [0, 0], "from": [-1, 3, -1], "size": [2, 3, 2], "inflate": 0.3}]
     # The arrows sit in the band: each shaft goes through it, half inside the
     # band (from x -1.3), so the band holds the arrows. The fletchings rest
@@ -184,9 +178,6 @@ def quickdraw_model():
     for tilt in (-14, 0, 14):
         parts.append({"bone": "right_arm", "uv": [8, 0], "from": [-1.8, 1, -0.5], "size": [1, 8, 1],
                       "pivot": [-1.3, 4.5, 0], "rotation": [tilt, 0, 0]})
-    for x, z, curl in ((-1, -1, -12), (0, 0, -20)):
-        parts.append({"bone": "right_arm", "uv": [16, 0], "from": [x, 9.5, z], "size": [1, 5, 1],
-                      "pivot": [x + 0.5, 10, z + 0.5], "rotation": [curl, 0, 0]})
     save_model("quickdraw_arrows", im, parts)
 
 

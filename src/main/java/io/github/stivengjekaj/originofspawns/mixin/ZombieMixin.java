@@ -5,12 +5,14 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,6 +28,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Zombie.class)
 public abstract class ZombieMixin {
+	/**
+	 * A species in the tag {@code originofspawns:no_random_equipment} gets no random weapon and no random armor.
+	 * The drowned has its own method for its natural trident, so this does not change it.
+	 */
+	@Inject(method = "populateDefaultEquipmentSlots", at = @At("HEAD"), cancellable = true)
+	private void originofspawns$noRandomEquipment(RandomSource random, DifficultyInstance difficulty, CallbackInfo info) {
+		if (((Zombie) (Object) this).getType().builtInRegistryHolder().is(Evolution.NO_RANDOM_EQUIPMENT)) {
+			info.cancel();
+		}
+	}
+
 	/**
 	 * A zombie with the convert villagers effect turns each villager that it kills, on each difficulty.
 	 */

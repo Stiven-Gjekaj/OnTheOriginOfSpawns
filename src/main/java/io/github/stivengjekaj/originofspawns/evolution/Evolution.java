@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
 import io.github.stivengjekaj.originofspawns.definition.DeathCondition;
 import io.github.stivengjekaj.originofspawns.definition.DeathContext;
 import io.github.stivengjekaj.originofspawns.definition.Gene;
@@ -25,6 +26,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tags.TagKey;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
@@ -44,6 +47,18 @@ import net.minecraft.world.phys.Vec3;
  */
 public final class Evolution {
 	private static final long TICKS_PER_DAY = 24000L;
+	/**
+	 * The species that get no random weapon and no random armor when they spawn.
+	 */
+	public static final TagKey<EntityType<?>> NO_RANDOM_EQUIPMENT =
+			TagKey.create(Registries.ENTITY_TYPE, OriginOfSpawns.id("no_random_equipment"));
+
+	/**
+	 * The species that do not pick up items, unless a gene lets them.
+	 */
+	public static final TagKey<EntityType<?>> NO_ITEM_PICKUP =
+			TagKey.create(Registries.ENTITY_TYPE, OriginOfSpawns.id("no_item_pickup"));
+
 	private static final long SUN_BURN_TICKS = 200L;
 	private static final int SPOTTED_SECONDS = 2;
 	private static final double SPOT_MIN_DISTANCE = 8.0;
@@ -73,6 +88,10 @@ public final class Evolution {
 	private static void onLoad(Entity entity, ServerLevel level) {
 		if (!(entity instanceof Mob mob)) {
 			return;
+		}
+		// A mob that spawned now gets no item pickup. A gene can give it back in onSpawn.
+		if (mob.hasAttached(ModAttachments.SPAWN_REASON) && mob.getType().builtInRegistryHolder().is(NO_ITEM_PICKUP)) {
+			mob.setCanPickUpLoot(false);
 		}
 		if (!mob.hasAttached(ModAttachments.GENES)) {
 			rollGenes(mob, level);

@@ -6,7 +6,8 @@
 		{
 			"type": "call_on_hurt",
 			"radius": 32,
-			"smoke": true
+			"smoke": true,
+			"cooldown_seconds": 30
 		}
 	]
 }

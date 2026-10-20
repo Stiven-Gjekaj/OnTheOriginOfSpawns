@@ -249,6 +249,9 @@ their recipe.
 
 The regions are `face`, `scalp`, `torso`, `arms`, `hands`, `legs`,
 `lower_legs`, and `feet`. The materials are `skin`, `cloth`, and `eyes`.
+The skeleton map, `originofspawns:textures/region/skeleton.png`, also has the
+regions `ribs`, `spine`, `pelvis`, `joints`, and `eye_sockets`, and the
+material `bone`.
 
 | Effect | Fields | Result |
 |---|---|---|

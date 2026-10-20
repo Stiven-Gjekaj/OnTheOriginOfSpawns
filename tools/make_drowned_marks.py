@@ -51,7 +51,22 @@ Pixel plan for the Abyssals.
   over the Spearfisher net.
 - Deepcold has a frost tint on all the skin, under the marks (order -2).
 - Glowspot has spots on the legs (rows 1 to 3) and on rows 2 and 3 of the
-  sides of the head, under the Undertow cap. The gene model glowspot_spots makes them glow.
+  sides of the head, under the Undertow cap. The gene model glowspot_spots
+  makes them glow.
+
+Pixel plan for the Barnacled. Five Barnacled genes are gene models.
+- Barnacle Crust: barnacles on the shoulders, the upper arms, and the back,
+  the gene model barnacle_crust_shells.
+- Coral Growth: pink coral on the outer side of each arm, the gene model
+  coral_growth_coral.
+- Shellback: a large clam shell on the back, the gene model
+  shellback_shell. It covers the barnacles on the back.
+- Anchor: a rusty chain round the waist, with a small anchor on the right
+  hip, the gene model anchor_chain.
+- Pearlheart: an open clam on the chest with a pearl that glows, the gene
+  model pearlheart_pearl.
+- Kelpwrapped has strips of kelp round the body, the arms, and the legs,
+  under the marks (order -1).
 This script needs Pillow.
 """
 import json
@@ -518,6 +533,232 @@ def glowspot_model():
     save_model("glowspot_spots", im, parts)
 
 
+BARNACLE = ("#C8C0AE", "#9C9482", "#2E2A24", "#E2DCCC")
+
+
+def barnacle_crust():
+    # The barnacles are the gene model barnacle_crust_shells.
+    return []
+
+
+def barnacle_crust_model():
+    # Small barnacles on the tops of the shoulders, on the outer sides of
+    # the upper arms, and on the back, off the middle, so that the Breacher
+    # fin stays free. Each barnacle is a short cone: a wide base with a dark
+    # hole in its top. Each base starts at the outer layer. With Shellback,
+    # the shell covers the barnacles on the back, and the barnacles on the
+    # shoulders stay in view.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def shell(face, x, y):
+        if face == "top":
+            return BARNACLE[2] if 0 < x < 2 and 0 < y < 2 else BARNACLE[0]
+        return BARNACLE[1] if y else BARNACLE[0]
+
+    def back_shell(face, x, y):
+        # On the back, the face that points out is the back face: a rough
+        # gray ring with a dark hole and a light lip on its top edge.
+        if face == "back":
+            if x == 1 and y == 1:
+                return BARNACLE[2]
+            return BARNACLE[3] if y == 0 else BARNACLE[(x + y) % 2]
+        return BARNACLE[1]
+
+    # A barnacle that points up: 3x1x3 at uv (0, 0). A barnacle that points
+    # out of the back: 3x3x1 at uv (16, 0). A small one: 2x2x1 at uv (16,
+    # 8).
+    paint_box(im, 0, 0, 3, 1, 3, shell)
+    paint_box(im, 16, 0, 3, 3, 1, back_shell)
+    paint_box(im, 16, 8, 2, 2, 1, lambda face, x, y: BARNACLE[2] if face == "back" and x == 1 and y == 1
+              else BARNACLE[3] if face == "back" and y == 0 else BARNACLE[1])
+    parts = []
+    for bone, side in (("right_arm", -1), ("left_arm", 1)):
+        x = -2.5 if side < 0 else -0.5
+        parts.append({"bone": bone, "uv": [0, 0], "from": [x, -3.25, -1.5], "size": [3, 1, 3]})
+        # A small one on the outer side of the upper arm, turned out.
+        ox = side * (2 + 0.25) + (0 if side > 0 else -1)
+        parts.append({"bone": bone, "uv": [16, 8], "from": [ox + (1 if side < 0 else -1), 0, -1],
+                      "size": [2, 2, 1], "pivot": [ox + 0.5, 1, -0.5], "rotation": [0, side * 90, 0]})
+    # Large and small barnacles on the back, in a loose cluster.
+    for x, y in ((-3.5, 1), (2, 6), (-2.5, 8.5)):
+        parts.append({"bone": "body", "uv": [16, 0], "from": [x, y, 2.25], "size": [3, 3, 1]})
+    for x, y in ((1.5, 1.5), (-3.5, 5), (2.5, 9.5), (-1.5, 4)):
+        parts.append({"bone": "body", "uv": [16, 8], "from": [x, y, 2.25], "size": [2, 2, 1]})
+    save_model("barnacle_crust_shells", im, parts)
+
+
+CORAL = ("#E8668A", "#C84870", "#FFC8D6")
+
+
+def coral_growth():
+    # The coral is the gene model coral_growth_coral.
+    return []
+
+
+def coral_growth_model():
+    # Branches of pink coral that grow out of the outer side of each
+    # forearm: a stalk that grows out and up, with two side branches and
+    # light tips. Each stalk starts inside the arm. On an arm bone, the
+    # right arm is from x -3 to 1, the left arm from x -1 to 3, and the
+    # forearm is from y 4 to 10.
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+
+    def branch(face, x, y):
+        return CORAL[2] if face == "top" or y == 0 else CORAL[(x + y) % 2]
+
+    # A stalk: 1x4x1 at uv (0, 0). A branch: 1x2x1 at uv (4, 0).
+    paint_box(im, 0, 0, 1, 4, 1, branch)
+    paint_box(im, 4, 0, 1, 2, 1, branch)
+    parts = []
+    for bone, side in (("right_arm", -1), ("left_arm", 1)):
+        base = -3 if side < 0 else 3
+        for y, z, lean in ((6, -0.5, 35), (3, 1, 50)):
+            pivot = [base, y + 4, z + 0.5]
+            parts.append({"bone": bone, "uv": [0, 0], "from": [base - 0.5, y, z], "size": [1, 4, 1],
+                          "pivot": pivot, "rotation": [0, 0, side * lean]})
+            parts.append({"bone": bone, "uv": [4, 0], "from": [base - 0.5, y + 1, z], "size": [1, 2, 1],
+                          "pivot": [base, y + 3, z + 0.5], "rotation": [-35, 0, side * (lean + 40)]})
+            parts.append({"bone": bone, "uv": [4, 0], "from": [base - 0.5, y + 2, z], "size": [1, 2, 1],
+                          "pivot": [base, y + 4, z + 0.5], "rotation": [30, 0, side * (lean - 25)]})
+    save_model("coral_growth_coral", im, parts)
+
+
+SHELL_SHADE = (("#8A6E52", "#7A5E44", "#4E3A28"),
+               ("#B08E6C", "#A0805E", "#6A5038"),
+               ("#D6BC98", "#C8AC88", "#8A6E52"))
+
+
+def shellback():
+    # The shell is the gene model shellback_shell.
+    return []
+
+
+def shellback_model():
+    # A large shell on the back, like the shell of a clam: three layers that
+    # get smaller toward the top of the dome, with light ridges that run
+    # down it. The first layer lies on the outer layer of the back. On the
+    # body bone, the back is at z 2, and the body is from x -4 to 4 and
+    # from y 0 to 12.
+    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+
+    def shell(shade):
+        # Each layer is lighter than the layer under it, so the dome shows.
+        # Dark grooves run down between the light ridges, and the edges
+        # are dark.
+        def color(face, x, y):
+            if face in ("right", "left") or face == "bottom":
+                return SHELL_SHADE[shade][2]
+            return SHELL_SHADE[shade][2] if x % 2 else SHELL_SHADE[shade][(y // 2) % 2]
+        return color
+
+    # The layers: 7x10x2 at uv (0, 0), 5x8x1 at uv (0, 14), 3x5x1 at uv
+    # (16, 14).
+    paint_box(im, 0, 0, 7, 10, 2, shell(0))
+    paint_box(im, 0, 14, 5, 8, 1, shell(1))
+    paint_box(im, 16, 14, 3, 5, 1, shell(2))
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [-3.5, 1, 2.25], "size": [7, 10, 2]},
+        {"bone": "body", "uv": [0, 14], "from": [-2.5, 2, 4.25], "size": [5, 8, 1]},
+        {"bone": "body", "uv": [16, 14], "from": [-1.5, 3.5, 5.25], "size": [3, 5, 1]},
+    ]
+    save_model("shellback_shell", im, parts)
+
+
+RUST = ("#8A4A2A", "#6A3A22", "#A8642E", "#5A5A5E")
+
+
+def anchor():
+    # The chain is the gene model anchor_chain.
+    return []
+
+
+def anchor_model():
+    # A rusty chain round the waist, above the Scavenger belt (y 10 to 11),
+    # and a short end of chain that hangs on the front of the right hip,
+    # with a small anchor at its end. On the body bone, the front is at z
+    # -2, and the body ends at y 12.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def links(face, x, y):
+        return RUST[(x + y) % 2] if (x + y) % 3 else RUST[2]
+
+    # The chain: 8x1x4 at uv (0, 0). The end: 1x3x1 at uv (0, 8). The bar
+    # of the anchor: 3x1x1 at uv (4, 8). An arm of the anchor: 1x2x1 at uv
+    # (12, 8).
+    paint_box(im, 0, 0, 8, 1, 4, links)
+    paint_box(im, 0, 8, 1, 3, 1, links)
+    paint_box(im, 4, 8, 3, 1, 1, lambda face, x, y: RUST[3] if x == 1 else RUST[0])
+    paint_box(im, 12, 8, 1, 2, 1, lambda face, x, y: RUST[3] if y else RUST[1])
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [-4, 8, -2], "size": [8, 1, 4], "inflate": 0.45},
+        {"bone": "body", "uv": [0, 8], "from": [-3, 9, -2.8], "size": [1, 3, 1]},
+        {"bone": "body", "uv": [4, 8], "from": [-4, 12, -2.8], "size": [3, 1, 1]},
+        {"bone": "body", "uv": [12, 8], "from": [-4, 11, -2.8], "size": [1, 2, 1]},
+        {"bone": "body", "uv": [12, 8], "from": [-2, 11, -2.8], "size": [1, 2, 1]},
+    ]
+    save_model("anchor_chain", im, parts)
+
+
+PEARL = "#FFF4F8"
+
+
+def pearlheart():
+    # The pearl is the gene model pearlheart_pearl.
+    return []
+
+
+def pearlheart_model():
+    # An open clam on the chest, over the heart, with a pearl that glows in
+    # it. The two halves of the clam open up and down. The clam lies on
+    # the outer layer of the chest. On the body bone, the chest is at z -2,
+    # and chest column c is at x c - 4.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+    clam = ("#E0C4B4", "#C8A898", "#F2DED2")
+    # A half of the clam: 4x1x2 at uv (0, 0). The pearl: 2x2x1 at uv (0, 6).
+    paint_box(im, 0, 0, 4, 1, 2, lambda face, x, y: clam[2] if face in ("top", "bottom") and x % 2 else
+              clam[(x + y) % 2])
+    paint_box(im, 0, 6, 2, 2, 1, lambda face, x, y: PEARL if (x + y) % 2 else "#F2E2EC")
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [-1, 6, -4.25], "size": [4, 1, 2]},
+        {"bone": "body", "uv": [0, 0], "from": [-1, 2.5, -4.25], "size": [4, 1, 2],
+         "pivot": [1, 3.5, -2.25], "rotation": [-30, 0, 0]},
+        {"bone": "body", "uv": [0, 6], "from": [0, 4, -3.3], "size": [2, 2, 1], "glow": True},
+    ]
+    save_model("pearlheart_pearl", im, parts)
+
+
+def kelpwrapped():
+    # Strips of kelp wrapped round the body, the arms, and the legs, at a
+    # slant, with dark edges and gaps. They go under the marks of other
+    # genes (order -1), so the Spearfisher net lies on top of them.
+    kelp = Mark(KELP[1], order=-1)
+    light = Mark(KELP[0], order=-1)
+    edge = Mark("#1E3818", order=-1)
+    pod = Mark(BLADDER, order=-1)
+
+    def wrap(pixel, col, row, seed):
+        turn = (row + col // 3) % 4
+        if noise100(col, row, seed) < 8 or turn == 3:
+            return
+        if turn == 2:
+            edge.put(pixel, 230)
+        elif noise100(col, row, seed + 1) < 6:
+            pod.put(pixel)
+        else:
+            (light if (col + row) % 3 == 0 else kelp).put(pixel, 255 if turn == 0 else 230)
+
+    for n, (face, width) in enumerate(((CHEST, 8), (SHIRT_BACK, 8), (RIGHT_SIDE, 4), (LEFT_SIDE, 4))):
+        for row in range(12):
+            for col in range(width):
+                wrap(body(face, col, row), col, row, 110 + n)
+    for face in (OUTER, FRONT, INNER, BACK):
+        for row in range(12):
+            for col in range(4):
+                wrap(arm(face, col, row), col + face, row + 1, 114)
+                wrap(leg(face, col, row), col + face, row + 2, 115)
+    return [kelp, light, edge, pod]
+
+
 GENES = {
     "undertow": undertow,
     "torrent": torrent,
@@ -537,6 +778,12 @@ GENES = {
     "ink": ink,
     "deepcold": deepcold,
     "glowspot": glowspot,
+    "barnacle_crust": barnacle_crust,
+    "coral_growth": coral_growth,
+    "shellback": shellback,
+    "anchor": anchor,
+    "pearlheart": pearlheart,
+    "kelpwrapped": kelpwrapped,
 }
 
 MODELS = {
@@ -548,6 +795,11 @@ MODELS = {
     "scavenger": "originofspawns:scavenger_bag",
     "lure": "originofspawns:lure_light",
     "glowspot": "originofspawns:glowspot_spots",
+    "barnacle_crust": "originofspawns:barnacle_crust_shells",
+    "coral_growth": "originofspawns:coral_growth_coral",
+    "shellback": "originofspawns:shellback_shell",
+    "anchor": "originofspawns:anchor_chain",
+    "pearlheart": "originofspawns:pearlheart_pearl",
 }
 
 
@@ -561,6 +813,11 @@ def main():
     scavenger_model()
     lure_model()
     glowspot_model()
+    barnacle_crust_model()
+    coral_growth_model()
+    shellback_model()
+    anchor_model()
+    pearlheart_model()
     for gene, make in GENES.items():
         marks = make()
         write(gene, marks, MODELS)

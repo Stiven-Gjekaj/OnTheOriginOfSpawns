@@ -1,0 +1,58 @@
+{
+	"texture": "originofspawns:textures/entity/shellback_shell.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.5,
+				1,
+				2.25
+			],
+			"size": [
+				7,
+				10,
+				2
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				14
+			],
+			"from": [
+				-2.5,
+				2,
+				4.25
+			],
+			"size": [
+				5,
+				8,
+				1
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				16,
+				14
+			],
+			"from": [
+				-1.5,
+				3.5,
+				5.25
+			],
+			"size": [
+				3,
+				5,
+				1
+			]
+		}
+	]
+}

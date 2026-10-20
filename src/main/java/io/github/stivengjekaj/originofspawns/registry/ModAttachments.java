@@ -61,6 +61,12 @@ public final class ModAttachments {
 	public static final AttachmentType<Boolean> UNDYING_USED =
 			AttachmentRegistry.createPersistent(OriginOfSpawns.id("undying_used"), com.mojang.serialization.Codec.BOOL);
 
+	/**
+	 * True when a mob used its one heal to full health.
+	 */
+	public static final AttachmentType<Boolean> HEAL_ONCE_USED =
+			AttachmentRegistry.createPersistent(OriginOfSpawns.id("heal_once_used"), com.mojang.serialization.Codec.BOOL);
+
 	private ModAttachments() {
 	}
 

@@ -16,6 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -313,6 +314,79 @@ public class DrownedEffectsTest {
 			helper.assertTrue(drowned.getDeltaMovement().y > 0.8, "the breach jumps up");
 			helper.succeed();
 		});
+	}
+
+	@GameTest
+	public void shellTakesLessDamageFromBehind(GameTestHelper helper) {
+		Drowned drowned = drownedWith(helper, new BlockPos(2, 1, 2), "test_shellback");
+		drowned.setYBodyRot(0.0F);
+		// A body rotation of 0 faces the south, to positive z.
+		Pig front = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(2, 1, 4));
+		Pig back = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(2, 1, 0));
+		var sources = helper.getLevel().damageSources();
+		helper.assertValueEqual(GeneCombat.modifyDamage(drowned, sources.mobAttack(back), 4.0F), 2.0F, "from behind");
+		helper.assertValueEqual(GeneCombat.modifyDamage(drowned, sources.mobAttack(front), 4.0F), 4.0F, "from the front");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void thornsHurtOnlyMeleeAttackers(GameTestHelper helper) {
+		Drowned drowned = drownedWith(helper, new BlockPos(1, 1, 1), "test_coral");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(2, 1, 1));
+		float full = pig.getHealth();
+		drowned.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(pig), 1.0F);
+		helper.assertValueEqual(pig.getHealth(), full - 1.0F, "a melee attacker");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void pearlHealsOnlyOnce(GameTestHelper helper) {
+		Drowned drowned = drownedWith(helper, new BlockPos(1, 1, 1), "test_pearl");
+		var source = helper.getLevel().damageSources().generic();
+		drowned.hurtServer(helper.getLevel(), source, drowned.getMaxHealth() * 0.6F);
+		helper.assertValueEqual(drowned.getHealth(), drowned.getMaxHealth(), "the first heal");
+		// The drowned is still invulnerable to the first hit, so only the damage above the first hit counts.
+		drowned.hurtServer(helper.getLevel(), source, drowned.getMaxHealth() * 1.2F + 0.5F);
+		helper.assertTrue(drowned.getHealth() < drowned.getMaxHealth() / 2.0F, "no second heal");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void inkBlindsTheAttackerAfterItsCooldown(GameTestHelper helper) {
+		Drowned drowned = drownedWith(helper, new BlockPos(1, 1, 1), "test_ink");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(2, 1, 1));
+		var source = helper.getLevel().damageSources().mobAttack(pig);
+		GeneCombat.onHurt(drowned, source);
+		helper.assertTrue(pig.hasEffect(MobEffects.BLINDNESS), "the first ink");
+		pig.removeAllEffects();
+		GeneCombat.onHurt(drowned, source);
+		helper.assertFalse(pig.hasEffect(MobEffects.BLINDNESS), "no ink in the cooldown");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 60)
+	public void harmWhenHurtsInItsState(GameTestHelper helper) {
+		Drowned drowned = drownedWith(helper, new BlockPos(1, 1, 1), "test_dry_out");
+		drowned.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200));
+		helper.runAfterDelay(45, () -> {
+			helper.assertTrue(drowned.getHealth() < drowned.getMaxHealth(), "fire resistance does not stop it");
+			helper.succeed();
+		});
+	}
+
+	@GameTest
+	public void capsizerBreaksTheBoatOnTheLastHit(GameTestHelper helper) {
+		Drowned drowned = drownedWith(helper, new BlockPos(1, 1, 1), "test_capsizer");
+		Pig rower = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 3));
+		var boat = helper.spawn(EntityTypes.OAK_BOAT, new BlockPos(3, 1, 3));
+		rower.startRiding(boat);
+		GeneCombat.onHit(drowned, rower);
+		GeneCombat.onHit(drowned, rower);
+		helper.assertFalse(boat.isRemoved(), "the boat after two hits");
+		GeneCombat.onHit(drowned, rower);
+		helper.assertTrue(boat.isRemoved(), "the boat breaks on the third hit");
+		helper.assertFalse(rower.isPassenger(), "the rider falls out");
+		helper.succeed();
 	}
 
 	/**

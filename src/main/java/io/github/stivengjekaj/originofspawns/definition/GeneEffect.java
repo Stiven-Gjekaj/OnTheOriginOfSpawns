@@ -89,7 +89,13 @@ public sealed interface GeneEffect {
 			Map.entry("throw_range", ThrowRange.CODEC),
 			Map.entry("scavenge_tridents", ScavengeTridents.CODEC),
 			Map.entry("no_weapon_drop", NoWeaponDrop.CODEC),
-			Map.entry("lightning_on_hit", LightningOnHit.CODEC)
+			Map.entry("lightning_on_hit", LightningOnHit.CODEC),
+			Map.entry("damage_from_behind", DamageFromBehind.CODEC),
+			Map.entry("thorns", Thorns.CODEC),
+			Map.entry("heal_once", HealOnce.CODEC),
+			Map.entry("effect_on_hurt", EffectOnHurt.CODEC),
+			Map.entry("harm_when", HarmWhen.CODEC),
+			Map.entry("break_boats", BreakBoats.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -1210,6 +1216,99 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "lightning_on_hit";
+		}
+	}
+
+	/**
+	 * Multiplies the damage that the mob takes from an attacker behind it.
+	 */
+	record DamageFromBehind(float multiplier) implements GeneEffect {
+		public static final MapCodec<DamageFromBehind> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(DamageFromBehind::multiplier)
+		).apply(instance, DamageFromBehind::new));
+
+		@Override
+		public String type() {
+			return "damage_from_behind";
+		}
+	}
+
+	/**
+	 * An attacker that hits the mob in melee takes damage.
+	 */
+	record Thorns(float damage) implements GeneEffect {
+		public static final MapCodec<Thorns> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).fieldOf("damage").forGetter(Thorns::damage)
+		).apply(instance, Thorns::new));
+
+		@Override
+		public String type() {
+			return "thorns";
+		}
+	}
+
+	/**
+	 * One time in its life, the mob heals to full health when its health drops under the part of its maximum.
+	 */
+	record HealOnce(float threshold) implements GeneEffect {
+		public static final MapCodec<HealOnce> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("threshold", 0.5F).forGetter(HealOnce::threshold)
+		).apply(instance, HealOnce::new));
+
+		@Override
+		public String type() {
+			return "heal_once";
+		}
+	}
+
+	/**
+	 * When an attacker hurts the mob, the attacker gets a status effect. The effect waits for its cooldown.
+	 * With {@code ink}, the mob sprays a cloud of ink.
+	 */
+	record EffectOnHurt(Holder<MobEffect> effect, float seconds, int amplifier, float cooldownSeconds, boolean ink)
+			implements GeneEffect {
+		public static final MapCodec<EffectOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(EffectOnHurt::effect),
+				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(EffectOnHurt::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(EffectOnHurt::amplifier),
+				Codec.floatRange(0.0F, 3600.0F).optionalFieldOf("cooldown_seconds", 0.0F).forGetter(EffectOnHurt::cooldownSeconds),
+				Codec.BOOL.optionalFieldOf("ink", false).forGetter(EffectOnHurt::ink)
+		).apply(instance, EffectOnHurt::new));
+
+		@Override
+		public String type() {
+			return "effect_on_hurt";
+		}
+	}
+
+	/**
+	 * Hurts the mob after each interval while the state is true. The damage is the damage of drying out, so fire
+	 * resistance does not stop it.
+	 */
+	record HarmWhen(When when, float amount, float intervalSeconds) implements GeneEffect {
+		public static final MapCodec<HarmWhen> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				When.CODEC.fieldOf("when").forGetter(HarmWhen::when),
+				Codec.floatRange(0.0F, 1000.0F).fieldOf("amount").forGetter(HarmWhen::amount),
+				Codec.floatRange(1.0F, 600.0F).optionalFieldOf("interval_seconds", 4.0F).forGetter(HarmWhen::intervalSeconds)
+		).apply(instance, HarmWhen::new));
+
+		@Override
+		public String type() {
+			return "harm_when";
+		}
+	}
+
+	/**
+	 * The hits of the mob on a boat or on a rider of a boat break the boat after the number of hits.
+	 */
+	record BreakBoats(int hits) implements GeneEffect {
+		public static final MapCodec<BreakBoats> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 100).optionalFieldOf("hits", 3).forGetter(BreakBoats::hits)
+		).apply(instance, BreakBoats::new));
+
+		@Override
+		public String type() {
+			return "break_boats";
 		}
 	}
 }

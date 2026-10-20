@@ -19,6 +19,10 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.player.Player;
@@ -94,6 +98,7 @@ public final class GeneCombat {
 				case GeneEffect.Sunburn sunburn when source.is(DamageTypeTags.IS_FIRE)
 						&& Evolution.isSunBurning(victim, victim.level().getGameTime()) -> result *= sunburn.multiplier();
 				case GeneEffect.DamageTakenWhen taken when test(victim, taken.when()) -> result *= taken.multiplier();
+				case GeneEffect.DamageFromBehind behind when isBehind(victim, source) -> result *= behind.multiplier();
 				case GeneEffect.DamageFrom from when source.getEntity() != null
 						&& from.attackers().stream().anyMatch(type -> type.value() == source.getEntity().getType()) ->
 						result *= from.multiplier();
@@ -144,6 +149,10 @@ public final class GeneCombat {
 				case GeneEffect.DragUnder drag when target instanceof Player player && player.isInWater() ->
 						mob.setAttached(ModAttachments.STATE, mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE)
 								.withDrag(player.getId(), mob.level().getGameTime() + Math.round(drag.seconds() * 20.0F)));
+				case GeneEffect.BreakBoats breaker when mob.level() instanceof ServerLevel level
+						&& (target instanceof AbstractBoat || target.getVehicle() instanceof AbstractBoat) ->
+						hitBoat(mob, level, target instanceof AbstractBoat boat ? boat : (AbstractBoat) target.getVehicle(),
+								breaker);
 				case GeneEffect.DrainFood drain when target instanceof Player player -> {
 					player.getFoodData().setFoodLevel(Math.max(0, player.getFoodData().getFoodLevel() - drain.amount()));
 					mob.heal(drain.heal());
@@ -190,6 +199,9 @@ public final class GeneCombat {
 	 * Runs the effects that act after the mob is hurt.
 	 */
 	public static void onHurt(LivingEntity entity, DamageSource source) {
+		if (entity instanceof Mob wounded && wounded.level() instanceof ServerLevel woundedLevel) {
+			healOnce(wounded, woundedLevel);
+		}
 		if (!(entity instanceof Mob mob) || !(mob.level() instanceof ServerLevel level)
 				|| !(source.getEntity() instanceof LivingEntity attacker) || attacker.getType() == mob.getType()) {
 			return;
@@ -213,10 +225,70 @@ public final class GeneCombat {
 					}
 				}
 				case GeneEffect.GraveCall call when mob.getRandom().nextFloat() < call.chance() -> graveCall(mob, level, call);
+				// The damage of thorns does not cause thorns, so that two mobs with thorns do not hurt each other forever.
+				case GeneEffect.Thorns thorns when source.getDirectEntity() == attacker && !source.is(DamageTypes.THORNS) ->
+						attacker.hurtServer(level, level.damageSources().thorns(mob), thorns.damage());
+				case GeneEffect.EffectOnHurt onHurt -> effectOnHurt(mob, level, onHurt, attacker);
 				default -> {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns true if the source of the damage is behind the victim.
+	 */
+	public static boolean isBehind(LivingEntity victim, DamageSource source) {
+		Vec3 from = source.getSourcePosition();
+		if (from == null) {
+			return false;
+		}
+		Vec3 facing = Vec3.directionFromRotation(0.0F, victim.yBodyRot);
+		Vec3 toSource = from.subtract(victim.position()).multiply(1.0, 0.0, 1.0);
+		return toSource.lengthSqr() > 1.0E-4 && toSource.normalize().dot(facing) < 0.0;
+	}
+
+	private static void hitBoat(Mob mob, ServerLevel level, AbstractBoat boat, GeneEffect.BreakBoats breaker) {
+		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+		int hits = state.boatId() == boat.getId() ? state.boatHits() + 1 : 1;
+		if (hits < breaker.hits()) {
+			mob.setAttached(ModAttachments.STATE, state.withBoatHits(boat.getId(), hits));
+			return;
+		}
+		mob.setAttached(ModAttachments.STATE, state.withBoatHits(-1, 0));
+		// The riders fall into the water, and the boat breaks as if a player broke it.
+		boat.ejectPassengers();
+		boat.destroy(level, boat.getPickResult() == null ? Items.AIR : boat.getPickResult().getItem());
+	}
+
+	/**
+	 * Heals the mob to full health one time in its life, when its health drops under the threshold.
+	 */
+	private static void healOnce(Mob mob, ServerLevel level) {
+		if (!mob.isAlive() || mob.getAttachedOrElse(ModAttachments.HEAL_ONCE_USED, false)) {
+			return;
+		}
+		var heal = GeneEffects.of(mob).filter(GeneEffect.HealOnce.class::isInstance).map(GeneEffect.HealOnce.class::cast)
+				.findFirst();
+		if (heal.isPresent() && mob.getHealth() < mob.getMaxHealth() * heal.get().threshold()) {
+			mob.setHealth(mob.getMaxHealth());
+			mob.setAttached(ModAttachments.HEAL_ONCE_USED, true);
+			level.sendParticles(ParticleTypes.BUBBLE, mob.getX(), mob.getY(0.5), mob.getZ(), 30, 0.4, 0.6, 0.4, 0.1);
+		}
+	}
+
+	private static void effectOnHurt(Mob mob, ServerLevel level, GeneEffect.EffectOnHurt onHurt, LivingEntity attacker) {
+		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+		long now = level.getGameTime();
+		if (state.hurtEffectTime() >= 0L && now - state.hurtEffectTime() < Math.round(onHurt.cooldownSeconds() * 20.0F)) {
+			return;
+		}
+		attacker.addEffect(new MobEffectInstance(onHurt.effect(), Math.round(onHurt.seconds() * 20.0F),
+				onHurt.amplifier()), mob);
+		if (onHurt.ink()) {
+			level.sendParticles(ParticleTypes.SQUID_INK, mob.getX(), mob.getY(0.6), mob.getZ(), 30, 0.5, 0.5, 0.5, 0.05);
+		}
+		mob.setAttached(ModAttachments.STATE, state.withHurtEffectTime(now));
 	}
 
 	private static void graveCall(Mob mob, ServerLevel level, GeneEffect.GraveCall call) {

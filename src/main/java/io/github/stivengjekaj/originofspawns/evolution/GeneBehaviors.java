@@ -221,6 +221,8 @@ public final class GeneBehaviors {
 							.ifPresent(mob::setTarget);
 				}
 				case GeneEffect.Hunt hunt -> hunt(mob, level, hunt);
+				case GeneEffect.HarmWhen harm when now % Math.max(1, Math.round(harm.intervalSeconds() * 20.0F)) < TICK_INTERVAL
+						&& GeneCombat.test(mob, harm.when()) -> mob.hurtServer(level, level.damageSources().dryOut(), harm.amount());
 				case GeneEffect.ScavengeTridents scavenge when mob.getMainHandItem().isEmpty() ->
 						scavengeTrident(mob, level, scavenge);
 				case GeneEffect.Glowing glowing when glowing.when() != GeneEffect.When.ALWAYS ->

@@ -54,9 +54,17 @@ public final class GeneCombat {
 	}
 
 	public static boolean test(LivingEntity entity, When when) {
+		return test(entity, when, ALONE_RADIUS);
+	}
+
+	/**
+	 * Returns true if the state is true for the entity now. The states {@code alone} and {@code grouped} use the
+	 * radius.
+	 */
+	public static boolean test(LivingEntity entity, When when, double groupRadius) {
 		return switch (when) {
 			case ALWAYS -> true;
-			case ALONE -> sameSpeciesNear(entity, ALONE_RADIUS) == 0;
+			case ALONE -> sameSpeciesNear(entity, groupRadius) == 0;
 			case AMBUSH -> {
 				long combat = entity.getAttachedOrElse(ModAttachments.TRACE, DeathTrace.NONE).combatTime();
 				yield combat < 0L || entity.level().getGameTime() - combat >= AMBUSH_TICKS;
@@ -68,7 +76,7 @@ public final class GeneCombat {
 			case IN_WATER -> entity.isInWater();
 			case ON_SAND -> onSand(entity);
 			case OFF_SAND -> !onSand(entity);
-			case GROUPED -> sameSpeciesNear(entity, ALONE_RADIUS) > 0;
+			case GROUPED -> sameSpeciesNear(entity, groupRadius) > 0;
 			case ON_LAND -> !entity.isInWater();
 			case DEEP -> entity.getY() <= entity.level().getSeaLevel() - DEEP_BLOCKS;
 			case ABOVE_SEA_LEVEL -> entity.getY() >= entity.level().getSeaLevel();
@@ -97,7 +105,8 @@ public final class GeneCombat {
 				case GeneEffect.DamageTaken taken when source.is(taken.damageTypes()) -> result *= taken.multiplier();
 				case GeneEffect.Sunburn sunburn when source.is(DamageTypeTags.IS_FIRE)
 						&& Evolution.isSunBurning(victim, victim.level().getGameTime()) -> result *= sunburn.multiplier();
-				case GeneEffect.DamageTakenWhen taken when test(victim, taken.when()) -> result *= taken.multiplier();
+				case GeneEffect.DamageTakenWhen taken when test(victim, taken.when(), taken.radius()) ->
+						result *= taken.multiplier();
 				case GeneEffect.DamageFromBehind behind when isBehind(victim, source) -> result *= behind.multiplier();
 				case GeneEffect.DamageFrom from when source.getEntity() != null
 						&& from.attackers().stream().anyMatch(type -> type.value() == source.getEntity().getType()) ->

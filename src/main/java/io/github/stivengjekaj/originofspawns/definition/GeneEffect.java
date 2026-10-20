@@ -311,10 +311,11 @@ public sealed interface GeneEffect {
 	/**
 	 * Multiplies the damage that the mob takes when the state is true.
 	 */
-	record DamageTakenWhen(When when, float multiplier) implements GeneEffect {
+	record DamageTakenWhen(When when, float multiplier, float radius) implements GeneEffect {
 		public static final MapCodec<DamageTakenWhen> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				When.CODEC.fieldOf("when").forGetter(DamageTakenWhen::when),
-				Codec.floatRange(0.0F, Float.MAX_VALUE).fieldOf("multiplier").forGetter(DamageTakenWhen::multiplier)
+				Codec.floatRange(0.0F, Float.MAX_VALUE).fieldOf("multiplier").forGetter(DamageTakenWhen::multiplier),
+				Codec.floatRange(0.5F, 64.0F).optionalFieldOf("radius", 8.0F).forGetter(DamageTakenWhen::radius)
 		).apply(instance, DamageTakenWhen::new));
 
 		@Override

@@ -133,6 +133,17 @@ public class CombatEffectsTest {
 	}
 
 	@GameTest
+	public void groupStateUsesItsRadius(GameTestHelper helper) {
+		Zombie zombie = clean(helper, new BlockPos(1, 1, 1), "test_linked_close");
+		Zombie ally = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(1, 1, 7));
+		var source = helper.getLevel().damageSources().generic();
+		helper.assertValueEqual(GeneCombat.modifyDamage(zombie, source, 4.0F), 4.0F, "an ally 6 blocks away");
+		ally.setPos(zombie.position().add(0.0, 0.0, 3.0));
+		helper.assertValueEqual(GeneCombat.modifyDamage(zombie, source, 4.0F), 2.0F, "an ally 3 blocks away");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void graveCallStopsAtItsMaximum(GameTestHelper helper) {
 		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_grave");
 		Player player = helper.makeMockPlayer(GameType.SURVIVAL);

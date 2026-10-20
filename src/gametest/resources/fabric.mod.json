@@ -34,7 +34,8 @@
 			"io.github.stivengjekaj.originofspawns.test.MobInfoClientTest",
 			"io.github.stivengjekaj.originofspawns.test.NightGenesClientTest",
 			"io.github.stivengjekaj.originofspawns.test.BabyGenesClientTest",
-			"io.github.stivengjekaj.originofspawns.test.HuskDrownedWorldClientTest"
+			"io.github.stivengjekaj.originofspawns.test.HuskDrownedWorldClientTest",
+			"io.github.stivengjekaj.originofspawns.test.GalleryClientTest"
 		]
 	},
 	"depends": {

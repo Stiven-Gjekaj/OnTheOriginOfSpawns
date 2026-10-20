@@ -188,6 +188,9 @@ public final class GeneBehaviors {
 			}
 			extra.snapTo(mob.getX() + mob.getRandom().nextInt(3) - 1, mob.getY(), mob.getZ() + mob.getRandom().nextInt(3) - 1,
 					mob.getRandom().nextFloat() * 360.0F, 0.0F);
+			// The vanilla spawn gives the extra mob its natural gear, for example the bow of a skeleton.
+			extra.finalizeSpawn(level, level.getCurrentDifficultyAt(extra.blockPosition()), EntitySpawnReason.REINFORCEMENT,
+					null);
 			// The brood has the genes of the first mob. Its genes are set before it joins, so it does not roll new ones.
 			extra.setAttached(ModAttachments.GENES, genes);
 			GeneEffects.applyAttributes(extra, GeneEffects.sources(level.registryAccess(), genes));

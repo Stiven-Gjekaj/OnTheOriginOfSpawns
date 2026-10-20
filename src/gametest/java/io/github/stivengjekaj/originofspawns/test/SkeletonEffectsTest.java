@@ -257,6 +257,17 @@ public class SkeletonEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void broodSkeletonsGetTheirBows(GameTestHelper helper) {
+		Skeleton skeleton = skeletonWith(helper, new BlockPos(2, 1, 2), "test_brood");
+		GeneBehaviors.onSpawn(skeleton, helper.getLevel(), EntitySpawnReason.NATURAL);
+		List<Skeleton> extras = helper.getLevel().getEntitiesOfClass(Skeleton.class, skeleton.getBoundingBox().inflate(3.0),
+				other -> other != skeleton);
+		helper.assertValueEqual(extras.size(), 1, "extra skeletons");
+		helper.assertTrue(extras.getFirst().getMainHandItem().is(Items.BOW), "the extra skeleton has a bow");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes a skeleton with a bow, test genes, and no AI. The genes go on before the skeleton enters the level, so it
 	 * gets nothing from the pool.

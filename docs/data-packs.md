@@ -260,7 +260,7 @@ material `bone`.
 | `desaturate` | `amount`, `darken` | Moves the color toward gray, and makes it darker |
 | `spots` | `colors`, `density` | Puts spots of the colors on a part of the pixels |
 | `pattern` | `texture`, `tint` | Stamps a tiled grayscale texture in the tint color |
-| `erase` | | Makes the pixels transparent |
+| `erase` | `texture` (none) | Makes the pixels transparent. With a texture, it erases only the pixels where the tiled texture has an alpha above 0. A 64 x 64 texture moves to the baby and split layouts, as a pattern does |
 
 ### Gene models
 

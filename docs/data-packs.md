@@ -146,7 +146,7 @@ The states for `when` are:
 |---|---|---|
 | `ignite_target` | `chance`, `seconds`, `hits` (`melee`) | Each hit has this chance to set the target on fire |
 | `pierce_shields` | | The projectiles of the mob go through shields, with their full damage |
-| `effect_on_hit` | `effect`, `seconds`, `amplifier` (`0`), `chance` (`1`), `when` (`always`), `hits` (`melee`) | Each hit gives the target a status effect, while the state is true. `hits` is `melee`, `projectile`, or `any`. A thrown trident is a projectile |
+| `effect_on_hit` | `effect`, `seconds`, `amplifier` (`0`), `chance` (`1`), `when` (`always`), `hits` (`melee`) | Each hit gives the target a status effect, while the state is true. `hits` is `melee`, `projectile`, or `any`. A thrown trident is a projectile. A projectile that a shield blocks gives no effect |
 | `pull_down_on_hit` | `blocks` | Each hit on a player in water pulls the player down by up to this many blocks. A block stops the pull |
 | `drag_under` | `seconds`, `sink_speed` (`0.12`) | When the mob hits a player in water, it holds on, and both sink. The player breaks free with a hit on the mob, or when the player leaves the water |
 | `break_boats` | `hits` (`3`) | The hits on a boat or on its rider break the boat after this many hits. The riders fall out |
@@ -161,10 +161,11 @@ The states for `when` are:
 | Type | Fields | Result |
 |---|---|---|
 | `effect_on_hurt` | `effect`, `seconds`, `amplifier` (`0`), `cooldown_seconds` (`0`), `ink` (`false`), `ally_radius` (`0`) | When an attacker hurts the mob, the attacker gets a status effect, after each cooldown. `ink` also sprays a cloud of ink. With an `ally_radius` above 0, the mobs of its species in the radius get the effect, and the attacker does not |
-| `barrage` | `group` (`3`), `radius` (`16`) | When the mob shoots, and this many mobs of its species in the radius target the same entity, they all shoot at the same time |
+| `barrage` | `group` (`3`), `radius` (`16`) | When the mob shoots at a player, and this many skeletons of its species in the radius target that player and see the player, they get the same wait to the next shot. Then they all shoot at the same time |
 | `call_on_hurt` | `radius`, `smoke` (`false`), `cooldown_seconds` (`0`) | When the mob is hurt, the mobs of its species in the radius attack the attacker. `smoke` also makes a column of smoke. The call waits for its cooldown |
 | `share_damage` | `fraction`, `radius` (`8`) | A part of the damage that the mob takes goes to the mobs of its species in the radius |
 | `share_healing` | `radius` (`6`) | When the mob heals, the mobs of its species in the radius heal by the same amount |
+| `call_on_hit` | `radius`, `hits` (`melee`) | When the mob hits a player, the mobs of its species in the radius target that player |
 | `call_on_sight` | `radius`, `cooldown_seconds` (`30`) | When the mob first targets a player, the mobs of its species in the radius target that player |
 | `grave_call` | `chance`, `max_calls` (`2`), `radius` (`8`) | When the mob is hurt, it has a chance to call a new mob of its species, with no genes |
 | `jockey` | `chance`, `mount` | When the mob spawns in a natural way, it has this chance to ride a new mob of the mount type |
@@ -178,7 +179,8 @@ The states for `when` are:
 | `leap` | `min_distance` (`3`), `max_distance` (`5`), `cooldown_seconds` (`5`), `miss_stun_seconds` (`1`), `medium` (`ground`) | The mob leaps at its target. A leap that reaches the target does a normal hit. After a missed leap, it cannot move for a short time. `medium` is `ground`, `water` for a dash through water at a target in water, or `breach` for a jump out of the water at a target on land up to 3 blocks higher |
 | `water_pull` | `radius`, `strength` (`0.01`) | Pulls the players in water in the radius slowly toward the mob. Players in creative or spectator mode do not move |
 | `trident_chance` | `chance` | The mob has this chance to spawn with a trident in an empty hand or in place of a fishing rod. This adds to the vanilla chance |
-| `throw_rate` | `multiplier` | Multiplies how often the mob throws or shoots with a ranged attack, also with a bow. `2` throws two times as often |
+| `throw_rate` | `multiplier` | Multiplies how often the mob throws or shoots with a ranged attack, also with a bow. `2` throws two times as often. With a bow, it changes the draw and the wait together |
+| `draw_time` | `multiplier` | Multiplies the time that the mob draws its bow. `1.25` draws 25% slower |
 | `throw_range` | `multiplier`, `target` | Multiplies the throw range at a target. `target` is `wet`, for a target in water or in a boat, `dry`, or `any` |
 | `keep_distance` | `blocks` | While the mob shoots with a bow, it walks back from a target nearer than this |
 | `arrow_spread` | `multiplier` | Multiplies the spread of the arrows of the mob. `0` makes each arrow fly straight |

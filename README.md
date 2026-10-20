@@ -29,7 +29,7 @@ _A Fabric mod where the mobs evolve from how you kill them_
 ---
 
 > [!NOTE]
-> **The mod is in development.** Version 0.3.0-alpha is out: the zombie, the
+> **The mod is in development.** Version 0.3.1-alpha is out: the zombie, the
 > husk, and the drowned are complete. Each one has 30 genes, 5 families, 20
 > minor families, and 10 hybrids.
 > The Beagle Notebook shows the gene pools and what you know of each family.

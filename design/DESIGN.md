@@ -313,17 +313,22 @@ Thus, the bones look worn, not undead.
   - An unknown family shows "???", and its genes show "???".
   - A seen family shows its name. Its genes show "???".
   - A known family shows its name and its genes.
-- The knowledge percentage sets the number of perk slots.
+- A player has 8 gene slots.
+  - Slot 1 holds the inherited gene. The player picks it one time, at the
+    first start, and it never changes. See "First start".
+  - Slots 2 to 8 hold perks. The knowledge percentage opens them.
 
 | Knowledge | Perk slots |
 |---|---|
 | 0% | 1 |
-| 20% | 2 |
-| 40% | 3 |
-| 60% | 4 |
-| 80% | 5 |
+| 15% | 2 |
+| 30% | 3 |
+| 45% | 4 |
+| 60% | 5 |
+| 75% | 6 |
+| 90% | 7 |
 
-- The maximum is 5 slots.
+- The maximum is 7 perk slots and 1 inherited slot.
 - Shared pages from the Royal Society also increase the knowledge percentage.
 - To take a perk, the player pays XP levels.
 - Each perk has a trade-off.
@@ -367,11 +372,37 @@ Version 1.0.0 has these 30 perks:
 | Bioluminescence | The player gives light | Mobs see the player from farther at night |
 | Mimic scent | Zombies ignore the player until the player attacks | Villagers give worse trades, and iron golems do not trust the player |
 
+## First start
+
+- The first time that the player opens the Beagle Notebook, it shows three
+  pages before the normal pages.
+- Page 1 shows a quote of Charles Darwin about evolution.
+  His books are in the public domain.
+- Page 2 tells the player that they inherited a strong gene from their
+  parents.
+- Page 3 shows the 5 player families and their inherited genes, in the same
+  layout as the families of the mobs.
+  The player picks one inherited gene.
+- The inherited gene:
+  - Takes slot 1 of the 8 gene slots, and stays there for all of the game.
+  - Has stronger effects than a perk.
+  - Grows from tier 1 to tier 3 as the player uses it.
+    Each gene counts its own use, for example the damage that it adds or the
+    blocks that it helps to break.
+  - Sets the main family of the player. See "Evolution classes".
+- Each player in a world picks on their own, so friends can pick different
+  families.
+- The mobs counter the inherited families of the players, as they counter
+  the perks and the classes.
+  For example, a server where most players picked one family selects for
+  mobs that resist that family.
+
 ## Evolution classes
 
-- Each player has passive evolution classes.
-  The player does not select a class.
-  The play style of the player selects it.
+- The 5 evolution classes are the 5 player families of "First start".
+  The inherited gene of the player sets the main family.
+- The play style of the player sets the second family.
+  The player does not select it.
 - The mod records the activity of the player in categories.
   These are the first categories:
 
@@ -391,13 +422,10 @@ Version 1.0.0 has these 30 perks:
 - Each class has two tiers of effects.
   Each tier has a gain and a cost.
   The cost is smaller than the cost of a perk.
-- The classes come from the two highest categories:
-
-| Condition | Highest category | Second category |
-|---|---|---|
-| The highest category is 10 or more points above the second | Main class: tier 2 effects | Tier 1 effects |
-| The highest category is less than 10 points above the second | Tier 1 effects | Tier 1 effects |
-
+- The main family comes from the inherited gene. The highest activity
+  category that is not the main family gives the second family.
+- The main family gives its family effects at tier 2. The second family
+  gives its family effects at tier 1, like the sub family of a mob.
 - The other categories give no effects.
 - The mobs counter the classes of the players.
   For example, a world of Fighters selects for tougher mobs.

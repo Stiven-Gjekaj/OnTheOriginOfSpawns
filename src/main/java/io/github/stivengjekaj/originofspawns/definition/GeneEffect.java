@@ -14,6 +14,8 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.damagesource.DamageType;
@@ -101,7 +103,10 @@ public sealed interface GeneEffect {
 			Map.entry("lure", Lure.CODEC),
 			Map.entry("keep_distance", KeepDistance.CODEC),
 			Map.entry("arrow_spread", ArrowSpread.CODEC),
-			Map.entry("pierce_shields", PierceShields.CODEC)
+			Map.entry("pierce_shields", PierceShields.CODEC),
+			Map.entry("damage_from_front", DamageFromFront.CODEC),
+			Map.entry("damage_from_enchantment", DamageFromEnchantment.CODEC),
+			Map.entry("ignored_by", IgnoredBy.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -259,7 +264,19 @@ public sealed interface GeneEffect {
 		/**
 		 * The mob is out of water and out of rain, in the daylight, under the open sky.
 		 */
-		SUNLIT;
+		SUNLIT,
+		/**
+		 * The target of the mob is 2 or more blocks lower than the mob.
+		 */
+		TARGET_BELOW,
+		/**
+		 * The target of the mob is 2 or more blocks higher than the mob.
+		 */
+		TARGET_ABOVE,
+		/**
+		 * The health of the mob is under half of its maximum.
+		 */
+		WOUNDED;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 
@@ -1417,6 +1434,50 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "pierce_shields";
+		}
+	}
+
+	/**
+	 * Multiplies the damage that the mob takes from an attacker in front of it.
+	 */
+	record DamageFromFront(float multiplier, Hits hits) implements GeneEffect {
+		public static final MapCodec<DamageFromFront> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(DamageFromFront::multiplier),
+				Hits.CODEC.optionalFieldOf("hits", Hits.ANY).forGetter(DamageFromFront::hits)
+		).apply(instance, DamageFromFront::new));
+
+		@Override
+		public String type() {
+			return "damage_from_front";
+		}
+	}
+
+	/**
+	 * Multiplies the damage that the mob takes from a weapon with the enchantment, for example Smite.
+	 */
+	record DamageFromEnchantment(ResourceKey<Enchantment> enchantment, float multiplier) implements GeneEffect {
+		public static final MapCodec<DamageFromEnchantment> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				ResourceKey.codec(Registries.ENCHANTMENT).fieldOf("enchantment").forGetter(DamageFromEnchantment::enchantment),
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(DamageFromEnchantment::multiplier)
+		).apply(instance, DamageFromEnchantment::new));
+
+		@Override
+		public String type() {
+			return "damage_from_enchantment";
+		}
+	}
+
+	/**
+	 * Mobs of these types do not target the mob.
+	 */
+	record IgnoredBy(HolderSet<EntityType<?>> mobs) implements GeneEffect {
+		public static final MapCodec<IgnoredBy> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				RegistryCodecs.holderSet(Registries.ENTITY_TYPE).fieldOf("mobs").forGetter(IgnoredBy::mobs)
+		).apply(instance, IgnoredBy::new));
+
+		@Override
+		public String type() {
+			return "ignored_by";
 		}
 	}
 }

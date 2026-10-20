@@ -21,6 +21,10 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.util.RandomSource;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
@@ -43,6 +47,7 @@ public final class GeneCombat {
 	private static final int BRIGHT_LIGHT = 12;
 	private static final double ALONE_RADIUS = 8.0;
 	private static final int DEEP_BLOCKS = 10;
+	private static final double HEIGHT_DIFFERENCE = 2.0;
 	/**
 	 * The damage multiplier of a critical hit in vanilla.
 	 */
@@ -86,6 +91,11 @@ public final class GeneCombat {
 			case DEEP -> entity.getY() <= entity.level().getSeaLevel() - DEEP_BLOCKS;
 			case ABOVE_SEA_LEVEL -> entity.getY() >= entity.level().getSeaLevel();
 			case STORM -> entity.level().isThundering();
+			case TARGET_BELOW -> entity instanceof Mob mob && mob.getTarget() != null
+					&& mob.getTarget().getY() <= entity.getY() - HEIGHT_DIFFERENCE;
+			case TARGET_ABOVE -> entity instanceof Mob mob && mob.getTarget() != null
+					&& mob.getTarget().getY() >= entity.getY() + HEIGHT_DIFFERENCE;
+			case WOUNDED -> entity.getHealth() < entity.getMaxHealth() / 2.0F;
 			case SUNLIT -> entity.level().isBrightOutside() && !entity.isInWaterOrRain()
 					&& entity.level().canSeeSky(BlockPos.containing(entity.getX(), entity.getEyeY(), entity.getZ()));
 		};
@@ -113,6 +123,11 @@ public final class GeneCombat {
 				case GeneEffect.DamageTakenWhen taken when test(victim, taken.when(), taken.radius()) ->
 						result *= taken.multiplier();
 				case GeneEffect.DamageFromBehind behind when isBehind(victim, source) -> result *= behind.multiplier();
+				case GeneEffect.DamageFromFront front when source.getSourcePosition() != null && !isBehind(victim, source)
+						&& front.hits().includes(source.getDirectEntity() instanceof Projectile) ->
+						result *= front.multiplier();
+				case GeneEffect.DamageFromEnchantment enchanted when hasEnchantment(source, enchanted.enchantment()) ->
+						result *= enchanted.multiplier();
 				case GeneEffect.DamageFrom from when source.getEntity() != null
 						&& from.attackers().stream().anyMatch(type -> type.value() == source.getEntity().getType()) ->
 						result *= from.multiplier();
@@ -271,6 +286,26 @@ public final class GeneCombat {
 		}
 		mob.setAttached(ModAttachments.STATE, state.withHurtCallTime(now));
 		return true;
+	}
+
+	/**
+	 * Returns true if the weapon of the attacker has the enchantment.
+	 */
+	public static boolean hasEnchantment(DamageSource source, ResourceKey<Enchantment> enchantment) {
+		if (!(source.getEntity() instanceof LivingEntity attacker) || source.getDirectEntity() != attacker) {
+			return false;
+		}
+		var holder = attacker.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(enchantment);
+		return holder.isPresent()
+				&& EnchantmentHelper.getItemEnchantmentLevel(holder.get(), attacker.getMainHandItem()) > 0;
+	}
+
+	/**
+	 * Returns true if the target has an effect that makes mobs of the type of the mob ignore it.
+	 */
+	public static boolean ignores(Mob mob, LivingEntity target) {
+		return GeneEffects.of(target).anyMatch(effect -> effect instanceof GeneEffect.IgnoredBy ignored
+				&& ignored.mobs().contains(mob.getType().builtInRegistryHolder()));
 	}
 
 	/**

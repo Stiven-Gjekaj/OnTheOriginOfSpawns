@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import java.util.List;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect.When;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
@@ -112,6 +113,65 @@ public class SkeletonEffectsTest {
 				"the block counts for the shield pressure");
 		helper.assertValueEqual(player.applyItemBlocking(level, level.damageSources().arrow(breakerArrow, breaker), 4.0F),
 				0.0F, "the shield does not block a piercing arrow");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void heightAndHealthStatesFollowTheMob(GameTestHelper helper) {
+		Skeleton skeleton = skeletonWith(helper, new BlockPos(2, 2, 2));
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(4, 1, 1));
+		skeleton.setTarget(pig);
+		pig.setPos(pig.getX(), skeleton.getY() - 2.0, pig.getZ());
+		helper.assertTrue(GeneCombat.test(skeleton, When.TARGET_BELOW), "a target 2 blocks lower");
+		helper.assertFalse(GeneCombat.test(skeleton, When.TARGET_ABOVE), "not higher");
+		pig.setPos(pig.getX(), skeleton.getY() + 3.0, pig.getZ());
+		helper.assertTrue(GeneCombat.test(skeleton, When.TARGET_ABOVE), "a target 3 blocks higher");
+		pig.setPos(pig.getX(), skeleton.getY() + 1.0, pig.getZ());
+		helper.assertFalse(GeneCombat.test(skeleton, When.TARGET_ABOVE), "a target 1 block higher");
+		helper.assertFalse(GeneCombat.test(skeleton, When.WOUNDED), "full health");
+		skeleton.setHealth(skeleton.getMaxHealth() / 2.0F - 1.0F);
+		helper.assertTrue(GeneCombat.test(skeleton, When.WOUNDED), "under half health");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void boneWallStopsArrowsFromTheFront(GameTestHelper helper) {
+		Skeleton skeleton = skeletonWith(helper, new BlockPos(2, 1, 2), "test_bonewall");
+		skeleton.setYBodyRot(0.0F);
+		Skeleton shooter = skeletonWith(helper, new BlockPos(0, 1, 0));
+		var level = helper.getLevel();
+		var arrow = new net.minecraft.world.entity.projectile.arrow.Arrow(level, shooter, new ItemStack(Items.ARROW),
+				new ItemStack(Items.BOW));
+		// A body rotation of 0 faces the south, to positive z.
+		arrow.setPos(skeleton.position().add(0.0, 1.0, 2.0));
+		helper.assertValueEqual(GeneCombat.modifyDamage(skeleton, level.damageSources().arrow(arrow, shooter), 4.0F),
+				2.0F, "an arrow from the front");
+		arrow.setPos(skeleton.position().add(0.0, 1.0, -2.0));
+		helper.assertValueEqual(GeneCombat.modifyDamage(skeleton, level.damageSources().arrow(arrow, shooter), 4.0F),
+				4.0F, "an arrow from behind");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void holyWardResistsSmiteAndWolves(GameTestHelper helper) {
+		Skeleton warded = skeletonWith(helper, new BlockPos(1, 1, 1), "test_holy_ward");
+		Skeleton plain = skeletonWith(helper, new BlockPos(1, 1, 4));
+		var level = helper.getLevel();
+		// The attacker has no genes, so that only the genes of the warded skeleton change the damage.
+		Skeleton attacker = skeletonWith(helper, new BlockPos(3, 1, 1));
+		ItemStack sword = new ItemStack(Items.IRON_SWORD);
+		helper.assertValueEqual(GeneCombat.modifyDamage(warded, level.damageSources().mobAttack(attacker), 4.0F), 4.0F,
+				"a plain hit");
+		sword.enchant(level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+				.getOrThrow(net.minecraft.world.item.enchantment.Enchantments.SMITE), 3);
+		attacker.setItemSlot(EquipmentSlot.MAINHAND, sword);
+		helper.assertValueEqual(GeneCombat.modifyDamage(warded, level.damageSources().mobAttack(attacker), 4.0F), 2.0F,
+				"a hit with a Smite sword");
+		var wolf = helper.spawnWithNoFreeWill(EntityTypes.WOLF, new BlockPos(3, 1, 3));
+		wolf.setTarget(warded);
+		helper.assertTrue(wolf.getTarget() == null, "the wolf ignores the warded skeleton");
+		wolf.setTarget(plain);
+		helper.assertTrue(wolf.getTarget() == plain, "the wolf targets a plain skeleton");
 		helper.succeed();
 	}
 

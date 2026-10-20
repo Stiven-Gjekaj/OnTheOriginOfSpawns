@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "damage_from_enchantment", "enchantment": "minecraft:smite", "multiplier": 0.5 }, { "type": "ignored_by", "mobs": "minecraft:wolf" }],
+	"mutation_rate": 0
+}

@@ -24,6 +24,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Mob.class)
 public abstract class MobMixin {
+	@Inject(method = "setTarget", at = @At("HEAD"), cancellable = true)
+	private void originofspawns$ignoredTarget(LivingEntity target, CallbackInfo info) {
+		Mob self = (Mob) (Object) this;
+		if (target != null && !self.level().isClientSide() && target.hasAttached(ModAttachments.GENES)
+				&& GeneCombat.ignores(self, target)) {
+			info.cancel();
+		}
+	}
+
 	@Inject(method = "setTarget", at = @At("HEAD"))
 	private void originofspawns$recordTarget(LivingEntity target, CallbackInfo info) {
 		Mob self = (Mob) (Object) this;

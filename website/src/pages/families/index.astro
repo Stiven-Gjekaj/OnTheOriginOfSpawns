@@ -3,7 +3,8 @@ import Layout from "../../layouts/Layout.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import Icon from "../../components/Icon.astro";
 import site from "../../data/site.json";
-import { url, famName, kindName, singular } from "../../lib/site.js";
+import SpeciesSwitch from "../../components/SpeciesSwitch.astro";
+import { url, famName, kindName, familiesOf } from "../../lib/site.js";
 
 const rules = [
   ["Neutral", "No family has 4 points.", "No family effects. At the start of a world, all mobs are neutral."],
@@ -14,20 +15,26 @@ const rules = [
 ];
 const tierNote = ["The sub of a minor family gets tier 1.", "A major family alone, a hybrid, or the major of a minor family gets tier 2.", "A pure family gets tier 3."];
 const minor = (a, b) => site.minors.find((m) => m.major === a && m.sub === b);
+const hybridsOf = (sp) => site.hybrids.filter((h) => h.species === sp);
+const minorsOf = (sp) => site.minors.filter((m) => m.species === sp);
 ---
-<Layout title="Families" description="The 5 zombie families, the 20 minor families, and the 10 hybrids of On the Origin of Spawns.">
+<Layout title="Families" description="The families, minor families, and hybrids of each species of On the Origin of Spawns.">
   <PageHeader eyebrow="Families" title="The genes of a mob select its family">
-    Each zombie gene has a main family tag. Some genes also have a sub family tag. The points of the genes select the family of each zombie.
+    Each species has its own 5 major families, 20 minor families, and 10 hybrids. Each gene has a main family tag, and some genes also have a sub family tag. The points of the genes select the family of each mob.
   </PageHeader>
 
   <div class="page container">
+    <SpeciesSwitch />
+    {site.species.map((sp) => (
+    <div data-species-panel={sp.id} hidden={sp.id !== site.species[0].id}>
+    {sp.intro && <p class="lead species-intro">{sp.intro}</p>}
     <section>
       <div class="section-head">
-        <h2>The 5 major families</h2>
+        <h2>The 5 {sp.name.toLowerCase()} families</h2>
         <p>Each major family has one big buff and one big debuff, at 3 tiers. A higher tier makes the buff stronger and the debuff weaker.</p>
       </div>
       <div class="grid grid-3">
-        {site.families.map((f) => (
+        {familiesOf(sp.id).map((f) => (
           <article class="card family" style={`--fam:var(--${f.id})`} id={f.id} data-family={f.id}>
             <div class="family-head">
               <span class="mc-slot"><Icon name={f.id} /></span>
@@ -46,11 +53,67 @@ const minor = (a, b) => site.minors.find((m) => m.major === a && m.sub === b);
                 <p class="muted small">{tierNote[i]}</p>
               </dl>
             ))}
-            <div class="actions"><a class="btn sm" href={url(`genes/?family=${f.id}`)}>{singular(f.id)} genes</a></div>
+            <div class="actions"><a class="btn sm" href={url(`genes/?species=${sp.id}&family=${f.id}`)}>Genes of the {f.name}</a></div>
           </article>
         ))}
       </div>
     </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>The 20 minor families of the {sp.name.toLowerCase()}</h2>
+        <p>A minor family has a major family and a sub family, and its own name. The rows show the major family, and the columns show the sub family. The diagonal shows the pure families.</p>
+      </div>
+      <div class="matrix-wrap">
+        <table class="matrix">
+          <thead>
+            <tr><th scope="col"><span class="sr-only">Major family</span></th>{familiesOf(sp.id).map((f) => <th scope="col" style={`color:var(--${f.id})`}>{f.name}</th>)}</tr>
+          </thead>
+          <tbody>
+            {familiesOf(sp.id).map((row) => (
+              <tr>
+                <th scope="row" style={`color:var(--${row.id})`}>{row.name}</th>
+                {familiesOf(sp.id).map((col) => {
+                  if (row.id === col.id) return <td class="pure" style={`--fam:var(--${row.id})`} tabindex="0" data-tip={`${row.name}: ${kindName("pure")}. Tier 3 effects.`}>{row.name}</td>;
+                  const m = minor(row.id, col.id);
+                  return <td style={`--fam:var(--${row.id})`} tabindex="0" data-tip={`${m.name}: ${m.style}. Major ${row.name} tier 2, sub ${col.name} tier 1.`}>{m.name}</td>;
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="table-wrap" style="margin-top: var(--s-4)">
+        <table>
+          <thead><tr><th>Minor family</th><th>Major</th><th>Sub</th><th>Play style</th></tr></thead>
+          <tbody>
+            {minorsOf(sp.id).map((m) => (
+              <tr><td><b>{m.name}</b></td><td style={`color:var(--${m.major})`}>{famName(m.major)}</td><td>{famName(m.sub)}</td><td class="muted">{m.style}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>The 10 hybrids of the {sp.name.toLowerCase()}</h2>
+        <p>A hybrid has the same points in two families. It gets the tier 2 effects of each of the two families. Each hybrid has its own name.</p>
+      </div>
+      <div class="grid grid-3">
+        {hybridsOf(sp.id).map((h) => (
+          <div class="card tight hybrid">
+            <span class="pair"><span class="mc-slot sm"><Icon name={h.a} /></span><span class="mc-slot sm"><Icon name={h.b} /></span></span>
+            <div>
+              <h3>{h.name}</h3>
+              <p class="small muted"><span style={`color:var(--${h.a})`}>{famName(h.a)}</span> and <span style={`color:var(--${h.b})`}>{famName(h.b)}</span>. {h.style}.</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+    </div>
+    ))}
 
     <section class="section">
       <div class="section-head">
@@ -70,63 +133,11 @@ const minor = (a, b) => site.minors.find((m) => m.major === a && m.sub === b);
       </div>
     </section>
 
-    <section class="section">
-      <div class="section-head">
-        <h2>The 20 minor families</h2>
-        <p>A minor family has a major family and a sub family, and its own name. The rows show the major family, and the columns show the sub family. The diagonal shows the pure families.</p>
-      </div>
-      <div class="matrix-wrap">
-        <table class="matrix">
-          <thead>
-            <tr><th scope="col"><span class="sr-only">Major family</span></th>{site.families.map((f) => <th scope="col" style={`color:var(--${f.id})`}>{f.name}</th>)}</tr>
-          </thead>
-          <tbody>
-            {site.families.map((row) => (
-              <tr>
-                <th scope="row" style={`color:var(--${row.id})`}>{row.name}</th>
-                {site.families.map((col) => {
-                  if (row.id === col.id) return <td class="pure" style={`--fam:var(--${row.id})`} tabindex="0" data-tip={`${row.name}: ${kindName("pure")}. Tier 3 effects.`}>{row.name}</td>;
-                  const m = minor(row.id, col.id);
-                  return <td style={`--fam:var(--${row.id})`} tabindex="0" data-tip={`${m.name}: ${m.style}. Major ${row.name} tier 2, sub ${col.name} tier 1.`}>{m.name}</td>;
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div class="table-wrap" style="margin-top: var(--s-4)">
-        <table>
-          <thead><tr><th>Minor family</th><th>Major</th><th>Sub</th><th>Play style</th></tr></thead>
-          <tbody>
-            {site.minors.map((m) => (
-              <tr><td><b>{m.name}</b></td><td style={`color:var(--${m.major})`}>{famName(m.major)}</td><td>{famName(m.sub)}</td><td class="muted">{m.style}</td></tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="section-head">
-        <h2>The 10 hybrids</h2>
-        <p>A hybrid has the same points in two families. It gets the tier 2 effects of each of the two families. Each hybrid has its own name.</p>
-      </div>
-      <div class="grid grid-3">
-        {site.hybrids.map((h) => (
-          <div class="card tight hybrid">
-            <span class="pair"><span class="mc-slot sm"><Icon name={h.a} /></span><span class="mc-slot sm"><Icon name={h.b} /></span></span>
-            <div>
-              <h3>{h.name}</h3>
-              <p class="small muted"><span style={`color:var(--${h.a})`}>{famName(h.a)}</span> and <span style={`color:var(--${h.b})`}>{famName(h.b)}</span>. {h.style}.</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
   </div>
 </Layout>
 
 <script>
+  import "../../scripts/species.js";
   document.querySelectorAll("[data-family]").forEach((card) => {
     card.querySelector(".tiers").addEventListener("click", (e) => {
       const b = e.target.closest("[data-tier]");
@@ -138,6 +149,7 @@ const minor = (a, b) => site.minors.find((m) => m.major === a && m.sub === b);
 </script>
 
 <style>
+  .species-intro { margin-bottom: var(--s-6); }
   .family { border-top: 3px solid var(--fam); display: grid; gap: var(--s-4); align-content: start; }
   .family-head { display: flex; gap: var(--s-3); align-items: flex-start; }
   .family h3 { color: var(--fam); font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 600; }
@@ -148,7 +160,7 @@ const minor = (a, b) => site.minors.find((m) => m.major === a && m.sub === b);
   .tier dt { font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding-top: 3px; }
   .tier dd { margin: 0; }
   .buff { color: var(--ok); }
-  .debuff { color: var(--predator); }
+  .debuff { color: var(--fam-0); }
   @keyframes rise { from { opacity: 0; transform: translateY(4px); } }
   .family .actions { margin-top: auto; }
   .power { margin-top: var(--s-4); display: grid; gap: var(--s-3); }

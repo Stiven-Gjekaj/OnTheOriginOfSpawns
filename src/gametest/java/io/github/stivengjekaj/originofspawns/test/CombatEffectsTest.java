@@ -205,6 +205,8 @@ public class CombatEffectsTest {
 	@GameTest(maxTicks = 40)
 	public void aDodgedArrowGoesThrough(GameTestHelper helper) {
 		Zombie zombie = clean(helper, new BlockPos(2, 1, 1), "test_dodge");
+		// The sun must not burn the zombie while the test waits.
+		zombie.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200));
 		float health = zombie.getHealth();
 		var arrow = new net.minecraft.world.entity.projectile.arrow.Arrow(helper.getLevel(),
 				zombie.getX(), zombie.getY(0.5), zombie.getZ() + 3.0, new net.minecraft.world.item.ItemStack(

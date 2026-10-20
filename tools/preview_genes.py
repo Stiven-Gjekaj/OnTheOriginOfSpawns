@@ -97,6 +97,10 @@ HUSK_EXTRA = {
                   ("Sunstroke + Mirage", ["sunstroke", "mirage"], False, {}),
                   ("All 6 at night", [], True, {"light": 0.18}),
                   ("All 6 baby", [], True, {"baby": True})],
+    "dunecrawlers": [("All 6 + Heatshimmer", ["heatshimmer"], True, {}),
+                     ("All 6 + Sunbaked, Sunstroke", ["sunbaked", "sunstroke"], True, {}),
+                     ("All 6 + Kilnskin", ["kilnskin"], True, {}),
+                     ("All 6 baby", [], True, {"baby": True})],
 }
 NIGHT = (18, 22, 38, 255)
 

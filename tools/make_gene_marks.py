@@ -678,7 +678,12 @@ MODELS = {
 }
 
 
-def write(gene, marks):
+def write(gene, marks, models=None):
+    """Write the patterns and the visual of a gene.
+
+    models gives the gene model of each gene. The default is MODELS.
+    """
+    models = MODELS if models is None else models
     # Remove the old patterns of the gene, so that no unused file stays.
     for old in os.listdir(MARK_DIR):
         if old.startswith(gene + "_") and old[len(gene) + 1:-4].isdigit():
@@ -708,8 +713,8 @@ def write(gene, marks):
             layer["order"] = mark.order
         layers.append(layer)
     visual = {"layers": layers}
-    if gene in MODELS:
-        visual["model"] = MODELS[gene]
+    if gene in models:
+        visual["model"] = models[gene]
     with open(os.path.join(VISUAL_DIR, gene + ".json"), "w") as fh:
         json.dump(visual, fh, indent="\t")
         fh.write("\n")

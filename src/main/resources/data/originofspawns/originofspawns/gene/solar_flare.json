@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:husk/scorcher",
+	"gains": [
+		{
+			"type": "death_effect",
+			"effect": "minecraft:blindness",
+			"seconds": 3,
+			"radius": 4,
+			"when": "bright"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

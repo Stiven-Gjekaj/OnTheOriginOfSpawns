@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:fire",
+	"family": "originofspawns:husk/scorcher",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 0
+		}
+	],
+	"downsides": [
+		{
+			"type": "water_damage",
+			"amount": 1,
+			"interval": 20
+		}
+	]
+}

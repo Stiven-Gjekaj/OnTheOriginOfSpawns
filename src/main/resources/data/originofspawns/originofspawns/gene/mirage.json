@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:husk/scorcher",
+	"gains": [
+		{
+			"type": "sidestep",
+			"range": 12,
+			"distance": 4,
+			"cooldown_seconds": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_base"
+		}
+	]
+}

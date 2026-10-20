@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:night",
+	"family": "originofspawns:husk/scorcher",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 2,
+			"idle_seconds": 0,
+			"when": "bright"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken_when",
+			"when": "dark",
+			"multiplier": 1.5
+		}
+	]
+}

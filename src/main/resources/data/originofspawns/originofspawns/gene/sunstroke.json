@@ -1,0 +1,27 @@
+{
+	"species": "minecraft:husk",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:husk/scorcher",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:nausea",
+			"seconds": 3,
+			"when": "bright"
+		},
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:slowness",
+			"seconds": 3,
+			"when": "bright"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

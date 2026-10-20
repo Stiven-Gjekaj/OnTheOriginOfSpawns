@@ -26,19 +26,24 @@ The `pages` workflow runs `npm ci` and `npm run build`, then publishes `dist/`.
 It reads these files:
 
 - `src/main/resources/data/originofspawns/originofspawns/gene/*.json`
-- `src/main/resources/data/originofspawns/originofspawns/family/zombie/*.json`
+- `src/main/resources/data/originofspawns/originofspawns/family/<species>/*.json`
 - `src/main/resources/data/originofspawns/originofspawns/pressure/*.json`
 - `src/main/resources/assets/originofspawns/lang/en_us.json`
 - `src/main/resources/assets/originofspawns/gene_visuals/*.json` and `gene_models/*.json`
-- `design/DESIGN.md`, `design/ROADMAP.md`, and `design/species/zombie.md`
+- `design/DESIGN.md`, `design/ROADMAP.md`, and `design/species/<species>.md`
 - `docs/data-packs.md`, `README.md`, and `gradle.properties`
 
 It writes `src/data/site.json`, and copies the textures that the gene visuals
 use into `public/mod/`.
 Git ignores these files, because the build makes them again each time.
 
+Each folder in `family/` is a species. The species needs a design file with
+the same name in `design/species/`, or the build stops.
+A gene shows its art when the mod has a gene visual for it.
+
 The state of each feature comes from the roadmap.
 A milestone with "(done)" in `design/ROADMAP.md` is part of the release.
+A species is in the release when the first milestone that names it is done.
 
 ## Dependencies
 

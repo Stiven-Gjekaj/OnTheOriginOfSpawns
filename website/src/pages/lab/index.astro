@@ -42,7 +42,7 @@ const note = Object.fromEntries(noArt.map((id) => [id, "The art of this species 
           <span class="badge" id="lab-count">0 of 5</span>
         </div>
         <p class="muted small">A mob carries a maximum of 5 genes. The family result uses the rules of the mod. The Baby button fits the marks to a baby, as the game does.</p>
-        {site.species.map((sp, i) => <p class="muted small" data-species-panel={sp.id} hidden={i !== 0}>{sp.babies.find((b) => /^Only/.test(b))}</p>)}
+        {site.species.map((sp, i) => <p class="muted small" data-species-panel={sp.id} hidden={i !== 0}>{sp.babies.find((b) => /^Only/.test(b)) || sp.babies[0]}</p>)}
         <p class="warn small" id="lab-msg" aria-live="polite"></p>
         {site.species.map((sp, i) => (
         <div data-species-panel={sp.id} hidden={i !== 0}>

@@ -1,7 +1,7 @@
 // The Gene Lab: a zombie with the genes that the visitor selects.
 
 import { genes } from "../data/site.json";
-import { familyOf, kindName, famName, recordFound } from "../lib/site.js";
+import { familyOf, kindName, famName, recordFound, speciesById } from "../lib/site.js";
 import * as Z from "./zombie.js";
 import { getSpecies } from "./species.js";
 
@@ -65,6 +65,7 @@ const stopSpin = () => { spin = false; press($("lab-spin"), false); };
 
 document.addEventListener("species", (e) => {
   species = e.detail;
+  syncBaby();
   chosen.clear();
   for (const id of defaultsFor(species).split(",")) if (byId[id]) chosen.add(id);
   $("lab-msg").textContent = "";
@@ -74,6 +75,13 @@ document.addEventListener("species", (e) => {
 $("lab-spin").addEventListener("click", () => { spin = !spin; press($("lab-spin"), spin); });
 $("lab-walk").addEventListener("click", () => { walk = !walk; press($("lab-walk"), walk); });
 $("lab-baby").addEventListener("click", () => { baby = !baby; press($("lab-baby"), baby); update(); });
+// A species with no babies, such as the skeleton, has no Baby button.
+function syncBaby() {
+  const can = speciesById[species]?.hasBabies ?? true;
+  $("lab-baby").disabled = !can;
+  if (!can && baby) { baby = false; press($("lab-baby"), false); }
+}
+syncBaby();
 $("lab-night").addEventListener("click", () => { night = !night; press($("lab-night"), night); $("lab-stage").classList.toggle("night", night); });
 $("lab-clear").addEventListener("click", () => { chosen.clear(); $("lab-msg").textContent = ""; update(); });
 $("lab-angle").addEventListener("input", (e) => { turn = (Number(e.target.value) * Math.PI) / 180; stopSpin(); });

@@ -19,7 +19,7 @@ const stats = [
   [site.hybrids.length, "Hybrids", "horde"],
   [site.pressures.length, "Pressures", "tank"],
 ];
-const speciesIcon = { zombie: "temperate", husk: "hot", drowned: "wet" };
+const speciesIcon = { zombie: "temperate", husk: "hot", drowned: "wet", skeleton: "skeleton" };
 
 const loop = [
   ["You kill a zombie", `The mod records the cause of the death. Fire, arrows, melee, and falls are some of the ${site.pressures.length} pressures.`],
@@ -110,6 +110,7 @@ const explore = [
                 </div>
               </div>
               <p class="muted small">{sp.intro || "The common zombie of the overworld. It is the first species of the mod."}</p>
+              {sp.jockeys.filter((x) => /^Only/.test(x)).map((x) => <p class="small muted">{x}</p>)}
               <div class="row fams">{familiesOf(sp.id).map((f) => <span class="badge fam" style={`--fam:var(--${f.id})`}>{f.name}</span>)}</div>
               {(() => {
                 const total = site.genes.filter((g) => g.species === sp.id).length;

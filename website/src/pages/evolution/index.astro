@@ -140,7 +140,7 @@ const genesFor = (p) => site.genes.filter((g) => g.counters === p);
           <li>A mob gets its genes one time, when it first joins a world.</li>
           <li>Each gene has a chance equal to its frequency in the pool of the biome category, or its mutation rate if that is higher.</li>
           <li>A mob carries a maximum of 5 genes. The genes with the highest frequency stay.</li>
-          {site.species.map((sp) => sp.babies.filter((x) => /^Only/.test(x)).map((x) => <li>{x}</li>))}
+          {site.species.map((sp) => [...sp.babies, ...sp.jockeys].filter((x) => /^Only/.test(x)).map((x) => <li>{x}</li>))}
         </ul>
       </div>
       <div class="card">

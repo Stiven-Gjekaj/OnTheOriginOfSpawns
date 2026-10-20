@@ -168,6 +168,8 @@ SKELETON_EXTRA = {
     "rattlers": [("All 6 + Marksmen", ["eagle_eye", "longdraw", "high_ground", "quickdraw"], True, {})],
     "ossified": [("Thickbone + marks", ["thickbone", "skitter", "hollow_bones", "quickdraw"], False, {}),
                  ("All 6 + Rattlers", ["backpedal", "fleetbone", "lightfoot"], True, {})],
+    "legions": [("All 6 + Ossified", ["thickbone", "bonewall", "reassemble"], True, {}),
+                ("All 6 + Marksmen", ["longdraw", "quickdraw", "high_ground"], True, {})],
 }
 NIGHT = (18, 22, 38, 255)
 

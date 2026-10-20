@@ -446,6 +446,21 @@ public class BehaviorEffectsTest {
 	}
 
 	@GameTest
+	public void aStoppedRiseEndsOnTheSurface(GameTestHelper helper) {
+		helper.setBlock(new BlockPos(1, 1, 1), Blocks.DIRT);
+		helper.setBlock(new BlockPos(1, 2, 1), Blocks.DIRT);
+		Zombie zombie = zombieWith(helper, new BlockPos(1, 3, 1), "test_burrow_stun");
+		double surface = zombie.getY();
+		// The zombie is in the ground with no gravity and no rise, as after its chunk unloaded in the rise.
+		zombie.setPos(zombie.getX(), surface - 1.3, zombie.getZ());
+		zombie.setNoGravity(true);
+		GeneBehaviors.installGoals(zombie);
+		helper.assertValueEqual(zombie.getY(), surface, "the zombie is on the surface");
+		helper.assertFalse(zombie.isNoGravity(), "the zombie has gravity");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void burrowCanRiseNextToThePlayer(GameTestHelper helper) {
 		for (int x = 0; x < 6; x++) {
 			for (int z = 0; z < 6; z++) {

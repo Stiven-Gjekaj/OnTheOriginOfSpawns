@@ -67,6 +67,7 @@ public final class GeneBehaviors {
 	 * Adds the goals of the effects to a mob. The game does not save goals, so this runs each time the mob loads.
 	 */
 	public static void installGoals(Mob mob) {
+		freeFromRise(mob);
 		var goals = ((MobAccessor) mob).originofspawns$goalSelector();
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
@@ -214,6 +215,26 @@ public final class GeneBehaviors {
 		mob.setAttached(ModAttachments.STATE, mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE)
 				.withRiseTicks(Math.max(1, Math.round(burrow.riseSeconds() * 20.0F))));
 		return true;
+	}
+
+	/**
+	 * Brings a burrowing mob up to the surface when its rise stopped, for example because its chunk unloaded.
+	 * The game does not save the rise, so a mob that loads with no gravity inside the ground is stuck.
+	 */
+	public static void freeFromRise(Mob mob) {
+		if (!mob.isNoGravity() || mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE).riseTicks() > 0
+				|| !GeneCombat.has(mob, GeneEffect.Burrow.class) || mob.level().noCollision(mob)) {
+			return;
+		}
+		for (int up = 1; up <= BURROW_DEPTH + 1; up++) {
+			double y = Math.floor(mob.getY()) + up;
+			if (mob.level().noCollision(mob, mob.getBoundingBox().move(0.0, y - mob.getY(), 0.0))) {
+				mob.setPos(mob.getX(), y, mob.getZ());
+				break;
+			}
+		}
+		mob.noPhysics = false;
+		mob.setNoGravity(false);
 	}
 
 	private static boolean canBurrow(ServerLevel level, BlockPos feet, GeneEffect.Burrow burrow) {

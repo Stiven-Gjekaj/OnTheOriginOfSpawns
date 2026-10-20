@@ -1,0 +1,25 @@
+{
+	"texture": "originofspawns:textures/entity/pearlheart_glow.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				6,
+				-2.3
+			],
+			"size": [
+				2,
+				2,
+				0
+			],
+			"glow": true
+		}
+	]
+}

@@ -1,4 +1,37 @@
 {
-	"layers": [],
-	"model": "originofspawns:pearlheart_pearl"
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/pearlheart_0.png",
+				"tint": "#C8C0AE"
+			},
+			"order": 2
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/pearlheart_1.png",
+				"tint": "#2E2A24"
+			},
+			"order": 2
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/pearlheart_2.png",
+				"tint": "#FFF4F8"
+			},
+			"order": 2
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/pearlheart_3.png",
+				"tint": "#E8C8D8"
+			},
+			"order": 2
+		}
+	],
+	"model": "originofspawns:pearlheart_glow"
 }

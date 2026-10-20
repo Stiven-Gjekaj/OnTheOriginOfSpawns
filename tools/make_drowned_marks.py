@@ -63,8 +63,9 @@ Pixel plan for the Barnacled. Five Barnacled genes are gene models.
   shellback_shell. It covers the barnacles on the back.
 - Anchor: rusty shackles on the ankles, with broken links of chain, the
   gene model anchor_chain.
-- Pearlheart: an open clam on the chest with a pearl that glows, the gene
-  model pearlheart_pearl.
+- Pearlheart has a pearl in a ring of barnacle crust in the middle of the
+  chest (columns 1 to 6, rows 5 to 8), at order 2. The gene model
+  pearlheart_glow makes the pearl glow.
 - Kelpwrapped has strips of kelp round the body, the arms, and the legs,
   under the marks (order -1).
 
@@ -726,28 +727,30 @@ PEARL = "#FFF4F8"
 
 
 def pearlheart():
-    # The pearl is the gene model pearlheart_pearl.
-    return []
+    # A pearl in the middle of the chest (columns 3 and 4, rows 6 and 7),
+    # in a ring of barnacle crust. The marks are at order 2, over the
+    # Spearfisher net and the Ink stains. The gene model pearlheart_glow
+    # puts a flat square that glows on the pearl, so it shows in the dark.
+    pearl = Mark(PEARL, order=2)
+    shade = Mark("#E8C8D8", order=2)
+    crust = Mark(BARNACLE[0], order=2)
+    hole = Mark(BARNACLE[2], order=2)
+    pearl.put(body(CHEST, 3, 6)).put(body(CHEST, 4, 6), 245).put(body(CHEST, 3, 7), 245)
+    shade.put(body(CHEST, 4, 7))
+    ring = ((2, 5), (3, 5), (4, 5), (5, 5), (5, 6), (5, 7), (5, 8), (4, 8), (3, 8), (2, 8), (2, 7), (2, 6))
+    for n, (col, row) in enumerate(ring):
+        (hole if n % 3 == 1 else crust).put(body(CHEST, col, row), 255 if n % 2 else 225)
+    crust.put(body(CHEST, 1, 6), 210).put(body(CHEST, 6, 7), 210)
+    return [crust, hole, pearl, shade]
 
 
 def pearlheart_model():
-    # An open clam on the chest, over the heart, with a pearl that glows in
-    # it. The two halves of the clam open up and down. The clam lies on
-    # the outer layer of the chest. On the body bone, the chest is at z -2,
-    # and chest column c is at x c - 4.
-    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
-    clam = ("#E0C4B4", "#C8A898", "#F2DED2")
-    # A half of the clam: 4x1x2 at uv (0, 0). The pearl: 2x2x1 at uv (0, 6).
-    paint_box(im, 0, 0, 4, 1, 2, lambda face, x, y: clam[2] if face in ("top", "bottom") and x % 2 else
-              clam[(x + y) % 2])
-    paint_box(im, 0, 6, 2, 2, 1, lambda face, x, y: PEARL if (x + y) % 2 else "#F2E2EC")
-    parts = [
-        {"bone": "body", "uv": [0, 0], "from": [-1, 6, -4.25], "size": [4, 1, 2]},
-        {"bone": "body", "uv": [0, 0], "from": [-1, 2.5, -4.25], "size": [4, 1, 2],
-         "pivot": [1, 3.5, -2.25], "rotation": [-30, 0, 0]},
-        {"bone": "body", "uv": [0, 6], "from": [0, 4, -3.3], "size": [2, 2, 1], "glow": True},
-    ]
-    save_model("pearlheart_pearl", im, parts)
+    # A flat 2x2 square that glows, just in front of the pearl. On the body
+    # bone, chest column c is at x c - 4, and the chest is at z -2.
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    paint_box(im, 0, 0, 2, 2, 0, lambda face, x, y: "#E8C8D8" if (x, y) == (1, 1) else PEARL)
+    parts = [{"bone": "body", "uv": [0, 0], "from": [-1, 6, -2.3], "size": [2, 2, 0], "glow": True}]
+    save_model("pearlheart_glow", im, parts)
 
 
 def kelpwrapped():
@@ -987,7 +990,7 @@ MODELS = {
     "coral_growth": "originofspawns:coral_growth_coral",
     "shellback": "originofspawns:shellback_shell",
     "anchor": "originofspawns:anchor_chain",
-    "pearlheart": "originofspawns:pearlheart_pearl",
+    "pearlheart": "originofspawns:pearlheart_glow",
     "drag_under": "originofspawns:drag_under_fingers",
     "fry": "originofspawns:fry_fins",
     "chorus": "originofspawns:chorus_earring",

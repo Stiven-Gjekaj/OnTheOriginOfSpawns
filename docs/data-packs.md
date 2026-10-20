@@ -152,7 +152,7 @@ The states for `when` are:
 | Type | Fields | Result |
 |---|---|---|
 | `effect_on_hurt` | `effect`, `seconds`, `amplifier` (`0`), `cooldown_seconds` (`0`), `ink` (`false`) | When an attacker hurts the mob, the attacker gets a status effect, after each cooldown. `ink` also sprays a cloud of ink |
-| `call_on_hurt` | `radius`, `smoke` (`false`) | When the mob is hurt, the mobs of its species in the radius attack the attacker. `smoke` also makes a column of smoke |
+| `call_on_hurt` | `radius`, `smoke` (`false`), `cooldown_seconds` (`0`) | When the mob is hurt, the mobs of its species in the radius attack the attacker. `smoke` also makes a column of smoke. The call waits for its cooldown |
 | `share_damage` | `fraction`, `radius` (`8`) | A part of the damage that the mob takes goes to the mobs of its species in the radius |
 | `share_healing` | `radius` (`6`) | When the mob heals, the mobs of its species in the radius heal by the same amount |
 | `call_on_sight` | `radius`, `cooldown_seconds` (`30`) | When the mob first targets a player, the mobs of its species in the radius target that player |

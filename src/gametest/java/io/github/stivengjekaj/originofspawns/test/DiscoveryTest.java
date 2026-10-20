@@ -9,6 +9,7 @@ import io.github.stivengjekaj.originofspawns.evolution.FamilyResult;
 import io.github.stivengjekaj.originofspawns.evolution.FamilyResult.Kind;
 import io.github.stivengjekaj.originofspawns.notebook.DiscoveredFamilies;
 import io.github.stivengjekaj.originofspawns.notebook.Discovery;
+import io.github.stivengjekaj.originofspawns.notebook.Knowledge;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -74,12 +75,43 @@ public class DiscoveryTest {
 	}
 
 	@GameTest
+	public void playerSeesAFamilyAfterEightSecondsNearIt(GameTestHelper helper) {
+		ServerPlayer player = player(helper);
+		FamilyResult family = new FamilyResult(Kind.PURE, Optional.of(NEAR), Optional.empty());
+		spawn(helper, player.position().add(3.0, 0.0, 0.0), family);
+		for (int second = 1; second < Discovery.SEEN_SECONDS; second++) {
+			Discovery.watch(player);
+		}
+		helper.assertValueEqual(found(player).knowledge(family.translationKey()), Knowledge.NONE, "after 7 seconds");
+		Discovery.watch(player);
+		helper.assertValueEqual(found(player).knowledge(family.translationKey()), Knowledge.SEEN, "after 8 seconds");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aKillTurnsASeenFamilyIntoAKnownFamily(GameTestHelper helper) {
+		ServerPlayer player = player(helper);
+		FamilyResult family = new FamilyResult(Kind.PURE, Optional.of(NEAR), Optional.empty());
+		Zombie zombie = spawn(helper, player.position().add(3.0, 0.0, 0.0), family);
+		helper.assertTrue(Discovery.see(player, zombie), "the family is new");
+		helper.assertTrue(Discovery.learn(player, zombie), "the seen family is not known yet");
+		helper.assertValueEqual(found(player).knowledge(family.translationKey()), Knowledge.KNOWN, "known");
+		helper.assertTrue(found(player).seen().isEmpty(), "a known family is not in the seen set");
+		helper.assertFalse(Discovery.see(player, zombie), "seeing a known family changes nothing");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void discoveredFamiliesReadFromTheirCodec(GameTestHelper helper) {
-		DiscoveredFamilies found = new DiscoveredFamilies(java.util.Set.of("b", "a"));
-		var json = DiscoveredFamilies.CODEC.encodeStart(com.mojang.serialization.JsonOps.INSTANCE, found).getOrThrow();
-		helper.assertValueEqual(json.toString(), "[\"a\",\"b\"]", "sorted list");
-		helper.assertValueEqual(DiscoveredFamilies.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, json).getOrThrow(),
-				found, "read back");
+		var ops = com.mojang.serialization.JsonOps.INSTANCE;
+		DiscoveredFamilies found = new DiscoveredFamilies(java.util.Set.of("b", "a"), java.util.Set.of("c"));
+		var json = DiscoveredFamilies.CODEC.encodeStart(ops, found).getOrThrow();
+		helper.assertValueEqual(json.toString(), "{\"known\":[\"a\",\"b\"],\"seen\":[\"c\"]}", "the saved form");
+		helper.assertValueEqual(DiscoveredFamilies.CODEC.parse(ops, json).getOrThrow(), found, "read back");
+		// The format of 0.2.0-alpha is a plain list of known families.
+		var old = com.google.gson.JsonParser.parseString("[\"a\",\"b\"]");
+		helper.assertValueEqual(DiscoveredFamilies.CODEC.parse(ops, old).getOrThrow(),
+				new DiscoveredFamilies(java.util.Set.of("a", "b")), "the old format");
 		helper.succeed();
 	}
 

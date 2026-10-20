@@ -27,7 +27,8 @@ public class NotebookClientTest implements FabricClientGameTest {
 				ServerPlayer player = server.getPlayerList().getPlayers().getFirst();
 				player.setAttached(ModAttachments.DISCOVERED, new DiscoveredFamilies(Set.of(
 						"family.originofspawns.zombie.predator", "family.originofspawns.zombie.stalker.predator",
-						"family.originofspawns.zombie.horde.and.tank", "family.originofspawns.neutral")));
+						"family.originofspawns.zombie.horde.and.tank", "family.originofspawns.neutral"),
+						Set.of("family.originofspawns.zombie.tank", "family.originofspawns.zombie.blight.horde")));
 				player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.BEAGLE_NOTEBOOK));
 				player.getItemInHand(InteractionHand.MAIN_HAND).use(player.level(), player, InteractionHand.MAIN_HAND);
 			});

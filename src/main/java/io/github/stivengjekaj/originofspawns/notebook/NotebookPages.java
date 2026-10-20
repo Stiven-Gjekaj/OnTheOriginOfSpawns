@@ -75,7 +75,7 @@ public final class NotebookPages {
 		}
 		entries.sort((a, b) -> a.gene().compareTo(b.gene()));
 		List<NotebookPayload.FamilyEntry> families = FamilyCatalog.of(server.registryAccess(), type).stream()
-				.map(entry -> new NotebookPayload.FamilyEntry(entry.key(), entry.kind(), found.contains(entry.key())))
+				.map(entry -> new NotebookPayload.FamilyEntry(entry.key(), entry.kind(), found.knowledge(entry.key())))
 				.toList();
 		return new NotebookPayload.Page(species, entries, families);
 	}

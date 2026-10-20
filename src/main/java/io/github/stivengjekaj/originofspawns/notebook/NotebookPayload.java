@@ -33,17 +33,27 @@ public record NotebookPayload(List<Page> pages) implements CustomPacketPayload {
 	}
 
 	/**
-	 * One family name of a species, and if the player found it.
+	 * One family name of a species, and how much the player knows about it.
 	 */
-	public record FamilyEntry(String key, FamilyResult.Kind kind, boolean found) {
+	public record FamilyEntry(String key, FamilyResult.Kind kind, Knowledge knowledge) {
+		private static final StreamCodec<RegistryFriendlyByteBuf, Knowledge> KNOWLEDGE_CODEC =
+				ByteBufCodecs.VAR_INT.map(index -> Knowledge.values()[index], Knowledge::ordinal).cast();
+
 		private static final StreamCodec<RegistryFriendlyByteBuf, FamilyResult.Kind> KIND_CODEC =
 				ByteBufCodecs.VAR_INT.map(index -> FamilyResult.Kind.values()[index], FamilyResult.Kind::ordinal).cast();
 
 		public static final StreamCodec<RegistryFriendlyByteBuf, FamilyEntry> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.STRING_UTF8.cast(), FamilyEntry::key,
 				KIND_CODEC, FamilyEntry::kind,
-				ByteBufCodecs.BOOL.cast(), FamilyEntry::found,
+				KNOWLEDGE_CODEC, FamilyEntry::knowledge,
 				FamilyEntry::new);
+
+		/**
+		 * Tells if the player knows the family.
+		 */
+		public boolean found() {
+			return knowledge == Knowledge.KNOWN;
+		}
 	}
 
 	/**

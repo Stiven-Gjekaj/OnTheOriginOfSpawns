@@ -42,10 +42,12 @@ public final class ModAttachments {
 			AttachmentRegistry.create(OriginOfSpawns.id("spawn_reason"));
 
 	/**
-	 * The families that a player found. The player keeps them after death.
+	 * The families that a player found. The player keeps them after death. Only the player gets them on the client,
+	 * for the mob info panel.
 	 */
 	public static final AttachmentType<DiscoveredFamilies> DISCOVERED = AttachmentRegistry.create(
-			OriginOfSpawns.id("discovered"), builder -> builder.persistent(DiscoveredFamilies.CODEC).copyOnDeath());
+			OriginOfSpawns.id("discovered"), builder -> builder.persistent(DiscoveredFamilies.CODEC).copyOnDeath()
+					.syncWith(DiscoveredFamilies.STREAM_CODEC, AttachmentSyncPredicate.targetOnly()));
 
 	private ModAttachments() {
 	}

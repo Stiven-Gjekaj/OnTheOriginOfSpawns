@@ -8,6 +8,7 @@ import java.util.Map;
 import io.github.stivengjekaj.originofspawns.evolution.BiomeCategory;
 import io.github.stivengjekaj.originofspawns.evolution.FamilyResult;
 import io.github.stivengjekaj.originofspawns.evolution.MobInfo;
+import io.github.stivengjekaj.originofspawns.notebook.Knowledge;
 import io.github.stivengjekaj.originofspawns.notebook.NotebookPayload;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -199,7 +200,8 @@ public class NotebookScreen extends Screen {
 
 	private void drawFamilies(GuiGraphicsExtractor graphics, NotebookPayload.Page page, int y) {
 		long found = page.families().stream().filter(NotebookPayload.FamilyEntry::found).count();
-		graphics.text(font, Component.translatable("screen.originofspawns.notebook.found", found, page.families().size()),
+		long seen = page.families().stream().filter(entry -> entry.knowledge() == Knowledge.SEEN).count();
+		graphics.text(font, Component.translatable("screen.originofspawns.notebook.found", found, seen, page.families().size()),
 				left + PADDING, y, FADED_INK, false);
 		y += ROW_HEIGHT + 2;
 		int columnWidth = (PAGE_WIDTH - PADDING * 2) / FAMILY_COLUMNS;
@@ -216,7 +218,8 @@ public class NotebookScreen extends Screen {
 			for (int i = 0; i < entries.size(); i++) {
 				NotebookPayload.FamilyEntry entry = entries.get(i);
 				int x = left + PADDING + (i % FAMILY_COLUMNS) * columnWidth;
-				Component name = entry.found() ? Component.translatable(entry.key()) : UNKNOWN;
+				// A known family is in ink. A seen family is in faded ink. An unknown family is "???".
+				Component name = entry.knowledge() == Knowledge.NONE ? UNKNOWN : Component.translatable(entry.key());
 				graphics.text(font, name, x + 4, y, entry.found() ? INK : FADED_INK, false);
 				if (i % FAMILY_COLUMNS == FAMILY_COLUMNS - 1 || i == entries.size() - 1) {
 					y += ROW_HEIGHT;

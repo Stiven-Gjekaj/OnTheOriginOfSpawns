@@ -93,7 +93,9 @@ HUSK_FAMILIES = {
 }
 
 HUSK_EXTRA = {
-    "scorchers": [("All 6 at night", [], True, {"light": 0.18}),
+    "scorchers": [("Sunbaked + Kilnskin", ["sunbaked", "kilnskin"], False, {}),
+                  ("Sunstroke + Mirage", ["sunstroke", "mirage"], False, {}),
+                  ("All 6 at night", [], True, {"light": 0.18}),
                   ("All 6 baby", [], True, {"baby": True})],
 }
 NIGHT = (18, 22, 38, 255)

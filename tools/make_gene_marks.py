@@ -665,6 +665,11 @@ GENES = {
     "plague_carrier": plague_carrier,
 }
 
+# The zombie genes with a visual that is written by hand, not by this script.
+# The overlap check looks at them too. The visuals of other species are not
+# in the check.
+HAND_WRITTEN = ("cinder", "ironhide", "bonerunner")
+
 # The gene models of the genes in GENES.
 MODELS = {
     "burrower": "originofspawns:burrower_dirt",
@@ -763,10 +768,10 @@ def main():
         marked = [m for m in marks if not isinstance(m, dict) and m.order >= 0]
         print(gene, sum(len(m.pixels) for m in marked), "mark pixels")
     owners = {}
-    for name in sorted(os.listdir(VISUAL_DIR)):
-        with open(os.path.join(VISUAL_DIR, name)) as fh:
+    for gene in sorted(list(GENES) + list(HAND_WRITTEN)):
+        with open(os.path.join(VISUAL_DIR, gene + ".json")) as fh:
             for p in touched(json.load(fh)):
-                owners.setdefault(p, set()).add(name[:-5])
+                owners.setdefault(p, set()).add(gene)
     shared = {}
     for p, genes in owners.items():
         if len(genes) > 1:

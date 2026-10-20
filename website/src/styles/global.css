@@ -90,11 +90,11 @@
   --slot-hi: #2c3a43;
   --slot-lo: #05080a;
 
-  --predator: #f07462;
-  --stalker: #a993f6;
-  --tank: #b8c3cd;
-  --horde: #f2ae4f;
-  --blight: #8bd346;
+  --fam-0: #f07462;
+  --fam-1: #a993f6;
+  --fam-2: #b8c3cd;
+  --fam-3: #f2ae4f;
+  --fam-4: #8bd346;
   --neutral: #9fb0aa;
 
   --ok: #8bd346;
@@ -125,11 +125,11 @@
   --slot-hi: #ffffff;
   --slot-lo: #373737;
 
-  --predator: #c2412f;
-  --stalker: #6a4bd3;
-  --tank: #5a6774;
-  --horde: #b1680a;
-  --blight: #3f7f19;
+  --fam-0: #c2412f;
+  --fam-1: #6a4bd3;
+  --fam-2: #5a6774;
+  --fam-3: #b1680a;
+  --fam-4: #3f7f19;
   --neutral: #6c7873;
 
   --ok: #3f7f19;
@@ -160,11 +160,11 @@
     --slot: #8b8b8b;
     --slot-hi: #ffffff;
     --slot-lo: #373737;
-    --predator: #c2412f;
-    --stalker: #6a4bd3;
-    --tank: #5a6774;
-    --horde: #b1680a;
-    --blight: #3f7f19;
+    --fam-0: #c2412f;
+    --fam-1: #6a4bd3;
+    --fam-2: #5a6774;
+    --fam-3: #b1680a;
+    --fam-4: #3f7f19;
     --neutral: #6c7873;
     --ok: #3f7f19;
     --warn: #b1680a;
@@ -414,7 +414,7 @@ main { flex: 1; }
 .mc-tooltip.show { opacity: 1; transform: none; }
 .mc-tooltip, .mob-info {
   /* The tooltip is always dark, so it keeps the bright family colors. */
-  --predator: #f07462; --stalker: #a993f6; --tank: #b8c3cd; --horde: #f2ae4f; --blight: #8bd346; --neutral: #9fb0aa;
+  --fam-0: #f07462; --fam-1: #a993f6; --fam-2: #b8c3cd; --fam-3: #f2ae4f; --fam-4: #8bd346; --neutral: #9fb0aa;
 }
 .mc-tooltip .t-name { font-size: 1.05rem; }
 .mc-tooltip .t-line { color: #aaaaaa; }

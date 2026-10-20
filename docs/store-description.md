@@ -98,8 +98,8 @@ If you take fire perks, the mobs evolve to ignore fire.
 Your notebook has a tab for each species.
 
 - Gene frequencies for each biome.
-- The families that you found. You find a family when you come near a mob
-  of that family.
+- The families that you found. You learn a family when you kill a mob of
+  that family, or when a mob of that family kills you.
 - Charts of change over time (planned).
 - Family trees and a phylogenetic tree (planned).
 - Field sketches that change when the genes change (planned).

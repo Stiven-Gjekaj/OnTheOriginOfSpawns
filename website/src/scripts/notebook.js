@@ -4,6 +4,7 @@
 
 import { genes, families, minors, hybrids } from "../data/site.json";
 import { familyOf, kindName, pct, fmt, t, loadState } from "../lib/site.js";
+import { getSpecies } from "./species.js";
 import { drawStill } from "./zombie-canvas.js";
 import * as Z from "./zombie.js";
 
@@ -11,26 +12,35 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = (id) => document.getElementById(id);
 const state = loadState();
 let category = "temperate";
+let species = getSpecies();
+const mine = (list) => list.filter((x) => x.species === species);
 
 function renderGenes() {
-  const p = state.pools[category] || {};
-  const known = genes.filter((g) => (p[g.id] || 0) > 0).sort((a, b) => p[b.id] - p[a.id]);
+  const p = state.pools[`${species}:${category}`] || {};
+  const known = mine(genes).filter((g) => (p[g.id] || 0) > 0).sort((a, b) => p[b.id] - p[a.id]);
   $("book-freq").innerHTML = known.slice(0, 12).map((g) => `
     <div class="freq" style="--fam:var(--${g.family})"><span class="nm">${g.name}</span>
     <span class="bar"><span style="width:${p[g.id] * 100}%"></span></span><span class="v">${pct(p[g.id])}</span></div>`).join("");
   $("book-empty").hidden = known.length > 0;
-  drawStill($("sketch"), known.slice(0, 5), { w: 120, h: 160, scale: 3.6, cy: 0.33, turn: -0.6 });
+  drawStill($("sketch"), known.slice(0, 5), { w: 120, h: 160, scale: 3.6, cy: 0.33, turn: -0.6, species });
 }
 
 function renderFamilies() {
+  const k = (x) => `${species}:${x}`;
   const all = [
-    ...families.map((f) => ({ key: f.id, name: f.name, kind: "pure" })),
-    ...minors.map((m) => ({ key: `${m.major}>${m.sub}`, name: m.name, kind: "minor" })),
-    ...hybrids.map((h) => ({ key: [h.a, h.b].sort().join("+"), name: h.name, kind: "hybrid" })),
-    { key: "neutral", name: kindName("neutral"), kind: "neutral" },
+    ...mine(families).map((f) => ({ key: k(f.id), name: f.name, kind: "pure" })),
+    ...mine(minors).map((m) => ({ key: k(`${m.major}>${m.sub}`), name: m.name, kind: "minor" })),
+    ...mine(hybrids).map((h) => ({ key: k([h.a, h.b].sort().join("+")), name: h.name, kind: "hybrid" })),
+    { key: k("neutral"), name: kindName("neutral"), kind: "neutral" },
   ];
   const found = new Set(loadState().found);
-  $("found-count").textContent = fmt("screen.originofspawns.notebook.found", all.filter((x) => found.has(x.key)).length, all.length);
+  // The game counts known families and seen families. The wiki records a
+  // family when the visitor spawns it, so each found family is known.
+  const n = all.filter((x) => found.has(x.key)).length;
+  const slots = (t("screen.originofspawns.notebook.found").match(/%s/g) || []).length;
+  $("found-count").textContent = slots >= 3
+    ? fmt("screen.originofspawns.notebook.found", n, 0, all.length)
+    : fmt("screen.originofspawns.notebook.found", n, all.length);
   document.querySelectorAll(".found[data-kind]").forEach((box) => {
     box.innerHTML = all.filter((x) => x.kind === box.dataset.kind)
       .map((x) => `<span class="f${found.has(x.key) ? "" : " no"}">${found.has(x.key) ? x.name : "?"}</span>`).join("");
@@ -68,12 +78,12 @@ $("book-cats").addEventListener("click", (e) => {
 // The mob info panel on a scene.
 let zombie = [];
 function nextZombie() {
-  const shuffled = [...genes].sort(() => Math.random() - 0.5);
+  const shuffled = mine(genes).sort(() => Math.random() - 0.5);
   zombie = shuffled.slice(0, 1 + Math.floor(Math.random() * 4));
   drawInfo();
 }
 function drawInfo() {
-  const r = familyOf(zombie);
+  const r = familyOf(zombie, species);
   const box = $("mob-info");
   box.classList.add("fade");
   setTimeout(() => {
@@ -83,7 +93,7 @@ function drawInfo() {
     box.classList.remove("fade");
   }, 160);
   const night = $("scene").classList.contains("night");
-  drawStill($("scene-zombie"), zombie, { w: 150, h: 200, scale: 4.6, cy: 0.33, turn: -0.25, light: night ? 0.5 : 1, opacity: night ? Z.opacityAt(zombie, 0) : 1 });
+  drawStill($("scene-zombie"), zombie, { w: 150, h: 200, scale: 4.6, cy: 0.33, turn: -0.25, species, light: night ? 0.5 : 1, opacity: night ? Z.opacityAt(zombie, 0) : 1 });
 }
 $("info-next").addEventListener("click", nextZombie);
 $("info-night").addEventListener("click", (e) => {
@@ -91,6 +101,13 @@ $("info-night").addEventListener("click", (e) => {
   e.currentTarget.setAttribute("aria-pressed", String(on));
   $("scene").classList.toggle("night", on);
   drawInfo();
+});
+
+document.addEventListener("species", (e) => {
+  species = e.detail;
+  renderGenes();
+  renderFamilies();
+  nextZombie();
 });
 
 renderGenes();

@@ -10,6 +10,7 @@ const nb = site.notebook;
 const m3 = site.roadmap.find((r) => r.key === "Milestone 3");
 const m4 = nb.m4;
 const cats = site.evolution.categories;
+const ribbons = ["#3f7f1c", "#a46a0c", "#1f6f8a", "#6b3a8f"];
 const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase();
 ---
 <Layout title="Beagle Notebook" description="The Beagle Notebook, the mob info panel, and the player perks of On the Origin of Spawns.">
@@ -21,16 +22,20 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
     <section>
       <div class="book">
         <div class="ribbons" role="group" aria-label="Species">
-          <button class="ribbon" type="button" aria-pressed="true" style="--rib:#3f7f1c">Zombie</button>
-          <button class="ribbon" type="button" disabled style="--rib:#a46a0c" data-tip="The husk comes in milestone 2b">Husk</button>
-          <button class="ribbon" type="button" disabled style="--rib:#1f6f8a" data-tip="The drowned comes in milestone 2b">Drowned</button>
+          {site.species.map((sp, i) => (
+            <button class="ribbon" type="button" data-species-btn={sp.id} aria-pressed={i === 0 ? "true" : "false"} style={`--rib:${ribbons[i % ribbons.length]}`}>{sp.name}</button>
+          ))}
           <button class="ribbon" type="button" disabled style="--rib:#6b6b6b" data-tip="The other hostile mobs come in milestone 2c">More</button>
         </div>
         <div class="spread" id="spread">
           <div class="sheet left" id="sheet-genes-left">
             <canvas class="sketch" id="sketch" aria-label="A field sketch of a zombie"></canvas>
-            <h3>Zombie</h3>
-            <p class="ink">The common zombie. It changes in each biome category. Its marks tell its history.</p>
+            {site.species.map((sp, i) => (
+              <div data-species-panel={sp.id} hidden={i !== 0}>
+                <h3>{sp.name}</h3>
+                <p class="ink">{sp.intro || "The common zombie. It changes in each biome category. Its marks tell its history."}</p>
+              </div>
+            ))}
             <h4>Biome category</h4>
             <div class="cats" id="book-cats">
               {cats.map((c) => <button type="button" class="cat" data-cat={c.id} aria-pressed={c.id === "temperate" ? "true" : "false"}><Icon name={c.id} />{c.name}</button>)}
@@ -76,15 +81,15 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
       <div class="section-head">
         <div class="eyebrow">In the game</div>
         <h2>The mob info panel</h2>
-        <p>When you look at a mob, a small panel shows at the top of the screen. It shows the family of the mob and its dominant genes. Mods such as AppleSkin and Jade show information in a similar way.</p>
+        <p>When you look at a mob, a small panel shows at the top of the screen. It shows the family of the mob and its dominant genes. Mods such as AppleSkin and Jade show information in a similar way. The scene uses the species of the open notebook tab.</p>
         <div class="row">
-          <button class="btn sm" type="button" id="info-next">Look at a different zombie</button>
+          <button class="btn sm" type="button" id="info-next">Look at a different mob</button>
           <button class="btn sm" type="button" id="info-night" aria-pressed="false">Night</button>
         </div>
       </div>
       <div class="scene" id="scene">
         <div class="mob-info" id="mob-info"></div>
-        <canvas id="scene-zombie" role="img" aria-label="A zombie in front of the player"></canvas>
+        <canvas id="scene-zombie" role="img" aria-label="A mob in front of the player"></canvas>
         <div class="crosshair" aria-hidden="true"></div>
       </div>
     </section>

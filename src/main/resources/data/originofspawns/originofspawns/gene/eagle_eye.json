@@ -7,6 +7,12 @@
 			"type": "throw_range",
 			"multiplier": 1.5,
 			"target": "any"
+		},
+		{
+			"type": "attribute",
+			"attribute": "minecraft:follow_range",
+			"amount": 0.5,
+			"operation": "add_multiplied_base"
 		}
 	],
 	"downsides": [

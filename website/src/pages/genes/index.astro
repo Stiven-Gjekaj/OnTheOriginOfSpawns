@@ -3,24 +3,29 @@ import Layout from "../../layouts/Layout.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import GeneCard from "../../components/GeneCard.astro";
 import GeneTips from "../../components/GeneTips.astro";
+import SpeciesSwitch from "../../components/SpeciesSwitch.astro";
 import site from "../../data/site.json";
+import { familiesOf } from "../../lib/site.js";
 ---
-<Layout title="Genes" description={`All ${site.genes.length} zombie genes of On the Origin of Spawns, with their gains, downsides, and marks.`}>
-  <PageHeader eyebrow="Genes" title={`The ${site.genes.length} zombie genes`}>
-    Each gene has gains, downsides, and a mark on the body. Its main tag gives 2 points to a family, and a sub tag gives 1 point. Point at a gene picture to see the effects of its data file.
+<Layout title="Genes" description={`All ${site.genes.length} genes of On the Origin of Spawns, with their gains, downsides, and marks.`}>
+  <PageHeader eyebrow="Genes" title={`The ${site.genes.length} genes`}>
+    Each species has 30 genes. Each gene has gains, downsides, and a mark on the body. Its main tag gives 2 points to a family, and a sub tag gives 1 point. Point at a gene picture to see the effects of its data file.
   </PageHeader>
   <GeneTips />
 
   <div class="page container">
+    <SpeciesSwitch />
     <div class="toolbar">
-      <div class="segmented" id="filters" role="group" aria-label="Family">
-        <button class="btn sm" type="button" data-filter="all" aria-pressed="true">All</button>
-        {site.families.map((f) => (
-          <button class="btn sm" type="button" data-filter={f.id} aria-pressed="false"><span class="dot" style={`background:var(--${f.id})`}></span>{f.name}</button>
-        ))}
-      </div>
+      {site.species.map((sp, i) => (
+        <div class="segmented" data-species-panel={sp.id} hidden={i !== 0} role="group" aria-label={`Families of the ${sp.name.toLowerCase()}`}>
+          <button class="btn sm" type="button" data-filter="all" aria-pressed="true">All</button>
+          {familiesOf(sp.id).map((f) => (
+            <button class="btn sm" type="button" data-filter={f.id} aria-pressed="false"><span class="dot" style={`background:var(--${f.id})`}></span>{f.name}</button>
+          ))}
+        </div>
+      ))}
       <input class="input search" id="search" type="search" placeholder="Search genes, effects, or pressures" aria-label="Search the genes" />
-      <span class="count muted small" id="count" aria-live="polite">{site.genes.length} of {site.genes.length}</span>
+      <span class="count muted small" id="count" aria-live="polite"></span>
     </div>
     <div class="genes" id="genes">
       {site.genes.map((g) => <GeneCard gene={g} />)}
@@ -30,34 +35,44 @@ import site from "../../data/site.json";
 </Layout>
 
 <script>
+  import { getSpecies } from "../../scripts/species.js";
+
   const cards = [...document.querySelectorAll("#genes .gene")];
-  const buttons = [...document.querySelectorAll("#filters [data-filter]")];
   const search = document.getElementById("search");
   let filter = new URLSearchParams(location.search).get("family") || "all";
 
   function apply() {
+    const sp = getSpecies();
     const q = search.value.trim().toLowerCase();
     let n = 0;
+    let total = 0;
     for (const c of cards) {
-      const ok = (filter === "all" || c.dataset.family === filter || c.dataset.sub === filter) && (!q || c.dataset.text.includes(q));
+      const mine = c.dataset.species === sp;
+      if (mine) total++;
+      const ok = mine && (filter === "all" || c.dataset.family === filter || c.dataset.sub === filter) && (!q || c.dataset.text.includes(q));
       c.hidden = !ok;
       if (ok) n++;
     }
-    buttons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.filter === filter)));
-    document.getElementById("count").textContent = `${n} of ${cards.length}`;
+    document.querySelectorAll("[data-filter]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.filter === filter)));
+    document.getElementById("count").textContent = `${n} of ${total}`;
     document.getElementById("empty").hidden = n > 0;
-  }
-  document.getElementById("filters").addEventListener("click", (e) => {
-    const b = e.target.closest("[data-filter]");
-    if (!b) return;
-    filter = b.dataset.filter;
     const u = new URL(location.href);
     if (filter === "all") u.searchParams.delete("family"); else u.searchParams.set("family", filter);
     history.replaceState(null, "", u);
+  }
+  document.querySelector(".toolbar").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-filter]");
+    if (!b) return;
+    filter = b.dataset.filter;
     apply();
   });
+  document.addEventListener("species", () => { filter = "all"; apply(); });
   search.addEventListener("input", apply);
+  // A gene in the hash, for example #gene-cinder, selects its species.
+  const target = location.hash.startsWith("#gene-") && document.getElementById(location.hash.slice(1));
+  if (target && target.dataset.species !== getSpecies()) document.querySelector(`[data-species-btn="${target.dataset.species}"]`)?.click();
   apply();
+  if (target) target.scrollIntoView();
 </script>
 
 <style>
@@ -70,7 +85,6 @@ import site from "../../data/site.json";
   .toolbar .dot { width: 8px; height: 8px; border-radius: 50%; }
   .search { flex: 1 1 220px; width: auto; }
   .genes { display: grid; gap: var(--s-4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
-  .genes [hidden] { display: none; }
   .empty { padding: var(--s-6) 0; text-align: center; }
   @media (max-width: 640px) { .toolbar { position: static; } }
 </style>

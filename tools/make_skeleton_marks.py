@@ -34,7 +34,8 @@ Pixel plan for the Marksmen.
 - Quickdraw: three arrows strapped on the right forearm, and long fingers
   on the right hand, the gene model quickdraw_arrows.
 - Shieldbreaker has a notch in each rib, at y 22 and y 24.
-- High Ground has no look for now. A hat model comes later.
+- High Ground: a wide-brim ranger hat, the gene model high_ground_hat, and
+  a soft shade on the upper face under it (y 8 to 11, order -1).
 
 Pixel plan for the Rattlers.
 - Skitter has cracks on the legs, rows 1 to 8, and a light shade on the
@@ -203,9 +204,55 @@ def shieldbreaker():
     return [notch, cut]
 
 
+HAT = ("#8A6A44", "#7A5A38", "#A88A5E", "#3E2A1A")
+
+
 def high_ground():
-    # High Ground has no look for now. A hat model comes later.
-    return []
+    # A wide-brim ranger hat, the gene model high_ground_hat. The brim puts
+    # the eyes in shadow: a soft dark shade on the upper face, rows 8 to 11
+    # (y 8 to 11), under the marks of other genes (order -1).
+    shade = Mark("#1E1C18", alpha=90, order=-1)
+    for x in range(8, 16):
+        for y in (8, 9, 10):
+            shade.put((x, y))
+    soft = Mark("#1E1C18", alpha=50, order=-1)
+    for x in range(8, 16):
+        soft.put((x, 11))
+    return [shade, soft]
+
+
+def high_ground_model():
+    # A wide-brim ranger hat of worn leather: a flat brim that sticks out 3
+    # pixels past the head on all sides, at the top of the head, and a low
+    # crown on the brim, with a dark band at its foot and a dent in its
+    # top. The brim is 0.2 pixel over the top of the head, so the two do not
+    # flicker, and it goes through the head, so only the ring of it outside
+    # the head shows. It hides only the top row of the face. On the head
+    # bone, the head is from y -8 to 0, and from -4 to 4 in x and z.
+    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+
+    def leather(face, x, y):
+        if face == "bottom":
+            return HAT[3] if (x + y) % 5 == 0 else HAT[1]
+        n = (x * 7 + y * 13) % 11
+        return HAT[2] if n == 0 else HAT[1] if n < 4 else HAT[0]
+
+    def crown(face, x, y):
+        if face == "top":
+            # The dent: a darker line from the front to the back.
+            return HAT[1] if x in (2, 3) else leather(face, x, y)
+        if face == "bottom":
+            return HAT[3]
+        return HAT[3] if y == 2 else leather(face, x, y)
+
+    # The brim: 14x1x14 at uv (0, 0). The crown: 6x3x6 at uv (0, 16).
+    paint_box(im, 0, 0, 14, 1, 14, leather)
+    paint_box(im, 0, 16, 6, 3, 6, crown)
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-7, -8.2, -7], "size": [14, 1, 14]},
+        {"bone": "head", "uv": [0, 16], "from": [-3, -11.2, -3], "size": [6, 3, 6]},
+    ]
+    save_model("high_ground_hat", im, parts)
 
 
 def skitter():
@@ -538,6 +585,7 @@ MODELS = {
     "quickdraw": "originofspawns:quickdraw_arrows",
     "backpedal": "originofspawns:backpedal_spine",
     "fleetbone": "originofspawns:fleetbone_trail",
+    "high_ground": "originofspawns:high_ground_hat",
     "thickbone": "originofspawns:thickbone_bones",
     "reassemble": "originofspawns:reassemble_wire",
     "bonewall": "originofspawns:bonewall_ribs",
@@ -547,6 +595,7 @@ MODELS = {
 def main():
     os.makedirs(MARK_DIR, exist_ok=True)
     longdraw_model()
+    high_ground_model()
     quickdraw_model()
     backpedal_model()
     fleetbone_model()

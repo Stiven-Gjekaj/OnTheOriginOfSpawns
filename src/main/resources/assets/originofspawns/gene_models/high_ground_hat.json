@@ -1,0 +1,41 @@
+{
+	"texture": "originofspawns:textures/entity/high_ground_hat.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-7,
+				-8.2,
+				-7
+			],
+			"size": [
+				14,
+				1,
+				14
+			]
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				16
+			],
+			"from": [
+				-3,
+				-11.2,
+				-3
+			],
+			"size": [
+				6,
+				3,
+				6
+			]
+		}
+	]
+}

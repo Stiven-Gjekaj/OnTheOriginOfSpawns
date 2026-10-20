@@ -1,4 +1,22 @@
 {
 	"region_map": "originofspawns:textures/region/skeleton.png",
-	"layers": []
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/high_ground_0.png",
+				"tint": "#1E1C18"
+			},
+			"order": -1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/high_ground_1.png",
+				"tint": "#1E1C18"
+			},
+			"order": -1
+		}
+	],
+	"model": "originofspawns:high_ground_hat"
 }

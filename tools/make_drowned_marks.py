@@ -155,38 +155,48 @@ def torrent():
 
 def torrent_model():
     # Large orange fins, like the fins of a fish, that stand out against the
-    # teal skin: a tall fin that sweeps back from each calf, and a fin that
-    # sticks out to the outer side of each lower leg, turned back. Each fin
-    # starts at the outer layer, so it touches the leg. On the leg bone, the
-    # leg is from x -2 to 2 and from y 0 to 12, and the back of the leg is
-    # at z 2.
-    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+    # teal skin: a tall fin on the back of each calf, and a fin that sticks
+    # out from the outer side of each lower leg and sweeps back. The base of
+    # each fin lies on the outer layer of the leg (0.25 pixel out), so no
+    # gap shows. The fins of the two legs are mirror images, so both side
+    # fins point out. On the leg bone, the leg is from x -2 to 2 and from y
+    # 0 to 12, and the back of the leg is at z 2.
+    im = Image.new("RGBA", (64, 16), (0, 0, 0, 0))
 
-    def fin(height, reach):
-        # x counts from the leg out. The fin is tall next to the leg and
-        # sweeps up and out to a point. Dark rays run out from the leg, and
+    def fin(reach, far_side):
+        # c counts from the base of the fin out to its edge. far_side gives
+        # the faces where the texture runs the other way, so that the base
+        # is at the leg on each face. Dark rays run out from the base, and
         # the edge is light.
         def color(face, x, y):
-            if x > reach[y]:
+            width = max(reach) + 1
+            c = width - 1 - x if face in far_side else x
+            if c > reach[y]:
                 return None
-            if x == reach[y]:
+            if c == reach[y]:
                 return FIN[3]
-            return FIN[2] if y % 2 == 1 and x > 0 else FIN[0] if x < 2 else FIN[1]
+            return FIN[2] if y % 2 == 1 and c > 0 else FIN[0] if c < 2 else FIN[1]
         return color
 
-    # The calf fin: 0x7x6 at uv (0, 0). The side fin: 0x5x4 at uv (14, 0).
-    paint_box(im, 0, 0, 0, 7, 6, fin(7, [5, 5, 4, 3, 2, 1, 0]))
-    paint_box(im, 14, 0, 0, 5, 4, fin(5, [3, 3, 2, 1, 0]))
+    calf = (5, 5, 4, 3, 2, 1, 0)
+    side = (3, 3, 2, 1, 0)
+    # The calf fin: 0x7x6 at uv (0, 0). On its right face, column 0 of the
+    # texture is the far end of the fin.
+    paint_box(im, 0, 0, 0, 7, 6, fin(calf, ("right",)))
+    # The side fin of the left leg: 4x5x0 at uv (14, 0). Its base is at x
+    # 2.25, the low x of the plane, so the front face runs out from the
+    # base, and the back face runs the other way. The side fin of the right
+    # leg: 4x5x0 at uv (24, 0), the mirror image.
+    paint_box(im, 14, 0, 4, 5, 0, fin(side, ("back",)))
+    paint_box(im, 24, 0, 4, 5, 0, fin(side, ("front",)))
     parts = []
-    for bone, side in (("right_leg", -1), ("left_leg", 1)):
-        parts.append({"bone": bone, "uv": [0, 0], "from": [0, 4, 2.25], "size": [0, 7, 6],
-                      "pivot": [0, 11, 2.25], "rotation": [-12, 0, 0]})
-        x = side * (2 + OUT)
-        # The side fin is a plane across the leg, turned out: 0x5x4 turned
-        # 90 degrees round y, so it sticks out to the side, then 30 degrees
-        # back.
-        parts.append({"bone": bone, "uv": [14, 0], "from": [x, 6, 0], "size": [0, 5, 4],
-                      "pivot": [x, 8, 0], "rotation": [0, side * 60, 0]})
+    for bone, sign, uv in (("right_leg", -1, [24, 0]), ("left_leg", 1, [14, 0])):
+        parts.append({"bone": bone, "uv": [0, 0], "from": [0, 4, 2.25], "size": [0, 7, 6]})
+        base = sign * 2.25
+        x0 = base if sign > 0 else base - 4
+        # The side fin turns round its base, so that its edge sweeps back.
+        parts.append({"bone": bone, "uv": uv, "from": [x0, 6, 0], "size": [4, 5, 0],
+                      "pivot": [base, 6, 0], "rotation": [0, -sign * 25, 0]})
     save_model("torrent_fins", im, parts)
 
 

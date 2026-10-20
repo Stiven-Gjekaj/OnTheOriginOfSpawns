@@ -1,8 +1,8 @@
 """Make close-up previews of the gene models and of some marks.
 
-Usage: python3 tools/preview_closeups.py [zombie] [husk] [drowned]
+Usage: python3 tools/preview_closeups.py [zombie] [husk] [drowned] [skeleton]
 
-With no species, the script makes the close-ups of all three.
+With no species, the script makes the close-ups of all the species.
 
 Each close-up shows a few mobs from several sides, on a white
 background. A view "at night" has a dark background and low light, so that
@@ -145,11 +145,15 @@ DROWNED_CLOSEUPS = {
     "drowned_chorus": ("Chorus", gene_rows(["chorus"], ["breacher", "barnacle_crust", "shellback"]), ALL_SIDES),
 }
 
+# The close-ups of the skeleton. The skeleton has no babies.
+SKELETON_CLOSEUPS = {}
+
 # Each species: its texture, its baby texture, and its close-ups.
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
     "husk": (pg.HUSK_PATH, pg.HUSK_BABY_PATH, HUSK_CLOSEUPS),
     "drowned": (pg.DROWNED_PATH, pg.DROWNED_BABY_PATH, DROWNED_CLOSEUPS),
+    "skeleton": (pg.SKELETON_PATH, None, SKELETON_CLOSEUPS),
 }
 
 
@@ -166,7 +170,7 @@ def closeup(title, rows, views, adult_tex, baby_tex):
         draw.text((pad, y), name, fill=(0, 0, 0, 255), font=pg.ImageFont.load_default(size=20))
         tex = pg.zombie(baby_tex if baby else adult_tex, genes, baby)
         cubes = pg.cubes_of(tex, genes, baby)
-        pivots = pg.BABY_PIVOTS if baby else pg.PIVOTS
+        pivots = pg.pivots(baby)
         for c, (view, turn, tilt, light) in enumerate(views):
             x = pad + c * (cell_w + pad)
             if light < 1:
@@ -186,7 +190,7 @@ def main(*species):
         adult_path, baby_path, closeups = SPECIES[kind]
         pg.set_mob(kind)
         adult = pg.find_zombie_texture(adult_path)
-        baby = pg.find_zombie_texture(baby_path)
+        baby = pg.find_zombie_texture(baby_path) if baby_path else None
         for file_name, (title, rows, views) in closeups.items():
             path = os.path.join(OUT_DIR, file_name + ".png")
             closeup(title, rows, views, adult, baby).save(path)

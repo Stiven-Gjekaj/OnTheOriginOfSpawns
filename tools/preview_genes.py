@@ -1,6 +1,6 @@
 """Make preview images of the gene visuals of the zombie or the husk.
 
-Usage: python3 tools/preview_genes.py [zombie | husk | drowned]
+Usage: python3 tools/preview_genes.py [zombie | husk | drowned | skeleton]
 
 The script reads the vanilla texture of the species from the Minecraft jar in
 the Gradle cache of Loom. The default species is the zombie. It reads the visual of each gene from
@@ -45,11 +45,13 @@ DROWNED_PATH = "assets/minecraft/textures/entity/zombie/drowned.png"
 DROWNED_BABY_PATH = "assets/minecraft/textures/entity/zombie/drowned_baby.png"
 DROWNED_OUTER_PATH = "assets/minecraft/textures/entity/zombie/drowned_outer_layer.png"
 DROWNED_OUTER_BABY_PATH = "assets/minecraft/textures/entity/zombie/drowned_outer_layer_baby.png"
+SKELETON_PATH = "assets/minecraft/textures/entity/skeleton/skeleton.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
-REGIONS = {"face": 1, "scalp": 2, "torso": 3, "arms": 4, "hands": 5, "legs": 6,
+REGIONS = {"face": 1, "scalp": 2, "torso": 3, "arms": 4, "hands": 5, "legs": 6, "ribs": 9, "spine": 10,
+           "pelvis": 11, "joints": 12, "eye_sockets": 13,
            "lower_legs": 7, "feet": 8}
-MATERIALS = {"skin": 1, "cloth": 2, "eyes": 3}
+MATERIALS = {"skin": 1, "cloth": 2, "eyes": 3, "bone": 4}
 
 # The families of the zombie, from design/species/zombie.md.
 FAMILIES = {
@@ -152,6 +154,16 @@ DROWNED_EXTRA = {
                ("Siren Song + Ink", ["siren_song", "ink", "blind_hunter"], False, {}),
                ("All 6 + Barnacled", ["anchor", "scavenger", "undertow"], True, {})],
 }
+# The families of the skeleton, from design/species/skeleton.md.
+SKELETON_FAMILIES = {
+    "marksmen": ["eagle_eye", "deadeye", "longdraw", "quickdraw", "shieldbreaker", "high_ground"],
+    "rattlers": ["skitter", "backpedal", "bonedash", "hollow_bones", "lightfoot", "fleetbone"],
+    "ossified": ["thickbone", "calcified", "marrowmend", "reassemble", "bonewall", "holy_ward"],
+    "legions": ["barrage", "bugler", "phalanx", "muster", "warcry", "spider_rider"],
+    "hexers": ["venomtip", "frostnock", "witherhex", "blindshot", "soulfire", "hexmark"],
+}
+
+SKELETON_EXTRA = {}
 NIGHT = (18, 22, 38, 255)
 
 # The babies of BabyGenesClientTest, for a sheet to compare with the game.
@@ -190,6 +202,19 @@ DROWNED_CUBES = ZOMBIE_CUBES[:2] + [
     ("left_arm", (32, 48), (-1, -2, -2), (4, 12, 4), False),
     ("right_leg", (0, 16), (-2, 0, -2), (4, 12, 4), False),
     ("left_leg", (16, 48), (-2, 0, -2), (4, 12, 4), False),
+]
+
+# The skeleton: thin arms and legs of 2x12x2, from SkeletonModel. The left
+# limbs mirror the right limbs.
+SKELETON_PIVOTS = {
+    "head": (0, 0, 0), "body": (0, 0, 0), "right_arm": (-5, 2, 0), "left_arm": (5, 2, 0),
+    "right_leg": (-2, 12, 0), "left_leg": (2, 12, 0),
+}
+SKELETON_CUBES = ZOMBIE_CUBES[:2] + [
+    ("right_arm", (40, 16), (-1, -2, -1), (2, 12, 2), False),
+    ("left_arm", (40, 16), (-1, -2, -1), (2, 12, 2), True),
+    ("right_leg", (0, 16), (-1, 0, -1), (2, 12, 2), False),
+    ("left_leg", (0, 16), (-1, 0, -1), (2, 12, 2), True),
 ]
 
 # The baby zombie has its own model (BabyZombieModel) and its own texture
@@ -367,9 +392,10 @@ def split_image(identifier):
     return SPLIT_IMAGES[identifier]
 
 
-# The look of the current species: True for split limbs, and the outer layer
-# textures (adult, baby) of the drowned, or None. main() sets it.
-MOB = {"split": False, "outer": None}
+# The look of the current species: True for split limbs, the outer layer
+# textures (adult, baby) of the drowned or None, and the cubes and the pivots
+# of the adult model. set_mob() sets it.
+MOB = {"split": False, "outer": None, "cubes": ZOMBIE_CUBES, "pivots": PIVOTS}
 
 BABY_IMAGES = {}
 
@@ -493,7 +519,7 @@ def cubes_of(tex, genes, baby=False):
     pixel larger, with the outer layer texture. The genes put their marks on
     the outer layer too, as DrownedOuterLayerMixin does.
     """
-    body = BABY_CUBES if baby else DROWNED_CUBES if MOB["split"] else ZOMBIE_CUBES
+    body = BABY_CUBES if baby else MOB["cubes"]
     cubes = [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": m,
               "texture": tex, "scale": 1.0} for b, uv, f, s, m in body]
     if MOB["outer"]:
@@ -505,6 +531,11 @@ def cubes_of(tex, genes, baby=False):
     return cubes
 
 
+def pivots(baby=False):
+    """Return the pivots of the bones of the current species."""
+    return BABY_PIVOTS if baby else MOB["pivots"]
+
+
 def view(tex, genes, back, turn=None, tilt=0, light=1.0, opacity=1.0, baby=False):
     """Draw the zombie with the gene models: the front, the back, or any turn.
 
@@ -513,7 +544,7 @@ def view(tex, genes, back, turn=None, tilt=0, light=1.0, opacity=1.0, baby=False
     """
     if turn is None:
         turn = 180 if back else 0
-    return render3d.render(cubes_of(tex, genes, baby), BABY_PIVOTS if baby else PIVOTS, turn, tilt,
+    return render3d.render(cubes_of(tex, genes, baby), pivots(baby), turn, tilt,
                            SCALE, (VIEW_W, VIEW_H), center=(0, VIEW_H / 2 - VIEW_Y), light=light,
                            opacity=opacity)
 
@@ -592,12 +623,16 @@ SPECIES = {
     "zombie": (ZOMBIE_PATH, BABY_PATH, FAMILIES, EXTRA, BABIES),
     "husk": (HUSK_PATH, HUSK_BABY_PATH, HUSK_FAMILIES, HUSK_EXTRA, []),
     "drowned": (DROWNED_PATH, DROWNED_BABY_PATH, DROWNED_FAMILIES, DROWNED_EXTRA, []),
+    "skeleton": (SKELETON_PATH, None, SKELETON_FAMILIES, SKELETON_EXTRA, []),
 }
 
 
 def set_mob(species):
     """Set the look of the species for the bake and the cubes."""
     MOB["split"] = species == "drowned"
+    MOB["cubes"] = (DROWNED_CUBES if species == "drowned" else SKELETON_CUBES if species == "skeleton"
+                    else ZOMBIE_CUBES)
+    MOB["pivots"] = SKELETON_PIVOTS if species == "skeleton" else PIVOTS
     MOB["outer"] = ((find_zombie_texture(DROWNED_OUTER_PATH), find_zombie_texture(DROWNED_OUTER_BABY_PATH))
                     if species == "drowned" else None)
 
@@ -608,7 +643,8 @@ def main(species="zombie"):
     adult_path, baby_path, families, extras, babies = SPECIES[species]
     set_mob(species)
     tex = find_zombie_texture(adult_path)
-    baby_tex = find_zombie_texture(baby_path)
+    # The skeleton has no babies.
+    baby_tex = find_zombie_texture(baby_path) if baby_path else None
     for family, genes in families.items():
         ready = [g for g in genes if visual(g) is not None]
         missing = [g for g in genes if g not in ready]

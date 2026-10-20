@@ -410,12 +410,12 @@ Version 1.0.0 has these 30 perks:
 |---|---|---|
 | Fabers | Builder | Blocks placed |
 | Warriors | Fighter | Kills and damage dealt |
-| Nomads | Explorer | Distance traveled, new biomes, and new structures |
+| Wayfarers | Explorer | Distance traveled, new biomes, and new structures |
 | Fossors | Miner | Blocks mined under the surface |
 | Cultors | Farmer | Crops harvested and animals bred |
 
 - The family names fit lineages, not jobs. A single player of a family is a
-  Faber, a Warrior, a Nomad, a Fossor, or a Cultor.
+  Faber, a Warrior, a Wayfarer, a Fossor, or a Cultor.
 
 - More categories can come later.
 - Each category has a percentage of the total activity of the player.
@@ -432,7 +432,7 @@ Version 1.0.0 has these 30 perks:
 - The other categories give no effects.
 - The mobs counter the classes of the players.
   For example, a world of Warriors selects for tougher mobs.
-  A world of Nomads selects for faster mobs.
+  A world of Wayfarers selects for faster mobs.
 - The notebook shows the percentage of each category and the current classes.
 - Data packs define the classes, their activities, and their effects.
 

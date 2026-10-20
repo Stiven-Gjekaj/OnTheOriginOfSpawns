@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:skeleton/marksman",
+	"gains": [
+		{
+			"type": "arrow_spread",
+			"multiplier": 0
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.8
+		}
+	]
+}

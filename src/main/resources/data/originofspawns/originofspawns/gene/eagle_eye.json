@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:skeleton/marksman",
+	"gains": [
+		{
+			"type": "throw_range",
+			"multiplier": 1.5,
+			"target": "any"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

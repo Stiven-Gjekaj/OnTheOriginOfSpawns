@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:skeleton/marksman",
+	"gains": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 1.3,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.8
+		}
+	]
+}

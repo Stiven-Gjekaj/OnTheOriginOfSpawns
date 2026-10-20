@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:skeleton/marksman",
+	"gains": [
+		{
+			"type": "pierce_shields"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

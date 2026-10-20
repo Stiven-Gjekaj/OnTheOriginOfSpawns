@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:skeleton",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:skeleton/marksman",
+	"sub_family": "originofspawns:skeleton/rattler",
+	"gains": [
+		{
+			"type": "throw_rate",
+			"multiplier": 1.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.75,
+			"hits": "projectile"
+		}
+	]
+}

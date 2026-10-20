@@ -37,6 +37,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.entity.player.Player;
@@ -86,8 +87,13 @@ public final class Evolution {
 	public static void register() {
 		ServerEntityEvents.ENTITY_LOAD.register(Evolution::onLoad);
 		ServerLivingEntityEvents.AFTER_DEATH.register(Evolution::onDeath);
-		ServerLivingEntityEvents.AFTER_DAMAGE.register(
-				(entity, source, baseDamage, damageTaken, blocked) -> GeneCombat.onHurt(entity, source));
+		ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) -> {
+			GeneCombat.onHurt(entity, source);
+			if (source.getDirectEntity() instanceof Projectile && source.getEntity() instanceof Mob mob && mob != entity
+					&& mob.hasAttached(ModAttachments.GENES)) {
+				GeneCombat.onProjectileHit(mob, entity);
+			}
+		});
 		ServerTickEvents.END_SERVER_TICK.register(Evolution::decay);
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> CROWDS.clear());
 	}

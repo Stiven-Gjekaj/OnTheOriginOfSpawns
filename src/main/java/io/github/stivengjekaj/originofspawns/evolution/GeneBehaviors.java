@@ -69,7 +69,7 @@ public final class GeneBehaviors {
 					goals.addGoal(1, new BreakDoorGoal(mob, difficulty -> true));
 					goals.addGoal(1, new SiegeGoal(mob, siege));
 				}
-				case GeneEffect.Glowing glowing -> mob.setGlowingTag(true);
+				case GeneEffect.Glowing glowing when glowing.when() == GeneEffect.When.ALWAYS -> mob.setGlowingTag(true);
 				default -> {
 				}
 			}
@@ -177,7 +177,8 @@ public final class GeneBehaviors {
 				}
 				case GeneEffect.Aura aura when now % Math.max(1, Math.round(aura.intervalSeconds() * 20.0F)) < TICK_INTERVAL -> {
 					AABB area = mob.getBoundingBox().inflate(aura.radius());
-					for (Player player : level.getEntitiesOfClass(Player.class, area)) {
+					for (Player player : level.getEntitiesOfClass(Player.class, area,
+							player -> !aura.inWaterOnly() || player.isInWater())) {
 						player.addEffect(new MobEffectInstance(aura.effect(),
 								Math.round(aura.intervalSeconds() * 20.0F) + TICK_INTERVAL, aura.amplifier()), mob);
 					}
@@ -199,6 +200,8 @@ public final class GeneBehaviors {
 							.ifPresent(mob::setTarget);
 				}
 				case GeneEffect.Hunt hunt -> hunt(mob, level, hunt);
+				case GeneEffect.Glowing glowing when glowing.when() != GeneEffect.When.ALWAYS ->
+						mob.setGlowingTag(GeneCombat.test(mob, glowing.when()));
 				default -> {
 				}
 			}

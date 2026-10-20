@@ -20,6 +20,9 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.core.BlockPos;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
@@ -51,15 +54,21 @@ public final class GeneEffects {
 	}
 
 	/**
-	 * Returns the opacity of the mob when it is translucent now, from the light at the mob. A mob that is not
-	 * translucent now gives nothing. The client uses it to draw the mob.
+	 * Returns the opacity of the mob when it is translucent now, from the light at the mob and the blocks around it.
+	 * A mob that is not translucent now gives nothing. The client uses it to draw the mob.
 	 */
 	public static Optional<Float> translucentOpacity(Entity entity) {
 		int light = entity.level().getMaxLocalRawBrightness(entity.blockPosition());
 		return of(entity)
-				.filter(effect -> effect instanceof GeneEffect.Translucent translucent && light <= translucent.maxLight())
+				.filter(effect -> effect instanceof GeneEffect.Translucent translucent && light <= translucent.maxLight()
+						&& translucent.blocks().map(blocks -> inBlocks(entity, blocks)).orElse(true))
 				.map(effect -> ((GeneEffect.Translucent) effect).opacity())
 				.min(Float::compare);
+	}
+
+	private static boolean inBlocks(Entity entity, TagKey<Block> blocks) {
+		BlockPos eyes = BlockPos.containing(entity.getX(), entity.getEyeY(), entity.getZ());
+		return entity.level().getBlockState(entity.blockPosition()).is(blocks) || entity.level().getBlockState(eyes).is(blocks);
 	}
 
 	/**

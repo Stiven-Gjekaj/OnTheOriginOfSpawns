@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.definition;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -242,6 +243,38 @@ public sealed interface GeneEffect {
 	}
 
 	/**
+	 * The hits of the mob that an effect acts on.
+	 */
+	enum Hits implements StringRepresentable {
+		/**
+		 * The hits of the hands of the mob.
+		 */
+		MELEE,
+		/**
+		 * The hits of the projectiles of the mob, for example a thrown trident.
+		 */
+		PROJECTILE,
+		/**
+		 * All hits of the mob.
+		 */
+		ANY;
+
+		public static final Codec<Hits> CODEC = StringRepresentable.fromEnum(Hits::values);
+
+		/**
+		 * Returns true if this kind of hit includes a hit with a projectile or a hit without one.
+		 */
+		public boolean includes(boolean projectile) {
+			return this == ANY || (this == PROJECTILE) == projectile;
+		}
+
+		@Override
+		public String getSerializedName() {
+			return name().toLowerCase(Locale.ROOT);
+		}
+	}
+
+	/**
 	 * Multiplies the damage that the mob deals when the state is true.
 	 */
 	record DamageDealtWhen(When when, float multiplier) implements GeneEffect {
@@ -317,18 +350,19 @@ public sealed interface GeneEffect {
 	/**
 	 * Gives the target a status effect when the mob hits it.
 	 */
-	record EffectOnHit(Holder<MobEffect> effect, float seconds, int amplifier, float chance, When when)
+	record EffectOnHit(Holder<MobEffect> effect, float seconds, int amplifier, float chance, When when, Hits hits)
 			implements GeneEffect {
 		public static final MapCodec<EffectOnHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				MobEffect.CODEC.fieldOf("effect").forGetter(EffectOnHit::effect),
 				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(EffectOnHit::seconds),
 				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(EffectOnHit::amplifier),
 				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("chance", 1.0F).forGetter(EffectOnHit::chance),
-				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(EffectOnHit::when)
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(EffectOnHit::when),
+				Hits.CODEC.optionalFieldOf("hits", Hits.MELEE).forGetter(EffectOnHit::hits)
 		).apply(instance, EffectOnHit::new));
 
 		public EffectOnHit(Holder<MobEffect> effect, float seconds, int amplifier, float chance) {
-			this(effect, seconds, amplifier, chance, When.ALWAYS);
+			this(effect, seconds, amplifier, chance, When.ALWAYS, Hits.MELEE);
 		}
 
 		@Override
@@ -536,11 +570,13 @@ public sealed interface GeneEffect {
 
 	/**
 	 * The client draws the mob translucent when the light at it is low. Other mobs still see it.
+	 * With {@code blocks}, the mob is translucent only when its feet or its eyes are in one of these blocks.
 	 */
-	record Translucent(int maxLight, float opacity) implements GeneEffect {
+	record Translucent(int maxLight, float opacity, Optional<TagKey<Block>> blocks) implements GeneEffect {
 		public static final MapCodec<Translucent> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.intRange(0, 15).optionalFieldOf("max_light", 7).forGetter(Translucent::maxLight),
-				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("opacity", 0.1F).forGetter(Translucent::opacity)
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("opacity", 0.1F).forGetter(Translucent::opacity),
+				TagKey.hashedCodec(Registries.BLOCK).optionalFieldOf("blocks").forGetter(Translucent::blocks)
 		).apply(instance, Translucent::new));
 
 		@Override
@@ -708,15 +744,17 @@ public sealed interface GeneEffect {
 
 	/**
 	 * Gives a status effect to the players near the mob, renewed after each interval.
+	 * With {@code in_water_only}, only the players in water get it.
 	 */
-	record Aura(Holder<MobEffect> effect, int amplifier, float radius, float intervalSeconds, boolean particles)
-			implements GeneEffect {
+	record Aura(Holder<MobEffect> effect, int amplifier, float radius, float intervalSeconds, boolean particles,
+			boolean inWaterOnly) implements GeneEffect {
 		public static final MapCodec<Aura> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				MobEffect.CODEC.fieldOf("effect").forGetter(Aura::effect),
 				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(Aura::amplifier),
 				Codec.floatRange(0.5F, 32.0F).fieldOf("radius").forGetter(Aura::radius),
 				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("interval_seconds", 2.0F).forGetter(Aura::intervalSeconds),
-				Codec.BOOL.optionalFieldOf("particles", false).forGetter(Aura::particles)
+				Codec.BOOL.optionalFieldOf("particles", false).forGetter(Aura::particles),
+				Codec.BOOL.optionalFieldOf("in_water_only", false).forGetter(Aura::inWaterOnly)
 		).apply(instance, Aura::new));
 
 		@Override
@@ -726,10 +764,12 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * The mob glows all the time, so that players see it through walls.
+	 * The mob glows while the state is true, so that players see it through walls.
 	 */
-	record Glowing() implements GeneEffect {
-		public static final MapCodec<Glowing> CODEC = MapCodec.unit(new Glowing());
+	record Glowing(When when) implements GeneEffect {
+		public static final MapCodec<Glowing> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(Glowing::when)
+		).apply(instance, Glowing::new));
 
 		@Override
 		public String type() {
@@ -880,15 +920,17 @@ public sealed interface GeneEffect {
 
 	/**
 	 * When the mob dies while the state is true, the players in the radius get a status effect.
+	 * With {@code allies}, the mobs of its species in the radius get it, and the players do not.
 	 */
-	record DeathEffect(Holder<MobEffect> effect, float seconds, int amplifier, float radius, When when)
+	record DeathEffect(Holder<MobEffect> effect, float seconds, int amplifier, float radius, When when, boolean allies)
 			implements GeneEffect {
 		public static final MapCodec<DeathEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				MobEffect.CODEC.fieldOf("effect").forGetter(DeathEffect::effect),
 				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(DeathEffect::seconds),
 				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(DeathEffect::amplifier),
 				Codec.floatRange(0.5F, 32.0F).fieldOf("radius").forGetter(DeathEffect::radius),
-				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(DeathEffect::when)
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(DeathEffect::when),
+				Codec.BOOL.optionalFieldOf("allies", false).forGetter(DeathEffect::allies)
 		).apply(instance, DeathEffect::new));
 
 		@Override

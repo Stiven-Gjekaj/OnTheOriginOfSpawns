@@ -133,7 +133,7 @@ public final class GeneCombat {
 			switch (effect) {
 				case GeneEffect.IgniteTarget ignite when mob.getRandom().nextFloat() < ignite.chance() ->
 						target.igniteForSeconds(ignite.seconds());
-				case GeneEffect.EffectOnHit onHit when target instanceof LivingEntity living
+				case GeneEffect.EffectOnHit onHit when onHit.hits().includes(false) && target instanceof LivingEntity living
 						&& mob.getRandom().nextFloat() < onHit.chance() && test(mob, onHit.when()) ->
 						living.addEffect(new MobEffectInstance(onHit.effect(), Math.round(onHit.seconds() * 20.0F),
 								onHit.amplifier()), mob);
@@ -149,6 +149,22 @@ public final class GeneCombat {
 								mob.getAttachedOrElse(ModAttachments.COMBAT, CombatRecord.NONE).withLeechedXp(taken));
 					}
 				}
+				default -> {
+				}
+			}
+		}
+	}
+
+	/**
+	 * Runs the effects that act when a projectile of the mob hits a target, for example a thrown trident.
+	 */
+	public static void onProjectileHit(Mob mob, LivingEntity target) {
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			switch (effect) {
+				case GeneEffect.EffectOnHit onHit when onHit.hits().includes(true)
+						&& mob.getRandom().nextFloat() < onHit.chance() && test(mob, onHit.when()) ->
+						target.addEffect(new MobEffectInstance(onHit.effect(), Math.round(onHit.seconds() * 20.0F),
+								onHit.amplifier()), mob);
 				default -> {
 				}
 			}
@@ -229,8 +245,11 @@ public final class GeneCombat {
 				}
 				case GeneEffect.DeathEffect death when test(mob, death.when()) -> {
 					AABB area = mob.getBoundingBox().inflate(death.radius());
-					for (Player player : level.getEntitiesOfClass(Player.class, area)) {
-						player.addEffect(new MobEffectInstance(death.effect(), Math.round(death.seconds() * 20.0F),
+					List<? extends LivingEntity> reached = death.allies()
+							? level.getEntitiesOfClass(Mob.class, area, other -> other != mob && other.getType() == mob.getType())
+							: level.getEntitiesOfClass(Player.class, area);
+					for (LivingEntity living : reached) {
+						living.addEffect(new MobEffectInstance(death.effect(), Math.round(death.seconds() * 20.0F),
 								death.amplifier()), mob);
 					}
 					level.sendParticles(ParticleTypes.END_ROD, mob.getX(), mob.getY(0.5), mob.getZ(), 20, death.radius() / 2.0, 0.5, death.radius() / 2.0, 0.05);

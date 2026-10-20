@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "death_effect", "effect": "minecraft:resistance", "seconds": 10, "radius": 8, "allies": true }],
+	"mutation_rate": 0
+}

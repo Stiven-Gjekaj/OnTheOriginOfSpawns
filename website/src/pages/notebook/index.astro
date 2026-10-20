@@ -1,0 +1,259 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import Icon from "../../components/Icon.astro";
+import Status from "../../components/Status.astro";
+import site from "../../data/site.json";
+import { t, url } from "../../lib/site.js";
+
+const nb = site.notebook;
+const m3 = site.roadmap.find((r) => r.key === "Milestone 3");
+const m4 = nb.m4;
+const cats = site.evolution.categories;
+const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase();
+---
+<Layout title="Beagle Notebook" description="The Beagle Notebook, the mob info panel, and the player perks of On the Origin of Spawns.">
+  <PageHeader eyebrow={nb.itemName} title="Record each species">
+    The Beagle Notebook is an item. It has a tab for each species. Each species tab has a gene page and a family page.
+  </PageHeader>
+
+  <div class="page container">
+    <section>
+      <div class="book">
+        <div class="ribbons" role="group" aria-label="Species">
+          <button class="ribbon" type="button" aria-pressed="true" style="--rib:#3f7f1c">Zombie</button>
+          <button class="ribbon" type="button" disabled style="--rib:#a46a0c" data-tip="The husk comes in milestone 2b">Husk</button>
+          <button class="ribbon" type="button" disabled style="--rib:#1f6f8a" data-tip="The drowned comes in milestone 2b">Drowned</button>
+          <button class="ribbon" type="button" disabled style="--rib:#6b6b6b" data-tip="The other hostile mobs come in milestone 2c">More</button>
+        </div>
+        <div class="spread" id="spread">
+          <div class="sheet left" id="sheet-genes-left">
+            <canvas class="sketch" id="sketch" aria-label="A field sketch of a zombie"></canvas>
+            <h3>Zombie</h3>
+            <p class="ink">The common zombie. It changes in each biome category. Its marks tell its history.</p>
+            <h4>Biome category</h4>
+            <div class="cats" id="book-cats">
+              {cats.map((c) => <button type="button" class="cat" data-cat={c.id} aria-pressed={c.id === "temperate" ? "true" : "false"}><Icon name={c.id} />{c.name}</button>)}
+            </div>
+            <span class="folio">1</span>
+          </div>
+          <div class="sheet right" id="sheet-genes-right">
+            <h3>{t("screen.originofspawns.notebook.section.genes", "Genes")}: <span id="book-cat-name">{cats.find((c) => c.id === "temperate")?.name}</span></h3>
+            <div id="book-freq"></div>
+            <div id="book-empty">
+              <p class="ink">{t("screen.originofspawns.notebook.no_genes", "No genes are known for this species.")}</p>
+              <p class="ink">Kill zombies in the <a href={url("evolution/#simulator")}>pool simulator</a> to fill this page.</p>
+            </div>
+            <span class="folio">2</span>
+          </div>
+          <div class="sheet left" id="sheet-fam-left" hidden>
+            <h3>{t("screen.originofspawns.notebook.section.families", "Families")}</h3>
+            <p class="found-count" id="found-count"></p>
+            <h4>{t("screen.originofspawns.notebook.kind.pure", "Pure families")}</h4>
+            <div class="found" data-kind="pure"></div>
+            <h4>{t("screen.originofspawns.notebook.kind.hybrid", "Hybrids")}</h4>
+            <div class="found" data-kind="hybrid"></div>
+            <h4>{t("screen.originofspawns.notebook.kind.neutral", "Neutral")}</h4>
+            <div class="found" data-kind="neutral"></div>
+            <span class="folio">3</span>
+          </div>
+          <div class="sheet right" id="sheet-fam-right" hidden>
+            <h4>{t("screen.originofspawns.notebook.kind.minor", "Minor families")}</h4>
+            <div class="found" data-kind="minor"></div>
+            <p class="ink">A family name shows when you find a zombie of that family. Spawn zombies in the <a href={url("evolution/#simulator")}>simulator</a>, or mix genes in the <a href={url("lab/")}>Gene Lab</a>.</p>
+            <span class="folio">4</span>
+          </div>
+          <div class="edge-tabs" role="group" aria-label="Notebook pages">
+            <button type="button" class="edge-tab" data-tab="genes" aria-pressed="true">{t("screen.originofspawns.notebook.section.genes", "Genes")}</button>
+            <button type="button" class="edge-tab" data-tab="families" aria-pressed="false">{t("screen.originofspawns.notebook.section.families", "Families")}</button>
+          </div>
+        </div>
+      </div>
+      <p class="muted small center">This notebook reads the pools of the simulator on the Evolution page, and the families that you find there and in the Gene Lab. Your browser keeps them.</p>
+    </section>
+
+    <section class="section grid grid-2 info">
+      <div class="section-head">
+        <div class="eyebrow">In the game</div>
+        <h2>The mob info panel</h2>
+        <p>When you look at a mob, a small panel shows at the top of the screen. It shows the family of the mob and its dominant genes. Mods such as AppleSkin and Jade show information in a similar way.</p>
+        <div class="row">
+          <button class="btn sm" type="button" id="info-next">Look at a different zombie</button>
+          <button class="btn sm" type="button" id="info-night" aria-pressed="false">Night</button>
+        </div>
+      </div>
+      <div class="scene" id="scene">
+        <div class="mob-info" id="mob-info"></div>
+        <canvas id="scene-zombie" role="img" aria-label="A zombie in front of the player"></canvas>
+        <div class="crosshair" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <section class="section" id="perks">
+      <div class="section-head">
+        <div class="eyebrow"><Status status="planned" text="Milestone 3" /></div>
+        <h2>Knowledge and perks</h2>
+        <p>The notebook shows a knowledge percentage. It is the part of all notebook entries that you filled. The knowledge percentage sets the number of perk slots.</p>
+      </div>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>Perk slots</h3>
+          <div class="slots">
+            {nb.knowledge.map((k) => (
+              <div class="slot-row">
+                <span class="small muted">{k.knowledge}</span>
+                <div class="xp"><span style={`--w:${Math.max(3, parseFloat(k.knowledge))}%`}></span></div>
+                <span class="small"><b>{k.slots}</b> {k.slots === "1" ? "slot" : "slots"}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div class="card">
+          <h3>The {site.perks.length} perks</h3>
+          <p class="muted small">Each perk has a gain and a cost. You pay XP levels to take a perk. Some perks cannot be used together. Point at a slot to read a perk.</p>
+          <div class="perks">
+            {site.perks.map((p, i) => (
+              <>
+                <span class="mc-slot perk" tabindex="0" data-tip-ref={`tip-perk-${i}`}>{initials(p.name)}</span>
+                <template id={`tip-perk-${i}`}>
+                  <div class="t-name t-gold">{p.name}</div>
+                  <div class="t-gain">+ {p.gain}</div>
+                  <div class="t-loss">- {p.cost}</div>
+                  <div class="t-gray">Milestone 3</div>
+                </template>
+              </>
+            ))}
+          </div>
+        </div>
+      </div>
+      {m3 && <p class="muted small" style="margin-top: var(--s-3)">Milestone 3 adds the perks and the knowledge percentage.</p>}
+    </section>
+
+    {m4 && (
+      <section class="section">
+        <div class="section-head">
+          <div class="eyebrow"><Status status="planned" text="Milestone 4" /></div>
+          <h2>The full notebook</h2>
+        </div>
+        <div class="callout"><ul class="muted">{m4.items.map((x) => <li>{x}</li>)}</ul></div>
+      </section>
+    )}
+  </div>
+</Layout>
+
+<script>
+  import "../../scripts/notebook.js";
+</script>
+
+<style>
+  .center { text-align: center; margin-top: var(--s-4); }
+  .book {
+    position: relative; max-width: 1040px; margin: var(--s-6) auto 0; padding: var(--s-4);
+    background: linear-gradient(#6b3a20, var(--leather)); border-radius: 10px;
+    box-shadow: inset 0 0 0 2px #2e170b, inset 0 3px 0 #8a5132, 0 24px 48px -24px rgba(0, 0, 0, 0.6);
+    perspective: 1800px;
+  }
+  .ribbons { position: absolute; top: -26px; left: 40px; display: flex; gap: 6px; }
+  .ribbon {
+    width: 72px; padding: 7px 2px 18px; border: 0; color: #fff; cursor: pointer;
+    font: 500 var(--fs-xs) / 1 var(--font-display); background: var(--rib);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
+    transform: translateY(var(--ty, 0)); transition: transform 140ms ease;
+  }
+  .ribbon:hover { --ty: -3px; }
+  .ribbon[aria-pressed="true"] { --ty: -8px; }
+  .ribbon:disabled { cursor: not-allowed; filter: saturate(0.4) brightness(0.8); }
+  .spread {
+    position: relative; display: grid; grid-template-columns: 1fr 1fr; min-height: 440px;
+    background: var(--paper); color: var(--ink); border-radius: 4px; transform-style: preserve-3d;
+  }
+  .spread::before {
+    content: ""; position: absolute; inset: 0 calc(50% - 14px); z-index: 2; pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.2) 45%, rgba(0, 0, 0, 0.28) 50%, rgba(0, 0, 0, 0.2) 55%, transparent);
+  }
+  .sheet {
+    position: relative; min-width: 0; padding: var(--s-6) var(--s-6) var(--s-7); font-family: var(--font-hand);
+    background: repeating-linear-gradient(transparent 0 27px, rgba(58, 42, 26, 0.12) 27px 28px), linear-gradient(90deg, var(--paper), var(--paper-2));
+  }
+  .sheet.right { background: repeating-linear-gradient(transparent 0 27px, rgba(58, 42, 26, 0.12) 27px 28px), linear-gradient(270deg, var(--paper), var(--paper-2)); }
+  .sheet h3, .sheet h4 { font-family: var(--font-display); color: var(--ink); font-weight: 600; }
+  .sheet h3 { font-size: var(--fs-lg); margin-bottom: var(--s-2); }
+  .sheet h4 { font-size: var(--fs-sm); margin: var(--s-4) 0 var(--s-2); }
+  .sheet a { color: #2f5d0c; font-weight: 600; }
+  .ink { font-style: italic; color: #6a4a2a; }
+  .folio { position: absolute; bottom: var(--s-3); font: 500 var(--fs-xs) / 1 var(--font-display); opacity: 0.55; }
+  .left .folio { left: var(--s-6); }
+  .right .folio { right: var(--s-6); }
+  .sketch { float: right; width: 120px; height: 160px; margin: 0 0 var(--s-2) var(--s-3); image-rendering: pixelated; }
+  .cats { display: flex; flex-wrap: wrap; gap: 6px; }
+  .cat {
+    display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 6px; cursor: pointer;
+    border: 1px solid rgba(58, 42, 26, 0.35); background: rgba(255, 255, 255, 0.25); color: var(--ink);
+    font: 500 var(--fs-xs) / 1.2 var(--font-display);
+  }
+  .cat :global(svg) { width: 14px; height: 14px; }
+  .cat[aria-pressed="true"] { background: #3f7f1c; color: #fff; border-color: #2a5a10; }
+  .edge-tabs { position: absolute; right: -40px; top: 40px; display: grid; gap: 6px; z-index: 3; }
+  .edge-tab {
+    writing-mode: vertical-rl; padding: 10px 6px; border: 0; border-radius: 0 6px 6px 0; cursor: pointer;
+    background: #c9b27a; color: var(--ink); font: 500 var(--fs-xs) / 1 var(--font-display);
+    transition: transform 120ms ease, background 120ms ease;
+  }
+  .edge-tab[aria-pressed="true"] { background: var(--paper); transform: translateX(-4px); }
+  .found-count { font: 500 var(--fs-sm) / 1.4 var(--font-display); }
+  @media (max-width: 1120px) { .edge-tabs { right: -34px; } }
+  @media (max-width: 760px) {
+    .spread { grid-template-columns: 1fr; }
+    .spread::before { display: none; }
+    .sheet { padding: var(--s-5) var(--s-4) var(--s-7); }
+    .sheet.right { border-top: 1px dashed rgba(58, 42, 26, 0.35); }
+    .left .folio { left: var(--s-4); }
+    .right .folio { right: var(--s-4); }
+    .edge-tabs { position: static; display: flex; padding: var(--s-2) var(--s-3) var(--s-3); }
+    .edge-tab { writing-mode: horizontal-tb; border-radius: 6px; }
+    .edge-tab[aria-pressed="true"] { transform: none; box-shadow: inset 0 -3px 0 #3f7f1c; }
+    .ribbons { left: var(--s-4); }
+    .ribbon { width: 60px; }
+    .book { padding: var(--s-2); }
+  }
+
+  .info { align-items: center; }
+  .info .section-head { margin: 0; }
+  .scene {
+    position: relative; overflow: hidden; min-height: 320px; display: grid; justify-items: center;
+    border-radius: var(--radius-lg); border: 1px solid var(--border);
+    background: linear-gradient(transparent 64%, #3f7f1c 64%, #3f7f1c 68%, #6b4a2b 68%), linear-gradient(#7fb8e6, #bfe0f2 64%);
+  }
+  .scene.night { background: linear-gradient(transparent 64%, #1f4310 64%, #1f4310 68%, #3a2816 68%), linear-gradient(#0b1030, #1a2350 64%); }
+  .scene .mob-info { margin-top: var(--s-4); max-width: calc(100% - 24px); height: fit-content; }
+  .scene canvas { position: absolute; bottom: 12%; width: 150px; height: 200px; image-rendering: pixelated; }
+  .crosshair {
+    position: absolute; left: 50%; top: 52%; width: 18px; height: 18px; transform: translate(-50%, -50%); pointer-events: none; mix-blend-mode: difference;
+    background: linear-gradient(#fff, #fff) center / 2px 100% no-repeat, linear-gradient(#fff, #fff) center / 100% 2px no-repeat;
+  }
+
+  .slots { display: grid; gap: var(--s-3); margin-top: var(--s-4); }
+  .slot-row { display: grid; grid-template-columns: 40px 1fr 64px; gap: var(--s-3); align-items: center; }
+  .perks { display: flex; flex-wrap: wrap; gap: 4px; margin-top: var(--s-4); }
+  .perk { width: 44px; height: 44px; color: #fff; font: 600 var(--fs-xs) / 1 var(--font-display); text-shadow: 1px 1px 0 #000; cursor: help; }
+</style>
+
+<style is:global>
+  .freq { display: grid; grid-template-columns: 100px 1fr 44px; gap: var(--s-2); align-items: center; margin: 6px 0; font-size: var(--fs-sm); }
+  .freq .nm { font-family: var(--font-display); font-weight: 500; }
+  .freq .bar { height: 10px; background: rgba(58, 42, 26, 0.12); border: 1px solid rgba(58, 42, 26, 0.45); }
+  .freq .bar span { display: block; height: 100%; background: var(--fam); transition: width 600ms ease; }
+  .freq .v { font-family: var(--font-display); text-align: right; }
+  .found { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; font-size: var(--fs-sm); }
+  .found .f { padding: 2px 6px; border: 1px dashed rgba(58, 42, 26, 0.45); }
+  .found .f.no { opacity: 0.45; font-style: italic; }
+  .page-turn {
+    position: absolute; top: 0; bottom: 0; right: 0; width: 50%; z-index: 4; transform-origin: left center;
+    background: linear-gradient(270deg, var(--paper), var(--paper-2)); box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+    animation: turn 600ms cubic-bezier(0.4, 0.1, 0.3, 1) forwards; backface-visibility: hidden;
+  }
+  .page-turn.back { left: 0; right: auto; transform-origin: right center; animation-name: turn-back; background: linear-gradient(90deg, var(--paper), var(--paper-2)); }
+  @keyframes turn { to { transform: rotateY(-180deg); } }
+  @keyframes turn-back { to { transform: rotateY(180deg); } }
+  @media (max-width: 760px) { .page-turn { width: 100%; } }
+</style>

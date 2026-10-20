@@ -6,7 +6,8 @@
 		{
 			"type": "burrow",
 			"player_radius": 24,
-			"rise_seconds": 2
+			"rise_seconds": 2,
+			"stun_seconds": 2
 		}
 	]
 }

@@ -31,6 +31,25 @@ Change this document when a decision changes.
 - A configuration option sets the pool scope to "global" or "per biome".
   This option comes after version 1.0.0.
 
+## Evolution for every mob
+
+- Every mob in the game evolves. The way that it evolves can be different.
+- Each mob has genes, families, and visuals, as the zombie does.
+- These are the ways of evolution:
+
+| Way | What drives it | Mobs |
+|---|---|---|
+| Natural selection | How the mobs die. A gene that counters a common cause of death gets stronger | Hostile mobs, and neutral mobs that fight the player, such as polar bears, bees, wolves, goats, piglins, and iron golems |
+| Artificial selection | The player picks the parents. The bred offspring carry the genes of the parents | Mobs that the player can breed, such as cows, sheep, pigs, chickens, horses, cats, and wolves |
+| Habitat selection | The world selects the mobs: predators, drowning, cold, heat, and the other causes of death that do not come from the player | Wild mobs that the player seldom kills, such as fish, squid, bats, frogs, and turtles |
+| Social selection | What happens to the village: raids, the trades that the player makes, and the villagers that the player protects | Villagers and wandering traders |
+| Lineage | Each defeat of a boss makes its next fight stronger, from the genes of the mobs near its arena | Bosses: the wither, the ender dragon, the warden, and the elder guardian |
+
+- A mob can evolve in more than one way. For example, a wolf evolves by
+  natural selection in the wild, and by artificial selection when the player
+  breeds it.
+- A rare mob can have fewer genes than 30, for example 15 for the shulker.
+
 ## Selection
 
 - Each pool counts the causes of death of its members.

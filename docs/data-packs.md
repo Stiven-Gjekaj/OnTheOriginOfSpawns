@@ -91,14 +91,14 @@ Times are in seconds, and distances are in blocks.
 |---|---|---|
 | `attribute` | `attribute`, `amount`, `operation` | Changes an attribute of the mob. `operation` is `add_value`, `add_multiplied_base`, or `add_multiplied_total` |
 | `damage_taken` | `damage_types`, `multiplier` | Multiplies the damage from these damage types. `0` makes the mob immune |
-| `damage_taken_when` | `when`, `multiplier` | Multiplies the damage that the mob takes while the state is true |
+| `damage_taken_when` | `when`, `multiplier`, `radius` (`8`) | Multiplies the damage that the mob takes while the state is true. The states `alone` and `grouped` use the radius |
 | `damage_dealt_when` | `when`, `multiplier` | Multiplies the damage that the mob deals while the state is true |
 | `damage_from` | `attackers`, `multiplier` | Multiplies the damage from these entity types, for example `minecraft:iron_golem` |
 | `sunburn` | `multiplier` | Multiplies the fire damage while the sun burns the mob. Other fire does normal damage |
 | `critical_immunity` | | A critical hit of a player does no extra damage to the mob |
 | `speed_when` | `when`, `multiplier` | Multiplies the speed of the mob while the state is true |
 | `attribute_when` | `when`, `attribute`, `amount`, `operation` | Changes an attribute of the mob while the state is true |
-| `dodge_projectiles` | `chance`, `when` (`always`) | Each projectile has this chance to miss the mob |
+| `dodge_projectiles` | `chance`, `when` (`always`) | Each projectile has this chance to miss the mob. A missed projectile goes through the mob |
 | `undying` | `health` (`4`) | One time in its life, a lethal hit leaves the mob with this health |
 | `effect_immunity` | `effects` | These status effects do not affect the mob |
 | `heal_multiplier` | `multiplier` | Multiplies each heal of the mob |
@@ -164,7 +164,7 @@ The states for `when` are:
 
 | Type | Fields | Result |
 |---|---|---|
-| `leap` | `min_distance` (`3`), `max_distance` (`5`), `cooldown_seconds` (`5`), `miss_stun_seconds` (`1`), `medium` (`ground`) | The mob leaps at its target. After a missed leap, it cannot move for a short time. `medium` is `ground`, `water` for a dash through water at a target in water, or `breach` for a jump out of the water at a target on land up to 3 blocks higher |
+| `leap` | `min_distance` (`3`), `max_distance` (`5`), `cooldown_seconds` (`5`), `miss_stun_seconds` (`1`), `medium` (`ground`) | The mob leaps at its target. A leap that reaches the target does a normal hit. After a missed leap, it cannot move for a short time. `medium` is `ground`, `water` for a dash through water at a target in water, or `breach` for a jump out of the water at a target on land up to 3 blocks higher |
 | `water_pull` | `radius`, `strength` (`0.01`) | Pulls the players in water in the radius slowly toward the mob. Players in creative or spectator mode do not move |
 | `trident_chance` | `chance` | The mob has this chance to spawn with a trident in an empty hand. This adds to the vanilla chance |
 | `throw_rate` | `multiplier` | Multiplies how often the mob throws or shoots with a ranged attack. `2` throws two times as often |
@@ -172,11 +172,11 @@ The states for `when` are:
 | `scavenge_tridents` | `radius` (`2`) | The mob takes a trident that a player threw near it into its empty hand, and keeps it |
 | `no_weapon_drop` | | The item in the hand of the mob does not drop when the mob dies |
 | `hunt` | `invisible_radius` (`0`), `wounded_range_multiplier` (`1`) | The mob finds invisible players in the radius, and players under half health farther away |
-| `frenzied_targeting` | `chance`, `interval_seconds` (`10`), `radius` (`8`) | Now and then, the mob targets the nearest mob of a different species |
+| `frenzied_targeting` | `chance`, `interval_seconds` (`10`), `radius` (`8`) | Now and then, the mob targets the nearest mob of a different species. A zombie, husk, or drowned does not target its kin |
 | `lurk` | `radius` (`6`) | The mob does not move while its target player faces it, until the player is in the radius |
-| `burrow` | `player_radius` (`24`), `rise_seconds` (`2`), `blocks` (`#originofspawns:burrowable`), `night_only` (`true`) | The mob can spawn under the ground near a player and rise. It rises only through the blocks in the tag |
+| `burrow` | `player_radius` (`24`), `rise_seconds` (`2`), `blocks` (`#originofspawns:burrowable`), `night_only` (`true`), `stun_seconds` (`0`), `near_player` (`false`) | The mob can spawn 2 blocks under the ground near a player and rise. It rises only through the blocks in the tag. After it rises, it cannot move for `stun_seconds`. With `near_player`, it rises next to the nearest player |
 | `sidestep` | `range` (`12`), `distance` (`4`), `cooldown_seconds` (`10`) | When a player looks at the mob from farther than the range, the mob moves to the side |
-| `climb` | | The mob climbs walls, like a spider |
+| `climb` | | The mob climbs walls, like a spider. It cannot climb glass |
 | `throw_effect` | `effect`, `seconds`, `amplifier` (`0`), `range` (`8`), `cooldown_seconds` (`8`) | The mob throws at its target, which gives a status effect |
 | `pick_up_items` | | The mob picks up items |
 | `no_conversion` | | The mob does not convert to a different species in water |
@@ -189,10 +189,10 @@ The states for `when` are:
 | Type | Fields | Result |
 |---|---|---|
 | `silence` | `idle` (`false`), `hurt` (`false`), `steps` (`false`), `death` (`false`) | Stops these sounds of the mob |
-| `loud` | `multiplier` | Multiplies the volume of the sounds of the mob |
-| `translucent` | `max_light` (`7`), `opacity` (`0.1`), `blocks` (none) | The client draws the mob translucent at this light level or lower. With `blocks`, only while its feet or its eyes are in a block of this tag. Other mobs still see it |
+| `loud` | `multiplier` | Multiplies the volume of the sounds of the mob, also its steps |
+| `translucent` | `max_light` (`7`), `opacity` (`0.1`), `blocks` (none) | The client draws the mob translucent at this light level or lower. With `blocks`, only while its feet or its eyes are in a block of this tag. With `night_only` (`false`), only while it is dark outside. Other mobs still see it |
 | `glowing` | `when` (`always`) | The mob glows while the state is true, so that players see it through walls |
-| `aura` | `effect`, `amplifier` (`0`), `radius`, `interval_seconds` (`2`), `particles` (`false`), `in_water_only` (`false`) | Gives a status effect to the players near the mob. With `in_water_only`, only to the players in water |
+| `aura` | `effect`, `amplifier` (`0`), `radius`, `interval_seconds` (`2`), `particles` (`false`), `in_water_only` (`false`), `seconds` (none) | Gives a status effect to the players near the mob. The effect lasts `seconds`, or until the next renewal when there is no `seconds`. With `in_water_only`, only the players in water get it |
 | `see_invisible` | `radius` | The mob sees invisible entities in the radius as if they were visible |
 | `sneak_blind` | `radius` | The mob does not see a sneaking entity farther than the radius |
 | `lure` | `radius` (`6`), `reset_seconds` (`20`), `multiplier` (`2`) | A light hangs in front of the mob. When a player comes into the radius, the light goes out, and the next hit does more damage. The light shows again after `reset_seconds` with no player near |

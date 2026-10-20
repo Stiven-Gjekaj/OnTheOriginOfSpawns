@@ -137,6 +137,11 @@ public final class GeneCombat {
 						&& mob.getRandom().nextFloat() < onHit.chance() && test(mob, onHit.when()) ->
 						living.addEffect(new MobEffectInstance(onHit.effect(), Math.round(onHit.seconds() * 20.0F),
 								onHit.amplifier()), mob);
+				case GeneEffect.PullDownOnHit pull when target instanceof Player player && player.isInWater() ->
+						GeneBehaviors.pullDown(player, pull.blocks());
+				case GeneEffect.DragUnder drag when target instanceof Player player && player.isInWater() ->
+						mob.setAttached(ModAttachments.STATE, mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE)
+								.withDrag(player.getId(), mob.level().getGameTime() + Math.round(drag.seconds() * 20.0F)));
 				case GeneEffect.DrainFood drain when target instanceof Player player -> {
 					player.getFoodData().setFoodLevel(Math.max(0, player.getFoodData().getFoodLevel() - drain.amount()));
 					mob.heal(drain.heal());
@@ -178,6 +183,11 @@ public final class GeneCombat {
 		if (!(entity instanceof Mob mob) || !(mob.level() instanceof ServerLevel level)
 				|| !(source.getEntity() instanceof LivingEntity attacker) || attacker.getType() == mob.getType()) {
 			return;
+		}
+		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+		if (state.dragTarget() == attacker.getId()) {
+			// The held player breaks free with a hit.
+			mob.setAttached(ModAttachments.STATE, state.withDrag(-1, -1L));
 		}
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {

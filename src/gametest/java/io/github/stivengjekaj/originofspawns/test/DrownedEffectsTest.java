@@ -1,6 +1,8 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect.When;
+import io.github.stivengjekaj.originofspawns.evolution.BehaviorState;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
@@ -150,6 +152,86 @@ public class DrownedEffectsTest {
 		spear.hurtServer(helper.getLevel(), helper.getLevel().damageSources().trident(trident, drowned), 1.0F);
 		helper.assertTrue(spear.hasEffect(MobEffects.SLOWNESS), "a hit of the trident");
 		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 40)
+	public void waterPullMovesOnlySwimmers(GameTestHelper helper) {
+		Drowned drowned = drownedWith(helper, new BlockPos(1, 1, 1));
+		ServerPlayer swimmer = swimmer(helper, new BlockPos(4, 1, 1));
+		ServerPlayer walker = helper.makeMockServerPlayerInLevel();
+		walker.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(1, 1, 4))));
+		walker.doTick();
+		swimmer.setDeltaMovement(Vec3.ZERO);
+		walker.setDeltaMovement(Vec3.ZERO);
+		GeneBehaviors.waterPull(drowned, helper.getLevel(), new GeneEffect.WaterPull(8.0F, 0.1F));
+		helper.assertTrue(swimmer.getDeltaMovement().x < -0.05, "the swimmer moves to the drowned");
+		helper.assertValueEqual(walker.getDeltaMovement(), Vec3.ZERO, "the player on land");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 40)
+	public void undertowPullsTheSwimmerDown(GameTestHelper helper) {
+		Drowned drowned = drownedWith(helper, new BlockPos(1, 1, 1), "test_undertow");
+		ServerPlayer swimmer = swimmer(helper, new BlockPos(3, 3, 3));
+		double before = swimmer.getY();
+		GeneCombat.onHit(drowned, swimmer);
+		helper.assertValueEqual(before - swimmer.getY(), 2.0, "the blocks down");
+		GeneCombat.onHit(drowned, swimmer);
+		helper.assertValueEqual(before - swimmer.getY(), 2.0, "the floor stops the pull");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 40)
+	public void dragUnderHoldsUntilAHit(GameTestHelper helper) {
+		Drowned drowned = drownedWith(helper, new BlockPos(1, 1, 1), "test_drag");
+		ServerPlayer swimmer = swimmer(helper, new BlockPos(3, 2, 3));
+		GeneCombat.onHit(drowned, swimmer);
+		helper.assertValueEqual(drowned.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE).dragTarget(),
+				swimmer.getId(), "the drowned holds the player");
+		GeneCombat.onHurt(drowned, helper.getLevel().damageSources().playerAttack(swimmer));
+		helper.assertValueEqual(drowned.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE).dragTarget(), -1,
+				"the player breaks free");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 40)
+	public void swimVerticalChangesTheSinkAndTheRise(GameTestHelper helper) {
+		BlockPos wet = new BlockPos(1, 1, 1);
+		fill(helper, wet, 2);
+		Drowned drowned = drownedWith(helper, wet);
+		helper.runAfterDelay(5, () -> {
+			var swim = new GeneEffect.SwimVertical(3.0F, 0.5F);
+			drowned.setDeltaMovement(0.0, 0.2, 0.0);
+			GeneBehaviors.swimVertical(drowned, swim);
+			helper.assertTrue(Math.abs(drowned.getDeltaMovement().y - 0.1) < 1.0E-6, "a slower rise");
+			drowned.setDeltaMovement(0.0, -0.1, 0.0);
+			GeneBehaviors.swimVertical(drowned, swim);
+			helper.assertTrue(Math.abs(drowned.getDeltaMovement().y + 0.12) < 1.0E-6, "a faster sink");
+			helper.succeed();
+		});
+	}
+
+	/**
+	 * Fills a column of water from the position up.
+	 */
+	private static void fill(GameTestHelper helper, BlockPos bottom, int height) {
+		for (int y = 0; y < height; y++) {
+			helper.setBlock(bottom.above(y), Blocks.WATER);
+		}
+	}
+
+	/**
+	 * Makes a player in a column of water from the floor to the position and one block above it.
+	 */
+	private static ServerPlayer swimmer(GameTestHelper helper, BlockPos pos) {
+		helper.setBlock(pos.atY(0), Blocks.STONE);
+		fill(helper, pos.atY(1), pos.getY() + 1);
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		player.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(pos)));
+		// A mock player has no connection, so the server does not tick it. One tick finds the water.
+		player.doTick();
+		return player;
 	}
 
 	/**

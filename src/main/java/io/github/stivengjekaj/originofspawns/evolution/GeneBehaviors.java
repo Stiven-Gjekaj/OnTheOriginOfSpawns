@@ -49,6 +49,12 @@ public final class GeneBehaviors {
 	private static final int BURROW_DEPTH = 2;
 	private static final float CHICKEN_JOCKEY_CHANCE = 0.05F;
 	private static final int TICK_INTERVAL = 20;
+	/**
+	 * The speed that swim vertical adds for each point of its down multiplier above 1, each tick.
+	 */
+	private static final double SINK_STEP = 0.01;
+	private static final double PULL_STEP = 0.25;
+	private static final double HOLD_DISTANCE = 1.5;
 
 	private GeneBehaviors() {
 	}
@@ -161,6 +167,15 @@ public final class GeneBehaviors {
 		}
 		List<GeneEffect> effects = GeneEffects.of(mob).toList();
 		updateSpeed(mob, effects);
+		for (GeneEffect effect : effects) {
+			switch (effect) {
+				case GeneEffect.WaterPull pull -> waterPull(mob, level, pull);
+				case GeneEffect.SwimVertical swim -> swimVertical(mob, swim);
+				case GeneEffect.DragUnder drag -> drag(mob, level, drag);
+				default -> {
+				}
+			}
+		}
 		if (mob.tickCount % TICK_INTERVAL != 0) {
 			return;
 		}
@@ -205,6 +220,70 @@ public final class GeneBehaviors {
 				default -> {
 				}
 			}
+		}
+	}
+
+	/**
+	 * Pulls the players in water near the mob a small step toward it.
+	 */
+	public static void waterPull(Mob mob, ServerLevel level, GeneEffect.WaterPull pull) {
+		AABB area = mob.getBoundingBox().inflate(pull.radius());
+		// A player in creative or spectator mode is invulnerable, and the pull does not move it.
+		for (Player player : level.getEntitiesOfClass(Player.class, area, player -> player.isInWater()
+				&& !player.getAbilities().invulnerable && player.distanceTo(mob) <= pull.radius())) {
+			Vec3 toMob = mob.position().subtract(player.position());
+			if (toMob.lengthSqr() > 1.0) {
+				player.push(toMob.normalize().scale(pull.strength()));
+				player.syncVelocity = true;
+			}
+		}
+	}
+
+	/**
+	 * Changes the vertical speed of a mob in water. It sinks faster, and it swims up slower.
+	 */
+	public static void swimVertical(Mob mob, GeneEffect.SwimVertical swim) {
+		if (!mob.isInWater()) {
+			return;
+		}
+		Vec3 speed = mob.getDeltaMovement();
+		double y = speed.y > 0.0 ? speed.y * Math.min(swim.up(), 1.0F) : speed.y - SINK_STEP * Math.max(swim.down() - 1.0F, 0.0F);
+		mob.setDeltaMovement(speed.x, y, speed.z);
+	}
+
+	/**
+	 * Moves the entity down, up to the number of blocks. A block stops the move.
+	 */
+	public static void pullDown(LivingEntity entity, float blocks) {
+		double moved = 0.0;
+		while (moved + PULL_STEP <= blocks && entity.level().noCollision(entity,
+				entity.getBoundingBox().move(0.0, -(moved + PULL_STEP), 0.0))) {
+			moved += PULL_STEP;
+		}
+		if (moved > 0.0) {
+			entity.teleportTo(entity.getX(), entity.getY() - moved, entity.getZ());
+		}
+	}
+
+	/**
+	 * Sinks the mob and the player that it holds. The drag stops when the time ends or the player leaves the water.
+	 */
+	private static void drag(Mob mob, ServerLevel level, GeneEffect.DragUnder drag) {
+		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+		if (state.dragTarget() < 0) {
+			return;
+		}
+		if (level.getGameTime() >= state.dragUntil() || !(level.getEntity(state.dragTarget()) instanceof LivingEntity held)
+				|| !held.isAlive() || !held.isInWater()) {
+			mob.setAttached(ModAttachments.STATE, state.withDrag(-1, -1L));
+			return;
+		}
+		Vec3 sink = new Vec3(0.0, -drag.sinkSpeed(), 0.0);
+		held.setDeltaMovement(sink);
+		held.syncVelocity = true;
+		mob.setDeltaMovement(sink);
+		if (mob.distanceTo(held) > HOLD_DISTANCE) {
+			mob.setPos(held.getX(), held.getY(), held.getZ());
 		}
 	}
 

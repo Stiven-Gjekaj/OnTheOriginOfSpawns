@@ -79,7 +79,11 @@ public sealed interface GeneEffect {
 			Map.entry("glowing", Glowing.CODEC),
 			Map.entry("raise_victim", RaiseVictim.CODEC),
 			Map.entry("sunburn", Sunburn.CODEC),
-			Map.entry("attract_golems", AttractGolems.CODEC)
+			Map.entry("attract_golems", AttractGolems.CODEC),
+			Map.entry("water_pull", WaterPull.CODEC),
+			Map.entry("pull_down_on_hit", PullDownOnHit.CODEC),
+			Map.entry("drag_under", DragUnder.CODEC),
+			Map.entry("swim_vertical", SwimVertical.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -1008,6 +1012,68 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "no_conversion";
+		}
+	}
+
+	/**
+	 * Pulls the players in water in the radius slowly toward the mob, like a song.
+	 *
+	 * @param strength the speed that the pull adds each tick, in blocks for each tick
+	 */
+	record WaterPull(float radius, float strength) implements GeneEffect {
+		public static final MapCodec<WaterPull> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 64.0F).fieldOf("radius").forGetter(WaterPull::radius),
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("strength", 0.01F).forGetter(WaterPull::strength)
+		).apply(instance, WaterPull::new));
+
+		@Override
+		public String type() {
+			return "water_pull";
+		}
+	}
+
+	/**
+	 * Each hit on a player in water pulls the player down, up to the number of blocks. A block stops the pull.
+	 */
+	record PullDownOnHit(float blocks) implements GeneEffect {
+		public static final MapCodec<PullDownOnHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 16.0F).fieldOf("blocks").forGetter(PullDownOnHit::blocks)
+		).apply(instance, PullDownOnHit::new));
+
+		@Override
+		public String type() {
+			return "pull_down_on_hit";
+		}
+	}
+
+	/**
+	 * When the mob hits a player in water, it holds on, and both sink for some seconds.
+	 * The player breaks free with a hit on the mob, or when the player leaves the water.
+	 */
+	record DragUnder(float seconds, float sinkSpeed) implements GeneEffect {
+		public static final MapCodec<DragUnder> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 60.0F).fieldOf("seconds").forGetter(DragUnder::seconds),
+				Codec.floatRange(0.0F, 2.0F).optionalFieldOf("sink_speed", 0.12F).forGetter(DragUnder::sinkSpeed)
+		).apply(instance, DragUnder::new));
+
+		@Override
+		public String type() {
+			return "drag_under";
+		}
+	}
+
+	/**
+	 * Multiplies the vertical speed of the mob in water: {@code down} when it sinks, {@code up} when it swims up.
+	 */
+	record SwimVertical(float down, float up) implements GeneEffect {
+		public static final MapCodec<SwimVertical> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("down", 1.0F).forGetter(SwimVertical::down),
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("up", 1.0F).forGetter(SwimVertical::up)
+		).apply(instance, SwimVertical::new));
+
+		@Override
+		public String type() {
+			return "swim_vertical";
 		}
 	}
 }

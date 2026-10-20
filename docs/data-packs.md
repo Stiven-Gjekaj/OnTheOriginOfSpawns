@@ -92,7 +92,7 @@ Times are in seconds, and distances are in blocks.
 | `attribute` | `attribute`, `amount`, `operation` | Changes an attribute of the mob. `operation` is `add_value`, `add_multiplied_base`, or `add_multiplied_total` |
 | `damage_taken` | `damage_types`, `multiplier` | Multiplies the damage from these damage types. `0` makes the mob immune |
 | `damage_taken_when` | `when`, `multiplier`, `radius` (`8`) | Multiplies the damage that the mob takes while the state is true. The states `alone` and `grouped` use the radius |
-| `damage_dealt_when` | `when`, `multiplier` | Multiplies the damage that the mob deals while the state is true |
+| `damage_dealt_when` | `when`, `multiplier`, `players_only` (`false`) | Multiplies the damage that the mob deals while the state is true. With `players_only`, only the damage to players |
 | `damage_from` | `attackers`, `multiplier` | Multiplies the damage from these entity types, for example `minecraft:iron_golem` |
 | `sunburn` | `multiplier` | Multiplies the fire damage while the sun burns the mob. Other fire does normal damage |
 | `critical_immunity` | | A critical hit of a player does no extra damage to the mob |
@@ -166,7 +166,7 @@ The states for `when` are:
 |---|---|---|
 | `leap` | `min_distance` (`3`), `max_distance` (`5`), `cooldown_seconds` (`5`), `miss_stun_seconds` (`1`), `medium` (`ground`) | The mob leaps at its target. A leap that reaches the target does a normal hit. After a missed leap, it cannot move for a short time. `medium` is `ground`, `water` for a dash through water at a target in water, or `breach` for a jump out of the water at a target on land up to 3 blocks higher |
 | `water_pull` | `radius`, `strength` (`0.01`) | Pulls the players in water in the radius slowly toward the mob. Players in creative or spectator mode do not move |
-| `trident_chance` | `chance` | The mob has this chance to spawn with a trident in an empty hand. This adds to the vanilla chance |
+| `trident_chance` | `chance` | The mob has this chance to spawn with a trident in an empty hand or in place of a fishing rod. This adds to the vanilla chance |
 | `throw_rate` | `multiplier` | Multiplies how often the mob throws or shoots with a ranged attack. `2` throws two times as often |
 | `throw_range` | `multiplier`, `target` | Multiplies the throw range at a target. `target` is `wet`, for a target in water or in a boat, or `dry` |
 | `scavenge_tridents` | `radius` (`2`) | The mob takes a trident that a player threw near it into its empty hand, and keeps it |

@@ -29,10 +29,11 @@ _A Fabric mod where the mobs evolve from how you kill them_
 ---
 
 > [!NOTE]
-> **The mod is in development.** Version 0.2.0-alpha is out: the zombie is
-> complete, with 30 genes, 5 families, 20 minor families, and 10 hybrids.
-> The Beagle Notebook shows the gene pools and the families that you found.
-> The husk and the drowned come next, in milestone 2b.
+> **The mod is in development.** Version 0.3.0-alpha is out: the zombie, the
+> husk, and the drowned are complete. Each one has 30 genes, 5 families, 20
+> minor families, and 10 hybrids.
+> The Beagle Notebook shows the gene pools and what you know of each family.
+> The other hostile mobs come next, in milestone 2c.
 > The [wiki](https://stiven-gjekaj.github.io/OnTheOriginOfSpawns/) shows each
 > gene and family.
 > [ROADMAP.md](design/ROADMAP.md) lists the milestones to version 1.0.0.
@@ -41,7 +42,7 @@ _A Fabric mod where the mobs evolve from how you kill them_
 > [!WARNING]
 > **Content warning: body horror.** Mobs change how they look as they evolve.
 > Some gene mixes show bare bone, open wounds, blood, rot, fungus, and veins on
-> the skin. A zombie can carry 5 genes, so a mix can look disturbing. Do not
+> the skin. A mob can carry 5 genes, so a mix can look disturbing. Do not
 > play this mod if body horror upsets you.
 
 ---

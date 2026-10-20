@@ -69,11 +69,12 @@ Pixel plan for the Barnacled. Five Barnacled genes are gene models.
 - Kelpwrapped has strips of kelp round the body, the arms, and the legs,
   under the marks (order -1).
 
-Pixel plan for the Sirens. Four Siren genes are gene models.
+Pixel plan for the Sirens. Three Siren genes are gene models.
 - Siren Song has the mouth (x 10 to 13, y 13 to 15), at order 2, over the
   Ink stains.
-- Drag Under: long, thin fingers on each hand, the gene model
-  drag_under_fingers.
+- Drag Under has octopus suction cups on the front and the inner faces of
+  the forearms (rows 4 to 8) and on the palms, at order 1, over the Surge
+  foam and the Capsizer webs.
 - Fry: small fins on the head, the gene model fry_fins. Fry is the baby
   gene, so the fins show on the baby drowned too.
 - Shoal has a pattern of scales on all the skin, under the marks (order
@@ -798,28 +799,24 @@ def siren_song():
     return [inside, rim]
 
 
-FINGER = ("#6E9A90", "#5A8278", "#2A3A36")
-
-
 def drag_under():
-    # The fingers are the gene model drag_under_fingers.
-    return []
-
-
-def drag_under_model():
-    # Long, thin fingers that hang from each hand and curl a little to the
-    # front, with dark nails. On an arm bone, the hand ends at y 10. The
-    # right arm is from x -3 to 1, and the left arm from x -1 to 3.
-    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
-    # A finger: 1x5x1 at uv (0, 0).
-    paint_box(im, 0, 0, 1, 5, 1, lambda face, x, y: FINGER[2] if y == 4 or face == "bottom" else
-              FINGER[y % 2])
-    parts = []
-    for bone, xs in (("right_arm", (-3, -1.5, 0)), ("left_arm", (-1, 0.5, 2))):
-        for n, x in enumerate(xs):
-            parts.append({"bone": bone, "uv": [0, 0], "from": [x, 9.5, -1.5], "size": [1, 5, 1],
-                          "pivot": [x + 0.5, 10, -1], "rotation": [-15 - 5 * n, 0, 0]})
-    save_model("drag_under_fingers", im, parts)
+    # Rows of octopus suction cups: a dark middle with a pale pink rim on
+    # one side and under it, along the front and the inner faces of the
+    # forearms (rows 4 to 8), and on the palms. The marks are at order 1,
+    # over the Surge foam and the Capsizer webs.
+    rim = Mark("#E8B0BC", order=1)
+    middle = Mark("#7A3A4A", order=1)
+    cups = (((1, 4), ((2, 4), (1, 5))), ((2, 6), ((1, 6), (2, 7))), ((1, 8), ((2, 8),)))
+    for face in (FRONT, INNER):
+        for (col, row), ring in cups:
+            middle.put(arm(face, col, row))
+            for c, r in ring:
+                rim.put(arm(face, c, r), 235)
+    for x, y in ((48, 16), (50, 18)):
+        middle.put([(x, y), (x - 8, y + 32)])
+    for x, y in ((49, 16), (48, 17), (51, 18), (50, 19)):
+        rim.put([(x, y), (x - 8, y + 32)], 235)
+    return [rim, middle]
 
 
 FRY_FIN = ("#B488E8", "#9468D0", "#EADCFF")
@@ -991,7 +988,6 @@ MODELS = {
     "shellback": "originofspawns:shellback_shell",
     "anchor": "originofspawns:anchor_chain",
     "pearlheart": "originofspawns:pearlheart_glow",
-    "drag_under": "originofspawns:drag_under_fingers",
     "fry": "originofspawns:fry_fins",
     "chorus": "originofspawns:chorus_earring",
     "wreckcaller": "originofspawns:wreckcaller_bell",
@@ -1013,7 +1009,6 @@ def main():
     shellback_model()
     anchor_model()
     pearlheart_model()
-    drag_under_model()
     fry_model()
     chorus_model()
     wreckcaller_model()

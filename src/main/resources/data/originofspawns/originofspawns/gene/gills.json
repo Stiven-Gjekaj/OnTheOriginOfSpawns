@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:on_land",
+	"family": "originofspawns:drowned/riptide",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 3,
+			"idle_seconds": 0,
+			"when": "in_water"
+		}
+	],
+	"downsides": [
+		{
+			"type": "harm_when",
+			"when": "sunlit",
+			"amount": 1,
+			"interval_seconds": 4
+		}
+	]
+}

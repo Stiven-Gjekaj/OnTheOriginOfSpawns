@@ -1,0 +1,16 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:drowned/riptide",
+	"sub_family": "originofspawns:drowned/harpooner",
+	"gains": [
+		{
+			"type": "leap",
+			"min_distance": 4,
+			"max_distance": 8,
+			"cooldown_seconds": 5,
+			"miss_stun_seconds": 1,
+			"medium": "water"
+		}
+	]
+}

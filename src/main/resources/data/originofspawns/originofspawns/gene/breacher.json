@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:on_land",
+	"family": "originofspawns:drowned/riptide",
+	"gains": [
+		{
+			"type": "leap",
+			"min_distance": 0,
+			"max_distance": 6,
+			"cooldown_seconds": 5,
+			"miss_stun_seconds": 1,
+			"medium": "breach"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fall",
+			"multiplier": 1.5
+		}
+	]
+}

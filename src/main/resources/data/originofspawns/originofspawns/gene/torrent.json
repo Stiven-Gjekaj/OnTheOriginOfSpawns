@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:drowned/riptide",
+	"gains": [
+		{
+			"type": "speed_when",
+			"when": "in_water",
+			"multiplier": 1.4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.15,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

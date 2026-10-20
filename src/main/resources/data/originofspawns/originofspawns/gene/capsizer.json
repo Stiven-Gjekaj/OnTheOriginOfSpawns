@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:boat",
+	"family": "originofspawns:drowned/riptide",
+	"gains": [
+		{
+			"type": "break_boats",
+			"hits": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "speed_when",
+			"when": "on_land",
+			"multiplier": 0.8
+		}
+	]
+}

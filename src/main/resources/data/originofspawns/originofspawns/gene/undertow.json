@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:drowned",
+	"counters": "originofspawns:boat",
+	"family": "originofspawns:drowned/riptide",
+	"gains": [
+		{
+			"type": "pull_down_on_hit",
+			"blocks": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

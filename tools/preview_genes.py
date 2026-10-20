@@ -166,6 +166,8 @@ SKELETON_FAMILIES = {
 SKELETON_EXTRA = {
     "marksmen": [("All 6 at night", [], True, {"light": 0.18})],
     "rattlers": [("All 6 + Marksmen", ["eagle_eye", "longdraw", "high_ground", "quickdraw"], True, {})],
+    "ossified": [("Thickbone + marks", ["thickbone", "skitter", "hollow_bones", "quickdraw"], False, {}),
+                 ("All 6 + Rattlers", ["backpedal", "fleetbone", "lightfoot"], True, {})],
 }
 NIGHT = (18, 22, 38, 255)
 

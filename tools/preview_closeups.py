@@ -158,6 +158,11 @@ SKELETON_CLOSEUPS = {
                            ("Backpedal + Bonedash", ["backpedal", "bonedash"], False),
                            ("Hollow Bones + Fleetbone", ["hollow_bones", "fleetbone"], False),
                            ("All 6", SKELETON["rattlers"], False)], ALL_SIDES),
+    "skeleton_ossified": ("Ossified marks and models",
+                          [("Thickbone + Reassemble", ["thickbone", "reassemble"], False),
+                           ("Bonewall + Holy Ward", ["bonewall", "holy_ward"], False),
+                           ("Calcified + Marrowmend", ["calcified", "marrowmend"], False),
+                           ("All 6", SKELETON["ossified"], False)], ALL_SIDES),
 }
 
 # Each species: its texture, its baby texture, and its close-ups.

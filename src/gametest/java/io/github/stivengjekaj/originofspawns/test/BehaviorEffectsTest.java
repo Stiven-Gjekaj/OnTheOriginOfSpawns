@@ -79,7 +79,8 @@ public class BehaviorEffectsTest {
 		});
 	}
 
-	@GameTest(maxTicks = 160)
+	// The aura renews each 6 seconds, so the test waits longer than one renewal after the player arrives.
+	@GameTest(maxTicks = 260)
 	public void auraCanHaveItsOwnTime(GameTestHelper helper) {
 		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_short_aura");
 		ServerPlayer player = helper.makeMockServerPlayerInLevel();

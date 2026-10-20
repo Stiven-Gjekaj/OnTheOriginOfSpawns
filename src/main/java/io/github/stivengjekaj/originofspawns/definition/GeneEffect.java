@@ -801,14 +801,15 @@ public sealed interface GeneEffect {
 	 * With {@code in_water_only}, only the players in water get it.
 	 */
 	record Aura(Holder<MobEffect> effect, int amplifier, float radius, float intervalSeconds, boolean particles,
-			boolean inWaterOnly) implements GeneEffect {
+			boolean inWaterOnly, Optional<Float> seconds) implements GeneEffect {
 		public static final MapCodec<Aura> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				MobEffect.CODEC.fieldOf("effect").forGetter(Aura::effect),
 				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(Aura::amplifier),
 				Codec.floatRange(0.5F, 32.0F).fieldOf("radius").forGetter(Aura::radius),
 				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("interval_seconds", 2.0F).forGetter(Aura::intervalSeconds),
 				Codec.BOOL.optionalFieldOf("particles", false).forGetter(Aura::particles),
-				Codec.BOOL.optionalFieldOf("in_water_only", false).forGetter(Aura::inWaterOnly)
+				Codec.BOOL.optionalFieldOf("in_water_only", false).forGetter(Aura::inWaterOnly),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds").forGetter(Aura::seconds)
 		).apply(instance, Aura::new));
 
 		@Override

@@ -79,6 +79,20 @@ public class BehaviorEffectsTest {
 		});
 	}
 
+	@GameTest(maxTicks = 160)
+	public void auraCanHaveItsOwnTime(GameTestHelper helper) {
+		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_short_aura");
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		player.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
+		helper.runAfterDelay(70, () -> player.setPos(zombie.position()));
+		helper.succeedWhen(() -> {
+			MobEffectInstance darkness = player.getEffect(MobEffects.DARKNESS);
+			helper.assertTrue(darkness != null, "the player has darkness");
+			helper.assertTrue(darkness.getDuration() <= 40, "the darkness lasts 2 seconds, not "
+					+ darkness.getDuration() + " ticks");
+		});
+	}
+
 	@GameTest
 	public void glowingMakesTheZombieGlow(GameTestHelper helper) {
 		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_glow");

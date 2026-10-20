@@ -244,8 +244,10 @@ public final class GeneBehaviors {
 					AABB area = mob.getBoundingBox().inflate(aura.radius());
 					for (Player player : level.getEntitiesOfClass(Player.class, area,
 							player -> !aura.inWaterOnly() || player.isInWater())) {
-						player.addEffect(new MobEffectInstance(aura.effect(),
-								Math.round(aura.intervalSeconds() * 20.0F) + TICK_INTERVAL, aura.amplifier()), mob);
+						// With no time of its own, the effect lasts until the next renewal, so that it does not end.
+						int ticks = aura.seconds().map(seconds -> Math.round(seconds * 20.0F))
+								.orElse(Math.round(aura.intervalSeconds() * 20.0F) + TICK_INTERVAL);
+						player.addEffect(new MobEffectInstance(aura.effect(), ticks, aura.amplifier()), mob);
 					}
 					if (aura.particles()) {
 						level.sendParticles(ParticleTypes.ITEM_SLIME, mob.getX(), mob.getY(0.5), mob.getZ(),

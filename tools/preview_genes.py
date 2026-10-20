@@ -138,6 +138,10 @@ DROWNED_EXTRA = {
     "harpooners": [("All 6 + Surge", ["surge", "capsizer"], True, {}),
                    ("All 6 + Breacher", ["breacher", "undertow"], True, {}),
                    ("All 6 baby", [], True, {"baby": True})],
+    "abyssals": [("All 6 at night", [], True, {"light": 0.18}),
+                 ("Deepcold + Stormcaller", ["deepcold", "stormcaller"], False, {}),
+                 ("All 6 + Spearfisher", ["spearfisher", "gills"], True, {}),
+                 ("All 6 baby", [], True, {"baby": True})],
 }
 NIGHT = (18, 22, 38, 255)
 

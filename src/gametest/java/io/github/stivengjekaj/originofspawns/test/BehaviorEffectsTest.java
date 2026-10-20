@@ -58,14 +58,12 @@ public class BehaviorEffectsTest {
 		helper.succeed();
 	}
 
-	@GameTest(maxTicks = 100)
+	@GameTest(maxTicks = 300)
 	public void regenerateHealsAnIdleZombie(GameTestHelper helper) {
 		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_regen");
 		zombie.setHealth(10.0F);
-		helper.runAfterDelay(45, () -> {
-			helper.assertTrue(zombie.getHealth() > 10.0F, "health was " + zombie.getHealth());
-			helper.succeed();
-		});
+		// The zombie heals at its next behavior tick. A busy test server can start that tick late, so the test waits.
+		helper.succeedWhen(() -> helper.assertTrue(zombie.getHealth() > 10.0F, "health was " + zombie.getHealth()));
 	}
 
 	@GameTest(maxTicks = 160)

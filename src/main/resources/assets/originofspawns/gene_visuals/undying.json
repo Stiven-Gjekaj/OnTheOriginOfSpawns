@@ -4,22 +4,30 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/undying_0.png",
-				"tint": "#8A1E1A"
+				"tint": "#2A0E0C"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/undying_1.png",
-				"tint": "#B07A48"
+				"tint": "#D8CCA8"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/undying_2.png",
-				"tint": "#3A2416"
+				"tint": "#5A3A40"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/undying_3.png",
+				"tint": "#8FD8B8"
 			}
 		}
-	]
+	],
+	"model": "originofspawns:undying_glow"
 }

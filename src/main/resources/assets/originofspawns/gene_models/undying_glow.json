@@ -1,0 +1,79 @@
+{
+	"texture": "originofspawns:textures/entity/undying_glow.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				4,
+				-2.02
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2,
+				8,
+				-2.02
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				4,
+				2.02
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				6,
+				2.02
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		}
+	]
+}

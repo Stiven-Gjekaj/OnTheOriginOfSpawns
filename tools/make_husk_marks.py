@@ -55,7 +55,10 @@ Pixel plan for the Mummies.
   and 7, and leg row 7.
 - Cursetouch has the hands, arm rows 9 to 11, at order 2, over the
   Sunbaked hands.
-- Undying has the jar on the belly: chest columns 2 to 4, rows 8 to 10.
+- Undying has a stitched gash down the chest, from column 6 of row 0 to
+  column 1 of row 9, and a stitched gash across the back of the shirt.
+  The Solar Flare sun covers the middle of the chest gash. Small squares
+  of the gene model undying_glow glow in the gashes.
 - Tomb Guard has no marks. Its gold collar and cuffs are the gene model
   tomb_guard_gold.
 This script needs Pillow.
@@ -405,17 +408,61 @@ def cursetouch():
     return [wrap, thread]
 
 
+# The pixels of the Undying wounds that glow: (face, col, row).
+UNDYING_GLOW = ((CHEST, 4, 4), (CHEST, 2, 8), (SHIRT_BACK, 4, 4), (SHIRT_BACK, 3, 6))
+GHOST = "#8FD8B8"
+
+
 def undying():
-    # A sealed jar on the belly, under the Solar Flare sun: a red wax seal on
-    # the lid, a clay jar, and a dark sign on the jar.
-    seal = Mark("#8A1E1A")
-    seal.put(body(CHEST, 2, 8)).put(body(CHEST, 3, 8), 225)
-    clay = Mark("#B07A48")
-    for col, row in ((2, 9), (4, 9), (2, 10), (3, 10), (4, 10)):
-        clay.put(body(CHEST, col, row), 255 if col != 4 else 220)
-    sign = Mark("#3A2416")
-    sign.put(body(CHEST, 3, 9))
-    return [seal, clay, sign]
+    # Old wounds that death did not take: a long gash down the chest and a
+    # long gash across the back. Pale thread stitches them shut, and a
+    # bruise rims them. A faint light glows in the gashes, from the gene
+    # model undying_glow.
+    gash = Mark("#2A0E0C")
+    stitch = Mark("#D8CCA8")
+    bruise = Mark("#5A3A40")
+    glow = Mark(GHOST)
+    for col, row in ((6, 1), (5, 2), (5, 3), (3, 5), (3, 6), (2, 7), (1, 9)):
+        gash.put(body(CHEST, col, row))
+    for col, row in ((4, 2), (6, 3), (3, 4), (5, 4), (2, 6), (4, 6), (1, 8), (3, 8)):
+        stitch.put(body(CHEST, col, row), 240)
+    bruise.put(body(CHEST, 6, 0), 225).put(body(CHEST, 2, 9), 225)
+    for col, row in ((6, 1), (5, 2), (4, 3), (3, 5), (2, 7)):
+        gash.put(body(SHIRT_BACK, col, row))
+    for col, row in ((4, 2), (6, 2), (3, 4), (5, 3), (2, 6), (4, 6)):
+        stitch.put(body(SHIRT_BACK, col, row), 240)
+    bruise.put(body(SHIRT_BACK, 7, 1), 225).put(body(SHIRT_BACK, 3, 7), 225)
+    for face, col, row in UNDYING_GLOW:
+        glow.put(body(face, col, row))
+    return [gash, stitch, bruise, glow]
+
+
+def undying_model():
+    # Flat 1x1 squares that glow, just in front of the glowing gash pixels.
+    # On the body bone, chest column c is at x c - 4, and the chest is at
+    # z -2. The back is at z 2, and back column c is at x 3 - c.
+    from PIL import Image
+    color = tuple(int(GHOST[i:i + 2], 16) for i in (1, 3, 5)) + (255,)
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    im.putpixel((0, 0), color)
+    im.putpixel((1, 0), color)
+    parts = []
+    for face, col, row in UNDYING_GLOW:
+        if face == CHEST:
+            at = [col - 4, row, -2.02]
+        else:
+            at = [3 - col, row, 2.02]
+        parts.append({"bone": "body", "uv": [0, 0], "from": at, "size": [1, 1, 0], "glow": True})
+    model = {
+        "texture": "originofspawns:textures/entity/undying_glow.png",
+        "texture_width": 16,
+        "texture_height": 16,
+        "parts": parts,
+    }
+    im.save(os.path.join(TEXTURE_DIR, "undying_glow.png"))
+    with open(os.path.join(MODEL_DIR, "undying_glow.json"), "w") as fh:
+        json.dump(model, fh, indent="\t")
+        fh.write("\n")
 
 
 def embalmed():
@@ -523,6 +570,7 @@ MODELS = {
     "solar_flare": "originofspawns:solar_flare_sun",
     "sinkhole": "originofspawns:sinkhole_sand",
     "tomb_guard": "originofspawns:tomb_guard_gold",
+    "undying": "originofspawns:undying_glow",
 }
 
 
@@ -531,6 +579,7 @@ def main():
     solar_flare_model()
     sinkhole_model()
     tomb_guard_model()
+    undying_model()
     for gene, make in GENES.items():
         marks = make()
         write(gene, marks, MODELS)

@@ -35,6 +35,20 @@ Pixel plan for the Marksmen.
   arm.
 - Shieldbreaker has a notch in each rib, at y 22 and y 24.
 - High Ground: claws of bone on the feet, the gene model high_ground_claws.
+
+Pixel plan for the Rattlers.
+- Skitter has cracks on the legs, rows 1 to 8, and a light shade on the
+  outer and the inner faces of the legs.
+- Backpedal: a bent spine that bows out of the back, the gene model
+  backpedal_spine. The real spine is darker (order 0, the spine region).
+- Bonedash has a crack on the pelvis: x 24 to 29 and x 20 and 21, y 30
+  and 31.
+- Hollow Bones has holes on the arms (rows 1 to 4, 7, and 8) and on the
+  back of the head.
+- Lightfoot has rags round the feet: leg rows 9 to 11, and the bottom of
+  the leg.
+- Fleetbone: a loose, broken jaw, the gene model fleetbone_jaw, and the
+  dark mouth, y 14.
 This script needs Pillow.
 """
 import json
@@ -175,6 +189,140 @@ def high_ground_model():
     save_model("high_ground_claws", im, parts)
 
 
+def skitter():
+    # Thin, cracked leg bones: dark cracks that run down the legs at a
+    # slant, with pale chips beside them, on leg rows 1 to 8. The outer and
+    # the inner faces of the legs are a little darker, so the legs look
+    # thinner from the front.
+    crack = Mark("#3A3834")
+    chip = Mark("#F4F0E6")
+    shade = Mark("#5A564C", alpha=90)
+    for face in SIDES:
+        for col, row in ((0, 1), (1, 2), (1, 3), (0, 6), (1, 7)):
+            if (face // 2 + row) % 2 == 0 or face == FRONT:
+                crack.put(leg(face, col, row))
+        chip.put(leg(face, 1, 1), 230).put(leg(face, 0, 7), 230)
+    for face in (OUTER, INNER):
+        for col in (0, 1):
+            for row in (4, 5, 8):
+                shade.put(leg(face, col, row))
+    return [crack, chip, shade]
+
+
+def backpedal():
+    # The bent back is the gene model backpedal_spine. The real spine is
+    # darker, so the bent spine stands out in front of it.
+    shade = Mark("#4A4840", alpha=170, regions=["spine"])
+    shade.fill()
+    return [shade]
+
+
+def backpedal_model():
+    # A bent, curved spine that bows out of the back: a column of vertebrae
+    # down the middle of the back. The top and the bottom vertebrae lie on
+    # the back, and the middle ones stand out further, so the back looks
+    # hunched. The vertebrae overlap, so the column has no gaps. On the
+    # body bone, the back is at z 2, and the middle 2 columns of the back
+    # are at x -1 to 1.
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+
+    def vertebra(face, x, y):
+        # A dark line between the vertebrae, on the lowest row.
+        if face in ("right", "left", "back") and y == 1:
+            return BONE[2]
+        return BONE[0] if face in ("top", "back") else BONE[1]
+
+    # A vertebra: 2x2x1 at uv (0, 0).
+    paint_box(im, 0, 0, 2, 2, 1, vertebra)
+    parts = []
+    for y, z in ((0, 2.0), (2, 2.4), (4, 2.8), (6, 2.9), (8, 2.5), (10, 2.0)):
+        parts.append({"bone": "body", "uv": [0, 0], "from": [-1, y, z], "size": [2, 2, 1]})
+    save_model("backpedal_spine", im, parts)
+
+
+def bonedash():
+    # A cracked hip: a dark crack across the pelvis on the left hip, from
+    # the front to the side, with pale chips, and a chip gone from the
+    # right hip.
+    crack = Mark("#2E2C28")
+    chip = Mark("#F4F0E6")
+    for p in ((26, 30), (27, 31), (25, 31), (28, 30), (29, 31)):
+        crack.put(p)
+    chip.put((27, 30), 230).put((24, 30), 210)
+    crack.put((20, 31), 220)
+    chip.put((21, 31), 220)
+    return [crack, chip]
+
+
+def hollow_bones():
+    # Small holes in the bones, as in bird bones: dark round holes with a
+    # pale rim under each, on the arms (rows 1 to 4 and 7 and 8) and on the
+    # back of the skull.
+    hole = Mark("#2A2824")
+    rim = Mark("#F0ECE2")
+    for face in SIDES:
+        for col, row in ((0, 1), (1, 3), (0, 7)):
+            c = (col + face // 2) % 2
+            hole.put(arm(face, c, row))
+            rim.put(arm(face, c, row + 1), 225)
+    for x, y in ((25, 9), (29, 10), (27, 12), (30, 13), (25, 14)):
+        hole.put((x, y))
+        rim.put((x, y + 1) if y < 15 else (x + 1, y), 225)
+    return [hole, rim]
+
+
+RAG = ("#9A8A6E", "#7E6E54", "#C2B494")
+
+
+def lightfoot():
+    # Feet wrapped in rags: strips of gray-brown cloth round the feet (leg
+    # rows 9 to 11) and under them, with dark lines between the turns and a
+    # loose end at the front.
+    rag = Mark(RAG[0])
+    light = Mark(RAG[2])
+    line = Mark("#4A3E2E")
+    for face in SIDES:
+        for col in (0, 1):
+            for row in (9, 10, 11):
+                if (row + col + face // 2) % 3 == 0:
+                    line.put(leg(face, col, row), 230)
+                elif (col + row) % 2:
+                    light.put(leg(face, col, row))
+                else:
+                    rag.put(leg(face, col, row))
+    for x in (4, 5):
+        for y in (16, 17):
+            rag.put((x, y), 235)
+    return [rag, light, line]
+
+
+def fleetbone():
+    # The loose jaw is the gene model fleetbone_jaw. The mouth on the face
+    # is dark, as the jaw hangs open under it.
+    gap = Mark("#1E1C1A")
+    for x in range(9, 15):
+        gap.put((x, 14))
+    return [gap]
+
+
+def fleetbone_model():
+    # A broken jaw that hangs loose under the face: it hangs open, and one
+    # side hangs lower than the other, with a row of teeth on its top. On
+    # the head bone, the face is at z -4 and the bottom of the head at y 0.
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+
+    def jaw(face, x, y):
+        if face == "top":
+            return "#F6F2E8" if x % 2 == 0 else "#2E2C28"
+        return BONE[1] if face != "front" else BONE[0]
+
+    # The jaw: 6x1x2 at uv (0, 0).
+    paint_box(im, 0, 0, 6, 1, 2, jaw)
+    parts = [{"bone": "head", "uv": [0, 0], "from": [-3, -0.5, -4.3], "size": [6, 1, 2],
+              "pivot": [2.5, -0.5, -3.3], "rotation": [-25, 0, -15]}]
+    save_model("fleetbone_jaw", im, parts)
+
+
 GENES = {
     "eagle_eye": eagle_eye,
     "deadeye": deadeye,
@@ -182,11 +330,19 @@ GENES = {
     "quickdraw": quickdraw,
     "shieldbreaker": shieldbreaker,
     "high_ground": high_ground,
+    "skitter": skitter,
+    "backpedal": backpedal,
+    "bonedash": bonedash,
+    "hollow_bones": hollow_bones,
+    "lightfoot": lightfoot,
+    "fleetbone": fleetbone,
 }
 
 MODELS = {
     "longdraw": "originofspawns:longdraw_bracer",
     "high_ground": "originofspawns:high_ground_claws",
+    "backpedal": "originofspawns:backpedal_spine",
+    "fleetbone": "originofspawns:fleetbone_jaw",
 }
 
 
@@ -194,6 +350,8 @@ def main():
     os.makedirs(MARK_DIR, exist_ok=True)
     longdraw_model()
     high_ground_model()
+    backpedal_model()
+    fleetbone_model()
     for gene, make in GENES.items():
         marks = make()
         write(gene, marks, MODELS, REGION_MAP)

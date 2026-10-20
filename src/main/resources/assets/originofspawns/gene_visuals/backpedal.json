@@ -1,0 +1,16 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"regions": [
+				"spine"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/backpedal_0.png",
+				"tint": "#4A4840"
+			}
+		}
+	],
+	"model": "originofspawns:backpedal_spine"
+}

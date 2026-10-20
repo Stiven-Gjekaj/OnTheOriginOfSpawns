@@ -6,17 +6,28 @@
 
 _A Fabric mod where the mobs evolve from how you kill them_
 
+**The most in-depth evolution mod for Minecraft.** Each kill is a vote in
+natural selection. Burn the zombies, and their children resist fire. Shoot
+them, and they grow armor plates. Every gene changes how a mob looks, so you
+can read the evolution of your world on the bodies of its mobs.
+
+| 3 | 90 | 15 | 90 | 20 | 6 | 523,308 |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| species | genes | families | named family mixes | causes of death | biome pools for each species | possible gene mixes |
+
 ![Minecraft](https://img.shields.io/badge/minecraft-26.3-5b8c32?style=for-the-badge)
 ![Fabric](https://img.shields.io/badge/fabric-0.19.5-dbd0b4?style=for-the-badge)
 ![Java](https://img.shields.io/badge/java-25-e76f00?style=for-the-badge&logo=openjdk&logoColor=ffffff)
 [![All rights reserved](https://img.shields.io/badge/all_rights_reserved-3a3f47?style=for-the-badge)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/Stiven-Gjekaj/OnTheOriginOfSpawns?style=for-the-badge&label=release&color=16181c)](https://github.com/Stiven-Gjekaj/OnTheOriginOfSpawns/releases/latest)
 [![Modrinth](https://img.shields.io/badge/modrinth-download-00af5c?style=for-the-badge&logo=modrinth&logoColor=ffffff)](https://modrinth.com/mod/tvKIdALe)
-[![CurseForge](https://img.shields.io/badge/curseforge-download-f16436?style=for-the-badge&logo=curseforge&logoColor=ffffff)](https://www.curseforge.com/projects/1754344)
+[![CurseForge](https://img.shields.io/badge/curseforge-download-f16436?style=for-the-badge&logo=curseforge&logoColor=ffffff)](https://www.curseforge.com/minecraft/mc-mods/on-the-origin-of-spawns)
 [![Ko-fi](https://img.shields.io/badge/ko--fi-support_this_project-f26a1b?style=for-the-badge&logo=ko-fi&logoColor=ffffff)](https://ko-fi.com/stivengjekaj)
 
 <p align="center">
   <a href="#overview"><b>Overview</b></a> |
+  <a href="#gallery"><b>Gallery</b></a> |
+  <a href="#download"><b>Download</b></a> |
   <a href="#features"><b>Features</b></a> |
   <a href="#build"><b>Build</b></a> |
   <a href="#release"><b>Release</b></a> |
@@ -57,6 +68,23 @@ You evolve too, but you choose how. Select small adaptations, each with a
 trade-off. Then watch the mobs adapt to counter you. Record each species in
 your Beagle Notebook while natural selection and artificial selection race
 each other.
+
+## Gallery
+
+| | |
+|:---:|:---:|
+| ![Five zombies, one of each family, each with three genes](assets/gallery/zombies.png) | ![Five husks, one of each family, each with three genes](assets/gallery/husks.png) |
+| Zombies: Predators, Stalkers, Tanks, Hordes, and Blights | Husks: Scorchers, Dunecrawlers, Mummies, Caravans, and Parchers |
+| ![Five drowned, one of each family, each with three genes](assets/gallery/drowned.png) | ![The mob info panel over a husk of the Mummies family](assets/gallery/info_panel.png) |
+| Drowned: Riptides, Harpooners, Abyssals, Barnacled, and Sirens | The mob info panel shows what you know of a mob |
+
+## Download
+
+- **Modrinth:** [modrinth.com/mod/tvKIdALe](https://modrinth.com/mod/tvKIdALe)
+- **CurseForge:** [curseforge.com/minecraft/mc-mods/on-the-origin-of-spawns](https://www.curseforge.com/minecraft/mc-mods/on-the-origin-of-spawns)
+- **GitHub:** [the latest release](https://github.com/Stiven-Gjekaj/OnTheOriginOfSpawns/releases/latest)
+
+The mod needs Minecraft 26.3, Fabric Loader 0.19.5 or later, and Fabric API.
 
 ## Features
 

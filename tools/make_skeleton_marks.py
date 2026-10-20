@@ -175,11 +175,14 @@ def quickdraw_model():
     paint_box(im, 8, 0, 1, 8, 1, arrow)
     paint_box(im, 16, 0, 1, 5, 1, finger)
     parts = [{"bone": "right_arm", "uv": [0, 0], "from": [-1, 3, -1], "size": [2, 3, 2], "inflate": 0.3}]
-    # The arrows fan out from the band: their heads meet under it, and their
-    # fletchings spread apart over it, so each arrow reads.
-    for tilt, out in ((-22, -8), (0, -14), (22, -8)):
-        parts.append({"bone": "right_arm", "uv": [8, 0], "from": [-2.4, -1, -0.5], "size": [1, 8, 1],
-                      "pivot": [-1.9, 6, 0], "rotation": [tilt, 0, out]})
+    # The arrows sit in the band: each shaft goes through it, half inside the
+    # band (from x -1.3), so the band holds the arrows. The fletchings rest
+    # just over the top of the band (y 2.7), and the heads come out under
+    # it. The arrows fan out a little from the middle of the band, so each
+    # arrow reads.
+    for tilt in (-14, 0, 14):
+        parts.append({"bone": "right_arm", "uv": [8, 0], "from": [-1.8, 1, -0.5], "size": [1, 8, 1],
+                      "pivot": [-1.3, 4.5, 0], "rotation": [tilt, 0, 0]})
     for x, z, curl in ((-1, -1, -12), (0, 0, -20)):
         parts.append({"bone": "right_arm", "uv": [16, 0], "from": [x, 9.5, z], "size": [1, 5, 1],
                       "pivot": [x + 0.5, 10, z + 0.5], "rotation": [curl, 0, 0]})

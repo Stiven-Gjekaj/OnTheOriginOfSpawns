@@ -211,7 +211,27 @@ public sealed interface GeneEffect {
 		/**
 		 * Another mob of the same species is in 8 blocks. This is the opposite of {@code alone}.
 		 */
-		GROUPED;
+		GROUPED,
+		/**
+		 * The mob is not in water. This is the opposite of {@code in_water}.
+		 */
+		ON_LAND,
+		/**
+		 * The mob is 10 or more blocks under the sea level of the world.
+		 */
+		DEEP,
+		/**
+		 * The mob is at the sea level of the world or above it.
+		 */
+		ABOVE_SEA_LEVEL,
+		/**
+		 * A thunderstorm is in the world.
+		 */
+		STORM,
+		/**
+		 * The mob is out of water and out of rain, in the daylight, under the open sky.
+		 */
+		SUNLIT;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 

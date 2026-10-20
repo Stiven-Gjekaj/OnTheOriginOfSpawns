@@ -31,6 +31,7 @@ public final class GeneCombat {
 	private static final int DARK_LIGHT = 6;
 	private static final int BRIGHT_LIGHT = 12;
 	private static final double ALONE_RADIUS = 8.0;
+	private static final int DEEP_BLOCKS = 10;
 	/**
 	 * The damage multiplier of a critical hit in vanilla.
 	 */
@@ -62,6 +63,12 @@ public final class GeneCombat {
 			case ON_SAND -> onSand(entity);
 			case OFF_SAND -> !onSand(entity);
 			case GROUPED -> sameSpeciesNear(entity, ALONE_RADIUS) > 0;
+			case ON_LAND -> !entity.isInWater();
+			case DEEP -> entity.getY() <= entity.level().getSeaLevel() - DEEP_BLOCKS;
+			case ABOVE_SEA_LEVEL -> entity.getY() >= entity.level().getSeaLevel();
+			case STORM -> entity.level().isThundering();
+			case SUNLIT -> entity.level().isBrightOutside() && !entity.isInWaterOrRain()
+					&& entity.level().canSeeSky(BlockPos.containing(entity.getX(), entity.getEyeY(), entity.getZ()));
 		};
 	}
 

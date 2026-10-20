@@ -333,6 +333,23 @@ public class BehaviorEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void aConvertedMobGetsNewGenes(GameTestHelper helper) {
+		Identifier cinder = Identifier.fromNamespaceAndPath("originofspawns", "cinder");
+		Zombie zombie = EntityTypes.ZOMBIE.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
+		zombie.setAttached(ModAttachments.GENES, new CarriedGenes(List.of(cinder)));
+		zombie.snapTo(helper.absoluteVec(new Vec3(1.5, 1.0, 1.5)), 0.0F, 0.0F);
+		helper.getLevel().addFreshEntity(zombie);
+		var drowned = zombie.convertTo(EntityTypes.DROWNED, net.minecraft.world.entity.ConversionParams.single(zombie, true, false),
+				converted -> {
+				});
+		helper.assertTrue(drowned != null, "the zombie converts");
+		CarriedGenes genes = drowned.getAttached(ModAttachments.GENES);
+		helper.assertTrue(genes != null, "the drowned gets genes from its own pool");
+		helper.assertFalse(genes.genes().contains(cinder), "the drowned keeps a zombie gene");
+		helper.succeed();
+	}
+
 	private static Zombie zombieWith(GameTestHelper helper, BlockPos pos, String... genes) {
 		// The genes go on before the zombie enters the level, so it gets no genes from the pool.
 		Zombie zombie = EntityTypes.ZOMBIE.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);

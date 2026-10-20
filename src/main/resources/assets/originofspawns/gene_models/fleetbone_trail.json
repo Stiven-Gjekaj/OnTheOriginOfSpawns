@@ -1,0 +1,75 @@
+{
+	"texture": "originofspawns:textures/entity/fleetbone_trail.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				9.5,
+				2
+			],
+			"size": [
+				2,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				10.4,
+				2.9
+			],
+			"size": [
+				2,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				4
+			],
+			"from": [
+				-0.5,
+				11.3,
+				3.8
+			],
+			"size": [
+				1,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				4
+			],
+			"from": [
+				-0.5,
+				12.1,
+				4.7
+			],
+			"size": [
+				1,
+				1,
+				1
+			]
+		}
+	]
+}

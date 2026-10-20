@@ -48,8 +48,9 @@ Pixel plan for the Rattlers.
   back of the head.
 - Lightfoot has rags round the feet: leg rows 9 to 11, and the bottom of
   the leg.
-- Fleetbone: a loose, broken jaw, the gene model fleetbone_jaw, and the
-  dark mouth, y 14.
+- Fleetbone erases the left half of the rib cage (x 24 to 34, y 21 to
+  26, order 2), and has cracks on the ribs that are left. The gene model
+  fleetbone_trail hangs loose vertebrae back from the spine.
 
 Pixel plan for the Ossified.
 - Thickbone: thicker arms and legs with a knob at each elbow and knee, the
@@ -381,30 +382,50 @@ def lightfoot():
 
 
 def fleetbone():
-    # The loose jaw is the gene model fleetbone_jaw. The mouth on the face
-    # is dark, as the jaw hangs open under it.
-    gap = Mark("#1E1C1A")
-    for x in range(9, 15):
-        gap.put((x, 14))
-    return [gap]
+    # A frame that lost bones to run light: the left half of the rib cage is
+    # gone (erased with a mask, at order 2, after the marks of other genes),
+    # and the ribs that are left have cracks. The loose vertebrae that hang
+    # back from the spine are the gene model fleetbone_trail. The left half
+    # of the mob is the right half of the front in the texture: x 24 to 27
+    # of the front, the left side (x 28 to 31), and x 32 to 34 of the back,
+    # rows 1 to 6 (y 21 to 26).
+    mask = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+    for y in range(21, 27):
+        for x in list(range(24, 35)):
+            mask.putpixel((x, y), (255, 255, 255, 255))
+    name = "fleetbone_mask"
+    mask.save(os.path.join(MARK_DIR, name + ".png"))
+    gone = {"order": 2, "effect": {"type": "erase", "texture": f"originofspawns:textures/gene_marks/{name}.png"}}
+    crack = Mark("#3A3834")
+    chip = Mark("#F4F0E6")
+    for p in ((23, 22), (22, 24), (19, 24), (39, 22), (38, 24)):
+        crack.put(p)
+    chip.put((23, 24), 230).put((19, 22), 220)
+    return [crack, chip, gone]
 
 
 def fleetbone_model():
-    # A broken jaw that hangs loose under the face: it hangs open, and one
-    # side hangs lower than the other, with a row of teeth on its top. On
-    # the head bone, the face is at z -4 and the bottom of the head at y 0.
+    # A short trail of loose vertebrae that hang back and down from the foot
+    # of the spine, like a tail, as if the bones fall away while it runs.
+    # Each vertebra touches the next at a corner, and the first lies on the
+    # back. They get smaller toward the end. On the body bone, the back is
+    # at z 2, and the foot of the spine is at y 10.
     im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
 
-    def jaw(face, x, y):
-        if face == "top":
-            return "#F6F2E8" if x % 2 == 0 else "#2E2C28"
-        return BONE[1] if face != "front" else BONE[0]
+    def vertebra(face, x, y):
+        return BONE[0] if face in ("top", "back") else BONE[1] if face != "bottom" else BONE[2]
 
-    # The jaw: 6x1x2 at uv (0, 0).
-    paint_box(im, 0, 0, 6, 1, 2, jaw)
-    parts = [{"bone": "head", "uv": [0, 0], "from": [-3, -0.5, -4.3], "size": [6, 1, 2],
-              "pivot": [2.5, -0.5, -3.3], "rotation": [-25, 0, -15]}]
-    save_model("fleetbone_jaw", im, parts)
+    # A large vertebra: 2x1x1 at uv (0, 0). A small vertebra: 1x1x1 at uv
+    # (0, 4).
+    paint_box(im, 0, 0, 2, 1, 1, vertebra)
+    paint_box(im, 0, 4, 1, 1, 1, vertebra)
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [-1, 9.5, 2], "size": [2, 1, 1]},
+        {"bone": "body", "uv": [0, 0], "from": [-1, 10.4, 2.9], "size": [2, 1, 1]},
+        {"bone": "body", "uv": [0, 4], "from": [-0.5, 11.3, 3.8], "size": [1, 1, 1]},
+        {"bone": "body", "uv": [0, 4], "from": [-0.5, 12.1, 4.7], "size": [1, 1, 1]},
+    ]
+    save_model("fleetbone_trail", im, parts)
 
 
 def thickbone():
@@ -569,7 +590,7 @@ MODELS = {
     "high_ground": "originofspawns:high_ground_talons",
     "quickdraw": "originofspawns:quickdraw_arrows",
     "backpedal": "originofspawns:backpedal_spine",
-    "fleetbone": "originofspawns:fleetbone_jaw",
+    "fleetbone": "originofspawns:fleetbone_trail",
     "bonedash": "originofspawns:bonedash_outriggers",
     "thickbone": "originofspawns:thickbone_bones",
     "reassemble": "originofspawns:reassemble_wire",

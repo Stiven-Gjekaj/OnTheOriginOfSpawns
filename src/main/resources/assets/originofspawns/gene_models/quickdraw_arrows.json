@@ -1,0 +1,160 @@
+{
+	"texture": "originofspawns:textures/entity/quickdraw_arrows.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				3,
+				-1
+			],
+			"size": [
+				2,
+				3,
+				2
+			],
+			"inflate": 0.3
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				-2.4,
+				-1,
+				-0.5
+			],
+			"size": [
+				1,
+				8,
+				1
+			],
+			"pivot": [
+				-1.9,
+				6,
+				0
+			],
+			"rotation": [
+				-22,
+				0,
+				-8
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				-2.4,
+				-1,
+				-0.5
+			],
+			"size": [
+				1,
+				8,
+				1
+			],
+			"pivot": [
+				-1.9,
+				6,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				-14
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				-2.4,
+				-1,
+				-0.5
+			],
+			"size": [
+				1,
+				8,
+				1
+			],
+			"pivot": [
+				-1.9,
+				6,
+				0
+			],
+			"rotation": [
+				22,
+				0,
+				-8
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				16,
+				0
+			],
+			"from": [
+				-1,
+				9.5,
+				-1
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"pivot": [
+				-0.5,
+				10,
+				-0.5
+			],
+			"rotation": [
+				-12,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				16,
+				0
+			],
+			"from": [
+				0,
+				9.5,
+				0
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"pivot": [
+				0.5,
+				10,
+				0.5
+			],
+			"rotation": [
+				-20,
+				0,
+				0
+			]
+		}
+	]
+}

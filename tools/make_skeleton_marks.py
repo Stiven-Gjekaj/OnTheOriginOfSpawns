@@ -31,8 +31,8 @@ Pixel plan for the Marksmen.
   the top of the head over it.
 - Longdraw: a leather bracer on the left forearm, the gene model
   longdraw_bracer.
-- Quickdraw has the fingertips: arm rows 10 and 11, and the bottom of the
-  arm.
+- Quickdraw: three arrows strapped on the right forearm, and long fingers
+  on the right hand, the gene model quickdraw_arrows.
 - Shieldbreaker has a notch in each rib, at y 22 and y 24.
 - High Ground: large hooked talons on the feet and a heavy brow ridge over
   the eyes, the gene model high_ground_talons.
@@ -145,18 +145,45 @@ def longdraw_model():
 
 
 def quickdraw():
-    # Worn, white fingertips: the tips are a clean white, with a gray line
-    # of wear above them.
-    tip = Mark("#FFFFFF")
-    wear = Mark("#5A564C")
-    for face in SIDES:
-        for col in (0, 1):
-            tip.put(arm(face, col, 11)).put(arm(face, col, 10), 240)
-            wear.put(arm(face, col, 9), 220 if (face + col) % 2 else 255)
-    for x in (44, 45):
-        for y in (16, 17):
-            tip.put((x, y))
-    return [tip, wear]
+    # The arrows and the fingers are the gene model quickdraw_arrows.
+    return []
+
+
+ARROW = ("#F2F0EA", "#B83A2E", "#8A6A44", "#6E7078")
+
+
+def quickdraw_model():
+    # Ready arrows and long fingers on the right arm: a leather band round
+    # the forearm (arm rows 5 to 7) with three arrows strapped on its outer
+    # side, head down, so they are ready to draw, and two long, thin bone
+    # fingers on the right hand. The left forearm keeps the Longdraw
+    # bracer. On an arm bone, the right arm is from x -1 to 1 and from y -2,
+    # and the hand ends at y 10.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def arrow(face, x, y):
+        if y < 2:
+            return ARROW[0] if (y + x) % 2 == 0 else ARROW[1]
+        return ARROW[3] if y == 7 else ARROW[2] if (x + y) % 2 else "#A6845A"
+
+    def finger(face, x, y):
+        return BONE[2] if y == 4 else BONE[0] if face in ("front", "top") else BONE[1]
+
+    # The band: 2x3x2 at uv (0, 0). An arrow: 1x8x1 at uv (8, 0). A finger:
+    # 1x5x1 at uv (16, 0).
+    paint_box(im, 0, 0, 2, 3, 2, lambda face, x, y: LEATHER[1] if y == 1 else LEATHER[0])
+    paint_box(im, 8, 0, 1, 8, 1, arrow)
+    paint_box(im, 16, 0, 1, 5, 1, finger)
+    parts = [{"bone": "right_arm", "uv": [0, 0], "from": [-1, 3, -1], "size": [2, 3, 2], "inflate": 0.3}]
+    # The arrows fan out from the band: their heads meet under it, and their
+    # fletchings spread apart over it, so each arrow reads.
+    for tilt, out in ((-22, -8), (0, -14), (22, -8)):
+        parts.append({"bone": "right_arm", "uv": [8, 0], "from": [-2.4, -1, -0.5], "size": [1, 8, 1],
+                      "pivot": [-1.9, 6, 0], "rotation": [tilt, 0, out]})
+    for x, z, curl in ((-1, -1, -12), (0, 0, -20)):
+        parts.append({"bone": "right_arm", "uv": [16, 0], "from": [x, 9.5, z], "size": [1, 5, 1],
+                      "pivot": [x + 0.5, 10, z + 0.5], "rotation": [curl, 0, 0]})
+    save_model("quickdraw_arrows", im, parts)
 
 
 def shieldbreaker():
@@ -540,6 +567,7 @@ GENES = {
 MODELS = {
     "longdraw": "originofspawns:longdraw_bracer",
     "high_ground": "originofspawns:high_ground_talons",
+    "quickdraw": "originofspawns:quickdraw_arrows",
     "backpedal": "originofspawns:backpedal_spine",
     "fleetbone": "originofspawns:fleetbone_jaw",
     "bonedash": "originofspawns:bonedash_outriggers",
@@ -552,6 +580,7 @@ MODELS = {
 def main():
     os.makedirs(MARK_DIR, exist_ok=True)
     longdraw_model()
+    quickdraw_model()
     high_ground_model()
     backpedal_model()
     bonedash_model()

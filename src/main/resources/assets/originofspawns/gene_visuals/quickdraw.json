@@ -1,19 +1,5 @@
 {
 	"region_map": "originofspawns:textures/region/skeleton.png",
-	"layers": [
-		{
-			"effect": {
-				"type": "pattern",
-				"texture": "originofspawns:textures/gene_marks/quickdraw_0.png",
-				"tint": "#FFFFFF"
-			}
-		},
-		{
-			"effect": {
-				"type": "pattern",
-				"texture": "originofspawns:textures/gene_marks/quickdraw_1.png",
-				"tint": "#5A564C"
-			}
-		}
-	]
+	"layers": [],
+	"model": "originofspawns:quickdraw_arrows"
 }

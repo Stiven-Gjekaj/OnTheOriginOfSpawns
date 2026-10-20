@@ -1,0 +1,26 @@
+{
+	"layers": [
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/deepcold_0.png",
+				"tint": "#9CC8F0"
+			},
+			"order": -2
+		},
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/deepcold_1.png",
+				"tint": "#F2FAFF"
+			},
+			"order": -2
+		}
+	]
+}

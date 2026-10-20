@@ -39,6 +39,18 @@ Pixel plan for the Harpooners.
 - Spearfisher has a torn net over all four faces of the body.
 - Stormcaller has copper and green rust on all the skin, under the marks
   (order -3).
+
+Pixel plan for the Abyssals.
+- Lure: an angler lure on the head with a bulb that glows, the gene model
+  lure_light.
+- Pressure Hide has pale folds round the legs (rows 4 to 10) and on row 6
+  and 7 of the sides of the head, columns 0 to 2.
+- Blind Hunter has the eyes (y 12 and 13, x 9, 10, 13, and 14).
+- Ink has the mouth (y 14 and 15) and a spray on the chest, at order 1,
+  over the Spearfisher net.
+- Deepcold has a frost tint on all the skin, under the marks (order -2).
+- Glowspot has spots on the legs (rows 1 to 3) and on rows 1 and 2 of the
+  sides of the head. The gene model glowspot_spots makes them glow.
 This script needs Pillow.
 """
 import json
@@ -47,7 +59,7 @@ import os
 from PIL import Image
 
 from make_gene_marks import (BACK, CHEST, FRONT, INNER, LEFT_SIDE, MARK_DIR, OUTER, RIGHT_SIDE, SHIRT_BACK,
-                             VISUAL_DIR, Mark, arm, body, head_side, noise100, touched, write)
+                             VISUAL_DIR, Mark, arm, body, head_side, leg, noise100, touched, write)
 from make_husk_marks import paint_box, save_model
 
 # The outer layer is 0.25 pixel out from the body. A gene model sits a
@@ -353,6 +365,137 @@ def stormcaller():
     return [copper, rust]
 
 
+GLOW = "#D8FF6A"
+
+
+def lure():
+    # The lure is the gene model lure_light.
+    return []
+
+
+def lure_model():
+    # An angler lure: a thin stalk grows up from the top of the head, bends
+    # forward, and hangs a bulb that glows in front of the forehead, 4
+    # pixels out from the face. On the
+    # head bone, the top of the head is at y -8, and the face is at z -4.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+    stalk = ("#2E4A4A", "#3E5E5A")
+    # The stalk up: 1x4x1 at uv (0, 0). The stalk forward: 1x1x6 at uv (4,
+    # 0). The stalk down: 1x2x1 at uv (20, 0). The bulb: 2x2x2 at uv (0, 8).
+    paint_box(im, 0, 0, 1, 4, 1, lambda face, x, y: stalk[y % 2])
+    paint_box(im, 4, 0, 1, 1, 6, lambda face, x, y: stalk[x % 2])
+    paint_box(im, 20, 0, 1, 2, 1, lambda face, x, y: stalk[y % 2])
+    paint_box(im, 0, 8, 2, 2, 2, lambda face, x, y: "#F6FFC8" if (x + y) % 3 == 0 else GLOW)
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-0.5, -12, -2], "size": [1, 4, 1]},
+        {"bone": "head", "uv": [4, 0], "from": [-0.5, -12, -8], "size": [1, 1, 6]},
+        {"bone": "head", "uv": [20, 0], "from": [-0.5, -11, -8], "size": [1, 2, 1]},
+        {"bone": "head", "uv": [0, 8], "from": [-1, -9, -8.5], "size": [2, 2, 2], "glow": True},
+    ]
+    save_model("lure_light", im, parts)
+
+
+def pressure_hide():
+    # Pale, thick skin: heavy pale folds round the legs, which no other
+    # Abyssal or Riptide mark uses, and on the sides of the head, beside the
+    # Gills slits. Each fold has a pale ridge and a dark crease under it.
+    ridge = Mark("#B4CCC4", alpha=230)
+    crease = Mark("#24403E", alpha=200)
+    for face in (OUTER, FRONT, INNER, BACK):
+        for col in range(4):
+            for row in (5, 9):
+                r = row - (1 if (col + face // 4) % 3 == 0 else 0)
+                ridge.put(leg(face, col, r), 255 if col % 2 else 230)
+                crease.put(leg(face, col, r + 1), 220)
+    for side in (0, 1):
+        for col in (0, 1, 2):
+            ridge.put(head_side(side, col, 6), 240)
+            crease.put(head_side(side, col, 7), 220)
+    return [ridge, crease]
+
+
+def blind_hunter():
+    # Milky white eyes: the bright eyes turn a cloudy white, and the pixels
+    # under them a pale gray.
+    milk = Mark("#EEF2F0")
+    cloud = Mark("#B8C4C4", alpha=220)
+    for x in (9, 10, 13, 14):
+        milk.put((x, 12), 255 if x in (9, 14) else 235)
+        cloud.put((x, 13))
+    return [milk, cloud]
+
+
+def ink():
+    # Black ink stains: round the mouth, in drips down the chin, and in a
+    # spray on the chest. The chest stains are at order 1, over the
+    # Spearfisher net.
+    stain = Mark("#0C0C12", order=1)
+    wet = Mark("#2A2A3A", order=1)
+    for x in range(10, 14):
+        stain.put((x, 14))
+    stain.put((10, 15)).put((12, 15))
+    wet.put((11, 15), 230).put((13, 15), 200)
+    for col, row in ((3, 0), (3, 1), (4, 0), (3, 2), (5, 1), (2, 3), (6, 3), (1, 5), (4, 4)):
+        stain.put(body(CHEST, col, row), 255 if row < 2 else 225)
+    for col, row in ((4, 1), (2, 1), (5, 4), (3, 3)):
+        wet.put(body(CHEST, col, row), 220)
+    return [stain, wet]
+
+
+def deepcold():
+    # A frost-blue tint on all the skin, and specks of white rime. They go
+    # under the marks (order -2), and they let the color under them show, so
+    # the Stormcaller copper under them turns cold.
+    frost = Mark("#9CC8F0", alpha=110, order=-2, materials=["skin"], size=16).fill()
+    rime = Mark("#F2FAFF", alpha=200, order=-2, materials=["skin"], size=16)
+    for y in range(16):
+        for x in range(16):
+            if noise100(x, y, 95) < 10:
+                rime.put((x, y), 255 if noise100(x, y, 96) < 50 else 220)
+    return [frost, rime]
+
+
+# The glowing spots of Glowspot: (bone, x, y, z) of each spot on the gene
+# model, and the texture pixels of the same spots. Column c of a side of the
+# head is at z c - 4. The left leg gets the spots of the right leg,
+# mirrored.
+GLOWSPOTS = [
+    ("right_leg", -1, 1, -2.3, leg(FRONT, 1, 1)), ("right_leg", 0, 3, -2.3, leg(FRONT, 2, 3)),
+    ("right_leg", -2.3, 2, 0, leg(OUTER, 1, 2)),
+    ("head", -4.3, -6, -3, [head_side(0, 1, 2)]), ("head", -4.3, -7, -1, [head_side(0, 3, 1)]),
+    ("head", 4.3, -6, -3, [head_side(1, 1, 2)]), ("head", 4.3, -7, -1, [head_side(1, 3, 1)]),
+]
+
+
+def glowspot():
+    # Spots of light on the legs and on the sides of the head. The texture
+    # has the spots, so they show in the day. The gene model glowspot_spots
+    # puts a small square that glows on each spot, so they show in the dark.
+    spot = Mark(GLOW)
+    for *_, pixels in GLOWSPOTS:
+        spot.put(pixels)
+    return [spot]
+
+
+def glowspot_model():
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    paint_box(im, 0, 0, 1, 1, 0, lambda face, x, y: GLOW)
+    paint_box(im, 4, 0, 0, 1, 1, lambda face, x, y: GLOW)
+    parts = []
+    for bone, x, y, z, _ in GLOWSPOTS:
+        side = abs(x) > 4 if bone == "head" else abs(x) > 2
+        if side:
+            # A square on a side face: 0x1x1 at uv (4, 0).
+            parts.append({"bone": bone, "uv": [4, 0], "from": [x, y, z], "size": [0, 1, 1], "glow": True})
+        else:
+            parts.append({"bone": bone, "uv": [0, 0], "from": [x, y, z], "size": [1, 1, 0], "glow": True})
+        if bone == "right_leg":
+            mirror = dict(parts[-1], bone="left_leg")
+            mirror["from"] = [-x - (0 if side else 1), y, z]
+            parts.append(mirror)
+    save_model("glowspot_spots", im, parts)
+
+
 GENES = {
     "undertow": undertow,
     "torrent": torrent,
@@ -366,6 +509,12 @@ GENES = {
     "scavenger": scavenger,
     "spearfisher": spearfisher,
     "stormcaller": stormcaller,
+    "lure": lure,
+    "pressure_hide": pressure_hide,
+    "blind_hunter": blind_hunter,
+    "ink": ink,
+    "deepcold": deepcold,
+    "glowspot": glowspot,
 }
 
 MODELS = {
@@ -375,6 +524,8 @@ MODELS = {
     "barbed": "originofspawns:barbed_barbs",
     "volley": "originofspawns:volley_rope",
     "scavenger": "originofspawns:scavenger_bag",
+    "lure": "originofspawns:lure_light",
+    "glowspot": "originofspawns:glowspot_spots",
 }
 
 
@@ -386,6 +537,8 @@ def main():
     barbed_model()
     volley_model()
     scavenger_model()
+    lure_model()
+    glowspot_model()
     for gene, make in GENES.items():
         marks = make()
         write(gene, marks, MODELS)

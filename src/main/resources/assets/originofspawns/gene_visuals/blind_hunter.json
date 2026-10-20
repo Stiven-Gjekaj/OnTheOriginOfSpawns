@@ -1,0 +1,18 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blind_hunter_0.png",
+				"tint": "#EEF2F0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blind_hunter_1.png",
+				"tint": "#B8C4C4"
+			}
+		}
+	]
+}

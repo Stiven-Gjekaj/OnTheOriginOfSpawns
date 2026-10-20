@@ -1,0 +1,12 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/glowspot_0.png",
+				"tint": "#D8FF6A"
+			}
+		}
+	],
+	"model": "originofspawns:glowspot_spots"
+}

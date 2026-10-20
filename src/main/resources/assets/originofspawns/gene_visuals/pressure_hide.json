@@ -1,0 +1,18 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/pressure_hide_0.png",
+				"tint": "#B4CCC4"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/pressure_hide_1.png",
+				"tint": "#24403E"
+			}
+		}
+	]
+}

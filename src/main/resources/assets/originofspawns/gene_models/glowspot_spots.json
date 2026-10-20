@@ -1,0 +1,187 @@
+{
+	"texture": "originofspawns:textures/entity/glowspot_spots.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				1,
+				-2.3
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				1,
+				-2.3
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				3,
+				-2.3
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				3,
+				-2.3
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "right_leg",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				-2.3,
+				2,
+				0
+			],
+			"size": [
+				0,
+				1,
+				1
+			],
+			"glow": true
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				2.3,
+				2,
+				0
+			],
+			"size": [
+				0,
+				1,
+				1
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				-4.3,
+				-6,
+				-3
+			],
+			"size": [
+				0,
+				1,
+				1
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				-4.3,
+				-7,
+				-1
+			],
+			"size": [
+				0,
+				1,
+				1
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				4.3,
+				-6,
+				-3
+			],
+			"size": [
+				0,
+				1,
+				1
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				4.3,
+				-7,
+				-1
+			],
+			"size": [
+				0,
+				1,
+				1
+			],
+			"glow": true
+		}
+	]
+}

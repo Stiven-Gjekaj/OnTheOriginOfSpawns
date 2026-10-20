@@ -18,23 +18,25 @@ if (canvas) {
   canvas.height = H * dpr;
   const ctx = canvas.getContext("2d");
 
-  // One family at a time, then some mixes, then a plain zombie.
+  // One family at a time, then some mixes, then a plain zombie. A set has
+  // the genes of one species only.
   const sets = families.map((f) => genes.filter((g) => g.family === f.id && g.visual).slice(0, 3));
   sets.push(["cinder", "bonerunner", "frenzy"].map((id) => byId[id]));
   sets.push(["ironhide", "lurker", "nightborn"].map((id) => byId[id]));
   sets.push(["bloat", "sporebearer", "thickskull"].map((id) => byId[id]));
-  sets.push([]);
-  const clean = sets.map((s) => s.filter((g) => g && g.visual));
+  // A family with no gene art yet has no set. The last set is a plain zombie.
+  const clean = sets.map((s) => s.filter((g) => g && g.visual)).filter((s) => s.length);
+  clean.push([]);
 
   let index = 0;
   let model = null;
   let since = 0;
   const load = () => {
     const list = clean[index % clean.length];
-    Z.bake(list).then((m) => {
+    Z.bake(list, false, list[0]?.species ?? "zombie").then((m) => {
       model = m;
       since = performance.now();
-      const r = familyOf(list);
+      const r = familyOf(list, list[0]?.species ?? "zombie");
       label.classList.add("fade");
       setTimeout(() => {
         label.innerHTML = `<div class="n" style="color:${r.color}">${r.name}</div>` +

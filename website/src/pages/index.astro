@@ -1,8 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Icon from "../components/Icon.astro";
+import Status from "../components/Status.astro";
 import site from "../data/site.json";
-import { url } from "../lib/site.js";
+import { url, familiesOf } from "../lib/site.js";
 import { brandIcon } from "../lib/icons.js";
 
 const { links, version, minecraft, fabric, tagline, overview, features, roadmap } = site;
@@ -11,13 +12,14 @@ const v1Done = v1.filter((r) => r.done).length;
 const next = v1.find((r) => !r.done);
 
 const stats = [
-  [site.genes.length, "Zombie genes", "blight"],
+  [site.species.length, "Species", "neutral"],
+  [site.genes.length, "Genes", "blight"],
   [site.families.length, "Major families", "predator"],
   [site.minors.length, "Minor families", "stalker"],
   [site.hybrids.length, "Hybrids", "horde"],
   [site.pressures.length, "Pressures", "tank"],
-  [site.evolution.categories.length, "Biome categories", "temperate"],
 ];
+const speciesIcon = { zombie: "temperate", husk: "hot", drowned: "wet" };
 
 const loop = [
   ["You kill a zombie", `The mod records the cause of the death. Fire, arrows, melee, and falls are some of the ${site.pressures.length} pressures.`],
@@ -28,9 +30,9 @@ const loop = [
 
 const explore = [
   ["evolution/", "Evolution", "Gene pools, pressures, selection, and a pool simulator.", "temperate"],
-  ["families/", "Families", "The 5 major families, the 20 minor families, and the 10 hybrids.", "stalker"],
-  ["genes/", "Genes", `All ${site.genes.length} zombie genes, with their gains, downsides, and marks.`, "blight"],
-  ["lab/", "Gene Lab", "Put genes on a zombie and see the marks of the game.", "predator"],
+  ["families/", "Families", "The major families, minor families, and hybrids of each species.", "stalker"],
+  ["genes/", "Genes", `All ${site.genes.length} genes, with their gains, downsides, and marks.`, "blight"],
+  ["lab/", "Gene Lab", "Put genes on a mob and see the marks of the game.", "predator"],
   ["notebook/", "Beagle Notebook", "The notebook, the mob info panel, and the perks.", "tank"],
   ["data-packs/", "Data packs", "Add your own genes, families, and pressures.", "horde"],
 ];
@@ -89,6 +91,37 @@ const explore = [
             </li>
           ))}
         </ol>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div class="eyebrow">Species</div>
+          <h2>Each species evolves its own way</h2>
+          <p>Each species has its own gene pools, 30 genes, and 5 families. A husk and a zombie share nothing.</p>
+        </div>
+        <div class="grid grid-3">
+          {site.species.map((sp) => (
+            <div class="card species">
+              <div class="species-head">
+                <span class="mc-slot"><Icon name={speciesIcon[sp.id] || "neutral"} /></span>
+                <div>
+                  <h3>{sp.name}</h3>
+                  <Status status={sp.status} text={sp.status === "released" ? undefined : `${sp.milestone}, in development`} />
+                </div>
+              </div>
+              <p class="muted small">{sp.intro || "The common zombie of the overworld. It is the first species of the mod."}</p>
+              <div class="row fams">{familiesOf(sp.id).map((f) => <span class="badge fam" style={`--fam:var(--${f.id})`}>{f.name}</span>)}</div>
+              {(() => {
+                const total = site.genes.filter((g) => g.species === sp.id).length;
+                return sp.art < total && <p class="small muted">{sp.art} of {total} genes have their art. The other art comes later.</p>;
+              })()}
+              <div class="row actions">
+                <a class="btn sm" href={url(`genes/${sp.id === site.species[0].id ? "" : `?species=${sp.id}`}`)}>Genes</a>
+                <a class="btn sm" href={url(`families/${sp.id === site.species[0].id ? "" : `?species=${sp.id}`}`)}>Families</a>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section class="section">
@@ -231,5 +264,10 @@ const explore = [
   .features li { display: flex; gap: var(--s-3); margin: 0; }
   .features li::before { content: ""; flex: none; width: 8px; height: 8px; margin-top: 8px; background: var(--accent); }
   .xp-row { display: grid; grid-template-columns: 1fr auto; gap: var(--s-3); align-items: center; margin: var(--s-4) 0 var(--s-2); }
+  .species { display: grid; gap: var(--s-3); align-content: start; }
+  .species-head { display: flex; gap: var(--s-3); align-items: center; }
+  .species-head h3 { font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 600; margin-bottom: 4px; }
+  .fams { gap: 6px; }
+  .species .actions { margin-top: auto; }
   .notebook-card { display: flex; gap: var(--s-4); align-items: flex-start; }
 </style>

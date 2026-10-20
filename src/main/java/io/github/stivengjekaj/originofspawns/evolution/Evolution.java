@@ -107,6 +107,10 @@ public final class Evolution {
 			}
 		}
 		if (mob.hasAttached(ModAttachments.GENES)) {
+			// A mob from an older version has no birth time, so its age starts now.
+			if (!mob.hasAttached(ModAttachments.BORN)) {
+				mob.setAttached(ModAttachments.BORN, level.getGameTime());
+			}
 			GeneBehaviors.installGoals(mob);
 		}
 	}
@@ -115,6 +119,26 @@ public final class Evolution {
 	 * Gives a new mob its genes from the pool of its species in the category of its biome.
 	 * A mob of a species that no gene can go to gets no genes.
 	 */
+	/**
+	 * Makes the carried genes of a mob from a list of genes: it finds the family from the tags of the genes and their
+	 * frequencies in the pool of the mob.
+	 */
+	public static CarriedGenes carry(ServerLevel level, Mob mob, List<Identifier> genes) {
+		Registry<Gene> registry = level.registryAccess().lookupOrThrow(ModRegistries.GENE);
+		Identifier species = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
+		BiomeCategory category = BiomeCategory.of(level.getBiome(mob.blockPosition()));
+		GenePools pools = GenePools.get(level.getServer());
+		List<FamilyResult.TaggedGene> tagged = new ArrayList<>();
+		for (Identifier id : genes) {
+			Gene gene = registry.getValue(id);
+			if (gene != null) {
+				tagged.add(new FamilyResult.TaggedGene(gene.family(), gene.subFamily(),
+						pools.frequency(species, category, id)));
+			}
+		}
+		return new CarriedGenes(genes, FamilyResult.of(tagged));
+	}
+
 	public static void rollGenes(Mob mob, ServerLevel level) {
 		Registry<Gene> registry = level.registryAccess().lookupOrThrow(ModRegistries.GENE);
 		Identifier species = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
@@ -134,12 +158,7 @@ public final class Evolution {
 		}
 
 		List<Identifier> rolled = GeneRoller.roll(candidates, mob.getRandom());
-		List<FamilyResult.TaggedGene> tagged = new ArrayList<>();
-		for (Identifier id : rolled) {
-			Gene gene = registry.getValue(id);
-			tagged.add(new FamilyResult.TaggedGene(gene.family(), gene.subFamily(), pools.frequency(species, category, id)));
-		}
-		CarriedGenes carried = new CarriedGenes(rolled, FamilyResult.of(tagged));
+		CarriedGenes carried = carry(level, mob, rolled);
 		mob.setAttached(ModAttachments.GENES, carried);
 		GeneEffects.applyAttributes(mob, GeneEffects.sources(level.registryAccess(), carried));
 	}

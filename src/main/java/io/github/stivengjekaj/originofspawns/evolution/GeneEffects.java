@@ -51,9 +51,6 @@ public final class GeneEffects {
 	}
 
 	/**
-	 * Returns the sources of effects of a mob: each gene, then the family tiers that its family result gives.
-	 */
-	/**
 	 * Returns the opacity of the mob when it is translucent now, from the light at the mob. A mob that is not
 	 * translucent now gives nothing. The client uses it to draw the mob.
 	 */
@@ -65,6 +62,9 @@ public final class GeneEffects {
 				.min(Float::compare);
 	}
 
+	/**
+	 * Returns the sources of effects of a mob: each gene, then the family tiers that its family result gives.
+	 */
 	public static List<Source> sources(RegistryAccess access, CarriedGenes carried) {
 		List<Source> sources = new ArrayList<>();
 		Registry<Gene> genes = access.lookupOrThrow(ModRegistries.GENE);
@@ -89,6 +89,22 @@ public final class GeneEffects {
 		if (family != null) {
 			sources.add(new Source("family/" + id.get().getNamespace() + "/" + id.get().getPath() + "/" + tier,
 					family.tier(tier).effects().toList()));
+		}
+	}
+
+	/**
+	 * Removes the attribute changes of the sources from a mob.
+	 */
+	public static void removeAttributes(Mob mob, List<Source> sources) {
+		for (Source source : sources) {
+			for (int index = 0; index < source.effects().size(); index++) {
+				if (source.effects().get(index) instanceof GeneEffect.AttributeChange change) {
+					AttributeInstance attribute = mob.getAttribute(change.attribute());
+					if (attribute != null) {
+						attribute.removeModifier(modifierId(source.source(), index));
+					}
+				}
+			}
 		}
 	}
 

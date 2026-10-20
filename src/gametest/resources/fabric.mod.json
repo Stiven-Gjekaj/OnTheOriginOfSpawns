@@ -10,6 +10,7 @@
 			"io.github.stivengjekaj.originofspawns.test.DefinitionTest",
 			"io.github.stivengjekaj.originofspawns.test.MobInfoTest",
 			"io.github.stivengjekaj.originofspawns.test.EquipmentTest",
+			"io.github.stivengjekaj.originofspawns.test.LivingEvolutionTest",
 			"io.github.stivengjekaj.originofspawns.test.BabyLayoutTest",
 			"io.github.stivengjekaj.originofspawns.test.DiscoveryTest",
 			"io.github.stivengjekaj.originofspawns.test.GenePoolsTest",

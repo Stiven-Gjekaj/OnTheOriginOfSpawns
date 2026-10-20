@@ -49,6 +49,12 @@ public final class ModAttachments {
 			OriginOfSpawns.id("discovered"), builder -> builder.persistent(DiscoveredFamilies.CODEC).copyOnDeath()
 					.syncWith(DiscoveredFamilies.STREAM_CODEC, AttachmentSyncPredicate.targetOnly()));
 
+	/**
+	 * The game time when a mob first got its genes. Living evolution needs the age of the mob.
+	 */
+	public static final AttachmentType<Long> BORN =
+			AttachmentRegistry.createPersistent(OriginOfSpawns.id("born"), com.mojang.serialization.Codec.LONG);
+
 	private ModAttachments() {
 	}
 

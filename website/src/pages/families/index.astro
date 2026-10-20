@@ -1,0 +1,176 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import Icon from "../../components/Icon.astro";
+import site from "../../data/site.json";
+import { url, famName, kindName, singular } from "../../lib/site.js";
+
+const rules = [
+  ["Neutral", "No family has 4 points.", "No family effects. At the start of a world, all mobs are neutral."],
+  ["Major", "One family has 4 points or more, and no other family has 2.", "Tier 2 effects of the major."],
+  ["Pure", "One family has 6 points or more, and no other family has points.", "Tier 3 effects of the family."],
+  ["Minor", "The major has 4 points or more, and a sub family has 2 or more.", "Tier 2 effects of the major, and tier 1 effects of the sub."],
+  ["Hybrid", "Two families have the same points, 4 or more.", "Tier 2 effects of each of the two."],
+];
+const tierNote = ["The sub of a minor family gets tier 1.", "A major family alone, a hybrid, or the major of a minor family gets tier 2.", "A pure family gets tier 3."];
+const minor = (a, b) => site.minors.find((m) => m.major === a && m.sub === b);
+---
+<Layout title="Families" description="The 5 zombie families, the 20 minor families, and the 10 hybrids of On the Origin of Spawns.">
+  <PageHeader eyebrow="Families" title="The genes of a mob select its family">
+    Each zombie gene has a main family tag. Some genes also have a sub family tag. The points of the genes select the family of each zombie.
+  </PageHeader>
+
+  <div class="page container">
+    <section>
+      <div class="section-head">
+        <h2>The 5 major families</h2>
+        <p>Each major family has one big buff and one big debuff, at 3 tiers. A higher tier makes the buff stronger and the debuff weaker.</p>
+      </div>
+      <div class="grid grid-3">
+        {site.families.map((f) => (
+          <article class="card family" style={`--fam:var(--${f.id})`} id={f.id} data-family={f.id}>
+            <div class="family-head">
+              <span class="mc-slot"><Icon name={f.id} /></span>
+              <div>
+                <h3>{f.name}</h3>
+                <p class="muted small">{f.summary}</p>
+              </div>
+            </div>
+            <div class="segmented tiers" role="group" aria-label={`Tier of the ${f.name}`}>
+              {[1, 2, 3].map((n) => <button class="btn sm" type="button" data-tier={n} aria-pressed={n === 3 ? "true" : "false"}>Tier {n}</button>)}
+            </div>
+            {f.tiers.map((tier, i) => (
+              <dl class="tier" data-tier-body={i + 1} hidden={i !== 2}>
+                <div><dt class="buff">Buff</dt><dd>{tier.buff}</dd></div>
+                <div><dt class="debuff">Debuff</dt><dd>{tier.debuff}</dd></div>
+                <p class="muted small">{tierNote[i]}</p>
+              </dl>
+            ))}
+            <div class="actions"><a class="btn sm" href={url(`genes/?family=${f.id}`)}>{singular(f.id)} genes</a></div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Family points and results</h2>
+        <p>A main family tag gives 2 points. A sub family tag gives 1 point. The family with the most points is the major family. The family with the second most points is the sub family.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Result</th><th>Rule</th><th>Effects</th></tr></thead>
+          <tbody>{rules.map(([name, rule, fx]) => <tr><td><b>{name}</b></td><td>{rule}</td><td class="muted">{fx}</td></tr>)}</tbody>
+        </table>
+      </div>
+      <div class="power card card-quiet">
+        <span class="control-label">Order of power</span>
+        <div class="row">{site.powerOrder.map((p, i) => <>{i > 0 && <span class="muted" aria-hidden="true">&rsaquo;</span>}<span class="badge">{p}</span></>)}</div>
+        <p class="muted small">A mob with 0 or 1 gene is neutral. A mob with genes of 3 different families, one gene each, is also neutral. If two families have the same points for the sub family, the family of the gene with the highest frequency wins.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>The 20 minor families</h2>
+        <p>A minor family has a major family and a sub family, and its own name. The rows show the major family, and the columns show the sub family. The diagonal shows the pure families.</p>
+      </div>
+      <div class="matrix-wrap">
+        <table class="matrix">
+          <thead>
+            <tr><th scope="col"><span class="sr-only">Major family</span></th>{site.families.map((f) => <th scope="col" style={`color:var(--${f.id})`}>{f.name}</th>)}</tr>
+          </thead>
+          <tbody>
+            {site.families.map((row) => (
+              <tr>
+                <th scope="row" style={`color:var(--${row.id})`}>{row.name}</th>
+                {site.families.map((col) => {
+                  if (row.id === col.id) return <td class="pure" style={`--fam:var(--${row.id})`} tabindex="0" data-tip={`${row.name}: ${kindName("pure")}. Tier 3 effects.`}>{row.name}</td>;
+                  const m = minor(row.id, col.id);
+                  return <td style={`--fam:var(--${row.id})`} tabindex="0" data-tip={`${m.name}: ${m.style}. Major ${row.name} tier 2, sub ${col.name} tier 1.`}>{m.name}</td>;
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="table-wrap" style="margin-top: var(--s-4)">
+        <table>
+          <thead><tr><th>Minor family</th><th>Major</th><th>Sub</th><th>Play style</th></tr></thead>
+          <tbody>
+            {site.minors.map((m) => (
+              <tr><td><b>{m.name}</b></td><td style={`color:var(--${m.major})`}>{famName(m.major)}</td><td>{famName(m.sub)}</td><td class="muted">{m.style}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>The 10 hybrids</h2>
+        <p>A hybrid has the same points in two families. It gets the tier 2 effects of each of the two families. Each hybrid has its own name.</p>
+      </div>
+      <div class="grid grid-3">
+        {site.hybrids.map((h) => (
+          <div class="card tight hybrid">
+            <span class="pair"><span class="mc-slot sm"><Icon name={h.a} /></span><span class="mc-slot sm"><Icon name={h.b} /></span></span>
+            <div>
+              <h3>{h.name}</h3>
+              <p class="small muted"><span style={`color:var(--${h.a})`}>{famName(h.a)}</span> and <span style={`color:var(--${h.b})`}>{famName(h.b)}</span>. {h.style}.</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  document.querySelectorAll("[data-family]").forEach((card) => {
+    card.querySelector(".tiers").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-tier]");
+      if (!b) return;
+      card.querySelectorAll("[data-tier]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      card.querySelectorAll("[data-tier-body]").forEach((d) => { d.hidden = d.dataset.tierBody !== b.dataset.tier; });
+    });
+  });
+</script>
+
+<style>
+  .family { border-top: 3px solid var(--fam); display: grid; gap: var(--s-4); align-content: start; }
+  .family-head { display: flex; gap: var(--s-3); align-items: flex-start; }
+  .family h3 { color: var(--fam); font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 600; }
+  .family-head p { margin-top: 2px; }
+  .tiers { justify-self: start; }
+  .tier { margin: 0; display: grid; gap: var(--s-2); min-height: 120px; align-content: start; animation: rise 220ms var(--ease); }
+  .tier div { display: grid; grid-template-columns: 64px 1fr; gap: var(--s-2); }
+  .tier dt { font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding-top: 3px; }
+  .tier dd { margin: 0; }
+  .buff { color: var(--ok); }
+  .debuff { color: var(--predator); }
+  @keyframes rise { from { opacity: 0; transform: translateY(4px); } }
+  .family .actions { margin-top: auto; }
+  .power { margin-top: var(--s-4); display: grid; gap: var(--s-3); }
+  .control-label { font-size: var(--fs-xs); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
+
+  .matrix-wrap { overflow-x: auto; }
+  .matrix { border-collapse: separate; border-spacing: 6px; table-layout: fixed; min-width: 560px; }
+  .matrix th { background: none; border: 0; text-transform: none; letter-spacing: 0; font-family: var(--font-display); font-weight: 500; font-size: var(--fs-sm); text-align: center; padding: var(--s-2); }
+  .matrix tbody th { text-align: right; }
+  .matrix td {
+    height: 60px; text-align: center; vertical-align: middle; padding: var(--s-2);
+    border: 1px solid var(--border); border-left: 3px solid var(--fam); border-radius: var(--radius);
+    background: var(--surface); font-weight: 600; font-size: var(--fs-sm); cursor: help;
+    transition: transform 120ms ease, background 120ms ease;
+  }
+  .matrix td:hover, .matrix td:focus-visible { transform: translateY(-2px); background: color-mix(in srgb, var(--fam) 10%, var(--surface)); }
+  .matrix td.pure { background: color-mix(in srgb, var(--fam) 16%, var(--surface)); border-style: dashed; border-left-style: solid; color: var(--fam); }
+  .matrix tbody tr:hover td { background: var(--surface); }
+  .matrix tbody tr td:hover { background: color-mix(in srgb, var(--fam) 10%, var(--surface)); }
+
+  .hybrid { display: flex; gap: var(--s-3); align-items: center; }
+  .pair { display: flex; flex: none; }
+  .pair .mc-slot + .mc-slot { margin-left: -4px; }
+  .hybrid p { margin-top: 2px; }
+</style>

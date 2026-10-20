@@ -21,6 +21,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -95,6 +97,11 @@ public abstract class ZombieMixin {
 		if (silence != null && silence.death()) {
 			info.setReturnValue(null);
 		}
+	}
+
+	@ModifyConstant(method = "playStepSound", constant = @Constant(floatValue = 0.15F))
+	private float originofspawns$stepVolume(float volume) {
+		return volume * GeneBehaviors.volumeMultiplier((Zombie) (Object) this);
 	}
 
 	@Inject(method = "playStepSound", at = @At("HEAD"), cancellable = true)

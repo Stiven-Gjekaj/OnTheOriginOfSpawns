@@ -19,6 +19,7 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.util.RandomSource;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
@@ -426,13 +427,22 @@ public final class GeneCombat {
 	 * Tells if a projectile misses the mob.
 	 */
 	public static boolean dodges(LivingEntity entity, DamageSource source) {
-		if (!source.is(DamageTypeTags.IS_PROJECTILE)) {
-			return false;
-		}
-		return GeneEffects.of(entity).anyMatch(effect -> effect instanceof GeneEffect.DodgeProjectiles dodge
-				&& test(entity, dodge.when()) && entity.getRandom().nextFloat() < dodge.chance());
+		return source.is(DamageTypeTags.IS_PROJECTILE) && dodges(entity, source.getDirectEntity());
 	}
 
+	/**
+	 * Returns true if the projectile misses the entity. The roll comes from the two entities, so each check of the
+	 * same projectile gives the same answer, and a missed projectile goes through the entity.
+	 */
+	public static boolean dodges(LivingEntity entity, Entity projectile) {
+		if (projectile == null) {
+			return false;
+		}
+		long seed = projectile.getUUID().getLeastSignificantBits() ^ entity.getUUID().getMostSignificantBits();
+		float roll = RandomSource.create(seed).nextFloat();
+		return GeneEffects.of(entity).anyMatch(effect -> effect instanceof GeneEffect.DodgeProjectiles dodge
+				&& test(entity, dodge.when()) && roll < dodge.chance());
+	}
 
 	/**
 	 * Returns true if a block of glass touches the side of the entity. A climber cannot climb glass.

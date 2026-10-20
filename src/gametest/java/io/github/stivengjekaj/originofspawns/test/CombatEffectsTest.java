@@ -202,6 +202,23 @@ public class CombatEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(maxTicks = 40)
+	public void aDodgedArrowGoesThrough(GameTestHelper helper) {
+		Zombie zombie = clean(helper, new BlockPos(2, 1, 1), "test_dodge");
+		float health = zombie.getHealth();
+		var arrow = new net.minecraft.world.entity.projectile.arrow.Arrow(helper.getLevel(),
+				zombie.getX(), zombie.getY(0.5), zombie.getZ() + 3.0, new net.minecraft.world.item.ItemStack(
+						net.minecraft.world.item.Items.ARROW), null);
+		arrow.setNoGravity(true);
+		arrow.setDeltaMovement(0.0, 0.0, -1.0);
+		helper.getLevel().addFreshEntity(arrow);
+		helper.runAfterDelay(8, () -> {
+			helper.assertValueEqual(zombie.getHealth(), health, "the zombie health");
+			helper.assertTrue(arrow.getZ() < zombie.getZ() - 1.0, "the arrow goes past the zombie");
+			helper.succeed();
+		});
+	}
+
 	@GameTest
 	public void undyingSurvivesOneLethalHit(GameTestHelper helper) {
 		Zombie zombie = clean(helper, new BlockPos(1, 1, 1), "test_undying");

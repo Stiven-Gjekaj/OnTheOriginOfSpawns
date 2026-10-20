@@ -8,6 +8,7 @@
 		"MobAccessor",
 		"MobMixin",
 		"PlayerMixin",
+		"ProjectileMixin",
 		"RangedAttackGoalMixin",
 		"ZombieMixin"
 	],

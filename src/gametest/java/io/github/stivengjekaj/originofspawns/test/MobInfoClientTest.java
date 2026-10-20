@@ -2,9 +2,11 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.FamilyResult;
+import io.github.stivengjekaj.originofspawns.notebook.DiscoveredFamilies;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
@@ -44,6 +46,9 @@ public class MobInfoClientTest implements FabricClientGameTest {
 						new FamilyResult(FamilyResult.Kind.MINOR, Optional.of(mod("zombie/predator")),
 								Optional.of(mod("zombie/stalker")))));
 				player.level().addFreshEntity(zombie);
+				// The panel shows the genes only for a family that the player knows.
+				player.setAttached(ModAttachments.DISCOVERED,
+						new DiscoveredFamilies(Set.of(zombie.getAttached(ModAttachments.GENES).family().translationKey())));
 			});
 			context.waitTicks(40);
 			boolean aimed = context.computeOnClient(client -> client.crosshairPickEntity instanceof Zombie);

@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import io.github.stivengjekaj.originofspawns.definition.Gene;
+import io.github.stivengjekaj.originofspawns.notebook.Knowledge;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -20,6 +21,8 @@ import net.minecraft.world.entity.Entity;
  * @param genes the genes, with the dominant genes first
  */
 public record MobInfo(Component family, Optional<Component> kind, List<Line> genes) {
+	private static final Component UNKNOWN = Component.literal("???");
+
 	/**
 	 * One gene of the mob. A dominant gene has a family tag of the family of the mob.
 	 */
@@ -44,6 +47,21 @@ public record MobInfo(Component family, Optional<Component> kind, List<Line> gen
 	 * @param lookup finds the definition of a gene, or nothing for an unknown gene
 	 */
 	public static MobInfo of(CarriedGenes carried, Function<Identifier, Optional<Gene>> lookup) {
+		return of(carried, lookup, Knowledge.KNOWN);
+	}
+
+	/**
+	 * Makes the info of a mob, with only what the player knows. An unknown family shows "???". A family that the
+	 * player only saw shows its name, but its genes show "???".
+	 */
+	public static MobInfo of(CarriedGenes carried, Function<Identifier, Optional<Gene>> lookup, Knowledge knowledge) {
+		if (knowledge != Knowledge.KNOWN) {
+			MobInfo full = of(carried, lookup, Knowledge.KNOWN);
+			List<Line> hidden = full.genes().stream().map(line -> new Line(line.gene(), UNKNOWN, false)).toList();
+			return knowledge == Knowledge.SEEN
+					? new MobInfo(full.family(), full.kind(), hidden)
+					: new MobInfo(UNKNOWN, Optional.empty(), hidden);
+		}
 		FamilyResult result = carried.family();
 		Component family = Component.translatableWithFallback(result.translationKey(),
 				result.first().map(Identifier::getPath).orElse("Neutral"));

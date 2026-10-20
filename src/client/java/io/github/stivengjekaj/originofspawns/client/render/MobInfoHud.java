@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.MobInfo;
+import io.github.stivengjekaj.originofspawns.notebook.DiscoveredFamilies;
+import io.github.stivengjekaj.originofspawns.notebook.Knowledge;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 import io.github.stivengjekaj.originofspawns.registry.ModRegistries;
 
@@ -41,7 +43,9 @@ public class MobInfoHud implements HudElement {
 			return;
 		}
 		var genes = minecraft.level.registryAccess().lookup(ModRegistries.GENE);
-		MobInfo info = MobInfo.of(carried, id -> genes.flatMap(registry -> registry.getOptional(id)));
+		Knowledge knowledge = minecraft.player.getAttachedOrElse(ModAttachments.DISCOVERED, DiscoveredFamilies.NONE)
+				.knowledge(carried.family().translationKey());
+		MobInfo info = MobInfo.of(carried, id -> genes.flatMap(registry -> registry.getOptional(id)), knowledge);
 		draw(graphics, minecraft.font, info);
 	}
 

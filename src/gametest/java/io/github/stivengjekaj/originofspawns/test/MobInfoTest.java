@@ -7,6 +7,7 @@ import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.FamilyResult;
 import io.github.stivengjekaj.originofspawns.evolution.FamilyResult.Kind;
 import io.github.stivengjekaj.originofspawns.evolution.MobInfo;
+import io.github.stivengjekaj.originofspawns.notebook.Knowledge;
 import io.github.stivengjekaj.originofspawns.registry.ModRegistries;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -58,6 +59,22 @@ public class MobInfoTest {
 		MobInfo info = MobInfo.of(new CarriedGenes(List.of(unknown),
 				new FamilyResult(Kind.MAJOR, Optional.of(TEST), Optional.empty())), id -> Optional.empty());
 		helper.assertFalse(info.genes().getFirst().dominant(), "not dominant");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theInfoShowsOnlyWhatThePlayerKnows(GameTestHelper helper) {
+		var genes = helper.getLevel().registryAccess().lookupOrThrow(ModRegistries.GENE);
+		CarriedGenes carried = new CarriedGenes(List.of(STALKER_GENE, TEST_GENE),
+				new FamilyResult(Kind.MAJOR, Optional.of(TEST), Optional.empty()));
+		MobInfo unknown = MobInfo.of(carried, genes::getOptional, Knowledge.NONE);
+		helper.assertValueEqual(unknown.family().getString(), "???", "an unknown family");
+		helper.assertTrue(unknown.kind().isEmpty(), "no kind for an unknown family");
+		helper.assertTrue(unknown.genes().stream().allMatch(line -> line.name().getString().equals("???")), "hidden genes");
+		MobInfo seen = MobInfo.of(carried, genes::getOptional, Knowledge.SEEN);
+		helper.assertTrue(seen.family().getContents() instanceof TranslatableContents, "a seen family shows its name");
+		helper.assertTrue(seen.genes().stream().allMatch(line -> line.name().getString().equals("???")), "seen genes stay hidden");
+		helper.assertValueEqual(seen.genes().size(), 2, "one line for each gene");
 		helper.succeed();
 	}
 

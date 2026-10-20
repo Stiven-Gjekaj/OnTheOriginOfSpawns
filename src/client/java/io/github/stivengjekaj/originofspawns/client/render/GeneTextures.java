@@ -202,6 +202,13 @@ public final class GeneTextures {
 	/**
 	 * Returns true if one of the genes has a visual with this model change.
 	 */
+	/**
+	 * Returns true if a texture with gene marks was baked from this base texture.
+	 */
+	public static boolean wasBakedFrom(Identifier base) {
+		return BAKED.keySet().stream().anyMatch(key -> key.startsWith(base + "|"));
+	}
+
 	public static boolean hasModel(List<Identifier> genes, Identifier model) {
 		if (genes == null) {
 			return false;

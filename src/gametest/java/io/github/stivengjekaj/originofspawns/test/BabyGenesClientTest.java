@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import java.util.List;
 
+import io.github.stivengjekaj.originofspawns.client.render.GeneTextures;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -49,6 +50,13 @@ public class BabyGenesClientTest implements FabricClientGameTest {
 			});
 			context.waitTicks(40);
 			context.takeScreenshot("baby_genes");
+			// The outer layer of the drowned covers its body, so the marks must be on the outer layer too.
+			for (String texture : List.of("drowned_outer_layer", "drowned_outer_layer_baby")) {
+				Identifier outer = Identifier.withDefaultNamespace("textures/entity/zombie/" + texture + ".png");
+				if (!context.computeOnClient(client -> GeneTextures.wasBakedFrom(outer))) {
+					throw new AssertionError("No gene marks on " + outer);
+				}
+			}
 		}
 	}
 

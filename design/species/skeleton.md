@@ -100,7 +100,7 @@ The visual column gives the region and the mark.
 | Eagle Eye | Marksman | `unreached` | 50% more bow range | 10% less speed | Eyes: a bright ring in each socket |
 | Deadeye | Marksman | `spotted` | Its arrows fly straight, with no spread | It draws its bow 25% slower | Skull: a crack over one eye |
 | Longdraw | Marksman | `projectile` | Its arrows do 30% more damage | It shoots 20% less often | Arms: a leather bracer on the left forearm. This changes the model |
-| Quickdraw | Marksman, sub Rattler | `crowd` | It shoots 50% more often | Its arrows do 25% less damage | Fingers: worn, white tips |
+| Quickdraw | Marksman, sub Rattler | `crowd` | It shoots 50% more often | Its arrows do 25% less damage | Arm: a band with three arrows on the forearm of the draw arm. This changes the model |
 | Shieldbreaker | Marksman | `shield` | Its arrows go through shields | 4 less maximum health | Ribs: a notch cut in each rib |
 | High Ground | Marksman | `fall` | 30% more arrow damage at a target lower than it | 20% less arrow damage at a target higher than it | Head: a wide-brim ranger hat. This changes the model |
 
@@ -110,10 +110,10 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Skitter | Rattler | `melee` | 25% more speed | 15% less maximum health | Legs: thin, cracked bones |
 | Backpedal | Rattler | `melee` | It walks back to keep 12 blocks from its target while it shoots | It shoots 15% less often | Spine: a bent, curved back |
-| Bonedash | Rattler | `projectile` | When a player draws a bow at it, it moves 3 blocks to the side, each 8 seconds | 2 less armor | Pelvis: a cracked hip |
+| Bonedash | Rattler | `projectile` | When a player draws a bow at it, it moves 3 blocks to the side, each 8 seconds | 2 less armor | Head: small bone wings on each side of the skull |
 | Hollow Bones | Rattler | `fall` | No fall damage, and it jumps 50% higher | 50% more damage from explosions | Bones: small holes, as in bird bones |
 | Lightfoot | Rattler | `spotted` | No step sounds and no idle sounds | 10% less arrow damage | Feet: wrapped in rags |
-| Fleetbone | Rattler, sub Legion | `critical` | 40% more speed when its health is under half | 20% less damage when its health is under half | Skull: a broken jaw that hangs loose |
+| Fleetbone | Rattler, sub Legion | `critical` | 40% more speed when its health is under half | 20% less damage when its health is under half | Ribs: half of the ribs are gone, and a trail of loose vertebrae hangs from the pelvis. This changes the model |
 
 ### Ossified genes
 

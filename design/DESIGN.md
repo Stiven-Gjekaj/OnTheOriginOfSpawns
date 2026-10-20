@@ -49,6 +49,15 @@ Change this document when a decision changes.
 - The mod weights each death by its cause, not by its player.
   Thus, one player cannot control a pool alone.
 - Each new mob gets its genes from its pool.
+- A mob can also change its genes after it spawns, but only where no player
+  sees it:
+  - The mob must be alive for one Minecraft day or more.
+  - No player is in 32 blocks, and no player can see the mob.
+  - At a check about once each minute, a small chance swaps one gene.
+    The mob drops its weakest gene for a gene that its pool now favors.
+    Then its family is found again.
+  - A mob with a name tag never changes its genes.
+  - This changes only the mob. It does not change the pool.
 - Random mutation makes small changes to the pool.
 - Each death raises the gene that counters its pressure by 2% of the
   distance to 100%.
@@ -150,6 +159,14 @@ Thus, the bones look worn, not undead.
   The genes under the most pressure come first.
   Thus, a species cannot have all defenses at the same time.
 - Each gene has a gain and a downside.
+- Mobs of a species with genes do not get weapons or armor that the vanilla
+  game gives at random, and they do not pick up items.
+  For example, a zombie does not spawn with a sword, a shovel, or armor.
+- A mob keeps the weapons and armor that are natural to it.
+  For example, a drowned keeps its trident, and a skeleton keeps its bow.
+- A gene can give a weapon, armor, or item pickup when that is its effect.
+  For example, Tridentborn gives a trident, and Packmule picks up items and
+  wears armor.
 - The difficulty sets the speed of evolution.
   Peaceful has no evolution.
   Hard has the fastest evolution.

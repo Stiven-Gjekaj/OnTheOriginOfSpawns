@@ -393,6 +393,48 @@ public class BehaviorEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(maxTicks = 60)
+	public void burrowRisesToTheSurfaceAndStuns(GameTestHelper helper) {
+		for (int x = 0; x < 5; x++) {
+			for (int z = 0; z < 5; z++) {
+				helper.setBlock(new BlockPos(x, 1, z), Blocks.DIRT);
+				helper.setBlock(new BlockPos(x, 2, z), Blocks.DIRT);
+			}
+		}
+		Zombie zombie = zombieWith(helper, new BlockPos(1, 3, 1), "test_burrow_stun");
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(3, 3, 3))));
+		double surface = zombie.getY();
+		var burrow = (GeneEffect.Burrow) GeneEffects.of(zombie).findFirst().orElseThrow();
+		helper.assertTrue(GeneBehaviors.burrow(zombie, helper.getLevel(), burrow), "the zombie goes under");
+		helper.assertValueEqual(zombie.getY(), surface - 2.0, "2 blocks under");
+		helper.runAfterDelay(30, () -> {
+			helper.assertValueEqual(zombie.getY(), surface, "the zombie ends on the surface");
+			long stun = zombie.getAttachedOrElse(ModAttachments.STATE,
+					io.github.stivengjekaj.originofspawns.evolution.BehaviorState.NONE).stunUntil();
+			helper.assertTrue(stun > helper.getLevel().getGameTime(), "the zombie is stunned after it rises");
+			helper.succeed();
+		});
+	}
+
+	@GameTest
+	public void burrowCanRiseNextToThePlayer(GameTestHelper helper) {
+		for (int x = 0; x < 6; x++) {
+			for (int z = 0; z < 6; z++) {
+				helper.setBlock(new BlockPos(x, 1, z), Blocks.DIRT);
+				helper.setBlock(new BlockPos(x, 2, z), Blocks.DIRT);
+			}
+		}
+		Zombie zombie = zombieWith(helper, new BlockPos(0, 3, 0), "test_burrow_near");
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(4, 3, 4))));
+		var burrow = (GeneEffect.Burrow) GeneEffects.of(zombie).findFirst().orElseThrow();
+		helper.assertTrue(GeneBehaviors.burrow(zombie, helper.getLevel(), burrow), "the zombie goes under");
+		double distance = Math.hypot(zombie.getX() - player.getX(), zombie.getZ() - player.getZ());
+		helper.assertTrue(distance <= 3.0, "the zombie is next to the player, at " + distance);
+		helper.succeed();
+	}
+
 	@GameTest
 	public void sidestepMovesAwayFromAFarWatcher(GameTestHelper helper) {
 		for (int x = 0; x < 8; x++) {

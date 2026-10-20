@@ -143,21 +143,63 @@ public final class GeneBehaviors {
 		}
 	}
 
-	private static void burrow(Mob mob, ServerLevel level, GeneEffect.Burrow burrow) {
-		if (burrow.nightOnly() && level.isBrightOutside() || level.getNearestPlayer(mob, burrow.playerRadius()) == null) {
-			return;
+	/**
+	 * Puts the mob under the ground near a player, so that it rises. With near player, the mob first moves next to
+	 * the nearest player.
+	 *
+	 * @return true if the mob went under the ground
+	 */
+	public static boolean burrow(Mob mob, ServerLevel level, GeneEffect.Burrow burrow) {
+		Player player = level.getNearestPlayer(mob, burrow.playerRadius());
+		if (burrow.nightOnly() && level.isBrightOutside() || player == null) {
+			return false;
 		}
-		BlockPos feet = mob.blockPosition();
-		for (int depth = 1; depth <= BURROW_DEPTH; depth++) {
-			if (!level.getBlockState(feet.below(depth)).is(burrow.blocks())) {
-				return;
-			}
+		BlockPos feet = burrow.nearPlayer() ? spotNear(mob, level, player.blockPosition(), burrow) : mob.blockPosition();
+		if (feet == null || !canBurrow(level, feet, burrow)) {
+			return false;
 		}
-		mob.setPos(mob.getX(), mob.getY() - BURROW_DEPTH, mob.getZ());
+		if (burrow.nearPlayer()) {
+			mob.setPos(feet.getX() + 0.5, feet.getY() - BURROW_DEPTH, feet.getZ() + 0.5);
+		} else {
+			mob.setPos(mob.getX(), mob.getY() - BURROW_DEPTH, mob.getZ());
+		}
 		mob.noPhysics = true;
 		mob.setNoGravity(true);
 		mob.setAttached(ModAttachments.STATE, mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE)
 				.withRiseTicks(Math.max(1, Math.round(burrow.riseSeconds() * 20.0F))));
+		return true;
+	}
+
+	private static boolean canBurrow(ServerLevel level, BlockPos feet, GeneEffect.Burrow burrow) {
+		for (int depth = 1; depth <= BURROW_DEPTH; depth++) {
+			if (!level.getBlockState(feet.below(depth)).is(burrow.blocks())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Finds a place next to the player where the mob can rise: the ground is of the burrow blocks, and the mob fits.
+	 */
+	private static BlockPos spotNear(Mob mob, ServerLevel level, BlockPos center, GeneEffect.Burrow burrow) {
+		for (int distance = 1; distance <= 2; distance++) {
+			for (int dx = -distance; dx <= distance; dx++) {
+				for (int dz = -distance; dz <= distance; dz++) {
+					if (Math.max(Math.abs(dx), Math.abs(dz)) != distance) {
+						continue;
+					}
+					for (int dy = 1; dy >= -1; dy--) {
+						BlockPos feet = center.offset(dx, dy, dz);
+						if (canBurrow(level, feet, burrow) && level.noCollision(mob, mob.getDimensions(mob.getPose())
+								.makeBoundingBox(feet.getX() + 0.5, feet.getY(), feet.getZ() + 0.5))) {
+							return feet;
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -488,9 +530,12 @@ public final class GeneBehaviors {
 	}
 
 	private static void rise(Mob mob, ServerLevel level, BehaviorState state) {
+		GeneEffect.Burrow burrow = GeneEffects.of(mob).filter(GeneEffect.Burrow.class::isInstance)
+				.map(GeneEffect.Burrow.class::cast).findFirst().orElse(new GeneEffect.Burrow(24.0F, 2.0F));
+		int total = Math.max(1, Math.round(burrow.riseSeconds() * 20.0F));
 		int left = state.riseTicks() - 1;
-		mob.setPos(mob.getX(), mob.getY() + (double) BURROW_DEPTH / Math.max(1, state.riseTicks() + left + 1) * 2.0,
-				mob.getZ());
+		// Each tick moves the same part of the depth, so the mob ends on the surface.
+		mob.setPos(mob.getX(), mob.getY() + (double) BURROW_DEPTH / total, mob.getZ());
 		mob.setDeltaMovement(0.0, 0.0, 0.0);
 		BlockPos surface = BlockPos.containing(mob.getX(), mob.getY() + BURROW_DEPTH - 0.5, mob.getZ());
 		level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(surface.below())),
@@ -498,7 +543,10 @@ public final class GeneBehaviors {
 		if (left <= 0) {
 			mob.noPhysics = false;
 			mob.setNoGravity(false);
-			mob.setPos(mob.getX(), Math.ceil(mob.getY()), mob.getZ());
+			mob.setPos(mob.getX(), Math.round(mob.getY()), mob.getZ());
+			long stunUntil = level.getGameTime() + Math.round(burrow.stunSeconds() * 20.0F);
+			mob.setAttached(ModAttachments.STATE, state.withRiseTicks(0).withStunUntil(stunUntil));
+			return;
 		}
 		mob.setAttached(ModAttachments.STATE, state.withRiseTicks(left));
 	}

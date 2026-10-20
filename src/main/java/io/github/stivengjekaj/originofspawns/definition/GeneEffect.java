@@ -639,7 +639,8 @@ public sealed interface GeneEffect {
 	 * When the mob spawns in a natural way at night near a player, it rises out of the ground.
 	 * It rises only through the blocks in the tag {@code originofspawns:burrowable}, and breaks none.
 	 */
-	record Burrow(float playerRadius, float riseSeconds, TagKey<Block> blocks, boolean nightOnly) implements GeneEffect {
+	record Burrow(float playerRadius, float riseSeconds, TagKey<Block> blocks, boolean nightOnly, float stunSeconds,
+			boolean nearPlayer) implements GeneEffect {
 		public static final TagKey<Block> DEFAULT_BLOCKS =
 				TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("originofspawns", "burrowable"));
 
@@ -647,11 +648,13 @@ public sealed interface GeneEffect {
 				Codec.floatRange(1.0F, 128.0F).optionalFieldOf("player_radius", 24.0F).forGetter(Burrow::playerRadius),
 				Codec.floatRange(0.05F, 60.0F).optionalFieldOf("rise_seconds", 2.0F).forGetter(Burrow::riseSeconds),
 				TagKey.hashedCodec(Registries.BLOCK).optionalFieldOf("blocks", DEFAULT_BLOCKS).forGetter(Burrow::blocks),
-				Codec.BOOL.optionalFieldOf("night_only", true).forGetter(Burrow::nightOnly)
+				Codec.BOOL.optionalFieldOf("night_only", true).forGetter(Burrow::nightOnly),
+				Codec.floatRange(0.0F, 60.0F).optionalFieldOf("stun_seconds", 0.0F).forGetter(Burrow::stunSeconds),
+				Codec.BOOL.optionalFieldOf("near_player", false).forGetter(Burrow::nearPlayer)
 		).apply(instance, Burrow::new));
 
 		public Burrow(float playerRadius, float riseSeconds) {
-			this(playerRadius, riseSeconds, DEFAULT_BLOCKS, true);
+			this(playerRadius, riseSeconds, DEFAULT_BLOCKS, true, 0.0F, false);
 		}
 
 		@Override

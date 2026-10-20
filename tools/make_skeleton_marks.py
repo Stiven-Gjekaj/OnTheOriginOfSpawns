@@ -34,8 +34,7 @@ Pixel plan for the Marksmen.
 - Quickdraw: three arrows strapped on the right forearm, and long fingers
   on the right hand, the gene model quickdraw_arrows.
 - Shieldbreaker has a notch in each rib, at y 22 and y 24.
-- High Ground: large hooked talons on the feet and a heavy brow ridge over
-  the eyes, the gene model high_ground_talons.
+- High Ground has no look for now. A hat model comes later.
 
 Pixel plan for the Rattlers.
 - Skitter has cracks on the legs, rows 1 to 8, and a light shade on the
@@ -201,51 +200,9 @@ def shieldbreaker():
     return [notch, cut]
 
 
-TALON = ("#4A3E30", "#6E5E48", "#9A8A6C")
-
-
 def high_ground():
-    # The talons and the brow are the gene model high_ground_talons.
+    # High Ground has no look for now. A hat model comes later.
     return []
-
-
-def high_ground_model():
-    # The look of a bird of prey that perches and looks down: large hooked
-    # talons on each foot, out past the outline of the leg, and a heavy
-    # brow ridge of bone over the eye sockets, low in the middle, like a
-    # hawk. The talons are dark horn, so they show against the bone. Each
-    # foot has two talons to the front and one to the back. Each talon is a
-    # long toe and a hook that bends down at its end, to the ground (y 12).
-    # On a leg bone, the leg is from x -1 to 1 and from z -1 to 1. On the
-    # head bone, the face is at z -4, and the eye sockets are at y -4.
-    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
-
-    def toe(face, x, y):
-        return TALON[2] if face == "top" else TALON[1]
-
-    # A toe: 1x1x4 at uv (0, 0). A hook: 1x1x1 at uv (10, 0). A half of
-    # the brow: 5x1x2 at uv (0, 4).
-    paint_box(im, 0, 0, 1, 1, 4, toe)
-    paint_box(im, 10, 0, 1, 1, 1, lambda face, x, y: TALON[0])
-    paint_box(im, 0, 4, 5, 1, 2, lambda face, x, y: BONE[0] if face == "top" else BONE[2] if face == "bottom"
-              else BONE[1])
-    parts = []
-    for bone in ("right_leg", "left_leg"):
-        for x, turn in ((-1, 15), (0, -15)):
-            # The toes go to the front and a little out, and the hook bends
-            # down at the tip.
-            parts.append({"bone": bone, "uv": [0, 0], "from": [x, 10, -5], "size": [1, 1, 4],
-                          "pivot": [x + 0.5, 10.5, -1], "rotation": [0, turn, 0]})
-            parts.append({"bone": bone, "uv": [10, 0], "from": [x, 11, -5.5], "size": [1, 1, 1],
-                          "pivot": [x + 0.5, 10.5, -1], "rotation": [0, turn, 0]})
-        parts.append({"bone": bone, "uv": [0, 0], "from": [-0.5, 10, 1], "size": [1, 1, 4]})
-        parts.append({"bone": bone, "uv": [10, 0], "from": [-0.5, 11, 4.5], "size": [1, 1, 1]})
-    # The brow: two halves that meet low over the nose and rise to the
-    # temples.
-    for x, side in ((-4.5, -1), (-0.5, 1)):
-        parts.append({"bone": "head", "uv": [0, 4], "from": [x, -5.5, -5.5], "size": [5, 1, 2],
-                      "pivot": [0, -5, -4.5], "rotation": [0, 0, -side * 14]})
-    save_model("high_ground_talons", im, parts)
 
 
 def skitter():
@@ -587,7 +544,6 @@ GENES = {
 
 MODELS = {
     "longdraw": "originofspawns:longdraw_bracer",
-    "high_ground": "originofspawns:high_ground_talons",
     "quickdraw": "originofspawns:quickdraw_arrows",
     "backpedal": "originofspawns:backpedal_spine",
     "fleetbone": "originofspawns:fleetbone_trail",
@@ -602,7 +558,6 @@ def main():
     os.makedirs(MARK_DIR, exist_ok=True)
     longdraw_model()
     quickdraw_model()
-    high_ground_model()
     backpedal_model()
     bonedash_model()
     fleetbone_model()

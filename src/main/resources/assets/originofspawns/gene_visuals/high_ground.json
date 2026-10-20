@@ -1,5 +1,4 @@
 {
 	"region_map": "originofspawns:textures/region/skeleton.png",
-	"layers": [],
-	"model": "originofspawns:high_ground_talons"
+	"layers": []
 }

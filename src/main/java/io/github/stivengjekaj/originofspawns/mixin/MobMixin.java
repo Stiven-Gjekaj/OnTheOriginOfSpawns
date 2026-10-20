@@ -7,6 +7,7 @@ import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.SpawnGroupData;
@@ -38,6 +39,25 @@ public abstract class MobMixin {
 	private void originofspawns$recordSpawnReason(ServerLevelAccessor level, DifficultyInstance difficulty,
 			EntitySpawnReason reason, SpawnGroupData data, CallbackInfoReturnable<SpawnGroupData> info) {
 		((Mob) (Object) this).setAttached(ModAttachments.SPAWN_REASON, reason);
+	}
+
+	/**
+	 * A species in the tag {@code originofspawns:no_random_equipment} gets no random armor and no random enchantments.
+	 * Its natural weapon, such as the bow of a skeleton, comes from its own class and stays.
+	 */
+	@Inject(method = "populateDefaultEquipmentSlots", at = @At("HEAD"), cancellable = true)
+	private void originofspawns$noRandomArmor(RandomSource random, DifficultyInstance difficulty, CallbackInfo info) {
+		if (((Mob) (Object) this).getType().builtInRegistryHolder().is(Evolution.NO_RANDOM_EQUIPMENT)) {
+			info.cancel();
+		}
+	}
+
+	@Inject(method = "populateDefaultEquipmentEnchantments", at = @At("HEAD"), cancellable = true)
+	private void originofspawns$noRandomEnchantments(ServerLevelAccessor level, RandomSource random,
+			DifficultyInstance difficulty, CallbackInfo info) {
+		if (((Mob) (Object) this).getType().builtInRegistryHolder().is(Evolution.NO_RANDOM_EQUIPMENT)) {
+			info.cancel();
+		}
 	}
 
 	@Inject(method = "burnUndead", at = @At("HEAD"))

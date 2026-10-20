@@ -1,5 +1,7 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import java.util.List;
+import net.minecraft.world.item.ItemStack;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -73,6 +75,24 @@ public class EquipmentTest {
 			}
 		}
 		helper.assertTrue(armed > 0, "no drowned of " + MOBS + " has a trident or a fishing rod");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void skeletonsKeepOnlyAPlainBow(GameTestHelper helper) {
+		for (int i = 0; i < 100; i++) {
+			Mob skeleton = spawned(helper, EntityTypes.SKELETON);
+			helper.assertTrue(skeleton.getMainHandItem().is(Items.BOW), "a skeleton has its bow");
+			helper.assertTrue(skeleton.getMainHandItem().getEnchantments().isEmpty(), "the bow has no enchantments");
+			for (EquipmentSlot slot : List.of(EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)) {
+				helper.assertTrue(skeleton.getItemBySlot(slot).isEmpty(), "a skeleton wears no " + slot.getName());
+			}
+			// On Halloween, a skeleton can wear a pumpkin. That is a vanilla look, not armor.
+			ItemStack head = skeleton.getItemBySlot(EquipmentSlot.HEAD);
+			helper.assertTrue(head.isEmpty() || !head.has(net.minecraft.core.component.DataComponents.EQUIPPABLE)
+					|| head.is(Items.CARVED_PUMPKIN) || head.is(Items.JACK_O_LANTERN), "a skeleton wears no helmet");
+			skeleton.discard();
+		}
 		helper.succeed();
 	}
 

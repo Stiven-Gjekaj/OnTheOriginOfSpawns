@@ -153,6 +153,11 @@ SKELETON_CLOSEUPS = {
                            ("Longdraw + Quickdraw", ["longdraw", "quickdraw"], False),
                            ("Shieldbreaker + High Ground", ["shieldbreaker", "high_ground"], False),
                            ("All 6", SKELETON["marksmen"], False)], ALL_SIDES),
+    "skeleton_rattlers": ("Rattler marks and models",
+                          [("Skitter + Lightfoot", ["skitter", "lightfoot"], False),
+                           ("Backpedal + Bonedash", ["backpedal", "bonedash"], False),
+                           ("Hollow Bones + Fleetbone", ["hollow_bones", "fleetbone"], False),
+                           ("All 6", SKELETON["rattlers"], False)], ALL_SIDES),
 }
 
 # Each species: its texture, its baby texture, and its close-ups.

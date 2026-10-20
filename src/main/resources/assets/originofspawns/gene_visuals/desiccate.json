@@ -1,0 +1,29 @@
+{
+	"layers": [
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/desiccate_0.png",
+				"tint": "#CFC4AC"
+			},
+			"order": -2
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/desiccate_1.png",
+				"tint": "#E2D8C0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/desiccate_2.png",
+				"tint": "#5E503C"
+			}
+		}
+	]
+}

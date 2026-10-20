@@ -1,0 +1,20 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mirage_water_0.png",
+				"tint": "#5C8CA8"
+			},
+			"order": 2
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mirage_water_1.png",
+				"tint": "#E8F6FF"
+			},
+			"order": 2
+		}
+	]
+}

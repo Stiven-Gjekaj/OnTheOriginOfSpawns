@@ -76,6 +76,19 @@ Pixel plan for the Caravans. Five Caravan genes are gene models.
 - Waterskin: a water bag on the outer side of the right thigh.
 - Sandling has a wrap: a wrap on the top of the head, on rows 0 to 2 of
   the sides and the back of the head, and on row 0 of the face.
+
+Pixel plan for the Parchers.
+- Dehydrator has the lips: y 13, x 10 to 13, and y 15, x 11 to 13, at
+  order 1, over the Sunstroke flush and the Sunbaked chin.
+- Thirstbite: two long yellow fangs, the gene model thirstbite_teeth, over the
+  mouth.
+- Desiccate has an ashen coat on the skin (order -2), and flakes on rows 3
+  to 7 of the sides of the head.
+- Salt Crust: salt crystals, the gene model salt_crust_crystals, on the
+  shoulders, the lower back, the hip, and the knees.
+- Mirage Water has a wet coat and glints on leg rows 9 to 11 and the soles,
+  at order 2, over the Dune Runner wraps.
+- Dust Lung has a sunken ribcage on the chest, under the marks (order -1).
 This script needs Pillow.
 """
 import json
@@ -828,6 +841,143 @@ def waterskin_model():
     save_model("waterskin_bag", im, parts)
 
 
+def dehydrator():
+    # Cracked, dry lips: a pale upper lip (y 13, x 10 to 13) and lower lip
+    # (y 15, x 11 to 13) round the mouth (y 14), with dark cracks. The
+    # lower lip stays off x 10, where the Sandblast sand spills. The mouth row stays free, so the
+    # Sandblast sand shows between the lips. The lips are at order 1, over
+    # the Sunstroke flush and the Sunbaked chin.
+    lip = Mark("#C9A88E", order=1)
+    crack = Mark("#3A1E14", order=1)
+    for x in range(10, 14):
+        (crack if x in (11, 13) else lip).put((x, 13), 235 if x % 2 else 255)
+        if x > 10:
+            (crack if x == 12 else lip).put((x, 15), 225 if x % 2 else 245)
+    return [lip, crack]
+
+
+def thirstbite():
+    # The long yellow teeth are the gene model thirstbite_teeth.
+    return []
+
+
+def thirstbite_model():
+    # Two long yellow fangs that hang from the upper jaw, with a gap of 2
+    # pixels between them, over the mouth (face row 14 is at y -2 on the head bone) and
+    # past the chin. They are flat squares just in front of the face (z
+    # -4). Texture x 10 to 13 is x -2 to 2 on the head.
+    from PIL import Image
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    tooth = ("#E8D27A", "#C8AA4A", "#8A7030")
+
+    def fang(face, x, y):
+        return tooth[2] if y == 2 else tooth[1] if face == "back" else tooth[y % 2 * 1]
+
+    # A fang: 1x3x0 at uv (0, 0).
+    paint_box(im, 0, 0, 1, 3, 0, fang)
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-2, -2, -4.05], "size": [1, 3, 0]},
+        {"bone": "head", "uv": [0, 0], "from": [1, -2, -4.05], "size": [1, 3, 0]},
+    ]
+    save_model("thirstbite_teeth", im, parts)
+
+
+def desiccate():
+    # Dry, flaking skin: a pale, ashen coat on the skin (order -2), and pale
+    # flakes that curl up from the skin, with a dark shadow under each
+    # flake, on the free rows of the sides of the head (rows 3 to 7). The
+    # back of the head has no flakes: there they look like a face. The flakes that fall need particles, which a gene visual
+    # cannot make.
+    ash = Mark("#CFC4AC", alpha=60, order=-2, materials=["skin"], size=16).fill()
+    flake = Mark("#E2D8C0")
+    shadow = Mark("#5E503C")
+    for side in (0, 1):
+        for col, row in ((5, 3), (3, 5), (6, 6)):
+            flake.put(head_side(side, col, row), 255 if col % 2 else 230)
+            if row < 7:
+                shadow.put(head_side(side, col, row + 1), 220)
+    return [ash, flake, shadow]
+
+
+SALT = ("#F4F6F8", "#D8E0E6", "#B8C4CC")
+
+
+def salt_crust():
+    # The salt crystals are the gene model salt_crust_crystals.
+    return []
+
+
+def salt_crust_model():
+    # Small white salt crystals that grow out of the body: on the tops of
+    # the shoulders, on the lower back under the Packmule pack (it ends at y
+    # 9), on the front of the hip, and on the knees. Each crystal is half
+    # inside the body, so it sits on the body with no gap.
+    from PIL import Image
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+
+    def crystal(face, x, y):
+        return SALT[0] if face == "top" else SALT[1] if face in ("front", "back") else SALT[2]
+
+    # A crystal: 1x1x1 at uv (0, 0). A large crystal: 2x2x2 at uv (0, 4).
+    paint_box(im, 0, 0, 1, 1, 1, crystal)
+    paint_box(im, 0, 4, 2, 2, 2, lambda face, x, y: SALT[0] if face == "top" or (x + y) % 3 == 0 else
+              crystal(face, x, y))
+    small = lambda bone, at, rot=None: dict({"bone": bone, "uv": [0, 0], "from": at, "size": [1, 1, 1]},
+                                            **({"pivot": [at[0] + 0.5, at[1] + 0.5, at[2] + 0.5],
+                                                "rotation": rot} if rot else {}))
+    large = lambda bone, at, rot: {"bone": bone, "uv": [0, 4], "from": at, "size": [2, 2, 2],
+                                   "pivot": [at[0] + 1, at[1] + 1, at[2] + 1], "rotation": rot}
+    parts = [
+        # The shoulders: the arm top is at y -2.
+        large("right_arm", [-2, -2.8, -1], [0, 30, 0]),
+        small("right_arm", [-3.3, -2.5, 0.5], [0, 0, -20]),
+        large("left_arm", [0, -2.8, -1], [0, -30, 0]),
+        small("left_arm", [2.3, -2.5, 0.5], [0, 0, 20]),
+        # The lower back, and the front of the hip.
+        large("body", [-2, 9.5, 1.2], [0, 0, 15]),
+        small("body", [0.5, 10, 1.6], [20, 0, 0]),
+        small("body", [1.5, 10.5, -2.6], [0, 0, 30]),
+        # The knees: the knee is at y 5 on the leg bone, and the front at z -2.
+        small("right_leg", [-1, 5, -2.5], [0, 0, 45]),
+        small("left_leg", [0.2, 6, -2.5], [0, 0, 30]),
+    ]
+    save_model("salt_crust_crystals", im, parts)
+
+
+def mirage_water():
+    # A wet shimmer on the feet: a thin blue-gray wet coat on leg rows 9 to
+    # 11 and on the soles, and bright glints of light. The coat is at order
+    # 2, so it shows over the Dune Runner wraps as wet cloth.
+    wet = Mark("#5C8CA8", alpha=90, order=2)
+    glint = Mark("#E8F6FF", alpha=230, order=2)
+    for face in (OUTER, FRONT, INNER, BACK):
+        for col in range(4):
+            for row in (9, 10, 11):
+                wet.put(leg(face, col, row))
+        glint.put(leg(face, (face // 4 + 1) % 4, 10)).put(leg(face, (face // 4 + 3) % 4, 11), 220)
+    for x in range(8, 12):
+        for y in range(16, 20):
+            wet.put([(x, y), (x + 16, y + 32)])
+    return [wet, glint]
+
+
+def dust_lung():
+    # A sunken ribcage on the chest: dark hollows between the ribs, pale
+    # dusty ribs, and the breastbone in the middle. It goes under the marks
+    # of other genes (order -1), and the Solar Flare sun covers its middle.
+    hollow = Mark("#2E261C", alpha=210, order=-1)
+    rib = Mark("#D2C6A6", alpha=230, order=-1)
+    for row in (2, 4, 6, 8):
+        for col in range(8):
+            if col in (3, 4):
+                continue
+            rib.put(body(CHEST, col, row), 255 if 1 <= col <= 6 else 220)
+            hollow.put(body(CHEST, col, row + 1), 230 if 1 <= col <= 6 else 190)
+    for row in range(2, 10):
+        rib.put(body(CHEST, 3, row), 235).put(body(CHEST, 4, row), 215)
+    return [hollow, rib]
+
+
 GENES = {
     "sunbaked": sunbaked,
     "heatshimmer": heatshimmer,
@@ -853,6 +1003,12 @@ GENES = {
     "sandling": sandling,
     "nomad": nomad,
     "waterskin": waterskin,
+    "dehydrator": dehydrator,
+    "thirstbite": thirstbite,
+    "desiccate": desiccate,
+    "salt_crust": salt_crust,
+    "mirage_water": mirage_water,
+    "dust_lung": dust_lung,
 }
 
 MODELS = {
@@ -865,6 +1021,8 @@ MODELS = {
     "signal_fire": "originofspawns:signal_fire_pot",
     "nomad": "originofspawns:nomad_scarf",
     "waterskin": "originofspawns:waterskin_bag",
+    "thirstbite": "originofspawns:thirstbite_teeth",
+    "salt_crust": "originofspawns:salt_crust_crystals",
 }
 
 
@@ -879,6 +1037,8 @@ def main():
     signal_fire_model()
     nomad_model()
     waterskin_model()
+    thirstbite_model()
+    salt_crust_model()
     for gene, make in GENES.items():
         marks = make()
         write(gene, marks, MODELS)

@@ -1,0 +1,20 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dust_lung_0.png",
+				"tint": "#2E261C"
+			},
+			"order": -1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dust_lung_1.png",
+				"tint": "#D2C6A6"
+			},
+			"order": -1
+		}
+	]
+}

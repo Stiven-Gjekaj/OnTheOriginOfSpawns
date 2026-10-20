@@ -1,0 +1,20 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dehydrator_0.png",
+				"tint": "#C9A88E"
+			},
+			"order": 1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dehydrator_1.png",
+				"tint": "#3A1E14"
+			},
+			"order": 1
+		}
+	]
+}

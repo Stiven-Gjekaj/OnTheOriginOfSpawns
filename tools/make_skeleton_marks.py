@@ -364,9 +364,9 @@ def fleetbone():
 def fleetbone_model():
     # A short trail of loose vertebrae that hang back and down from the foot
     # of the spine, like a tail, as if the bones fall away while it runs.
-    # Each vertebra touches the next at a corner, and the first lies on the
-    # back. They get smaller toward the end. On the body bone, the back is
-    # at z 2, and the foot of the spine is at y 10.
+    # The first vertebra starts inside the pelvis (y 10 to 12), so the trail
+    # comes out of it, and each vertebra overlaps the one before it. They
+    # get smaller toward the end. On the body bone, the back is at z 2.
     im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
 
     def vertebra(face, x, y):
@@ -377,10 +377,10 @@ def fleetbone_model():
     paint_box(im, 0, 0, 2, 1, 1, vertebra)
     paint_box(im, 0, 4, 1, 1, 1, vertebra)
     parts = [
-        {"bone": "body", "uv": [0, 0], "from": [-1, 9.5, 2], "size": [2, 1, 1]},
-        {"bone": "body", "uv": [0, 0], "from": [-1, 10.4, 2.9], "size": [2, 1, 1]},
-        {"bone": "body", "uv": [0, 4], "from": [-0.5, 11.3, 3.8], "size": [1, 1, 1]},
-        {"bone": "body", "uv": [0, 4], "from": [-0.5, 12.1, 4.7], "size": [1, 1, 1]},
+        {"bone": "body", "uv": [0, 0], "from": [-1, 10, 1.4], "size": [2, 1, 1]},
+        {"bone": "body", "uv": [0, 0], "from": [-1, 10.6, 2.1], "size": [2, 1, 1]},
+        {"bone": "body", "uv": [0, 4], "from": [-0.5, 11.2, 2.8], "size": [1, 1, 1]},
+        {"bone": "body", "uv": [0, 4], "from": [-0.5, 11.8, 3.5], "size": [1, 1, 1]},
     ]
     save_model("fleetbone_trail", im, parts)
 

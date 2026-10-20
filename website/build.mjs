@@ -128,7 +128,7 @@ function mdToHtml(md, { skipFirstHeading = true } = {}) {
       if (firstHeading && skipFirstHeading) { firstHeading = false; i++; continue; }
       const level = Math.min(h[1].length + 1, 6);
       const id = "dp-" + slug(h[2]);
-      if (level <= 4) toc.push({ level, id, title: h[2] });
+      if (level <= 5) toc.push({ level, id, title: h[2] });
       html.push(`<h${level} id="${id}">${inline(h[2])}</h${level}>`);
       i++;
       continue;

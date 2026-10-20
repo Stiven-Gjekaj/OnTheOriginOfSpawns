@@ -1,28 +1,28 @@
 # Wiki website
 
 This folder holds the wiki of On the Origin of Spawns.
-It is a static site. It has no backend.
+It is a static site that Astro makes.
+GitHub Pages serves it at https://stiven-gjekaj.github.io/OnTheOriginOfSpawns/.
 
-## Serve the wiki
+## Commands
 
-The Gene Lab reads the mod textures, so the browser must load the site from a
-server, not from a file.
-Run this command from the root of the repository:
+You need Node 22.12 or later.
+Run these commands in `website/`:
 
-    python3 -m http.server 8000 --directory website
+| Command | Result |
+|---|---|
+| `npm ci` | Installs the exact versions of `package-lock.json` |
+| `npm run dev` | Makes the data, then starts a server at http://localhost:4321/OnTheOriginOfSpawns/ |
+| `npm run build` | Makes the data, then writes the site to `dist/` |
+| `npm run preview` | Serves `dist/` at http://localhost:4321/OnTheOriginOfSpawns/ |
+| `npm run data` | Makes the data only |
 
-Then open http://localhost:8000 in a browser.
+The `pages` workflow runs `npm ci` and `npm run build`, then publishes `dist/`.
 
-## Update the data
+## Data
 
-The pages read `js/data.js`.
-`build.mjs` makes this file from the files of the mod.
-Run it after a change to the genes, the families, the pressures, the language
-file, the gene visuals, the design files, or the data pack guide:
-
-    node website/build.mjs
-
-The script needs Node 18 or later, and no packages.
+`build.mjs` makes the data of the pages from the files of the mod.
+`npm run dev` and `npm run build` run it first.
 It reads these files:
 
 - `src/main/resources/data/originofspawns/originofspawns/gene/*.json`
@@ -33,23 +33,32 @@ It reads these files:
 - `design/DESIGN.md`, `design/ROADMAP.md`, and `design/species/zombie.md`
 - `docs/data-packs.md`, `README.md`, and `gradle.properties`
 
-It also copies the textures that the gene visuals use into `mod/`.
-Do not edit `js/data.js` or `mod/`. The script writes them again.
+It writes `src/data/site.json`, and copies the textures that the gene visuals
+use into `public/mod/`.
+Git ignores these files, because the build makes them again each time.
 
 The state of each feature comes from the roadmap.
-A gene that a finished milestone names shows as part of the release.
-The other genes show as milestone 2a.
-When milestone 2a gets "(done)" in `design/ROADMAP.md`, run the script again.
+A milestone with "(done)" in `design/ROADMAP.md` is part of the release.
+
+## Dependencies
+
+Each dependency has an exact version in `package.json`.
+`package-lock.json` holds the exact version of each package below them.
+All versions were published before 2026-10-06.
+To add a package, use the same rule:
+
+    npm install --save-exact --before=<a date two weeks ago> <package>@<version>
 
 ## Files
 
-| File | Content |
+| Path | Content |
 |---|---|
-| `index.html` | The page shell |
-| `css/site.css` | The styles: panels, slots, buttons, tooltips, and the XP bar |
-| `js/app.js` | The pages |
-| `js/zombie.js` | The zombie renderer of the hero, the Gene Lab, and the gene cards |
-| `js/data.js` | The data from `build.mjs` |
-| `img/` | The mod icon, the banner, and the notebook item |
-| `mod/` | The mod textures from `build.mjs` |
-| `LICENSES.md` | The licences of the font and the images |
+| `astro.config.mjs` | The configuration. The base path is `/OnTheOriginOfSpawns` |
+| `src/pages/` | One folder for each page |
+| `src/layouts/Layout.astro` | The head, the header, and the footer of each page |
+| `src/components/` | The parts that the pages share |
+| `src/styles/global.css` | The design system: the type scale, the spacing, the colors, and the Minecraft elements |
+| `src/lib/` | Helpers for the pages and the browser scripts |
+| `src/scripts/` | The browser scripts: the zombie renderer, the Gene Lab, the simulator, the notebook, and the tooltip |
+| `public/img/` | The mod icon and the banner |
+| `LICENSES.md` | The licences of the fonts and the images |

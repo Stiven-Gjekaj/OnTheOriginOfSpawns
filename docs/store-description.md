@@ -1,5 +1,21 @@
 ![On the Origin of Spawns](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/brand/banner.png)
 
+**The most in-depth evolution mod for Minecraft.** Each kill is a vote in
+natural selection. Burn the zombies, and their children resist fire. Shoot
+them, and they grow armor plates. Every gene changes how a mob looks, so you
+can read the evolution of your world on the bodies of its mobs.
+
+- **3** species: the zombie, the husk, and the drowned
+- **90** genes, each with a gain, a downside, and a look
+- **15** families, and **90** named family mixes
+- **20** causes of death that drive the selection
+- **6** biome pools for each species
+- **523,308** possible gene mixes
+
+![Five zombies, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/zombies.png)
+![Five husks, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/husks.png)
+![Five drowned, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/drowned.png)
+
 > **Alpha.** The zombie, the husk, and the drowned are complete. Each one has
 > 30 genes, 5 families, 20 minor families, and 10 hybrids of its own. The
 > other mobs, the player adaptations, and the later notebook pages are the

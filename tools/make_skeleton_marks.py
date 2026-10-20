@@ -214,11 +214,14 @@ def high_ground():
 
 def high_ground_model():
     # A wide-brim ranger hat of worn leather: a flat brim that sticks out 3
-    # pixels past the head on all sides, at the top of the head, and a low
-    # crown on the brim, with a dark band at its foot and a dent in its
-    # top. The brim is 0.2 pixel over the top of the head, so the two do not
-    # flicker, and it goes through the head, so only the ring of it outside
-    # the head shows. It hides only the top row of the face. On the head
+    # pixels past the head on all sides, and a low crown on the brim, with
+    # a dark band at its foot and a dent in its top. The hat sits down on
+    # the head: the brim is from y -7.6 to -6.6, so it crosses the forehead
+    # 0.4 pixel under the top of the skull. The crown is as wide as the head
+    # (0.3 pixel out), and it covers the top of the skull down to the brim,
+    # so no part of the skull shows over the brim. The brim goes through
+    # the head, so only the ring of it outside the head shows. The hat
+    # hides the top row of the face and a part of the second. On the head
     # bone, the head is from y -8 to 0, and from -4 to 4 in x and z.
     im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
 
@@ -231,17 +234,17 @@ def high_ground_model():
     def crown(face, x, y):
         if face == "top":
             # The dent: a darker line from the front to the back.
-            return HAT[1] if x in (2, 3) else leather(face, x, y)
+            return HAT[1] if x in (3, 4) else leather(face, x, y)
         if face == "bottom":
             return HAT[3]
         return HAT[3] if y == 2 else leather(face, x, y)
 
-    # The brim: 14x1x14 at uv (0, 0). The crown: 6x3x6 at uv (0, 16).
+    # The brim: 14x1x14 at uv (0, 0). The crown: 8x3x8 at uv (0, 16).
     paint_box(im, 0, 0, 14, 1, 14, leather)
-    paint_box(im, 0, 16, 6, 3, 6, crown)
+    paint_box(im, 0, 16, 8, 3, 8, crown)
     parts = [
-        {"bone": "head", "uv": [0, 0], "from": [-7, -8.2, -7], "size": [14, 1, 14]},
-        {"bone": "head", "uv": [0, 16], "from": [-3, -11.2, -3], "size": [6, 3, 6]},
+        {"bone": "head", "uv": [0, 0], "from": [-7, -7.6, -7], "size": [14, 1, 14]},
+        {"bone": "head", "uv": [0, 16], "from": [-4, -10.6, -4], "size": [8, 3, 8], "inflate": 0.3},
     ]
     save_model("high_ground_hat", im, parts)
 

@@ -8,7 +8,7 @@
 			"effect": "minecraft:blindness",
 			"seconds": 3,
 			"radius": 4,
-			"when": "bright"
+			"when": "sunlit"
 		}
 	],
 	"downsides": [

@@ -3,6 +3,7 @@
 	"package": "io.github.stivengjekaj.originofspawns.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"mixins": [
+		"AbstractSkeletonMixin",
 		"LivingEntityMixin",
 		"MeleeAttackGoalMixin",
 		"MobAccessor",
@@ -10,6 +11,7 @@
 		"PlayerMixin",
 		"ProjectileMixin",
 		"RangedAttackGoalMixin",
+		"RangedBowAttackGoalMixin",
 		"SpiderMixin",
 		"ZombieMixin"
 	],

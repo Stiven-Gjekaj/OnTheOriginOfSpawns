@@ -98,7 +98,9 @@ public sealed interface GeneEffect {
 			Map.entry("break_boats", BreakBoats.CODEC),
 			Map.entry("see_invisible", SeeInvisible.CODEC),
 			Map.entry("sneak_blind", SneakBlind.CODEC),
-			Map.entry("lure", Lure.CODEC)
+			Map.entry("lure", Lure.CODEC),
+			Map.entry("keep_distance", KeepDistance.CODEC),
+			Map.entry("arrow_spread", ArrowSpread.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -1161,8 +1163,8 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * Multiplies the throw range of the mob at a target: a wet target is in water or in a boat, and a dry target
-	 * is not.
+	 * Multiplies the throw range of the mob at a target: a wet target is in water or in a boat, a dry target is not,
+	 * and any target is both.
 	 */
 	record ThrowRange(float multiplier, Target target) implements GeneEffect {
 		public static final MapCodec<ThrowRange> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -1180,7 +1182,8 @@ public sealed interface GeneEffect {
 		 */
 		public enum Target implements StringRepresentable {
 			WET,
-			DRY;
+			DRY,
+			ANY;
 
 			public static final Codec<Target> CODEC = StringRepresentable.fromEnum(Target::values);
 
@@ -1367,6 +1370,34 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "lure";
+		}
+	}
+
+	/**
+	 * While the mob shoots with a bow, it walks back when its target is nearer than the number of blocks.
+	 */
+	record KeepDistance(float blocks) implements GeneEffect {
+		public static final MapCodec<KeepDistance> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 32.0F).fieldOf("blocks").forGetter(KeepDistance::blocks)
+		).apply(instance, KeepDistance::new));
+
+		@Override
+		public String type() {
+			return "keep_distance";
+		}
+	}
+
+	/**
+	 * Multiplies the spread of the arrows of the mob. The multiplier 0 makes each arrow fly straight.
+	 */
+	record ArrowSpread(float multiplier) implements GeneEffect {
+		public static final MapCodec<ArrowSpread> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(ArrowSpread::multiplier)
+		).apply(instance, ArrowSpread::new));
+
+		@Override
+		public String type() {
+			return "arrow_spread";
 		}
 	}
 }

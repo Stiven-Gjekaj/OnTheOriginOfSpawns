@@ -442,6 +442,32 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns true if the mob wants to walk back from its target now, because the target is too near.
+	 */
+	public static boolean keepsDistance(Mob mob) {
+		LivingEntity target = mob.getTarget();
+		if (target == null) {
+			return false;
+		}
+		double distance = mob.distanceTo(target);
+		return GeneEffects.of(mob).anyMatch(effect -> effect instanceof GeneEffect.KeepDistance keep
+				&& distance < keep.blocks());
+	}
+
+	/**
+	 * Returns the product of the arrow spread multipliers of the mob.
+	 */
+	public static float arrowSpreadMultiplier(LivingEntity mob) {
+		float multiplier = 1.0F;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.ArrowSpread spread) {
+				multiplier *= spread.multiplier();
+			}
+		}
+		return multiplier;
+	}
+
+	/**
 	 * Returns the attack interval of a ranged goal after the throw rates of the mob.
 	 */
 	public static int scaleThrowInterval(Mob mob, int ticks) {
@@ -465,7 +491,8 @@ public final class GeneBehaviors {
 		GeneEffect.ThrowRange.Target kind = wet ? GeneEffect.ThrowRange.Target.WET : GeneEffect.ThrowRange.Target.DRY;
 		float multiplier = 1.0F;
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
-			if (effect instanceof GeneEffect.ThrowRange range && range.target() == kind) {
+			if (effect instanceof GeneEffect.ThrowRange range
+					&& (range.target() == kind || range.target() == GeneEffect.ThrowRange.Target.ANY)) {
 				multiplier *= range.multiplier();
 			}
 		}

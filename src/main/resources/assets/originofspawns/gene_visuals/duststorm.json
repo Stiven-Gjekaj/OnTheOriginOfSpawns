@@ -6,7 +6,7 @@
 				"texture": "originofspawns:textures/gene_marks/duststorm_0.png",
 				"tint": "#D8C8A0"
 			},
-			"order": -2
+			"order": -1
 		},
 		{
 			"effect": {
@@ -14,7 +14,7 @@
 				"texture": "originofspawns:textures/gene_marks/duststorm_1.png",
 				"tint": "#EADCB8"
 			},
-			"order": -2
+			"order": -1
 		}
 	]
 }

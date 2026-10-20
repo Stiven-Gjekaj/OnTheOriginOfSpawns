@@ -1,0 +1,26 @@
+{
+	"layers": [
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/embalmed_0.png",
+				"tint": "#2E1A0C"
+			},
+			"order": -3
+		},
+		{
+			"materials": [
+				"skin"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/embalmed_1.png",
+				"tint": "#C88A3A"
+			},
+			"order": -3
+		}
+	]
+}

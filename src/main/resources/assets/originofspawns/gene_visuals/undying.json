@@ -1,0 +1,25 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/undying_0.png",
+				"tint": "#8A1E1A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/undying_1.png",
+				"tint": "#B07A48"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/undying_2.png",
+				"tint": "#3A2416"
+			}
+		}
+	]
+}

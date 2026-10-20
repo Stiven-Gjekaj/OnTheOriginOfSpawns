@@ -44,7 +44,20 @@ Pixel plan for the Dunecrawlers.
   is the gene model sinkhole_sand.
 - Sandblast has the mouth (x 11 to 13, y 14) and 2 pixels of the chin (x 10
   and 14, y 15).
-- Duststorm has a coat of dust over all the husk (order -2).
+- Duststorm has a coat of dust over all the husk (order -1).
+
+Pixel plan for the Mummies.
+- Wrapped has bandages over all the body and the head, under the marks
+  (order -2).
+- Embalmed has a coat of dark resin on the skin (order -3). It is between
+  the Kilnskin color (order -4) and the Wrapped bandages.
+- Grave Dust has a dust on the cloth (order -1), and rags on arm rows 3, 4,
+  and 7, and leg row 7.
+- Cursetouch has the hands, arm rows 9 to 11, at order 2, over the
+  Sunbaked hands.
+- Undying has the jar on the belly: chest columns 2 to 4, rows 8 to 10.
+- Tomb Guard has no marks. Its gold collar and cuffs are the gene model
+  tomb_guard_gold.
 This script needs Pillow.
 """
 import json
@@ -313,15 +326,176 @@ def sandblast():
 
 def duststorm():
     # A coat of fine dust over the whole husk: a pale haze and small specks.
-    # They go under the marks of other genes (order -2). The dust cloud
+    # They go under the marks of other genes, and over the Wrapped bandages
+    # (order -1). The dust cloud
     # around the husk needs particles, which a gene visual cannot make.
-    haze = Mark("#D8C8A0", alpha=70, order=-2, size=16).fill()
-    speck = Mark("#EADCB8", alpha=170, order=-2, size=16)
+    haze = Mark("#D8C8A0", alpha=70, order=-1, size=16).fill()
+    speck = Mark("#EADCB8", alpha=170, order=-1, size=16)
     for y in range(16):
         for x in range(16):
             if noise100(x, y, 33) < 9:
                 speck.put((x, y), 255 if noise100(x, y, 34) < 50 else 215)
     return [haze, speck]
+
+
+# The faces of the head in the texture: the top left pixel, the width, and
+# the height.
+HEAD_FACES = {"top": (8, 0, 8, 8), "right": (0, 8, 8, 8), "left": (16, 8, 8, 8),
+              "back": (24, 8, 8, 8)}
+BODY_FACES = ((CHEST, 8), (SHIRT_BACK, 8), (RIGHT_SIDE, 4), (LEFT_SIDE, 4))
+LINEN = ("#DDD3B8", "#C9BEA0")
+
+
+def strip(col, row, seed):
+    """Return 0 for a pixel of a bandage, 1 for the dark edge of a bandage,
+    and None for a gap. Each bandage is 2 rows wide. It goes round with a
+    slight slant: it drops 1 row each 4 columns."""
+    if noise100(col, row, seed) < 3:
+        return None
+    turn = (row + col // 4) % 3
+    return 1 if turn == 2 else 0
+
+
+def wrapped():
+    # Linen bandages round the body, the arms, the legs, and the head, at a
+    # slant, with gaps. They go under the marks of other genes (order -2).
+    linen = Mark(LINEN[0], order=-2)
+    edge = Mark("#8E8268", order=-2)
+
+    def wrap(pixel, col, row, seed):
+        kind = strip(col, row, seed)
+        if kind == 0:
+            linen.put(pixel, 255 if noise100(col, row, seed + 1) < 80 else 232)
+        elif kind == 1:
+            edge.put(pixel, 235)
+
+    for n, (face, width) in enumerate(BODY_FACES):
+        for row in range(12):
+            for col in range(width):
+                wrap(body(face, col, row), col, row, 40 + n)
+    for face in (OUTER, FRONT, INNER, BACK):
+        for row in range(12):
+            for col in range(4):
+                wrap(arm(face, col, row), col + face, row, 44)
+                wrap(leg(face, col, row), col + face, row + 1, 45)
+    for n, (x0, y0, w, h) in enumerate(HEAD_FACES.values()):
+        for row in range(h):
+            for col in range(w):
+                wrap((x0 + col, y0 + row), col, row, 46 + n)
+    # A band over the top 2 rows of the face.
+    for x in range(8, 16):
+        linen.put((x, 8), 240).put((x, 9), 220 if x % 3 else 255)
+    return [linen, edge]
+
+
+def cursetouch():
+    # Dark wraps on the hands, rows 9 to 11, with a faint violet thread. They
+    # are at order 2, over the Sunbaked hands, with a few gaps.
+    wrap = Mark("#2A2430", order=2)
+    thread = Mark("#5A3C78", order=2)
+    for face in (OUTER, FRONT, INNER, BACK):
+        for col in range(4):
+            for row in (9, 10, 11):
+                if noise100(col + face, row, 51) < 12:
+                    continue
+                if (row + col + face // 4) % 3 == 0:
+                    thread.put(arm(face, col, row), 230)
+                else:
+                    wrap.put(arm(face, col, row), 255 if (col + row) % 2 else 220)
+    return [wrap, thread]
+
+
+def undying():
+    # A sealed jar on the belly, under the Solar Flare sun: a red wax seal on
+    # the lid, a clay jar, and a dark sign on the jar.
+    seal = Mark("#8A1E1A")
+    seal.put(body(CHEST, 2, 8)).put(body(CHEST, 3, 8), 225)
+    clay = Mark("#B07A48")
+    for col, row in ((2, 9), (4, 9), (2, 10), (3, 10), (4, 10)):
+        clay.put(body(CHEST, col, row), 255 if col != 4 else 220)
+    sign = Mark("#3A2416")
+    sign.put(body(CHEST, 3, 9))
+    return [seal, clay, sign]
+
+
+def embalmed():
+    # A coat of dark resin over the skin. It lets the color under it show, so
+    # Kilnskin under it gives dark brick (order -3, over Kilnskin at -4). A
+    # few amber glints show the gloss of the resin on the top and the back
+    # of the head. The glints are not side by side, so that they do not look
+    # like eyes.
+    resin = Mark("#2E1A0C", alpha=140, order=-3, materials=["skin"], size=16).fill()
+    glint = Mark("#C88A3A", alpha=220, order=-3, materials=["skin"])
+    glint.put((9, 3)).put((12, 5), 225).put((27, 13), 230)
+    return [resin, glint]
+
+
+def grave_dust():
+    # Torn, dusty wraps: rags of gray linen that hang from the upper arms
+    # (rows 3 and 4), the forearms (row 7), and the legs (row 7). A gray
+    # dust dulls the cloth (order -1), so that the Wrapped bandages under it
+    # look dusty too.
+    dust = Mark("#9C9688", alpha=80, order=-1, materials=["cloth"], size=16).fill()
+    rag = Mark("#B4AC98")
+    torn = Mark("#5C5648")
+    for face in (OUTER, FRONT, INNER, BACK):
+        for col in range(4):
+            n = noise100(col + face, 3, 61)
+            rag.put(arm(face, col, 3), 255 if n < 50 else 225)
+            if n < 55:
+                rag.put(arm(face, col, 4), 230)
+            else:
+                torn.put(arm(face, col, 4), 220)
+            if noise100(col + face, 7, 62) < 65:
+                rag.put(arm(face, col, 7), 235)
+                rag.put(leg(face, col, 7), 235)
+            else:
+                torn.put(leg(face, col, 7), 230)
+    return [dust, rag, torn]
+
+
+def tomb_guard():
+    # The gold trinkets are the gene model tomb_guard_gold.
+    return []
+
+
+def tomb_guard_model():
+    # A broad gold collar round the neck, on the top of the body, and a gold
+    # cuff on each wrist, at arm row 8. On an arm bone, the arm is from y -2,
+    # so row 8 is at y 6.
+    from PIL import Image
+    gold = (226, 178, 58, 255)
+    gold_dark = (168, 120, 34, 255)
+    stone = (40, 110, 150, 255)
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def box(u, v, w, h, d, color):
+        for y in range(v, v + d + h):
+            for x in range(u, u + 2 * (d + w)):
+                if y < v + d and not u + d <= x < u + d + 2 * w:
+                    continue
+                im.putpixel((x, y), color(x - u, y - v))
+
+    # The collar: 8x1x4 at uv (0, 0). Blue stones in the gold on the sides.
+    box(0, 0, 8, 1, 4, lambda x, y: stone if y == 4 and x % 3 == 1 else gold if (x + y) % 2 else gold_dark)
+    # The cuff: 4x1x4 at uv (0, 8).
+    box(0, 8, 4, 1, 4, lambda x, y: stone if y == 4 and x % 4 == 2 else gold if (x + y) % 2 else gold_dark)
+    parts = [{"bone": "body", "uv": [0, 0], "from": [-4, 0, -2], "size": [8, 1, 4], "inflate": 0.3}]
+    for bone, x, mirror in (("right_arm", -3, False), ("left_arm", -1, True)):
+        part = {"bone": bone, "uv": [0, 8], "from": [x, 6, -2], "size": [4, 1, 4], "inflate": 0.25}
+        if mirror:
+            part["mirror"] = True
+        parts.append(part)
+    model = {
+        "texture": "originofspawns:textures/entity/tomb_guard_gold.png",
+        "texture_width": 32,
+        "texture_height": 16,
+        "parts": parts,
+    }
+    im.save(os.path.join(TEXTURE_DIR, "tomb_guard_gold.png"))
+    with open(os.path.join(MODEL_DIR, "tomb_guard_gold.json"), "w") as fh:
+        json.dump(model, fh, indent="\t")
+        fh.write("\n")
 
 
 GENES = {
@@ -337,11 +511,18 @@ GENES = {
     "scuttler": scuttler,
     "sandblast": sandblast,
     "duststorm": duststorm,
+    "wrapped": wrapped,
+    "cursetouch": cursetouch,
+    "undying": undying,
+    "embalmed": embalmed,
+    "tomb_guard": tomb_guard,
+    "grave_dust": grave_dust,
 }
 
 MODELS = {
     "solar_flare": "originofspawns:solar_flare_sun",
     "sinkhole": "originofspawns:sinkhole_sand",
+    "tomb_guard": "originofspawns:tomb_guard_gold",
 }
 
 
@@ -349,6 +530,7 @@ def main():
     os.makedirs(MARK_DIR, exist_ok=True)
     solar_flare_model()
     sinkhole_model()
+    tomb_guard_model()
     for gene, make in GENES.items():
         marks = make()
         write(gene, marks, MODELS)

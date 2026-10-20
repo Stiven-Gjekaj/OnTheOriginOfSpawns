@@ -1,0 +1,29 @@
+{
+	"layers": [
+		{
+			"materials": [
+				"cloth"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/grave_dust_0.png",
+				"tint": "#9C9688"
+			},
+			"order": -1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/grave_dust_1.png",
+				"tint": "#B4AC98"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/grave_dust_2.png",
+				"tint": "#5C5648"
+			}
+		}
+	]
+}

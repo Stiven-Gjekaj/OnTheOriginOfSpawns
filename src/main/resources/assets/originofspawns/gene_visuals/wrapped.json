@@ -1,0 +1,20 @@
+{
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wrapped_0.png",
+				"tint": "#DDD3B8"
+			},
+			"order": -2
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wrapped_1.png",
+				"tint": "#8E8268"
+			},
+			"order": -2
+		}
+	]
+}

@@ -145,6 +145,17 @@ public class BehaviorEffectsTest {
 	}
 
 	@GameTest
+	public void broodExtrasGetTheirSpawnEffects(GameTestHelper helper) {
+		Zombie zombie = zombieWith(helper, new BlockPos(2, 1, 2), "test_brood_pickup");
+		AABB area = new AABB(zombie.blockPosition()).inflate(3);
+		GeneBehaviors.onSpawn(zombie, helper.getLevel(), EntitySpawnReason.NATURAL);
+		List<Zombie> extras = helper.getLevel().getEntitiesOfClass(Zombie.class, area, other -> other != zombie);
+		helper.assertValueEqual(extras.size(), 1, "extra zombies");
+		helper.assertTrue(extras.getFirst().canPickUpLoot(), "the extra zombie can pick up items");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void killedPlayerRisesWithTheHead(GameTestHelper helper) {
 		Zombie zombie = zombieWith(helper, new BlockPos(1, 1, 1), "test_raise");
 		ServerPlayer player = helper.makeMockServerPlayerInLevel();

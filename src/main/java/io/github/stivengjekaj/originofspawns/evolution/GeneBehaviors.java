@@ -140,6 +140,8 @@ public final class GeneBehaviors {
 			extra.setAttached(ModAttachments.GENES, genes);
 			GeneEffects.applyAttributes(extra, GeneEffects.sources(level.registryAccess(), genes));
 			level.addFreshEntity(extra);
+			// The extra mob joins with its genes, so the load does not run its spawn effects. They run here.
+			onSpawn(extra, level, EntitySpawnReason.REINFORCEMENT);
 		}
 	}
 

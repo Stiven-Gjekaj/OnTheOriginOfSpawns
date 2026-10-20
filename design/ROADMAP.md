@@ -108,15 +108,22 @@ The husk and the drowned come out together in one alpha release.
 
 ### Milestone 3: Player perks and classes
 
+- Add the first start pages in the notebook: a quote of Darwin, the
+  inheritance page, and the pick of an inherited gene from 5 player families.
+- Add the inherited genes. Each one is permanent, takes slot 1, and grows
+  from tier 1 to tier 3 with use.
 - Calculate the knowledge percentage.
-- Open perk slots at 0%, 20%, 40%, 60%, and 80%.
+- Open perk slots 2 to 8 at 0%, 15%, 30%, 45%, 60%, 75%, and 90%.
 - Add the 30 perks with their XP cost, the change cost, and the exclusive
   pairs.
 - Add the Lamarck and Darwin schools.
 - Add epigenetics.
 - Record the activity categories with more weight for recent activity.
-- Add the evolution classes with tier 1 and tier 2 effects.
-- Make the mobs counter the classes of the players.
+- Make the 5 evolution classes the 5 player families. The inherited gene sets
+  the main family, at tier 2. The play style sets the second family, at
+  tier 1.
+- Make the mobs counter the classes and the inherited families of the
+  players.
 
 ### Milestone 4: Full notebook
 

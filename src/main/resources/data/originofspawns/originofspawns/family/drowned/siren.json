@@ -1,0 +1,50 @@
+{
+	"species": "minecraft:drowned",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "water_pull",
+					"radius": 6
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "alone",
+					"multiplier": 0.75
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "water_pull",
+					"radius": 10
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "alone",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "water_pull",
+					"radius": 16
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "alone",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

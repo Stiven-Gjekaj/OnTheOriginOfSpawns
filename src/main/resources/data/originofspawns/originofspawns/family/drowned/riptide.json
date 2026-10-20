@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:drowned",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "speed_when",
+					"when": "in_water",
+					"multiplier": 1.2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "speed_when",
+					"when": "on_land",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "speed_when",
+					"when": "in_water",
+					"multiplier": 1.4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "speed_when",
+					"when": "on_land",
+					"multiplier": 0.9
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "speed_when",
+					"when": "in_water",
+					"multiplier": 1.6
+				}
+			],
+			"debuffs": [
+				{
+					"type": "speed_when",
+					"when": "on_land",
+					"multiplier": 0.95
+				}
+			]
+		}
+	]
+}

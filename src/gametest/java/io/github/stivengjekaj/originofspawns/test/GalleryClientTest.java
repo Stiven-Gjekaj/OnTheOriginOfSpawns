@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.test;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
+import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotOptions;
 
@@ -19,11 +21,13 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -125,13 +129,14 @@ public class GalleryClientTest implements FabricClientGameTest {
 				context.waitTicks(20);
 				context.takeScreenshot(TestScreenshotOptions.of(scene.name()).withSize(1920, 1080)
 						.disableCounterPrefix().withDestinationDir(OUTPUT));
-				server.runCommand("kill @e[tag=originofspawns_gallery]");
-				// The killed mobs drop items, which must not show in the next scene.
-				server.runCommand("kill @e[type=item]");
+				clear(server);
 				// Pyre leaves fire on the floor, which must not burn the mobs of the next scene.
 				server.runCommand("execute at @p run fill ~-24 ~ ~-8 ~24 ~4 ~24 air replace minecraft:fire");
 			}
-			allFamilies(context, singleplayer);
+			overhead(context, singleplayer, SCENES, "all_families", 6.5);
+			// The tall wither skeletons stand in the back row, so they do not hide a row behind them.
+			overhead(context, singleplayer, List.of(SKELETON_SCENES.get(0), SKELETON_SCENES.get(1),
+					SKELETON_SCENES.get(2), SKELETON_SCENES.get(4), SKELETON_SCENES.get(3)), "skeleton_families", 8.5);
 			infoPanel(context, singleplayer);
 		}
 	}
@@ -187,10 +192,27 @@ public class GalleryClientTest implements FabricClientGameTest {
 	}
 
 	/**
-	 * Puts all 15 families in three rows, one row for each species on its own floor, and looks down on them at 45
-	 * degrees.
+	 * Removes all entities except the player. The mobs do not die, so death genes such as Vengeful Spirit and Curse
+	 * Cloud leave no vexes, clouds, or items in the next scene.
 	 */
-	private static void allFamilies(ClientGameTestContext context, TestSingleplayerContext singleplayer) {
+	private static void clear(TestServerContext server) {
+		server.runOnServer(s -> {
+			List<Entity> others = new ArrayList<>();
+			s.overworld().getAllEntities().forEach(entity -> {
+				if (!(entity instanceof Player)) {
+					others.add(entity);
+				}
+			});
+			others.forEach(Entity::discard);
+		});
+	}
+
+	/**
+	 * Puts the families of the scenes in rows, one row for each species on its own floor, and looks down on them at 45
+	 * degrees. More rows need a higher camera.
+	 */
+	private static void overhead(ClientGameTestContext context, TestSingleplayerContext singleplayer, List<Scene> rows,
+			String name, double height) {
 		var server = singleplayer.getServer();
 		server.runOnServer(s -> {
 			ServerPlayer player = s.getPlayerList().getPlayers().getFirst();
@@ -200,8 +222,8 @@ public class GalleryClientTest implements FabricClientGameTest {
 			for (BlockPos pos : BlockPos.betweenClosed(base.offset(-30, -1, -12), base.offset(30, -1, 40))) {
 				level.setBlock(pos, Blocks.GRASS_BLOCK.defaultBlockState(), 2);
 			}
-			for (int row = 0; row < SCENES.size(); row++) {
-				Scene scene = SCENES.get(row);
+			for (int row = 0; row < rows.size(); row++) {
+				Scene scene = rows.get(row);
 				int z = base.getZ() + 6 + row * 3;
 				for (BlockPos pos : BlockPos.betweenClosed(base.getX() - 24, base.getY() - 2, z - 1,
 						base.getX() + 24, base.getY() - 2, z + 1)) {
@@ -217,8 +239,7 @@ public class GalleryClientTest implements FabricClientGameTest {
 					Mob mob = scene.type().create(level, EntitySpawnReason.COMMAND);
 					mob.setNoAi(true);
 					mob.setPersistenceRequired();
-					mob.setItemSlot(EquipmentSlot.MAINHAND, scene.type() == EntityTypes.DROWNED && i == 1
-							? new ItemStack(Items.TRIDENT) : ItemStack.EMPTY);
+					mob.setItemSlot(EquipmentSlot.MAINHAND, weapon(scene.type(), i));
 					mob.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
 					double x = (i - (scene.mobs().size() - 1) / 2.0) * 2.0;
 					mob.snapTo(base.getX() + 0.5 + x, base.getY(), z + 0.5, 180.0F, 0.0F);
@@ -237,19 +258,20 @@ public class GalleryClientTest implements FabricClientGameTest {
 			player.getAbilities().flying = true;
 			player.onUpdateAbilities();
 			// At 45 degrees, the camera sees the middle row as far ahead of it as it is high above it.
-			double height = 6.5;
-			player.connection.teleport(base.getX() + 0.5, base.getY() + height - 1.6, base.getZ() + 9.5 - height,
+			double middle = 6.5 + (rows.size() - 1) * 1.5;
+			player.connection.teleport(base.getX() + 0.5, base.getY() + height - 1.6, base.getZ() + middle - height,
 					0.0F, 45.0F);
 		});
 		context.waitTicks(40);
 		server.runCommand("execute as @e[tag=originofspawns_gallery] run data merge entity @s {Fire:0s}");
+		// Pyre puts fire on the floor around its wither skeleton.
+		server.runCommand("execute at @p run fill ~-24 ~-12 ~-4 ~24 ~ ~24 air replace minecraft:fire");
 		server.runCommand("effect clear @a");
 		// The smoke of the put out fires clears in about 3 seconds.
 		context.waitTicks(80);
-		context.takeScreenshot(TestScreenshotOptions.of("all_families").withSize(1920, 1080)
+		context.takeScreenshot(TestScreenshotOptions.of(name).withSize(1920, 1080)
 				.disableCounterPrefix().withDestinationDir(OUTPUT));
-		server.runCommand("kill @e[tag=originofspawns_gallery]");
-		server.runCommand("kill @e[type=item]");
+		clear(server);
 		server.runOnServer(s -> {
 			ServerPlayer player = s.getPlayerList().getPlayers().getFirst();
 			player.getAbilities().flying = false;

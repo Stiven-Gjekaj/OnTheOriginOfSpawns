@@ -44,11 +44,13 @@ A pressure needs `damage_types`, `conditions`, or both.
 | `shield` | The killer blocked a hit with a shield in the 10 seconds before the death, or holds its shield up |
 | `snow` | It snowed on the mob when it died |
 | `warm` | The mob died in a biome that is not cold |
+| `dry` | The mob died in a biome that is not wet |
+| `shears` | Someone sheared the mob before its death, for example the mushrooms of a bogged |
 
 The mod has these pressures: `fire`, `projectile`, `melee`, `explosion`,
 `fall`, `unreached`, `sunlight`, `spotted`, `alone`, `crowd`, `critical`,
 `golem`, `player_death`, `in_water`, `on_land`, `cold`, `night`, `boat`,
-`contact`, `trident`, `wolf`, `shield`, `snow`, and `warm`.
+`contact`, `trident`, `wolf`, `shield`, `snow`, `warm`, `dry`, and `shears`.
 The `contact` pressure uses the tag `#originofspawns:contact`: cacti and sweet
 berry bushes. The `trident` pressure uses the tag `#originofspawns:trident`.
 The `melee` pressure uses the tag `#originofspawns:melee`.
@@ -95,7 +97,7 @@ Times are in seconds, and distances are in blocks.
 |---|---|---|
 | `attribute` | `attribute`, `amount`, `operation` | Changes an attribute of the mob. `operation` is `add_value`, `add_multiplied_base`, or `add_multiplied_total` |
 | `damage_taken` | `damage_types`, `multiplier` | Multiplies the damage from these damage types. `0` makes the mob immune |
-| `damage_taken_when` | `when`, `multiplier`, `radius` (`8`) | Multiplies the damage that the mob takes while the state is true. The states `alone` and `grouped` use the radius |
+| `damage_taken_when` | `when`, `multiplier`, `radius` (`8`), `damage_types` (all) | Multiplies the damage that the mob takes while the state is true. The states `alone` and `grouped` use the radius. With `damage_types`, only the damage of this tag counts |
 | `damage_dealt_when` | `when`, `multiplier`, `players_only` (`false`), `hits` (`any`) | Multiplies the damage that the mob deals while the state is true. With `players_only`, only the damage to players. `hits` is `melee`, `projectile`, or `any` |
 | `damage_from` | `attackers`, `multiplier` | Multiplies the damage from these entity types, for example `minecraft:iron_golem` |
 | `sunburn` | `multiplier` | Multiplies the fire damage while the sun burns the mob. Other fire does normal damage |
@@ -149,6 +151,10 @@ The states for `when` are:
 | `cold_biome` | The mob is in a biome that is cold enough for snow |
 | `night` | It is dark outside |
 | `target_frozen` | The target of the mob freezes, as in powder snow |
+| `wet_ground` | The mob is in water, or stands on a block in the tag `#originofspawns:mud` |
+| `dry_ground` | The mob is not in water and does not stand on mud |
+| `on_rot_ground` | The mob stands on a block in the tag `#originofspawns:rot_ground`: mud, moss, or mycelium |
+| `target_in_water` | The target of the mob is in water |
 
 #### Hits
 
@@ -170,7 +176,7 @@ The states for `when` are:
 
 | Type | Fields | Result |
 |---|---|---|
-| `effect_on_hurt` | `effect`, `seconds`, `amplifier` (`0`), `cooldown_seconds` (`0`), `ink` (`false`), `ally_radius` (`0`), `player_radius` (`0`) | When an attacker hurts the mob, the attacker gets a status effect, after each cooldown. `ink` also sprays a cloud of ink. With an `ally_radius` above 0, the mobs of its species in the radius get the effect, and the attacker does not. With a `player_radius` above 0, the players in the radius get the effect, and the attacker does not |
+| `effect_on_hurt` | `effect`, `seconds`, `amplifier` (`0`), `cooldown_seconds` (`0`), `ink` (`false`), `ally_radius` (`0`), `player_radius` (`0`), `hits` (`any`) | When an attacker hurts the mob with a hit of the kind in `hits`, the attacker gets a status effect, after each cooldown. `ink` also sprays a cloud of ink. With an `ally_radius` above 0, the mobs of its species in the radius get the effect, and the attacker does not. With a `player_radius` above 0, the players in the radius get the effect, and the attacker does not |
 | `barrage` | `group` (`3`), `radius` (`16`) | When the mob shoots at a player, and this many skeletons of its species in the radius target that player and see the player, they get the same wait to the next shot. Then they all shoot at the same time |
 | `call_on_hurt` | `radius`, `smoke` (`false`), `cooldown_seconds` (`0`) | When the mob is hurt, the mobs of its species in the radius attack the attacker. `smoke` also makes a column of smoke. The call waits for its cooldown |
 | `share_damage` | `fraction`, `radius` (`8`) | A part of the damage that the mob takes goes to the mobs of its species in the radius |
@@ -243,6 +249,8 @@ The states for `when` are:
 | `heal_on_ally_death` | `amount`, `radius` | The mob heals by the amount when another mob of its species dies in the radius |
 | `hidden_from_afar` | `blocks`, `when` (`always`) | While the state is true, players farther than `blocks` do not see the mob. It is not the invisibility effect |
 | `ghost_arrows` | `blocks` | Players farther than `blocks` do not see the arrows of the mob while they fly |
+| `heal_on_hit` | `amount`, `hits` (`melee`), `when` (`always`) | Each hit of the mob heals it by the amount, while the state is true |
+| `regrow` | `seconds`, `heal` (`0`) | After a shear, the mushrooms of a bogged grow back after the seconds, and it heals by `heal` |
 | `death_effect` | `effect`, `seconds`, `amplifier` (`0`), `radius`, `when` (`always`), `allies` (`false`) | When the mob dies while the state is true, the players in the radius get a status effect. With `allies`, the mobs of its species get it instead |
 
 ### Gene visuals

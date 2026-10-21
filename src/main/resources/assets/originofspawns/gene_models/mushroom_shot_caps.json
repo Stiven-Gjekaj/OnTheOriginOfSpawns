@@ -1,0 +1,92 @@
+{
+	"texture": "originofspawns:textures/entity/mushroom_shot_caps.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_arm",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				-1.6,
+				5,
+				-0.5
+			],
+			"size": [
+				1,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2.4,
+				4,
+				-1
+			],
+			"size": [
+				2,
+				1,
+				2
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				-0.5,
+				7,
+				-1.6
+			],
+			"size": [
+				1,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				6,
+				-2.4
+			],
+			"size": [
+				2,
+				1,
+				2
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				4
+			],
+			"from": [
+				-0.5,
+				8,
+				1
+			],
+			"size": [
+				1,
+				1,
+				1
+			]
+		}
+	]
+}

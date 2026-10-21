@@ -1,0 +1,45 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/regrowth_0.png",
+				"tint": "#C8282A"
+			},
+			"target": "outer"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/regrowth_1.png",
+				"tint": "#F2EEE0"
+			},
+			"target": "outer"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/regrowth_2.png",
+				"tint": "#A07850"
+			},
+			"target": "outer"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/regrowth_3.png",
+				"tint": "#D8D0B4"
+			},
+			"target": "outer"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/regrowth_4.png",
+				"tint": "#1E2814"
+			},
+			"target": "outer"
+		}
+	]
+}

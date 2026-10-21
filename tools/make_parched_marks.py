@@ -81,6 +81,21 @@ Pixel plan for the Scorpions.
   lower edge of the body wrap.
 - Tail Whip has pale spikes down the lower back: on the spine (y 25 to 31)
   and on the body wrap of the back (y 56 to 63).
+
+Pixel plan for the Fossils.
+- Petrified has a gray stone texture on all the bone (order -1).
+- Amber Heart: a stone of amber in the rib cage, the gene model
+  amber_heart_stone, which glows.
+- Bedrock Bones has dark stone at the joints of the legs: the knees (leg
+  rows 5 and 6, on the bones and on the leg wraps) and the ankles (row 10).
+- Stoneskin has short cracks filled with stone on the skull: on the cheeks
+  (face rows 10 to 13, at the sides), on the head wrap over them, and on
+  the top of the head.
+- Sediment has layers of packed sand on the feet: bands of sand colors on
+  leg rows 8 to 11 and on the bottom of the legs.
+- Last Stand has one broken rib: a gap in the front rib (x 23, y 22), with
+  pale, jagged ends and a piece that has dropped (y 24). A tear in the body
+  wrap over it (x 21 to 25, y 54 to 56) shows the break.
 This script needs Pillow.
 """
 import json
@@ -668,6 +683,123 @@ def tail_whip():
         base.put((34, y + 1)).put((37, y + 1)) if y < 63 else None
     return [spike, base]
 
+
+STONE = ("#9A9A96", "#6A6A66", "#C0C0BC", "#2E2C2C")
+
+
+def petrified():
+    # A gray stone texture on all the bone, as a fossil: a cool gray with
+    # dark and pale specks of stone, under the marks of other genes (order
+    # -1).
+    stone = Mark(STONE[0], alpha=230, order=-1, materials=["bone"], size=16).fill()
+    dark = Mark(STONE[1], order=-1, materials=["bone"], size=16)
+    pale = Mark(STONE[2], order=-1, materials=["bone"], size=16)
+    for x in range(16):
+        for y in range(16):
+            n = noise100(x, y, 331)
+            if n < 18:
+                dark.put((x, y))
+            elif n > 88:
+                pale.put((x, y))
+    return [stone, dark, pale]
+
+
+AMBER = ("#E8A030", "#FFD070", "#A0601A")
+
+
+def amber_heart():
+    # The stone is the gene model amber_heart_stone.
+    return []
+
+
+def amber_heart_model():
+    # A stone of amber in the rib cage: a clear, warm stone set in the
+    # middle of the chest, where the body wrap is open, with a bright core
+    # and darker facets. It sits in the front of the ribs and stands out of
+    # them a little, so it shows from the front. It glows. On the body
+    # bone, the front of the body is at z -2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def stone(face, x, y):
+        if face == "front" and x == 1 and y == 1:
+            return AMBER[1]
+        return AMBER[2] if (x + y) % 3 == 0 else AMBER[0]
+
+    # The stone: 3x3x2 at uv (0, 0).
+    paint_box(im, 0, 0, 3, 3, 2, stone)
+    parts = [{"bone": "body", "uv": [0, 0], "from": [-1.5, 2, -2.6], "size": [3, 3, 2], "glow": True}]
+    save_model("amber_heart_stone", im, parts)
+
+
+def bedrock_bones():
+    # Dark stone at the joints of the legs, as bedrock: the knees (leg rows
+    # 5 and 6) on the bones and on the leg wraps over them, and the ankles
+    # (row 10), dark gray with pale specks.
+    rock = Mark(STONE[3])
+    speck = Mark(STONE[1])
+    for face in SIDES:
+        for col in (0, 1):
+            for row in (5, 6, 10):
+                (speck if (col + row + face) % 3 == 0 else rock).put(leg(face, col, row))
+        for col in (0, 1, 2):
+            for row in (5, 6):
+                for p in leg_wrap(face, col, row):
+                    (speck if (col + row) % 3 == 0 else rock).put(p)
+    return [rock, speck]
+
+
+def stoneskin():
+    # Short cracks filled with stone on the skull: small cracks on the
+    # cheeks (at the sides of the face, rows 10 to 13), each a dark line
+    # with gray stone in it, the same cracks on the head wrap over them, and
+    # two on the top of the head. The cracks are short, so the face does
+    # not get long streaks.
+    crack = Mark("#3A3630")
+    stone = Mark(STONE[2])
+    cracks = (((8, 10), (8, 11), (9, 11)), ((15, 12), (15, 13), (14, 13)))
+    for top in (0, 32):
+        for line in cracks:
+            for x, y in line:
+                crack.put((x, y + top))
+            x, y = line[1]
+            stone.put((x + (1 if x == 8 else -1), y + top))
+    for x, y in ((10, 2), (11, 3), (13, 5), (12, 6)):
+        crack.put((x, y)).put((x, y + 32))
+    stone.put((11, 2)).put((12, 5))
+    return [crack, stone]
+
+
+def sediment():
+    # Layers of packed sand on the feet: bands of sand colors, one over the
+    # other, on leg rows 8 to 11 of all the faces, and packed sand on the
+    # bottom of the legs.
+    bands = {8: "#C8A060", 9: "#E0C890", 10: "#9A7A50", 11: "#E8D8B0"}
+    marks = {row: Mark(color) for row, color in bands.items()}
+    for face in SIDES:
+        for col in (0, 1):
+            for row, mark in marks.items():
+                mark.put(leg(face, col, row))
+    for x in (4, 5):
+        for y in (16, 17):
+            marks[10].put((x, y))
+    return list(marks.values())
+
+
+def last_stand():
+    # One broken rib: the front rib (y 22) has a gap at x 23, with pale,
+    # jagged ends on each side of it (x 22 and 24), and a piece of the rib
+    # has dropped below the gap (y 24). A tear in the body wrap over it (x
+    # 21 to 25, y 54 to 56) lets the break show.
+    end = Mark("#F4EEDC")
+    piece = Mark(BONE[1])
+    dark = Mark(DARK)
+    end.put((22, 22)).put((24, 22))
+    dark.put((23, 23))
+    piece.put((23, 24))
+    tear = [(x, y) for x in range(21, 26) for y in range(54, 57)]
+    return [erase("last_stand", "gap", [(23, 22)] + tear), end, dark, piece]
+
+
 GENES = {
     "sap": sap,
     "fumble": fumble,
@@ -693,6 +825,12 @@ GENES = {
     "sand_hide": sand_hide,
     "venom_sac": venom_sac,
     "tail_whip": tail_whip,
+    "petrified": petrified,
+    "amber_heart": amber_heart,
+    "bedrock_bones": bedrock_bones,
+    "stoneskin": stoneskin,
+    "sediment": sediment,
+    "last_stand": last_stand,
 }
 
 MODELS = {
@@ -704,10 +842,11 @@ MODELS = {
     "stinger": "originofspawns:stinger_tail",
     "pincers": "originofspawns:pincers_claws",
     "carapace": "originofspawns:carapace_shell",
+    "amber_heart": "originofspawns:amber_heart_stone",
 }
 
 MODEL_MAKERS = [long_wind_model, whirlwind_volley_model, circler_model, gorge_model, glide_model,
-                stinger_model, pincers_model, carapace_model]
+                stinger_model, pincers_model, carapace_model, amber_heart_model]
 
 
 def main():

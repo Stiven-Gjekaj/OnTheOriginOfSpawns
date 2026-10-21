@@ -1,0 +1,38 @@
+{
+	"region_map": "originofspawns:textures/region/parched.png",
+	"layers": [
+		{
+			"materials": [
+				"bone"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/petrified_0.png",
+				"tint": "#9A9A96"
+			},
+			"order": -1
+		},
+		{
+			"materials": [
+				"bone"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/petrified_1.png",
+				"tint": "#6A6A66"
+			},
+			"order": -1
+		},
+		{
+			"materials": [
+				"bone"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/petrified_2.png",
+				"tint": "#C0C0BC"
+			},
+			"order": -1
+		}
+	]
+}

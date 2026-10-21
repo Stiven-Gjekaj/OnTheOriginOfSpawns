@@ -1,0 +1,32 @@
+{
+	"region_map": "originofspawns:textures/region/parched.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "erase",
+				"texture": "originofspawns:textures/gene_marks/last_stand_gap.png"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/last_stand_0.png",
+				"tint": "#F4EEDC"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/last_stand_1.png",
+				"tint": "#2A2218"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/last_stand_2.png",
+				"tint": "#B8AE98"
+			}
+		}
+	]
+}

@@ -1,0 +1,25 @@
+{
+	"texture": "originofspawns:textures/entity/amber_heart_stone.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				2,
+				-2.6
+			],
+			"size": [
+				3,
+				3,
+				2
+			],
+			"glow": true
+		}
+	]
+}

@@ -1,0 +1,33 @@
+{
+	"region_map": "originofspawns:textures/region/parched.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sediment_0.png",
+				"tint": "#C8A060"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sediment_1.png",
+				"tint": "#E0C890"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sediment_2.png",
+				"tint": "#9A7A50"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sediment_3.png",
+				"tint": "#E8D8B0"
+			}
+		}
+	]
+}

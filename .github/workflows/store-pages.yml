@@ -53,14 +53,15 @@ jobs:
                 return
               fi
               echo "The old picture of $title is at: $url"
-              curl --fail-with-body -sS -X DELETE -G "$API/project/$PROJECT/gallery" \
-                --data-urlencode "url=$url" -H "Authorization: $TOKEN" -H "User-Agent: $AGENT"
+              curl --fail-with-body -sS -X DELETE "$API/project/$PROJECT/gallery" \
+                --url-query "url=$url" -H "Authorization: $TOKEN" -H "User-Agent: $AGENT"
               echo "Deleted the old picture: $title"
             fi
             echo "Add: $title"
-            curl --fail-with-body -sS -X POST -G "$API/project/$PROJECT/gallery" \
-              --data-urlencode "ext=png" --data-urlencode "featured=$featured" \
-              --data-urlencode "title=$title" --data-urlencode "description=$description" \
+            # The fields go in the URL and the picture is the body, so the request does not use -G.
+            curl --fail-with-body -sS -X POST "$API/project/$PROJECT/gallery" \
+              --url-query "ext=png" --url-query "featured=$featured" \
+              --url-query "title=$title" --url-query "description=$description" \
               -H "Authorization: $TOKEN" -H "User-Agent: $AGENT" -H "Content-Type: image/png" \
               --data-binary "@$file"
             echo "Added: $title"

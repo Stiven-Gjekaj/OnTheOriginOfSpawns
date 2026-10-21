@@ -60,6 +60,19 @@ Pixel plan for the Ambushers.
 - Surprise has a wider grin: the corners of the mouth go up and out (x 9
   and 14, y 12 and 13).
 
+Pixel plan for the Fumers.
+- Toxic Blast has green-yellow blisters on the body: round blisters with a
+  pale top and a dark rim, on all the side faces of the body.
+- Smoke Bomb has short puffs of gray smoke over the eyes (y 8 and 9) and on
+  the front edge of the top of the head.
+- Stink has dark green stains on the body, with short drips under them.
+- Wither Gas has black drool from the mouth: short drips from the corners of
+  the mouth on the bottom of the head, and drops on the top of the chest (y
+  20 to 22).
+- Gas Leak has holes that leak gas on the back of the body: dark holes with
+  puffs of pale green gas round them.
+- Spore Blast: small brown mushrooms on the head, the gene model
+  spore_blast_mushrooms.
 This script needs Pillow.
 """
 import json
@@ -425,6 +438,146 @@ def surprise():
     for p in ((9, 13), (14, 13), (9, 12), (14, 12)):
         black.put(p)
     return [black]
+
+
+def toxic_blast():
+    # Green-yellow blisters on the body: round blisters of 2 by 2 pixels,
+    # each with a pale top, a green-yellow body, and a dark rim under it, on
+    # all the side faces of the body.
+    top = Mark("#F0F8A0")
+    blister = Mark("#C8E040")
+    rim = Mark("#4A5A10")
+    for x, y, face, col, row in pixels(BODY, SIDES):
+        if (col % 3 == 0 and row % 4 == 1 and noise100(x, y, 361) < 55
+                and col + 1 < BODY[face][2] and row + 2 < BODY[face][3]):
+            top.put((x, y))
+            blister.put((x + 1, y)).put((x, y + 1)).put((x + 1, y + 1))
+            rim.put((x, y + 2)).put((x + 1, y + 2))
+    return [top, blister, rim]
+
+
+def smoke_bomb():
+    # Short puffs of gray smoke over the eyes: a puff over each eye (y 8
+    # and 9), and smoke on the front edge of the top of the head, as if the
+    # smoke rises from the eyes. The puffs are short, so they do not make
+    # streaks down the face.
+    smoke = Mark("#B0B0B0")
+    light = Mark("#D8D8D8")
+    for left, right in ((9, 10), (13, 14)):
+        smoke.put((left, 9)).put((right, 9))
+        light.put((left, 8))
+        smoke.put((right, 8))
+    for x in range(9, 15):
+        (light if x % 2 else smoke).put((x, 7))
+    return [smoke, light]
+
+
+def stink():
+    # Dark green stains on the body: blotches of dark, dull green, each
+    # with a short drip under it, on all the side faces of the body.
+    stain = Mark("#2A4A1A")
+    drip = Mark("#3A5A22")
+    for x, y, face, col, row in pixels(BODY, SIDES):
+        n = noise100(x // 2, y // 3, 362)
+        if n < 22 and row < 10:
+            stain.put((x, y))
+            if noise100(x, y, 363) < 30:
+                drip.put((x, y + 1)).put((x, y + 2))
+    return [stain, drip]
+
+
+def wither_gas():
+    # Black drool from the mouth: short black drips from the corners of the
+    # mouth, on the front edge of the bottom of the head, and drops of it on
+    # the top of the chest (y 20 to 22), with a dark gray edge.
+    drool = Mark("#0A0A0A")
+    edge = Mark("#3A3436")
+    for x in (18, 21):
+        drool.put((x, 7))
+        edge.put((x, 6))
+    for x, y in ((22, 20), (22, 21), (25, 20), (25, 21), (25, 22)):
+        drool.put((x, y))
+    edge.put((23, 20)).put((24, 20))
+    return [drool, edge]
+
+
+def gas_leak():
+    # Holes that leak gas on the back of the body: dark holes with puffs of
+    # pale green gas round them, on the back face (x 32 to 39).
+    hole = Mark("#0E1A0A")
+    gas = Mark("#C8F0A8", alpha=210)
+    for x, y in ((34, 22), (37, 24), (33, 27), (36, 29)):
+        hole.put((x, y))
+        for n in ((x, y - 1), (x + 1, y - 1), (x - 1, y), (x + 1, y)):
+            gas.put(n)
+    return [hole, gas]
+
+
+def spore_blast():
+    # The mushrooms are the gene model spore_blast_mushrooms.
+    return []
+
+
+def spore_blast_model():
+    # Small brown mushrooms on the head: three small mushrooms that grow on
+    # the top of the head and on its side, each a pale stem and a brown cap
+    # with pale spots. On the head bone, the top of the head is at y -8.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def cap(face, x, y):
+        if face == "top" and (x + y) % 2 == 0:
+            return "#D8C8A8"
+        return "#8A6040" if face != "bottom" else "#6A4A2E"
+
+    # A cap: 2x1x2 at uv (0, 0). A stem: 1x1x1 at uv (8, 0).
+    paint_box(im, 0, 0, 2, 1, 2, cap)
+    paint_box(im, 8, 0, 1, 1, 1, lambda face, x, y: "#E8E0C8")
+    parts = []
+    for x, z in ((-3, -2), (1, 1), (-1, 2.5)):
+        parts.append({"bone": "head", "uv": [8, 0], "from": [x + 0.5, -9, z + 0.5], "size": [1, 1, 1]})
+        parts.append({"bone": "head", "uv": [0, 0], "from": [x, -10, z], "size": [2, 1, 2]})
+    parts.append({"bone": "head", "uv": [8, 0], "from": [4, -5.5, 0.5], "size": [1, 1, 1]})
+    parts.append({"bone": "head", "uv": [0, 0], "from": [4.5, -6, 0], "size": [2, 1, 2]})
+    save_model("spore_blast_mushrooms", im, parts)
+
+GENES = {
+    "big_bang": big_bang,
+    "shrapnel": shrapnel,
+    "golem_breaker": golem_breaker,
+    "chain_reaction": chain_reaction,
+    "aftershock": aftershock,
+    "concussion": concussion,
+    "sprinter": sprinter,
+    "short_fuse": short_fuse,
+    "leaper": leaper,
+    "dodger": dodger,
+    "tracker": tracker,
+    "wallcrawler": wallcrawler,
+    "silent_fuse": silent_fuse,
+    "leafskin": leafskin,
+    "gloom": gloom,
+    "veiled": veiled,
+    "patient": patient,
+    "surprise": surprise,
+    "toxic_blast": toxic_blast,
+    "smoke_bomb": smoke_bomb,
+    "stink": stink,
+    "wither_gas": wither_gas,
+    "gas_leak": gas_leak,
+    "spore_blast": spore_blast,
+}
+
+MODELS = {
+    "big_bang": "originofspawns:big_bang_belly",
+    "short_fuse": "originofspawns:short_fuse_fuse",
+    "leaper": "originofspawns:leaper_haunches",
+    "wallcrawler": "originofspawns:wallcrawler_claws",
+    "patient": "originofspawns:patient_roots",
+    "spore_blast": "originofspawns:spore_blast_mushrooms",
+}
+
+MODEL_MAKERS = [big_bang_model, short_fuse_model, leaper_model, wallcrawler_model, patient_model,
+                spore_blast_model]
 
 
 def main():

@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/creeper.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/toxic_blast_0.png",
+				"tint": "#F0F8A0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/toxic_blast_1.png",
+				"tint": "#C8E040"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/toxic_blast_2.png",
+				"tint": "#4A5A10"
+			}
+		}
+	]
+}

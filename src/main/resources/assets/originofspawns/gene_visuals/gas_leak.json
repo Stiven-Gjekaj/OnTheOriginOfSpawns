@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/creeper.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/gas_leak_0.png",
+				"tint": "#0E1A0A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/gas_leak_1.png",
+				"tint": "#C8F0A8"
+			}
+		}
+	]
+}

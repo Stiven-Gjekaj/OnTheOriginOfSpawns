@@ -1,26 +1,20 @@
 ---
 // One gene: its look, its tags, its pressure, its gains, and its downsides.
 import Status from "./Status.astro";
-import Icon from "./Icon.astro";
-import { famName, url } from "../lib/site.js";
+import MobShot from "./MobShot.astro";
+import { famName } from "../lib/site.js";
 import site from "../data/site.json";
 
 interface Props { gene: any }
 const { gene: g } = Astro.props;
 const pressure = site.pressures.find((p) => p.id === g.counters);
 const text = [g.name, g.gains, g.downsides, g.look, g.counters, g.details, famName(g.family), g.sub ? famName(g.sub) : ""].join(" ").toLowerCase();
-// A gene with a mark on the back shows the back of the zombie.
-const back = ["shade", "lurker"].includes(g.id);
 ---
 <article class="gene" id={`gene-${g.id}`} style={`--fam:var(--${g.family})`} data-species={g.species} data-family={g.family} data-sub={g.sub || ""} data-text={text}>
   <div class="gene-top">
-    <span class="mc-slot lg" data-tip-ref={`tip-gene-${g.id}`}>
-      {g.visual
-        ? <canvas data-zombie data-genes={g.id} data-species={g.species} data-w="72" data-h="72" data-scale="2.05" data-cy="0.37" data-turn={back ? "2.6" : "-0.55"} aria-label={`The look of ${g.name}`}></canvas>
-        : <Icon name={g.family} />}
-    </span>
+    <MobShot shot={g.shot} alt={`A ${g.species} with the gene ${g.name}`} height={128} class="gene-shot" />
     <div class="gene-title">
-      <h3>{g.name}</h3>
+      <h3 data-tip-ref={`tip-gene-${g.id}`}>{g.name}</h3>
       <div class="row tags">
         <span class="badge fam">{famName(g.family)}</span>
         {g.sub && <span class="badge fam sub" style={`--fam:var(--${g.sub})`}>sub {famName(g.sub)}</span>}
@@ -31,13 +25,12 @@ const back = ["shade", "lurker"].includes(g.id);
   <dl>
     <div><dt class="gain">Gains</dt><dd>{g.gains}</dd></div>
     <div><dt class="loss">Downsides</dt><dd>{g.downsides}</dd></div>
-    <div><dt>Look</dt><dd class="look">{g.look}{!g.visual && <span class="no-art"> The art of this gene comes later.</span>}</dd></div>
+    <div><dt>Look</dt><dd class="look">{g.look}{!g.shot && <span class="no-art"> The picture of this gene comes later.</span>}</dd></div>
     {g.limit && <div><dt>In the mod now</dt><dd>{g.limit}</dd></div>}
   </dl>
   {g.details && <details><summary>Details</summary><p>{g.details}</p></details>}
   <div class="gene-foot">
     <Status status={g.status} />
-    {g.visual && <a class="btn sm" href={url(`lab/?species=${g.species}&genes=${g.id}`)}>Try it in the Gene Lab</a>}
   </div>
 </article>
 
@@ -52,6 +45,8 @@ const back = ["shade", "lurker"].includes(g.id);
   .gene:hover { border-color: color-mix(in srgb, var(--fam) 45%, var(--border)); }
   .gene:target { border-color: var(--fam); box-shadow: 0 0 0 3px color-mix(in srgb, var(--fam) 25%, transparent); }
   .gene-top { display: flex; gap: var(--s-4); align-items: center; }
+  .gene-top :global(.gene-shot) { flex: none; width: 108px; }
+  h3[data-tip-ref] { cursor: help; }
   .gene-title { display: grid; gap: var(--s-2); min-width: 0; }
   h3 { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-lg); }
   .tags { gap: 6px; }

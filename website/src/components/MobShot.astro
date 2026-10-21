@@ -1,0 +1,47 @@
+---
+// A picture of a mob, taken in the game. It shows the front. When the
+// visitor points at it or taps it, it shows the back.
+import { url } from "../lib/site.js";
+
+interface Props {
+  shot: { front: string; back: string | null } | null;
+  alt: string;
+  height?: number;
+  class?: string;
+}
+const { shot, alt, height = 160, class: cls = "" } = Astro.props;
+---
+{shot && (
+  <figure class={`mob-shot ${cls}`} style={`--h:${height}px`} tabindex={shot.back ? 0 : undefined} title={shot.back ? "Point at the picture to see the back" : undefined}>
+    <img class="front" src={url(shot.front)} alt={`${alt}, front`} loading="lazy" decoding="async" height={height} />
+    {shot.back && <img class="back" src={url(shot.back)} alt={`${alt}, back`} loading="lazy" decoding="async" height={height} />}
+  </figure>
+)}
+
+<style>
+  .mob-shot {
+    position: relative;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    height: calc(var(--h) + 16px);
+    padding: 8px;
+    border-radius: var(--radius);
+    background:
+      radial-gradient(60% 50% at 50% 92%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%),
+      linear-gradient(var(--surface-2), var(--surface-3));
+    outline-offset: 2px;
+  }
+  .mob-shot img {
+    grid-area: 1 / 1;
+    height: var(--h);
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    transition: opacity 200ms ease;
+  }
+  .mob-shot .back { opacity: 0; }
+  .mob-shot:hover .back, .mob-shot:focus-visible .back, .mob-shot:focus .back { opacity: 1; }
+  .mob-shot:hover .front:has(+ .back), .mob-shot:focus .front:has(+ .back) { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) { .mob-shot img { transition: none; } }
+</style>

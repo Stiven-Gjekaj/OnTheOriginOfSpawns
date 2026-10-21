@@ -13,6 +13,7 @@ import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
 import io.github.stivengjekaj.originofspawns.visual.BabyLayout;
 import io.github.stivengjekaj.originofspawns.visual.GeneVisual;
 import io.github.stivengjekaj.originofspawns.visual.TextureBaker;
+import io.github.stivengjekaj.originofspawns.visual.VisualLayer;
 
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 
@@ -85,12 +86,22 @@ public final class GeneTextures {
 	 * Returns the texture for a mob with these genes, with the marks moved to the layout of its texture.
 	 */
 	public static Identifier textureFor(Identifier base, List<Identifier> genes, Layout layout) {
+		return textureFor(base, genes, layout, VisualLayer.Target.BODY);
+	}
+
+	/**
+	 * Returns the texture for a mob with these genes, with the layers that have the target. The outer target is for
+	 * the outer layer of a mob, such as the cloth of the stray.
+	 */
+	public static Identifier textureFor(Identifier base, List<Identifier> genes, Layout layout, VisualLayer.Target target) {
 		if (genes == null || genes.isEmpty()) {
 			return base;
 		}
 		List<Identifier> visible = new ArrayList<>();
 		for (Identifier id : genes) {
-			if (GeneVisuals.get(id) != null) {
+			GeneVisual visual = GeneVisuals.get(id);
+			if (visual != null && (target == VisualLayer.Target.BODY
+					|| visual.layers().stream().anyMatch(layer -> layer.target() == target))) {
 				visible.add(id);
 			}
 		}
@@ -98,16 +109,16 @@ public final class GeneTextures {
 			return base;
 		}
 		visible.sort(null);
-		String key = base + "|" + layout + "|" + visible;
+		String key = base + "|" + layout + "|" + target + "|" + visible;
 		Identifier baked = BAKED.get(key);
 		if (baked == null) {
-			baked = bake(base, visible, layout);
+			baked = bake(base, visible, layout, target);
 			BAKED.put(key, baked);
 		}
 		return baked;
 	}
 
-	private static Identifier bake(Identifier base, List<Identifier> genes, Layout layout) {
+	private static Identifier bake(Identifier base, List<Identifier> genes, Layout layout, VisualLayer.Target target) {
 		TextureBaker.Image source = image(base);
 		if (source == null) {
 			return base;
@@ -121,7 +132,7 @@ public final class GeneTextures {
 				layers.add(new TextureBaker.GeneLayers(regionMap, visual.layers(), id.hashCode()));
 			}
 		}
-		TextureBaker.bakeAll(texture, layers, id -> layoutPattern(id, layout));
+		TextureBaker.bakeAll(texture, layers, id -> layoutPattern(id, layout), target);
 		return register(texture);
 	}
 

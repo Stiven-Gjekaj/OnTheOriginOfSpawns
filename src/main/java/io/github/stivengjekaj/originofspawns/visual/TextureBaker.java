@@ -33,21 +33,45 @@ public final class TextureBaker {
 	}
 
 	/**
-	 * Applies the layers of all the genes of a mob to the texture, in place, in the order of the layers.
+	 * Applies the body layers of all the genes of a mob to the texture, in place, in the order of the layers.
 	 */
 	public static void bakeAll(Image texture, List<GeneLayers> genes, Function<Identifier, Image> patterns) {
+		bakeAll(texture, genes, patterns, VisualLayer.Target.BODY);
+	}
+
+	/**
+	 * Applies the layers of all the genes of a mob that have the target to the texture, in place, in the order of the
+	 * layers. A layer on the outer layer covers all the pixels, with no region map.
+	 */
+	public static void bakeAll(Image texture, List<GeneLayers> genes, Function<Identifier, Image> patterns,
+			VisualLayer.Target target) {
 		record Step(GeneLayers gene, VisualLayer layer) {
 		}
 		List<Step> steps = new ArrayList<>();
 		for (GeneLayers gene : genes) {
 			for (VisualLayer layer : gene.layers()) {
-				steps.add(new Step(gene, layer));
+				if (layer.target() == target) {
+					steps.add(new Step(gene, layer));
+				}
 			}
 		}
 		// The sort is stable, so steps with the same order keep the order of the genes.
 		steps.sort(Comparator.comparingInt(step -> step.layer().order()));
 		for (Step step : steps) {
-			bake(texture, step.gene().regionMap(), List.of(step.layer()), step.gene().seed(), patterns);
+			if (target == VisualLayer.Target.OUTER) {
+				bakeEverywhere(texture, step.layer(), step.gene().seed(), patterns);
+			} else {
+				bake(texture, step.gene().regionMap(), List.of(step.layer()), step.gene().seed(), patterns);
+			}
+		}
+	}
+
+	private static void bakeEverywhere(Image texture, VisualLayer layer, int seed, Function<Identifier, Image> patterns) {
+		for (int y = 0; y < texture.height(); y++) {
+			for (int x = 0; x < texture.width(); x++) {
+				int index = x + y * texture.width();
+				texture.pixels()[index] = apply(layer.effect(), texture.pixels()[index], x, y, seed, patterns);
+			}
 		}
 	}
 

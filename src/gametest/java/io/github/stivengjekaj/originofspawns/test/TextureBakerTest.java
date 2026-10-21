@@ -92,6 +92,23 @@ public class TextureBakerTest {
 	}
 
 	@GameTest
+	public void outerLayersGoOnlyOnTheOuterTexture(GameTestHelper helper) {
+		VisualLayer cloth = VisualLayer.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(
+				"{\"target\": \"outer\", \"regions\": [\"hands\"], \"effect\": {\"type\": \"erase\"}}")).getOrThrow();
+		List<TextureBaker.GeneLayers> genes = List.of(new TextureBaker.GeneLayers(regionMap(), List.of(cloth), 0));
+		Image body = texture();
+		TextureBaker.bakeAll(body, genes, id -> null);
+		helper.assertValueEqual(body.get(0, 0), GREEN, "the body texture keeps its pixels");
+
+		Image outer = texture();
+		TextureBaker.bakeAll(outer, genes, id -> null, VisualLayer.Target.OUTER);
+		// The outer layer has no region map, so the layer covers each pixel, also the pixel with no region.
+		helper.assertValueEqual(outer.get(0, 0), 0, "the outer texture is erased");
+		helper.assertValueEqual(outer.get(3, 0), 0, "the pixel with no region is erased too");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void spotsAreTheSameForTheSameSeed(GameTestHelper helper) {
 		VisualLayer spots = new VisualLayer(List.of(), List.of(),
 				new VisualEffect.Spots(List.of(0x110000, 0x880000), 0.5F));

@@ -1,0 +1,26 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:stray/blizzard",
+	"gains": [
+		{
+			"type": "throw_range",
+			"multiplier": 1.5,
+			"target": "any",
+			"when": "snowing"
+		},
+		{
+			"type": "attribute",
+			"attribute": "minecraft:follow_range",
+			"amount": 0.5,
+			"operation": "add_multiplied_base"
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.85,
+			"when": "not_snowing"
+		}
+	]
+}

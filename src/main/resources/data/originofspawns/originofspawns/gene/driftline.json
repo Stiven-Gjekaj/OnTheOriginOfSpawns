@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:stray/drifter",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:speed",
+			"radius": 8,
+			"interval_seconds": 2,
+			"allies": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9,
+			"hits": "projectile"
+		}
+	]
+}

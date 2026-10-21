@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:stray/drifter",
+	"gains": [
+		{
+			"type": "walk_on_powder_snow"
+		}
+	],
+	"downsides": [
+		{
+			"type": "speed_when",
+			"when": "off_snow",
+			"multiplier": 0.9
+		}
+	]
+}

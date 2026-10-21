@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:stray/blizzard",
+	"gains": [
+		{
+			"type": "fan_shot",
+			"arrows": 3,
+			"angle": 15,
+			"cooldown_seconds": 10,
+			"when": "snowing"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.85,
+			"hits": "projectile"
+		}
+	]
+}

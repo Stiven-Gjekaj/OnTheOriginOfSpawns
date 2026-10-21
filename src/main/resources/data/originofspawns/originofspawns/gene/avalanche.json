@@ -1,0 +1,29 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:stray/drifter",
+	"sub_family": "originofspawns:stray/glacier",
+	"gains": [
+		{
+			"type": "leap",
+			"min_distance": 0,
+			"max_distance": 8,
+			"cooldown_seconds": 5,
+			"miss_stun_seconds": 0,
+			"when": "target_below"
+		},
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fall",
+			"multiplier": 0
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.15,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

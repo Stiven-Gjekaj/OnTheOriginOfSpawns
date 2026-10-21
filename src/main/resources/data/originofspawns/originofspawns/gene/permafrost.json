@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:stray/glacier",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 2,
+			"idle_seconds": 0,
+			"when": "on_snow"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 1.5
+		}
+	]
+}

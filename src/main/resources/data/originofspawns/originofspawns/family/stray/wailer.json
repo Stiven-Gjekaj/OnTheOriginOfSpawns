@@ -1,0 +1,77 @@
+{
+	"species": "minecraft:stray",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "translucent",
+					"max_light": 15,
+					"opacity": 0.1,
+					"when": "snowing"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.25,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "translucent",
+					"max_light": 15,
+					"opacity": 0.1,
+					"when": "snowing"
+				},
+				{
+					"type": "translucent",
+					"max_light": 15,
+					"opacity": 0.1,
+					"night_only": true
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "translucent",
+					"max_light": 15,
+					"opacity": 0.1,
+					"when": "snowing"
+				},
+				{
+					"type": "translucent",
+					"max_light": 15,
+					"opacity": 0.1,
+					"night_only": true
+				},
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": 0.1,
+					"operation": "add_multiplied_total"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

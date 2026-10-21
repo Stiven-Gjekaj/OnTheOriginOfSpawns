@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:stray/wailer",
+	"gains": [
+		{
+			"type": "gaze_effect",
+			"effect": "minecraft:slowness",
+			"seconds": 2,
+			"range": 16,
+			"interval_seconds": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9,
+			"hits": "projectile"
+		}
+	]
+}

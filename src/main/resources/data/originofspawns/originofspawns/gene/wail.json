@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:stray/wailer",
+	"gains": [
+		{
+			"type": "effect_on_hurt",
+			"effect": "minecraft:weakness",
+			"seconds": 3,
+			"cooldown_seconds": 15,
+			"player_radius": 8
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

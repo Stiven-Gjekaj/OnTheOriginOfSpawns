@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:stray/wailer",
+	"sub_family": "originofspawns:stray/blizzard",
+	"gains": [
+		{
+			"type": "call_on_death",
+			"radius": 24
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

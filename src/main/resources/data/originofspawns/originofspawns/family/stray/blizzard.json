@@ -1,0 +1,64 @@
+{
+	"species": "minecraft:stray",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "snowing",
+					"multiplier": 1.1,
+					"hits": "projectile"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "not_snowing",
+					"multiplier": 0.75,
+					"hits": "projectile"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "snowing",
+					"multiplier": 1.2,
+					"hits": "projectile"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "not_snowing",
+					"multiplier": 0.8,
+					"hits": "projectile"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "snowing",
+					"multiplier": 1.3,
+					"hits": "projectile"
+				},
+				{
+					"type": "speed_when",
+					"when": "snowing",
+					"multiplier": 1.15
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "not_snowing",
+					"multiplier": 0.9,
+					"hits": "projectile"
+				}
+			]
+		}
+	]
+}

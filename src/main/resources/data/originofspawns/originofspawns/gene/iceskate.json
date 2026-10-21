@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:stray/drifter",
+	"gains": [
+		{
+			"type": "speed_when",
+			"when": "on_ice",
+			"multiplier": 1.4
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fall",
+			"multiplier": 1.5
+		}
+	]
+}

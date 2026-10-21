@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:stray/glacier",
+	"sub_family": "originofspawns:stray/frostbiter",
+	"gains": [
+		{
+			"type": "freeze_attacker",
+			"seconds": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

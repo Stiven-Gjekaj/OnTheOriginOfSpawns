@@ -1,0 +1,59 @@
+{
+	"species": "minecraft:stray",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "freeze_on_hit",
+					"seconds": 3,
+					"chance": 0.25,
+					"hits": "projectile"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.75,
+					"hits": "projectile"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "freeze_on_hit",
+					"seconds": 3,
+					"chance": 0.4,
+					"hits": "projectile"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.8,
+					"hits": "projectile"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "freeze_on_hit",
+					"seconds": 3,
+					"chance": 0.6,
+					"hits": "projectile"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.9,
+					"hits": "projectile"
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:stray/glacier",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_projectile",
+			"multiplier": 0.6
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.85
+		}
+	]
+}

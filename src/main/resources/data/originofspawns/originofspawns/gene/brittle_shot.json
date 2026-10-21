@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:stray/frostbiter",
+	"gains": [
+		{
+			"type": "armor_break",
+			"multiplier": 2,
+			"frozen_only": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9,
+			"hits": "projectile"
+		}
+	]
+}

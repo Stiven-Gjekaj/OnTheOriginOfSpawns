@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:stray/frostbiter",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:mining_fatigue",
+			"seconds": 5,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

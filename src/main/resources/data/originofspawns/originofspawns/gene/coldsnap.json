@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:stray/frostbiter",
+	"gains": [
+		{
+			"type": "arrow_effect",
+			"effect": "minecraft:slowness",
+			"seconds": 60,
+			"amplifier": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.85
+		}
+	]
+}

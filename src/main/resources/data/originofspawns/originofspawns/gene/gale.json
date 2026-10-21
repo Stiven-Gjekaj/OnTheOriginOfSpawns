@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:stray/blizzard",
+	"gains": [
+		{
+			"type": "arrow_knockback",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

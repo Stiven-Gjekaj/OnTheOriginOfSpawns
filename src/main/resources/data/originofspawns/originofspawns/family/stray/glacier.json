@@ -1,0 +1,56 @@
+{
+	"species": "minecraft:stray",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:armor",
+					"amount": 2,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_fire",
+					"multiplier": 1.75
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:armor",
+					"amount": 4,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_fire",
+					"multiplier": 1.5
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:armor",
+					"amount": 6,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_fire",
+					"multiplier": 1.25
+				}
+			]
+		}
+	]
+}

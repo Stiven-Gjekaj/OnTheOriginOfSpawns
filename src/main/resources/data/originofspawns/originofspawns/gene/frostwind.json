@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:snow",
+	"family": "originofspawns:stray/blizzard",
+	"gains": [
+		{
+			"type": "freeze_aura",
+			"radius": 6,
+			"when": "snowing"
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:stray",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:stray/drifter",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:follow_range",
+			"amount": 0.5,
+			"operation": "add_multiplied_base"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

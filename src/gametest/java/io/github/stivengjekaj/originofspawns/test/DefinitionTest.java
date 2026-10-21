@@ -53,6 +53,24 @@ public class DefinitionTest {
 	}
 
 	@GameTest
+	public void modGenesCounterPressuresThatExist(GameTestHelper helper) {
+		var genes = helper.getLevel().registryAccess().lookupOrThrow(ModRegistries.GENE);
+		var pressures = helper.getLevel().registryAccess().lookupOrThrow(ModRegistries.PRESSURE);
+		int checked = 0;
+		for (var entry : genes.entrySet()) {
+			Identifier id = entry.getKey().identifier();
+			if (!id.getNamespace().equals("originofspawns")) {
+				continue;
+			}
+			ResourceKey<Pressure> counters = entry.getValue().counters();
+			helper.assertTrue(pressures.containsKey(counters), id + " counters the pressure " + counters.identifier());
+			checked++;
+		}
+		helper.assertTrue(checked > 0, "the mod has genes");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void pressureReadsDamageTag(GameTestHelper helper) {
 		Pressure pressure = get(helper, ModRegistries.PRESSURE, "test_heat");
 		helper.assertValueEqual(pressure.damageTypes(), Optional.of(DamageTypeTags.IS_FIRE), "damage types");

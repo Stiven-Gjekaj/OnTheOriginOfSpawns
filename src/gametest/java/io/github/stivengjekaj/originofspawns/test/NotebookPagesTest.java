@@ -42,7 +42,7 @@ public class NotebookPagesTest {
 
 	@GameTest
 	public void catalogListsEachFamilyName(GameTestHelper helper) {
-		List<FamilyCatalog.Entry> catalog = FamilyCatalog.of(helper.getLevel().registryAccess(), EntityTypes.STRAY);
+		List<FamilyCatalog.Entry> catalog = FamilyCatalog.of(helper.getLevel().registryAccess(), EntityTypes.GIANT);
 		helper.assertValueEqual(catalog, List.of(
 				new FamilyCatalog.Entry("family.originofspawns_test.predator", Kind.PURE),
 				new FamilyCatalog.Entry("family.originofspawns_test.prey", Kind.PURE),
@@ -55,7 +55,7 @@ public class NotebookPagesTest {
 
 	@GameTest
 	public void pageMarksTheFoundFamilies(GameTestHelper helper) {
-		NotebookPayload.Page page = NotebookPages.page(helper.getLevel().getServer(), EntityTypes.STRAY,
+		NotebookPayload.Page page = NotebookPages.page(helper.getLevel().getServer(), EntityTypes.GIANT,
 				new DiscoveredFamilies(Set.of("family.originofspawns_test.prey.predator")));
 		List<String> found = page.families().stream().filter(NotebookPayload.FamilyEntry::found)
 				.map(NotebookPayload.FamilyEntry::key).toList();
@@ -66,7 +66,7 @@ public class NotebookPagesTest {
 	@GameTest
 	public void speciesWithGenesOrFamiliesHavePages(GameTestHelper helper) {
 		var species = NotebookPages.species(helper.getLevel().getServer());
-		helper.assertTrue(species.contains(EntityTypes.STRAY), "a species with families only");
+		helper.assertTrue(species.contains(EntityTypes.GIANT), "a species with families only");
 		helper.assertTrue(species.contains(EntityTypes.HUSK), "a species with genes only");
 		helper.assertFalse(species.contains(EntityTypes.PIG), "a species with nothing");
 		helper.succeed();

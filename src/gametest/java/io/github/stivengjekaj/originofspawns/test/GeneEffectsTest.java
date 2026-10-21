@@ -15,7 +15,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.skeleton.Stray;
+import net.minecraft.world.entity.monster.Giant;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
@@ -31,14 +31,14 @@ public class GeneEffectsTest {
 		BlockPos pos = new BlockPos(1, 1, 1);
 		BiomeCategory category = BiomeCategory.of(helper.getLevel().getBiome(helper.absolutePos(pos)));
 		GenePools.get(helper.getLevel().getServer())
-				.setFrequency(Identifier.withDefaultNamespace("stray"), category, SWIFT, 1.0F);
+				.setFrequency(Identifier.withDefaultNamespace("giant"), category, SWIFT, 1.0F);
 
-		Stray stray = helper.spawnWithNoFreeWill(EntityTypes.STRAY, pos);
+		Giant giant = helper.spawnWithNoFreeWill(EntityTypes.GIANT, pos);
 
-		CarriedGenes carried = stray.getAttached(ModAttachments.GENES);
-		helper.assertTrue(carried != null && carried.genes().contains(SWIFT), "the stray carries the gene");
-		helper.assertTrue(stray.getAttribute(Attributes.MOVEMENT_SPEED).hasModifier(GeneEffects.modifierId(SWIFT, 0)),
-				"the speed modifier is on the stray");
+		CarriedGenes carried = giant.getAttached(ModAttachments.GENES);
+		helper.assertTrue(carried != null && carried.genes().contains(SWIFT), "the giant carries the gene");
+		helper.assertTrue(giant.getAttribute(Attributes.MOVEMENT_SPEED).hasModifier(GeneEffects.modifierId(SWIFT, 0)),
+				"the speed modifier is on the giant");
 		helper.succeed();
 	}
 

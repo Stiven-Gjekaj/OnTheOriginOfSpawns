@@ -1,5 +1,5 @@
 {
-	"species": "minecraft:stray",
+	"species": "minecraft:giant",
 	"counters": "originofspawns_test:test_heat",
 	"family": "originofspawns_test:predator",
 	"gains": [

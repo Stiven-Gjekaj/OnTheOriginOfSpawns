@@ -21,7 +21,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.skeleton.Stray;
+import net.minecraft.world.entity.monster.Giant;
 
 public class FamilyTest {
 	private static final Identifier A = id("a");
@@ -108,15 +108,15 @@ public class FamilyTest {
 		BiomeCategory category = BiomeCategory.of(helper.getLevel().getBiome(helper.absolutePos(pos)));
 		GenePools pools = GenePools.get(helper.getLevel().getServer());
 		for (String gene : List.of("test_swift", "test_swift_2", "test_swift_3")) {
-			pools.setFrequency(Identifier.withDefaultNamespace("stray"), category, id(gene), 1.0F);
+			pools.setFrequency(Identifier.withDefaultNamespace("giant"), category, id(gene), 1.0F);
 		}
 
-		Stray stray = helper.spawnWithNoFreeWill(EntityTypes.STRAY, pos);
+		Giant giant = helper.spawnWithNoFreeWill(EntityTypes.GIANT, pos);
 
-		CarriedGenes carried = stray.getAttached(ModAttachments.GENES);
+		CarriedGenes carried = giant.getAttached(ModAttachments.GENES);
 		helper.assertValueEqual(carried.family(),
 				new FamilyResult(Kind.PURE, Optional.of(id("predator")), Optional.empty()), "family");
-		helper.assertValueEqual(stray.getAttributeValue(Attributes.ARMOR), 3.0, "armor from tier 3");
+		helper.assertValueEqual(giant.getAttributeValue(Attributes.ARMOR), 3.0, "armor from tier 3");
 		helper.succeed();
 	}
 

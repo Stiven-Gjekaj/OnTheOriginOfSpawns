@@ -50,7 +50,8 @@ public abstract class CreeperMixin {
 	}
 
 	/**
-	 * The effects after the blast run when the vanilla blast and the vanilla cloud are done, before the creeper goes.
+	 * The effects after the blast run when the vanilla blast and the vanilla cloud are done. The game already removed
+	 * the creeper then, but its place, its genes, and its level stay, and the effects need only these.
 	 */
 	@Inject(method = "explodeCreeper", at = @At("TAIL"))
 	private void originofspawns$afterBlast(CallbackInfo info) {

@@ -250,6 +250,7 @@ const minors = [];
 const hybrids = [];
 const genes = [];
 const pressureText = {};
+const pressureSpecies = {};
 
 for (const sp of speciesIds) {
   const mdFile = `design/species/${sp}.md`;
@@ -311,6 +312,8 @@ for (const sp of speciesIds) {
     const id = (r.Pressure || "").replace(/`/g, "");
     const when = Object.entries(r).find(([k]) => /death counts when/.test(k))?.[1];
     if (id && when && !pressureText[id]) pressureText[id] = when;
+    // The pressure table of a design file names the pressures of the species.
+    if (id) (pressureSpecies[id] ||= new Set()).add(sp);
   }
 
   // The genes of the species, in the order of the design file.
@@ -404,7 +407,7 @@ const pressures = pressureJson.map(({ id, json }) => {
     damageTypes: json.damage_types || null,
     conditions: json.conditions || [],
     when: pressureText[id] || "",
-    species: [...new Set(users.map((g) => g.species))],
+    species: speciesIds.filter((sp) => users.some((g) => g.species === sp) || pressureSpecies[id]?.has(sp)),
     status: users.some((g) => g.status === "released") ? "released" : "development",
   };
 });

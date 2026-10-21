@@ -303,9 +303,15 @@ public final class Evolution {
 			facts.add(DeathCondition.GOLEM);
 		}
 		facts.add(mob.isInWater() ? DeathCondition.IN_WATER : DeathCondition.ON_LAND);
-		if (BiomeCategory.of(level.getBiome(mob.blockPosition())) == BiomeCategory.COLD
-				|| source.is(DamageTypeTags.IS_FREEZING)) {
+		boolean coldBiome = BiomeCategory.of(level.getBiome(mob.blockPosition())) == BiomeCategory.COLD;
+		if (coldBiome || source.is(DamageTypeTags.IS_FREEZING)) {
 			facts.add(DeathCondition.COLD);
+		}
+		if (!coldBiome) {
+			facts.add(DeathCondition.WARM);
+		}
+		if (GeneCombat.snowingOn(mob)) {
+			facts.add(DeathCondition.SNOW);
 		}
 		if (level.isDarkOutside()) {
 			facts.add(DeathCondition.NIGHT);

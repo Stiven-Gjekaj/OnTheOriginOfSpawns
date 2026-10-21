@@ -281,7 +281,39 @@ public sealed interface GeneEffect {
 		/**
 		 * The health of the mob is under half of its maximum.
 		 */
-		WOUNDED;
+		WOUNDED,
+		/**
+		 * It snows on the mob: a storm in a biome where the storm is snow, with open sky above the mob.
+		 */
+		SNOWING,
+		/**
+		 * It does not snow on the mob. This is the opposite of {@code snowing}.
+		 */
+		NOT_SNOWING,
+		/**
+		 * The mob stands on snow or ice, or in a snow layer or powder snow.
+		 */
+		ON_SNOW,
+		/**
+		 * The mob does not stand on snow or ice. This is the opposite of {@code on_snow}.
+		 */
+		OFF_SNOW,
+		/**
+		 * The mob stands on ice.
+		 */
+		ON_ICE,
+		/**
+		 * The mob is in a biome that is cold enough for snow.
+		 */
+		COLD_BIOME,
+		/**
+		 * It is dark outside, between dusk and dawn.
+		 */
+		NIGHT,
+		/**
+		 * The target of the mob freezes, as in powder snow.
+		 */
+		TARGET_FROZEN;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 

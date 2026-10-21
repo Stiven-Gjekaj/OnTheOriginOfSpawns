@@ -27,7 +27,8 @@
 			"io.github.stivengjekaj.originofspawns.test.CombatEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.BehaviorEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.DrownedEffectsTest",
-			"io.github.stivengjekaj.originofspawns.test.SkeletonEffectsTest"
+			"io.github.stivengjekaj.originofspawns.test.SkeletonEffectsTest",
+			"io.github.stivengjekaj.originofspawns.test.StrayEffectsTest"
 		],
 		"fabric-client-gametest": [
 			"io.github.stivengjekaj.originofspawns.test.GeneTextureClientTest",

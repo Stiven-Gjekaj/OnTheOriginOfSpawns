@@ -39,6 +39,7 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.level.biome.Biome;
 
 /**
  * The effects of genes and families that act in combat: on damage, on a hit, on a hurt, and on a death.
@@ -100,7 +101,40 @@ public final class GeneCombat {
 			case WOUNDED -> entity.getHealth() < entity.getMaxHealth() / 2.0F;
 			case SUNLIT -> entity.level().isBrightOutside() && !entity.isInWaterOrRain()
 					&& entity.level().canSeeSky(BlockPos.containing(entity.getX(), entity.getEyeY(), entity.getZ()));
+			case SNOWING -> snowingOn(entity);
+			case NOT_SNOWING -> !snowingOn(entity);
+			case ON_SNOW -> onSnow(entity);
+			case OFF_SNOW -> !onSnow(entity);
+			case ON_ICE -> entity.level().getBlockState(entity.getBlockPosBelowThatAffectsMyMovement()).is(BlockTags.ICE);
+			case COLD_BIOME -> entity.level().getBiome(entity.blockPosition()).value()
+					.coldEnoughToSnow(entity.blockPosition(), entity.level().getSeaLevel());
+			case NIGHT -> entity.level().isDarkOutside();
+			case TARGET_FROZEN -> entity instanceof Mob mob && mob.getTarget() != null && mob.getTarget().getTicksFrozen() > 0;
 		};
+	}
+
+	/**
+	 * Returns true if it snows on the entity: a storm, open sky above it, and a biome where the storm is snow.
+	 */
+	public static boolean snowingOn(Entity entity) {
+		BlockPos head = BlockPos.containing(entity.getX(), entity.getEyeY(), entity.getZ());
+		return entity.level().isRaining() && entity.level().canSeeSky(head) && snowsAt(entity.level(), head);
+	}
+
+	/**
+	 * Returns true if a storm at the position is snow, from its biome and its height.
+	 */
+	public static boolean snowsAt(net.minecraft.world.level.Level level, BlockPos pos) {
+		return level.getBiome(pos).value().getPrecipitationAt(pos, level.getSeaLevel()) == Biome.Precipitation.SNOW;
+	}
+
+	/**
+	 * Returns true if the entity stands on snow or ice, or in a snow layer or in powder snow.
+	 */
+	public static boolean onSnow(Entity entity) {
+		var below = entity.level().getBlockState(entity.getBlockPosBelowThatAffectsMyMovement());
+		var feet = entity.level().getBlockState(entity.blockPosition());
+		return below.is(BlockTags.SNOW) || below.is(BlockTags.ICE) || feet.is(BlockTags.SNOW);
 	}
 
 	public static int sameSpeciesNear(LivingEntity entity, double radius) {

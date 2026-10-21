@@ -253,6 +253,10 @@ BOGGED_CLOSEUPS = {
                        [FRONT, SIDE, BACK, THREE_QUARTER]),
 }
 
+# The close-ups of the wither skeleton. It has no babies.
+WITHER = pg.WITHER_SKELETON_FAMILIES
+WITHER_SKELETON_CLOSEUPS = {}
+
 # Each species: its texture, its baby texture, and its close-ups.
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
@@ -261,6 +265,7 @@ SPECIES = {
     "skeleton": (pg.SKELETON_PATH, None, SKELETON_CLOSEUPS),
     "stray": (pg.STRAY_PATH, None, STRAY_CLOSEUPS),
     "bogged": (pg.BOGGED_PATH, None, BOGGED_CLOSEUPS),
+    "wither_skeleton": (pg.WITHER_SKELETON_PATH, None, WITHER_SKELETON_CLOSEUPS),
 }
 
 

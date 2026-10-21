@@ -49,6 +49,7 @@ SKELETON_PATH = "assets/minecraft/textures/entity/skeleton/skeleton.png"
 STRAY_PATH = "assets/minecraft/textures/entity/skeleton/stray.png"
 STRAY_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/stray_overlay.png"
 BOGGED_PATH = "assets/minecraft/textures/entity/skeleton/bogged.png"
+WITHER_SKELETON_PATH = "assets/minecraft/textures/entity/skeleton/wither_skeleton.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -212,6 +213,16 @@ BOGGED_EXTRA = {
     "vinebound": [("All 6 + Mirefolk", ["wader", "leechbone"], True, {})],
     "mosshides": [("All 6 translucent", [], True, {"opacity": 0.55})],
 }
+# The families of the wither skeleton, from design/species/wither_skeleton.md.
+WITHER_SKELETON_FAMILIES = {
+    "blademasters": ["duelist", "parry", "cleave", "lunge", "bladestorm", "executioner"],
+    "ashborn": ["cinderblade", "pyre", "lavawalker", "cauterize", "smoke_screen", "ember_eyes"],
+    "witherlords": ["deep_wither", "wither_aura", "decay_touch", "skull_shot", "black_rot", "grave_chill"],
+    "ramparts": ["brickplate", "holdfast", "sentinel", "brickshield", "garrison", "smite_ward"],
+    "soul_reapers": ["soulstride", "soul_link", "vengeful_spirit", "soul_hunger", "ghost_step", "soul_drain"],
+}
+
+WITHER_SKELETON_EXTRA = {}
 NIGHT = (18, 22, 38, 255)
 
 # The babies of BabyGenesClientTest, for a sheet to compare with the game.
@@ -445,7 +456,7 @@ def split_image(identifier):
 # the pivots of the adult model, and True when only the layers with the
 # target "outer" go on the outer layer (the stray). set_mob() sets it.
 MOB = {"split": False, "outer": None, "cubes": ZOMBIE_CUBES, "pivots": PIVOTS, "outer_target": False,
-       "outer_inflate": 0.25, "extra": []}
+       "outer_inflate": 0.25, "extra": [], "held": []}
 
 # The mushrooms on the head of the bogged, from BoggedModel: crossed planes
 # of 6x4 pixels, with the texture of the mob. Each is (uv, from, size,
@@ -458,6 +469,26 @@ BOGGED_MUSHROOMS = [
     ((50, 28), (-5, -5, 4), (6, 4, 0), (-2, -1, 4), (-90, 0, 45)),
     ((50, 28), (-5, -5, 4), (6, 4, 0), (-2, -1, 4), (-90, 0, 135)),
 ]
+
+
+def stone_sword():
+    """Return the cubes of a plain stone sword in the right hand.
+
+    The previews do not draw held items. This sword is a stand-in, so that
+    a sheet shows where the sword of the wither skeleton is: the blade
+    points forward from the hand, as the arm hangs down.
+    """
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+    for x in range(32):
+        for y in range(16):
+            im.putpixel((x, y), (122, 122, 122, 255) if y < 10 else (104, 78, 46, 255))
+    blade = {"bone": "right_arm", "uv": (0, 0), "from": (-0.5, 9, -11), "size": (1, 1, 8), "inflate": 0.0,
+             "mirror": False, "texture": im, "scale": 1.0}
+    hilt = {"bone": "right_arm", "uv": (0, 10), "from": (-0.5, 9, -3), "size": (1, 1, 3), "inflate": 0.0,
+            "mirror": False, "texture": im, "scale": 1.0}
+    guard = {"bone": "right_arm", "uv": (0, 10), "from": (-1.5, 9, -4), "size": (3, 1, 1), "inflate": 0.0,
+             "mirror": False, "texture": im, "scale": 1.0}
+    return [blade, guard, hilt]
 
 BABY_IMAGES = {}
 
@@ -611,6 +642,7 @@ def cubes_of(tex, genes, baby=False):
                    "texture": outer, "scale": 1.0} for b, uv, f, s, m in outer_body]
     cubes += [{"bone": "head", "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": False, "texture": tex,
                "scale": 1.0, "pivot": p, "rotation": rot} for uv, f, s, p, rot in MOB["extra"]]
+    cubes += MOB["held"]
     for gene in genes:
         cubes += gene_cubes(gene, tex, baby)
     return cubes
@@ -720,12 +752,13 @@ SPECIES = {
     "skeleton": (SKELETON_PATH, None, SKELETON_FAMILIES, SKELETON_EXTRA, []),
     "stray": (STRAY_PATH, None, STRAY_FAMILIES, STRAY_EXTRA, []),
     "bogged": (BOGGED_PATH, None, BOGGED_FAMILIES, BOGGED_EXTRA, []),
+    "wither_skeleton": (WITHER_SKELETON_PATH, None, WITHER_SKELETON_FAMILIES, WITHER_SKELETON_EXTRA, []),
 }
 
 
 def set_mob(species):
     """Set the look of the species for the bake and the cubes."""
-    skeleton = species in ("skeleton", "stray", "bogged")
+    skeleton = species in ("skeleton", "stray", "bogged", "wither_skeleton")
     MOB["split"] = species == "drowned"
     MOB["cubes"] = DROWNED_CUBES if species == "drowned" else SKELETON_CUBES if skeleton else ZOMBIE_CUBES
     MOB["pivots"] = SKELETON_PIVOTS if skeleton else PIVOTS
@@ -737,6 +770,9 @@ def set_mob(species):
     # The bogged cloth is 0.2 pixel larger than the body, the others 0.25.
     MOB["outer_inflate"] = 0.2 if species == "bogged" else 0.25
     MOB["extra"] = BOGGED_MUSHROOMS if species == "bogged" else []
+    # The wither skeleton holds a stone sword. The previews draw the body
+    # at 1 times its size, so the sword is at that size too.
+    MOB["held"] = stone_sword() if species == "wither_skeleton" else []
 
 
 def main(species="zombie"):

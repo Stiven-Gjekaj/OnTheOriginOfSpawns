@@ -286,6 +286,7 @@ WITHER_SKELETON_CLOSEUPS = {
     "wither_changes": ("Wither skeleton genes after the review",
                        [("Soul Hunger", ["soul_hunger"], False), ("Vengeful Spirit", ["vengeful_spirit"], False)],
                        [FRONT, SIDE, BACK, THREE_QUARTER]),
+    "wither_soul_hunger": ("Soul Hunger", [("Soul Hunger", ["soul_hunger"], False)], ALL_SIDES),
 }
 
 # Each species: its texture, its baby texture, and its close-ups.

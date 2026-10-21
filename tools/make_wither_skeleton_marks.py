@@ -85,8 +85,9 @@ Pixel plan for the Soul Reapers.
   soul_link_flame, which glows.
 - Vengeful Spirit has a blue wisp that curls over the top of the skull,
   and down the sides of the head to row 9.
-- Soul Hunger has a long, open jaw: a wide, dark mouth with a soul blue
-  inside (x 9 to 14, y 13 to 15), and pale teeth at its edges.
+- Soul Hunger has soul blue light in the eye sockets (y 12) and in the
+  gaps of the teeth (y 14), and thin blue cracks from the eyes across the
+  brow and over the top of the skull.
 - Ghost Step has faded legs: a pale blue-gray on leg rows 3 to 11, and an
   erase in a dither on them, so that they are half see-through.
 - Soul Drain has blue light between the fingers: arm rows 10 and 11, and a
@@ -745,17 +746,23 @@ def vengeful_spirit():
 
 
 def soul_hunger():
-    # A long, open jaw that hungers for souls: a wide, dark mouth (x 9 to
-    # 14, y 13 to 15) with a soul blue inside, and pale teeth on its top and
-    # its bottom edges.
-    inside = Mark(SOUL[3])
-    deep = Mark("#081820")
-    teeth = Mark(ASH[0])
-    for x in range(9, 15):
-        inside.put((x, 14))
-        (teeth if x % 2 else deep).put((x, 13))
-        (teeth if x % 2 == 0 else deep).put((x, 15))
-    return [inside, deep, teeth]
+    # A hunger for souls that burns inside the skull: bright soul blue light
+    # fills the eye sockets (y 12), and a dimmer blue shines through the
+    # gaps of the teeth (y 14). Thin blue cracks run from the eyes up across
+    # the brow and over the top of the skull, as if the light breaks out.
+    # The cracks keep off the Cauterize seam (x 12).
+    light = Mark(SOUL[0])
+    core = Mark(SOUL[1])
+    crack = Mark(SOUL[2])
+    for x in (9, 10, 13, 14):
+        (core if x in (10, 13) else light).put((x, 12))
+    for x in (10, 12):
+        crack.put((x, 14))
+    light.put((11, 14))
+    for p in ((10, 11), (11, 10), (11, 9), (10, 8), (13, 11), (13, 10), (14, 9), (14, 8),
+              (10, 7), (9, 6), (11, 5), (14, 7), (14, 6), (13, 4)):
+        crack.put(p)
+    return [light, core, crack]
 
 
 def ghost_step():

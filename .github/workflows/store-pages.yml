@@ -48,6 +48,12 @@ jobs:
           printf '%s' "$gallery" | jq -r '.[] | "- " + (.title // "no title") + ": " + .url'
           add() {
             file="$1"; title="$2"; description="$3"; featured="$4"
+            # The name of a picture on Modrinth is the SHA-1 of the file that was uploaded.
+            hash=$(sha1sum "$file" | cut -c1-40)
+            if printf '%s' "$gallery" | jq -e --arg hash "$hash" 'any(.[]; .url | contains($hash))' > /dev/null; then
+              echo "The gallery already has this file: $title"
+              return
+            fi
             url=$(printf '%s' "$gallery" | jq -r --arg title "$title" '[.[] | select(.title == $title)][0].url // empty')
             if [ -n "$url" ]; then
               if [ "$REPLACE" != "true" ]; then
@@ -68,12 +74,13 @@ jobs:
               --data-binary "@$file"
             echo "Added: $title"
           }
-          add assets/gallery/zombies.png "Zombies" "Predators, Stalkers, Tanks, Hordes, and Blights, each with three genes" true
-          add assets/gallery/husks.png "Husks" "Scorchers, Dunecrawlers, Mummies, Caravans, and Parchers, each with three genes" false
-          add assets/gallery/drowned.png "Drowned" "Riptides, Harpooners, Abyssals, Barnacled, and Sirens, each with three genes" false
-          add assets/gallery/skeletons.png "Skeletons" "Marksmen, Rattlers, Ossified, Legions, and Hexers, each with three genes" false
-          add assets/gallery/strays.png "Strays" "Glaciers, Blizzards, Drifters, Frostbiters, and Wailers, each with three genes" false
-          add assets/gallery/bogged.png "Bogged" "Sporecaps, Mirefolk, Venomers, Vinebound, and Mosshides, each with three genes" false
-          add assets/gallery/wither_skeletons.png "Wither skeletons" "Blademasters, Ashborn, Witherlords, Ramparts, and Soul Reapers, each with three genes" false
-          add assets/gallery/parched.png "Parched" "Enfeeblers, Windcarvers, Vultures, Scorpions, and Fossils, each with three genes" false
-          add assets/gallery/info_panel.png "Mob info panel" "The panel shows what you know of the family and the genes of a mob" false
+          add assets/gallery/zombies.png "Alpha Zombies." "Predators, Stalkers, Tanks, Hordes, and Blights, each with three genes" true
+          add assets/gallery/husks.png "Alpha Husks." "Scorchers, Dunecrawlers, Mummies, Caravans, and Parchers, each with three genes" false
+          add assets/gallery/drowned.png "Alpha Drowned." "Riptides, Harpooners, Abyssals, Barnacled, and Sirens, each with three genes" false
+          add assets/gallery/all_families.png "All 15 Alpha Families." "The 15 families of the zombie, the husk, and the drowned, from above" false
+          add assets/gallery/skeletons.png "Alpha Skeletons." "Marksmen, Rattlers, Ossified, Legions, and Hexers, each with three genes" false
+          add assets/gallery/strays.png "Alpha Strays." "Glaciers, Blizzards, Drifters, Frostbiters, and Wailers, each with three genes" false
+          add assets/gallery/bogged.png "Alpha Bogged." "Sporecaps, Mirefolk, Venomers, Vinebound, and Mosshides, each with three genes" false
+          add assets/gallery/wither_skeletons.png "Alpha Wither Skeletons." "Blademasters, Ashborn, Witherlords, Ramparts, and Soul Reapers, each with three genes" false
+          add assets/gallery/parched.png "Alpha Parched." "Enfeeblers, Windcarvers, Vultures, Scorpions, and Fossils, each with three genes" false
+          add assets/gallery/info_panel.png "Mob Info Panel." "The panel shows what you know of the family and the genes of a mob" false

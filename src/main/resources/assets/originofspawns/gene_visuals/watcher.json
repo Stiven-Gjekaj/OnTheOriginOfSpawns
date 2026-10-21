@@ -1,0 +1,25 @@
+{
+	"region_map": "originofspawns:textures/region/parched.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "erase",
+				"texture": "originofspawns:textures/gene_marks/watcher_bald.png"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/watcher_0.png",
+				"tint": "#C8B8A0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/watcher_1.png",
+				"tint": "#5A4E3E"
+			}
+		}
+	]
+}

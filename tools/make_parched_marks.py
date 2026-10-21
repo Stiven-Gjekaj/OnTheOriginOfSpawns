@@ -52,6 +52,22 @@ Pixel plan for the Windcarvers.
   back, the gene model whirlwind_volley_quiver.
 - Quickwind has worn, polished finger tips: arm rows 10 and 11 and the
   bottom of both arms, over the Fumble fingers (order 1).
+
+Pixel plan for the Vultures.
+- Carrion Eye has red rings round the eye sockets (y 11 and 13, and
+  beside them), with dark sockets.
+- Circler: a ruff of dark feathers round the neck, on the shoulders, the
+  gene model circler_ruff.
+- Gorge: a long, hooked jaw of bone like a beak, the gene model
+  gorge_beak.
+- Flock has black feathers with gray edges down the spine: on the spine (x
+  35 and 36, y 20 to 29) and down the middle of the body wrap of the back
+  (x 34 to 37).
+- Glide: wings of bone with dark feathers under the arms, the gene model
+  glide_wings.
+- Watcher has a bald, wrinkled crown: the head wrap is gone on the top of
+  the head and over the brow (y 32 to 41 of the wrap), and the bone of the
+  crown and the brow has dark wrinkles.
 This script needs Pillow.
 """
 import json
@@ -344,6 +360,151 @@ def quickwind():
         tip.put((u + 5, 16)).put((u + 4, 17))
     return [tip, shine]
 
+
+FEATHER = ("#2A2220", "#4A3A30", "#6A5A48", "#1A1614")
+
+
+def carrion_eye():
+    # Red rings round the eye sockets, as the eyes of a carrion bird: red
+    # pixels over and under each socket (y 11 and 13) and beside it, and
+    # dark sockets with a small red core.
+    ring = Mark("#B82020")
+    dark = Mark("#140A08")
+    core = Mark("#E04030")
+    for outer, inner, side in ((9, 10, 8), (14, 13, 15)):
+        dark.put((outer, 12))
+        core.put((inner, 12))
+        for x in (outer, inner):
+            ring.put((x, 11)).put((x, 13))
+        ring.put((side, 12))
+    return [ring, dark, core]
+
+
+def circler():
+    # The ruff is the gene model circler_ruff.
+    return []
+
+
+def circler_model():
+    # A ruff of dark feathers round the neck, as a vulture has: a ring of
+    # feathers that sits on the shoulders, round the bottom of the head,
+    # with a ragged lower edge and paler tips. The middle of its top is open
+    # for the neck. On the body bone, the top of the body is at y 0, and the
+    # head is from x -4 to 4 and from z -4 to 4.
+    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+
+    def ruff(face, x, y):
+        if face == "top":
+            return None if 1 <= x <= 8 and 1 <= y <= 8 else FEATHER[1]
+        if face == "bottom":
+            return FEATHER[3]
+        if y == 1 and x % 2:
+            return None
+        return FEATHER[2] if y == 0 and x % 3 == 0 else FEATHER[0] if (x + y) % 2 else FEATHER[1]
+
+    # The ruff: 10x2x10 at uv (0, 0).
+    paint_box(im, 0, 0, 10, 2, 10, ruff)
+    parts = [{"bone": "body", "uv": [0, 0], "from": [-5, -0.5, -5], "size": [10, 2, 10]}]
+    save_model("circler_ruff", im, parts)
+
+
+def gorge():
+    # The beak is the gene model gorge_beak.
+    return []
+
+
+def gorge_model():
+    # A long, hooked jaw of bone like a beak: a jaw that juts forward from
+    # the mouth, and a dark hook at its tip that bends down, with a dark
+    # edge where the jaw closes. On the head bone, the face is at z -4, and the
+    # mouth is at y -2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def jaw(face, x, y):
+        if face == "bottom":
+            return BONE[2]
+        return BONE[0] if face == "top" else DARK if y == 1 else BONE[1]
+
+    def hook(face, x, y):
+        return DARK if y == 1 else BONE[2]
+
+    # The jaw: 4x2x2 at uv (0, 0). The hook: 2x2x1 at uv (12, 0).
+    paint_box(im, 0, 0, 4, 2, 2, jaw)
+    paint_box(im, 12, 0, 2, 2, 1, hook)
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-2, -3, -6], "size": [4, 2, 2]},
+        {"bone": "head", "uv": [12, 0], "from": [-1, -2.5, -7], "size": [2, 2, 1]},
+    ]
+    save_model("gorge_beak", im, parts)
+
+
+def flock():
+    # Black feathers down the spine: feathers in a row of chevrons, black
+    # with a gray edge, on the spine (x 35 and 36, y 20 to 29) and down the
+    # middle of the body wrap of the back (x 34 to 37, y 48 to 63).
+    black = Mark(FEATHER[3])
+    edge = Mark("#7A7268")
+    for top, bottom in ((20, 30), (52, 64)):
+        for y in range(top, bottom):
+            black.put((35, y)).put((36, y))
+            if y % 2 == 0:
+                edge.put((34, y)).put((37, y))
+    for x in range(34, 38):
+        for y in range(48, 52):
+            (black if x in (35, 36) else edge).put((x, y))
+    return [black, edge]
+
+
+def glide():
+    # The wings are the gene model glide_wings.
+    return []
+
+
+def glide_model():
+    # Wings of bone with dark feathers under the arms: on each arm, a strut
+    # of bone along the back of the arm, and a sheet of dark feathers that
+    # hangs from it and spreads back and out, with ragged ends. On an arm
+    # bone, the arm is from z -1 to 1, and from y -2 to 10.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def sheet(face, x, y):
+        if face not in ("right", "left"):
+            return None
+        if y > 6 + x % 3:
+            return None
+        if y == 0:
+            return BONE[0]
+        return FEATHER[2] if (x + y) % 4 == 0 else FEATHER[0] if x % 2 else FEATHER[1]
+
+    # The sheet: 0x9x4 at uv (0, 0).
+    paint_box(im, 0, 0, 0, 9, 4, sheet)
+    parts = [
+        {"bone": "right_arm", "uv": [0, 0], "from": [0, -1, 1], "size": [0, 9, 4],
+         "pivot": [0, -1, 1], "rotation": [0, -25, 0]},
+        {"bone": "left_arm", "uv": [0, 0], "from": [0, -1, 1], "size": [0, 9, 4],
+         "pivot": [0, -1, 1], "rotation": [0, 25, 0]},
+    ]
+    save_model("glide_wings", im, parts)
+
+
+def watcher():
+    # A bald, wrinkled crown, as the head of a vulture: the head wrap is
+    # gone from the top of the head and from over the brow (y 32 to 41 of
+    # the wrap), and the bone of the crown (the top of the head) and of the
+    # brow (face rows 8 and 9) has dark wrinkles across it.
+    bald = [(x, y) for x in range(8, 16) for y in range(32, 40)]
+    bald += [(x, y) for x in range(0, 32) for y in (40, 41)]
+    wrinkle = Mark("#5A4E3E")
+    skin = Mark("#C8B8A0")
+    for x in range(8, 16):
+        for y in range(0, 8):
+            if y % 2 == 1 and (x + y // 2) % 4 != 0:
+                wrinkle.put((x, y))
+            else:
+                skin.put((x, y), 230)
+        wrinkle.put((x, 8 + x % 2))
+    return [erase("watcher", "bald", bald), skin, wrinkle]
+
 GENES = {
     "sap": sap,
     "fumble": fumble,
@@ -357,14 +518,23 @@ GENES = {
     "wind_dodge": wind_dodge,
     "whirlwind_volley": whirlwind_volley,
     "quickwind": quickwind,
+    "carrion_eye": carrion_eye,
+    "circler": circler,
+    "gorge": gorge,
+    "flock": flock,
+    "glide": glide,
+    "watcher": watcher,
 }
 
 MODELS = {
     "long_wind": "originofspawns:long_wind_wrap",
     "whirlwind_volley": "originofspawns:whirlwind_volley_quiver",
+    "circler": "originofspawns:circler_ruff",
+    "gorge": "originofspawns:gorge_beak",
+    "glide": "originofspawns:glide_wings",
 }
 
-MODEL_MAKERS = [long_wind_model, whirlwind_volley_model]
+MODEL_MAKERS = [long_wind_model, whirlwind_volley_model, circler_model, gorge_model, glide_model]
 
 
 def main():

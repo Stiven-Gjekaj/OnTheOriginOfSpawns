@@ -3,7 +3,7 @@
 // browser.
 
 import { genes, families, minors, hybrids } from "../data/site.json";
-import { familyOf, kindName, pct, fmt, t, loadState, url, speciesById } from "../lib/site.js";
+import { familyOf, kindName, pct, t, loadState, url, speciesById } from "../lib/site.js";
 import { getSpecies } from "./species.js";
 
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -13,13 +13,18 @@ let category = "temperate";
 let species = getSpecies();
 const mine = (list) => list.filter((x) => x.species === species);
 
+// The gene page lists all the genes of the species, by family, with their
+// frequency in the pool of the simulator. A pool that nobody changed is 0%.
 function renderGenes() {
   const p = state.pools[`${species}:${category}`] || {};
-  const known = mine(genes).filter((g) => (p[g.id] || 0) > 0).sort((a, b) => p[b.id] - p[a.id]);
-  $("book-freq").innerHTML = known.slice(0, 12).map((g) => `
-    <div class="freq" style="--fam:var(--${g.family})"><span class="nm">${g.name}</span>
-    <span class="bar"><span style="width:${p[g.id] * 100}%"></span></span><span class="v">${pct(p[g.id])}</span></div>`).join("");
-  $("book-empty").hidden = known.length > 0;
+  const list = mine(genes);
+  const groups = mine(families).map((f) => `
+    <div class="freq-group" style="--fam:var(--${f.id})">${f.name}</div>` +
+    list.filter((g) => g.family === f.id).map((g) => `
+    <div class="freq" style="--fam:var(--${g.family})"><span class="nm" data-tip-ref="tip-gene-${g.id}">${g.name}</span>
+    <span class="bar"><span style="width:${(p[g.id] || 0) * 100}%"></span></span><span class="v">${pct(p[g.id] || 0)}</span></div>`).join(""));
+  $("book-freq").innerHTML = groups.join("");
+  const known = list.filter((g) => (p[g.id] || 0) > 0).sort((a, b) => p[b.id] - p[a.id]);
   // The field sketch: the picture of the strongest gene, or of a plain mob.
   const shot = known[0]?.shot || speciesById[species]?.shot;
   const img = $("sketch");
@@ -35,17 +40,12 @@ function renderFamilies() {
     ...mine(hybrids).map((h) => ({ key: k([h.a, h.b].sort().join("+")), name: h.name, kind: "hybrid" })),
     { key: k("neutral"), name: kindName("neutral"), kind: "neutral" },
   ];
-  const found = new Set(loadState().found);
-  // The game counts known families and seen families. The wiki records a
-  // family when the visitor spawns it, so each found family is known.
-  const n = all.filter((x) => found.has(x.key)).length;
-  const slots = (t("screen.originofspawns.notebook.found").match(/%s/g) || []).length;
-  $("found-count").textContent = slots >= 3
-    ? fmt("screen.originofspawns.notebook.found", n, 0, all.length)
-    : fmt("screen.originofspawns.notebook.found", n, all.length);
+  // The family page shows all the family results of the species from the start.
+  $("found-count").textContent = `${all.length} family results`;
+  const link = url(`families/?species=${species}`);
   document.querySelectorAll(".found[data-kind]").forEach((box) => {
     box.innerHTML = all.filter((x) => x.kind === box.dataset.kind)
-      .map((x) => `<span class="f${found.has(x.key) ? "" : " no"}">${found.has(x.key) ? x.name : "?"}</span>`).join("");
+      .map((x) => `<a class="f" href="${link}${x.kind === "pure" ? `#${x.key.split(":")[1]}` : ""}">${x.name}</a>`).join("");
   });
 }
 

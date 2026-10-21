@@ -3,6 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import Icon from "../../components/Icon.astro";
 import Status from "../../components/Status.astro";
+import GeneTips from "../../components/GeneTips.astro";
 import site from "../../data/site.json";
 import { t, url } from "../../lib/site.js";
 
@@ -18,6 +19,7 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
     The Beagle Notebook is an item. It has a tab for each species. Each species tab has a gene page and a family page.
   </PageHeader>
 
+  <GeneTips />
   <div class="page container">
     <section>
       <div class="book">
@@ -45,15 +47,13 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
           <div class="sheet right" id="sheet-genes-right">
             <h3>{t("screen.originofspawns.notebook.section.genes", "Genes")}: <span id="book-cat-name">{cats.find((c) => c.id === "temperate")?.name}</span></h3>
             <div id="book-freq"></div>
-            <div id="book-empty">
-              <p class="ink">{t("screen.originofspawns.notebook.no_genes", "No genes are known for this species.")}</p>
-              <p class="ink">Kill mobs in the <a href={url("evolution/#simulator")}>pool simulator</a> to fill this page.</p>
-            </div>
+            <p class="ink">The bars show the pool of this biome category in the <a href={url("evolution/#simulator")}>pool simulator</a>. Kill mobs there to change them.</p>
             <span class="folio">2</span>
           </div>
           <div class="sheet left" id="sheet-fam-left" hidden>
             <h3>{t("screen.originofspawns.notebook.section.families", "Families")}</h3>
             <p class="found-count" id="found-count"></p>
+            <p class="ink">Each name links to its family on the families page.</p>
             <h4>{t("screen.originofspawns.notebook.kind.pure", "Pure families")}</h4>
             <div class="found" data-kind="pure"></div>
             <h4>{t("screen.originofspawns.notebook.kind.hybrid", "Hybrids")}</h4>
@@ -65,7 +65,7 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
           <div class="sheet right" id="sheet-fam-right" hidden>
             <h4>{t("screen.originofspawns.notebook.kind.minor", "Minor families")}</h4>
             <div class="found" data-kind="minor"></div>
-            <p class="ink">A family name shows when you find a mob of that family. Spawn mobs in the <a href={url("evolution/#simulator")}>simulator</a> to find families.</p>
+
             <span class="folio">4</span>
           </div>
           <div class="edge-tabs" role="group" aria-label="Notebook pages">
@@ -74,7 +74,7 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
           </div>
         </div>
       </div>
-      <p class="muted small center">This notebook reads the pools of the simulator on the Evolution page, and the families that you find there. Your browser keeps them.</p>
+      <p class="muted small center">The notebook shows all the genes and families of each species. The gene bars read the pools of the simulator on the Evolution page, and your browser keeps them.</p>
     </section>
 
     <section class="section grid grid-2 info">
@@ -256,7 +256,9 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
   .freq .v { font-family: var(--font-display); text-align: right; }
   .found { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 6px; font-size: var(--fs-sm); }
   .found .f { padding: 2px 6px; border: 1px dashed rgba(58, 42, 26, 0.45); }
-  .found .f.no { opacity: 0.45; font-style: italic; }
+  .found a.f { color: var(--ink); font-weight: 400; text-decoration: none; }
+  .found a.f:hover { border-style: solid; }
+  .freq-group { margin: var(--s-3) 0 0; font: 600 var(--fs-xs) / 1 var(--font-display); color: var(--fam); text-transform: uppercase; letter-spacing: 0.06em; }
   .page-turn {
     position: absolute; top: 0; bottom: 0; right: 0; width: 50%; z-index: 4; transform-origin: left center;
     background: linear-gradient(270deg, var(--paper), var(--paper-2)); box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);

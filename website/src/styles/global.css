@@ -387,7 +387,6 @@ main { flex: 1; }
   image-rendering: pixelated;
 }
 .mc-slot svg, .mc-slot img { width: 30px; height: 30px; image-rendering: pixelated; }
-.mc-slot canvas { width: 100%; height: 100%; image-rendering: pixelated; }
 .mc-slot.lg { width: 72px; height: 72px; }
 .mc-slot.sm { width: 36px; height: 36px; }
 .mc-slot.sm svg { width: 22px; height: 22px; }

@@ -4,7 +4,7 @@ import Icon from "../components/Icon.astro";
 import Status from "../components/Status.astro";
 import MobShot from "../components/MobShot.astro";
 import site from "../data/site.json";
-import { url, familiesOf } from "../lib/site.js";
+import { url, familiesOf, speciesStatus } from "../lib/site.js";
 import { brandIcon } from "../lib/icons.js";
 
 const { links, version, minecraft, fabric, tagline, overview, features, roadmap } = site;
@@ -120,7 +120,7 @@ const explore = [
               <MobShot shot={sp.shot} alt={`A plain ${sp.name.toLowerCase()}`} height={150} />
               <div class="species-head">
                 <h3>{sp.name}</h3>
-                <Status status={sp.status} text={sp.status === "released" ? undefined : `${sp.milestone}, in development`} />
+                <Status status={sp.status} text={speciesStatus(sp)} />
               </div>
               <p class="muted small">{sp.intro || "The common zombie of the overworld. It is the first species of the mod."}</p>
               {sp.jockeys.filter((x) => /^Only/.test(x)).map((x) => <p class="small muted">{x}</p>)}

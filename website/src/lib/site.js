@@ -33,6 +33,9 @@ export const fmt = (key, ...args) => {
 };
 
 export const statusText = (s) => (s === "released" ? `In ${version}` : s === "development" ? "In development" : "Planned");
+// The state of a species. A species that no milestone names is "In development".
+export const speciesStatus = (sp) =>
+  sp.status === "released" ? undefined : sp.milestone ? `${sp.milestone}, in development` : "In development";
 export const statusClass = (s) => (s === "released" ? "ok" : s === "development" ? "warn" : "plan");
 
 // The family of a set of genes of one species, with the rules of DESIGN.md

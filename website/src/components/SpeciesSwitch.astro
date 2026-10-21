@@ -3,6 +3,7 @@
 // the species and keeps it in the URL as ?species=<id>.
 import site from "../data/site.json";
 import Status from "./Status.astro";
+import { speciesStatus } from "../lib/site.js";
 
 interface Props { disabled?: string[]; note?: Record<string, string> }
 const { disabled = [], note = {} } = Astro.props;
@@ -16,7 +17,7 @@ const { disabled = [], note = {} } = Astro.props;
     ))}
   </div>
   {site.species.map((s, i) => (
-    <span class="state" data-species-panel={s.id} hidden={i !== 0}><Status status={s.status} text={s.status === "released" ? undefined : `${s.milestone}, in development`} /></span>
+    <span class="state" data-species-panel={s.id} hidden={i !== 0}><Status status={s.status} text={speciesStatus(s)} /></span>
   ))}
 </div>
 

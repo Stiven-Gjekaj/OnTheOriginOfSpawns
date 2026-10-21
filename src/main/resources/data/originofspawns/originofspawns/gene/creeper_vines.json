@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:bogged/vinebound",
+	"gains": [
+		{
+			"type": "climb"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:bogged/mosshide",
+	"sub_family": "originofspawns:bogged/vinebound",
+	"gains": [
+		{
+			"type": "hidden_from_afar",
+			"blocks": 10,
+			"when": "night"
+		}
+	],
+	"downsides": [
+		{
+			"type": "sunburn",
+			"multiplier": 2
+		}
+	]
+}

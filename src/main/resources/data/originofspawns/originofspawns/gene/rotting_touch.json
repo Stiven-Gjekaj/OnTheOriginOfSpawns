@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:bogged/venomer",
+	"gains": [
+		{
+			"type": "effect_on_hurt",
+			"effect": "minecraft:poison",
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:bogged/venomer",
+	"gains": [
+		{
+			"type": "arrow_effect",
+			"effect": "minecraft:poison",
+			"seconds": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.85
+		}
+	]
+}

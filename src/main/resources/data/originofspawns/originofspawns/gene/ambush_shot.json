@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:bogged/mosshide",
+	"gains": [
+		{
+			"type": "damage_dealt_when",
+			"when": "ambush",
+			"multiplier": 1.5,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.9
+		}
+	]
+}

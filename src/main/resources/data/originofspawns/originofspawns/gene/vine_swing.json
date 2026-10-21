@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:bogged/vinebound",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fall",
+			"multiplier": 0
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

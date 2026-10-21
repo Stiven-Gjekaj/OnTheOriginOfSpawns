@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:bogged/sporecap",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 2,
+			"idle_seconds": 0,
+			"when": "on_rot_ground"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:fire",
+	"family": "originofspawns:bogged/mirefolk",
+	"gains": [
+		{
+			"type": "death_cloud",
+			"effect": "minecraft:poison",
+			"seconds": 4,
+			"radius": 3,
+			"cloud_seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_explosion",
+			"multiplier": 1.5
+		}
+	]
+}

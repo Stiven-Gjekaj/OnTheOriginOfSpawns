@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:bogged/sporecap",
+	"gains": [
+		{
+			"type": "death_cloud",
+			"effect": "minecraft:nausea",
+			"seconds": 5,
+			"radius": 3,
+			"cloud_seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

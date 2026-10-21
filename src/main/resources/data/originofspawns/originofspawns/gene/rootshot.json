@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:bogged/vinebound",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:slowness",
+			"seconds": 1,
+			"hits": "projectile",
+			"amplifier": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9,
+			"hits": "projectile"
+		}
+	]
+}

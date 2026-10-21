@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:fire",
+	"family": "originofspawns:bogged/vinebound",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 1.5
+		}
+	]
+}

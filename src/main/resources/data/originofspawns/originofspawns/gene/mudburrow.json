@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:bogged/mirefolk",
+	"sub_family": "originofspawns:bogged/mosshide",
+	"gains": [
+		{
+			"type": "burrow",
+			"player_radius": 24,
+			"rise_seconds": 2,
+			"blocks": "#originofspawns:mud",
+			"night_only": false,
+			"stun_seconds": 1,
+			"near_player": true
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:wolf",
+	"family": "originofspawns:bogged/venomer",
+	"gains": [
+		{
+			"type": "effect_immunity",
+			"effects": [
+				"minecraft:poison",
+				"minecraft:wither"
+			]
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 1.25
+		}
+	]
+}

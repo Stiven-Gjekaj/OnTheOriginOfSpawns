@@ -1,0 +1,59 @@
+{
+	"species": "minecraft:bogged",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hurt",
+					"effect": "minecraft:nausea",
+					"seconds": 2,
+					"cooldown_seconds": 20,
+					"player_radius": 2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_fire",
+					"multiplier": 1.75
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hurt",
+					"effect": "minecraft:nausea",
+					"seconds": 3,
+					"cooldown_seconds": 15,
+					"player_radius": 3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_fire",
+					"multiplier": 1.5
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hurt",
+					"effect": "minecraft:nausea",
+					"seconds": 4,
+					"cooldown_seconds": 10,
+					"player_radius": 4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_fire",
+					"multiplier": 1.25
+				}
+			]
+		}
+	]
+}

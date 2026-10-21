@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:shears",
+	"family": "originofspawns:bogged/sporecap",
+	"gains": [
+		{
+			"type": "regrow",
+			"seconds": 30,
+			"heal": 6
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 1.25
+		}
+	]
+}

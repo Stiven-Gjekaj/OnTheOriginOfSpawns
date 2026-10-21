@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:bogged/mirefolk",
+	"gains": [
+		{
+			"type": "damage_taken_when",
+			"when": "wet_ground",
+			"multiplier": 0.7,
+			"damage_types": "#minecraft:is_projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.15,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

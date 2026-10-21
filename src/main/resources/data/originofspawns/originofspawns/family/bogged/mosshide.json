@@ -1,0 +1,71 @@
+{
+	"species": "minecraft:bogged",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "translucent",
+					"max_light": 15,
+					"opacity": 0.1,
+					"blocks": "#originofspawns:swamp_cover"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.25,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "translucent",
+					"max_light": 15,
+					"opacity": 0.1,
+					"blocks": "#originofspawns:swamp_cover"
+				},
+				{
+					"type": "translucent",
+					"max_light": 15,
+					"opacity": 0.1,
+					"blocks": "#originofspawns:water_cover"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "translucent",
+					"max_light": 15,
+					"opacity": 0.1,
+					"blocks": "#originofspawns:swamp_cover"
+				},
+				{
+					"type": "translucent",
+					"max_light": 15,
+					"opacity": 0.1,
+					"blocks": "#originofspawns:water_cover"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

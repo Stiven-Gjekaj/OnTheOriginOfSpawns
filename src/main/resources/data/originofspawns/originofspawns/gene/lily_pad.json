@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:bogged/mosshide",
+	"gains": [
+		{
+			"type": "translucent",
+			"max_light": 15,
+			"opacity": 0.1,
+			"blocks": "#originofspawns:water_cover"
+		}
+	],
+	"downsides": [
+		{
+			"type": "speed_when",
+			"when": "on_land",
+			"multiplier": 0.9
+		}
+	]
+}

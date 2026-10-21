@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:bogged/sporecap",
+	"sub_family": "originofspawns:bogged/venomer",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:nausea",
+			"seconds": 4,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9,
+			"hits": "projectile"
+		}
+	]
+}

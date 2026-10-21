@@ -1,0 +1,24 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:bogged/vinebound",
+	"sub_family": "originofspawns:bogged/mirefolk",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:slowness",
+			"amplifier": 4,
+			"radius": 3,
+			"interval_seconds": 10,
+			"seconds": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

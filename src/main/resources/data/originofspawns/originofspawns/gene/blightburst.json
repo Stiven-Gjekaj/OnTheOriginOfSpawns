@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:bogged/venomer",
+	"sub_family": "originofspawns:bogged/sporecap",
+	"gains": [
+		{
+			"type": "death_effect",
+			"effect": "minecraft:poison",
+			"seconds": 5,
+			"radius": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

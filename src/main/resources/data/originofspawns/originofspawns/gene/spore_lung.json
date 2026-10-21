@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:bogged/sporecap",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:nausea",
+			"radius": 3,
+			"interval_seconds": 10,
+			"seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

@@ -1,0 +1,60 @@
+{
+	"species": "minecraft:bogged",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "speed_when",
+					"when": "wet_ground",
+					"multiplier": 1.1
+				}
+			],
+			"debuffs": [
+				{
+					"type": "speed_when",
+					"when": "dry_ground",
+					"multiplier": 0.75
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "speed_when",
+					"when": "wet_ground",
+					"multiplier": 1.2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "speed_when",
+					"when": "dry_ground",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "speed_when",
+					"when": "wet_ground",
+					"multiplier": 1.3
+				},
+				{
+					"type": "attribute_when",
+					"when": "wet_ground",
+					"attribute": "minecraft:armor",
+					"amount": 2,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "speed_when",
+					"when": "dry_ground",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

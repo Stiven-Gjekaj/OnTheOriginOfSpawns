@@ -4,6 +4,7 @@ import PageHeader from "../../components/PageHeader.astro";
 import Icon from "../../components/Icon.astro";
 import site from "../../data/site.json";
 import SpeciesSwitch from "../../components/SpeciesSwitch.astro";
+import MobShot from "../../components/MobShot.astro";
 import { url, famName, kindName, familiesOf } from "../../lib/site.js";
 
 const rules = [
@@ -27,7 +28,14 @@ const minorsOf = (sp) => site.minors.filter((m) => m.species === sp);
     <SpeciesSwitch />
     {site.species.map((sp) => (
     <div data-species-panel={sp.id} hidden={sp.id !== site.species[0].id}>
-    {sp.intro && <p class="lead species-intro">{sp.intro}</p>}
+    <div class="species-intro">
+      <MobShot shot={sp.shot} alt={`A plain ${sp.name.toLowerCase()} with no genes`} height={180} class="plain-shot" />
+      <div>
+        <h2>The {sp.name.toLowerCase()}</h2>
+        {sp.intro && <p class="lead">{sp.intro}</p>}
+        <p class="muted small">The picture shows a {sp.name.toLowerCase()} with no genes. Each family picture shows a {sp.name.toLowerCase()} with all 6 genes of the family.</p>
+      </div>
+    </div>
     <section>
       <div class="section-head">
         <h2>The 5 {sp.name.toLowerCase()} families</h2>
@@ -36,6 +44,7 @@ const minorsOf = (sp) => site.minors.filter((m) => m.species === sp);
       <div class="grid grid-3">
         {familiesOf(sp.id).map((f) => (
           <article class="card family" style={`--fam:var(--${f.id})`} id={f.id} data-family={f.id}>
+            <MobShot shot={f.shot} alt={`A ${sp.name.toLowerCase()} with all the genes of the ${f.name}`} height={170} />
             <div class="family-head">
               <span class="mc-slot"><Icon name={f.id} /></span>
               <div>
@@ -149,7 +158,10 @@ const minorsOf = (sp) => site.minors.filter((m) => m.species === sp);
 </script>
 
 <style>
-  .species-intro { margin-bottom: var(--s-6); }
+  .species-intro { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: var(--s-5); align-items: center; margin-bottom: var(--s-7); }
+  .species-intro .lead { margin-top: var(--s-2); }
+  .species-intro .small { margin-top: var(--s-2); }
+  @media (max-width: 560px) { .species-intro { grid-template-columns: 1fr; } .species-intro :global(.plain-shot) { max-width: 200px; } }
   .family { border-top: 3px solid var(--fam); display: grid; gap: var(--s-4); align-content: start; }
   .family-head { display: flex; gap: var(--s-3); align-items: flex-start; }
   .family h3 { color: var(--fam); font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 600; }

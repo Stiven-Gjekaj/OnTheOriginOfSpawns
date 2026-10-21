@@ -5,6 +5,7 @@
 	"client": [
 		"AbstractSkeletonRendererMixin",
 		"AbstractZombieRendererMixin",
+		"BoggedTextureMixin",
 		"DrownedOuterLayerMixin",
 		"EntityRenderDispatcherMixin",
 		"LivingEntityRendererMixin",

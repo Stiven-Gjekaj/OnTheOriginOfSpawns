@@ -21,7 +21,8 @@ import net.minecraft.world.phys.Vec3;
 /**
  * Shows skeletons with genes, and checks that the skeleton species get the textures with the gene marks. From left
  * to right: a plain skeleton, a skeleton with Venomtip and High Ground, a skeleton with Barrage and Soulfire, a
- * stray with Venomtip and gray cloth, and a wither skeleton with Venomtip.
+ * stray with Venomtip and gray cloth, and a wither skeleton with Venomtip. A bogged with Venomtip and gray cloth
+ * stands at the far left.
  */
 public class SkeletonGenesClientTest implements FabricClientGameTest {
 	private static Identifier gene(String name) {
@@ -44,10 +45,13 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 				spawn(player, EntityTypes.STRAY, front.add(-1.2, 0.0, 0.0), List.of(gene("venomtip"),
 						Identifier.fromNamespaceAndPath("originofspawns_test", "test_cloth_dye")));
 				spawn(player, EntityTypes.WITHER_SKELETON, front.add(-2.6, 0.0, 0.4), List.of(gene("venomtip")));
+				spawn(player, EntityTypes.BOGGED, front.add(3.6, 0.0, 0.4), List.of(gene("venomtip"),
+						Identifier.fromNamespaceAndPath("originofspawns_test", "test_cloth_dye")));
 			});
 			context.waitTicks(40);
 			context.takeScreenshot("skeleton_genes");
-			for (String texture : List.of("skeleton", "stray", "stray_overlay", "wither_skeleton")) {
+			for (String texture : List.of("skeleton", "stray", "stray_overlay", "wither_skeleton", "bogged",
+					"bogged_overlay")) {
 				Identifier base = Identifier.withDefaultNamespace("textures/entity/skeleton/" + texture + ".png");
 				if (!context.computeOnClient(client -> GeneTextures.wasBakedFrom(base))) {
 					throw new AssertionError("No gene marks on " + base);

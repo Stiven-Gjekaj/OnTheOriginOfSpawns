@@ -49,18 +49,16 @@ Pixel plan for the Sporecaps.
   15), and on the bottom of the head.
 
 Pixel plan for the Mirefolk.
-- Wader has dark, wet mud on the legs up to the knees: leg rows 4 to 11
-  and the bottom of the leg.
+- Wader has wet mud on the legs up to the knees: leg rows 6 to 11 and the
+  bottom of the leg.
 - Mudcake has a cracked crust of dried mud on the outer layer of the
   sides and the back of the body. The front stays free for the
   Blightburst pustules.
 - Mudburrow has mud that drips from the skull: patches on the top of the
   outer head, and drips down its sides, front, and back (y 8 to 12).
-- Mire Grip has large webbed hands of green, rotten skin: arm rows 7 to
-  10, over the Barkskin bark (order 1).
-- Swamp Gas has large, bright green bubbles of gas at the pelvis (y 28 to
-  31 of the body) and on the lower edge of the outer layer over it (y 24
-  to 30).
+- Mire Grip has webbed fingers of rotten skin: arm rows 9 and 10.
+- Swamp Gas has bubbles of gas at the pelvis, under the outer layer: y 28
+  to 31 of the body.
 - Leechbone: black leeches on the forearms, the gene model
   leechbone_leeches.
 
@@ -68,8 +66,8 @@ Pixel plan for the Venomers.
 - Venom Gland: a green sac under the jaw, the gene model venom_gland_sac.
 - Toxic Tip has bright green finger tips: arm row 11 and the bottom of the
   arm.
-- Bile Shot has large, yellow-green stains on the front of the ribs (x 20
-  to 27, y 23 to 25), with drips down to y 29.
+- Bile Shot has yellow stains on the lower ribs of the front (x 20 to 27,
+  y 24 to 27).
 - Rotting Touch has green rot in the joints: the shoulders and the hips
   (row 0), the elbows (arm row 5), and the knees (leg rows 4 and 5).
 - Antivenom has a bright green light in the eyes of the outer face, and
@@ -93,16 +91,15 @@ Pixel plan for the Vinebound.
   vine_swing_vines.
 
 Pixel plan for the Mosshides.
-- Lily Pad: a large lily pad with a small white flower on the top of the
-  skull, at the right back, tilted toward the front, the gene model
-  lily_pad_pad.
+- Lily Pad: a lily pad on the top of the skull, at the right back, the
+  gene model lily_pad_pad.
 - Ambush Shot has a clump of moss over the left eye of the outer face (x
   12 to 15, y 10 to 13). The right eye stays open.
 - Silent Rot has moss wrapped round the feet: leg rows 9 to 11 and the
   bottom of the leg, over the Wader mud (order 1).
 - Swamp Shroud: a hood of hanging moss, the gene model swamp_shroud_hood.
-- Bog Mist has wisps of gray mist on the outer layer of the body and the
-  arms only. The head and the bones keep their color.
+- Bog Mist has a gray haze of mist over all of the outer layer, with
+  paler wisps in it.
 - Barkskin has plates of wet bark on the forearms (arm rows 6 to 8) and on
   the thighs (leg rows 1 to 3).
 This script needs Pillow.
@@ -272,7 +269,6 @@ def spore_lung():
 
 
 MUD = ("#4A3828", "#36281C", "#6A5238", "#2A1E14")
-WET = ("#2E2216", "#1E160E", "#5A4632", "#8A7458")
 DRY = ("#9A8466", "#7E6A50", "#4E3E2A")
 
 

@@ -94,12 +94,12 @@ The husk and the drowned come out together in one alpha release.
 
 #### Milestone 2c: The other hostile and neutral mobs
 
-- The order is: skeletons (skeleton, stray, bogged, wither skeleton), the
-  creeper, spiders (spider, cave spider), illagers (pillager, vindicator,
-  evoker, witch), endermen (enderman, endermite), slimes (slime, magma cube),
-  the Nether mobs (zombified piglin, piglin, piglin brute, hoglin, zoglin),
-  the flyers (phantom, vex, ghast, blaze, breeze), the guardian, and the
-  others (silverfish, shulker, ravager, creaking).
+- The order is: skeletons (skeleton, stray, bogged, wither skeleton,
+  parched), the creeper, spiders (spider, cave spider), illagers (pillager,
+  vindicator, evoker, witch), endermen (enderman, endermite), slimes (slime,
+  magma cube), the Nether mobs (zombified piglin, piglin, piglin brute,
+  hoglin, zoglin), the flyers (phantom, vex, ghast, blaze, breeze), the
+  guardian, and the others (silverfish, shulker, ravager, creaking).
 - The neutral mobs that fight the player come after the hostile mobs: polar
   bear, bee, wolf, goat, dolphin, panda, llama, and iron golem.
 

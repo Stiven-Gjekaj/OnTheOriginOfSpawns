@@ -240,7 +240,7 @@ A resource pack can change the look of any gene.
 | Field | Default | Description |
 |---|---|---|
 | `region_map` | `originofspawns:textures/region/humanoid.png` | The map that labels the pixels of the mob texture |
-| `layers` | | The changes to the texture, in order. A layer with no `regions` or no `materials` covers all of them. A layer can have an `order`, an integer with the default `0` |
+| `layers` | | The changes to the texture, in order. A layer with no `regions` or no `materials` covers all of them. A layer can have an `order`, an integer with the default `0`. A layer can have a `target`: `body` (the default) or `outer`. An `outer` layer goes on the outer layer of the mob, such as the cloth of the stray, and covers all of its pixels |
 | `model` | none | A gene model that adds cubes to the mob, for example `originofspawns:bone_legs` |
 
 The layers of all the genes of a mob go on in sequence of their `order`.

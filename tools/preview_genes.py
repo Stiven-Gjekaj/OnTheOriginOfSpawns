@@ -50,6 +50,7 @@ STRAY_PATH = "assets/minecraft/textures/entity/skeleton/stray.png"
 STRAY_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/stray_overlay.png"
 BOGGED_PATH = "assets/minecraft/textures/entity/skeleton/bogged.png"
 WITHER_SKELETON_PATH = "assets/minecraft/textures/entity/skeleton/wither_skeleton.png"
+PARCHED_PATH = "assets/minecraft/textures/entity/skeleton/parched.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -231,6 +232,16 @@ WITHER_SKELETON_EXTRA = {
     "soul_reapers": [("All 6 at night", [], True, {"light": 0.18}),
                      ("All 6 + Ashborn", ["ember_eyes", "pyre"], True, {})],
 }
+# The families of the parched, from design/species/parched.md.
+PARCHED_FAMILIES = {
+    "enfeeblers": ["sap", "fumble", "exploit", "curse_cloud", "unnerving_rattle", "withering_glare"],
+    "windcarvers": ["long_wind", "gust_shot", "tailwind", "wind_dodge", "whirlwind_volley", "quickwind"],
+    "vultures": ["carrion_eye", "circler", "gorge", "flock", "glide", "watcher"],
+    "scorpions": ["stinger", "pincers", "carapace", "sand_hide", "venom_sac", "tail_whip"],
+    "fossils": ["petrified", "amber_heart", "bedrock_bones", "stoneskin", "sediment", "last_stand"],
+}
+
+PARCHED_EXTRA = {}
 NIGHT = (18, 22, 38, 255)
 
 # The babies of BabyGenesClientTest, for a sheet to compare with the game.
@@ -277,6 +288,29 @@ SKELETON_PIVOTS = {
     "head": (0, 0, 0), "body": (0, 0, 0), "right_arm": (-5, 2, 0), "left_arm": (5, 2, 0),
     "right_leg": (-2, 12, 0), "left_leg": (2, 12, 0),
 }
+# The parched, from SkeletonModel.createSingleModelDualBodyLayer: the bones
+# of the skeleton on a 64x64 texture, with the left arm on its own uv, and
+# wraps of cloth over the bones (PARCHED_WRAPS).
+PARCHED_PIVOTS = {
+    "head": (0, 0, 0), "body": (0, 0, 0), "right_arm": (-5.5, 2, 0), "left_arm": (5.5, 2, 0),
+    "right_leg": (-2, 12, 0), "left_leg": (2, 12, 0),
+}
+PARCHED_CUBES = ZOMBIE_CUBES[:2] + [
+    ("body", (28, 0), (-4, 10, -2), (8, 1, 4), False),
+    ("right_arm", (40, 16), (-1, -2, -1), (2, 12, 2), False),
+    ("left_arm", (56, 16), (-1, -2, -1), (2, 12, 2), False),
+    ("right_leg", (0, 16), (-1, 0, -1), (2, 12, 2), False),
+    ("left_leg", (0, 16), (-1, 0, -1), (2, 12, 2), True),
+]
+# Each wrap: bone, uv, from, size, mirror, inflate.
+PARCHED_WRAPS = [
+    ("head", (0, 32), (-4, -8, -4), (8, 8, 8), False, 0.2),
+    ("body", (16, 48), (-4, 0, -2), (8, 12, 4), False, 0.025),
+    ("right_arm", (42, 33), (-1.55, -2.025, -1.5), (3, 12, 3), False, 0.0),
+    ("left_arm", (40, 48), (-1.45, -2.025, -1.5), (3, 12, 3), False, 0.0),
+    ("right_leg", (0, 49), (-1.5, 0, -1.5), (3, 12, 3), False, 0.0),
+    ("left_leg", (4, 49), (-1.5, 0, -1.5), (3, 12, 3), False, 0.0),
+]
 SKELETON_CUBES = ZOMBIE_CUBES[:2] + [
     ("right_arm", (40, 16), (-1, -2, -1), (2, 12, 2), False),
     ("left_arm", (40, 16), (-1, -2, -1), (2, 12, 2), True),
@@ -464,7 +498,7 @@ def split_image(identifier):
 # the pivots of the adult model, and True when only the layers with the
 # target "outer" go on the outer layer (the stray). set_mob() sets it.
 MOB = {"split": False, "outer": None, "cubes": ZOMBIE_CUBES, "pivots": PIVOTS, "outer_target": False,
-       "outer_inflate": 0.25, "extra": [], "held": []}
+       "outer_inflate": 0.25, "extra": [], "held": [], "wraps": []}
 
 # The mushrooms on the head of the bogged, from BoggedModel: crossed planes
 # of 6x4 pixels, with the texture of the mob. Each is (uv, from, size,
@@ -651,6 +685,8 @@ def cubes_of(tex, genes, baby=False):
     cubes += [{"bone": "head", "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": False, "texture": tex,
                "scale": 1.0, "pivot": p, "rotation": rot} for uv, f, s, p, rot in MOB["extra"]]
     cubes += MOB["held"]
+    cubes += [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": inflate, "mirror": m, "texture": tex,
+               "scale": 1.0} for b, uv, f, s, m, inflate in MOB["wraps"]]
     for gene in genes:
         cubes += gene_cubes(gene, tex, baby)
     return cubes
@@ -761,15 +797,18 @@ SPECIES = {
     "stray": (STRAY_PATH, None, STRAY_FAMILIES, STRAY_EXTRA, []),
     "bogged": (BOGGED_PATH, None, BOGGED_FAMILIES, BOGGED_EXTRA, []),
     "wither_skeleton": (WITHER_SKELETON_PATH, None, WITHER_SKELETON_FAMILIES, WITHER_SKELETON_EXTRA, []),
+    "parched": (PARCHED_PATH, None, PARCHED_FAMILIES, PARCHED_EXTRA, []),
 }
 
 
 def set_mob(species):
     """Set the look of the species for the bake and the cubes."""
-    skeleton = species in ("skeleton", "stray", "bogged", "wither_skeleton")
+    skeleton = species in ("skeleton", "stray", "bogged", "wither_skeleton", "parched")
     MOB["split"] = species == "drowned"
-    MOB["cubes"] = DROWNED_CUBES if species == "drowned" else SKELETON_CUBES if skeleton else ZOMBIE_CUBES
-    MOB["pivots"] = SKELETON_PIVOTS if skeleton else PIVOTS
+    MOB["cubes"] = (DROWNED_CUBES if species == "drowned" else PARCHED_CUBES if species == "parched"
+                    else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
+    MOB["pivots"] = PARCHED_PIVOTS if species == "parched" else SKELETON_PIVOTS if skeleton else PIVOTS
+    MOB["wraps"] = PARCHED_WRAPS if species == "parched" else []
     MOB["outer"] = ((find_zombie_texture(DROWNED_OUTER_PATH), find_zombie_texture(DROWNED_OUTER_BABY_PATH))
                     if species == "drowned" else (find_zombie_texture(STRAY_OUTER_PATH), None)
                     if species == "stray" else (find_zombie_texture(BOGGED_OUTER_PATH), None)

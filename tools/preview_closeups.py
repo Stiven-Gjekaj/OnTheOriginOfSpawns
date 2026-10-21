@@ -289,6 +289,10 @@ WITHER_SKELETON_CLOSEUPS = {
     "wither_soul_hunger": ("Soul Hunger", [("Soul Hunger", ["soul_hunger"], False)], ALL_SIDES),
 }
 
+# The close-ups of the parched. It has no babies.
+PARCHED = pg.PARCHED_FAMILIES
+PARCHED_CLOSEUPS = {}
+
 # Each species: its texture, its baby texture, and its close-ups.
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
@@ -298,6 +302,7 @@ SPECIES = {
     "stray": (pg.STRAY_PATH, None, STRAY_CLOSEUPS),
     "bogged": (pg.BOGGED_PATH, None, BOGGED_CLOSEUPS),
     "wither_skeleton": (pg.WITHER_SKELETON_PATH, None, WITHER_SKELETON_CLOSEUPS),
+    "parched": (pg.PARCHED_PATH, None, PARCHED_CLOSEUPS),
 }
 
 

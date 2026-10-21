@@ -94,6 +94,17 @@ public class ParchedEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void aPlayersOnlyBonusSkipsOtherMobs(GameTestHelper helper) {
+		Parched parched = parchedWith(helper, new BlockPos(1, 1, 1), "test_player_hunter");
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		var pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 1));
+		var source = helper.getLevel().damageSources().mobAttack(parched);
+		helper.assertValueEqual(GeneCombat.modifyDamage(player, source, 4.0F), 8.0F, "the damage to a player");
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, source, 4.0F), 4.0F, "the damage to a pig");
+		helper.succeed();
+	}
+
 	static Parched parchedWith(GameTestHelper helper, BlockPos pos, String... genes) {
 		Parched parched = EntityTypes.PARCHED.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
 		parched.setAttached(ModAttachments.GENES, new CarriedGenes(java.util.Arrays.stream(genes)

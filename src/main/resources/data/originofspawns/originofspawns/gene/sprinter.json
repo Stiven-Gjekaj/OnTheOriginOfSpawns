@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:creeper/rusher",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": 0.25,
+			"operation": "add_multiplied_total"
+		}
+	],
+	"downsides": [
+		{
+			"type": "blast_size",
+			"multiplier": 0.85
+		}
+	]
+}

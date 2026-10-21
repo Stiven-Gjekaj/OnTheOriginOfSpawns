@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:creeper/rusher",
+	"gains": [
+		{
+			"type": "sidestep",
+			"range": 24,
+			"distance": 3,
+			"cooldown_seconds": 8,
+			"aimed": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "blast_size",
+			"multiplier": 0.9
+		}
+	]
+}

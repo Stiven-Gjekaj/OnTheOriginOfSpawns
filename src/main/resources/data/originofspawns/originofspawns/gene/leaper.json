@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:creeper/rusher",
+	"gains": [
+		{
+			"type": "leap",
+			"min_distance": 3,
+			"max_distance": 6,
+			"cooldown_seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

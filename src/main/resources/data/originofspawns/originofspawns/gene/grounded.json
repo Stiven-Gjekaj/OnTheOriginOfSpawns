@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns:fire",
+	"family": "originofspawns:creeper/thunderhead",
+	"gains": [
+		{
+			"type": "lightning_immunity"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

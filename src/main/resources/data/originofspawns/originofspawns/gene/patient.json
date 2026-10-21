@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:creeper/ambusher",
+	"gains": [
+		{
+			"type": "lurk",
+			"radius": 4,
+			"ignite": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "blast_size",
+			"multiplier": 0.9
+		}
+	]
+}

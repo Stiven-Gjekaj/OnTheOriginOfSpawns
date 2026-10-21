@@ -1,0 +1,50 @@
+{
+	"species": "minecraft:creeper",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "charged_spawn",
+					"chance": 0.03
+				}
+			],
+			"debuffs": [
+				{
+					"type": "water_damage",
+					"amount": 1,
+					"interval": 40
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "charged_spawn",
+					"chance": 0.06
+				}
+			],
+			"debuffs": [
+				{
+					"type": "water_damage",
+					"amount": 1,
+					"interval": 60
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "charged_spawn",
+					"chance": 0.1
+				}
+			],
+			"debuffs": [
+				{
+					"type": "water_damage",
+					"amount": 1,
+					"interval": 80
+				}
+			]
+		}
+	]
+}

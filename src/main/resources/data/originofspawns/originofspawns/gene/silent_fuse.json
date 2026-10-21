@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:creeper/ambusher",
+	"gains": [
+		{
+			"type": "silent_fuse"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

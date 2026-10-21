@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:creeper",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": 0.15,
+					"operation": "add_multiplied_total"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "blast_size",
+					"multiplier": 0.75
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": 0.2,
+					"operation": "add_multiplied_total"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "blast_size",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": 0.25,
+					"operation": "add_multiplied_total"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "blast_size",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

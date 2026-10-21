@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:creeper/blaster",
+	"gains": [
+		{
+			"type": "damage_to",
+			"targets": "#originofspawns:golems",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

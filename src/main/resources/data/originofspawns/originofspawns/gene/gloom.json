@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns:night",
+	"family": "originofspawns:creeper/ambusher",
+	"gains": [
+		{
+			"type": "translucent",
+			"max_light": 7,
+			"opacity": 0.1
+		}
+	],
+	"downsides": [
+		{
+			"type": "blast_size",
+			"multiplier": 0.85
+		}
+	]
+}

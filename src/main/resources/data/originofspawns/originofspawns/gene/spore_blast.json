@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:creeper/fumer",
+	"gains": [
+		{
+			"type": "blast_cloud",
+			"effect": "minecraft:slowness",
+			"seconds": 6
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

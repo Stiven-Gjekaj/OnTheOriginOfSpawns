@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns:in_water",
+	"family": "originofspawns:creeper/thunderhead",
+	"gains": [
+		{
+			"type": "speed_when",
+			"when": "storm",
+			"multiplier": 1.4444
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

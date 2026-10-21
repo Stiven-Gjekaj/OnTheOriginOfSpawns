@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:creeper/blaster",
+	"gains": [
+		{
+			"type": "blast_effect",
+			"effect": "minecraft:nausea",
+			"seconds": 5
+		},
+		{
+			"type": "blast_effect",
+			"effect": "minecraft:slowness",
+			"seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "blast_size",
+			"multiplier": 0.9
+		}
+	]
+}

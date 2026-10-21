@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns:night",
+	"family": "originofspawns:creeper/thunderhead",
+	"gains": [
+		{
+			"type": "charge_when",
+			"when": "storm"
+		}
+	],
+	"downsides": [
+		{
+			"type": "water_damage",
+			"amount": 1,
+			"interval": 60
+		}
+	]
+}

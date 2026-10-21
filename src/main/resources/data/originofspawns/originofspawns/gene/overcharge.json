@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:creeper/thunderhead",
+	"sub_family": "originofspawns:creeper/blaster",
+	"gains": [
+		{
+			"type": "blast_size",
+			"multiplier": 1.25,
+			"when": "charged"
+		}
+	],
+	"downsides": [
+		{
+			"type": "fuse_time",
+			"multiplier": 1.15
+		}
+	]
+}

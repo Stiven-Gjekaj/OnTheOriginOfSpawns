@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:creeper/blaster",
+	"gains": [
+		{
+			"type": "chain_reaction",
+			"radius": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_explosion",
+			"multiplier": 1.25
+		}
+	]
+}

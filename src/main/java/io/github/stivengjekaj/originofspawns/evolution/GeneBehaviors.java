@@ -324,14 +324,26 @@ public final class GeneBehaviors {
 						mob.heal(regenerate.amount());
 					}
 				}
-				case GeneEffect.Aura aura when now % Math.max(1, Math.round(aura.intervalSeconds() * 20.0F)) < TICK_INTERVAL -> {
+				case GeneEffect.FreezeAura freeze when GeneCombat.test(mob, freeze.when()) -> {
+					AABB area = mob.getBoundingBox().inflate(freeze.radius());
+					for (Player player : level.getEntitiesOfClass(Player.class, area, Player::canFreeze)) {
+						// The freeze stops 1 second past full, so that it does not build up with no end.
+						int most = player.getTicksRequiredToFreeze() + 2 * TICK_INTERVAL;
+						player.setTicksFrozen(Math.min(most, player.getTicksFrozen() + freeze.rate()));
+					}
+				}
+				case GeneEffect.Aura aura when now % Math.max(1, Math.round(aura.intervalSeconds() * 20.0F)) < TICK_INTERVAL
+						&& GeneCombat.test(mob, aura.when()) -> {
 					AABB area = mob.getBoundingBox().inflate(aura.radius());
-					for (Player player : level.getEntitiesOfClass(Player.class, area,
-							player -> !aura.inWaterOnly() || player.isInWater())) {
-						// With no time of its own, the effect lasts until the next renewal, so that it does not end.
-						int ticks = aura.seconds().map(seconds -> Math.round(seconds * 20.0F))
-								.orElse(Math.round(aura.intervalSeconds() * 20.0F) + TICK_INTERVAL);
-						player.addEffect(new MobEffectInstance(aura.effect(), ticks, aura.amplifier()), mob);
+					// With no time of its own, the effect lasts until the next renewal, so that it does not end.
+					int ticks = aura.seconds().map(seconds -> Math.round(seconds * 20.0F))
+							.orElse(Math.round(aura.intervalSeconds() * 20.0F) + TICK_INTERVAL);
+					List<? extends LivingEntity> targets = aura.allies()
+							? level.getEntitiesOfClass(Mob.class, area, other -> other.getType() == mob.getType()
+									&& (!aura.inWaterOnly() || other.isInWater()))
+							: level.getEntitiesOfClass(Player.class, area, player -> !aura.inWaterOnly() || player.isInWater());
+					for (LivingEntity target : targets) {
+						target.addEffect(new MobEffectInstance(aura.effect(), ticks, aura.amplifier()), mob);
 					}
 					if (aura.particles()) {
 						level.sendParticles(ParticleTypes.ITEM_SLIME, mob.getX(), mob.getY(0.5), mob.getZ(),
@@ -559,7 +571,7 @@ public final class GeneBehaviors {
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			if (effect instanceof GeneEffect.DrawTime draw) {
 				multiplier *= draw.multiplier();
-			} else if (effect instanceof GeneEffect.ThrowRate rate) {
+			} else if (effect instanceof GeneEffect.ThrowRate rate && GeneCombat.test(mob, rate.when())) {
 				multiplier /= rate.multiplier();
 			}
 		}
@@ -572,7 +584,7 @@ public final class GeneBehaviors {
 	public static int scaleThrowInterval(Mob mob, int ticks) {
 		float rate = 1.0F;
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
-			if (effect instanceof GeneEffect.ThrowRate throwRate) {
+			if (effect instanceof GeneEffect.ThrowRate throwRate && GeneCombat.test(mob, throwRate.when())) {
 				rate *= throwRate.multiplier();
 			}
 		}
@@ -590,7 +602,7 @@ public final class GeneBehaviors {
 		GeneEffect.ThrowRange.Target kind = wet ? GeneEffect.ThrowRange.Target.WET : GeneEffect.ThrowRange.Target.DRY;
 		float multiplier = 1.0F;
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
-			if (effect instanceof GeneEffect.ThrowRange range
+			if (effect instanceof GeneEffect.ThrowRange range && GeneCombat.test(mob, range.when())
 					&& (range.target() == kind || range.target() == GeneEffect.ThrowRange.Target.ANY)) {
 				multiplier *= range.multiplier();
 			}

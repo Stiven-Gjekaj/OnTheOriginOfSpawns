@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "aura", "effect": "minecraft:speed", "radius": 8, "interval_seconds": 1, "allies": true }],
+	"mutation_rate": 0
+}

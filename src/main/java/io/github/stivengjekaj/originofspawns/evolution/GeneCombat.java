@@ -114,6 +114,19 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Freezes the entity as powder snow does, so that the freeze stays full for the seconds. An entity that cannot
+	 * freeze, for example a player in leather armor, does not freeze.
+	 */
+	public static void freeze(LivingEntity entity, float seconds) {
+		if (!entity.canFreeze()) {
+			return;
+		}
+		// The game takes 2 ticks of freeze away each tick out of powder snow.
+		int ticks = entity.getTicksRequiredToFreeze() + Math.round(seconds * 40.0F);
+		entity.setTicksFrozen(Math.max(entity.getTicksFrozen(), ticks));
+	}
+
+	/**
 	 * Returns true if it snows on the entity: a storm, open sky above it, and a biome where the storm is snow.
 	 */
 	public static boolean snowingOn(Entity entity) {
@@ -218,6 +231,8 @@ public final class GeneCombat {
 						&& mob.getRandom().nextFloat() < onHit.chance() && test(mob, onHit.when()) ->
 						living.addEffect(new MobEffectInstance(onHit.effect(), Math.round(onHit.seconds() * 20.0F),
 								onHit.amplifier()), mob);
+				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(false) && target instanceof LivingEntity living
+						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(living, freeze.seconds());
 				case GeneEffect.CallOnHit call when call.hits().includes(false) && target instanceof Player player ->
 						GeneBehaviors.callAllies(mob, call.radius(), player);
 				case GeneEffect.PullDownOnHit pull when target instanceof Player player && player.isInWater() ->
@@ -257,6 +272,8 @@ public final class GeneCombat {
 						&& mob.getRandom().nextFloat() < onHit.chance() && test(mob, onHit.when()) ->
 						target.addEffect(new MobEffectInstance(onHit.effect(), Math.round(onHit.seconds() * 20.0F),
 								onHit.amplifier()), mob);
+				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(true)
+						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(target, freeze.seconds());
 				case GeneEffect.CallOnHit call when call.hits().includes(true) && target instanceof Player player ->
 						GeneBehaviors.callAllies(mob, call.radius(), player);
 				case GeneEffect.IgniteTarget ignite when ignite.hits().includes(true)
@@ -309,6 +326,8 @@ public final class GeneCombat {
 				case GeneEffect.Thorns thorns when source.getDirectEntity() == attacker && !source.is(DamageTypes.THORNS) ->
 						attacker.hurtServer(level, level.damageSources().thorns(mob), thorns.damage());
 				case GeneEffect.EffectOnHurt onHurt -> effectOnHurt(mob, level, onHurt, attacker);
+				case GeneEffect.FreezeAttacker freeze when source.getDirectEntity() == attacker ->
+						freeze(attacker, freeze.seconds());
 				default -> {
 				}
 			}

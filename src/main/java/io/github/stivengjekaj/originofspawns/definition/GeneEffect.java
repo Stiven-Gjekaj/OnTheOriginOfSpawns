@@ -111,7 +111,10 @@ public sealed interface GeneEffect {
 			Map.entry("reassemble", Reassemble.CODEC),
 			Map.entry("barrage", Barrage.CODEC),
 			Map.entry("jockey", Jockey.CODEC),
-			Map.entry("draw_time", DrawTime.CODEC)
+			Map.entry("draw_time", DrawTime.CODEC),
+			Map.entry("freeze_on_hit", FreezeOnHit.CODEC),
+			Map.entry("freeze_attacker", FreezeAttacker.CODEC),
+			Map.entry("freeze_aura", FreezeAura.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -688,13 +691,14 @@ public sealed interface GeneEffect {
 	 * With {@code blocks}, the mob is translucent only when its feet or its eyes are in one of these blocks.
 	 * With {@code night_only}, the mob is translucent only while it is dark outside.
 	 */
-	record Translucent(int maxLight, float opacity, Optional<TagKey<Block>> blocks, boolean nightOnly)
+	record Translucent(int maxLight, float opacity, Optional<TagKey<Block>> blocks, boolean nightOnly, When when)
 			implements GeneEffect {
 		public static final MapCodec<Translucent> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.intRange(0, 15).optionalFieldOf("max_light", 7).forGetter(Translucent::maxLight),
 				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("opacity", 0.1F).forGetter(Translucent::opacity),
 				TagKey.hashedCodec(Registries.BLOCK).optionalFieldOf("blocks").forGetter(Translucent::blocks),
-				Codec.BOOL.optionalFieldOf("night_only", false).forGetter(Translucent::nightOnly)
+				Codec.BOOL.optionalFieldOf("night_only", false).forGetter(Translucent::nightOnly),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(Translucent::when)
 		).apply(instance, Translucent::new));
 
 		@Override
@@ -883,7 +887,7 @@ public sealed interface GeneEffect {
 	 * With {@code in_water_only}, only the players in water get it.
 	 */
 	record Aura(Holder<MobEffect> effect, int amplifier, float radius, float intervalSeconds, boolean particles,
-			boolean inWaterOnly, Optional<Float> seconds) implements GeneEffect {
+			boolean inWaterOnly, Optional<Float> seconds, boolean allies, When when) implements GeneEffect {
 		public static final MapCodec<Aura> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				MobEffect.CODEC.fieldOf("effect").forGetter(Aura::effect),
 				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(Aura::amplifier),
@@ -891,7 +895,9 @@ public sealed interface GeneEffect {
 				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("interval_seconds", 2.0F).forGetter(Aura::intervalSeconds),
 				Codec.BOOL.optionalFieldOf("particles", false).forGetter(Aura::particles),
 				Codec.BOOL.optionalFieldOf("in_water_only", false).forGetter(Aura::inWaterOnly),
-				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds").forGetter(Aura::seconds)
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds").forGetter(Aura::seconds),
+				Codec.BOOL.optionalFieldOf("allies", false).forGetter(Aura::allies),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(Aura::when)
 		).apply(instance, Aura::new));
 
 		@Override
@@ -1232,10 +1238,15 @@ public sealed interface GeneEffect {
 	/**
 	 * Multiplies how often the mob throws or shoots. The multiplier 2 throws two times as often.
 	 */
-	record ThrowRate(float multiplier) implements GeneEffect {
+	record ThrowRate(float multiplier, When when) implements GeneEffect {
 		public static final MapCodec<ThrowRate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				Codec.floatRange(0.05F, 20.0F).fieldOf("multiplier").forGetter(ThrowRate::multiplier)
+				Codec.floatRange(0.05F, 20.0F).fieldOf("multiplier").forGetter(ThrowRate::multiplier),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(ThrowRate::when)
 		).apply(instance, ThrowRate::new));
+
+		public ThrowRate(float multiplier) {
+			this(multiplier, When.ALWAYS);
+		}
 
 		@Override
 		public String type() {
@@ -1247,11 +1258,16 @@ public sealed interface GeneEffect {
 	 * Multiplies the throw range of the mob at a target: a wet target is in water or in a boat, a dry target is not,
 	 * and any target is both.
 	 */
-	record ThrowRange(float multiplier, Target target) implements GeneEffect {
+	record ThrowRange(float multiplier, Target target, When when) implements GeneEffect {
 		public static final MapCodec<ThrowRange> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.05F, 10.0F).fieldOf("multiplier").forGetter(ThrowRange::multiplier),
-				Target.CODEC.fieldOf("target").forGetter(ThrowRange::target)
+				Target.CODEC.fieldOf("target").forGetter(ThrowRange::target),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(ThrowRange::when)
 		).apply(instance, ThrowRange::new));
+
+		public ThrowRange(float multiplier, Target target) {
+			this(multiplier, target, When.ALWAYS);
+		}
 
 		@Override
 		public String type() {
@@ -1598,6 +1614,54 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "draw_time";
+		}
+	}
+
+	/**
+	 * Each hit freezes the target as powder snow does, for the seconds, after the freeze is full. Leather armor stops
+	 * it.
+	 */
+	record FreezeOnHit(float seconds, float chance, Hits hits) implements GeneEffect {
+		public static final MapCodec<FreezeOnHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 600.0F).fieldOf("seconds").forGetter(FreezeOnHit::seconds),
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("chance", 1.0F).forGetter(FreezeOnHit::chance),
+				Hits.CODEC.optionalFieldOf("hits", Hits.MELEE).forGetter(FreezeOnHit::hits)
+		).apply(instance, FreezeOnHit::new));
+
+		@Override
+		public String type() {
+			return "freeze_on_hit";
+		}
+	}
+
+	/**
+	 * An entity that hits the mob in melee freezes for the seconds.
+	 */
+	record FreezeAttacker(float seconds) implements GeneEffect {
+		public static final MapCodec<FreezeAttacker> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 600.0F).fieldOf("seconds").forGetter(FreezeAttacker::seconds)
+		).apply(instance, FreezeAttacker::new));
+
+		@Override
+		public String type() {
+			return "freeze_attacker";
+		}
+	}
+
+	/**
+	 * Players in the radius start to freeze while the state is true. The freeze grows each second by the rate, in
+	 * ticks of freeze. The game takes 2 ticks of freeze away each tick, so a rate above 40 makes the freeze grow.
+	 */
+	record FreezeAura(float radius, int rate, When when) implements GeneEffect {
+		public static final MapCodec<FreezeAura> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 32.0F).fieldOf("radius").forGetter(FreezeAura::radius),
+				Codec.intRange(1, 1000).optionalFieldOf("rate", 60).forGetter(FreezeAura::rate),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(FreezeAura::when)
+		).apply(instance, FreezeAura::new));
+
+		@Override
+		public String type() {
+			return "freeze_aura";
 		}
 	}
 }

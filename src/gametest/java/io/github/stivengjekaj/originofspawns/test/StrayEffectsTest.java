@@ -6,7 +6,9 @@ import io.github.stivengjekaj.originofspawns.definition.DeathCondition;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect.When;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -14,13 +16,17 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.skeleton.Stray;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
@@ -83,6 +89,82 @@ public class StrayEffectsTest {
 		helper.assertFalse(GeneCombat.test(stray, When.TARGET_FROZEN), "a warm target");
 		pig.setTicksFrozen(40);
 		helper.assertTrue(GeneCombat.test(stray, When.TARGET_FROZEN), "a target that freezes");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void frostArrowsFreezeTheTarget(GameTestHelper helper) {
+		Stray stray = strayWith(helper, new BlockPos(1, 1, 1), "test_frost_arrows");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(4, 1, 1));
+		GeneCombat.onHit(stray, pig);
+		helper.assertValueEqual(pig.getTicksFrozen(), 0, "a melee hit does not freeze");
+		GeneCombat.onProjectileHit(stray, pig);
+		helper.assertTrue(pig.isFullyFrozen(), "an arrow hit freezes the pig");
+		helper.assertValueEqual(pig.getTicksFrozen(), pig.getTicksRequiredToFreeze() + 120, "full for 3 seconds");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void leatherArmorStopsTheFreeze(GameTestHelper helper) {
+		Stray stray = strayWith(helper, new BlockPos(1, 1, 1), "test_frost_arrows");
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		player.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.LEATHER_BOOTS));
+		GeneCombat.onProjectileHit(stray, player);
+		helper.assertValueEqual(player.getTicksFrozen(), 0, "leather boots stop the freeze");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aMeleeHitOnRimeFreezesTheAttacker(GameTestHelper helper) {
+		Stray stray = strayWith(helper, new BlockPos(1, 1, 1), "test_rime_shell");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 1));
+		GeneCombat.onHurt(stray, helper.getLevel().damageSources().mobAttack(pig));
+		helper.assertTrue(pig.isFullyFrozen(), "the attacker freezes");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aFrostWindFreezesThePlayersNear(GameTestHelper helper) {
+		Stray stray = strayWith(helper, new BlockPos(1, 1, 1), "test_frost_wind");
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		player.setGameMode(GameType.SURVIVAL);
+		player.snapTo(helper.absoluteVec(new Vec3(3.5, 1.0, 1.5)));
+		stray.tickCount = 20;
+		GeneBehaviors.tick(stray, helper.getLevel());
+		helper.assertValueEqual(player.getTicksFrozen(), 60, "the freeze grows by the rate");
+		for (int i = 0; i < 10; i++) {
+			GeneBehaviors.tick(stray, helper.getLevel());
+		}
+		helper.assertValueEqual(player.getTicksFrozen(), player.getTicksRequiredToFreeze() + 40,
+				"the freeze stops 1 second past full");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void statesLimitTheRangeAndTheTranslucency(GameTestHelper helper) {
+		helper.setBlock(new BlockPos(1, 0, 1), Blocks.SNOW_BLOCK);
+		helper.setBlock(new BlockPos(4, 0, 1), Blocks.STONE);
+		Stray onSnow = strayWith(helper, new BlockPos(1, 1, 1), "test_snow_range", "test_snow_shade");
+		Stray onStone = strayWith(helper, new BlockPos(4, 1, 1), "test_snow_range", "test_snow_shade");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(2, 1, 4));
+		helper.assertValueEqual(GeneBehaviors.throwRangeMultiplier(onSnow, pig), 1.5F, "the range on snow");
+		helper.assertValueEqual(GeneBehaviors.throwRangeMultiplier(onStone, pig), 1.0F, "the range on stone");
+		helper.assertTrue(GeneEffects.translucentOpacity(onSnow).isPresent(), "see-through on snow");
+		helper.assertTrue(GeneEffects.translucentOpacity(onStone).isEmpty(), "solid on stone");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void anAllyAuraGoesToTheSameSpecies(GameTestHelper helper) {
+		Stray leader = strayWith(helper, new BlockPos(1, 1, 1), "test_ally_speed");
+		Stray ally = strayWith(helper, new BlockPos(3, 1, 1));
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		player.setGameMode(GameType.SURVIVAL);
+		player.snapTo(helper.absoluteVec(new Vec3(1.5, 1.0, 3.5)));
+		leader.tickCount = 20;
+		GeneBehaviors.tick(leader, helper.getLevel());
+		helper.assertTrue(ally.hasEffect(MobEffects.SPEED), "the ally gets Speed");
+		helper.assertFalse(player.hasEffect(MobEffects.SPEED), "the player does not");
 		helper.succeed();
 	}
 

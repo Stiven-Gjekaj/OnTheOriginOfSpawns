@@ -91,8 +91,9 @@ Pixel plan for the Vinebound.
   vine_swing_vines.
 
 Pixel plan for the Mosshides.
-- Lily Pad: a lily pad on the top of the skull, at the right back, the
-  gene model lily_pad_pad.
+- Lily Pad: a large lily pad with a small white flower on the top of the
+  skull, at the right back, tilted toward the front, the gene model
+  lily_pad_pad.
 - Ambush Shot has a clump of moss over the left eye of the outer face (x
   12 to 15, y 10 to 13). The right eye stays open.
 - Silent Rot has moss wrapped round the feet: leg rows 9 to 11 and the
@@ -702,27 +703,38 @@ def lily_pad():
 
 
 def lily_pad_model():
-    # A lily pad on the top of the skull, at the right back, where the
+    # A large lily pad on the top of the skull, at the right back, where the
     # mushrooms of the bogged leave room: a flat, round green leaf with
-    # pale veins, a dark rim, and the notch of a lily pad, that lies on the
-    # outer layer of the top of the head (y -8.2) and hangs out a little
-    # over the right side and the back, so that it shows from the side.
+    # pale veins, a dark rim, and the notch of a lily pad. Its back edge is
+    # raised, so it tilts toward the front and shows its top from the front.
+    # A small white flower with a pink middle sits on it. The front edge
+    # lies on the outer layer of the top of the head (y -8.2).
     im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
 
     def pad(face, x, y):
         if face not in ("top", "bottom"):
             return None
-        corner = (x in (0, 4)) and (y in (0, 4))
-        notch = x == 2 and y < 2
+        corner = (x in (0, 6)) and (y in (0, 6)) or (x, y) in ((1, 0), (0, 1), (5, 0), (6, 1))
+        notch = x == 3 and y < 3
         if corner or notch:
             return None
-        if x in (0, 4) or y in (0, 4):
+        if x in (0, 6) or y in (0, 6) or (x, y) in ((1, 1), (5, 1)):
             return LILY[2]
-        return LILY[1] if x == y or x + y == 4 else LILY[0]
+        return LILY[1] if x == y or x + y == 6 else LILY[0]
 
-    # The pad: 5x0x5 at uv (0, 0).
-    paint_box(im, 0, 0, 5, 0, 5, pad)
-    parts = [{"bone": "head", "uv": [0, 0], "from": [-5.4, -8.3, 0.4], "size": [5, 0, 5]}]
+    def flower(face, x, y):
+        if face == "top":
+            return "#F4A8C8" if (x, y) == (1, 1) else "#FAF6F2"
+        return "#FAF6F2" if face != "bottom" else "#D8D0D0"
+
+    # The pad: 7x0x7 at uv (0, 0). The flower: 3x1x3 at uv (16, 0).
+    paint_box(im, 0, 0, 7, 0, 7, pad)
+    paint_box(im, 16, 0, 3, 1, 3, flower)
+    tilt = {"pivot": [-2.5, -8.3, -1], "rotation": [20, 0, 0]}
+    parts = [
+        dict({"bone": "head", "uv": [0, 0], "from": [-6, -8.3, -1], "size": [7, 0, 7]}, **tilt),
+        dict({"bone": "head", "uv": [16, 0], "from": [-4, -9.3, 2.5], "size": [3, 1, 3]}, **tilt),
+    ]
     save_model("lily_pad_pad", im, parts)
 
 

@@ -8,6 +8,7 @@ import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.BehaviorState;
 import io.github.stivengjekaj.originofspawns.mixin.AbstractSkeletonAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -17,6 +18,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -173,6 +175,37 @@ public class BoggedEffectsTest {
 		MobEffectInstance poison = pig.getEffect(MobEffects.POISON);
 		helper.assertTrue(poison != null && poison.getAmplifier() == 1 && poison.getDuration() == 240,
 				"the target gets a Poison II of 12 seconds: " + poison);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void mudburrowNeedsMudUnderTheSpot(GameTestHelper helper) {
+		for (int x = 0; x < 6; x++) {
+			for (int z = 0; z < 6; z++) {
+				helper.setBlock(new BlockPos(x, 1, z), Blocks.STONE);
+				helper.setBlock(new BlockPos(x, 2, z), Blocks.STONE);
+			}
+		}
+		Bogged bogged = boggedWith(helper, new BlockPos(0, 3, 0), "test_mudburrow");
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(4, 3, 4))));
+		double surface = bogged.getY();
+		GeneBehaviors.onSpawn(bogged, helper.getLevel(), EntitySpawnReason.NATURAL);
+		helper.assertValueEqual(bogged.getY(), surface, "the bogged stays on stone");
+		helper.assertValueEqual(bogged.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE).riseTicks(), 0,
+				"the bogged does not rise on stone");
+		for (int x = 0; x < 6; x++) {
+			for (int z = 0; z < 6; z++) {
+				helper.setBlock(new BlockPos(x, 1, z), Blocks.MUD);
+				helper.setBlock(new BlockPos(x, 2, z), Blocks.MUD);
+			}
+		}
+		GeneBehaviors.onSpawn(bogged, helper.getLevel(), EntitySpawnReason.NATURAL);
+		helper.assertValueEqual(bogged.getY(), helper.absoluteVec(new Vec3(0.0, 1.0, 0.0)).y, "2 blocks under the mud");
+		helper.assertTrue(bogged.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE).riseTicks() > 0,
+				"the bogged rises out of the mud");
+		double distance = Math.hypot(bogged.getX() - player.getX(), bogged.getZ() - player.getZ());
+		helper.assertTrue(distance <= 3.0, "the bogged is next to the player, at " + distance);
 		helper.succeed();
 	}
 

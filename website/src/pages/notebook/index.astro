@@ -10,7 +10,7 @@ const nb = site.notebook;
 const m3 = site.roadmap.find((r) => r.key === "Milestone 3");
 const m4 = nb.m4;
 const cats = site.evolution.categories;
-const ribbons = ["#3f7f1c", "#a46a0c", "#1f6f8a", "#6b3a8f", "#4f7f9a", "#8a3a3a"];
+const ribbons = ["#3f7f1c", "#a46a0c", "#1f6f8a", "#6b3a8f", "#4f7f9a", "#8a3a3a", "#3a3a44"];
 const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase();
 ---
 <Layout title="Beagle Notebook" description="The Beagle Notebook, the mob info panel, and the player perks of On the Origin of Spawns.">
@@ -23,7 +23,7 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
       <div class="book">
         <div class="ribbons" role="group" aria-label="Species">
           {site.species.map((sp, i) => (
-            <button class="ribbon" type="button" data-species-btn={sp.id} aria-pressed={i === 0 ? "true" : "false"} style={`--rib:${ribbons[i % ribbons.length]}`}>{sp.name}</button>
+            <button class="ribbon" type="button" data-species-btn={sp.id} aria-pressed={i === 0 ? "true" : "false"} style={`--rib:${ribbons[i % ribbons.length]}`} title={sp.name}>{sp.name}</button>
           ))}
           <button class="ribbon" type="button" disabled style="--rib:#6b6b6b" data-tip="The other hostile mobs come in milestone 2c">More</button>
         </div>

@@ -232,7 +232,7 @@ The states for `when` are:
 |---|---|---|
 | `silence` | `idle` (`false`), `hurt` (`false`), `steps` (`false`), `death` (`false`) | Stops these sounds of the mob |
 | `loud` | `multiplier` | Multiplies the volume of the sounds of the mob, also its steps |
-| `translucent` | `max_light` (`7`), `opacity` (`0.1`), `blocks` (none) | The client draws the mob translucent at this light level or lower. With `blocks`, only while its feet or its eyes are in a block of this tag. With `night_only` (`false`), only while it is dark outside. With `when` (`always`) and `also` (`always`), only while both states are true. Other mobs still see it |
+| `translucent` | `max_light` (`7`), `opacity` (`0.1`), `blocks` (none), `night_only` (`false`), `when` (`always`), `also` (`always`) | The client draws the mob translucent at this light level or lower. With `blocks`, only while its feet or its eyes are in a block of this tag. With `night_only` (`false`), only while it is dark outside. With `when` (`always`) and `also` (`always`), only while both states are true. Other mobs still see it |
 | `glowing` | `when` (`always`) | The mob glows while the state is true, so that players see it through walls |
 | `aura` | `effect`, `amplifier` (`0`), `radius`, `interval_seconds` (`2`), `particles` (`false`), `in_water_only` (`false`), `seconds` (none), `allies` (`false`), `when` (`always`) | While the state is true, gives a status effect to the players near the mob. The effect lasts `seconds`, or until the next renewal when there is no `seconds`. With `in_water_only`, only the players in water get it. With `allies`, the mobs of its species get it instead of the players |
 | `ignored_by` | `mobs` | Mobs of these types do not target the mob |

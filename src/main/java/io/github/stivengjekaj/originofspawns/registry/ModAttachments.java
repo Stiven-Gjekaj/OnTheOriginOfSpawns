@@ -113,6 +113,11 @@ public final class ModAttachments {
 	 */
 	public static final AttachmentType<Long> SKULL_TIME = AttachmentRegistry.create(OriginOfSpawns.id("skull_time"));
 
+	/**
+	 * On a player: the game time of the last item that a gene made the player drop.
+	 */
+	public static final AttachmentType<Long> DISARM_TIME = AttachmentRegistry.create(OriginOfSpawns.id("disarm_time"));
+
 	private ModAttachments() {
 	}
 

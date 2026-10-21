@@ -136,7 +136,8 @@ public sealed interface GeneEffect {
 			Map.entry("soul_hunger", SoulHunger.CODEC),
 			Map.entry("damage_to", DamageTo.CODEC),
 			Map.entry("snowball_damage", SnowballDamage.CODEC),
-			Map.entry("water_sensitive", WaterSensitive.CODEC)
+			Map.entry("water_sensitive", WaterSensitive.CODEC),
+			Map.entry("disarm", Disarm.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -374,7 +375,23 @@ public sealed interface GeneEffect {
 		/**
 		 * The mob does not stand on soul sand or soul soil. This is the opposite of {@code on_soul_ground}.
 		 */
-		OFF_SOUL_GROUND;
+		OFF_SOUL_GROUND,
+		/**
+		 * It is bright outside. This is the opposite of {@code night}.
+		 */
+		DAY,
+		/**
+		 * The health of the mob is half of its maximum or more. This is the opposite of {@code wounded}.
+		 */
+		HEALTHY,
+		/**
+		 * The mob targets a player with half health or more. This is the opposite of {@code hunting_wounded}.
+		 */
+		HUNTING_HEALTHY,
+		/**
+		 * The target of the mob has the Weakness effect.
+		 */
+		TARGET_WEAKENED;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 
@@ -761,14 +778,15 @@ public sealed interface GeneEffect {
 	 * With {@code blocks}, the mob is translucent only when its feet or its eyes are in one of these blocks.
 	 * With {@code night_only}, the mob is translucent only while it is dark outside.
 	 */
-	record Translucent(int maxLight, float opacity, Optional<TagKey<Block>> blocks, boolean nightOnly, When when)
-			implements GeneEffect {
+	record Translucent(int maxLight, float opacity, Optional<TagKey<Block>> blocks, boolean nightOnly, When when,
+			When also) implements GeneEffect {
 		public static final MapCodec<Translucent> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.intRange(0, 15).optionalFieldOf("max_light", 7).forGetter(Translucent::maxLight),
 				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("opacity", 0.1F).forGetter(Translucent::opacity),
 				TagKey.hashedCodec(Registries.BLOCK).optionalFieldOf("blocks").forGetter(Translucent::blocks),
 				Codec.BOOL.optionalFieldOf("night_only", false).forGetter(Translucent::nightOnly),
-				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(Translucent::when)
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(Translucent::when),
+				When.CODEC.optionalFieldOf("also", When.ALWAYS).forGetter(Translucent::also)
 		).apply(instance, Translucent::new));
 
 		@Override
@@ -2054,6 +2072,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "water_sensitive";
+		}
+	}
+
+	/**
+	 * Each hit of the mob has a chance to make a player drop the item in the main hand. A player loses an item one
+	 * time in each cooldown at most. An item with Curse of Binding does not drop.
+	 */
+	record Disarm(float chance, float cooldownSeconds, Hits hits) implements GeneEffect {
+		public static final MapCodec<Disarm> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(Disarm::chance),
+				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(Disarm::cooldownSeconds),
+				Hits.CODEC.optionalFieldOf("hits", Hits.PROJECTILE).forGetter(Disarm::hits)
+		).apply(instance, Disarm::new));
+
+		@Override
+		public String type() {
+			return "disarm";
 		}
 	}
 }

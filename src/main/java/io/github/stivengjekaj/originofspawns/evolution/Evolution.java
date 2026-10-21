@@ -329,6 +329,8 @@ public final class Evolution {
 		}
 		if (level.isDarkOutside()) {
 			facts.add(DeathCondition.NIGHT);
+		} else {
+			facts.add(DeathCondition.DAY);
 		}
 		if (source.getEntity() != null && source.getEntity().getVehicle() instanceof AbstractBoat) {
 			facts.add(DeathCondition.BOAT);

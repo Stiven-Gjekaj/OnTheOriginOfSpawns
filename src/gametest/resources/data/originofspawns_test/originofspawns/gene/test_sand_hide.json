@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "translucent", "max_light": 15, "opacity": 0.1, "when": "on_sand", "also": "day" }],
+	"mutation_rate": 0
+}

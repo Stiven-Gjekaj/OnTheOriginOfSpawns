@@ -89,7 +89,11 @@ public enum DeathCondition implements StringRepresentable {
 	/**
 	 * The killer hit the mob with a weapon with the Smite enchantment.
 	 */
-	SMITE;
+	SMITE,
+	/**
+	 * The mob died while it was bright outside.
+	 */
+	DAY;
 
 	public static final Codec<DeathCondition> CODEC = StringRepresentable.fromEnum(DeathCondition::values);
 

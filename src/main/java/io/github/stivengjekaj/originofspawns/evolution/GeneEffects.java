@@ -66,7 +66,7 @@ public final class GeneEffects {
 						&& translucent.blocks().map(blocks -> inBlocks(entity, blocks)).orElse(true)
 						&& (!translucent.nightOnly() || entity.level().isDarkOutside())
 						&& (!(entity instanceof net.minecraft.world.entity.LivingEntity living)
-								|| GeneCombat.test(living, translucent.when())))
+								|| GeneCombat.test(living, translucent.when()) && GeneCombat.test(living, translucent.also())))
 				.map(effect -> ((GeneEffect.Translucent) effect).opacity())
 				.min(Float::compare);
 	}

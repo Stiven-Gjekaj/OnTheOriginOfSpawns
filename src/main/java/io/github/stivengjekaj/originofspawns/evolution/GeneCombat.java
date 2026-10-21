@@ -130,6 +130,12 @@ public final class GeneCombat {
 			case IN_FIRE -> entity.level().getBlockState(entity.blockPosition()).is(BlockTags.FIRE)
 					|| entity.level().getFluidState(entity.blockPosition()).is(net.minecraft.tags.FluidTags.LAVA);
 			case ON_SOUL_GROUND -> onSoulGround(entity);
+			case DAY -> !entity.level().isDarkOutside();
+			case HEALTHY -> entity.getHealth() >= entity.getMaxHealth() / 2.0F;
+			case HUNTING_HEALTHY -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
+					&& player.getHealth() >= player.getMaxHealth() / 2.0F;
+			case TARGET_WEAKENED -> entity instanceof Mob mob && mob.getTarget() != null
+					&& mob.getTarget().hasEffect(net.minecraft.world.effect.MobEffects.WEAKNESS);
 			case OFF_SOUL_GROUND -> !onSoulGround(entity);
 		};
 	}
@@ -204,6 +210,25 @@ public final class GeneCombat {
 	 */
 	public static boolean snowsAt(net.minecraft.world.level.Level level, BlockPos pos) {
 		return level.getBiome(pos).value().getPrecipitationAt(pos, level.getSeaLevel()) == Biome.Precipitation.SNOW;
+	}
+
+	/**
+	 * Makes the player drop the item in the main hand, if the cooldown of the player is over and the item has no
+	 * Curse of Binding. Returns true if the item dropped.
+	 */
+	public static boolean disarm(Player player, GeneEffect.Disarm disarm) {
+		var stack = player.getMainHandItem();
+		long now = player.level().getGameTime();
+		long last = player.getAttachedOrElse(ModAttachments.DISARM_TIME, Long.MIN_VALUE);
+		if (stack.isEmpty() || (last != Long.MIN_VALUE && now - last < Math.round(disarm.cooldownSeconds() * 20.0F))
+				|| net.minecraft.world.item.enchantment.EnchantmentHelper.has(stack,
+						net.minecraft.world.item.enchantment.EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE)) {
+			return false;
+		}
+		player.setAttached(ModAttachments.DISARM_TIME, now);
+		player.drop(stack.copy(), true, net.minecraft.util.Prediction.SERVER_ONLY);
+		player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.item.ItemStack.EMPTY);
+		return true;
 	}
 
 	/**
@@ -380,6 +405,8 @@ public final class GeneCombat {
 								onHit.amplifier()), mob);
 				case GeneEffect.HealOnHit heal when heal.hits().includes(false) && test(mob, heal.when()) ->
 						mob.heal(heal.amount());
+				case GeneEffect.Disarm disarm when disarm.hits().includes(false) && target instanceof Player player
+						&& mob.getRandom().nextFloat() < disarm.chance() -> disarm(player, disarm);
 				case GeneEffect.Cleave cleave when mob.level() instanceof ServerLevel level -> {
 					float damage = (float) mob.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE)
 							* cleave.part();
@@ -434,6 +461,8 @@ public final class GeneCombat {
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(target, freeze.seconds());
 				case GeneEffect.HealOnHit heal when heal.hits().includes(true) && test(mob, heal.when()) ->
 						mob.heal(heal.amount());
+				case GeneEffect.Disarm disarm when disarm.hits().includes(true) && target instanceof Player player
+						&& mob.getRandom().nextFloat() < disarm.chance() -> disarm(player, disarm);
 				case GeneEffect.ArrowKnockback knockback -> {
 					Vec3 away = new Vec3(target.getX() - mob.getX(), 0.0, target.getZ() - mob.getZ());
 					if (away.lengthSqr() > 1.0E-4) {

@@ -72,6 +72,41 @@ public class GalleryClientTest implements FabricClientGameTest {
 					List.of("barnacle_crust", "coral_growth", "anchor"),
 					List.of("chorus", "wreckcaller", "pearlheart"))));
 
+	/**
+	 * The scenes of the skeleton species. They are not in the picture of all families.
+	 */
+	private static final List<Scene> SKELETON_SCENES = List.of(
+			new Scene("skeletons", EntityTypes.SKELETON, Blocks.COARSE_DIRT, List.of(
+					List.of("high_ground", "quickdraw", "longdraw"),
+					List.of("fleetbone", "bonedash", "backpedal"),
+					List.of("bonewall", "thickbone", "reassemble"),
+					List.of("phalanx", "bugler", "warcry"),
+					List.of("hexmark", "soulfire", "witherhex"))),
+			new Scene("strays", EntityTypes.STRAY, Blocks.SNOW_BLOCK, List.of(
+					List.of("iceplate", "glacial_wall", "shatterhide"),
+					List.of("gale", "hailshot", "frostwind"),
+					List.of("driftline", "snowshoe", "iceskate"),
+					List.of("icicle", "coldsnap", "frostbite"),
+					List.of("mourner", "frozen_gaze", "hollow_cry"))),
+			new Scene("bogged", EntityTypes.BOGGED, Blocks.MUD, List.of(
+					List.of("shelfback", "puffball", "mushroom_shot"),
+					List.of("leechbone", "wader", "mire_grip"),
+					List.of("venom_gland", "antivenom", "bile_shot"),
+					List.of("creeper_vines", "snare", "vine_swing"),
+					List.of("lily_pad", "swamp_shroud", "barkskin"))),
+			new Scene("wither_skeletons", EntityTypes.WITHER_SKELETON, Blocks.NETHER_BRICKS, List.of(
+					List.of("executioner", "duelist", "parry"),
+					List.of("ember_eyes", "cinderblade", "pyre"),
+					List.of("skull_shot", "black_rot", "grave_chill"),
+					List.of("brickplate", "brickshield", "sentinel"),
+					List.of("vengeful_spirit", "soulstride", "soul_link"))),
+			new Scene("parched", EntityTypes.PARCHED, Blocks.SANDSTONE, List.of(
+					List.of("fumble", "exploit", "curse_cloud"),
+					List.of("long_wind", "whirlwind_volley", "gust_shot"),
+					List.of("circler", "gorge", "glide"),
+					List.of("stinger", "pincers", "carapace"),
+					List.of("amber_heart", "stoneskin", "petrified"))));
+
 	@Override
 	public void runTest(ClientGameTestContext context) {
 		if (System.getenv("ORIGINOFSPAWNS_GALLERY") == null) {
@@ -82,7 +117,7 @@ public class GalleryClientTest implements FabricClientGameTest {
 			server.runCommand("time set noon");
 			server.runCommand("weather clear");
 			context.runOnClient(client -> setHudHidden(client, true));
-			for (Scene scene : SCENES) {
+			for (Scene scene : java.util.stream.Stream.concat(SCENES.stream(), SKELETON_SCENES.stream()).toList()) {
 				server.runOnServer(s -> stage(s, scene));
 				context.waitTicks(40);
 				// The light under the new blocks updates a few ticks late, so a mob can catch fire first.
@@ -93,6 +128,8 @@ public class GalleryClientTest implements FabricClientGameTest {
 				server.runCommand("kill @e[tag=originofspawns_gallery]");
 				// The killed mobs drop items, which must not show in the next scene.
 				server.runCommand("kill @e[type=item]");
+				// Pyre leaves fire on the floor, which must not burn the mobs of the next scene.
+				server.runCommand("execute at @p run fill ~-24 ~ ~-8 ~24 ~4 ~24 air replace minecraft:fire");
 			}
 			allFamilies(context, singleplayer);
 			infoPanel(context, singleplayer);
@@ -118,8 +155,7 @@ public class GalleryClientTest implements FabricClientGameTest {
 			Mob mob = scene.type().create(level, EntitySpawnReason.COMMAND);
 			mob.setNoAi(true);
 			mob.setPersistenceRequired();
-			mob.setItemSlot(EquipmentSlot.MAINHAND, scene.type() == EntityTypes.DROWNED && i == 1
-					? new ItemStack(Items.TRIDENT) : ItemStack.EMPTY);
+			mob.setItemSlot(EquipmentSlot.MAINHAND, weapon(scene.type(), i));
 			mob.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
 			double x = (i - (scene.mobs().size() - 1) / 2.0) * 1.6;
 			mob.snapTo(base.getX() + 0.5 + x, base.getY(), base.getZ() + 5.5, 180.0F - (float) x * 6.0F, 0.0F);
@@ -135,6 +171,20 @@ public class GalleryClientTest implements FabricClientGameTest {
 		}
 	}
 
+	/**
+	 * Returns the natural weapon of the mob at the place in the row: the trident of the second drowned, the stone
+	 * sword of a wither skeleton, and the bow of the other skeletons.
+	 */
+	private static ItemStack weapon(EntityType<? extends Mob> type, int place) {
+		if (type == EntityTypes.DROWNED) {
+			return place == 1 ? new ItemStack(Items.TRIDENT) : ItemStack.EMPTY;
+		}
+		if (type == EntityTypes.WITHER_SKELETON) {
+			return new ItemStack(Items.STONE_SWORD);
+		}
+		return SKELETON_SCENES.stream().anyMatch(scene -> scene.type() == type) ? new ItemStack(Items.BOW)
+				: ItemStack.EMPTY;
+	}
 
 	/**
 	 * Puts all 15 families in three rows, one row for each species on its own floor, and looks down on them at 45

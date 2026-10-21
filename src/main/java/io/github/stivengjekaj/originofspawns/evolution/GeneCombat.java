@@ -473,6 +473,11 @@ public final class GeneCombat {
 			for (Mob ally : level.getEntitiesOfClass(Mob.class, area, other -> other.getType() == mob.getType())) {
 				ally.addEffect(new MobEffectInstance(instance), mob);
 			}
+		} else if (onHurt.playerRadius() > 0.0F) {
+			AABB area = mob.getBoundingBox().inflate(onHurt.playerRadius());
+			for (Player player : level.getEntitiesOfClass(Player.class, area)) {
+				player.addEffect(new MobEffectInstance(instance), mob);
+			}
 		} else {
 			attacker.addEffect(instance, mob);
 		}

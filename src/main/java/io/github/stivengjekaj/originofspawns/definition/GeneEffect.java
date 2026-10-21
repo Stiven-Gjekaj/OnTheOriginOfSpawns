@@ -1397,14 +1397,15 @@ public sealed interface GeneEffect {
 	 * in the radius get the effect, and the attacker does not.
 	 */
 	record EffectOnHurt(Holder<MobEffect> effect, float seconds, int amplifier, float cooldownSeconds, boolean ink,
-			float allyRadius) implements GeneEffect {
+			float allyRadius, float playerRadius) implements GeneEffect {
 		public static final MapCodec<EffectOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				MobEffect.CODEC.fieldOf("effect").forGetter(EffectOnHurt::effect),
 				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(EffectOnHurt::seconds),
 				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(EffectOnHurt::amplifier),
 				Codec.floatRange(0.0F, 3600.0F).optionalFieldOf("cooldown_seconds", 0.0F).forGetter(EffectOnHurt::cooldownSeconds),
 				Codec.BOOL.optionalFieldOf("ink", false).forGetter(EffectOnHurt::ink),
-				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("ally_radius", 0.0F).forGetter(EffectOnHurt::allyRadius)
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("ally_radius", 0.0F).forGetter(EffectOnHurt::allyRadius),
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("player_radius", 0.0F).forGetter(EffectOnHurt::playerRadius)
 		).apply(instance, EffectOnHurt::new));
 
 		@Override

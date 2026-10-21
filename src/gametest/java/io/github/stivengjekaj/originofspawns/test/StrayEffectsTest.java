@@ -318,6 +318,18 @@ public class StrayEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void aWailWeakensThePlayersNear(GameTestHelper helper) {
+		Stray stray = strayWith(helper, new BlockPos(1, 1, 1), "test_wail");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 1));
+		ServerPlayer near = helper.makeMockServerPlayerInLevel();
+		near.snapTo(helper.absoluteVec(new Vec3(1.5, 1.0, 5.5)));
+		GeneCombat.onHurt(stray, helper.getLevel().damageSources().mobAttack(pig));
+		helper.assertTrue(near.hasEffect(MobEffects.WEAKNESS), "a player in 8 blocks gets Weakness");
+		helper.assertFalse(pig.hasEffect(MobEffects.WEAKNESS), "the attacker that is not a player does not");
+		helper.succeed();
+	}
+
 	private static int arrows(GameTestHelper helper) {
 		return helper.getLevel().getEntitiesOfClass(AbstractArrow.class,
 				new net.minecraft.world.phys.AABB(helper.absolutePos(BlockPos.ZERO)).inflate(16.0)).size();

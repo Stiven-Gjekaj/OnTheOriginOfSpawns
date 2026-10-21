@@ -8,6 +8,7 @@ import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.evolution.GenePools;
 import io.github.stivengjekaj.originofspawns.mixin.CreeperAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -43,6 +44,7 @@ import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -115,6 +117,25 @@ public class CreeperEffectsTest {
 				"the fuse of a swelling creeper burns");
 		helper.assertTrue(Evolution.facts(lit, source, helper.getLevel()).contains(DeathCondition.FUSE),
 				"the fuse of a lit creeper burns");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void leafCoverHidesACreeperInLeavesAndGrass(GameTestHelper helper) {
+		helper.setBlock(new BlockPos(1, 0, 1), Blocks.GRASS_BLOCK);
+		helper.setBlock(new BlockPos(1, 1, 1), Blocks.SHORT_GRASS);
+		helper.setBlock(new BlockPos(3, 0, 1), Blocks.GRASS_BLOCK);
+		helper.setBlock(new BlockPos(3, 1, 1), Blocks.FERN);
+		helper.setBlock(new BlockPos(5, 1, 1), Blocks.OAK_LEAVES);
+		helper.setBlock(new BlockPos(7, 0, 1), Blocks.STONE);
+		Creeper inGrass = creeperWith(helper, new BlockPos(1, 1, 1), "test_leafskin");
+		Creeper inFern = creeperWith(helper, new BlockPos(3, 1, 1), "test_leafskin");
+		Creeper inLeaves = creeperWith(helper, new BlockPos(5, 1, 1), "test_leafskin");
+		Creeper inOpen = creeperWith(helper, new BlockPos(7, 1, 1), "test_leafskin");
+		helper.assertTrue(GeneEffects.translucentOpacity(inGrass).isPresent(), "short grass hides the creeper");
+		helper.assertTrue(GeneEffects.translucentOpacity(inFern).isPresent(), "a fern hides the creeper");
+		helper.assertTrue(GeneEffects.translucentOpacity(inLeaves).isPresent(), "leaves hide the creeper");
+		helper.assertTrue(GeneEffects.translucentOpacity(inOpen).isEmpty(), "the creeper in the open is solid");
 		helper.succeed();
 	}
 

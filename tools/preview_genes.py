@@ -51,6 +51,7 @@ STRAY_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/stray_overlay.png"
 BOGGED_PATH = "assets/minecraft/textures/entity/skeleton/bogged.png"
 WITHER_SKELETON_PATH = "assets/minecraft/textures/entity/skeleton/wither_skeleton.png"
 PARCHED_PATH = "assets/minecraft/textures/entity/skeleton/parched.png"
+CREEPER_PATH = "assets/minecraft/textures/entity/creeper/creeper.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -249,6 +250,16 @@ PARCHED_EXTRA = {
     "fossils": [("All 6 at night", [], True, {"light": 0.18}),
                 ("All 6 + Enfeeblers", ["exploit", "fumble"], True, {})],
 }
+# The families of the creeper, from design/species/creeper.md.
+CREEPER_FAMILIES = {
+    "blasters": ["big_bang", "shrapnel", "golem_breaker", "chain_reaction", "aftershock", "concussion"],
+    "rushers": ["sprinter", "short_fuse", "leaper", "dodger", "tracker", "wallcrawler"],
+    "ambushers": ["silent_fuse", "leafskin", "gloom", "veiled", "patient", "surprise"],
+    "fumers": ["toxic_blast", "smoke_bomb", "stink", "wither_gas", "gas_leak", "spore_blast"],
+    "thunderheads": ["lightning_rod", "static", "overcharge", "conductor", "grounded", "thunderstruck"],
+}
+
+CREEPER_EXTRA = {}
 NIGHT = (18, 22, 38, 255)
 
 # The babies of BabyGenesClientTest, for a sheet to compare with the game.
@@ -318,6 +329,17 @@ PARCHED_WRAPS = [
     ("right_leg", (0, 49), (-1.5, 0, -1.5), (3, 12, 3), False, 0.0),
     ("left_leg", (4, 49), (-1.5, 0, -1.5), (3, 12, 3), False, 0.0),
 ]
+# The creeper, from CreeperModel: a head and a body on one pivot, and four
+# legs that all use uv (0, 16).
+CREEPER_PIVOTS = {
+    "head": (0, 6, 0), "body": (0, 6, 0), "right_hind_leg": (-2, 18, 4), "left_hind_leg": (2, 18, 4),
+    "right_front_leg": (-2, 18, -4), "left_front_leg": (2, 18, -4),
+}
+CREEPER_CUBES = [
+    ("head", (0, 0), (-4, -8, -4), (8, 8, 8), False),
+    ("body", (16, 16), (-4, 0, -2), (8, 12, 4), False),
+] + [(leg, (0, 16), (-2, 0, -2), (4, 6, 4), False)
+     for leg in ("right_hind_leg", "left_hind_leg", "right_front_leg", "left_front_leg")]
 SKELETON_CUBES = ZOMBIE_CUBES[:2] + [
     ("right_arm", (40, 16), (-1, -2, -1), (2, 12, 2), False),
     ("left_arm", (40, 16), (-1, -2, -1), (2, 12, 2), True),
@@ -805,6 +827,7 @@ SPECIES = {
     "bogged": (BOGGED_PATH, None, BOGGED_FAMILIES, BOGGED_EXTRA, []),
     "wither_skeleton": (WITHER_SKELETON_PATH, None, WITHER_SKELETON_FAMILIES, WITHER_SKELETON_EXTRA, []),
     "parched": (PARCHED_PATH, None, PARCHED_FAMILIES, PARCHED_EXTRA, []),
+    "creeper": (CREEPER_PATH, None, CREEPER_FAMILIES, CREEPER_EXTRA, []),
 }
 
 
@@ -813,8 +836,9 @@ def set_mob(species):
     skeleton = species in ("skeleton", "stray", "bogged", "wither_skeleton", "parched")
     MOB["split"] = species == "drowned"
     MOB["cubes"] = (DROWNED_CUBES if species == "drowned" else PARCHED_CUBES if species == "parched"
-                    else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
-    MOB["pivots"] = PARCHED_PIVOTS if species == "parched" else SKELETON_PIVOTS if skeleton else PIVOTS
+                    else CREEPER_CUBES if species == "creeper" else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
+    MOB["pivots"] = (PARCHED_PIVOTS if species == "parched" else CREEPER_PIVOTS if species == "creeper"
+                     else SKELETON_PIVOTS if skeleton else PIVOTS)
     MOB["wraps"] = PARCHED_WRAPS if species == "parched" else []
     MOB["outer"] = ((find_zombie_texture(DROWNED_OUTER_PATH), find_zombie_texture(DROWNED_OUTER_BABY_PATH))
                     if species == "drowned" else (find_zombie_texture(STRAY_OUTER_PATH), None)

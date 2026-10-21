@@ -320,6 +320,10 @@ PARCHED_CLOSEUPS = {
                         [FRONT, SIDE, BACK, THREE_QUARTER, ("front at night", 0, 0, 0.18), NIGHT_BEHIND]),
 }
 
+# The close-ups of the creeper. It has no babies.
+CREEPER = pg.CREEPER_FAMILIES
+CREEPER_CLOSEUPS = {}
+
 # Each species: its texture, its baby texture, and its close-ups.
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
@@ -330,6 +334,7 @@ SPECIES = {
     "bogged": (pg.BOGGED_PATH, None, BOGGED_CLOSEUPS),
     "wither_skeleton": (pg.WITHER_SKELETON_PATH, None, WITHER_SKELETON_CLOSEUPS),
     "parched": (pg.PARCHED_PATH, None, PARCHED_CLOSEUPS),
+    "creeper": (pg.CREEPER_PATH, None, CREEPER_CLOSEUPS),
 }
 
 

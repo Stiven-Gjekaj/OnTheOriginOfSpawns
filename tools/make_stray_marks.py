@@ -41,6 +41,21 @@ Pixel plan for the Glaciers.
 - Glacial Wall: a slab of ice over the chest, the gene model
   glacial_wall_slab.
 - Icebound: a block of ice round each foot, the gene model icebound_blocks.
+
+Pixel plan for the Blizzards.
+- Squall cuts the lower cloth into long, slanted strips: it erases slits
+  in the cloth of the body (rows 4 to 9), the sleeves, and the legs.
+- Snowdrift has snow in the folds of the cloth: the fronts, the backs,
+  and the sides of the body, the sleeves, and the leg cloth, more at the
+  hems.
+- Hailshot: a quiver packed with ice on the back, the gene model
+  hailshot_quiver.
+- Gale erases the hood of the cloth, so the skull is bare, and the gene
+  model gale_hood hangs the hood back from the neck.
+- Frostwind has frost breath round the jaw: face rows 13 to 15, and the
+  front of the bottom of the head.
+- Stormborn has a cap of packed snow on the cloth of the head: the top,
+  and row 8 of each side, with drips on row 9.
 This script needs Pillow.
 """
 import json
@@ -252,6 +267,158 @@ def icebound_model():
     save_model("icebound_blocks", im, parts)
 
 
+
+CLOTH = ("#617677", "#576C6D", "#445C5D", "#394E4F")
+
+
+def cloth_pixels(rows=range(20, 30)):
+    """Return the cloth pixels of the body, the sleeves, and the legs.
+
+    The body is x 16 to 39, the arms x 40 to 55, and the legs x 0 to 15,
+    on the rows. The holes of the cloth stay clear, as the marks keep the
+    alpha of the cloth.
+    """
+    return [(x, y) for y in rows for x in range(0, 56)]
+
+
+def squall():
+    # The cloth is torn into long strips that blow back: long slits that
+    # lean a little cut the lower cloth of the body (rows 23 to 29), the
+    # sleeves, and the leg cloth (rows 22 to 29), each fourth column. A pale
+    # streak on one edge of each strip shows the wind.
+    slits = []
+    streak = Mark("#8FA4A6", alpha=170, target="outer")
+    for x, y in cloth_pixels(range(22, 30)):
+        if 16 <= x < 40 and y < 23:
+            continue
+        cut = (x + (y - 20) // 4) % 4
+        if cut == 0:
+            slits.append((x, y))
+        elif cut == 1:
+            streak.put((x, y))
+    return [erase("squall", "slits", slits, target="outer"), streak]
+
+
+def snowdrift():
+    # Snow in the folds of the cloth: wide clumps of snow (2 pixels) on the
+    # cloth of the body, the sleeves, and the legs. There is no snow on the
+    # top rows, and more snow on each lower row, where the snow collects in
+    # the hems. A gray shade marks the top of each clump.
+    snow = Mark(SNOW[0], target="outer")
+    shade = Mark(SNOW[1], target="outer")
+    for x, y in cloth_pixels(range(22, 32)):
+        if noise100(x // 2, y, 231) < 6 * (y - 21):
+            if noise100(x // 2, y - 1, 231) < 6 * (y - 22):
+                snow.put((x, y))
+            else:
+                shade.put((x, y))
+    return [snow, shade]
+
+
+def hailshot():
+    # The quiver is the gene model hailshot_quiver.
+    return []
+
+
+def hailshot_model():
+    # A quiver of pale hide on the back, over the right shoulder, packed
+    # with lumps of ice that stick out of its top in place of arrows. It
+    # leans the other way to the Barrage quiver of the skeleton. On the body
+    # bone, the cloth of the back is at z 2.25.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def quiver(face, x, y):
+        if face == "top":
+            return "#2E3A40"
+        if y in (1, 5):
+            return "#46565E"
+        return "#7A8C94" if (x + y) % 3 else "#66787F"
+
+    def lump(face, x, y):
+        return ICE[0] if face == "top" else ICE[1] if (x + y) % 2 else ICE[2]
+
+    # The quiver: 3x7x2 at uv (0, 0). A lump: 2x2x2 at uv (12, 0). A small
+    # lump: 1x2x1 at uv (20, 0).
+    paint_box(im, 0, 0, 3, 7, 2, quiver)
+    paint_box(im, 12, 0, 2, 2, 2, lump)
+    paint_box(im, 20, 0, 1, 2, 1, lump)
+    lean = {"pivot": [-2.5, 5, 3], "rotation": [0, 0, -25]}
+    parts = [dict({"bone": "body", "uv": [0, 0], "from": [-4, 1, 2.3], "size": [3, 7, 2]}, **lean),
+             dict({"bone": "body", "uv": [12, 0], "from": [-4, -0.5, 2.3], "size": [2, 2, 2]}, **lean),
+             dict({"bone": "body", "uv": [20, 0], "from": [-2, -1.5, 2.8], "size": [1, 2, 1]}, **lean),
+             dict({"bone": "body", "uv": [20, 0], "from": [-3.5, -1, 3.3], "size": [1, 2, 1]}, **lean)]
+    save_model("hailshot_quiver", im, parts)
+
+
+def gale():
+    # The wind blows the hood back: the cloth of the head is gone, so the
+    # skull is bare, and the gene model gale_hood hangs the hood back from
+    # the neck.
+    head = [(x, y) for x in range(0, 32) for y in range(0, 16)]
+    return [erase("gale", "hood", head, target="outer")]
+
+
+def gale_model():
+    # The hood, blown back off the skull: a bunch of cloth at the back of
+    # the neck, and a torn tail that hangs from it and lies on the cloth of
+    # the back. On the head bone, the back of the head is at z 4, the
+    # neck is at y 0, and the cloth of the back is at z 2.25.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def bunch(face, x, y):
+        return CLOTH[0] if face == "top" else CLOTH[1] if (x + y) % 3 else CLOTH[2]
+
+    def tail(face, x, y):
+        if face in ("front", "back"):
+            # The lower end of the tail is torn.
+            if y >= 5 and (x + y) % 3 == 0 or y == 6 and x % 2:
+                return None
+            return CLOTH[1] if x % 3 else CLOTH[2]
+        return CLOTH[3]
+
+    # The bunch: 8x3x3 at uv (0, 0). The tail: 6x7x1 at uv (0, 8).
+    paint_box(im, 0, 0, 8, 3, 3, bunch)
+    paint_box(im, 0, 8, 6, 7, 1, tail)
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-4, -3, 3], "size": [8, 3, 3]},
+        {"bone": "head", "uv": [0, 8], "from": [-3, 0, 2.3], "size": [6, 7, 1]},
+    ]
+    save_model("gale_hood", im, parts)
+
+
+def frostwind():
+    # Frost breath round the jaw: a pale mist over the mouth and the chin
+    # (face rows 13 to 15), and on the front of the bottom of the head, so
+    # that it shows from below too. The mouth stays dark in the middle.
+    mist = Mark("#E8F6FF", alpha=190)
+    frost = Mark(RIME[0])
+    for x in range(8, 16):
+        frost.put((x, 15)) if x % 3 else mist.put((x, 15))
+    for x in (8, 9, 14, 15):
+        mist.put((x, 14))
+    for x in (8, 15):
+        mist.put((x, 13), 220)
+    for x in range(16, 24):
+        (frost if x % 2 else mist).put((x, 7))
+        mist.put((x, 6), 200)
+    return [mist, frost]
+
+
+def stormborn():
+    # A cap of packed snow on the cloth of the head: the top of the hood is
+    # white, row 8 of each side is snow, and drips hang on row 9. A pale
+    # blue shade marks the edge of the cap.
+    snow = Mark(SNOW[0], target="outer")
+    shade = Mark(SNOW[2], target="outer")
+    for x in range(8, 16):
+        for y in range(0, 8):
+            (shade if noise100(x, y, 241) < 15 else snow).put((x, y))
+    for x in range(0, 32):
+        snow.put((x, 8))
+        if x % 3 == 1:
+            shade.put((x, 9))
+    return [snow, shade]
+
 GENES = {
     "iceplate": iceplate,
     "permafrost": permafrost,
@@ -259,6 +426,12 @@ GENES = {
     "rimeshell": rimeshell,
     "glacial_wall": glacial_wall,
     "icebound": icebound,
+    "squall": squall,
+    "snowdrift": snowdrift,
+    "hailshot": hailshot,
+    "gale": gale,
+    "frostwind": frostwind,
+    "stormborn": stormborn,
 }
 
 MODELS = {
@@ -266,9 +439,12 @@ MODELS = {
     "shatterhide": "originofspawns:shatterhide_spikes",
     "glacial_wall": "originofspawns:glacial_wall_slab",
     "icebound": "originofspawns:icebound_blocks",
+    "hailshot": "originofspawns:hailshot_quiver",
+    "gale": "originofspawns:gale_hood",
 }
 
-MODEL_MAKERS = [iceplate_model, shatterhide_model, glacial_wall_model, icebound_model]
+MODEL_MAKERS = [iceplate_model, shatterhide_model, glacial_wall_model, icebound_model, hailshot_model,
+                gale_model]
 
 
 def changed_pixels(visual):

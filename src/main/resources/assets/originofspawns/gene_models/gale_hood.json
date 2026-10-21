@@ -1,0 +1,41 @@
+{
+	"texture": "originofspawns:textures/entity/gale_hood.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4,
+				-3,
+				3
+			],
+			"size": [
+				8,
+				3,
+				3
+			]
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-3,
+				0,
+				2.3
+			],
+			"size": [
+				6,
+				7,
+				1
+			]
+		}
+	]
+}

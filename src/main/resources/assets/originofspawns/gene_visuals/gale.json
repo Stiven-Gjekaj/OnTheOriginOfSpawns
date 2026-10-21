@@ -1,0 +1,13 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "erase",
+				"texture": "originofspawns:textures/gene_marks/gale_hood.png"
+			},
+			"target": "outer"
+		}
+	],
+	"model": "originofspawns:gale_hood"
+}

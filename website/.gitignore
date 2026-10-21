@@ -3,5 +3,4 @@ dist/
 .astro/
 # build.mjs makes these files from the mod files.
 src/data/site.json
-public/mod/
 public/img/beagle_notebook.png

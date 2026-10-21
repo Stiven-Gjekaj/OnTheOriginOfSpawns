@@ -3,9 +3,10 @@
 // Usage: node website/build.mjs
 //
 // The script reads the gene, family, and pressure JSON files, the language
-// file, the gene visuals and models, the design files, and the data pack
+// file, the design files, and the data pack
 // guide. It writes website/src/data/site.json for the Astro pages, and copies
-// the mod textures that the Gene Lab uses into website/public/mod/.
+// the notebook item into website/public/img/. The pictures of the mobs are in
+// website/public/shots/, and the script lists the ones that are there.
 // "npm run build" and "npm run dev" run it first. Git ignores its output.
 // The script needs Node 22 or later, and no packages.
 
@@ -229,25 +230,16 @@ const speciesIds = fs.readdirSync(path.join(DATA, "family"))
   .filter((d) => fs.statSync(path.join(DATA, "family", d)).isDirectory())
   .sort((a, b) => (SPECIES_ORDER.indexOf(a) + 1 || 99) - (SPECIES_ORDER.indexOf(b) + 1 || 99) || a.localeCompare(b));
 const doneText = roadmap.filter((r) => r.done).map((r) => r.text).join(" ");
-const textures = new Set();
-
-function visualOf(id) {
-  const file = path.join(ASSETS, "gene_visuals", id + ".json");
-  if (!fs.existsSync(file)) return null;
-  const vis = readJson(file);
-  for (const layer of vis.layers || []) if (layer.effect.texture) textures.add(layer.effect.texture);
-  textures.add(vis.region_map || `${NS}:textures/region/humanoid.png`);
-  let model = null;
-  if (vis.model) {
-    const [ns, name] = vis.model.split(":");
-    model = readJson(path.join(RES, "assets", ns, "gene_models", name + ".json"));
-    // A model with mob_texture uses the baked texture of the mob, as in the game.
-    if (model.texture) textures.add(model.texture);
-    else if (!model.mob_texture) {
-      throw new Error(`the gene model ${vis.model} needs a texture, or mob_texture set to true`);
-    }
-  }
-  return { layers: vis.layers || [], regionMap: vis.region_map || null, model };
+// The pictures of the mobs, taken in the game, are in public/shots/:
+// <species>/<kind>/<name>-front.png and -back.png. The kinds are "plain",
+// "gene", and "family". A picture is null when its files are not there.
+const SHOTS = path.join(SITE, "public/shots");
+function shotOf(sp, kind, name) {
+  const base = `shots/${sp}/${kind}/${name}`;
+  const front = fs.existsSync(path.join(SITE, "public", base + "-front.png"));
+  const back = fs.existsSync(path.join(SITE, "public", base + "-back.png"));
+  if (!front) return null;
+  return { front: base + "-front.png", back: back ? base + "-back.png" : null };
 }
 
 const geneJson = jsonDir(path.join(DATA, "gene"));
@@ -282,6 +274,7 @@ for (const sp of speciesIds) {
     const tierRows = sec ? tables(sec.lines)[0] || [] : [];
     families.push({
       id, species: sp, slot, name,
+      shot: shotOf(sp, "family", id),
       summary: sec ? paragraphs(sec.lines)[0] || "" : "",
       tiers: [1, 2, 3].map((n) => {
         const row = tierRows.find((r) => r.Tier === `Tier ${n}`) || {};
@@ -362,7 +355,7 @@ for (const sp of speciesIds) {
         decay: json.decay_rate ?? 0.01,
       },
       status: named || released ? "released" : "development",
-      visual: visualOf(id),
+      shot: shotOf(sp, "gene", id),
     };
   });
   list.sort((a, b) => (geneRows[a.name]?.index ?? 99) - (geneRows[b.name]?.index ?? 99));
@@ -373,9 +366,6 @@ for (const sp of speciesIds) {
     .filter((x) => !/^This document|DESIGN\.md|first drafts/.test(x));
   const babies = md.find((x) => /^Bab(y|ies)\b/.test(x.title));
   const jockeys = md.find((x) => /jockeys$/i.test(x.title));
-  // The region map of the body: the map that most gene visuals of the species name.
-  const maps = list.map((g) => g.visual?.regionMap).filter(Boolean);
-  const regionMap = maps.sort((a, b) => maps.filter((m) => m === b).length - maps.filter((m) => m === a).length)[0] || null;
   species.push({
     id: sp,
     entity,
@@ -384,11 +374,11 @@ for (const sp of speciesIds) {
     families: order,
     status: released ? "released" : "development",
     milestone: milestone ? milestone.key : null,
-    art: list.filter((g) => g.visual).length,
+    shot: shotOf(sp, "plain", "plain"),
+    art: list.filter((g) => g.shot).length,
     babies: babies ? bullets(babies.lines).map((x) => x.text) : [],
     hasBabies: babies ? bullets(babies.lines).some((x) => /^Only the .* gene makes/.test(x.text)) : false,
     jockeys: jockeys ? bullets(jockeys.lines).map((x) => x.text) : [],
-    regionMap,
   });
 }
 for (const { id } of geneJson) {
@@ -474,23 +464,15 @@ const out = {
 fs.mkdirSync(path.join(SITE, "src/data"), { recursive: true });
 fs.writeFileSync(path.join(SITE, "src/data/site.json"), JSON.stringify(out, null, 1) + "\n");
 
-// Copy the textures of the gene viewer. Remove old copies first, so that a
-// texture that the mod removes also goes from the site.
+// The old builds copied the mod textures for the 3D views. Remove them.
 const PUBLIC = path.join(SITE, "public");
-const modDir = path.join(PUBLIC, "mod");
-fs.rmSync(modDir, { recursive: true, force: true });
-for (const id of textures) {
-  const [ns, p] = id.split(":");
-  const src = path.join(RES, "assets", ns, p);
-  const dst = path.join(modDir, ns, p);
-  fs.mkdirSync(path.dirname(dst), { recursive: true });
-  fs.copyFileSync(src, dst);
-}
+fs.rmSync(path.join(PUBLIC, "mod"), { recursive: true, force: true });
 const img = path.join(PUBLIC, "img");
 fs.mkdirSync(img, { recursive: true });
 fs.copyFileSync(path.join(ASSETS, "textures/item/beagle_notebook.png"), path.join(img, "beagle_notebook.png"));
 
-const withVisual = genes.filter((g) => g.visual).length;
-console.log(`species: ${species.map((x) => x.id).join(", ")}, genes: ${genes.length} (${withVisual} with a visual), families: ${families.length}, ` +
+const withShot = genes.filter((g) => g.shot).length;
+if (!fs.existsSync(SHOTS)) console.warn("warning: website/public/shots/ is not there, so the pages show no pictures");
+console.log(`species: ${species.map((x) => x.id).join(", ")}, genes: ${genes.length} (${withShot} with a picture), families: ${families.length}, ` +
   `minor families: ${minors.length}, hybrids: ${hybrids.length}, pressures: ${pressures.length}, ` +
-  `textures: ${textures.size}, milestones: ${roadmap.length}`);
+  `family pictures: ${families.filter((f) => f.shot).length}, milestones: ${roadmap.length}`);

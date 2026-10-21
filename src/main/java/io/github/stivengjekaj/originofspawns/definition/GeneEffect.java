@@ -617,18 +617,23 @@ public sealed interface GeneEffect {
 	/**
 	 * The mob leaps at its target. After a missed leap, it cannot move for a short time.
 	 */
-	record Leap(float minDistance, float maxDistance, float cooldownSeconds, float missStunSeconds, Medium medium)
-			implements GeneEffect {
+	record Leap(float minDistance, float maxDistance, float cooldownSeconds, float missStunSeconds, Medium medium,
+			When when) implements GeneEffect {
 		public static final MapCodec<Leap> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.0F, 32.0F).optionalFieldOf("min_distance", 3.0F).forGetter(Leap::minDistance),
 				Codec.floatRange(0.0F, 32.0F).optionalFieldOf("max_distance", 5.0F).forGetter(Leap::maxDistance),
 				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("cooldown_seconds", 5.0F).forGetter(Leap::cooldownSeconds),
 				Codec.floatRange(0.0F, 60.0F).optionalFieldOf("miss_stun_seconds", 1.0F).forGetter(Leap::missStunSeconds),
-				Medium.CODEC.optionalFieldOf("medium", Medium.GROUND).forGetter(Leap::medium)
+				Medium.CODEC.optionalFieldOf("medium", Medium.GROUND).forGetter(Leap::medium),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(Leap::when)
 		).apply(instance, Leap::new));
 
 		public Leap(float minDistance, float maxDistance, float cooldownSeconds, float missStunSeconds) {
 			this(minDistance, maxDistance, cooldownSeconds, missStunSeconds, Medium.GROUND);
+		}
+
+		public Leap(float minDistance, float maxDistance, float cooldownSeconds, float missStunSeconds, Medium medium) {
+			this(minDistance, maxDistance, cooldownSeconds, missStunSeconds, medium, When.ALWAYS);
 		}
 
 		/**

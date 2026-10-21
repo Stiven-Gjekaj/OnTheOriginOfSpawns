@@ -3,6 +3,7 @@ package io.github.stivengjekaj.originofspawns.evolution.goal;
 import java.util.EnumSet;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.BehaviorState;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -56,7 +57,8 @@ public class LeapGoal extends Goal {
 			}
 		};
 		double distance = mob.distanceTo(target);
-		return ready && distance >= leap.minDistance() && distance <= leap.maxDistance();
+		return ready && distance >= leap.minDistance() && distance <= leap.maxDistance()
+				&& GeneCombat.test(mob, leap.when());
 	}
 
 	/**

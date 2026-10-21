@@ -3,6 +3,8 @@ package io.github.stivengjekaj.originofspawns.test;
 import java.util.Set;
 
 import io.github.stivengjekaj.originofspawns.definition.DeathCondition;
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
+import io.github.stivengjekaj.originofspawns.evolution.goal.LeapGoal;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect.When;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
@@ -298,6 +300,21 @@ public class StrayEffectsTest {
 				1.0F, new ItemStack(Items.BOW));
 		helper.assertValueEqual(GeneEffects.hiddenBeyond(ghostArrow).orElse(-1.0F), 4.0F, "a flying ghost arrow");
 		helper.assertTrue(GeneEffects.hiddenBeyond(plainArrow).isEmpty(), "a plain arrow");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void anAvalancheLeapsOnlyAtALowerTarget(GameTestHelper helper) {
+		Stray stray = strayWith(helper, new BlockPos(1, 4, 1));
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(4, 1, 1));
+		stray.setTarget(pig);
+		// A stray with no AI does not update its ground state, so the test sets it.
+		stray.setOnGround(true);
+		LeapGoal goal = new LeapGoal(stray, new GeneEffect.Leap(0.0F, 8.0F, 5.0F, 0.0F, GeneEffect.Leap.Medium.GROUND,
+				When.TARGET_BELOW));
+		helper.assertTrue(goal.canUse(), "a target 3 blocks lower");
+		pig.setPos(pig.getX(), stray.getY(), pig.getZ());
+		helper.assertFalse(goal.canUse(), "a target at the same height");
 		helper.succeed();
 	}
 

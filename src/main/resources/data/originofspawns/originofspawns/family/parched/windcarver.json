@@ -11,7 +11,7 @@
 				{
 					"type": "attribute",
 					"attribute": "minecraft:follow_range",
-					"amount": 0.10000000000000009,
+					"amount": 0.1,
 					"operation": "add_multiplied_base"
 				}
 			],
@@ -34,7 +34,7 @@
 				{
 					"type": "attribute",
 					"attribute": "minecraft:follow_range",
-					"amount": 0.19999999999999996,
+					"amount": 0.2,
 					"operation": "add_multiplied_base"
 				},
 				{
@@ -61,7 +61,7 @@
 				{
 					"type": "attribute",
 					"attribute": "minecraft:follow_range",
-					"amount": 0.30000000000000004,
+					"amount": 0.3,
 					"operation": "add_multiplied_base"
 				},
 				{

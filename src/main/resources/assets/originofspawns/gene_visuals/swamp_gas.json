@@ -5,7 +5,7 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/swamp_gas_0.png",
-				"tint": "#D2F0A0"
+				"tint": "#9CF060"
 			}
 		},
 		{
@@ -19,8 +19,32 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/swamp_gas_2.png",
-				"tint": "#4E6A28"
+				"tint": "#3E6A1E"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/swamp_gas_3.png",
+				"tint": "#9CF060"
+			},
+			"target": "outer"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/swamp_gas_4.png",
+				"tint": "#FFFFFF"
+			},
+			"target": "outer"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/swamp_gas_5.png",
+				"tint": "#3E6A1E"
+			},
+			"target": "outer"
 		}
 	]
 }

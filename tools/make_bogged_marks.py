@@ -58,8 +58,9 @@ Pixel plan for the Mirefolk.
   outer head, and drips down its sides, front, and back (y 8 to 12).
 - Mire Grip has large webbed hands of green, rotten skin: arm rows 7 to
   10, over the Barkskin bark (order 1).
-- Swamp Gas has bubbles of gas at the pelvis, under the outer layer: y 28
-  to 31 of the body.
+- Swamp Gas has large, bright green bubbles of gas at the pelvis (y 28 to
+  31 of the body) and on the lower edge of the outer layer over it (y 24
+  to 30).
 - Leechbone: black leeches on the forearms, the gene model
   leechbone_leeches.
 
@@ -352,17 +353,23 @@ def mire_grip():
 
 
 def swamp_gas():
-    # Bubbles of gas at the pelvis, under the outer layer: small pale green
-    # bubbles with a bright spot, on the front, the sides, and the back of
-    # the body, y 28 to 31.
-    bubble = Mark("#D2F0A0")
-    shine = Mark("#FFFFFF")
-    rim = Mark("#4E6A28")
-    for cx, cy in ((21, 30), (25, 29), (18, 30), (30, 29), (34, 30), (38, 29), (23, 28)):
-        bubble.put((cx, cy)).put((cx + 1, cy))
-        shine.put((cx, cy - 1)) if cy > 28 else shine.put((cx + 1, cy + 1))
-        rim.put((cx, cy + 1)) if cy < 31 else None
-    return [bubble, shine, rim]
+    # Large, bright green bubbles of gas over the pelvis: round bubbles of 2
+    # by 2 pixels, with a white shine and a dark rim under them, on the
+    # pelvis (y 28 to 31) and on the lower edge of the outer layer of the
+    # body over it (y 24 to 30).
+    marks = []
+    for target in (None, "outer"):
+        bubble = Mark("#9CF060", target=target)
+        shine = Mark("#FFFFFF", target=target)
+        rim = Mark("#3E6A1E", target=target)
+        spots = (((17, 29), (21, 29), (25, 28), (29, 29), (33, 29), (37, 28)) if target is None else
+                 ((16, 26), (20, 24), (26, 25), (30, 27), (34, 26), (38, 24), (22, 28), (36, 28)))
+        for x, y in spots:
+            shine.put((x, y))
+            bubble.put((x + 1, y)).put((x, y + 1)).put((x + 1, y + 1))
+            rim.put((x, y + 2)).put((x + 1, y + 2)) if y + 2 < 32 else None
+        marks += [bubble, shine, rim]
+    return marks
 
 
 def leechbone():

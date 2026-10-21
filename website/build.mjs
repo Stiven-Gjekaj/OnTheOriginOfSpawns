@@ -225,7 +225,7 @@ const milestoneOf = (key) => roadmap.find((r) => r.key === key);
 
 // Species: each folder in family/ is a species. Its design file in
 // design/species/ gives the text, and the language file gives the names.
-const SPECIES_ORDER = ["zombie", "husk", "drowned", "skeleton", "stray", "bogged"];
+const SPECIES_ORDER = ["zombie", "husk", "drowned", "skeleton", "stray", "bogged", "wither_skeleton"];
 const speciesIds = fs.readdirSync(path.join(DATA, "family"))
   .filter((d) => fs.statSync(path.join(DATA, "family", d)).isDirectory())
   .sort((a, b) => (SPECIES_ORDER.indexOf(a) + 1 || 99) - (SPECIES_ORDER.indexOf(b) + 1 || 99) || a.localeCompare(b));
@@ -325,7 +325,8 @@ for (const sp of speciesIds) {
   const limits = Object.fromEntries(limitTable.map((r) => [r.Gene, r["In the mod now"]]));
 
   // The state of the species comes from the first milestone that names it.
-  const plural = new RegExp(`\\b${sp}s?\\b`, "i");
+  // A species id like wither_skeleton is "wither skeleton" in the text.
+  const plural = new RegExp(`\\b${sp.replace(/_/g, " ")}s?\\b`, "i");
   // A milestone that names the species in its title comes first. Else the
   // first milestone that names it in its text, for example in a list of mobs.
   const milestone = roadmap.find((r) => r.items.length && plural.test(r.title))
@@ -366,6 +367,7 @@ for (const sp of speciesIds) {
     .filter((x) => !/^This document|DESIGN\.md|first drafts/.test(x));
   const babies = md.find((x) => /^Bab(y|ies)\b/.test(x.title));
   const jockeys = md.find((x) => /jockeys$/i.test(x.title));
+  const equipment = md.find((x) => x.title === "Equipment");
   species.push({
     id: sp,
     entity,
@@ -379,6 +381,7 @@ for (const sp of speciesIds) {
     babies: babies ? bullets(babies.lines).map((x) => x.text) : [],
     hasBabies: babies ? bullets(babies.lines).some((x) => /^Only the .* gene makes/.test(x.text)) : false,
     jockeys: jockeys ? bullets(jockeys.lines).map((x) => x.text) : [],
+    equipment: equipment ? bullets(equipment.lines).map((x) => x.text) : [],
   });
 }
 for (const { id } of geneJson) {

@@ -2,7 +2,7 @@
 // files and keeps the pools in the browser, so that the notebook can read them.
 
 import { genes } from "../data/site.json";
-import { familyOf, kindName, pct, t, loadState, saveState, recordFound, url, speciesById } from "../lib/site.js";
+import { familyOf, kindName, pct, t, loadState, saveState, url, speciesById } from "../lib/site.js";
 import { getSpecies } from "./species.js";
 
 const state = loadState();
@@ -42,7 +42,6 @@ function spawn() {
   got = got.slice(0, 5);
   zombie = got;
   const r = familyOf(got, species);
-  recordFound(r);
   $("sim-result").innerHTML = `<div class="n" style="color:${r.color}">${r.name}</div>` +
     (r.kind === "neutral" ? "" : `<div class="k">${kindName(r.kind)}</div>`) +
     `<div class="g">${got.length ? got.map((g) => g.name).join(", ") : t("mob_info.originofspawns.no_genes", "No genes")}</div>`;

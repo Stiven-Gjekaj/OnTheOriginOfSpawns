@@ -72,12 +72,6 @@ export function familyOf(list, sp = list[0]?.species ?? "zombie") {
   return r;
 }
 
-// The key of a family result in the notebook. A major family alone uses the
-// key of its family, as a pure family does.
-export const resultKey = (r) =>
-  `${r.species}:` +
-  (r.kind === "neutral" ? "neutral" : r.kind === "hybrid" ? [r.a, r.b].sort().join("+") : r.kind === "minor" ? `${r.major}>${r.sub}` : r.major);
-
 // A short line for an effect of a data file.
 export function effectLine(e) {
   const parts = Object.entries(e)
@@ -92,13 +86,13 @@ export function effectLine(e) {
 }
 
 // The state that the visitor makes on one page and reads on another: the
-// pools of the simulator and the families that the visitor found.
+// pools of the simulator.
 const KEY = "oots-wiki-v2";
 export function loadState() {
   try {
-    return Object.assign({ pools: {}, deaths: {}, found: [] }, JSON.parse(localStorage.getItem(KEY) || "{}"));
+    return Object.assign({ pools: {}, deaths: {} }, JSON.parse(localStorage.getItem(KEY) || "{}"));
   } catch {
-    return { pools: {}, deaths: {}, found: [] };
+    return { pools: {}, deaths: {} };
   }
 }
 export function saveState(state) {
@@ -106,13 +100,5 @@ export function saveState(state) {
     localStorage.setItem(KEY, JSON.stringify(state));
   } catch {
     // The browser does not keep the state. The page still works.
-  }
-}
-export function recordFound(r) {
-  const s = loadState();
-  const key = resultKey(r);
-  if (!s.found.includes(key)) {
-    s.found.push(key);
-    saveState(s);
   }
 }

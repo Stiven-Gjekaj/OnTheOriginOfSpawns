@@ -121,9 +121,9 @@ The visual column gives the region and the mark.
 | Snowshoe | Drifter | `unreached` | It walks on powder snow and does not sink | 10% less speed on other blocks | Feet: wide snowshoes of bone and hide. This changes the model |
 | Iceskate | Drifter | `melee` | 40% more speed on ice | 50% more fall damage | Feet: bone blades under the feet. This changes the model |
 | Pathfinder | Drifter | `alone` | 50% more follow range, and it chases longer | 2 less armor | Skull: a cloth wrapped over the eyes, with one eye hole |
-| Avalanche | Drifter, sub Glacier | `fall` | When its target is 3 or more blocks lower, it jumps down at the target and takes no fall damage | 15% less maximum health | Legs: snow packed on the shins |
+| Avalanche | Drifter, sub Glacier | `fall` | When its target is 2 or more blocks lower, it jumps down at the target and takes no fall damage | 15% less maximum health | Legs: snow packed on the shins |
 | Snowburrow | Drifter | `spotted` | It hides under snow and rises next to a player | It cannot move for 1 second after it rises | Body: snow on the shoulders and the skull |
-| Driftline | Drifter | `crowd` | Strays in 8 blocks get 15% more speed | 10% less arrow damage | Back: a pole with a torn banner. This changes the model |
+| Driftline | Drifter | `crowd` | Strays in 8 blocks get Speed, 20% more speed | 10% less arrow damage | Back: a pole with a torn banner. This changes the model |
 
 ### Frostbiter genes
 
@@ -145,7 +145,7 @@ The visual column gives the region and the mark.
 | Frozen Gaze | Wailer | `projectile` | A player that looks at it gets Slowness for 2 seconds | 10% less arrow damage | Eyes: cold white lights that glow. This changes the model |
 | Hollow Cry | Wailer, sub Blizzard | `alone` | When it dies, the strays in 24 blocks target its killer | 10% less speed | Chest: a hole through the ribs |
 | Mourner | Wailer | `crowd` | It heals 4 health when another stray dies in 12 blocks | 10% less speed | Cloth: a long, torn veil over the skull. This changes the model |
-| Ghostshot | Wailer | `shield` | Its arrows are almost invisible in flight | 10% less arrow damage | Hands: faded and see-through |
+| Ghostshot | Wailer | `shield` | Players more than 4 blocks away cannot see its arrows in flight | 10% less arrow damage | Hands: faded and see-through |
 
 ## Gene details
 
@@ -162,7 +162,7 @@ The visual column gives the region and the mark.
 | Rimefall | It places powder snow only in air, and not where a player stands |
 | Brittle Shot | It doubles the armor damage of the arrow hit |
 | Frozen Gaze | It works as the look check of the enderman. It needs a clear line of sight, each 2 seconds |
-| Ghostshot | The client draws the arrow at about 20% opacity. The arrow still has its sound |
+| Ghostshot | The arrow still has its sound, and players see it when it is stuck in a block |
 
 ## Equipment
 

@@ -470,9 +470,7 @@ const out = {
 fs.mkdirSync(path.join(SITE, "src/data"), { recursive: true });
 fs.writeFileSync(path.join(SITE, "src/data/site.json"), JSON.stringify(out, null, 1) + "\n");
 
-// The old builds copied the mod textures for the 3D views. Remove them.
 const PUBLIC = path.join(SITE, "public");
-fs.rmSync(path.join(PUBLIC, "mod"), { recursive: true, force: true });
 const img = path.join(PUBLIC, "img");
 fs.mkdirSync(img, { recursive: true });
 fs.copyFileSync(path.join(ASSETS, "textures/item/beagle_notebook.png"), path.join(img, "beagle_notebook.png"));

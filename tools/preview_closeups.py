@@ -245,6 +245,12 @@ BOGGED_CLOSEUPS = {
                           ("Swamp Shroud + Silent Rot", ["swamp_shroud", "silent_rot"], False),
                           ("Bog Mist + Barkskin", ["bog_mist", "barkskin"], False),
                           ("All 6", BOGGED["mosshides"], False)], ALL_SIDES),
+    "bogged_changes": ("Bogged genes after the review",
+                       [("Snare", ["snare"], False), ("Lily Pad", ["lily_pad"], False),
+                        ("Wader", ["wader"], False), ("Mire Grip", ["mire_grip"], False),
+                        ("Swamp Gas", ["swamp_gas"], False), ("Bile Shot", ["bile_shot"], False),
+                        ("Bog Mist", ["bog_mist"], False)],
+                       [FRONT, SIDE, BACK, THREE_QUARTER]),
 }
 
 # Each species: its texture, its baby texture, and its close-ups.

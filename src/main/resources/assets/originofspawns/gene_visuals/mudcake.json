@@ -24,20 +24,6 @@
 				"tint": "#4E3E2A"
 			},
 			"target": "outer"
-		},
-		{
-			"effect": {
-				"type": "pattern",
-				"texture": "originofspawns:textures/gene_marks/mudcake_3.png",
-				"tint": "#9A8466"
-			}
-		},
-		{
-			"effect": {
-				"type": "pattern",
-				"texture": "originofspawns:textures/gene_marks/mudcake_4.png",
-				"tint": "#4E3E2A"
-			}
 		}
 	]
 }

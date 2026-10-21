@@ -43,16 +43,17 @@ Pixel plan for the Sporecaps.
 - Regrowth has small mushrooms in the eye sockets of the outer face: a
   red cap over the right eye and a brown cap over the left eye (y 11), with
   their stems in the sockets (y 12).
-- Rot Mend has white threads of fungus on the front of the ribs (x 21 to
-  26, y 21 to 27).
+- Rot Mend has white threads of fungus on the front of the upper ribs (x
+  21 to 26, y 21 to 24).
 - Spore Lung has pale spores round the mouth of the outer face (y 13 to
   15), and on the bottom of the head.
 
 Pixel plan for the Mirefolk.
 - Wader has wet mud on the legs up to the knees: leg rows 6 to 11 and the
-  bottom of the leg, with drips on row 5.
-- Mudcake has a cracked crust of dried mud on the outer layer of the body,
-  and on the ribs of the sides and the back.
+  bottom of the leg.
+- Mudcake has a cracked crust of dried mud on the outer layer of the
+  sides and the back of the body. The front stays free for the Plague
+  Carrier pustules.
 - Mudburrow has mud that drips from the skull: patches on the top of the
   outer head, and drips down its sides, front, and back (y 8 to 12).
 - Mire Grip has webbed fingers of rotten skin: arm rows 9 and 10.
@@ -190,16 +191,16 @@ def regrowth():
 
 
 def rot_mend():
-    # White threads of fungus on the front of the ribs, where the vines
-    # leave the ribs bare: thin lines that cross between the ribs, with a
-    # few knots where they meet.
+    # White threads of fungus on the front of the upper ribs (y 21 to 24),
+    # where the vines leave the ribs bare: thin lines that cross between
+    # the ribs, with a few knots where they meet.
     thread = Mark(CREAM[0], alpha=230)
     knot = Mark("#FFFFFF")
     for x in range(21, 27):
-        for y in range(21, 28):
+        for y in range(21, 25):
             if (x + y) % 3 == 0 or (x - y) % 4 == 0:
                 thread.put((x, y))
-    for p in ((22, 23), (25, 23), (23, 26)):
+    for p in ((22, 23), (25, 23), (24, 21)):
         knot.put(p)
     return [thread, knot]
 
@@ -232,8 +233,8 @@ DRY = ("#9A8466", "#7E6A50", "#4E3E2A")
 
 def wader():
     # Wet mud on the legs up to the knees: dark mud on leg rows 6 to 11 of
-    # all the faces and on the bottom of the leg, with glossy wet spots,
-    # and drips of mud on row 5.
+    # all the faces and on the bottom of the leg, with glossy wet spots.
+    # The knees (rows 4 and 5) stay free for the Rotting Touch rot.
     mud = Mark(MUD[0])
     deep = Mark(MUD[1])
     wet = Mark(MUD[2])
@@ -242,7 +243,6 @@ def wader():
             for row in range(6, 12):
                 n = noise100(face + col, row, 281)
                 (wet if n < 15 else deep if row > 9 else mud).put(leg(face, col, row))
-        mud.put(leg(face, face // 2 % 2, 5), 230)
     for x in (4, 5):
         for y in (16, 17):
             deep.put((x, y))
@@ -251,23 +251,18 @@ def wader():
 
 def mudcake():
     # A cracked crust of dried mud: pale, dry mud on the outer layer of the
-    # body (y 20 to 31 of the body) and on the bones of the sides and the
-    # back of the ribs, with dark cracks in a net.
+    # sides and the back of the body (y 20 to 31), with dark cracks in a
+    # net.
     crust = Mark(DRY[0], target="outer")
     shade = Mark(DRY[1], target="outer")
     crack = Mark(DRY[2], target="outer")
-    for x in range(16, 40):
-        for y in range(16, 32):
+    for x in list(range(16, 20)) + list(range(28, 40)):
+        for y in range(20, 32):
             if (x * 2 + y) % 7 == 0 or (x - 2 * y) % 9 == 0:
                 crack.put((x, y))
             else:
                 (shade if noise100(x, y, 282) < 30 else crust).put((x, y))
-    bone = Mark(DRY[0])
-    bone_crack = Mark(DRY[2])
-    for x in list(range(16, 20)) + list(range(28, 40)):
-        for y in range(21, 28):
-            (bone_crack if (x * 2 + y) % 7 == 0 else bone).put((x, y))
-    return [crust, shade, crack, bone, bone_crack]
+    return [crust, shade, crack]
 
 
 def mudburrow():

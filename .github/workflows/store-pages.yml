@@ -44,6 +44,8 @@ jobs:
         run: |
           gallery=$(curl --fail-with-body -sS "$API/project/$PROJECT" \
             -H "Authorization: $TOKEN" -H "User-Agent: $AGENT" | jq -c '.gallery')
+          echo "The gallery has these pictures:"
+          printf '%s' "$gallery" | jq -r '.[] | "- " + (.title // "no title") + ": " + .url'
           add() {
             file="$1"; title="$2"; description="$3"; featured="$4"
             url=$(printf '%s' "$gallery" | jq -r --arg title "$title" '[.[] | select(.title == $title)][0].url // empty')

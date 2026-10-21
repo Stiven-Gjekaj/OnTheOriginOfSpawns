@@ -142,7 +142,8 @@ public sealed interface GeneEffect {
 			Map.entry("fuse_time", FuseTime.CODEC),
 			Map.entry("blast_cloud", BlastCloud.CODEC),
 			Map.entry("blast_effect", BlastEffect.CODEC),
-			Map.entry("chain_reaction", ChainReaction.CODEC)
+			Map.entry("chain_reaction", ChainReaction.CODEC),
+			Map.entry("aftershock", Aftershock.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2190,6 +2191,25 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "chain_reaction";
+		}
+	}
+
+	/**
+	 * After the blast of the mob, a second blast goes off at the same place. The second blast does not cause more
+	 * aftershocks, and the other blast effects do not act on it.
+	 *
+	 * @param seconds the time between the two blasts
+	 * @param fraction the radius of the second blast, as a part of the radius of the first blast
+	 */
+	record Aftershock(float seconds, float fraction) implements GeneEffect {
+		public static final MapCodec<Aftershock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 60.0F).optionalFieldOf("seconds", 2.0F).forGetter(Aftershock::seconds),
+				Codec.floatRange(0.05F, 4.0F).optionalFieldOf("fraction", 0.5F).forGetter(Aftershock::fraction)
+		).apply(instance, Aftershock::new));
+
+		@Override
+		public String type() {
+			return "aftershock";
 		}
 	}
 }

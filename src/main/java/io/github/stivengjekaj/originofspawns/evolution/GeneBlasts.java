@@ -12,6 +12,7 @@ import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.level.Level;
 
 /**
  * The effects of genes that act on the blast of a creeper: its size, its fuse, and what it leaves behind.
@@ -57,6 +58,15 @@ public final class GeneBlasts {
 				case GeneEffect.BlastCloud cloud -> blastCloud(creeper, level, cloud, radius);
 				case GeneEffect.ChainReaction chain when !creeper.getAttachedOrElse(ModAttachments.CHAIN_LIT, false) ->
 						chainReaction(creeper, level, chain);
+				case GeneEffect.Aftershock aftershock -> {
+					double x = creeper.getX();
+					double y = creeper.getY();
+					double z = creeper.getZ();
+					// The creeper is gone then, but it stays the cause, so the damage effects of its genes still act.
+					// This plain blast does not run the effects after a blast, so it causes no more aftershocks.
+					DelayedTasks.schedule(level, Math.round(aftershock.seconds() * 20.0F), () -> level.explode(creeper,
+							x, y, z, radius * aftershock.fraction(), Level.ExplosionInteraction.MOB));
+				}
 				default -> {
 				}
 			}

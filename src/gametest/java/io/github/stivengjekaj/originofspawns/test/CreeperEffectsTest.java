@@ -192,6 +192,29 @@ public class CreeperEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = BLASTS, padding = 8, maxTicks = 120)
+	public void anAftershockIsASmallerSecondBlast(GameTestHelper helper) {
+		explode(creeperWith(helper, new BlockPos(1, 1, 1), "test_aftershock"));
+		// The golems come after the first blast. The second blast has a radius of 1.5, so it reaches 3 blocks.
+		IronGolem near = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(3, 1, 1));
+		IronGolem far = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(5, 1, 1));
+		helper.runAfterDelay(30, () -> helper.assertValueEqual(near.getHealth(), near.getMaxHealth(),
+				"no second blast before 2 seconds"));
+		helper.runAfterDelay(45, () -> {
+			helper.assertTrue(near.getHealth() < near.getMaxHealth(), "the second blast hurts the near golem");
+			helper.assertValueEqual(far.getHealth(), far.getMaxHealth(), "the second blast is smaller");
+			near.discard();
+		});
+		helper.runAfterDelay(50, () -> {
+			// A golem at the place of the blasts takes damage from a blast of each size.
+			IronGolem later = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(1, 1, 1));
+			helper.runAfterDelay(50, () -> {
+				helper.assertValueEqual(later.getHealth(), later.getMaxHealth(), "no third blast");
+				helper.succeed();
+			});
+		});
+	}
+
 	/**
 	 * Makes a player in survival 4 blocks east of the blast place, who holds a shield up to the west.
 	 */

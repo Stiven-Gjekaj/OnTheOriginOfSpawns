@@ -316,6 +316,9 @@ public final class GeneBehaviors {
 				case GeneEffect.WaterPull pull -> waterPull(mob, level, pull);
 				case GeneEffect.SwimVertical swim -> swimVertical(mob, swim);
 				case GeneEffect.DragUnder drag -> drag(mob, level, drag);
+				case GeneEffect.Lurk lurk when lurk.ignite() && mob instanceof Creeper creeper && !creeper.isIgnited()
+						&& mob.getTarget() instanceof Player player && mob.distanceTo(player) <= lurk.radius()
+						&& mob.hasLineOfSight(player) -> creeper.ignite();
 				default -> {
 				}
 			}

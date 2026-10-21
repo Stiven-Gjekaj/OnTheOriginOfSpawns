@@ -847,11 +847,17 @@ public sealed interface GeneEffect {
 	/**
 	 * The mob does not move while its target player faces it, until the player is in the radius.
 	 * The camera mode of the player does not change this.
+	 * With {@code ignite}, a creeper lights its fuse when its target player comes in the radius and it sees the player.
 	 */
-	record Lurk(float radius) implements GeneEffect {
+	record Lurk(float radius, boolean ignite) implements GeneEffect {
 		public static final MapCodec<Lurk> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("radius", 6.0F).forGetter(Lurk::radius)
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("radius", 6.0F).forGetter(Lurk::radius),
+				Codec.BOOL.optionalFieldOf("ignite", false).forGetter(Lurk::ignite)
 		).apply(instance, Lurk::new));
+
+		public Lurk(float radius) {
+			this(radius, false);
+		}
 
 		@Override
 		public String type() {

@@ -444,6 +444,24 @@ public class CreeperEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void aPatientCreeperLightsItsFuseWhenThePlayerComesNear(GameTestHelper helper) {
+		Creeper patient = creeperWith(helper, new BlockPos(1, 1, 4), "test_patient");
+		Creeper lurker = creeperWith(helper, new BlockPos(3, 1, 4), "test_lurker");
+		ServerPlayer player = playerFacing(helper, 0.0F);
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(2, 1, 9))));
+		patient.setTarget(player);
+		lurker.setTarget(player);
+		GeneBehaviors.tick(patient, helper.getLevel());
+		helper.assertFalse(patient.isIgnited(), "the player is out of the radius");
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(2, 1, 1))));
+		GeneBehaviors.tick(patient, helper.getLevel());
+		GeneBehaviors.tick(lurker, helper.getLevel());
+		helper.assertTrue(patient.isIgnited(), "the patient creeper lights its fuse");
+		helper.assertFalse(lurker.isIgnited(), "a lurk with no ignite does not light the fuse");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes a player at the north end of the test that faces in the direction of the yaw.
 	 */

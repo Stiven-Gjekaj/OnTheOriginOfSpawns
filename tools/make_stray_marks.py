@@ -36,7 +36,7 @@ Pixel plan for the Glaciers.
   y 21 to 26). The ribs show in it, and ice fills the gaps between them.
 - Shatterhide: sharp ice spikes out of the back, the gene model
   shatterhide_spikes.
-- Rimeshell has a crust of rime on the forearms: arm rows 5 to 11 of the
+- Rimeshell has a crust of rime on the forearms: arm rows 5 to 9 of the
   outer, the inner, and the back faces.
 - Glacial Wall: a slab of ice over the chest, the gene model
   glacial_wall_slab.
@@ -207,18 +207,18 @@ def shatterhide_model():
 
 def rimeshell():
     # A crust of rime on the forearms: a rough crust of pale blue ice with
-    # white specks on arm rows 6 to 10 of the outer, the inner, and the back
-    # faces, with a deep blue edge under the sleeve (row 5) and at the wrist
-    # (row 11). The
-    # front face stays free for the Numbing Shot veins.
+    # white specks on arm rows 6 to 9 of the outer, the inner, and the back
+    # faces, with a deep blue edge under the sleeve (row 5). The front face
+    # stays free for the Numbing Shot veins, and the hands (rows 10 and 11)
+    # stay free for the Frostbite fingers.
     crust = Mark(ICE[1])
     white = Mark(RIME[0])
     edge = Mark(ICE[3])
     for face in (OUTER, INNER, BACK):
         for col in (0, 1):
-            for row in range(6, 11):
+            for row in range(6, 10):
                 (white if noise100(face + col, row, 211) < 35 else crust).put(arm(face, col, row))
-            edge.put(arm(face, col, 5 if (col + face // 2) % 2 else 11), 230)
+            edge.put(arm(face, col, 5), 230)
     return [crust, white, edge]
 
 

@@ -1,0 +1,75 @@
+{
+	"texture": "originofspawns:textures/entity/vine_swing_vines.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				9.5,
+				-1.2
+			],
+			"size": [
+				0,
+				6,
+				2
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				0,
+				9.5,
+				0.2
+			],
+			"size": [
+				0,
+				4,
+				2
+			]
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				9.5,
+				-1.2
+			],
+			"size": [
+				0,
+				6,
+				2
+			]
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				0,
+				9.5,
+				0.2
+			],
+			"size": [
+				0,
+				4,
+				2
+			]
+		}
+	]
+}

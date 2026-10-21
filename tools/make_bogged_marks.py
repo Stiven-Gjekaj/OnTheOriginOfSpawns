@@ -74,6 +74,21 @@ Pixel plan for the Venomers.
   the gene model antivenom_eyes makes it glow.
 - Plague Carrier has green pustules on the front of the outer layer of the
   body (x 20 to 27), and on the leaves over the upper arms.
+
+Pixel plan for the Vinebound.
+- Rootshot: roots that coil round the bow arm (the right arm), the gene
+  model rootshot_roots.
+- Creeper Vines: vines that hang down the legs, the gene model
+  creeper_vines_vines.
+- Thornwrap has two thorny vines that wrap the front of the ribs (x 20 to
+  27, y 21 to 28), over the other marks there (order 1), and the same
+  vines on the outer layer of the back.
+- Snare: roots that grow out of the feet over the ground, the gene model
+  snare_roots.
+- Mossbed: thick pads of moss on the shoulders, the gene model
+  mossbed_moss.
+- Vine Swing: vines that trail from the hands, the gene model
+  vine_swing_vines.
 This script needs Pillow.
 """
 import json
@@ -472,6 +487,185 @@ def plague_carrier():
         rim.put((x, y + 1)).put((x + 1, y + 1))
     return [pus, top, rim]
 
+
+ROOT_COLORS = ("#6A4A2E", "#4A3220", "#A08060")
+VINE = ("#4E7A24", "#36581A", "#7AA838")
+
+
+def rootshot():
+    # The roots are the gene model rootshot_roots.
+    return []
+
+
+def rootshot_model():
+    # Roots that coil round the bow arm, the right arm: three rings of root
+    # round the forearm, each one tilted, so that they read as one root
+    # that coils down the arm, and a loose end that hangs from the wrist.
+    # On the right arm bone, the arm is from x -1 to 1 and from z -1 to 1,
+    # and row r is at y r - 2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def ring(face, x, y):
+        if face in ("top", "bottom"):
+            return None
+        return ROOT_COLORS[0] if (x + y) % 3 else ROOT_COLORS[1]
+
+    # A ring: 2x1x2 at uv (0, 0). The loose end: 1x3x1 at uv (0, 4).
+    paint_box(im, 0, 0, 2, 1, 2, ring)
+    paint_box(im, 0, 4, 1, 3, 1, lambda face, x, y: ROOT_COLORS[2] if y == 2 else ROOT_COLORS[0])
+    parts = []
+    for y, tilt in ((4, 20), (6, -20), (8, 20)):
+        parts.append({"bone": "right_arm", "uv": [0, 0], "from": [-1, y, -1], "size": [2, 1, 2],
+                      "inflate": 0.35, "pivot": [0, y + 0.5, 0], "rotation": [0, 0, tilt]})
+    parts.append({"bone": "right_arm", "uv": [0, 4], "from": [-1.3, 9, 0.3], "size": [1, 3, 1]})
+    save_model("rootshot_roots", im, parts)
+
+
+def creeper_vines():
+    # The vines are the gene model creeper_vines_vines.
+    return []
+
+
+def creeper_vines_model():
+    # Vines that hang down the legs: a sheet of thin vines with leaves on
+    # the outer side and on the back of each leg, from the hip to the shin.
+    # The vines are thin strips with gaps between them. On a leg bone, the
+    # leg is from x -1 to 1 and from z -1 to 1, and from y 0 to 12.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def vines(face, x, y):
+        if face not in ("right", "left", "front", "back"):
+            return None
+        if (x + y // 3) % 2:
+            return None if y % 4 else VINE[2]
+        return VINE[1] if y % 3 == 0 else VINE[0]
+
+    # The side sheet: 0x10x2 at uv (0, 0). The back sheet: 2x10x0 at uv (8,
+    # 0).
+    paint_box(im, 0, 0, 0, 10, 2, vines)
+    paint_box(im, 8, 0, 2, 10, 0, vines)
+    parts = []
+    for bone, side in (("right_leg", -1), ("left_leg", 1)):
+        parts.append({"bone": bone, "uv": [0, 0], "from": [side * 1.15, 0, -1], "size": [0, 10, 2]})
+        parts.append({"bone": bone, "uv": [8, 0], "from": [-1, 0, 1.15], "size": [2, 10, 0]})
+    save_model("creeper_vines_vines", im, parts)
+
+
+def thornwrap():
+    # Two thorny vines that wrap the front of the ribs: dark green vines
+    # that run across the ribs at a slant, with pale thorns on them. They go
+    # over the other marks on the ribs (order 1). The same vines go on over
+    # the outer layer of the back, so that they wrap round the body.
+    vine = Mark(VINE[1], order=1)
+    thorn = Mark("#D8C890", order=1)
+    for x in range(20, 28):
+        for y0 in (21, 25):
+            y = y0 + (x - 20) // 3
+            vine.put((x, y))
+            if x % 3 == 1:
+                thorn.put((x, y - 1))
+    back = Mark(VINE[1], target="outer", order=1)
+    back_thorn = Mark("#D8C890", target="outer", order=1)
+    for x in range(32, 40):
+        for y0 in (21, 25):
+            y = y0 + (39 - x) // 3
+            back.put((x, y))
+            if x % 3 == 1:
+                back_thorn.put((x, y - 1))
+    return [vine, thorn, back, back_thorn]
+
+
+def snare():
+    # The roots are the gene model snare_roots.
+    return []
+
+
+def snare_model():
+    # Roots that grow out of the feet: on each foot, four roots that spread
+    # over the ground to the front, the back, and the sides, each with a
+    # pale tip. On a leg bone, the foot is from x -1 to 1 and from z -1 to
+    # 1, and the ground is at y 12.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def root(face, x, y):
+        return ROOT_COLORS[2] if face == "top" and x == 2 else ROOT_COLORS[0] if face == "top" else ROOT_COLORS[1]
+
+    # A root along x: 3x1x1 at uv (0, 0). A root along z: 1x1x3 at uv (0,
+    # 4).
+    paint_box(im, 0, 0, 3, 1, 1, root)
+    paint_box(im, 0, 4, 1, 1, 3, lambda face, x, y: ROOT_COLORS[2] if face == "top" and y == 2 else
+              ROOT_COLORS[0] if face == "top" else ROOT_COLORS[1])
+    parts = []
+    for bone in ("right_leg", "left_leg"):
+        parts.append({"bone": bone, "uv": [0, 0], "from": [-3.5, 11, -0.5], "size": [3, 1, 1], "mirror": True})
+        parts.append({"bone": bone, "uv": [0, 0], "from": [0.5, 11, 0], "size": [3, 1, 1]})
+        parts.append({"bone": bone, "uv": [0, 4], "from": [-0.5, 11, -3.5], "size": [1, 1, 3]})
+        parts.append({"bone": bone, "uv": [0, 4], "from": [-0.2, 11, 0.5], "size": [1, 1, 3]})
+    save_model("snare_roots", im, parts)
+
+
+MOSS = ("#6E8A2E", "#55702A", "#3E5420", "#8EA848")
+
+
+def mossbed():
+    # The moss is the gene model mossbed_moss.
+    return []
+
+
+def mossbed_model():
+    # Thick pads of moss on the shoulders: a wide, soft pad on the top of
+    # each arm, on the leaves of the outer layer, and a smaller lump on top
+    # of it. The pads keep clear of the head (x -4 to 4). On an arm bone,
+    # the outer layer of the top is at y -2.2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def pad(face, x, y):
+        if face == "top":
+            return MOSS[3] if (x * 3 + y) % 5 == 0 else MOSS[0]
+        if face == "bottom":
+            return MOSS[2]
+        return MOSS[1] if y == 0 else MOSS[2] if x % 2 else MOSS[1]
+
+    # The pad: 4x2x5 at uv (0, 0). The lump: 2x1x3 at uv (0, 8).
+    paint_box(im, 0, 0, 4, 2, 5, pad)
+    paint_box(im, 0, 8, 2, 1, 3, lambda face, x, y: MOSS[3] if face == "top" else MOSS[1])
+    parts = [
+        {"bone": "right_arm", "uv": [0, 0], "from": [-3.5, -4.2, -2.5], "size": [4, 2, 5]},
+        {"bone": "right_arm", "uv": [0, 8], "from": [-2.5, -5.2, -1.5], "size": [2, 1, 3]},
+        {"bone": "left_arm", "uv": [0, 0], "from": [-0.5, -4.2, -2.5], "size": [4, 2, 5], "mirror": True},
+        {"bone": "left_arm", "uv": [0, 8], "from": [0.5, -5.2, -1.5], "size": [2, 1, 3], "mirror": True},
+    ]
+    save_model("mossbed_moss", im, parts)
+
+
+def vine_swing():
+    # The vines are the gene model vine_swing_vines.
+    return []
+
+
+def vine_swing_model():
+    # Vines that trail from the hands: from the bottom of each hand, two
+    # thin vines with small leaves hang down, one at the front and one at
+    # the back, of different lengths. On an arm bone, the hand ends at y
+    # 10.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def vine(face, x, y):
+        if face not in ("right", "left"):
+            return None
+        if x == 1:
+            return VINE[2] if y % 2 else None
+        return VINE[0] if y % 3 else VINE[1]
+
+    # A long vine: 0x6x2 at uv (0, 0). A short vine: 0x4x2 at uv (8, 0).
+    paint_box(im, 0, 0, 0, 6, 2, vine)
+    paint_box(im, 8, 0, 0, 4, 2, vine)
+    parts = []
+    for bone in ("right_arm", "left_arm"):
+        parts.append({"bone": bone, "uv": [0, 0], "from": [0, 9.5, -1.2], "size": [0, 6, 2]})
+        parts.append({"bone": bone, "uv": [8, 0], "from": [0, 9.5, 0.2], "size": [0, 4, 2]})
+    save_model("vine_swing_vines", im, parts)
+
 GENES = {
     "puffball": puffball,
     "shelfback": shelfback,
@@ -491,6 +685,12 @@ GENES = {
     "rotting_touch": rotting_touch,
     "antivenom": antivenom,
     "plague_carrier": plague_carrier,
+    "rootshot": rootshot,
+    "creeper_vines": creeper_vines,
+    "thornwrap": thornwrap,
+    "snare": snare,
+    "mossbed": mossbed,
+    "vine_swing": vine_swing,
 }
 
 MODELS = {
@@ -500,10 +700,16 @@ MODELS = {
     "leechbone": "originofspawns:leechbone_leeches",
     "venom_gland": "originofspawns:venom_gland_sac",
     "antivenom": "originofspawns:antivenom_eyes",
+    "rootshot": "originofspawns:rootshot_roots",
+    "creeper_vines": "originofspawns:creeper_vines_vines",
+    "snare": "originofspawns:snare_roots",
+    "mossbed": "originofspawns:mossbed_moss",
+    "vine_swing": "originofspawns:vine_swing_vines",
 }
 
 MODEL_MAKERS = [puffball_model, shelfback_model, mushroom_shot_model, leechbone_model, venom_gland_model,
-                antivenom_model]
+                antivenom_model, rootshot_model, creeper_vines_model, snare_model, mossbed_model,
+                vine_swing_model]
 
 
 def main():

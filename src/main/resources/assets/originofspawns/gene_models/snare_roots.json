@@ -1,0 +1,145 @@
+{
+	"texture": "originofspawns:textures/entity/snare_roots.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.5,
+				11,
+				-0.5
+			],
+			"size": [
+				3,
+				1,
+				1
+			],
+			"mirror": true
+		},
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				11,
+				0
+			],
+			"size": [
+				3,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				4
+			],
+			"from": [
+				-0.5,
+				11,
+				-3.5
+			],
+			"size": [
+				1,
+				1,
+				3
+			]
+		},
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				4
+			],
+			"from": [
+				-0.2,
+				11,
+				0.5
+			],
+			"size": [
+				1,
+				1,
+				3
+			]
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.5,
+				11,
+				-0.5
+			],
+			"size": [
+				3,
+				1,
+				1
+			],
+			"mirror": true
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				11,
+				0
+			],
+			"size": [
+				3,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				4
+			],
+			"from": [
+				-0.5,
+				11,
+				-3.5
+			],
+			"size": [
+				1,
+				1,
+				3
+			]
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				4
+			],
+			"from": [
+				-0.2,
+				11,
+				0.5
+			],
+			"size": [
+				1,
+				1,
+				3
+			]
+		}
+	]
+}

@@ -33,6 +33,7 @@ const minorsOf = (sp) => site.minors.filter((m) => m.species === sp);
       <div>
         <h2>The {sp.name.toLowerCase()}</h2>
         {sp.intro && <p class="lead">{sp.intro}</p>}
+        {sp.equipment[0] && <p class="small">{sp.equipment[0]}</p>}
         <p class="muted small">The picture shows a {sp.name.toLowerCase()} with no genes. Each family picture shows a {sp.name.toLowerCase()} with all 6 genes of the family.</p>
       </div>
     </div>

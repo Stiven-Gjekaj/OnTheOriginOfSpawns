@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "pierce_shields", "blasts": true }],
+	"mutation_rate": 0
+}

@@ -1599,10 +1599,17 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * The projectiles of the mob go through shields, and do their full damage.
+	 * The projectiles of the mob go through shields, and do their full damage. A shield takes no damage from them.
+	 * With {@code blasts}, the blast of the mob also goes through shields in the same way.
 	 */
-	record PierceShields() implements GeneEffect {
-		public static final MapCodec<PierceShields> CODEC = MapCodec.unit(new PierceShields());
+	record PierceShields(boolean blasts) implements GeneEffect {
+		public static final MapCodec<PierceShields> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.BOOL.optionalFieldOf("blasts", false).forGetter(PierceShields::blasts)
+		).apply(instance, PierceShields::new));
+
+		public PierceShields() {
+			this(false);
+		}
 
 		@Override
 		public String type() {

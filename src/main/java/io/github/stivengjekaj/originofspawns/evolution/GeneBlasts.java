@@ -96,4 +96,13 @@ public final class GeneBlasts {
 			}
 		}
 	}
+
+	/**
+	 * Returns true if the source is the blast of a mob whose blasts go through shields.
+	 */
+	public static boolean piercesShields(DamageSource source) {
+		Mob mob = blaster(source);
+		return mob != null && GeneEffects.of(mob).anyMatch(effect -> effect instanceof GeneEffect.PierceShields pierce
+				&& pierce.blasts());
+	}
 }

@@ -3,6 +3,7 @@ package io.github.stivengjekaj.originofspawns.mixin;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -84,8 +85,9 @@ public abstract class LivingEntityMixin {
 	@Inject(method = "applyItemBlocking", at = @At("HEAD"), cancellable = true)
 	private void originofspawns$pierceShields(ServerLevel level, DamageSource source, float amount,
 			CallbackInfoReturnable<Float> info) {
+		// No block also means no damage to the shield.
 		if (source.getDirectEntity() instanceof Projectile && source.getEntity() instanceof LivingEntity shooter
-				&& GeneCombat.has(shooter, GeneEffect.PierceShields.class)) {
+				&& GeneCombat.has(shooter, GeneEffect.PierceShields.class) || GeneBlasts.piercesShields(source)) {
 			info.setReturnValue(0.0F);
 		}
 	}

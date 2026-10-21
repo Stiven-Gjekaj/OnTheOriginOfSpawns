@@ -7,11 +7,23 @@ import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.mixin.CreeperAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
+import java.util.UUID;
+
+import com.mojang.authlib.GameProfile;
+
+import io.netty.channel.embedded.EmbeddedChannel;
+
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.game.ServerboundPlayerLoadedPacket;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -19,6 +31,9 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -143,6 +158,60 @@ public class CreeperEffectsTest {
 		helper.assertTrue(golem.hasEffect(MobEffects.NAUSEA), "the blast gives Nausea");
 		helper.assertValueEqual(golem.getEffect(MobEffects.SLOWNESS).getDuration(), 100, "Slowness for 5 seconds");
 		helper.succeed();
+	}
+
+	@GameTest(environment = BLASTS, padding = 8, maxTicks = 40)
+	public void shrapnelGoesThroughAShield(GameTestHelper helper) {
+		ServerPlayer plainTarget = shieldedPlayer(helper);
+		explode(creeperWith(helper, new BlockPos(1, 1, 1)));
+		helper.assertTrue(plainTarget.getHealth() > plainTarget.getMaxHealth() - 1.0F, "the shield stops a plain blast");
+		helper.assertTrue(plainTarget.getOffhandItem().getDamageValue() > 0, "a plain blast damages the shield");
+		ServerPlayer target = shieldedPlayer(helper);
+		explode(creeperWith(helper, new BlockPos(1, 1, 1), "test_shrapnel"));
+		helper.assertTrue(target.getHealth() < target.getMaxHealth() - 5.0F, "shrapnel hurts the player behind the shield");
+		helper.assertValueEqual(target.getOffhandItem().getDamageValue(), 0, "shrapnel does not damage the shield");
+		helper.succeed();
+	}
+
+	/**
+	 * Makes a player in survival 4 blocks east of the blast place, who holds a shield up to the west.
+	 */
+	static ServerPlayer shieldedPlayer(GameTestHelper helper) {
+		ServerPlayer player = survivalPlayer(helper);
+		player.setNoGravity(true);
+		player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.SHIELD));
+		player.startUsingItem(InteractionHand.OFF_HAND);
+		// A shield blocks only after it is up for a short time. A mock player is not ticked by the server.
+		for (int i = 0; i < 10; i++) {
+			player.doTick();
+		}
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(5, 1, 1))));
+		player.setYRot(90.0F);
+		player.setYHeadRot(90.0F);
+		helper.assertTrue(player.isBlocking(), "the player holds the shield up");
+		return player;
+	}
+
+	/**
+	 * Makes a player in the level in survival mode, who can take damage. The mock player of the test helper is always
+	 * in creative mode, so its items take no damage.
+	 */
+	static ServerPlayer survivalPlayer(GameTestHelper helper) {
+		var server = helper.getLevel().getServer();
+		var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "test-survival-player"), false);
+		ServerPlayer player = new ServerPlayer(server, helper.getLevel(), cookie.gameProfile(), cookie.clientInformation()) {
+			@Override
+			public GameType gameMode() {
+				return GameType.SURVIVAL;
+			}
+		};
+		Connection connection = new Connection(PacketFlow.SERVERBOUND);
+		new EmbeddedChannel(connection);
+		server.getPlayerList().placeNewPlayer(connection, player, cookie);
+		player.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
+		// A player takes no damage until its client tells the server that the world loaded.
+		player.connection.handleAcceptPlayerLoad(new ServerboundPlayerLoadedPacket());
+		return player;
 	}
 
 	static AreaEffectCloud cloudNear(GameTestHelper helper, Creeper creeper) {

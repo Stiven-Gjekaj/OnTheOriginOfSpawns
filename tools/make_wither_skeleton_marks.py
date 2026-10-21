@@ -86,9 +86,10 @@ Pixel plan for the Soul Reapers.
 - Vengeful Spirit: a small, pale blue ghost that curls up from the back
   and over the right shoulder, the gene model vengeful_spirit_ghost, which
   glows.
-- Soul Hunger has soul blue light in the eye sockets (y 12) and in the
-  gaps of the teeth (y 14), and thin blue cracks from the eyes across the
-  brow and over the top of the skull.
+- Soul Hunger has a deep blue soul glow in the eye sockets: a bright core
+  in the inner pixel of each socket, in a darker blue ring (y 11 to 13).
+  A faint blue glows in the middle of the front ribs (x 23 and 24, y 22 to
+  24) and on the spine (x 35 and 36, y 23 to 26).
 - Ghost Step has faded legs: a pale blue-gray on leg rows 3 to 11, and an
   erase in a dither on them, so that they are half see-through.
 - Soul Drain has blue light between the fingers: arm rows 10 and 11, and a
@@ -774,23 +775,23 @@ def vengeful_spirit_model():
 
 
 def soul_hunger():
-    # A hunger for souls that burns inside the skull: bright soul blue light
-    # fills the eye sockets (y 12), and a dimmer blue shines through the
-    # gaps of the teeth (y 14). Thin blue cracks run from the eyes up across
-    # the brow and over the top of the skull, as if the light breaks out.
-    # The cracks keep off the Cauterize seam (x 12).
-    light = Mark(SOUL[0])
+    # A calm, deep hunger for souls: the skull stays plain. In each eye
+    # socket, a small, bright soul blue core (the inner pixel of the
+    # socket) sits in a ring of darker blue (the outer pixel, and the
+    # pixels over and under the core). A faint blue glows deep in the rib
+    # cage: on the middle of the front ribs and on the spine.
     core = Mark(SOUL[1])
-    crack = Mark(SOUL[2])
-    for x in (9, 10, 13, 14):
-        (core if x in (10, 13) else light).put((x, 12))
-    for x in (10, 12):
-        crack.put((x, 14))
-    light.put((11, 14))
-    for p in ((10, 11), (11, 10), (11, 9), (10, 8), (13, 11), (13, 10), (14, 9), (14, 8),
-              (10, 7), (9, 6), (11, 5), (14, 7), (14, 6), (13, 4)):
-        crack.put(p)
-    return [light, core, crack]
+    ring = Mark(SOUL[2])
+    for inner, outer in ((10, 9), (13, 14)):
+        core.put((inner, 12))
+        ring.put((outer, 12)).put((inner, 11), 200).put((inner, 13), 200)
+    deep = Mark(SOUL[2], alpha=80)
+    for x in (23, 24):
+        for y in (22, 23, 24):
+            deep.put((x, y), 220 if y == 23 else 160)
+    for y in range(23, 27):
+        deep.put((35, y), 160).put((36, y), 160)
+    return [core, ring, deep]
 
 
 def ghost_step():

@@ -5,14 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/soul_hunger_0.png",
-				"tint": "#50D8F0"
+				"tint": "#C8F8FF"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/soul_hunger_1.png",
-				"tint": "#C8F8FF"
+				"tint": "#2A8AB0"
 			}
 		},
 		{

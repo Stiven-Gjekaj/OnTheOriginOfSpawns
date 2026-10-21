@@ -45,6 +45,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
@@ -117,6 +118,8 @@ public final class GeneBehaviors {
 				case GeneEffect.Jockey jockey when reason == EntitySpawnReason.NATURAL
 						&& mob.getRandom().nextFloat() < jockey.chance() -> mount(mob, level, jockey);
 				case GeneEffect.Burrow burrow when reason == EntitySpawnReason.NATURAL -> burrow(mob, level, burrow);
+				case GeneEffect.ChargedSpawn charged when mob instanceof Creeper creeper
+						&& mob.getRandom().nextFloat() < charged.chance() -> GeneBlasts.charge(creeper);
 				default -> {
 				}
 			}

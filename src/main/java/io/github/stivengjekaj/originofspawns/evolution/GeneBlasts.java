@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.evolution;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 
+import io.github.stivengjekaj.originofspawns.mixin.CreeperAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.server.level.ServerLevel;
@@ -128,5 +129,12 @@ public final class GeneBlasts {
 		Mob mob = blaster(source);
 		return mob != null && GeneEffects.of(mob).anyMatch(effect -> effect instanceof GeneEffect.PierceShields pierce
 				&& pierce.blasts());
+	}
+
+	/**
+	 * Makes the creeper a charged creeper, with no lightning.
+	 */
+	public static void charge(Creeper creeper) {
+		creeper.getEntityData().set(CreeperAccessor.originofspawns$poweredData(), true);
 	}
 }

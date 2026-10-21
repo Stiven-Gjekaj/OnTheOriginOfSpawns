@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect.When;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.mixin.CreeperAccessor;
@@ -56,6 +57,17 @@ public class CreeperEffectsTest {
 		helper.assertTrue(GeneCombat.test(creeper, When.CHARGED), "a charged creeper");
 		var zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(3, 1, 1));
 		helper.assertFalse(GeneCombat.test(zombie, When.CHARGED), "a zombie is never charged");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aGeneCanSpawnTheCreeperCharged(GameTestHelper helper) {
+		Creeper charged = creeperWith(helper, new BlockPos(1, 1, 1), "test_charged_spawn");
+		Creeper plain = creeperWith(helper, new BlockPos(3, 1, 1));
+		GeneBehaviors.onSpawn(charged, helper.getLevel(), EntitySpawnReason.NATURAL);
+		GeneBehaviors.onSpawn(plain, helper.getLevel(), EntitySpawnReason.NATURAL);
+		helper.assertTrue(charged.isPowered(), "the gene spawns it charged");
+		helper.assertFalse(plain.isPowered(), "a plain creeper spawns with no charge");
 		helper.succeed();
 	}
 

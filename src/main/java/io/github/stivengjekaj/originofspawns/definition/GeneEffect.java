@@ -144,7 +144,8 @@ public sealed interface GeneEffect {
 			Map.entry("blast_effect", BlastEffect.CODEC),
 			Map.entry("chain_reaction", ChainReaction.CODEC),
 			Map.entry("aftershock", Aftershock.CODEC),
-			Map.entry("silent_fuse", SilentFuse.CODEC)
+			Map.entry("silent_fuse", SilentFuse.CODEC),
+			Map.entry("charged_spawn", ChargedSpawn.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2224,6 +2225,20 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "silent_fuse";
+		}
+	}
+
+	/**
+	 * The creeper has a chance to spawn charged, as if lightning hit it.
+	 */
+	record ChargedSpawn(float chance) implements GeneEffect {
+		public static final MapCodec<ChargedSpawn> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(ChargedSpawn::chance)
+		).apply(instance, ChargedSpawn::new));
+
+		@Override
+		public String type() {
+			return "charged_spawn";
 		}
 	}
 }

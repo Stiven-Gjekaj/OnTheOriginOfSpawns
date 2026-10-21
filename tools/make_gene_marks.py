@@ -693,6 +693,15 @@ def write(gene, marks, models=None, region_map=None):
     map.
     """
     models = MODELS if models is None else models
+    # Two species must not use the same gene id. A visual of the same name
+    # with a different region map belongs to a gene of another species, so
+    # stop before the write replaces it.
+    path = os.path.join(VISUAL_DIR, gene + ".json")
+    if os.path.exists(path):
+        with open(path) as fh:
+            old_map = json.load(fh).get("region_map")
+        if old_map != region_map:
+            raise SystemExit(f"{gene}: the visual belongs to another species ({old_map}). Use another id.")
     # Remove the old patterns of the gene, so that no unused file stays.
     for old in os.listdir(MARK_DIR):
         if old.startswith(gene + "_") and old[len(gene) + 1:-4].isdigit():

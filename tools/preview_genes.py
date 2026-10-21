@@ -222,7 +222,15 @@ WITHER_SKELETON_FAMILIES = {
     "soul_reapers": ["soulstride", "soul_link", "vengeful_spirit", "soul_hunger", "ghost_step", "soul_drain"],
 }
 
-WITHER_SKELETON_EXTRA = {}
+WITHER_SKELETON_EXTRA = {
+    "blademasters": [("All 6 + Ramparts", ["brickshield", "garrison"], True, {})],
+    "ashborn": [("All 6 at night", [], True, {"light": 0.18}),
+                ("All 6 + Soul Reapers", ["soul_link", "soul_drain"], True, {})],
+    "witherlords": [("All 6 + Blademasters", ["duelist", "executioner"], True, {})],
+    "ramparts": [("All 6 + Blademasters", ["duelist", "cleave"], True, {})],
+    "soul_reapers": [("All 6 at night", [], True, {"light": 0.18}),
+                     ("All 6 + Ashborn", ["ember_eyes", "pyre"], True, {})],
+}
 NIGHT = (18, 22, 38, 255)
 
 # The babies of BabyGenesClientTest, for a sheet to compare with the game.

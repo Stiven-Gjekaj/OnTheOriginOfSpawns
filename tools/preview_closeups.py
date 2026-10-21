@@ -255,7 +255,35 @@ BOGGED_CLOSEUPS = {
 
 # The close-ups of the wither skeleton. It has no babies.
 WITHER = pg.WITHER_SKELETON_FAMILIES
-WITHER_SKELETON_CLOSEUPS = {}
+WITHER_SKELETON_CLOSEUPS = {
+    "wither_blademasters": ("Blademaster marks and models",
+                            [("Duelist + Parry", ["duelist", "parry"], False),
+                             ("Cleave + Lunge", ["cleave", "lunge"], False),
+                             ("Bladestorm + Executioner", ["bladestorm", "executioner"], False),
+                             ("All 6", WITHER["blademasters"], False)], ALL_SIDES),
+    "wither_ashborn": ("Ashborn marks and models",
+                       [("Cinderblade + Pyre", ["cinderblade", "pyre"], False),
+                        ("Lavawalker + Cauterize", ["lavawalker", "cauterize"], False),
+                        ("Smoke Screen + Ember Eyes", ["smoke_screen", "ember_eyes"], False),
+                        ("All 6", WITHER["ashborn"], False)],
+                       [FRONT, SIDE, BACK, THREE_QUARTER, ("front at night", 0, 0, 0.18), NIGHT_BEHIND]),
+    "wither_witherlords": ("Witherlord marks and models",
+                           [("Deep Wither + Decay Touch", ["deep_wither", "decay_touch"], False),
+                            ("Wither Aura + Black Rot", ["wither_aura", "black_rot"], False),
+                            ("Skull Shot + Grave Chill", ["skull_shot", "grave_chill"], False),
+                            ("All 6", WITHER["witherlords"], False)], ALL_SIDES),
+    "wither_ramparts": ("Rampart marks and models",
+                        [("Brickplate + Smite Ward", ["brickplate", "smite_ward"], False),
+                         ("Holdfast + Sentinel", ["holdfast", "sentinel"], False),
+                         ("Brickshield + Garrison", ["brickshield", "garrison"], False),
+                         ("All 6", WITHER["ramparts"], False)], ALL_SIDES),
+    "wither_soul_reapers": ("Soul Reaper marks and models",
+                            [("Soulstride + Ghost Step", ["soulstride", "ghost_step"], False),
+                             ("Soul Link + Soul Drain", ["soul_link", "soul_drain"], False),
+                             ("Vengeful Spirit + Soul Hunger", ["vengeful_spirit", "soul_hunger"], False),
+                             ("All 6", WITHER["soul_reapers"], False)],
+                            [FRONT, SIDE, BACK, THREE_QUARTER, ("front at night", 0, 0, 0.18), NIGHT_BEHIND]),
+}
 
 # Each species: its texture, its baby texture, and its close-ups.
 SPECIES = {

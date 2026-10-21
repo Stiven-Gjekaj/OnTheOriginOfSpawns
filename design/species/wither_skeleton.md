@@ -141,8 +141,8 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Soulstride | Soul Reaper | `unreached` | 40% more speed on soul sand and soul soil | 10% less speed on other blocks | Feet: blue soul fire at the feet that glows. This changes the model |
 | Soul Link | Soul Reaper | `crowd` | It heals 4 health when another wither skeleton dies in 12 blocks | 10% less speed | Chest: a blue soul flame in the ribs that glows. This changes the model |
-| Vengeful Spirit | Soul Reaper, sub Witherlord | `critical` | When it dies, a vex comes out and attacks its killer | 4 less maximum health | Head: a blue wisp over the skull |
-| Soul Hunger | Soul Reaper | `alone` | 20% more melee damage for each player that it hit in the last 10 seconds, up to 60% | 10% less maximum health | Jaw: a long, open jaw |
+| Vengeful Spirit | Soul Reaper, sub Witherlord | `critical` | When it dies, a vex comes out and attacks its killer | 4 less maximum health | Shoulder: a pale blue ghost that curls up from the back over the shoulder and glows. This changes the model |
+| Soul Hunger | Soul Reaper | `alone` | 20% more melee damage for each player that it hit in the last 10 seconds, up to 60% | 10% less maximum health | Skull: blue soul light in the eyes and the mouth, with thin blue cracks |
 | Ghost Step | Soul Reaper | `projectile` | 25% chance to dodge a projectile | 10% less melee damage | Legs: faded and see-through |
 | Soul Drain | Soul Reaper | `melee` | Its hits take 1 food from a player | 2 less armor | Hands: blue light between the fingers |
 

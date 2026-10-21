@@ -3,10 +3,8 @@
 // Lab keep in the browser.
 
 import { genes, families, minors, hybrids } from "../data/site.json";
-import { familyOf, kindName, pct, fmt, t, loadState } from "../lib/site.js";
+import { familyOf, kindName, pct, fmt, t, loadState, url, speciesById } from "../lib/site.js";
 import { getSpecies } from "./species.js";
-import { drawStill } from "./zombie-canvas.js";
-import * as Z from "./zombie.js";
 
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = (id) => document.getElementById(id);
@@ -22,7 +20,11 @@ function renderGenes() {
     <div class="freq" style="--fam:var(--${g.family})"><span class="nm">${g.name}</span>
     <span class="bar"><span style="width:${p[g.id] * 100}%"></span></span><span class="v">${pct(p[g.id])}</span></div>`).join("");
   $("book-empty").hidden = known.length > 0;
-  drawStill($("sketch"), known.slice(0, 5), { w: 120, h: 160, scale: 3.6, cy: 0.33, turn: -0.6, species });
+  // The field sketch: the picture of the strongest gene, or of a plain mob.
+  const shot = known[0]?.shot || speciesById[species]?.shot;
+  const img = $("sketch");
+  if (shot) img.src = url(shot.front); else img.removeAttribute("src");
+  img.alt = known[0] ? `A field sketch of a ${species} with ${known[0].name}` : `A field sketch of a plain ${species}`;
 }
 
 function renderFamilies() {
@@ -79,7 +81,8 @@ $("book-cats").addEventListener("click", (e) => {
 let zombie = [];
 function nextZombie() {
   const shuffled = mine(genes).sort(() => Math.random() - 0.5);
-  zombie = shuffled.slice(0, 1 + Math.floor(Math.random() * 4));
+  // The wiki has a picture of each gene alone, so the mob has one gene.
+  zombie = shuffled.slice(0, 1);
   drawInfo();
 }
 function drawInfo() {
@@ -92,8 +95,10 @@ function drawInfo() {
       `<div class="g">${zombie.length ? zombie.map((g) => g.name).join(", ") : t("mob_info.originofspawns.no_genes", "No genes")}</div>`;
     box.classList.remove("fade");
   }, 160);
-  const night = $("scene").classList.contains("night");
-  drawStill($("scene-zombie"), zombie, { w: 150, h: 200, scale: 4.6, cy: 0.33, turn: -0.25, species, light: night ? 0.5 : 1, opacity: night ? Z.opacityAt(zombie, 0) : 1 });
+  const shot = zombie[0]?.shot || speciesById[species]?.shot;
+  const img = $("scene-shot");
+  if (shot) img.src = url(shot.front); else img.removeAttribute("src");
+  img.alt = zombie[0] ? `A ${species} with the gene ${zombie[0].name}` : `A plain ${species}`;
 }
 $("info-next").addEventListener("click", nextZombie);
 $("info-night").addEventListener("click", (e) => {

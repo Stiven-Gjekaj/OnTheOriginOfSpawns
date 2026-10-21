@@ -29,7 +29,7 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
         </div>
         <div class="spread" id="spread">
           <div class="sheet left" id="sheet-genes-left">
-            <canvas class="sketch" id="sketch" aria-label="A field sketch of a zombie"></canvas>
+            <img class="sketch" id="sketch" alt="" height="160" />
             {site.species.map((sp, i) => (
               <div data-species-panel={sp.id} hidden={i !== 0}>
                 <h3>{sp.name}</h3>
@@ -65,7 +65,7 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
           <div class="sheet right" id="sheet-fam-right" hidden>
             <h4>{t("screen.originofspawns.notebook.kind.minor", "Minor families")}</h4>
             <div class="found" data-kind="minor"></div>
-            <p class="ink">A family name shows when you find a zombie of that family. Spawn zombies in the <a href={url("evolution/#simulator")}>simulator</a>, or mix genes in the <a href={url("lab/")}>Gene Lab</a>.</p>
+            <p class="ink">A family name shows when you find a mob of that family. Spawn mobs in the <a href={url("evolution/#simulator")}>simulator</a> to find families.</p>
             <span class="folio">4</span>
           </div>
           <div class="edge-tabs" role="group" aria-label="Notebook pages">
@@ -74,7 +74,7 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
           </div>
         </div>
       </div>
-      <p class="muted small center">This notebook reads the pools of the simulator on the Evolution page, and the families that you find there and in the Gene Lab. Your browser keeps them.</p>
+      <p class="muted small center">This notebook reads the pools of the simulator on the Evolution page, and the families that you find there. Your browser keeps them.</p>
     </section>
 
     <section class="section grid grid-2 info">
@@ -89,7 +89,7 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
       </div>
       <div class="scene" id="scene">
         <div class="mob-info" id="mob-info"></div>
-        <canvas id="scene-zombie" role="img" aria-label="A mob in front of the player"></canvas>
+        <img id="scene-shot" alt="" height="200" />
         <div class="crosshair" aria-hidden="true"></div>
       </div>
     </section>
@@ -189,7 +189,8 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
   .folio { position: absolute; bottom: var(--s-3); font: 500 var(--fs-xs) / 1 var(--font-display); opacity: 0.55; }
   .left .folio { left: var(--s-6); }
   .right .folio { right: var(--s-6); }
-  .sketch { float: right; width: 120px; height: 160px; margin: 0 0 var(--s-2) var(--s-3); image-rendering: pixelated; }
+  .sketch { float: right; height: 160px; width: auto; max-width: 40%; object-fit: contain; margin: 0 0 var(--s-2) var(--s-3); filter: sepia(0.35) contrast(0.95); }
+  .sketch:not([src]) { display: none; }
   .cats { display: flex; flex-wrap: wrap; gap: 6px; }
   .cat {
     display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 6px; cursor: pointer;
@@ -232,7 +233,9 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
   }
   .scene.night { background: linear-gradient(transparent 64%, #1f4310 64%, #1f4310 68%, #3a2816 68%), linear-gradient(#0b1030, #1a2350 64%); }
   .scene .mob-info { margin-top: var(--s-4); max-width: calc(100% - 24px); height: fit-content; }
-  .scene canvas { position: absolute; bottom: 12%; width: 150px; height: 200px; image-rendering: pixelated; }
+  .scene img { position: absolute; bottom: 10%; height: 200px; width: auto; object-fit: contain; }
+  .scene.night img { filter: brightness(0.55) saturate(0.8); }
+  .scene img:not([src]) { display: none; }
   .crosshair {
     position: absolute; left: 50%; top: 52%; width: 18px; height: 18px; transform: translate(-50%, -50%); pointer-events: none; mix-blend-mode: difference;
     background: linear-gradient(#fff, #fff) center / 2px 100% no-repeat, linear-gradient(#fff, #fff) center / 100% 2px no-repeat;

@@ -29,7 +29,6 @@ It reads these files:
 - `src/main/resources/data/originofspawns/originofspawns/family/<species>/*.json`
 - `src/main/resources/data/originofspawns/originofspawns/pressure/*.json`
 - `src/main/resources/assets/originofspawns/lang/en_us.json`
-- `src/main/resources/assets/originofspawns/gene_visuals/*.json` and `gene_models/*.json`
 - `design/DESIGN.md`, `design/ROADMAP.md`, and `design/species/<species>.md`
 - `docs/data-packs.md`, `README.md`, and `gradle.properties`
 

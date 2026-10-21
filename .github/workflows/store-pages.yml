@@ -1,12 +1,18 @@
 # This workflow updates the Modrinth page from the files in this repository.
 # It sets the description from docs/store-description.md, and adds the pictures
 # in assets/gallery to the gallery. A picture that is already in the gallery,
-# with the same title, is not added again.
+# with the same title, is not added again. With the input "replace", the workflow
+# deletes that picture and adds the new file in its place.
 # Start it by hand from the Actions tab.
 
 name: store-pages
 on:
   workflow_dispatch:
+    inputs:
+      replace:
+        description: Replace the gallery pictures that are already there
+        type: boolean
+        default: false
 
 jobs:
   modrinth:
@@ -33,14 +39,22 @@ jobs:
             -H "Authorization: $TOKEN" -H "User-Agent: $AGENT" -H "Content-Type: application/json" \
             --data @body.json
       - name: add the gallery pictures
+        env:
+          REPLACE: ${{ inputs.replace }}
         run: |
-          existing=$(curl --fail-with-body -sS "$API/project/$PROJECT" \
-            -H "Authorization: $TOKEN" -H "User-Agent: $AGENT" | jq -r '.gallery[].title')
+          gallery=$(curl --fail-with-body -sS "$API/project/$PROJECT" \
+            -H "Authorization: $TOKEN" -H "User-Agent: $AGENT" | jq -c '.gallery')
           add() {
             file="$1"; title="$2"; description="$3"; featured="$4"
-            if printf '%s\n' "$existing" | grep -qxF "$title"; then
-              echo "The gallery already has: $title"
-              return
+            url=$(printf '%s' "$gallery" | jq -r --arg title "$title" '[.[] | select(.title == $title)][0].url // empty')
+            if [ -n "$url" ]; then
+              if [ "$REPLACE" != "true" ]; then
+                echo "The gallery already has: $title"
+                return
+              fi
+              curl --fail-with-body -sS -X DELETE -G "$API/project/$PROJECT/gallery" \
+                --data-urlencode "url=$url" -H "Authorization: $TOKEN" -H "User-Agent: $AGENT"
+              echo "Deleted the old picture: $title"
             fi
             curl --fail-with-body -sS -X POST -G "$API/project/$PROJECT/gallery" \
               --data-urlencode "ext=png" --data-urlencode "featured=$featured" \
@@ -52,4 +66,9 @@ jobs:
           add assets/gallery/zombies.png "Zombies" "Predators, Stalkers, Tanks, Hordes, and Blights, each with three genes" true
           add assets/gallery/husks.png "Husks" "Scorchers, Dunecrawlers, Mummies, Caravans, and Parchers, each with three genes" false
           add assets/gallery/drowned.png "Drowned" "Riptides, Harpooners, Abyssals, Barnacled, and Sirens, each with three genes" false
+          add assets/gallery/skeletons.png "Skeletons" "Marksmen, Rattlers, Ossified, Legions, and Hexers, each with three genes" false
+          add assets/gallery/strays.png "Strays" "Glaciers, Blizzards, Drifters, Frostbiters, and Wailers, each with three genes" false
+          add assets/gallery/bogged.png "Bogged" "Sporecaps, Mirefolk, Venomers, Vinebound, and Mosshides, each with three genes" false
+          add assets/gallery/wither_skeletons.png "Wither skeletons" "Blademasters, Ashborn, Witherlords, Ramparts, and Soul Reapers, each with three genes" false
+          add assets/gallery/parched.png "Parched" "Enfeeblers, Windcarvers, Vultures, Scorpions, and Fossils, each with three genes" false
           add assets/gallery/info_panel.png "Mob info panel" "The panel shows what you know of the family and the genes of a mob" false

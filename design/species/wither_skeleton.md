@@ -95,7 +95,7 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Duelist | Blademaster | `alone` | 30% more melee damage with no other wither skeleton in 8 blocks | 2 less armor | Arms: a red cloth tied around the sword arm |
+| Duelist | Blademaster | `alone` | 30% more melee damage with no other wither skeleton in 8 blocks | 2 less armor | Arms: a red cloth tied around the sword arm. This changes the model |
 | Parry | Blademaster | `melee` | It takes no damage from a melee hit, one time each 6 seconds | 10% less maximum health | Arms: a bone guard on the forearm. This changes the model |
 | Cleave | Blademaster | `crowd` | Its hits also do half damage to other players in 2 blocks of the target | It attacks 15% slower | Body: a wide belt of bone plates |
 | Lunge | Blademaster, sub Soul Reaper | `unreached` | It leaps at a player 3 to 6 blocks away | After a missed leap, it cannot move for 1 second | Legs: long, thin shins |
@@ -129,7 +129,7 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Brickplate | Rampart | `projectile` | 6 more armor | 15% less speed | Chest: a plate of nether brick. This changes the model |
-| Holdfast | Rampart | `explosion` | Full knockback resistance, and 40% less explosion damage | 10% less speed | Feet: wide feet of blackstone |
+| Holdfast | Rampart | `explosion` | Full knockback resistance, and 40% less explosion damage | 10% less speed | Feet: wide feet of blackstone. This changes the model |
 | Sentinel | Rampart | `spotted` | When it sees a player, the wither skeletons in 24 blocks target that player. It can call again after 30 seconds | Players hear it from two times farther | Head: a tall crest of bone. This changes the model |
 | Brickshield | Rampart | `projectile` | 50% less damage from projectiles that hit it from the front | It attacks 15% slower | Arms: a nether brick shield on the left arm. This changes the model |
 | Garrison | Rampart, sub Witherlord | `alone` | Its spawn groups have 1 more wither skeleton | Each wither skeleton of the group has 15% less maximum health | Body: a red sash of the fortress |

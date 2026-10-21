@@ -83,8 +83,8 @@ Pixel plan for the Vinebound.
 - Thornwrap has two thorny vines that wrap the front of the ribs (x 20 to
   27, y 21 to 28), over the other marks there (order 1), and the same
   vines on the outer layer of the back.
-- Snare: roots that grow out of the feet over the ground, the gene model
-  snare_roots.
+- Snare: thin, twisted roots that grow down out of the shins and the
+  feet into the ground, the gene model snare_roots.
 - Mossbed: thick pads of moss on the shoulders, the gene model
   mossbed_moss.
 - Vine Swing: vines that trail from the hands, the gene model
@@ -594,26 +594,39 @@ def snare():
 
 
 def snare_model():
-    # Roots that grow out of the feet: on each foot, four roots that spread
-    # over the ground to the front, the back, and the sides, each with a
-    # pale tip. On a leg bone, the foot is from x -1 to 1 and from z -1 to
-    # 1, and the ground is at y 12.
+    # Roots that grow down out of the shins and the feet into the ground:
+    # on each leg, four thin, pale roots, each in two parts that bend, so
+    # that they look twisted. A root starts on the shin, runs down close to
+    # the leg, and then bends out and goes into the ground, with gaps
+    # between the roots. The roots are paler than the dark feet of the
+    # bogged, so they read. On a leg bone, the leg is from x -1 to 1 and
+    # from z -1 to 1, and the ground is at y 12.
     im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+    pale = ("#9A7A50", "#6E5232", "#C8A878")
 
-    def root(face, x, y):
-        return ROOT_COLORS[2] if face == "top" and x == 2 else ROOT_COLORS[0] if face == "top" else ROOT_COLORS[1]
+    def upper(face, x, y):
+        return pale[2] if y == 0 else pale[0] if (x + y) % 3 else pale[1]
 
-    # A root along x: 3x1x1 at uv (0, 0). A root along z: 1x1x3 at uv (0,
-    # 4).
-    paint_box(im, 0, 0, 3, 1, 1, root)
-    paint_box(im, 0, 4, 1, 1, 3, lambda face, x, y: ROOT_COLORS[2] if face == "top" and y == 2 else
-              ROOT_COLORS[0] if face == "top" else ROOT_COLORS[1])
+    def lower(face, x, y):
+        return pale[1] if y == 3 else pale[0]
+
+    # An upper part: 1x4x1 at uv (0, 0). A lower part: 1x4x1 at uv (8, 0).
+    paint_box(im, 0, 0, 1, 4, 1, upper)
+    paint_box(im, 8, 0, 1, 4, 1, lower)
     parts = []
+    # Each root: where it starts on the shin (x, y, z), and how far its
+    # upper and its lower part lean out, in degrees, round the z axis (to
+    # the side) or the x axis (to the front or the back).
+    roots = (((-1.4, 6, -0.5), (0, 0, -10), (0, 0, -50)),
+             ((-0.5, 6.5, -1.4), (10, 0, 0), (50, 0, 0)),
+             ((-0.5, 7, 0.4), (-10, 0, 0), (-45, 0, 0)),
+             ((0.4, 7.5, -0.5), (0, 0, 10), (0, 0, 55)))
     for bone in ("right_leg", "left_leg"):
-        parts.append({"bone": bone, "uv": [0, 0], "from": [-3.5, 11, -0.5], "size": [3, 1, 1], "mirror": True})
-        parts.append({"bone": bone, "uv": [0, 0], "from": [0.5, 11, 0], "size": [3, 1, 1]})
-        parts.append({"bone": bone, "uv": [0, 4], "from": [-0.5, 11, -3.5], "size": [1, 1, 3]})
-        parts.append({"bone": bone, "uv": [0, 4], "from": [-0.2, 11, 0.5], "size": [1, 1, 3]})
+        for (x, y, z), lean, bend in roots:
+            parts.append({"bone": bone, "uv": [0, 0], "from": [x, y, z], "size": [1, 4, 1],
+                          "pivot": [x + 0.5, y, z + 0.5], "rotation": list(lean)})
+            parts.append({"bone": bone, "uv": [8, 0], "from": [x, y + 3.6, z], "size": [1, 4, 1],
+                          "pivot": [x + 0.5, y + 3.6, z + 0.5], "rotation": list(bend)})
     save_model("snare_roots", im, parts)
 
 

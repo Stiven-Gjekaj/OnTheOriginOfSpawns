@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "damage_taken_when", "when": "wet_ground", "multiplier": 0.5, "damage_types": "#minecraft:is_projectile" }],
+	"mutation_rate": 0
+}

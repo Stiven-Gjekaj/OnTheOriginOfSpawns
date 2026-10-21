@@ -229,7 +229,8 @@ public final class GeneCombat {
 				case GeneEffect.DamageTaken taken when source.is(taken.damageTypes()) -> result *= taken.multiplier();
 				case GeneEffect.Sunburn sunburn when source.is(DamageTypeTags.IS_FIRE)
 						&& Evolution.isSunBurning(victim, victim.level().getGameTime()) -> result *= sunburn.multiplier();
-				case GeneEffect.DamageTakenWhen taken when test(victim, taken.when(), taken.radius()) ->
+				case GeneEffect.DamageTakenWhen taken when test(victim, taken.when(), taken.radius())
+						&& taken.damageTypes().map(tag -> source.is(tag)).orElse(true) ->
 						result *= taken.multiplier();
 				case GeneEffect.DamageFromBehind behind when isBehind(victim, source) -> result *= behind.multiplier();
 				case GeneEffect.DamageFromFront front when source.getSourcePosition() != null && !isBehind(victim, source)

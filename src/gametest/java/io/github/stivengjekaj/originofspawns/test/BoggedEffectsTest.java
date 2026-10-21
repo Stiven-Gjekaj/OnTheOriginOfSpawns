@@ -106,6 +106,21 @@ public class BoggedEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void damageWhenWetCanBeOnlyForSomeDamage(GameTestHelper helper) {
+		helper.setBlock(new BlockPos(1, 0, 1), Blocks.MUD);
+		Bogged bogged = boggedWith(helper, new BlockPos(1, 1, 1), "test_mudcake");
+		Bogged shooter = boggedWith(helper, new BlockPos(4, 1, 4));
+		var arrow = new net.minecraft.world.entity.projectile.arrow.Arrow(helper.getLevel(), shooter,
+				new ItemStack(Items.ARROW), null);
+		var sources = helper.getLevel().damageSources();
+		helper.assertValueEqual(GeneCombat.modifyDamage(bogged, sources.arrow(arrow, shooter), 4.0F), 2.0F,
+				"an arrow on mud does half damage");
+		helper.assertValueEqual(GeneCombat.modifyDamage(bogged, sources.generic(), 4.0F), 4.0F,
+				"other damage on mud is full");
+		helper.succeed();
+	}
+
 	private static void biome(GameTestHelper helper, String biome) {
 		BlockPos from = helper.absolutePos(new BlockPos(0, 0, 0));
 		BlockPos to = helper.absolutePos(new BlockPos(5, 4, 5));

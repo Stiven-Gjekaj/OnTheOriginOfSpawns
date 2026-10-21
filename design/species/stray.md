@@ -132,7 +132,7 @@ The visual column gives the region and the mark.
 | Frostbite | Frostbiter | `projectile` | Each arrow hit freezes the target for 4 seconds | 10% less arrow damage | Fingers: black, frostbitten tips |
 | Icicle | Frostbiter | `melee` | 30% more arrow damage at a target that freezes | 2 less armor | Skull: icicles that hang from the jaw. This changes the model |
 | Numbing Shot | Frostbiter | `golem` | Its arrows give Mining Fatigue for 5 seconds | 10% less speed | Arms: blue veins of frost |
-| Coldsnap | Frostbiter | `shield` | The Slowness from its arrows lasts two times longer and is one level stronger | It shoots 15% less often | Bow arm: frost on the hand that holds the bow |
+| Coldsnap | Frostbiter | `shield` | The Slowness from its arrows lasts two times longer and is one level stronger | It shoots 15% less often | Bow arm: frost on the hand that holds the bow. This changes the model |
 | Rimefall | Frostbiter, sub Drifter | `critical` | When it dies, powder snow fills the block where it died | 4 less maximum health | Pelvis: a lump of packed snow |
 | Brittle Shot | Frostbiter | `shield` | Its arrows break the armor of a frozen player two times faster | 10% less arrow damage | Ribs: cracks filled with ice |
 
@@ -140,7 +140,7 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Pale | Wailer | `spotted` | At night, it is almost invisible in snowy biomes | The sun burns it two times faster | Bones: a pale white that fades at the edges |
+| Pale | Wailer | `spotted` | At night, it is almost invisible in snowy biomes | The sun burns it two times faster | Bones: a pale white that fades at the edges, and that glows at night. This changes the model |
 | Wail | Wailer | `melee` | When it is hurt, players in 8 blocks get Weakness for 3 seconds, each 15 seconds | Players hear it from two times farther | Jaw: hangs open, as if it screams |
 | Frozen Gaze | Wailer | `projectile` | A player that looks at it gets Slowness for 2 seconds | 10% less arrow damage | Eyes: cold white lights that glow. This changes the model |
 | Hollow Cry | Wailer, sub Blizzard | `alone` | When it dies, the strays in 24 blocks target its killer | 10% less speed | Chest: a hole through the ribs |

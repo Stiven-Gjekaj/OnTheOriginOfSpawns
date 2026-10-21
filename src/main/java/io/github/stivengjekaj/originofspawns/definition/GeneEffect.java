@@ -391,7 +391,11 @@ public sealed interface GeneEffect {
 		/**
 		 * The target of the mob has the Weakness effect.
 		 */
-		TARGET_WEAKENED;
+		TARGET_WEAKENED,
+		/**
+		 * The mob is a charged creeper.
+		 */
+		CHARGED;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 

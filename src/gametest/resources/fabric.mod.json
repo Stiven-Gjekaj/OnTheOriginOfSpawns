@@ -31,7 +31,8 @@
 			"io.github.stivengjekaj.originofspawns.test.StrayEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.BoggedEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.WitherSkeletonEffectsTest",
-			"io.github.stivengjekaj.originofspawns.test.ParchedEffectsTest"
+			"io.github.stivengjekaj.originofspawns.test.ParchedEffectsTest",
+			"io.github.stivengjekaj.originofspawns.test.CreeperEffectsTest"
 		],
 		"fabric-client-gametest": [
 			"io.github.stivengjekaj.originofspawns.test.GeneTextureClientTest",

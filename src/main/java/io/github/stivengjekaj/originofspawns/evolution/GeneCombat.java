@@ -22,6 +22,7 @@ import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -137,6 +138,7 @@ public final class GeneCombat {
 			case TARGET_WEAKENED -> entity instanceof Mob mob && mob.getTarget() != null
 					&& mob.getTarget().hasEffect(net.minecraft.world.effect.MobEffects.WEAKNESS);
 			case OFF_SOUL_GROUND -> !onSoulGround(entity);
+			case CHARGED -> entity instanceof Creeper creeper && creeper.isPowered();
 		};
 	}
 

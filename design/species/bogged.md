@@ -99,7 +99,7 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Puffball | Sporecap | `melee` | When it dies, it leaves a cloud of Nausea for 5 seconds | 4 less maximum health | Head: a large puffball mushroom on the skull. This changes the model |
 | Shelfback | Sporecap | `projectile` | 4 more armor | 10% less speed | Back: shelf fungus in steps down the spine. This changes the model |
-| Mushroom Shot | Sporecap, sub Venomer | `spotted` | Its arrows give Nausea for 4 seconds | 10% less arrow damage | Arms: red mushroom caps on the bow arm |
+| Mushroom Shot | Sporecap, sub Venomer | `spotted` | Its arrows give Nausea for 4 seconds | 10% less arrow damage | Arms: red mushroom caps on the bow arm. This changes the model |
 | Regrowth | Sporecap | `shears` | After a shear, its mushrooms grow back after 30 seconds, and it heals 6 health | 25% more fire damage | Skull: small mushrooms in the eye sockets |
 | Rot Mend | Sporecap | `critical` | It heals 1 health each 2 seconds while it stands on mud, moss, or mycelium | 4 less maximum health | Ribs: white threads of fungus between the ribs |
 | Spore Lung | Sporecap | `crowd` | Players in 3 blocks get Nausea each 10 seconds | Players hear it from two times farther | Mouth: spores that drift from the jaw |
@@ -130,12 +130,12 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Rootshot | Vinebound | `unreached` | Each arrow hit roots the target for 1 second | 10% less arrow damage | Arms: roots that coil around the bow arm |
+| Rootshot | Vinebound | `unreached` | Each arrow hit roots the target for 1 second | 10% less arrow damage | Arms: roots that coil around the bow arm. This changes the model |
 | Creeper Vines | Vinebound | `fall` | It climbs walls | 2 less armor | Legs: vines that hang from the legs. This changes the model |
 | Thornwrap | Vinebound | `melee` | A player that hits it in melee takes 2 damage | 10% less speed | Body: thorny vines around the ribs |
 | Snare | Vinebound, sub Mirefolk | `spotted` | A player in 3 blocks is rooted for 1 second, each 10 seconds | 10% less maximum health | Feet: roots that grow from the feet. This changes the model |
 | Mossbed | Vinebound | `fire` | It heals 1 health each 3 seconds out of combat | 50% more fire damage | Shoulders: thick moss. This changes the model |
-| Vine Swing | Vinebound | `fall` | No fall damage | 10% less maximum health | Arms: vines that trail from the hands |
+| Vine Swing | Vinebound | `fall` | No fall damage | 10% less maximum health | Arms: vines that trail from the hands. This changes the model |
 
 ### Mosshide genes
 

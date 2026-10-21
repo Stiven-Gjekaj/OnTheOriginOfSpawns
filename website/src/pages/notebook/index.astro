@@ -258,7 +258,9 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
   .found .f { padding: 2px 6px; border: 1px dashed rgba(58, 42, 26, 0.45); }
   .found a.f { color: var(--ink); font-weight: 400; text-decoration: none; }
   .found a.f:hover { border-style: solid; }
-  .freq-group { margin: var(--s-3) 0 0; font: 600 var(--fs-xs) / 1 var(--font-display); color: var(--fam); text-transform: uppercase; letter-spacing: 0.06em; }
+  /* The family colors are for the dark page, so the paper uses ink with a mark of the color. */
+  .freq-group { display: flex; align-items: center; gap: 6px; margin: var(--s-3) 0 0; font: 600 var(--fs-xs) / 1 var(--font-display); color: var(--ink); text-transform: uppercase; letter-spacing: 0.06em; }
+  .freq-group::before { content: ""; width: 10px; height: 10px; background: var(--fam); border: 1px solid rgba(58, 42, 26, 0.6); }
   .page-turn {
     position: absolute; top: 0; bottom: 0; right: 0; width: 50%; z-index: 4; transform-origin: left center;
     background: linear-gradient(270deg, var(--paper), var(--paper-2)); box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);

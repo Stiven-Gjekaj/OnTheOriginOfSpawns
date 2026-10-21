@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:wither_skeleton/witherlord",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:wither",
+			"radius": 4,
+			"interval_seconds": 5,
+			"seconds": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

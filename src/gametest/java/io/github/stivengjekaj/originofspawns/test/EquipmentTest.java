@@ -97,6 +97,20 @@ public class EquipmentTest {
 	}
 
 	@GameTest
+	public void witherSkeletonsKeepOnlyAPlainStoneSword(GameTestHelper helper) {
+		for (int i = 0; i < 100; i++) {
+			Mob wither = spawned(helper, EntityTypes.WITHER_SKELETON);
+			helper.assertTrue(wither.getMainHandItem().is(Items.STONE_SWORD), "a wither skeleton has its stone sword");
+			helper.assertTrue(wither.getMainHandItem().getEnchantments().isEmpty(), "the sword has no enchantments");
+			for (EquipmentSlot slot : List.of(EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)) {
+				helper.assertTrue(wither.getItemBySlot(slot).isEmpty(), "a wither skeleton wears no " + slot.getName());
+			}
+			wither.discard();
+		}
+		helper.succeed();
+	}
+
+	@GameTest
 	public void spidersCarryNoSkeletons(GameTestHelper helper) {
 		// In vanilla, 1 spider in 100 spawns with a skeleton, so 500 spiders would give about 5.
 		for (int i = 0; i < 500; i++) {

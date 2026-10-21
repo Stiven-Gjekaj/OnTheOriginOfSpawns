@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:wither_skeleton/ashborn",
+	"gains": [
+		{
+			"type": "speed_when",
+			"when": "in_lava",
+			"multiplier": 1.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "speed_when",
+			"when": "out_of_lava",
+			"multiplier": 0.9
+		}
+	]
+}

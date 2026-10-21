@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:wither_skeleton/ashborn",
+	"gains": [
+		{
+			"type": "death_block",
+			"block": "minecraft:fire"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

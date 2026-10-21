@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:wither_skeleton/rampart",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": 6,
+			"operation": "add_value"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.15,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

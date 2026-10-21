@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:wither_skeleton/soul_reaper",
+	"gains": [
+		{
+			"type": "drain_food",
+			"amount": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

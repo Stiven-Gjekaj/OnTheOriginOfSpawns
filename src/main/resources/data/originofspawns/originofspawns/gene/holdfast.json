@@ -1,0 +1,26 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:wither_skeleton/rampart",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:knockback_resistance",
+			"amount": 1,
+			"operation": "add_value"
+		},
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_explosion",
+			"multiplier": 0.6
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

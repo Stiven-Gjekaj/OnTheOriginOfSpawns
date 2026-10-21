@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:wither_skeleton/blademaster",
+	"gains": [
+		{
+			"type": "damage_dealt_when",
+			"when": "hunting_wounded",
+			"multiplier": 1.5,
+			"hits": "melee"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

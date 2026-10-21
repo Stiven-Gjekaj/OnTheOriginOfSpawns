@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:wither_skeleton/blademaster",
+	"gains": [
+		{
+			"type": "parry",
+			"cooldown_seconds": 6
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

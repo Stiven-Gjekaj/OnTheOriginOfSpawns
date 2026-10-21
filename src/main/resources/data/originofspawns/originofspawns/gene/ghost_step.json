@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:wither_skeleton/soul_reaper",
+	"gains": [
+		{
+			"type": "dodge_projectiles",
+			"chance": 0.25
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9,
+			"hits": "melee"
+		}
+	]
+}

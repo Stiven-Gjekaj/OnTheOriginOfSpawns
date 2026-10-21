@@ -1,0 +1,77 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "ignite_target",
+					"chance": 0.25,
+					"seconds": 3,
+					"hits": "melee"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "snowball_damage",
+					"damage": 3
+				},
+				{
+					"type": "water_sensitive"
+				},
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_freezing",
+					"multiplier": 1.75
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "ignite_target",
+					"chance": 0.5,
+					"seconds": 4,
+					"hits": "melee"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "snowball_damage",
+					"damage": 2
+				},
+				{
+					"type": "water_sensitive"
+				},
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_freezing",
+					"multiplier": 1.5
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "ignite_target",
+					"chance": 1,
+					"seconds": 5,
+					"hits": "melee"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "snowball_damage",
+					"damage": 1
+				},
+				{
+					"type": "water_sensitive"
+				},
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_freezing",
+					"multiplier": 1.25
+				}
+			]
+		}
+	]
+}

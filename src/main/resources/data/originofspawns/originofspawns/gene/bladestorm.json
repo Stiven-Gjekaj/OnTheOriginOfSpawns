@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:wither_skeleton/blademaster",
+	"gains": [
+		{
+			"type": "attack_interval",
+			"multiplier": 0.7
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.85,
+			"hits": "melee"
+		}
+	]
+}

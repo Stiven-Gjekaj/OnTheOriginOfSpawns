@@ -1,0 +1,56 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "heal_on_hit",
+					"amount": 1,
+					"hits": "melee"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.25,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "heal_on_hit",
+					"amount": 1.5,
+					"hits": "melee"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "heal_on_hit",
+					"amount": 2,
+					"hits": "melee"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

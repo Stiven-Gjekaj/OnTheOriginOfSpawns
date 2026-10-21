@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:wither_skeleton/witherlord",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:slowness",
+			"seconds": 3,
+			"hits": "melee"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9,
+			"hits": "melee"
+		}
+	]
+}

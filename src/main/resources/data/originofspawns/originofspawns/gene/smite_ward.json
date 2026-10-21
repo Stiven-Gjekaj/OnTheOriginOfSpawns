@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:smite",
+	"family": "originofspawns:wither_skeleton/rampart",
+	"gains": [
+		{
+			"type": "damage_from_enchantment",
+			"enchantment": "minecraft:smite",
+			"multiplier": 0.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

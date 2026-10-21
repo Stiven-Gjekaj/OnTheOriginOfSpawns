@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:wither_skeleton/soul_reaper",
+	"gains": [
+		{
+			"type": "heal_on_ally_death",
+			"amount": 4,
+			"radius": 12
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

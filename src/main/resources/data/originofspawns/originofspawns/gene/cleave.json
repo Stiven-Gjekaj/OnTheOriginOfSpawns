@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:wither_skeleton/blademaster",
+	"gains": [
+		{
+			"type": "cleave",
+			"part": 0.5,
+			"radius": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attack_interval",
+			"multiplier": 1.15
+		}
+	]
+}

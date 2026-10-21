@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:fire",
+	"family": "originofspawns:wither_skeleton/ashborn",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 2,
+			"idle_seconds": 0,
+			"when": "in_fire"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_projectile",
+			"multiplier": 1.25
+		}
+	]
+}

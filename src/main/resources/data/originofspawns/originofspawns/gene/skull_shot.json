@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:wither_skeleton/witherlord",
+	"sub_family": "originofspawns:wither_skeleton/ashborn",
+	"gains": [
+		{
+			"type": "skull_shot",
+			"cooldown_seconds": 10,
+			"min_range": 6,
+			"max_range": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:wither_skeleton/soul_reaper",
+	"gains": [
+		{
+			"type": "speed_when",
+			"when": "on_soul_ground",
+			"multiplier": 1.4
+		}
+	],
+	"downsides": [
+		{
+			"type": "speed_when",
+			"when": "off_soul_ground",
+			"multiplier": 0.9
+		}
+	]
+}

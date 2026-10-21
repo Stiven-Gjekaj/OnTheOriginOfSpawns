@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:wither_skeleton",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:wither_skeleton/soul_reaper",
+	"sub_family": "originofspawns:wither_skeleton/witherlord",
+	"gains": [
+		{
+			"type": "death_spawn",
+			"entity": "minecraft:vex",
+			"life_seconds": 30
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

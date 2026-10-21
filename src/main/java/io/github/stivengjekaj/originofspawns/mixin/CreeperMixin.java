@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 
@@ -70,14 +71,14 @@ public abstract class CreeperMixin {
 	}
 
 	/**
-	 * A silent fuse starts with no hiss.
+	 * A silent fuse starts with no hiss. The game gives the hiss a fixed volume, so a loud creeper changes it here.
 	 */
 	@WrapOperation(method = "tick", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/world/entity/monster/Creeper;playSound(Lnet/minecraft/sounds/SoundEvent;FF)V"))
 	private void originofspawns$fuseSound(Creeper creeper, SoundEvent sound, float volume, float pitch,
 			Operation<Void> original) {
 		if (!GeneCombat.has(creeper, GeneEffect.SilentFuse.class)) {
-			original.call(creeper, sound, volume, pitch);
+			original.call(creeper, sound, volume * GeneBehaviors.volumeMultiplier(creeper), pitch);
 		}
 	}
 

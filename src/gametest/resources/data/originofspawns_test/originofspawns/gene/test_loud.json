@@ -1,5 +1,5 @@
 {
-	"species": "minecraft:zombie",
+	"species": "minecraft:creeper",
 	"counters": "originofspawns_test:test_heat",
 	"family": "originofspawns_test:test",
 	"gains": [{ "type": "loud", "multiplier": 2 }],

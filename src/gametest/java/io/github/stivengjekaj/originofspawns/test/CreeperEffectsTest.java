@@ -37,6 +37,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.animal.pig.Pig;
@@ -325,6 +326,40 @@ public class CreeperEffectsTest {
 		});
 	}
 
+	@GameTest(environment = BLASTS, padding = 24, maxTicks = 20)
+	public void aPlainCreeperHasNormalSounds(GameTestHelper helper) {
+		assertSoundVolumes(helper, 1.0F);
+	}
+
+	@GameTest(environment = BLASTS, padding = 24, maxTicks = 20)
+	public void aLoudCreeperHasLouderStepsAndFuse(GameTestHelper helper) {
+		assertSoundVolumes(helper, 2.0F, "test_loud");
+	}
+
+	/**
+	 * Makes a creeper with the genes walk a step on stone and light its fuse. Then it checks that the step and the
+	 * hiss have the vanilla volume times the multiplier.
+	 */
+	static void assertSoundVolumes(GameTestHelper helper, float multiplier, String... genes) {
+		helper.setBlock(new BlockPos(1, 0, 1), Blocks.STONE);
+		helper.setBlock(new BlockPos(2, 0, 1), Blocks.STONE);
+		helper.setBlock(new BlockPos(3, 0, 1), Blocks.STONE);
+		Listener listener = listener(helper);
+		Creeper creeper = creeperWith(helper, new BlockPos(1, 1, 1), genes);
+		helper.runAfterDelay(2, () -> {
+			// A small move down hits the stone, so the creeper is on the ground and makes a step.
+			creeper.move(MoverType.SELF, new Vec3(2.0, -0.1, 0.0));
+			creeper.ignite();
+		});
+		helper.runAfterDelay(5, () -> {
+			// The stone has a volume of 1, and the game plays a step at 0.15 of it.
+			helper.assertValueEqual(listener.volumeOf(SoundEvents.STONE_STEP), 0.15F * multiplier, "the step");
+			helper.assertValueEqual(listener.volumeOf(SoundEvents.CREEPER_PRIMED), multiplier, "the hiss");
+			creeper.discard();
+			helper.succeed();
+		});
+	}
+
 	/**
 	 * Lights the fuse of the creeper with the flint and steel of a second player, as a player does.
 	 */
@@ -343,15 +378,24 @@ public class CreeperEffectsTest {
 		 * Returns true if the server sent this sound to the player.
 		 */
 		boolean heard(SoundEvent sound) {
+			return volumeOf(sound) >= 0.0F;
+		}
+
+		/**
+		 * Returns the volume of the last time that the server sent this sound to the player, or -1.
+		 */
+		float volumeOf(SoundEvent sound) {
 			Object packet;
-			boolean heard = false;
+			float volume = -1.0F;
 			java.util.List<Object> kept = new java.util.ArrayList<>();
 			while ((packet = channel.readOutbound()) != null) {
 				kept.add(packet);
-				heard |= packet instanceof ClientboundSoundPacket soundPacket && soundPacket.getSound().value() == sound;
+				if (packet instanceof ClientboundSoundPacket soundPacket && soundPacket.getSound().value() == sound) {
+					volume = soundPacket.getVolume();
+				}
 			}
 			kept.forEach(channel::writeOutbound);
-			return heard;
+			return volume;
 		}
 	}
 

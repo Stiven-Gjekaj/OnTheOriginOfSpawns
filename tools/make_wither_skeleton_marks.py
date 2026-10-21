@@ -83,8 +83,9 @@ Pixel plan for the Soul Reapers.
   soulstride_flames, which glows.
 - Soul Link: a blue soul flame in the rib cage, the gene model
   soul_link_flame, which glows.
-- Vengeful Spirit has a blue wisp that curls over the top of the skull,
-  and down the sides of the head to row 9.
+- Vengeful Spirit: a small, pale blue ghost that curls up from the back
+  and over the right shoulder, the gene model vengeful_spirit_ghost, which
+  glows.
 - Soul Hunger has soul blue light in the eye sockets (y 12) and in the
   gaps of the teeth (y 14), and thin blue cracks from the eyes across the
   brow and over the top of the skull.
@@ -728,21 +729,48 @@ def soul_link_model():
 
 
 def vengeful_spirit():
-    # A blue wisp over the skull: a curl of pale soul blue that winds over
-    # the top of the head, with a bright head and a fading tail, and two
-    # strands that come down the sides of the head to row 9.
-    wisp = Mark(SOUL[0])
-    bright = Mark(SOUL[1])
-    tail = Mark(SOUL[2], alpha=200)
-    for p in ((9, 6), (10, 5), (11, 4), (12, 4), (13, 5), (13, 6), (12, 7), (11, 6)):
-        wisp.put(p)
-    bright.put((9, 6)).put((10, 6))
-    for p in ((14, 3), (14, 2), (13, 1), (12, 1), (11, 2)):
-        tail.put(p)
-    for x in (2, 5, 18, 21, 26, 29):
-        wisp.put((x, 8))
-        tail.put((x, 9))
-    return [wisp, bright, tail]
+    # The spirit is the gene model vengeful_spirit_ghost.
+    return []
+
+
+GHOST = ("#C8F0FF", "#8AD0F0", "#4A9AC8", "#0E2A3A")
+
+
+def vengeful_spirit_model():
+    # A small, pale blue ghost, as a vex, that curls up from the back and
+    # over the right shoulder: a tail that starts on the back of the ribs,
+    # a body that rises behind the shoulder, and a head with dark eyes that
+    # looks forward over the shoulder, with two small arms. All the parts
+    # touch, and the tail lies on the back, so nothing floats. It glows.
+    # It is over the right shoulder, as the left shoulder has the Skull Shot
+    # skull. On the body bone, the back is at z 2, the head is from x -4 to
+    # 4 and from y -8 to 0, and the right arm is from x -6 to -4.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def body(face, x, y):
+        return GHOST[0] if face == "top" or y == 0 else GHOST[1] if (x + y) % 3 else GHOST[2]
+
+    def head(face, x, y):
+        if face == "front" and y == 1 and x in (0, 2):
+            return GHOST[3]
+        return GHOST[0] if face in ("top", "front") else GHOST[1]
+
+    # A tail part: 2x3x1 at uv (0, 0). The body: 2x3x2 at uv (8, 0). The
+    # head: 3x3x3 at uv (0, 6). An arm: 0x2x1 at uv (16, 0).
+    paint_box(im, 0, 0, 2, 3, 1, body)
+    paint_box(im, 8, 0, 2, 3, 2, body)
+    paint_box(im, 0, 6, 3, 3, 3, head)
+    paint_box(im, 16, 0, 0, 2, 1, lambda face, x, y: GHOST[1])
+    glow = {"glow": True}
+    parts = [
+        dict({"bone": "body", "uv": [0, 0], "from": [-2, 4, 2], "size": [2, 3, 1]}, **glow),
+        dict({"bone": "body", "uv": [0, 0], "from": [-3.5, 1.5, 2.2], "size": [2, 3, 1]}, **glow),
+        dict({"bone": "body", "uv": [8, 0], "from": [-5, -1.5, 1.5], "size": [2, 3, 2]}, **glow),
+        dict({"bone": "body", "uv": [0, 6], "from": [-7, -4.5, -0.5], "size": [3, 3, 3]}, **glow),
+        dict({"bone": "body", "uv": [16, 0], "from": [-7.1, -1.5, -0.2], "size": [0, 2, 1]}, **glow),
+        dict({"bone": "body", "uv": [16, 0], "from": [-3.9, -1.5, -0.2], "size": [0, 2, 1]}, **glow),
+    ]
+    save_model("vengeful_spirit_ghost", im, parts)
 
 
 def soul_hunger():
@@ -841,11 +869,12 @@ MODELS = {
     "brickshield": "originofspawns:brickshield_shield",
     "soulstride": "originofspawns:soulstride_flames",
     "soul_link": "originofspawns:soul_link_flame",
+    "vengeful_spirit": "originofspawns:vengeful_spirit_ghost",
 }
 
 MODEL_MAKERS = [duelist_model, parry_model, executioner_model, cinderblade_model, pyre_model, ember_eyes_model,
                 skull_shot_model, brickplate_model, holdfast_model, sentinel_model, brickshield_model,
-                soulstride_model, soul_link_model]
+                soulstride_model, soul_link_model, vengeful_spirit_model]
 
 
 def main():

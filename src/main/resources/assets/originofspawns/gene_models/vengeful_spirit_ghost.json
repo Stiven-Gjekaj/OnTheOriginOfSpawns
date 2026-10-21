@@ -1,0 +1,115 @@
+{
+	"texture": "originofspawns:textures/entity/vengeful_spirit_ghost.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2,
+				4,
+				2
+			],
+			"size": [
+				2,
+				3,
+				1
+			],
+			"glow": true
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.5,
+				1.5,
+				2.2
+			],
+			"size": [
+				2,
+				3,
+				1
+			],
+			"glow": true
+		},
+		{
+			"bone": "body",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				-5,
+				-1.5,
+				1.5
+			],
+			"size": [
+				2,
+				3,
+				2
+			],
+			"glow": true
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				6
+			],
+			"from": [
+				-7,
+				-4.5,
+				-0.5
+			],
+			"size": [
+				3,
+				3,
+				3
+			],
+			"glow": true
+		},
+		{
+			"bone": "body",
+			"uv": [
+				16,
+				0
+			],
+			"from": [
+				-7.1,
+				-1.5,
+				-0.2
+			],
+			"size": [
+				0,
+				2,
+				1
+			],
+			"glow": true
+		},
+		{
+			"bone": "body",
+			"uv": [
+				16,
+				0
+			],
+			"from": [
+				-3.9,
+				-1.5,
+				-0.2
+			],
+			"size": [
+				0,
+				2,
+				1
+			],
+			"glow": true
+		}
+	]
+}

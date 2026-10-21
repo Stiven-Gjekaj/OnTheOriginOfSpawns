@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/decay_touch_0.png",
+				"tint": "#050505"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/decay_touch_1.png",
+				"tint": "#8A9078"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/decay_touch_2.png",
+				"tint": "#4E6038"
+			}
+		}
+	]
+}

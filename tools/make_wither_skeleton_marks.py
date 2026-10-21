@@ -49,6 +49,22 @@ Pixel plan for the Ashborn.
   up the sides and the back of the head (y 10 to 15).
 - Ember Eyes has orange flames in the eye sockets, and the gene model
   ember_eyes_flames makes them glow.
+
+Pixel plan for the Witherlords.
+- Deep Wither has black veins with pale violet edges that spread from the
+  joints: down from the shoulders and the hips (rows 0 to 3), and out from
+  the elbows and the knees (rows 4 to 7), on the outer, the front, and the
+  back faces.
+- Wither Aura has black dust with pale ash edges that falls from the ribs:
+  under the front ribs, on the spine, on the pelvis, and down the thighs.
+- Decay Touch has black, rotten fingers: arm rows 10 and 11 and the bottom
+  of the arm are black, with a pale, sick edge on row 9.
+- Skull Shot: a small wither skull on the left shoulder, the gene model
+  skull_shot_skull.
+- Black Rot has wide blotches of black rot with pale rims in the ribs of
+  the front and the back (y 22 to 24).
+- Grave Chill has frost in the eye sockets: pale blue sockets with white
+  frost round them (y 11 and 13).
 This script needs Pillow.
 """
 import json
@@ -367,6 +383,119 @@ def ember_eyes_model():
               "glow": True} for (x, y), color in EYE_PIXELS]
     save_model("ember_eyes_flames", im, parts)
 
+
+ROT = ("#050505", "#9A9080", "#6A645A")
+
+
+def deep_wither():
+    # Black veins that spread from the joints: lines of deep black that
+    # run down from the shoulders and the hips (rows 0 to 3) and out from
+    # the elbows and the knees (rows 4 to 7), on the outer, the front, and
+    # the back faces. Each vein has a pale violet edge beside it, the color
+    # of the wither, so that it reads on the black bone.
+    vein = Mark(ROT[0])
+    edge = Mark("#8A7A96")
+    for at in (arm, leg):
+        for face in (OUTER, FRONT, BACK):
+            for row, col in ((0, 0), (1, 0), (2, 1), (3, 1), (5, 0), (6, 1), (7, 1)):
+                vein.put(at(face, col, row))
+                edge.put(at(face, 1 - col, row))
+    return [vein, edge]
+
+
+def wither_aura():
+    # Black dust that falls from the ribs: specks of black dust, each with a
+    # pale ash edge under it, under the ribs of the front (y 25 and 26), on
+    # the spine (x 35 and 36, y 25 to 29), on the pelvis (y 30 and 31), and
+    # down the thighs (leg rows 0 to 5), fewer as they fall.
+    dust = Mark(ROT[0])
+    ash = Mark("#A8A29A")
+    for x, y in ((21, 25), (23, 25), (26, 25), (22, 26), (25, 26), (35, 25), (36, 27), (35, 28),
+                 (17, 30), (20, 30), (24, 30), (27, 30), (30, 30), (33, 30), (38, 30)):
+        dust.put((x, y))
+        ash.put((x, y + 1))
+    for face in SIDES:
+        for row, col in ((0, 0), (2, 1), (4, 0)):
+            c = (col + face // 2) % 2
+            dust.put(leg(face, c, row))
+            ash.put(leg(face, c, row + 1))
+    return [dust, ash]
+
+
+def decay_touch():
+    # Black, rotten fingers: the fingers and the hands (arm rows 10 and 11,
+    # and the bottom of the arm) are a dead black, with a pale, sick
+    # gray-green edge where the rot ends (row 9), and spots of green rot.
+    black = Mark(ROT[0])
+    sick = Mark("#8A9078")
+    spot = Mark("#4E6038")
+    for face in SIDES:
+        for col in (0, 1):
+            black.put(arm(face, col, 11))
+            (spot if col == face // 2 % 2 else black).put(arm(face, col, 10))
+            sick.put(arm(face, col, 9))
+    for x in (44, 45):
+        for y in (16, 17):
+            black.put((x, y))
+    return [black, sick, spot]
+
+
+def skull_shot():
+    # The skull is the gene model skull_shot_skull.
+    return []
+
+
+def skull_shot_model():
+    # A small wither skull on the left shoulder, the shoulder that does not
+    # hold the sword: a dark gray skull with a paler rim, two black eye
+    # holes, and a black mouth. It sits on the top of the left arm, clear
+    # of the head. On the left arm bone, the top of the arm is at y -2, and
+    # the head is at x -5.5 and less.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def skull(face, x, y):
+        if face == "front":
+            if y == 1 and x in (0, 2) or y == 3 and x in (1, 2):
+                return "#050505"
+            return "#5E5E5E" if y == 0 else "#3A3A3A"
+        if face == "top":
+            return "#4A4A4A"
+        return "#5E5E5E" if y == 0 or x in (0, 3) else "#2E2E2E"
+
+    # The skull: 4x4x4 at uv (0, 0).
+    paint_box(im, 0, 0, 4, 4, 4, skull)
+    parts = [{"bone": "left_arm", "uv": [0, 0], "from": [-0.5, -6, -2], "size": [4, 4, 4]}]
+    save_model("skull_shot_skull", im, parts)
+
+
+def black_rot():
+    # Black rot in the ribs: wide blotches of deep black on the ribs of the
+    # front and the back (y 22 to 24), each with a pale, dead rim on the
+    # bone round it, so that the rot reads on the black bone.
+    rot = Mark(ROT[0])
+    rim = Mark(ROT[1])
+    blotches = ((21, 22), (22, 22), (22, 23), (25, 24), (26, 24), (26, 23),
+                (33, 22), (34, 22), (37, 24), (38, 24), (38, 22))
+    for p in blotches:
+        rot.put(p)
+    for x, y in blotches:
+        for n in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)):
+            if n not in blotches and 20 <= n[0] < 40 and 22 <= n[1] <= 24:
+                rim.put(n)
+    return [rot, rim]
+
+
+def grave_chill():
+    # Frost in the eye sockets: the sockets are a pale, icy blue, and white
+    # frost grows round them (y 11 and 13), more on the outer side.
+    ice = Mark("#A8D8F0")
+    frost = Mark("#EEF8FF")
+    for outer, inner in ((9, 10), (14, 13)):
+        ice.put((outer, 12)).put((inner, 12))
+        frost.put((outer, 11)).put((outer, 13)).put((inner, 13), 220)
+    frost.put((8, 12)).put((15, 12))
+    return [ice, frost]
+
 GENES = {
     "duelist": duelist,
     "parry": parry,
@@ -380,6 +509,12 @@ GENES = {
     "cauterize": cauterize,
     "smoke_screen": smoke_screen,
     "ember_eyes": ember_eyes,
+    "deep_wither": deep_wither,
+    "wither_aura": wither_aura,
+    "decay_touch": decay_touch,
+    "skull_shot": skull_shot,
+    "black_rot": black_rot,
+    "grave_chill": grave_chill,
 }
 
 MODELS = {
@@ -389,9 +524,11 @@ MODELS = {
     "cinderblade": "originofspawns:cinderblade_embers",
     "pyre": "originofspawns:pyre_coals",
     "ember_eyes": "originofspawns:ember_eyes_flames",
+    "skull_shot": "originofspawns:skull_shot_skull",
 }
 
-MODEL_MAKERS = [duelist_model, parry_model, executioner_model, cinderblade_model, pyre_model, ember_eyes_model]
+MODEL_MAKERS = [duelist_model, parry_model, executioner_model, cinderblade_model, pyre_model, ember_eyes_model,
+                skull_shot_model]
 
 
 def main():

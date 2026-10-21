@@ -6,7 +6,8 @@
 		{
 			"type": "effect_on_hurt",
 			"effect": "minecraft:poison",
-			"seconds": 3
+			"seconds": 3,
+			"hits": "melee"
 		}
 	],
 	"downsides": [

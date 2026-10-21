@@ -121,6 +121,20 @@ public class BoggedEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void aMeleeOnlyHurtEffectSkipsArrows(GameTestHelper helper) {
+		Bogged bogged = boggedWith(helper, new BlockPos(1, 1, 1), "test_rotting_touch");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 1));
+		var skeleton = helper.spawnWithNoFreeWill(EntityTypes.SKELETON, new BlockPos(1, 1, 4));
+		var arrow = new net.minecraft.world.entity.projectile.arrow.Arrow(helper.getLevel(), skeleton,
+				new ItemStack(Items.ARROW), null);
+		GeneCombat.onHurt(bogged, helper.getLevel().damageSources().arrow(arrow, skeleton));
+		helper.assertFalse(skeleton.hasEffect(net.minecraft.world.effect.MobEffects.POISON), "an arrow gives no Poison");
+		GeneCombat.onHurt(bogged, helper.getLevel().damageSources().mobAttack(pig));
+		helper.assertTrue(pig.hasEffect(net.minecraft.world.effect.MobEffects.POISON), "a melee hit gives Poison");
+		helper.succeed();
+	}
+
 	private static void biome(GameTestHelper helper, String biome) {
 		BlockPos from = helper.absolutePos(new BlockPos(0, 0, 0));
 		BlockPos to = helper.absolutePos(new BlockPos(5, 4, 5));

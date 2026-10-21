@@ -71,6 +71,20 @@ Pixel plan for the Drifters.
   top of the hood.
 - Driftline: a pole with a torn banner on the back, the gene model
   driftline_banner.
+
+Pixel plan for the Frostbiters.
+- Frostbite has black fingers: arm row 11 and the bottom of the arm, with
+  a dark blue bruise on row 10.
+- Icicle: icicles that hang from the jaw, the gene model icicle_spikes.
+- Numbing Shot has blue veins of frost on the front face of the forearms:
+  arm rows 4 to 9.
+- Coldsnap: a crust of frost on the right hand, the hand that holds the
+  bow, the gene model coldsnap_frost.
+- Rimefall has a lump of packed snow at the pelvis: the front of the
+  pelvis (y 28 to 31) on the bone and on the lower edge of the cloth.
+- Brittle Shot shows the ribs on the back and the sides of the chest:
+  slits in the cloth at the ribs (y 22 and 24), with ice in the cracks of
+  the ribs.
 This script needs Pillow.
 """
 import json
@@ -598,6 +612,114 @@ def driftline_model():
     ]
     save_model("driftline_banner", im, parts)
 
+
+def frostbite():
+    # Black, frostbitten fingertips: the fingers (arm row 11, and the
+    # bottom of the arm) are black, and a dark blue bruise is on row 10.
+    black = Mark("#1A1820")
+    bruise = Mark("#3E3A66")
+    for face in SIDES:
+        for col in (0, 1):
+            black.put(arm(face, col, 11))
+            bruise.put(arm(face, col, 10), 235 if (col + face // 2) % 2 else 255)
+    for x in (44, 45):
+        for y in (16, 17):
+            black.put((x, y))
+    return [black, bruise]
+
+
+def icicle():
+    # The icicles are the gene model icicle_spikes.
+    return []
+
+
+def icicle_model():
+    # Icicles that hang from the jaw: a row of thin spikes of ice of
+    # different lengths under the front of the skull. On the head bone, the
+    # bottom of the head is at y 0, and the face is at z -4.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def spike(face, x, y):
+        return ICE[0] if face in ("front", "right") and y == 0 else ICE[1] if y < 2 else ICE[2]
+
+    # An icicle: 1x3x1 at uv (0, 0).
+    paint_box(im, 0, 0, 1, 3, 1, spike)
+    parts = []
+    for x, length in ((-3.5, 2), (-1.5, 3), (0.5, 2), (2.5, 3)):
+        parts.append({"bone": "head", "uv": [0, 0], "from": [x, 0, -4], "size": [1, length, 1]})
+    save_model("icicle_spikes", im, parts)
+
+
+def numbing_shot():
+    # Blue veins of frost on the front of the forearms: a deep blue vein
+    # that runs down the front face from row 4 to the wrist (row 9), with
+    # pale blue branches beside it.
+    vein = Mark("#2E64B4")
+    branch = Mark("#7AB8F0")
+    for row, col in ((4, 0), (5, 0), (6, 1), (7, 1), (8, 0), (9, 0)):
+        vein.put(arm(FRONT, col, row))
+        branch.put(arm(FRONT, 1 - col, row + 1), 230) if row % 3 == 0 else None
+    branch.put(arm(FRONT, 1, 9))
+    return [vein, branch]
+
+
+def coldsnap():
+    # The frost is the gene model coldsnap_frost.
+    return []
+
+
+def coldsnap_model():
+    # A crust of frost on the right hand, the hand that holds the bow: a
+    # shell of white and blue frost round the hand (rows 9 to 11), and two
+    # small crystals on the knuckles. On the right arm bone, row r is at y
+    # r - 2, and the arm is from x -1 to 1.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def crust(face, x, y):
+        return RIME[0] if (x + y) % 3 == 0 else ICE[1] if (x + y) % 3 == 1 else ICE[0]
+
+    # The crust: 2x3x2 at uv (0, 0). A crystal: 1x1x1 at uv (12, 0).
+    paint_box(im, 0, 0, 2, 3, 2, crust)
+    paint_box(im, 12, 0, 1, 1, 1, lambda face, x, y: ICE[2] if face == "bottom" else ICE[0])
+    parts = [
+        {"bone": "right_arm", "uv": [0, 0], "from": [-1, 7, -1], "size": [2, 3, 2], "inflate": 0.35},
+        {"bone": "right_arm", "uv": [12, 0], "from": [-1.8, 8, -1.8], "size": [1, 1, 1]},
+        {"bone": "right_arm", "uv": [12, 0], "from": [0.8, 9, -1.8], "size": [1, 1, 1]},
+    ]
+    save_model("coldsnap_frost", im, parts)
+
+
+def rimefall():
+    # A lump of packed snow at the pelvis: snow on the front of the pelvis
+    # (y 30 and 31) and on its sides, and a lump of snow on the lower edge
+    # of the cloth over it (y 28 and 29), so that it reads as one lump.
+    snow = Mark(SNOW[0])
+    shade = Mark(SNOW[1])
+    for x in range(20, 28):
+        snow.put((x, 30))
+        (shade if x in (20, 27) else snow).put((x, 31))
+    for x in (17, 18, 29, 30):
+        shade.put((x, 30))
+    cloth_snow = Mark(SNOW[0], target="outer")
+    cloth_shade = Mark(SNOW[2], target="outer")
+    for x in range(21, 27):
+        cloth_snow.put((x, 29))
+        (cloth_shade if x in (21, 26) else cloth_snow).put((x, 28))
+    return [snow, shade, cloth_snow, cloth_shade]
+
+
+def brittle_shot():
+    # The ribs show on the back and the sides of the chest, through long
+    # slits in the cloth at the ribs (y 22 and 24). The ribs have dark
+    # cracks with ice in them.
+    sides = [x for x in range(16, 40) if not 20 <= x < 28]
+    holes = [(x, y) for x in sides for y in (22, 24)]
+    crack = Mark("#2E3A48")
+    ice = Mark(ICE[1])
+    for x, y in holes:
+        (crack if (x + y // 2) % 2 else ice).put((x, y))
+    return [erase("brittle_shot", "holes", holes, target="outer"), crack, ice]
+
 GENES = {
     "iceplate": iceplate,
     "permafrost": permafrost,
@@ -617,6 +739,12 @@ GENES = {
     "avalanche": avalanche,
     "snowburrow": snowburrow,
     "driftline": driftline,
+    "frostbite": frostbite,
+    "icicle": icicle,
+    "numbing_shot": numbing_shot,
+    "coldsnap": coldsnap,
+    "rimefall": rimefall,
+    "brittle_shot": brittle_shot,
 }
 
 MODELS = {
@@ -629,10 +757,13 @@ MODELS = {
     "snowshoe": "originofspawns:snowshoe_shoes",
     "iceskate": "originofspawns:iceskate_blades",
     "driftline": "originofspawns:driftline_banner",
+    "icicle": "originofspawns:icicle_spikes",
+    "coldsnap": "originofspawns:coldsnap_frost",
 }
 
 MODEL_MAKERS = [iceplate_model, shatterhide_model, glacial_wall_model, icebound_model, hailshot_model,
-                gale_model, snowshoe_model, iceskate_model, driftline_model]
+                gale_model, snowshoe_model, iceskate_model, driftline_model,
+                icicle_model, coldsnap_model]
 
 
 def changed_pixels(visual):

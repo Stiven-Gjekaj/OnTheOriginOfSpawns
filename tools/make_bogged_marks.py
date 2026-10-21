@@ -68,8 +68,8 @@ Pixel plan for the Venomers.
 - Venom Gland: a green sac under the jaw, the gene model venom_gland_sac.
 - Toxic Tip has bright green finger tips: arm row 11 and the bottom of the
   arm.
-- Bile Shot has yellow stains on the lower ribs of the front (x 20 to 27,
-  y 24 to 27).
+- Bile Shot has large, yellow-green stains on the front of the ribs (x 20
+  to 27, y 23 to 25), with drips down to y 29.
 - Rotting Touch has green rot in the joints: the shoulders and the hips
   (row 0), the elbows (arm row 5), and the knees (leg rows 4 and 5).
 - Antivenom has a bright green light in the eyes of the outer face, and

@@ -64,6 +64,8 @@ public class GeneModelLayer<S extends HumanoidRenderState, M extends HumanoidMod
 	private void submit(PoseStack poseStack, SubmitNodeCollector collector, GeneModel.Bone bone, ModelPart part,
 			Identifier texture, int light, int overlay, boolean baby) {
 		poseStack.pushPose();
+		// The root of some models has its own pose. The wither skeleton has a root that is 1.2 times larger.
+		getParentModel().root().translateAndRotate(poseStack);
 		bone(bone).translateAndRotate(poseStack);
 		if (baby) {
 			// The parts are in adult bone coordinates. This moves and scales them onto the smaller baby bone.

@@ -21,7 +21,8 @@ import net.minecraft.world.phys.Vec3;
 /**
  * Shows skeletons with genes, and checks that the skeleton species get the textures with the gene marks. From left
  * to right: a plain skeleton, a skeleton with Venomtip and High Ground, a skeleton with Barrage and Soulfire, a
- * stray with Venomtip and gray cloth, and a wither skeleton with Venomtip. A bogged with Venomtip and gray cloth
+ * stray with Venomtip and gray cloth, and a wither skeleton with the Executioner hood and Ember Eyes. The gene models
+ * of the wither skeleton must grow with its larger body. A bogged with Venomtip and gray cloth
  * stands at the far left.
  */
 public class SkeletonGenesClientTest implements FabricClientGameTest {
@@ -44,7 +45,7 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 				spawn(player, EntityTypes.SKELETON, front, List.of(gene("barrage"), gene("soulfire")));
 				spawn(player, EntityTypes.STRAY, front.add(-1.2, 0.0, 0.0), List.of(gene("venomtip"),
 						Identifier.fromNamespaceAndPath("originofspawns_test", "test_cloth_dye")));
-				spawn(player, EntityTypes.WITHER_SKELETON, front.add(-2.6, 0.0, 0.4), List.of(gene("venomtip")));
+				spawn(player, EntityTypes.WITHER_SKELETON, front.add(-2.6, 0.0, 0.4), List.of(gene("executioner"), gene("ember_eyes")));
 				spawn(player, EntityTypes.BOGGED, front.add(3.6, 0.0, 0.4), List.of(gene("venomtip"),
 						Identifier.fromNamespaceAndPath("originofspawns_test", "test_cloth_dye")));
 			});

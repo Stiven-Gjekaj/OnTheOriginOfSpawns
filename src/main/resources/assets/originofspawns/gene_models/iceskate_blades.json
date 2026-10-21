@@ -1,0 +1,113 @@
+{
+	"texture": "originofspawns:textures/entity/iceskate_blades.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				11,
+				-3.5
+			],
+			"size": [
+				1,
+				1,
+				7
+			],
+			"inflate": 0.05
+		},
+		{
+			"bone": "right_leg",
+			"uv": [
+				18,
+				0
+			],
+			"from": [
+				-0.5,
+				9.5,
+				-4.4
+			],
+			"size": [
+				1,
+				2,
+				1
+			]
+		},
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-0.5,
+				10,
+				-1
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"inflate": 0.3
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				11,
+				-3.5
+			],
+			"size": [
+				1,
+				1,
+				7
+			],
+			"inflate": 0.05
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				18,
+				0
+			],
+			"from": [
+				-0.5,
+				9.5,
+				-4.4
+			],
+			"size": [
+				1,
+				2,
+				1
+			]
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-0.5,
+				10,
+				-1
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"inflate": 0.3
+		}
+	]
+}

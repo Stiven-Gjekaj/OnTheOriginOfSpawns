@@ -56,6 +56,21 @@ Pixel plan for the Blizzards.
   front of the bottom of the head.
 - Stormborn has a cap of packed snow on the cloth of the head: the top,
   and row 8 of each side, with drips on row 9.
+
+Pixel plan for the Drifters.
+- Snowshoe: a wide snowshoe of bone and hide under each foot, the gene
+  model snowshoe_shoes.
+- Iceskate: a bone blade under each foot, the gene model iceskate_blades.
+- Pathfinder has a band of pale rag over the eyes: face rows 11 to 13, with a
+  hole at the left eye (x 13 and 14), and the same band on the cloth of
+  the sides and the back of the head, with a knot at the back.
+- Avalanche has snow packed on the shins: leg rows 8 to 11, and the lower
+  edge of the leg cloth (y 25 to 27).
+- Snowburrow has snow on the cloth of the shoulders (the top of the body,
+  the tops of the sleeves, and their top row) and patches of snow on the
+  top of the hood.
+- Driftline: a pole with a torn banner on the back, the gene model
+  driftline_banner.
 This script needs Pillow.
 """
 import json
@@ -419,6 +434,170 @@ def stormborn():
             shade.put((x, 9))
     return [snow, shade]
 
+
+HIDE = ("#8A7458", "#6E5A42")
+
+
+def snowshoe():
+    # The snowshoes are the gene model snowshoe_shoes.
+    return []
+
+
+def snowshoe_model():
+    # A wide snowshoe under each foot: a frame of bone with round corners
+    # and a web of hide in it, and a strap of hide over the foot. On a leg
+    # bone, the foot is from x -1 to 1 and from z -1 to 1, and the ground
+    # is at y 12.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def shoe(face, x, y):
+        if face in ("top", "bottom"):
+            if (x in (0, 3)) and (y in (0, 5)):
+                return None
+            if x in (0, 3) or y in (0, 5):
+                return "#E2E4DC"
+            return HIDE[0] if (x + y) % 2 else HIDE[1]
+        return "#C8CCC2"
+
+    # The shoe: 4x1x6 at uv (0, 0). The strap: 2x1x2 at uv (0, 10).
+    paint_box(im, 0, 0, 4, 1, 6, shoe)
+    paint_box(im, 0, 10, 2, 1, 2, lambda face, x, y: HIDE[1])
+    parts = []
+    for bone in ("right_leg", "left_leg"):
+        parts.append({"bone": bone, "uv": [0, 0], "from": [-2, 11, -3], "size": [4, 1, 6]})
+        parts.append({"bone": bone, "uv": [0, 10], "from": [-1, 10, -1], "size": [2, 1, 2], "inflate": 0.3})
+    save_model("snowshoe_shoes", im, parts)
+
+
+def iceskate():
+    # The blades are the gene model iceskate_blades.
+    return []
+
+
+def iceskate_model():
+    # A thin blade of bone under each foot, longer than the foot, with a
+    # curl at its front tip, and a strut that holds it to the foot. On a
+    # leg bone, the foot is from z -1 to 1, and the ground is at y 12.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def blade(face, x, y):
+        return "#E8E4D8" if face == "top" else "#A8A496" if face != "bottom" else "#7E7A6E"
+
+    # The blade: 1x1x7 at uv (0, 0). The curl: 1x2x1 at uv (18, 0). The
+    # strut: 1x1x2 at uv (0, 8).
+    paint_box(im, 0, 0, 1, 1, 7, blade)
+    paint_box(im, 18, 0, 1, 2, 1, lambda face, x, y: "#A8A496")
+    paint_box(im, 0, 8, 1, 1, 2, lambda face, x, y: "#6E6452")
+    parts = []
+    for bone in ("right_leg", "left_leg"):
+        parts.append({"bone": bone, "uv": [0, 0], "from": [-0.5, 11, -3.5], "size": [1, 1, 7], "inflate": 0.05})
+        parts.append({"bone": bone, "uv": [18, 0], "from": [-0.5, 9.5, -4.4], "size": [1, 2, 1]})
+        parts.append({"bone": bone, "uv": [0, 8], "from": [-0.5, 10, -1], "size": [1, 1, 2], "inflate": 0.3})
+    save_model("iceskate_blades", im, parts)
+
+
+def pathfinder():
+    # A band of pale rag over the eyes: face rows 11 to 13, with one hole at
+    # the left eye (x 13 and 14 of row 12), so that one eye looks out. The
+    # band goes on round the cloth of the head (rows 11 to 13 of the sides
+    # and the back), with a knot and two loose ends at the back.
+    band = Mark("#B8AE98")
+    edge = Mark("#6E6452")
+    for x in range(8, 16):
+        edge.put((x, 11))
+        band.put((x, 13))
+        if x not in (13, 14):
+            band.put((x, 12))
+    wrap = Mark("#B8AE98", target="outer")
+    light = Mark("#6E6452", target="outer")
+    for x in list(range(0, 8)) + list(range(16, 32)):
+        light.put((x, 11))
+        wrap.put((x, 12)).put((x, 13))
+    knot = Mark("#8E846E", target="outer")
+    knot.put((27, 12)).put((28, 12)).put((27, 13)).put((28, 13))
+    knot.put((26, 14)).put((29, 14)).put((26, 15)).put((29, 15), 220)
+    return [band, edge, wrap, light, knot]
+
+
+def avalanche():
+    # Snow packed on the shins: a thick band of snow on leg rows 8 to 11 of
+    # all the faces, with a gray shade on its top row. The snow goes on up
+    # the lower edge of the leg cloth (rows 5 to 7), so that it reads from
+    # far away.
+    snow = Mark(SNOW[0])
+    shade = Mark(SNOW[1])
+    for face in SIDES:
+        for col in (0, 1):
+            shade.put(leg(face, col, 8))
+            for row in (9, 10, 11):
+                snow.put(leg(face, col, row))
+    cloth_snow = Mark(SNOW[0], target="outer")
+    cloth_shade = Mark(SNOW[1], target="outer")
+    for x in range(0, 16):
+        cloth_shade.put((x, 25))
+        cloth_snow.put((x, 26)).put((x, 27))
+    return [snow, shade, cloth_snow, cloth_shade]
+
+
+def snowburrow():
+    # Snow on the shoulders and the skull, as if it just rose out of the
+    # snow: snow on the top of the body, on the tops of the sleeves and
+    # their top row, and patches of snow on the top of the hood.
+    snow = Mark(SNOW[0], target="outer")
+    shade = Mark(SNOW[1], target="outer")
+    for x in range(20, 28):
+        for y in range(16, 20):
+            snow.put((x, y))
+    for x in range(44, 52):
+        for y in range(16, 20):
+            snow.put((x, y))
+    for x in range(40, 56):
+        (shade if x % 3 == 0 else snow).put((x, 20))
+    for x in range(16, 40):
+        if x % 4 == 1:
+            shade.put((x, 20))
+    for x in range(8, 16):
+        for y in range(0, 8):
+            if noise100(x // 2, y // 2, 251) < 45:
+                snow.put((x, y))
+    return [snow, shade]
+
+
+def driftline():
+    # The banner is the gene model driftline_banner.
+    return []
+
+
+def driftline_model():
+    # A tall pole on the back, with a torn banner high over the head. The
+    # pole lies on the cloth of the back (z 2.25) from the waist up, and a
+    # bar at its top holds the banner. The banner is pale blue cloth with a
+    # dark stripe, and its lower edge is torn. On the body bone, the top of
+    # the head is at y -8.
+    im = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+
+    def pole(face, x, y):
+        return "#7A6A52" if face in ("front", "back") and y % 5 else "#5E5040"
+
+    def banner(face, x, y):
+        if face not in ("front", "back"):
+            return None
+        if y == 4 and x % 2 == 0 or y == 3 and x == 1:
+            return None
+        return "#3E5A6E" if y == 1 else "#B4C8D4" if (x + y) % 4 else "#9CB2C0"
+
+    # The pole: 1x23x1 at uv (0, 0). The bar: 5x1x1 at uv (4, 0). The
+    # banner: 4x5x0 at uv (4, 4).
+    paint_box(im, 0, 0, 1, 23, 1, pole)
+    paint_box(im, 4, 0, 5, 1, 1, lambda face, x, y: "#5E5040")
+    paint_box(im, 4, 4, 4, 5, 0, banner)
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [2, -14, 2.3], "size": [1, 23, 1]},
+        {"bone": "body", "uv": [4, 0], "from": [-2, -14, 2.3], "size": [5, 1, 1]},
+        {"bone": "body", "uv": [4, 4], "from": [-2, -13, 2.8], "size": [4, 5, 0]},
+    ]
+    save_model("driftline_banner", im, parts)
+
 GENES = {
     "iceplate": iceplate,
     "permafrost": permafrost,
@@ -432,6 +611,12 @@ GENES = {
     "gale": gale,
     "frostwind": frostwind,
     "stormborn": stormborn,
+    "snowshoe": snowshoe,
+    "iceskate": iceskate,
+    "pathfinder": pathfinder,
+    "avalanche": avalanche,
+    "snowburrow": snowburrow,
+    "driftline": driftline,
 }
 
 MODELS = {
@@ -441,10 +626,13 @@ MODELS = {
     "icebound": "originofspawns:icebound_blocks",
     "hailshot": "originofspawns:hailshot_quiver",
     "gale": "originofspawns:gale_hood",
+    "snowshoe": "originofspawns:snowshoe_shoes",
+    "iceskate": "originofspawns:iceskate_blades",
+    "driftline": "originofspawns:driftline_banner",
 }
 
 MODEL_MAKERS = [iceplate_model, shatterhide_model, glacial_wall_model, icebound_model, hailshot_model,
-                gale_model]
+                gale_model, snowshoe_model, iceskate_model, driftline_model]
 
 
 def changed_pixels(visual):

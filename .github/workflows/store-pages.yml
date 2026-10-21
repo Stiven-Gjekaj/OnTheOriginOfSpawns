@@ -52,10 +52,12 @@ jobs:
                 echo "The gallery already has: $title"
                 return
               fi
+              echo "The old picture of $title is at: $url"
               curl --fail-with-body -sS -X DELETE -G "$API/project/$PROJECT/gallery" \
                 --data-urlencode "url=$url" -H "Authorization: $TOKEN" -H "User-Agent: $AGENT"
               echo "Deleted the old picture: $title"
             fi
+            echo "Add: $title"
             curl --fail-with-body -sS -X POST -G "$API/project/$PROJECT/gallery" \
               --data-urlencode "ext=png" --data-urlencode "featured=$featured" \
               --data-urlencode "title=$title" --data-urlencode "description=$description" \

@@ -37,6 +37,7 @@ import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
 import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
+import net.minecraft.world.entity.monster.skeleton.Bogged;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -337,6 +338,17 @@ public final class GeneBehaviors {
 							&& player.hasLineOfSight(mob))) {
 						player.addEffect(new MobEffectInstance(gaze.effect(), Math.round(gaze.seconds() * 20.0F),
 								gaze.amplifier()), mob);
+					}
+				}
+				case GeneEffect.Regrow regrow when mob instanceof Bogged bogged && bogged.isSheared() -> {
+					long sheared = mob.getAttachedOrElse(ModAttachments.SHEAR_TIME, now);
+					if (!mob.hasAttached(ModAttachments.SHEAR_TIME)) {
+						mob.setAttached(ModAttachments.SHEAR_TIME, now);
+					}
+					if (now - sheared >= Math.round(regrow.seconds() * 20.0F)) {
+						bogged.setSheared(false);
+						bogged.heal(regrow.heal());
+						mob.removeAttached(ModAttachments.SHEAR_TIME);
 					}
 				}
 				case GeneEffect.FreezeAura freeze when GeneCombat.test(mob, freeze.when()) -> {

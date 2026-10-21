@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.evolution;
 
 import java.util.List;
 
+import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect.When;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -53,6 +54,10 @@ public final class GeneCombat {
 	private static final int BRIGHT_LIGHT = 12;
 	private static final double ALONE_RADIUS = 8.0;
 	private static final double HEAL_ON_DEATH_REACH = 32.0;
+	private static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> MUD =
+			net.minecraft.tags.TagKey.create(Registries.BLOCK, OriginOfSpawns.id("mud"));
+	private static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> ROT_GROUND =
+			net.minecraft.tags.TagKey.create(Registries.BLOCK, OriginOfSpawns.id("rot_ground"));
 	private static final double KNOCKBACK = 0.4;
 	private static final int DEEP_BLOCKS = 10;
 	private static final double HEIGHT_DIFFERENCE = 2.0;
@@ -115,6 +120,11 @@ public final class GeneCombat {
 					.coldEnoughToSnow(entity.blockPosition(), entity.level().getSeaLevel());
 			case NIGHT -> entity.level().isDarkOutside();
 			case TARGET_FROZEN -> entity instanceof Mob mob && mob.getTarget() != null && mob.getTarget().getTicksFrozen() > 0;
+			case WET_GROUND -> wetGround(entity);
+			case DRY_GROUND -> !wetGround(entity);
+			case ON_ROT_GROUND -> entity.level().getBlockState(entity.getBlockPosBelowThatAffectsMyMovement()).is(ROT_GROUND)
+					|| entity.level().getBlockState(entity.blockPosition()).is(ROT_GROUND);
+			case TARGET_IN_WATER -> entity instanceof Mob mob && mob.getTarget() != null && mob.getTarget().isInWater();
 		};
 	}
 
@@ -181,6 +191,14 @@ public final class GeneCombat {
 	 */
 	public static boolean snowsAt(net.minecraft.world.level.Level level, BlockPos pos) {
 		return level.getBiome(pos).value().getPrecipitationAt(pos, level.getSeaLevel()) == Biome.Precipitation.SNOW;
+	}
+
+	/**
+	 * Returns true if the entity is in water or stands on mud.
+	 */
+	public static boolean wetGround(Entity entity) {
+		return entity.isInWater()
+				|| entity.level().getBlockState(entity.getBlockPosBelowThatAffectsMyMovement()).is(MUD);
 	}
 
 	/**
@@ -273,6 +291,8 @@ public final class GeneCombat {
 						&& mob.getRandom().nextFloat() < onHit.chance() && test(mob, onHit.when()) ->
 						living.addEffect(new MobEffectInstance(onHit.effect(), Math.round(onHit.seconds() * 20.0F),
 								onHit.amplifier()), mob);
+				case GeneEffect.HealOnHit heal when heal.hits().includes(false) && test(mob, heal.when()) ->
+						mob.heal(heal.amount());
 				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(false) && target instanceof LivingEntity living
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(living, freeze.seconds());
 				case GeneEffect.CallOnHit call when call.hits().includes(false) && target instanceof Player player ->
@@ -316,6 +336,8 @@ public final class GeneCombat {
 								onHit.amplifier()), mob);
 				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(true)
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(target, freeze.seconds());
+				case GeneEffect.HealOnHit heal when heal.hits().includes(true) && test(mob, heal.when()) ->
+						mob.heal(heal.amount());
 				case GeneEffect.ArrowKnockback knockback -> {
 					Vec3 away = new Vec3(target.getX() - mob.getX(), 0.0, target.getZ() - mob.getZ());
 					if (away.lengthSqr() > 1.0E-4) {

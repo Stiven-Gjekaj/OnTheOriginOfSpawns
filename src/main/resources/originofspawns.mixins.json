@@ -6,6 +6,7 @@
 		"AbstractArrowAccessor",
 		"AbstractSkeletonAccessor",
 		"AbstractSkeletonMixin",
+		"BoggedMixin",
 		"LivingEntityMixin",
 		"MeleeAttackGoalMixin",
 		"MobAccessor",

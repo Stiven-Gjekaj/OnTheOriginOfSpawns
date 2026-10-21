@@ -126,7 +126,9 @@ public sealed interface GeneEffect {
 			Map.entry("call_on_death", CallOnDeath.CODEC),
 			Map.entry("heal_on_ally_death", HealOnAllyDeath.CODEC),
 			Map.entry("hidden_from_afar", HiddenFromAfar.CODEC),
-			Map.entry("ghost_arrows", GhostArrows.CODEC)
+			Map.entry("ghost_arrows", GhostArrows.CODEC),
+			Map.entry("heal_on_hit", HealOnHit.CODEC),
+			Map.entry("regrow", Regrow.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -328,7 +330,23 @@ public sealed interface GeneEffect {
 		/**
 		 * The target of the mob freezes, as in powder snow.
 		 */
-		TARGET_FROZEN;
+		TARGET_FROZEN,
+		/**
+		 * The mob is in water, or stands on a block in the tag {@code originofspawns:mud}.
+		 */
+		WET_GROUND,
+		/**
+		 * The mob is not in water and does not stand on mud. This is the opposite of {@code wet_ground}.
+		 */
+		DRY_GROUND,
+		/**
+		 * The mob stands on a block in the tag {@code originofspawns:rot_ground}: mud, moss, or mycelium.
+		 */
+		ON_ROT_GROUND,
+		/**
+		 * The target of the mob is in water.
+		 */
+		TARGET_IN_WATER;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 
@@ -1849,6 +1867,37 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "ghost_arrows";
+		}
+	}
+
+	/**
+	 * Each hit of the mob heals it by the amount, while the state is true.
+	 */
+	record HealOnHit(float amount, Hits hits, When when) implements GeneEffect {
+		public static final MapCodec<HealOnHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1000.0F).fieldOf("amount").forGetter(HealOnHit::amount),
+				Hits.CODEC.optionalFieldOf("hits", Hits.MELEE).forGetter(HealOnHit::hits),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(HealOnHit::when)
+		).apply(instance, HealOnHit::new));
+
+		@Override
+		public String type() {
+			return "heal_on_hit";
+		}
+	}
+
+	/**
+	 * After a shear, the mushrooms of a bogged grow back after the seconds, and the bogged heals by the amount.
+	 */
+	record Regrow(float seconds, float heal) implements GeneEffect {
+		public static final MapCodec<Regrow> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(Regrow::seconds),
+				Codec.floatRange(0.0F, 1000.0F).optionalFieldOf("heal", 0.0F).forGetter(Regrow::heal)
+		).apply(instance, Regrow::new));
+
+		@Override
+		public String type() {
+			return "regrow";
 		}
 	}
 }

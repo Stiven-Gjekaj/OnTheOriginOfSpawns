@@ -91,6 +91,12 @@ public final class ModAttachments {
 	public static final AttachmentType<Float> GHOST_ARROW = AttachmentRegistry.create(OriginOfSpawns.id("ghost_arrow"),
 			builder -> builder.syncWith(ByteBufCodecs.FLOAT, AttachmentSyncPredicate.all()));
 
+	/**
+	 * The game time of the last shear of a bogged.
+	 */
+	public static final AttachmentType<Long> SHEAR_TIME = AttachmentRegistry.createPersistent(OriginOfSpawns.id("shear_time"),
+			com.mojang.serialization.Codec.LONG);
+
 	private ModAttachments() {
 	}
 

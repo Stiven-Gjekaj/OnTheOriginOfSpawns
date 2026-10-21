@@ -314,6 +314,12 @@ public final class Evolution {
 		if (GeneCombat.snowingOn(mob)) {
 			facts.add(DeathCondition.SNOW);
 		}
+		if (BiomeCategory.of(level.getBiome(mob.blockPosition())) != BiomeCategory.WET) {
+			facts.add(DeathCondition.DRY);
+		}
+		if (mob instanceof net.minecraft.world.entity.monster.skeleton.Bogged bogged && bogged.isSheared()) {
+			facts.add(DeathCondition.SHEARS);
+		}
 		if (level.isDarkOutside()) {
 			facts.add(DeathCondition.NIGHT);
 		}

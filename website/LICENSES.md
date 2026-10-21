@@ -13,20 +13,19 @@ The build puts them in `dist/_astro/`.
 - Licence text: https://openfontlicense.org/open-font-license-official-text/
 - Each font package in `node_modules/` also holds its licence file.
 
-## Images and textures
+## Images
 
-The mod icon, the banner, the notebook item, and the files in `public/mod/`
-come from this repository.
+The mod icon, the banner, and the notebook item come from this repository.
 They have the same licence as the mod: all rights reserved.
 Refer to `LICENSE` at the root of the repository.
 
-The wiki does not use the textures, the sounds, or the font of Minecraft.
-The CSS draws the panels, the slots, and the buttons.
-The zombie skin of the Gene Lab is a flat color drawing that
-`src/scripts/zombie.js` makes from the region map of the mod.
-It is not the vanilla zombie texture.
-The preview sheets in `build/previews/` use the vanilla zombie texture, so the
-wiki does not use them.
+The pictures in `public/shots/` are screenshots of the game with the mod.
+They show the mobs as the game draws them, with the vanilla textures and the
+gene marks of the mod.
+The wiki does not contain the texture files, the sounds, or the font of
+Minecraft.
+The CSS draws the panels, the slots, and the buttons, and the pixel icons are
+drawings of the wiki.
 
 This is not an official Minecraft product.
 Mojang and Microsoft do not approve it, and it has no connection with them.

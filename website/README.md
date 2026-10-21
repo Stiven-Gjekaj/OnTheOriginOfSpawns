@@ -33,13 +33,19 @@ It reads these files:
 - `design/DESIGN.md`, `design/ROADMAP.md`, and `design/species/<species>.md`
 - `docs/data-packs.md`, `README.md`, and `gradle.properties`
 
-It writes `src/data/site.json`, and copies the textures that the gene visuals
-use into `public/mod/`.
+It writes `src/data/site.json`, and copies the notebook item into
+`public/img/`.
 Git ignores these files, because the build makes them again each time.
 
 Each folder in `family/` is a species. The species needs a design file with
 the same name in `design/species/`, or the build stops.
-A gene shows its art when the mod has a gene visual for it.
+The pictures of the mobs are screenshots of the game, in
+`public/shots/<species>/<kind>/<name>-<view>.png`.
+The kind is `plain` (a mob with no genes), `gene` (a mob with only that gene),
+or `family` (a mob with the 6 genes of that family).
+The view is `front` or `back`.
+The build lists the pictures that are there, and a page shows no picture
+where a file is missing.
 
 The state of each feature comes from the roadmap.
 A milestone with "(done)" in `design/ROADMAP.md` is part of the release.
@@ -64,6 +70,7 @@ To add a package, use the same rule:
 | `src/components/` | The parts that the pages share |
 | `src/styles/global.css` | The design system: the type scale, the spacing, the colors, and the Minecraft elements |
 | `src/lib/` | Helpers for the pages and the browser scripts |
-| `src/scripts/` | The browser scripts: the zombie renderer, the Gene Lab, the simulator, the notebook, and the tooltip |
+| `src/scripts/` | The browser scripts: the hero, the species switch, the simulator, the notebook, and the tooltip |
 | `public/img/` | The mod icon and the banner |
+| `public/shots/` | The screenshots of the mobs |
 | `LICENSES.md` | The licences of the fonts and the images |

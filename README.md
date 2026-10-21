@@ -102,7 +102,7 @@ These features are for version 1.0.0. Some are not complete.
 - 5 major families and 20 minor families for each species, with hybrids
 - Extinction of a species in a biome category
 - 30 player perks, each with a gain and a cost
-- 1 to 5 perk slots, from the knowledge percentage of your notebook
+- 1 to 7 perk slots, from the knowledge percentage of your notebook
 - A panel that shows the family and the genes of the mob that you look at
 - The Beagle Notebook, with a tab for each species, a page of genes, a page
   of the families that you found, and later charts, family trees, and

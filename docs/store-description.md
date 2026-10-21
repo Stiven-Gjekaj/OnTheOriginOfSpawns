@@ -106,8 +106,8 @@ Each one has a gain and a cost.
 And 24 more.
 
 You start with 1 slot.
-More slots open as your notebook fills: 2 at 20% knowledge, 3 at 40%, 4 at 60%,
-and 5 at 80%.
+More slots open as your notebook fills: 2 at 15% knowledge, 3 at 30%, 4 at 45%,
+5 at 60%, 6 at 75%, and 7 at 90%.
 To take an adaptation, you pay XP levels.
 
 The mobs watch you.

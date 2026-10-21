@@ -49,8 +49,8 @@ Pixel plan for the Sporecaps.
   15), and on the bottom of the head.
 
 Pixel plan for the Mirefolk.
-- Wader has wet mud on the legs up to the knees: leg rows 6 to 11 and the
-  bottom of the leg.
+- Wader has dark, wet mud on the legs up to the knees: leg rows 4 to 11
+  and the bottom of the leg.
 - Mudcake has a cracked crust of dried mud on the outer layer of the
   sides and the back of the body. The front stays free for the
   Blightburst pustules.
@@ -270,25 +270,29 @@ def spore_lung():
 
 
 MUD = ("#4A3828", "#36281C", "#6A5238", "#2A1E14")
+WET = ("#2E2216", "#1E160E", "#5A4632", "#8A7458")
 DRY = ("#9A8466", "#7E6A50", "#4E3E2A")
 
 
 def wader():
-    # Wet mud on the legs up to the knees: dark mud on leg rows 6 to 11 of
-    # all the faces and on the bottom of the leg, with glossy wet spots.
-    # The knees (rows 4 and 5) stay free for the Rotting Touch rot.
-    mud = Mark(MUD[0])
-    deep = Mark(MUD[1])
-    wet = Mark(MUD[2])
+    # Dark, wet mud on the legs up to the knees: mud on leg rows 4 to 11 of
+    # all the faces and on the bottom of the leg, darkest at the feet, with
+    # wet shine spots and a ragged top edge on row 4.
+    mud = Mark(WET[0])
+    deep = Mark(WET[1])
+    wet = Mark(WET[2])
+    shine = Mark(WET[3])
     for face in SIDES:
         for col in (0, 1):
-            for row in range(6, 12):
+            for row in range(4, 12):
+                if row == 4 and (col + face // 2) % 2:
+                    continue
                 n = noise100(face + col, row, 281)
-                (wet if n < 15 else deep if row > 9 else mud).put(leg(face, col, row))
+                (shine if n < 8 else wet if n < 25 else deep if row > 8 else mud).put(leg(face, col, row))
     for x in (4, 5):
         for y in (16, 17):
             deep.put((x, y))
-    return [mud, deep, wet]
+    return [mud, deep, wet, shine]
 
 
 def mudcake():

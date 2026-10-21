@@ -5,21 +5,28 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/wader_0.png",
-				"tint": "#4A3828"
+				"tint": "#2E2216"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/wader_1.png",
-				"tint": "#36281C"
+				"tint": "#1E160E"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/wader_2.png",
-				"tint": "#6A5238"
+				"tint": "#5A4632"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wader_3.png",
+				"tint": "#8A7458"
 			}
 		}
 	]

@@ -8,6 +8,7 @@
 		"AbstractSkeletonMixin",
 		"BoggedMixin",
 		"CreeperAccessor",
+		"CreeperMixin",
 		"LivingEntityMixin",
 		"MeleeAttackGoalMixin",
 		"MobAccessor",

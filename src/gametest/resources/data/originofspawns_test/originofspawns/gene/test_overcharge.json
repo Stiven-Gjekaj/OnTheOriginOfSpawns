@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "blast_size", "multiplier": 1.25, "when": "charged" }],
+	"mutation_rate": 0
+}

@@ -137,7 +137,8 @@ public sealed interface GeneEffect {
 			Map.entry("damage_to", DamageTo.CODEC),
 			Map.entry("snowball_damage", SnowballDamage.CODEC),
 			Map.entry("water_sensitive", WaterSensitive.CODEC),
-			Map.entry("disarm", Disarm.CODEC)
+			Map.entry("disarm", Disarm.CODEC),
+			Map.entry("blast_size", BlastSize.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2093,6 +2094,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "disarm";
+		}
+	}
+
+	/**
+	 * Multiplies the radius of the blast of the mob while the state is true. It also multiplies the larger blast of a
+	 * charged creeper.
+	 */
+	record BlastSize(float multiplier, When when) implements GeneEffect {
+		public static final MapCodec<BlastSize> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 10.0F).fieldOf("multiplier").forGetter(BlastSize::multiplier),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(BlastSize::when)
+		).apply(instance, BlastSize::new));
+
+		@Override
+		public String type() {
+			return "blast_size";
 		}
 	}
 }

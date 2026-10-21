@@ -5,6 +5,7 @@ import net.minecraft.world.entity.monster.Creeper;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(Creeper.class)
 public interface CreeperAccessor {
@@ -15,4 +16,10 @@ public interface CreeperAccessor {
 	static EntityDataAccessor<Boolean> originofspawns$poweredData() {
 		throw new AssertionError();
 	}
+
+	/**
+	 * Makes the blast of the creeper now, as at the end of its fuse.
+	 */
+	@Invoker("explodeCreeper")
+	void originofspawns$explode();
 }

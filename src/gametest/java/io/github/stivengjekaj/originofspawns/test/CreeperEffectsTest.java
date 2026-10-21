@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect.When;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.mixin.CreeperAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -13,6 +14,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.phys.Vec3;
 
@@ -20,6 +22,11 @@ import net.minecraft.world.phys.Vec3;
  * Tests the effects that the creeper genes use: the blast, the fuse, the charge, and the states of a creeper.
  */
 public class CreeperEffectsTest {
+	/**
+	 * The test environment for blasts: no block breaks, and players take the normal damage.
+	 */
+	static final String BLASTS = "originofspawns_test:blasts";
+
 	@GameTest
 	public void aChargedCreeperIsInTheChargedState(GameTestHelper helper) {
 		Creeper creeper = creeperWith(helper, new BlockPos(1, 1, 1));
@@ -29,6 +36,40 @@ public class CreeperEffectsTest {
 		var zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(3, 1, 1));
 		helper.assertFalse(GeneCombat.test(zombie, When.CHARGED), "a zombie is never charged");
 		helper.succeed();
+	}
+
+	@GameTest(environment = BLASTS, padding = 16)
+	public void aLargerBlastReachesFarther(GameTestHelper helper) {
+		Creeper plain = creeperWith(helper, new BlockPos(1, 1, 1));
+		Creeper big = creeperWith(helper, new BlockPos(1, 1, 12), "test_big_bang");
+		// The blast of a plain creeper reaches 6 blocks. A pig at 8 blocks is out of its reach.
+		Pig nearPlain = pigAt(helper, new BlockPos(9, 1, 1));
+		Pig nearBig = pigAt(helper, new BlockPos(9, 1, 12));
+		explode(plain);
+		explode(big);
+		helper.assertValueEqual(nearPlain.getHealth(), nearPlain.getMaxHealth(), "the plain blast misses the pig");
+		helper.assertTrue(!nearBig.isAlive() || nearBig.getHealth() < nearBig.getMaxHealth(),
+				"the larger blast reaches the pig");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aBlastSizeCanNeedTheCharge(GameTestHelper helper) {
+		Creeper creeper = creeperWith(helper, new BlockPos(1, 1, 1), "test_overcharge");
+		helper.assertValueEqual(GeneBlasts.sizeMultiplier(creeper), 1.0F, "no change without the charge");
+		charge(creeper);
+		helper.assertValueEqual(GeneBlasts.sizeMultiplier(creeper), 1.25F, "a larger blast with the charge");
+		helper.succeed();
+	}
+
+	static void explode(Creeper creeper) {
+		((CreeperAccessor) creeper).originofspawns$explode();
+	}
+
+	static Pig pigAt(GameTestHelper helper, BlockPos pos) {
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, pos);
+		pig.setNoGravity(true);
+		return pig;
 	}
 
 	static void charge(Creeper creeper) {

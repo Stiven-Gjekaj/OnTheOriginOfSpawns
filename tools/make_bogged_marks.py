@@ -101,8 +101,8 @@ Pixel plan for the Mosshides.
 - Silent Rot has moss wrapped round the feet: leg rows 9 to 11 and the
   bottom of the leg, over the Wader mud (order 1).
 - Swamp Shroud: a hood of hanging moss, the gene model swamp_shroud_hood.
-- Bog Mist has a gray haze of mist over all of the outer layer, with
-  paler wisps in it.
+- Bog Mist has wisps of gray mist on the outer layer of the body and the
+  arms only. The head and the bones keep their color.
 - Barkskin has plates of wet bark on the forearms (arm rows 6 to 8) and on
   the thighs (leg rows 1 to 3).
 This script needs Pillow.

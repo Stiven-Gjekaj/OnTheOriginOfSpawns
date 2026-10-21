@@ -42,11 +42,13 @@ A pressure needs `damage_types`, `conditions`, or both.
 | `boat` | The killer was in a boat |
 | `wolf` | A wolf killed the mob |
 | `shield` | The killer blocked a hit with a shield in the 10 seconds before the death, or holds its shield up |
+| `snow` | It snowed on the mob when it died |
+| `warm` | The mob died in a biome that is not cold |
 
 The mod has these pressures: `fire`, `projectile`, `melee`, `explosion`,
 `fall`, `unreached`, `sunlight`, `spotted`, `alone`, `crowd`, `critical`,
 `golem`, `player_death`, `in_water`, `on_land`, `cold`, `night`, `boat`,
-`contact`, `trident`, `wolf`, and `shield`.
+`contact`, `trident`, `wolf`, `shield`, `snow`, and `warm`.
 The `contact` pressure uses the tag `#originofspawns:contact`: cacti and sweet
 berry bushes. The `trident` pressure uses the tag `#originofspawns:trident`.
 The `melee` pressure uses the tag `#originofspawns:melee`.
@@ -139,6 +141,14 @@ The states for `when` are:
 | `target_below` | The target of the mob is 2 or more blocks lower than the mob |
 | `target_above` | The target of the mob is 2 or more blocks higher than the mob |
 | `wounded` | The health of the mob is under half of its maximum |
+| `snowing` | It snows on the mob: a storm in a biome where the storm is snow, with open sky above the mob |
+| `not_snowing` | It does not snow on the mob |
+| `on_snow` | The mob stands on snow or ice, or in a snow layer or powder snow |
+| `off_snow` | The mob does not stand on snow or ice |
+| `on_ice` | The mob stands on ice |
+| `cold_biome` | The mob is in a biome that is cold enough for snow |
+| `night` | It is dark outside |
+| `target_frozen` | The target of the mob freezes, as in powder snow |
 
 #### Hits
 
@@ -160,7 +170,7 @@ The states for `when` are:
 
 | Type | Fields | Result |
 |---|---|---|
-| `effect_on_hurt` | `effect`, `seconds`, `amplifier` (`0`), `cooldown_seconds` (`0`), `ink` (`false`), `ally_radius` (`0`) | When an attacker hurts the mob, the attacker gets a status effect, after each cooldown. `ink` also sprays a cloud of ink. With an `ally_radius` above 0, the mobs of its species in the radius get the effect, and the attacker does not |
+| `effect_on_hurt` | `effect`, `seconds`, `amplifier` (`0`), `cooldown_seconds` (`0`), `ink` (`false`), `ally_radius` (`0`), `player_radius` (`0`) | When an attacker hurts the mob, the attacker gets a status effect, after each cooldown. `ink` also sprays a cloud of ink. With an `ally_radius` above 0, the mobs of its species in the radius get the effect, and the attacker does not. With a `player_radius` above 0, the players in the radius get the effect, and the attacker does not |
 | `barrage` | `group` (`3`), `radius` (`16`) | When the mob shoots at a player, and this many skeletons of its species in the radius target that player and see the player, they get the same wait to the next shot. Then they all shoot at the same time |
 | `call_on_hurt` | `radius`, `smoke` (`false`), `cooldown_seconds` (`0`) | When the mob is hurt, the mobs of its species in the radius attack the attacker. `smoke` also makes a column of smoke. The call waits for its cooldown |
 | `share_damage` | `fraction`, `radius` (`8`) | A part of the damage that the mob takes goes to the mobs of its species in the radius |
@@ -176,12 +186,12 @@ The states for `when` are:
 
 | Type | Fields | Result |
 |---|---|---|
-| `leap` | `min_distance` (`3`), `max_distance` (`5`), `cooldown_seconds` (`5`), `miss_stun_seconds` (`1`), `medium` (`ground`) | The mob leaps at its target. A leap that reaches the target does a normal hit. After a missed leap, it cannot move for a short time. `medium` is `ground`, `water` for a dash through water at a target in water, or `breach` for a jump out of the water at a target on land up to 3 blocks higher |
+| `leap` | `min_distance` (`3`), `max_distance` (`5`), `cooldown_seconds` (`5`), `miss_stun_seconds` (`1`), `medium` (`ground`), `when` (`always`) | The mob leaps at its target while the state is true. A leap that reaches the target does a normal hit. After a missed leap, it cannot move for a short time. `medium` is `ground`, `water` for a dash through water at a target in water, or `breach` for a jump out of the water at a target on land up to 3 blocks higher |
 | `water_pull` | `radius`, `strength` (`0.01`) | Pulls the players in water in the radius slowly toward the mob. Players in creative or spectator mode do not move |
 | `trident_chance` | `chance` | The mob has this chance to spawn with a trident in an empty hand or in place of a fishing rod. This adds to the vanilla chance |
-| `throw_rate` | `multiplier` | Multiplies how often the mob throws or shoots with a ranged attack, also with a bow. `2` throws two times as often. With a bow, it changes the draw and the wait together |
+| `throw_rate` | `multiplier`, `when` (`always`) | While the state is true, multiplies how often the mob throws or shoots with a ranged attack, also with a bow. `2` throws two times as often. With a bow, it changes the draw and the wait together |
 | `draw_time` | `multiplier` | Multiplies the time that the mob draws its bow. `1.25` draws 25% slower |
-| `throw_range` | `multiplier`, `target` | Multiplies the throw range at a target. `target` is `wet`, for a target in water or in a boat, `dry`, or `any` |
+| `throw_range` | `multiplier`, `target`, `when` (`always`) | While the state is true, multiplies the throw range at a target. A range past the follow range of the mob needs more follow range too. `target` is `wet`, for a target in water or in a boat, `dry`, or `any` |
 | `keep_distance` | `blocks` | While the mob shoots with a bow, it walks back from a target nearer than this |
 | `arrow_spread` | `multiplier` | Multiplies the spread of the arrows of the mob. `0` makes each arrow fly straight |
 | `scavenge_tridents` | `radius` (`2`) | The mob takes a trident that a player threw near it into its empty hand, and keeps it |
@@ -205,9 +215,9 @@ The states for `when` are:
 |---|---|---|
 | `silence` | `idle` (`false`), `hurt` (`false`), `steps` (`false`), `death` (`false`) | Stops these sounds of the mob |
 | `loud` | `multiplier` | Multiplies the volume of the sounds of the mob, also its steps |
-| `translucent` | `max_light` (`7`), `opacity` (`0.1`), `blocks` (none) | The client draws the mob translucent at this light level or lower. With `blocks`, only while its feet or its eyes are in a block of this tag. With `night_only` (`false`), only while it is dark outside. Other mobs still see it |
+| `translucent` | `max_light` (`7`), `opacity` (`0.1`), `blocks` (none) | The client draws the mob translucent at this light level or lower. With `blocks`, only while its feet or its eyes are in a block of this tag. With `night_only` (`false`), only while it is dark outside. With `when` (`always`), only while the state is true. Other mobs still see it |
 | `glowing` | `when` (`always`) | The mob glows while the state is true, so that players see it through walls |
-| `aura` | `effect`, `amplifier` (`0`), `radius`, `interval_seconds` (`2`), `particles` (`false`), `in_water_only` (`false`), `seconds` (none) | Gives a status effect to the players near the mob. The effect lasts `seconds`, or until the next renewal when there is no `seconds`. With `in_water_only`, only the players in water get it |
+| `aura` | `effect`, `amplifier` (`0`), `radius`, `interval_seconds` (`2`), `particles` (`false`), `in_water_only` (`false`), `seconds` (none), `allies` (`false`), `when` (`always`) | While the state is true, gives a status effect to the players near the mob. The effect lasts `seconds`, or until the next renewal when there is no `seconds`. With `in_water_only`, only the players in water get it. With `allies`, the mobs of its species get it instead of the players |
 | `ignored_by` | `mobs` | Mobs of these types do not target the mob |
 | `see_invisible` | `radius` | The mob sees invisible entities in the radius as if they were visible |
 | `sneak_blind` | `radius` | The mob does not see a sneaking entity farther than the radius |
@@ -219,6 +229,20 @@ The states for `when` are:
 |---|---|---|
 | `death_burst` | `damage`, `radius` | When the mob dies, it damages the players in the radius |
 | `death_cloud` | `effect`, `seconds`, `amplifier` (`0`), `radius`, `cloud_seconds` (`5`) | When the mob dies, it leaves a cloud that gives a status effect |
+| `freeze_on_hit` | `seconds`, `chance` (`1`), `hits` (`melee`) | Each hit freezes the target as powder snow does. The freeze stays full for `seconds`. Leather armor stops it |
+| `freeze_attacker` | `seconds` | An entity that hits the mob in melee freezes for `seconds` |
+| `freeze_aura` | `radius`, `rate` (`60`), `when` (`always`) | While the state is true, the players in the radius start to freeze. The freeze grows each second by `rate` ticks. The game takes away 40 ticks each second, so a `rate` above 40 makes it grow. It stops 1 second past full |
+| `fan_shot` | `arrows` (`3`), `angle` (`15`), `cooldown_seconds` (`10`), `when` (`always`) | When the mob shoots its bow while the state is true, it also shoots more arrows in a fan, one time in each cooldown. `arrows` includes the normal shot |
+| `arrow_knockback` | `multiplier` | The projectiles of the mob push the target back more. `2` pushes two times as far |
+| `walk_on_powder_snow` | | The mob walks on powder snow and does not sink, as with leather boots |
+| `arrow_effect` | `effect`, `seconds`, `amplifier` (`0`) | The arrows of the mob carry a status effect, as a tipped arrow does. A stronger effect of the same kind replaces a weaker one |
+| `death_block` | `block` | When the mob dies, the block goes where it died. It goes only in air, and not where a player stands |
+| `armor_break` | `multiplier`, `frozen_only` (`false`) | The projectile hits of the mob damage the armor of a player more. `2` damages it two times as much. With `frozen_only`, only on a player that freezes |
+| `gaze_effect` | `effect`, `seconds`, `amplifier` (`0`), `range` (`16`), `interval_seconds` (`2`) | A player in the range that looks at the mob gets the status effect, as the enderman checks a look, with a clear line of sight |
+| `call_on_death` | `radius` | When the mob dies, the mobs of its species in the radius target the player that killed it |
+| `heal_on_ally_death` | `amount`, `radius` | The mob heals by the amount when another mob of its species dies in the radius |
+| `hidden_from_afar` | `blocks`, `when` (`always`) | While the state is true, players farther than `blocks` do not see the mob. It is not the invisibility effect |
+| `ghost_arrows` | `blocks` | Players farther than `blocks` do not see the arrows of the mob while they fly |
 | `death_effect` | `effect`, `seconds`, `amplifier` (`0`), `radius`, `when` (`always`), `allies` (`false`) | When the mob dies while the state is true, the players in the radius get a status effect. With `allies`, the mobs of its species get it instead |
 
 ### Gene visuals

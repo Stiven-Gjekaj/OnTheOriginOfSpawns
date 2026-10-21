@@ -56,7 +56,8 @@ Pixel plan for the Mirefolk.
   Blightburst pustules.
 - Mudburrow has mud that drips from the skull: patches on the top of the
   outer head, and drips down its sides, front, and back (y 8 to 12).
-- Mire Grip has webbed fingers of rotten skin: arm rows 9 and 10.
+- Mire Grip has large webbed hands of green, rotten skin: arm rows 7 to
+  10, over the Barkskin bark (order 1).
 - Swamp Gas has bubbles of gas at the pelvis, under the outer layer: y 28
   to 31 of the body.
 - Leechbone: black leeches on the forearms, the gene model

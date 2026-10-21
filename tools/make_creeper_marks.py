@@ -35,6 +35,17 @@ Pixel plan for the Blasters.
 - Concussion has wide eyes with pale yellow rings: a ring round each eye,
   over it (y 9), beside it, and under it (y 12, x 9 and 14).
 
+Pixel plan for the Rushers.
+- Sprinter has pale stripes down the legs: one column of each side face of
+  the legs, rows 0 to 5.
+- Short Fuse: a fuse that smokes on the top of the head, the gene model
+  short_fuse_fuse.
+- Leaper: bent, springy back legs, the gene model leaper_haunches.
+- Dodger has wide, flat feet: a dark sole on leg row 5 and on the bottom of
+  the legs, with pale toe lines on row 4.
+- Tracker has a wide, open mouth: the mouth is 2 pixels wider (x 9 and 14,
+  y 13 and 14).
+- Wallcrawler: hooked claws on the feet, the gene model wallcrawler_claws.
 This script needs Pillow.
 """
 import json
@@ -166,6 +177,126 @@ def concussion():
     return [ring]
 
 
+def sprinter():
+    # Pale stripes down the legs, as the marks of a fast runner: one pale
+    # column on each side face of the legs, rows 0 to 5.
+    stripe = Mark("#D8F0C8")
+    for x, y, face, col, row in pixels(LEG, SIDES):
+        if col == 1:
+            stripe.put((x, y))
+    return [stripe]
+
+
+def short_fuse():
+    # A smoking spot on the top of the head, where the fuse comes out. The
+    # fuse is the gene model short_fuse_fuse.
+    burn = Mark("#2A2A2A")
+    burn.put((11, 3)).put((12, 3)).put((11, 4)).put((12, 4))
+    return [burn]
+
+
+def short_fuse_model():
+    # A fuse that smokes on the top of the head: a short, dark cord that
+    # sticks up from the middle of the top of the head and bends, a bright
+    # spark at its tip, and a puff of gray smoke that sits on the spark. On
+    # the head bone, the top of the head is at y -8.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def cord(face, x, y):
+        return "#3A3A3A" if (y + x) % 2 else "#5A4A3A"
+
+    def puff(face, x, y):
+        return "#C8C8C8" if (x + y) % 2 else "#A0A0A0"
+
+    # The cord: 1x3x1 at uv (0, 0). The spark: 1x1x1 at uv (4, 0). The
+    # puff: 2x2x2 at uv (8, 0).
+    paint_box(im, 0, 0, 1, 3, 1, cord)
+    paint_box(im, 4, 0, 1, 1, 1, lambda face, x, y: "#FFB030")
+    paint_box(im, 8, 0, 2, 2, 2, puff)
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-0.5, -11, -0.5], "size": [1, 3, 1],
+         "pivot": [0, -8, 0], "rotation": [0, 0, 15]},
+        {"bone": "head", "uv": [4, 0], "from": [0.2, -12, -0.5], "size": [1, 1, 1]},
+        {"bone": "head", "uv": [8, 0], "from": [0, -14, -1], "size": [2, 2, 2]},
+    ]
+    save_model("short_fuse_fuse", im, parts)
+
+
+def leaper():
+    # The haunches are the gene model leaper_haunches.
+    return []
+
+
+def leaper_model():
+    # Bent, springy back legs: on each hind leg, a thick haunch that bends
+    # back from the top of the leg, as the leg of a frog, in the greens of
+    # the creeper, with a pale line where it bends. On a leg bone, the leg
+    # is from x -2 to 2, from y 0 to 6, and from z -2 to 2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def haunch(face, x, y):
+        if face != "top" and y == 2:
+            return "#B8E8A0"
+        n = (x * 7 + y * 3 + len(face)) % 5
+        return SKIN[1] if n == 0 else SKIN[2] if n == 1 else SKIN[0]
+
+    # The haunch: 4x3x2 at uv (0, 0).
+    paint_box(im, 0, 0, 4, 3, 2, haunch)
+    parts = [{"bone": bone, "uv": [0, 0], "from": [-2, 0, 1], "size": [4, 3, 2],
+              "pivot": [0, 0, 1.5], "rotation": [-15, 0, 0]}
+             for bone in ("right_hind_leg", "left_hind_leg")]
+    save_model("leaper_haunches", im, parts)
+
+
+def dodger():
+    # Wide, flat feet: a dark sole on the lowest row of the legs (row 5) and
+    # on the bottom of the legs, and pale toe lines on row 4 that spread the
+    # foot.
+    sole = Mark(SKIN[3])
+    toe = Mark("#C8F0B0")
+    for x, y, face, col, row in pixels(LEG, SIDES):
+        if row == 5:
+            sole.put((x, y))
+        elif row == 4 and col in (0, 3):
+            toe.put((x, y))
+    for x, y, face, col, row in pixels(LEG, ("bottom",)):
+        sole.put((x, y))
+    return [sole, toe]
+
+
+def tracker():
+    # A wide, open mouth, as if the creeper sniffs for its prey: the black
+    # mouth is one pixel wider on each side (x 9 and 14, y 13 and 14).
+    black = Mark("#0A0A0A")
+    for p in ((9, 13), (14, 13), (9, 14), (14, 14)):
+        black.put(p)
+    return [black]
+
+
+def wallcrawler():
+    # The claws are the gene model wallcrawler_claws.
+    return []
+
+
+def wallcrawler_model():
+    # Hooked claws on the feet: on each leg, two dark claws that stick out
+    # of the front of the foot and hook down, with pale tips. On a leg bone,
+    # the front of the foot is at z -2, and the ground is at y 6.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def claw(face, x, y):
+        return "#D8D8C8" if face == "front" or y == 1 else "#2A3A2A"
+
+    # A claw: 1x1x2 at uv (0, 0).
+    paint_box(im, 0, 0, 1, 1, 2, claw)
+    parts = []
+    for bone in ("right_hind_leg", "left_hind_leg", "right_front_leg", "left_front_leg"):
+        for x in (-1.5, 0.5):
+            parts.append({"bone": bone, "uv": [0, 0], "from": [x, 5, -3.5], "size": [1, 1, 2],
+                          "pivot": [x + 0.5, 5.5, -2], "rotation": [-30, 0, 0]})
+    save_model("wallcrawler_claws", im, parts)
+
+
 GENES = {
     "big_bang": big_bang,
     "shrapnel": shrapnel,
@@ -173,13 +304,22 @@ GENES = {
     "chain_reaction": chain_reaction,
     "aftershock": aftershock,
     "concussion": concussion,
+    "sprinter": sprinter,
+    "short_fuse": short_fuse,
+    "leaper": leaper,
+    "dodger": dodger,
+    "tracker": tracker,
+    "wallcrawler": wallcrawler,
 }
 
 MODELS = {
     "big_bang": "originofspawns:big_bang_belly",
+    "short_fuse": "originofspawns:short_fuse_fuse",
+    "leaper": "originofspawns:leaper_haunches",
+    "wallcrawler": "originofspawns:wallcrawler_claws",
 }
 
-MODEL_MAKERS = [big_bang_model]
+MODEL_MAKERS = [big_bang_model, short_fuse_model, leaper_model, wallcrawler_model]
 
 
 def main():

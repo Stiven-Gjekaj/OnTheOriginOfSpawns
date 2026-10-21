@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/creeper.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dodger_0.png",
+				"tint": "#1E4A16"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dodger_1.png",
+				"tint": "#C8F0B0"
+			}
+		}
+	]
+}

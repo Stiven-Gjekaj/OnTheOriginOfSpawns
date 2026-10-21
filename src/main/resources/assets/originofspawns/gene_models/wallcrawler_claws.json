@@ -1,0 +1,223 @@
+{
+	"texture": "originofspawns:textures/entity/wallcrawler_claws.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				5,
+				-3.5
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"pivot": [
+				-1.0,
+				5.5,
+				-2
+			],
+			"rotation": [
+				-30,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "right_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				5,
+				-3.5
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"pivot": [
+				1.0,
+				5.5,
+				-2
+			],
+			"rotation": [
+				-30,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "left_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				5,
+				-3.5
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"pivot": [
+				-1.0,
+				5.5,
+				-2
+			],
+			"rotation": [
+				-30,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "left_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				5,
+				-3.5
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"pivot": [
+				1.0,
+				5.5,
+				-2
+			],
+			"rotation": [
+				-30,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "right_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				5,
+				-3.5
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"pivot": [
+				-1.0,
+				5.5,
+				-2
+			],
+			"rotation": [
+				-30,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "right_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				5,
+				-3.5
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"pivot": [
+				1.0,
+				5.5,
+				-2
+			],
+			"rotation": [
+				-30,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "left_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				5,
+				-3.5
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"pivot": [
+				-1.0,
+				5.5,
+				-2
+			],
+			"rotation": [
+				-30,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "left_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				5,
+				-3.5
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"pivot": [
+				1.0,
+				5.5,
+				-2
+			],
+			"rotation": [
+				-30,
+				0,
+				0
+			]
+		}
+	]
+}

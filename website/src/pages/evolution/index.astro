@@ -52,6 +52,7 @@ const genesFor = (p) => site.genes.filter((g) => g.counters === p);
                   {genesFor(p.id).map((g, i) => (
                     <>{i > 0 && ", "}<a href={url(`genes/#gene-${g.id}`)} data-tip-ref={`tip-gene-${g.id}`}>{g.name}</a></>
                   ))}
+                  {genesFor(p.id).length === 0 && <span class="muted">No gene yet</span>}
                 </td>
                 <td><Status status={p.status} /></td>
               </tr>

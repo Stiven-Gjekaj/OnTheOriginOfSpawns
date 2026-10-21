@@ -1,0 +1,21 @@
+{
+	"region_map": "originofspawns:textures/region/parched.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/tail_whip_0.png",
+				"tint": "#E8E0C8"
+			},
+			"order": 1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/tail_whip_1.png",
+				"tint": "#2A2218"
+			},
+			"order": 1
+		}
+	]
+}

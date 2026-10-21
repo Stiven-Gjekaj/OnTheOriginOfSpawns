@@ -1,0 +1,27 @@
+{
+	"region_map": "originofspawns:textures/region/parched.png",
+	"layers": [
+		{
+			"materials": [
+				"bone"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sand_hide_0.png",
+				"tint": "#D8C090"
+			},
+			"order": -1
+		},
+		{
+			"materials": [
+				"bone"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sand_hide_1.png",
+				"tint": "#8A7048"
+			},
+			"order": -1
+		}
+	]
+}

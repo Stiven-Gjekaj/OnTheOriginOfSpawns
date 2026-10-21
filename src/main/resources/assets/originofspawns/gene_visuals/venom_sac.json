@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/parched.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/venom_sac_0.png",
+				"tint": "#D8C030"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/venom_sac_1.png",
+				"tint": "#F8F0A0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/venom_sac_2.png",
+				"tint": "#6A5410"
+			}
+		}
+	]
+}

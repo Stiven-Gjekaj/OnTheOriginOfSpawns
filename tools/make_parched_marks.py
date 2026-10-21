@@ -68,6 +68,19 @@ Pixel plan for the Vultures.
 - Watcher has a bald, wrinkled crown: the head wrap is gone on the top of
   the head and over the brow (y 32 to 41 of the wrap), and the bone of the
   crown and the brow has dark wrinkles.
+
+Pixel plan for the Scorpions.
+- Stinger: a curled scorpion tail on the back, the gene model
+  stinger_tail.
+- Pincers: claws like pincers on the hands, the gene model pincers_claws.
+- Carapace: a dark shell of plates over the ribs, the gene model
+  carapace_shell.
+- Sand Hide has sand-colored patches on the bones (order -1).
+- Venom Sac has a swollen yellow sac at the front of the pelvis: on the
+  pelvis (x 21 to 26, y 29 to 31), on the box of the pelvis, and on the
+  lower edge of the body wrap.
+- Tail Whip has pale spikes down the lower back: on the spine (y 25 to 31)
+  and on the body wrap of the back (y 56 to 63).
 This script needs Pillow.
 """
 import json
@@ -505,6 +518,156 @@ def watcher():
         wrinkle.put((x, 8 + x % 2))
     return [erase("watcher", "bald", bald), skin, wrinkle]
 
+
+CHITIN = ("#8A5A20", "#6A4218", "#C08A40", "#1A1008")
+
+
+def chitin(face, x, y):
+    """Return the color of a pixel of the shell of a scorpion."""
+    if face == "top":
+        return CHITIN[2] if (x + y) % 3 == 0 else CHITIN[0]
+    return CHITIN[1] if face == "bottom" or (x + y) % 2 else CHITIN[0]
+
+
+def stinger():
+    # The tail is the gene model stinger_tail.
+    return []
+
+
+def stinger_model():
+    # A curled scorpion tail on the back: a chain of shell segments that
+    # starts on the lower back, rises up behind the head, and curls forward
+    # over the top of the head, with a black sting at its tip that points
+    # down to the front. Each segment overlaps the one before it, so the
+    # tail holds together. The segments behind the head stay out of it (z
+    # 4.3 and more), and the curl is over the head (y -10 and less). On the
+    # body bone, the back is at z 2, and the body is from y 0 to 12.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def sting(face, x, y):
+        return CHITIN[3] if y else CHITIN[2]
+
+    # A segment: 2x2x2 at uv (0, 0). The sting: 1x2x1 at uv (8, 0).
+    paint_box(im, 0, 0, 2, 2, 2, chitin)
+    paint_box(im, 8, 0, 1, 2, 1, sting)
+    parts = []
+    for y, z in ((8, 1.8), (6, 2.8), (4, 3.6), (2, 4.3), (0, 4.4), (-2, 4.4), (-4, 4.4), (-6, 4.4),
+                 (-8, 4.3), (-10, 3.4), (-10.8, 1.8), (-10.6, 0.2)):
+        parts.append({"bone": "body", "uv": [0, 0], "from": [-1, y, z], "size": [2, 2, 2]})
+    parts.append({"bone": "body", "uv": [8, 0], "from": [-0.5, -9, -0.6], "size": [1, 2, 1],
+                  "pivot": [0, -9, 0], "rotation": [-35, 0, 0]})
+    save_model("stinger_tail", im, parts)
+
+
+def pincers():
+    # The claws are the gene model pincers_claws.
+    return []
+
+
+def pincers_model():
+    # Claws like pincers on the hands: on each hand, a shell base round the
+    # wrist and two thick prongs under it that open a little, as the claw
+    # of a scorpion. On an arm bone, the hand ends at y 10.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def prong(face, x, y):
+        return CHITIN[3] if y == 2 else chitin(face, x, y)
+
+    # The base: 2x1x2 at uv (0, 0). A prong: 1x3x1 at uv (8, 0).
+    paint_box(im, 0, 0, 2, 1, 2, chitin)
+    paint_box(im, 8, 0, 1, 3, 1, prong)
+    parts = []
+    for bone in ("right_arm", "left_arm"):
+        parts.append({"bone": bone, "uv": [0, 0], "from": [-1, 8, -1], "size": [2, 1, 2], "inflate": 0.3})
+        parts.append({"bone": bone, "uv": [8, 0], "from": [-0.5, 9, -1.3], "size": [1, 3, 1],
+                      "pivot": [0, 9, -0.8], "rotation": [-15, 0, 0]})
+        parts.append({"bone": bone, "uv": [8, 0], "from": [-0.5, 9, 0.3], "size": [1, 3, 1],
+                      "pivot": [0, 9, 0.8], "rotation": [15, 0, 0]})
+    save_model("pincers_claws", im, parts)
+
+
+def carapace():
+    # The shell is the gene model carapace_shell.
+    return []
+
+
+def carapace_model():
+    # A dark shell over the ribs: three plates of dark shell, one over the
+    # other, each a little narrower, as the back of a scorpion, with a
+    # glossy upper edge. They lie on the body wrap of the front (z -2.05).
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+    dark = ("#4A3420", "#3A2818", "#8A6A40")
+
+    def plate(face, x, y):
+        if face == "front":
+            return dark[2] if y == 0 else dark[0] if x % 3 else dark[1]
+        return dark[1]
+
+    # A wide plate: 7x3x1 at uv (0, 0). A narrow plate: 5x2x1 at uv (0, 6).
+    paint_box(im, 0, 0, 7, 3, 1, plate)
+    paint_box(im, 0, 6, 5, 2, 1, plate)
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [-3.5, 1, -3.05], "size": [7, 3, 1]},
+        {"bone": "body", "uv": [0, 0], "from": [-3.5, 3.6, -3.15], "size": [7, 3, 1]},
+        {"bone": "body", "uv": [0, 6], "from": [-2.5, 6.2, -3.05], "size": [5, 2, 1]},
+    ]
+    save_model("carapace_shell", im, parts)
+
+
+def sand_hide():
+    # Sand-colored patches on the bones, as the skin of a desert beast: wide
+    # patches of sand color with darker sand edges on all the bone, under
+    # the marks of other genes (order -1).
+    patch = Mark(SAND[0], order=-1, materials=["bone"], size=16)
+    edge = Mark(SAND[2], order=-1, materials=["bone"], size=16)
+    for x in range(16):
+        for y in range(16):
+            n = noise100(x // 2, y // 2, 321)
+            if n < 40:
+                patch.put((x, y))
+            elif n < 48:
+                edge.put((x, y))
+    return [patch, edge]
+
+
+def venom_sac():
+    # A swollen yellow sac at the front of the pelvis: a round, bright
+    # yellow sac with a pale shine and a dark rim, on the pelvis (x 21 to
+    # 26, y 29 to 31), on the front of the box of the pelvis, and on the
+    # lower edge of the body wrap over it.
+    sac = Mark("#D8C030")
+    shine = Mark("#F8F0A0")
+    rim = Mark("#6A5410")
+    for x in range(21, 27):
+        for y in (30, 31):
+            sac.put((x, y))
+        (rim if x in (21, 26) else sac).put((x, 29))
+    shine.put((23, 30))
+    for x in range(32, 40):
+        (sac if 33 <= x <= 38 else rim).put((x, 4))
+    shine.put((34, 4))
+    for x in range(21, 27):
+        for y in (61, 62, 63):
+            (rim if x in (21, 26) and y == 61 else sac).put((x, y))
+    shine.put((23, 62))
+    return [sac, shine, rim]
+
+
+def tail_whip():
+    # Pale spikes down the lower back: sharp spikes of bone, each a pale
+    # point on a dark base, on the spine (y 25 to 31) and down the middle
+    # of the body wrap of the back (y 56 to 63). They go over the Flock
+    # feathers (order 1).
+    spike = Mark(BONE[0], order=1)
+    base = Mark(DARK, order=1)
+    for y in range(25, 32, 2):
+        spike.put((35, y)).put((36, y))
+        base.put((35, y + 1)).put((36, y + 1)) if y < 31 else None
+    for y in range(56, 64, 2):
+        spike.put((35, y)).put((36, y))
+        base.put((34, y + 1)).put((37, y + 1)) if y < 63 else None
+    return [spike, base]
+
 GENES = {
     "sap": sap,
     "fumble": fumble,
@@ -524,6 +687,12 @@ GENES = {
     "flock": flock,
     "glide": glide,
     "watcher": watcher,
+    "stinger": stinger,
+    "pincers": pincers,
+    "carapace": carapace,
+    "sand_hide": sand_hide,
+    "venom_sac": venom_sac,
+    "tail_whip": tail_whip,
 }
 
 MODELS = {
@@ -532,9 +701,13 @@ MODELS = {
     "circler": "originofspawns:circler_ruff",
     "gorge": "originofspawns:gorge_beak",
     "glide": "originofspawns:glide_wings",
+    "stinger": "originofspawns:stinger_tail",
+    "pincers": "originofspawns:pincers_claws",
+    "carapace": "originofspawns:carapace_shell",
 }
 
-MODEL_MAKERS = [long_wind_model, whirlwind_volley_model, circler_model, gorge_model, glide_model]
+MODEL_MAKERS = [long_wind_model, whirlwind_volley_model, circler_model, gorge_model, glide_model,
+                stinger_model, pincers_model, carapace_model]
 
 
 def main():

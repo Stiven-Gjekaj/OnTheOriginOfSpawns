@@ -282,7 +282,11 @@ The states for `when` are:
 #### Creepers
 
 These effects act only on a creeper. The vanilla blast has a radius of 3, or
-6 for a charged creeper. The vanilla fuse burns for 30 ticks.
+6 for a charged creeper. The vanilla fuse burns for 30 ticks. A gene fuse
+burns for 3 ticks or more.
+
+The creeper causes its own blast. So `damage_dealt_when` and `damage_to`
+change the blast damage, and the `hits` field counts a blast as `melee`.
 
 | Type | Fields | Result |
 |---|---|---|
@@ -291,7 +295,7 @@ These effects act only on a creeper. The vanilla blast has a radius of 3, or
 | `blast_cloud` | `effect`, `seconds`, `amplifier` (`0`), `effect_seconds` (the value of `seconds`) | The blast leaves a cloud of the status effect, with the radius of the blast. The cloud stays for `seconds`. It comes in addition to the vanilla cloud of a creeper with status effects |
 | `blast_effect` | `effect`, `seconds`, `amplifier` (`0`) | Each living entity that the blast damages gets the status effect. A shield that stops the blast also stops the effect. Use one entry for each effect |
 | `chain_reaction` | `radius` (`5`) | The blast lights the fuses of the creepers in the radius whose fuses do not burn yet. A creeper that a chain lit does not light more creepers |
-| `aftershock` | `seconds` (`2`), `fraction` (`0.5`) | After the time, a second blast goes off at the same place, with this part of the radius. It makes no more aftershocks, clouds, chains, or lightning. A save and quit before the second blast loses it |
+| `aftershock` | `seconds` (`2`), `fraction` (`0.5`) | After the time, a second blast goes off at the same place, with this part of the radius. It makes no more aftershocks, clouds, chains, or lightning. The damage genes and `blast_effect` of the creeper still act on it. A save and quit before the second blast loses it |
 | `silent_fuse` | | The fuse makes no sound, also when flint and steel or a fire charge lights it. Sculk sensors still detect it |
 | `charged_spawn` | `chance` | The creeper has this chance to spawn charged |
 | `charge_when` | `when` (`storm`) | The creeper becomes charged when the state is true, and it stays charged |

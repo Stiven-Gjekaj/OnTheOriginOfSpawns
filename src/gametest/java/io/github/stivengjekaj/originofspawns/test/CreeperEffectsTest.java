@@ -10,7 +10,10 @@ import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.evolution.GenePools;
+import io.github.stivengjekaj.originofspawns.evolution.goal.LeapGoal;
+import io.github.stivengjekaj.originofspawns.evolution.goal.LurkGoal;
 import io.github.stivengjekaj.originofspawns.mixin.CreeperAccessor;
+import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import java.util.UUID;
@@ -38,6 +41,7 @@ import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.animal.pig.Pig;
@@ -506,6 +510,29 @@ public class CreeperEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = BLASTS, padding = 8)
+	public void aDeathCloudComesOnlyFromADeathBeforeTheBlast(GameTestHelper helper) {
+		Creeper killed = creeperWith(helper, new BlockPos(1, 1, 1), "test_gas_leak");
+		Creeper exploded = creeperWith(helper, new BlockPos(1, 1, 7), "test_gas_leak");
+		killed.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 100.0F);
+		helper.assertTrue(killed.isDeadOrDying(), "the creeper dies");
+		explode(exploded);
+		helper.assertValueEqual(cloudsAt(helper, killed).size(), 1, "a death leaves the cloud");
+		helper.assertValueEqual(cloudsAt(helper, exploded).size(), 0, "a blast is not a death, so it leaves no cloud");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theBehaviorGoalsWorkOnACreeper(GameTestHelper helper) {
+		Creeper creeper = creeperWith(helper, new BlockPos(1, 1, 1), "test_creeper_moves");
+		GeneBehaviors.installGoals(creeper);
+		var goals = ((MobAccessor) creeper).originofspawns$goalSelector().getAvailableGoals().stream()
+				.map(WrappedGoal::getGoal).toList();
+		helper.assertTrue(goals.stream().anyMatch(LeapGoal.class::isInstance), "the creeper has the leap goal");
+		helper.assertTrue(goals.stream().anyMatch(LurkGoal.class::isInstance), "the creeper has the lurk goal");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes a player at the north end of the test that faces in the direction of the yaw.
 	 */
@@ -563,6 +590,11 @@ public class CreeperEffectsTest {
 		// A player takes no damage until its client tells the server that the world loaded.
 		player.connection.handleAcceptPlayerLoad(new ServerboundPlayerLoadedPacket());
 		return new Listener(player, channel);
+	}
+
+	static java.util.List<AreaEffectCloud> cloudsAt(GameTestHelper helper, Creeper creeper) {
+		return helper.getLevel().getEntitiesOfClass(AreaEffectCloud.class, creeper.getBoundingBox().inflate(0.5),
+				cloud -> cloud.position().distanceTo(creeper.position()) < 0.5);
 	}
 
 	static AreaEffectCloud cloudNear(GameTestHelper helper, Creeper creeper) {

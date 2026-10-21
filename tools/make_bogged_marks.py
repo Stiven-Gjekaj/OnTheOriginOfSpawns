@@ -49,8 +49,8 @@ Pixel plan for the Sporecaps.
   15), and on the bottom of the head.
 
 Pixel plan for the Mirefolk.
-- Wader has wet mud on the legs up to the knees: leg rows 6 to 11 and the
-  bottom of the leg.
+- Wader has dark, wet mud on the legs up to the knees: leg rows 4 to 11
+  and the bottom of the leg.
 - Mudcake has a cracked crust of dried mud on the outer layer of the
   sides and the back of the body. The front stays free for the
   Blightburst pustules.
@@ -270,6 +270,7 @@ def spore_lung():
 
 
 MUD = ("#4A3828", "#36281C", "#6A5238", "#2A1E14")
+WET = ("#2E2216", "#1E160E", "#5A4632", "#8A7458")
 DRY = ("#9A8466", "#7E6A50", "#4E3E2A")
 
 

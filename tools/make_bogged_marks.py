@@ -52,8 +52,8 @@ Pixel plan for the Mirefolk.
 - Wader has wet mud on the legs up to the knees: leg rows 6 to 11 and the
   bottom of the leg.
 - Mudcake has a cracked crust of dried mud on the outer layer of the
-  sides and the back of the body. The front stays free for the Plague
-  Carrier pustules.
+  sides and the back of the body. The front stays free for the
+  Blightburst pustules.
 - Mudburrow has mud that drips from the skull: patches on the top of the
   outer head, and drips down its sides, front, and back (y 8 to 12).
 - Mire Grip has webbed fingers of rotten skin: arm rows 9 and 10.
@@ -72,7 +72,7 @@ Pixel plan for the Venomers.
   (row 0), the elbows (arm row 5), and the knees (leg rows 4 and 5).
 - Antivenom has a bright green light in the eyes of the outer face, and
   the gene model antivenom_eyes makes it glow.
-- Plague Carrier has green pustules on the front of the outer layer of the
+- Blightburst has green pustules on the front of the outer layer of the
   body (x 20 to 27), and on the leaves over the upper arms.
 
 Pixel plan for the Vinebound.
@@ -486,7 +486,7 @@ def antivenom_model():
     save_model("antivenom_eyes", im, parts)
 
 
-def plague_carrier():
+def blightburst():
     # Green pustules on the cloth of the chest: round, bright green
     # pustules with a pale top and a dark rim, on the vines of the front of
     # the outer layer (x 20 to 27), and on the leaves over the upper arms.
@@ -831,7 +831,7 @@ GENES = {
     "bile_shot": bile_shot,
     "rotting_touch": rotting_touch,
     "antivenom": antivenom,
-    "plague_carrier": plague_carrier,
+    "blightburst": blightburst,
     "rootshot": rootshot,
     "creeper_vines": creeper_vines,
     "thornwrap": thornwrap,

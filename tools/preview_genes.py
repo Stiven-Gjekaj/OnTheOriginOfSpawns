@@ -199,7 +199,7 @@ STRAY_EXTRA = {
 BOGGED_FAMILIES = {
     "sporecaps": ["puffball", "shelfback", "mushroom_shot", "regrowth", "rot_mend", "spore_lung"],
     "mirefolk": ["wader", "mudcake", "mudburrow", "mire_grip", "swamp_gas", "leechbone"],
-    "venomers": ["venom_gland", "toxic_tip", "bile_shot", "rotting_touch", "antivenom", "plague_carrier"],
+    "venomers": ["venom_gland", "toxic_tip", "bile_shot", "rotting_touch", "antivenom", "blightburst"],
     "vinebound": ["rootshot", "creeper_vines", "thornwrap", "snare", "mossbed", "vine_swing"],
     "mosshides": ["lily_pad", "ambush_shot", "silent_rot", "swamp_shroud", "bog_mist", "barkskin"],
 }

@@ -232,7 +232,7 @@ BOGGED_CLOSEUPS = {
     "bogged_venomers": ("Venomer marks and models",
                         [("Venom Gland + Toxic Tip", ["venom_gland", "toxic_tip"], False),
                          ("Bile Shot + Rotting Touch", ["bile_shot", "rotting_touch"], False),
-                         ("Antivenom + Plague Carrier", ["antivenom", "plague_carrier"], False),
+                         ("Antivenom + Blightburst", ["antivenom", "blightburst"], False),
                          ("All 6", BOGGED["venomers"], False)],
                         [FRONT, SIDE, BACK, THREE_QUARTER, ("front at night", 0, 0, 0.18), NIGHT_BEHIND]),
     "bogged_vinebound": ("Vinebound marks and models",

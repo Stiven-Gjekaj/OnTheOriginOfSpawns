@@ -41,6 +41,9 @@ import net.minecraft.world.level.block.LightBlock;
  * tools/matte_wiki_shots.py finds the transparency of each pixel from the two pictures, and from two pictures of the
  * empty rooms. The raw pictures go to build/wiki_shots, with names such as zombie__gene__cinder__front__black.
  * <p>
+ * The environment variable ORIGINOFSPAWNS_WIKI_SPECIES limits the pictures to some species, for example
+ * "creeper,parched". With no value, the test takes the pictures of all species.
+ * <p>
  * The mob exists only on the client. A mob on the server would run the effects of its genes, and an aura such as
  * Darkness or Nausea would change the picture.
  */
@@ -48,7 +51,7 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 	private static final Path OUTPUT = projectRoot().resolve("build/wiki_shots");
 	private static final List<EntityType<? extends Mob>> SPECIES = List.of(EntityTypes.ZOMBIE, EntityTypes.HUSK,
 			EntityTypes.DROWNED, EntityTypes.SKELETON, EntityTypes.STRAY, EntityTypes.BOGGED, EntityTypes.WITHER_SKELETON,
-			EntityTypes.PARCHED);
+			EntityTypes.PARCHED, EntityTypes.CREEPER);
 	private static final int SHOT_ID = -424242;
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 960;
@@ -100,7 +103,7 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 				server.runOnServer(s -> room(s.overworld(), base, wall));
 				context.waitTicks(40);
 				shoot(context, "background__" + background);
-				for (EntityType<? extends Mob> type : SPECIES) {
+				for (EntityType<? extends Mob> type : selectedSpecies()) {
 					for (Subject subject : subjects(singleplayer, type)) {
 						CarriedGenes carried = server.computeOnServer(s -> carry(s.overworld(), type, subject.genes()));
 						for (String view : List.of("front", "back")) {
@@ -114,6 +117,19 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 				context.runOnClient(client -> client.level.removeEntity(SHOT_ID, Entity.RemovalReason.DISCARDED));
 			}
 		}
+	}
+
+	/**
+	 * Returns the species in ORIGINOFSPAWNS_WIKI_SPECIES, or all species if the variable has no value.
+	 */
+	private static List<EntityType<? extends Mob>> selectedSpecies() {
+		String names = System.getenv("ORIGINOFSPAWNS_WIKI_SPECIES");
+		if (names == null || names.isBlank()) {
+			return SPECIES;
+		}
+		List<String> wanted = java.util.Arrays.stream(names.split(",")).map(String::trim).toList();
+		return SPECIES.stream().filter(type -> wanted.contains(BuiltInRegistries.ENTITY_TYPE.getKey(type).getPath()))
+				.toList();
 	}
 
 	/**

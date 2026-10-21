@@ -48,6 +48,8 @@ DROWNED_OUTER_BABY_PATH = "assets/minecraft/textures/entity/zombie/drowned_outer
 SKELETON_PATH = "assets/minecraft/textures/entity/skeleton/skeleton.png"
 STRAY_PATH = "assets/minecraft/textures/entity/skeleton/stray.png"
 STRAY_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/stray_overlay.png"
+BOGGED_PATH = "assets/minecraft/textures/entity/skeleton/bogged.png"
+BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
 REGIONS = {"face": 1, "scalp": 2, "torso": 3, "arms": 4, "hands": 5, "legs": 6, "ribs": 9, "spine": 10,
@@ -193,6 +195,16 @@ STRAY_EXTRA = {
     "wailers": [("All 6 at night", [], True, {"light": 0.18}),
                 ("All 6 translucent", [], True, {"opacity": 0.55})],
 }
+# The families of the bogged, from design/species/bogged.md.
+BOGGED_FAMILIES = {
+    "sporecaps": ["puffball", "shelfback", "mushroom_shot", "regrowth", "rot_mend", "spore_lung"],
+    "mirefolk": ["wader", "mudcake", "mudburrow", "mire_grip", "swamp_gas", "leechbone"],
+    "venomers": ["venom_gland", "toxic_tip", "bile_shot", "rotting_touch", "antivenom", "plague_carrier"],
+    "vinebound": ["rootshot", "creeper_vines", "thornwrap", "snare", "mossbed", "vine_swing"],
+    "mosshides": ["lily_pad", "ambush_shot", "silent_rot", "swamp_shroud", "bog_mist", "barkskin"],
+}
+
+BOGGED_EXTRA = {}
 NIGHT = (18, 22, 38, 255)
 
 # The babies of BabyGenesClientTest, for a sheet to compare with the game.
@@ -425,7 +437,20 @@ def split_image(identifier):
 # textures (adult, baby) of the drowned or the stray or None, the cubes and
 # the pivots of the adult model, and True when only the layers with the
 # target "outer" go on the outer layer (the stray). set_mob() sets it.
-MOB = {"split": False, "outer": None, "cubes": ZOMBIE_CUBES, "pivots": PIVOTS, "outer_target": False}
+MOB = {"split": False, "outer": None, "cubes": ZOMBIE_CUBES, "pivots": PIVOTS, "outer_target": False,
+       "outer_inflate": 0.25, "extra": []}
+
+# The mushrooms on the head of the bogged, from BoggedModel: crossed planes
+# of 6x4 pixels, with the texture of the mob. Each is (uv, from, size,
+# pivot, rotation in degrees).
+BOGGED_MUSHROOMS = [
+    ((50, 16), (0, -11, 3), (6, 4, 0), (3, -8, 3), (0, 45, 0)),
+    ((50, 16), (0, -11, 3), (6, 4, 0), (3, -8, 3), (0, 135, 0)),
+    ((50, 22), (-6, -11, -3), (6, 4, 0), (-3, -8, -3), (0, 45, 0)),
+    ((50, 22), (-6, -11, -3), (6, 4, 0), (-3, -8, -3), (0, 135, 0)),
+    ((50, 28), (-5, -5, 4), (6, 4, 0), (-2, -1, 4), (-90, 0, 45)),
+    ((50, 28), (-5, -5, 4), (6, 4, 0), (-2, -1, 4), (-90, 0, 135)),
+]
 
 BABY_IMAGES = {}
 
@@ -575,8 +600,10 @@ def cubes_of(tex, genes, baby=False):
     if MOB["outer"]:
         outer = zombie(MOB["outer"][1 if baby else 0], genes, baby, outer=True)
         outer_body = ZOMBIE_CUBES if MOB["outer_target"] else body
-        cubes += [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.25, "mirror": m,
+        cubes += [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": MOB["outer_inflate"], "mirror": m,
                    "texture": outer, "scale": 1.0} for b, uv, f, s, m in outer_body]
+    cubes += [{"bone": "head", "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": False, "texture": tex,
+               "scale": 1.0, "pivot": p, "rotation": rot} for uv, f, s, p, rot in MOB["extra"]]
     for gene in genes:
         cubes += gene_cubes(gene, tex, baby)
     return cubes
@@ -685,19 +712,24 @@ SPECIES = {
     "drowned": (DROWNED_PATH, DROWNED_BABY_PATH, DROWNED_FAMILIES, DROWNED_EXTRA, []),
     "skeleton": (SKELETON_PATH, None, SKELETON_FAMILIES, SKELETON_EXTRA, []),
     "stray": (STRAY_PATH, None, STRAY_FAMILIES, STRAY_EXTRA, []),
+    "bogged": (BOGGED_PATH, None, BOGGED_FAMILIES, BOGGED_EXTRA, []),
 }
 
 
 def set_mob(species):
     """Set the look of the species for the bake and the cubes."""
-    skeleton = species in ("skeleton", "stray")
+    skeleton = species in ("skeleton", "stray", "bogged")
     MOB["split"] = species == "drowned"
     MOB["cubes"] = DROWNED_CUBES if species == "drowned" else SKELETON_CUBES if skeleton else ZOMBIE_CUBES
     MOB["pivots"] = SKELETON_PIVOTS if skeleton else PIVOTS
     MOB["outer"] = ((find_zombie_texture(DROWNED_OUTER_PATH), find_zombie_texture(DROWNED_OUTER_BABY_PATH))
                     if species == "drowned" else (find_zombie_texture(STRAY_OUTER_PATH), None)
-                    if species == "stray" else None)
-    MOB["outer_target"] = species == "stray"
+                    if species == "stray" else (find_zombie_texture(BOGGED_OUTER_PATH), None)
+                    if species == "bogged" else None)
+    MOB["outer_target"] = species in ("stray", "bogged")
+    # The bogged cloth is 0.2 pixel larger than the body, the others 0.25.
+    MOB["outer_inflate"] = 0.2 if species == "bogged" else 0.25
+    MOB["extra"] = BOGGED_MUSHROOMS if species == "bogged" else []
 
 
 def main(species="zombie"):

@@ -216,6 +216,10 @@ STRAY_CLOSEUPS = {
                       [FRONT, SIDE, BACK, THREE_QUARTER, ("front at night", 0, 0, 0.18), NIGHT_BEHIND]),
 }
 
+# The close-ups of the bogged. The bogged has no babies.
+BOGGED = pg.BOGGED_FAMILIES
+BOGGED_CLOSEUPS = {}
+
 # Each species: its texture, its baby texture, and its close-ups.
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
@@ -223,6 +227,7 @@ SPECIES = {
     "drowned": (pg.DROWNED_PATH, pg.DROWNED_BABY_PATH, DROWNED_CLOSEUPS),
     "skeleton": (pg.SKELETON_PATH, None, SKELETON_CLOSEUPS),
     "stray": (pg.STRAY_PATH, None, STRAY_CLOSEUPS),
+    "bogged": (pg.BOGGED_PATH, None, BOGGED_CLOSEUPS),
 }
 
 

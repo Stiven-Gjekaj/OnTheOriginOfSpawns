@@ -102,7 +102,9 @@ The husk and the drowned come out together in one alpha release.
   (phantom, vex, ghast, blaze, breeze), the guardian, the undead mounts (camel
   husk, zombie nautilus, zombie horse, skeleton horse), and the others
   (silverfish, shulker, ravager, creaking).
-- The zombie villager uses the body of the zombie, so it comes first.
+- The zombie villager comes first, because it acts as a zombie. It has the
+  body of a villager, with the arms and the walk of a zombie, and biome and
+  profession layers. Its gene marks need a region map of their own.
 - The neutral mobs that fight the player come after the hostile mobs: polar
   bear, bee, wolf, goat, dolphin, panda, llama, and iron golem.
 

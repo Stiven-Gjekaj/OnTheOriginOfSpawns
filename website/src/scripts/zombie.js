@@ -254,7 +254,8 @@ async function applyLayer(out, gene, layer, maps, patternOf) {
   const regions = new Set((layer.regions || []).map((r) => REGIONS[r]));
   const materials = new Set((layer.materials || []).map((m) => MATERIALS[m]));
   const e = layer.effect;
-  const pattern = e.type === "pattern" ? await patternOf(e.texture) : null;
+  // A pattern, and an erase with a mask texture, read a tiled texture.
+  const pattern = e.texture && (e.type === "pattern" || e.type === "erase") ? await patternOf(e.texture) : null;
   const tint = e.tint ? rgb(e.tint) : [255, 255, 255];
   const colors = e.colors ? e.colors.map(rgb) : [];
   const o = out.data;
@@ -280,6 +281,8 @@ async function applyLayer(out, gene, layer, maps, patternOf) {
         const shade = pattern.data[pi] / 255;
         for (let k = 0; k < 3; k++) o[i + k] = Math.trunc(o[i + k] + (tint[k] * shade - o[i + k]) * strength);
       } else if (e.type === "erase") {
+        // With a mask, erase only where the mask has alpha, like TextureBaker.masked.
+        if (pattern && !pattern.data[((y % pattern.height) * pattern.width + (x % pattern.width)) * 4 + 3]) continue;
         o[i] = o[i + 1] = o[i + 2] = o[i + 3] = 0;
       }
     }

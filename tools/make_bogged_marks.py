@@ -56,7 +56,8 @@ Pixel plan for the Mirefolk.
   Blightburst pustules.
 - Mudburrow has mud that drips from the skull: patches on the top of the
   outer head, and drips down its sides, front, and back (y 8 to 12).
-- Mire Grip has webbed fingers of rotten skin: arm rows 9 and 10.
+- Mire Grip has large webbed hands of green, rotten skin: arm rows 7 to
+  10, over the Barkskin bark (order 1).
 - Swamp Gas has bubbles of gas at the pelvis, under the outer layer: y 28
   to 31 of the body.
 - Leechbone: black leeches on the forearms, the gene model
@@ -331,17 +332,23 @@ def mudburrow():
 
 
 def mire_grip():
-    # Webbed fingers of rotten skin: a sheet of pale, bloated, gray-green
-    # skin over the hands (arm rows 9 and 10), with darker lines where the
-    # webs pull between the fingers. The hands of the bogged are dark, so
-    # the pale skin reads against them. The finger tips (row 11) stay dark.
-    skin = Mark("#A8B088")
-    web = Mark("#6A7050")
+    # Large webbed hands of rotten, green skin: the skin covers the hands
+    # and the wrists (arm rows 7 to 10), with dark webs between the fingers
+    # and bright, slimy spots. The finger tips (row 11) stay dark. The skin
+    # goes over the Barkskin bark on the wrists (order 1).
+    skin = Mark("#5E8A3A", order=1)
+    web = Mark("#2E4A1E", order=1)
+    slime = Mark("#9CD060", order=1)
     for face in SIDES:
         for col in (0, 1):
-            skin.put(arm(face, col, 9))
-            (web if col == face // 2 % 2 else skin).put(arm(face, col, 10))
-    return [skin, web]
+            for row in (7, 8, 9, 10):
+                if row == 10 and col == face // 2 % 2:
+                    web.put(arm(face, col, row))
+                elif (row + col + face) % 5 == 0:
+                    slime.put(arm(face, col, row))
+                else:
+                    skin.put(arm(face, col, row))
+    return [skin, web, slime]
 
 
 def swamp_gas():

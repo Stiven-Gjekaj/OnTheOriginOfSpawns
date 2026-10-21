@@ -5,15 +5,25 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/mire_grip_0.png",
-				"tint": "#A8B088"
-			}
+				"tint": "#5E8A3A"
+			},
+			"order": 1
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/mire_grip_1.png",
-				"tint": "#6A7050"
-			}
+				"tint": "#2E4A1E"
+			},
+			"order": 1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mire_grip_2.png",
+				"tint": "#9CD060"
+			},
+			"order": 1
 		}
 	]
 }

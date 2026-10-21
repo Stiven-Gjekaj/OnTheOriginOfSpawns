@@ -101,8 +101,8 @@ Pixel plan for the Mosshides.
 - Silent Rot has moss wrapped round the feet: leg rows 9 to 11 and the
   bottom of the leg, over the Wader mud (order 1).
 - Swamp Shroud: a hood of hanging moss, the gene model swamp_shroud_hood.
-- Bog Mist has a gray haze of mist over all of the outer layer, with
-  paler wisps in it.
+- Bog Mist has wisps of gray mist on the outer layer of the body and the
+  arms only. The head and the bones keep their color.
 - Barkskin has plates of wet bark on the forearms (arm rows 6 to 8) and on
   the thighs (leg rows 1 to 3).
 This script needs Pillow.
@@ -825,14 +825,19 @@ def swamp_shroud_model():
 
 
 def bog_mist():
-    # A gray haze of mist on all of the outer layer: a pale gray film over
-    # the moss and the vines, with paler wisps that drift across it.
-    haze = Mark("#C8CCC8", alpha=120, target="outer")
-    wisp = Mark("#E8ECE8", alpha=170, target="outer")
-    for x in range(64):
-        for y in range(32):
-            ((wisp if (x + 2 * y) % 9 < 2 else haze)).put((x, y))
-    return [haze, wisp]
+    # Wisps of gray mist on the cloth only: pale gray streaks that drift
+    # across the vines and the leaves of the body and the arms. The head
+    # (the face) and the bones keep their color.
+    wisp = Mark("#D0D4D0", alpha=190, target="outer")
+    thin = Mark("#B8BEB8", alpha=130, target="outer")
+    for x in range(16, 56):
+        for y in range(16, 32):
+            band = (x + 2 * y) % 11
+            if band < 2:
+                wisp.put((x, y))
+            elif band == 2:
+                thin.put((x, y))
+    return [wisp, thin]
 
 
 BARK = ("#5A4430", "#3E2E20", "#7A6044", "#8A7458")

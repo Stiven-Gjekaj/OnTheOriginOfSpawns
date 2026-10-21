@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wader_0.png",
+				"tint": "#4A3828"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wader_1.png",
+				"tint": "#36281C"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wader_2.png",
+				"tint": "#6A5238"
+			}
+		}
+	]
+}

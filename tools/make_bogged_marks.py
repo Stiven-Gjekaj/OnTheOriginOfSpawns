@@ -47,6 +47,19 @@ Pixel plan for the Sporecaps.
   26, y 21 to 27).
 - Spore Lung has pale spores round the mouth of the outer face (y 13 to
   15), and on the bottom of the head.
+
+Pixel plan for the Mirefolk.
+- Wader has wet mud on the legs up to the knees: leg rows 6 to 11 and the
+  bottom of the leg, with drips on row 5.
+- Mudcake has a cracked crust of dried mud on the outer layer of the body,
+  and on the ribs of the sides and the back.
+- Mudburrow has mud that drips from the skull: patches on the top of the
+  outer head, and drips down its sides, front, and back (y 8 to 12).
+- Mire Grip has webbed fingers of rotten skin: arm rows 9 and 10.
+- Swamp Gas has bubbles of gas at the pelvis, under the outer layer: y 28
+  to 31 of the body.
+- Leechbone: black leeches on the forearms, the gene model
+  leechbone_leeches.
 This script needs Pillow.
 """
 import json
@@ -212,6 +225,123 @@ def spore_lung():
     return [pale, green]
 
 
+
+MUD = ("#4A3828", "#36281C", "#6A5238", "#2A1E14")
+DRY = ("#9A8466", "#7E6A50", "#4E3E2A")
+
+
+def wader():
+    # Wet mud on the legs up to the knees: dark mud on leg rows 6 to 11 of
+    # all the faces and on the bottom of the leg, with glossy wet spots,
+    # and drips of mud on row 5.
+    mud = Mark(MUD[0])
+    deep = Mark(MUD[1])
+    wet = Mark(MUD[2])
+    for face in SIDES:
+        for col in (0, 1):
+            for row in range(6, 12):
+                n = noise100(face + col, row, 281)
+                (wet if n < 15 else deep if row > 9 else mud).put(leg(face, col, row))
+        mud.put(leg(face, face // 2 % 2, 5), 230)
+    for x in (4, 5):
+        for y in (16, 17):
+            deep.put((x, y))
+    return [mud, deep, wet]
+
+
+def mudcake():
+    # A cracked crust of dried mud: pale, dry mud on the outer layer of the
+    # body (y 20 to 31 of the body) and on the bones of the sides and the
+    # back of the ribs, with dark cracks in a net.
+    crust = Mark(DRY[0], target="outer")
+    shade = Mark(DRY[1], target="outer")
+    crack = Mark(DRY[2], target="outer")
+    for x in range(16, 40):
+        for y in range(16, 32):
+            if (x * 2 + y) % 7 == 0 or (x - 2 * y) % 9 == 0:
+                crack.put((x, y))
+            else:
+                (shade if noise100(x, y, 282) < 30 else crust).put((x, y))
+    bone = Mark(DRY[0])
+    bone_crack = Mark(DRY[2])
+    for x in list(range(16, 20)) + list(range(28, 40)):
+        for y in range(21, 28):
+            (bone_crack if (x * 2 + y) % 7 == 0 else bone).put((x, y))
+    return [crust, shade, crack, bone, bone_crack]
+
+
+def mudburrow():
+    # Mud that drips from the skull: patches of dark, wet mud on the top of
+    # the outer head, and drips of it down the sides, the front, and the
+    # back (y 8 to 12), each drip a different length. The eyes stay clear.
+    mud = Mark(MUD[0], target="outer")
+    wet = Mark(MUD[2], target="outer")
+    for x in range(8, 16):
+        for y in range(0, 8):
+            if noise100(x // 2, y // 2, 283) < 60:
+                (wet if (x + y) % 4 == 0 else mud).put((x, y))
+    for x in range(0, 32):
+        length = 8 + (x * 7 + 3) % 5
+        for y in range(8, length + 1):
+            if (x, y) in ((9, 12), (10, 12), (13, 12), (14, 12)):
+                continue
+            (wet if y == length else mud).put((x, y))
+    return [mud, wet]
+
+
+def mire_grip():
+    # Webbed fingers of rotten skin: a sheet of pale, bloated, gray-green
+    # skin over the hands (arm rows 9 and 10), with darker lines where the
+    # webs pull between the fingers. The hands of the bogged are dark, so
+    # the pale skin reads against them. The finger tips (row 11) stay dark.
+    skin = Mark("#A8B088")
+    web = Mark("#6A7050")
+    for face in SIDES:
+        for col in (0, 1):
+            skin.put(arm(face, col, 9))
+            (web if col == face // 2 % 2 else skin).put(arm(face, col, 10))
+    return [skin, web]
+
+
+def swamp_gas():
+    # Bubbles of gas at the pelvis, under the outer layer: small pale green
+    # bubbles with a bright spot, on the front, the sides, and the back of
+    # the body, y 28 to 31.
+    bubble = Mark("#D2F0A0")
+    shine = Mark("#FFFFFF")
+    rim = Mark("#4E6A28")
+    for cx, cy in ((21, 30), (25, 29), (18, 30), (30, 29), (34, 30), (38, 29), (23, 28)):
+        bubble.put((cx, cy)).put((cx + 1, cy))
+        shine.put((cx, cy - 1)) if cy > 28 else shine.put((cx + 1, cy + 1))
+        rim.put((cx, cy + 1)) if cy < 31 else None
+    return [bubble, shine, rim]
+
+
+def leechbone():
+    # The leeches are the gene model leechbone_leeches.
+    return []
+
+
+def leechbone_model():
+    # Black leeches on the forearms: on each arm, a leech on the outer side
+    # and a leech on the front, each a short, fat body that holds on to the
+    # bone (it goes a little into the arm). A leech is black with a dark
+    # red band near its head. On an arm bone, the arm is from x -1 to 1 and
+    # from z -1 to 1, and row r is at y r - 2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def leech(face, x, y):
+        return "#4A1E1E" if y == 0 else "#1A1614" if (x + y) % 2 else "#2A2420"
+
+    # A leech: 1x3x1 at uv (0, 0).
+    paint_box(im, 0, 0, 1, 3, 1, leech)
+    parts = []
+    for bone, side in (("right_arm", -1), ("left_arm", 1)):
+        x = -1.6 if side < 0 else 0.6
+        parts.append({"bone": bone, "uv": [0, 0], "from": [x, 4, -0.5], "size": [1, 3, 1], "inflate": 0.1})
+        parts.append({"bone": bone, "uv": [0, 0], "from": [-0.5, 6.5, -1.6], "size": [1, 3, 1], "inflate": 0.1})
+    save_model("leechbone_leeches", im, parts)
+
 GENES = {
     "puffball": puffball,
     "shelfback": shelfback,
@@ -219,15 +349,22 @@ GENES = {
     "regrowth": regrowth,
     "rot_mend": rot_mend,
     "spore_lung": spore_lung,
+    "wader": wader,
+    "mudcake": mudcake,
+    "mudburrow": mudburrow,
+    "mire_grip": mire_grip,
+    "swamp_gas": swamp_gas,
+    "leechbone": leechbone,
 }
 
 MODELS = {
     "puffball": "originofspawns:puffball_cap",
     "shelfback": "originofspawns:shelfback_shelves",
     "mushroom_shot": "originofspawns:mushroom_shot_caps",
+    "leechbone": "originofspawns:leechbone_leeches",
 }
 
-MODEL_MAKERS = [puffball_model, shelfback_model, mushroom_shot_model]
+MODEL_MAKERS = [puffball_model, shelfback_model, mushroom_shot_model, leechbone_model]
 
 
 def main():

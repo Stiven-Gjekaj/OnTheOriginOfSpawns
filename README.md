@@ -74,6 +74,8 @@ each other.
 
 ![All 15 families from above: zombies on grass, husks on sand, and drowned on prismarine](assets/gallery/all_families.png)
 
+![All 25 skeleton families from above: skeletons, strays, bogged, parched, and wither skeletons, each on its own floor](assets/gallery/skeleton_families.png)
+
 | | |
 |:---:|:---:|
 | ![Five zombies, one of each family, each with three genes](assets/gallery/zombies.png) | ![Five husks, one of each family, each with three genes](assets/gallery/husks.png) |

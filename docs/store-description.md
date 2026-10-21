@@ -13,15 +13,8 @@ can read the evolution of your world on the bodies of its mobs.
 - **6** biome pools for each species
 - **1,395,488** possible gene mixes
 
-![All 15 families from above](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/all_families.png)
-![Five zombies, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/zombies.png)
-![Five husks, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/husks.png)
-![Five drowned, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/drowned.png)
-![Five skeletons, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/skeletons.png)
-![Five strays, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/strays.png)
-![Five bogged, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/bogged.png)
-![Five wither skeletons, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/wither_skeletons.png)
-![Five parched, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/parched.png)
+![The 15 families of the zombie, the husk, and the drowned, from above](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/all_families.png)
+![The 25 families of the five skeleton species, from above](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/skeleton_families.png)
 
 > **Alpha.** The zombie, the husk, the drowned, the skeleton, the stray, the
 > bogged, the wither skeleton, and the parched are complete. Each one has

@@ -375,6 +375,32 @@ public class BehaviorEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void aSkeletonThatFreezesGetsStrayGenes(GameTestHelper helper) {
+		Identifier old = Identifier.fromNamespaceAndPath("originofspawns_test", "test_skeleton_only");
+		var skeleton = EntityTypes.SKELETON.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
+		skeleton.setAttached(ModAttachments.GENES, new CarriedGenes(List.of(old)));
+		skeleton.snapTo(helper.absoluteVec(new Vec3(1.5, 1.0, 1.5)), 0.0F, 0.0F);
+		helper.getLevel().addFreshEntity(skeleton);
+		helper.assertTrue(GeneEffects.of(skeleton).findAny().isPresent(), "the skeleton has the effect of its gene");
+		// The vanilla freeze conversion calls this method when the skeleton stays in powder snow.
+		var stray = skeleton.convertTo(EntityTypes.STRAY, net.minecraft.world.entity.ConversionParams.single(skeleton, true, true),
+				converted -> {
+				});
+		helper.assertTrue(stray != null, "the skeleton converts");
+		CarriedGenes genes = stray.getAttached(ModAttachments.GENES);
+		helper.assertTrue(genes != null, "the stray gets genes from its own pool");
+		helper.assertFalse(genes.genes().contains(old), "the stray keeps a skeleton gene");
+		var registry = helper.getLevel().registryAccess().lookupOrThrow(
+				io.github.stivengjekaj.originofspawns.registry.ModRegistries.GENE);
+		for (Identifier id : genes.genes()) {
+			var gene = registry.getValue(id);
+			helper.assertTrue(gene != null && gene.carriedBy(EntityTypes.STRAY), "the stray gene " + id
+					+ " is not in the stray pool");
+		}
+		helper.succeed();
+	}
+
 	@GameTest(maxTicks = 100)
 	public void attributeWhenFollowsTheSand(GameTestHelper helper) {
 		BlockPos ground = new BlockPos(1, 0, 1);

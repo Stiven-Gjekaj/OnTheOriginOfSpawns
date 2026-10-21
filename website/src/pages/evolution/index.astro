@@ -124,8 +124,8 @@ const genesFor = (p) => site.genes.filter((g) => g.counters === p);
         </div>
         <div class="card spawn">
           <h3>Spawn from the pool</h3>
-          <p class="muted small" id="sim-art" hidden>The gene art of this species comes later. The picture shows a plain mob.</p>
-          <div class="spawn-stage"><canvas id="sim-canvas" role="img" aria-label="The zombie that spawned from the pool"></canvas></div>
+          <div class="spawn-stage"><img id="sim-shot" alt="" height="220" /></div>
+          <p class="muted small" id="sim-caption"></p>
           <div class="mob-info" id="sim-result"><div class="n">No mob yet</div><div class="g">Press the button</div></div>
           <button class="mc-btn" type="button" id="sim-spawn">Spawn a mob</button>
           <p class="muted small" id="sim-log" aria-live="polite"></p>
@@ -146,7 +146,7 @@ const genesFor = (p) => site.genes.filter((g) => g.counters === p);
       <div class="card">
         <h3>Gene marks</h3>
         <ul class="muted">{pick(ev.visuals, /^Each gene adds|^The marks of different|^The mod does not have a texture|^Data packs define/).map((x) => <li>{x}</li>)}</ul>
-        <div class="actions"><a class="btn sm" href={url("lab/")}>Open the Gene Lab</a></div>
+        <div class="actions"><a class="btn sm" href={url("genes/")}>See the genes</a></div>
       </div>
     </section>
 
@@ -191,7 +191,9 @@ const genesFor = (p) => site.genes.filter((g) => g.counters === p);
     width: 100%; display: grid; place-items: center; border-radius: var(--radius);
     background: radial-gradient(60% 60% at 50% 40%, color-mix(in srgb, var(--accent) 10%, transparent), transparent), var(--surface-2);
   }
-  .spawn-stage canvas { width: min(100%, 200px); aspect-ratio: 3 / 4; image-rendering: pixelated; }
+  .spawn-stage { min-height: 236px; padding: 8px 0; }
+  .spawn-stage img { height: 220px; width: auto; max-width: 100%; object-fit: contain; }
+  .spawn-stage img:not([src]) { visibility: hidden; }
   .spawn .mob-info { width: 100%; }
 </style>
 

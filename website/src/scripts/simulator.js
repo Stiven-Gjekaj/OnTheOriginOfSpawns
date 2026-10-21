@@ -2,8 +2,7 @@
 // files and keeps the pools in the browser, so that the notebook can read them.
 
 import { genes } from "../data/site.json";
-import { familyOf, kindName, pct, t, loadState, saveState, recordFound } from "../lib/site.js";
-import { drawStill } from "./zombie-canvas.js";
+import { familyOf, kindName, pct, t, loadState, saveState, recordFound, url, speciesById } from "../lib/site.js";
 import { getSpecies } from "./species.js";
 
 const state = loadState();
@@ -30,7 +29,6 @@ function render(hit = new Set()) {
       <span class="val">${pct(p[g.id])}</span>
     </div>`).join("");
   $("sim-deaths").textContent = `Deaths in this pool: ${state.deaths[key()] || 0}`;
-  $("sim-art").hidden = genes.some((g) => g.visual);
   saveState(state);
 }
 
@@ -54,7 +52,19 @@ function spawn() {
   draw();
 }
 
-const draw = () => drawStill($("sim-canvas"), zombie, { w: 180, h: 240, scale: 5.2, cy: 0.32, turn: -0.55, species });
+// The wiki has a picture of a plain mob and of each gene alone. A mob with
+// more genes shows the picture of its gene with the highest frequency.
+function draw() {
+  const img = $("sim-shot");
+  const sp = speciesById[species];
+  const top = zombie[0];
+  const shot = top?.shot || sp?.shot;
+  if (shot) img.src = url(shot.front); else img.removeAttribute("src");
+  img.alt = top ? `A ${sp.name.toLowerCase()} with the gene ${top.name}` : `A plain ${sp?.name.toLowerCase()}`;
+  $("sim-caption").textContent = !top ? `The picture shows a ${sp?.name.toLowerCase()} with no genes.`
+    : zombie.length === 1 ? `The picture shows a ${sp.name.toLowerCase()} with ${top.name}.`
+    : `The wiki has no picture of this mix. The picture shows only ${top.name}, the gene with the highest frequency.`;
+}
 
 $("sim-cats").addEventListener("click", (e) => {
   const b = e.target.closest("[data-cat]");

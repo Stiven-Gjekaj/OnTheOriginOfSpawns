@@ -14,6 +14,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.phys.Vec3;
@@ -76,6 +77,38 @@ public class CreeperEffectsTest {
 			helper.assertTrue(slow.isRemoved(), "the slow creeper exploded after 60 ticks");
 			helper.succeed();
 		});
+	}
+
+	@GameTest(environment = BLASTS, padding = 8)
+	public void damageEffectsChangeTheBlastDamage(GameTestHelper helper) {
+		// Each blast has the same place, so only the genes change the damage.
+		float plain = blastDamageToGolem(helper);
+		float soft = blastDamageToGolem(helper, "test_soft_blast");
+		helper.assertTrue(plain > 0.0F, "the plain blast hurts the golem");
+		helper.assertTrue(Math.abs(soft - plain * 0.5F) < 0.01F, "half the damage, was " + soft + " of " + plain);
+		helper.succeed();
+	}
+
+	@GameTest(environment = BLASTS, padding = 8)
+	public void moreBlastDamageToATag(GameTestHelper helper) {
+		float plain = blastDamageToGolem(helper);
+		float breaker = blastDamageToGolem(helper, "test_golem_breaker");
+		helper.assertTrue(Math.abs(breaker - plain * 2.0F) < 0.01F, "two times the damage, was " + breaker + " of " + plain);
+		helper.succeed();
+	}
+
+	/**
+	 * Explodes a creeper with the genes 4 blocks from a new iron golem, and returns the health that the golem lost.
+	 * The golem goes away after the blast.
+	 */
+	static float blastDamageToGolem(GameTestHelper helper, String... genes) {
+		Creeper creeper = creeperWith(helper, new BlockPos(1, 1, 2), genes);
+		IronGolem golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(5, 1, 2));
+		float before = golem.getHealth();
+		explode(creeper);
+		float lost = before - golem.getHealth();
+		golem.discard();
+		return lost;
 	}
 
 	static void explode(Creeper creeper) {

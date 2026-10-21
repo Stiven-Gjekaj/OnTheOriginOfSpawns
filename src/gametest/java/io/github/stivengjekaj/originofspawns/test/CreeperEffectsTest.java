@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect.When;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
@@ -349,6 +350,59 @@ public class CreeperEffectsTest {
 		helper.assertTrue(grounded.getRemainingFireTicks() <= 0, "no fire from the lightning");
 		helper.assertTrue(grounded.isPowered(), "the lightning still charges it");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void unseenAsksIfThePlayerSawTheMob(GameTestHelper helper) {
+		Creeper creeper = creeperWith(helper, new BlockPos(1, 1, 5), "test_surprise");
+		ServerPlayer player = playerFacing(helper, 0.0F);
+		// The creeper is to the south. The player looks south at it, and to the west is to the side.
+		face(player, 90.0F);
+		helper.assertTrue(GeneCombat.test(creeper, When.UNSEEN, player), "the player never looked at the creeper");
+		face(player, 0.0F);
+		helper.assertFalse(GeneCombat.test(creeper, When.UNSEEN, player), "the player looks at the creeper");
+		Evolution.trackLooks(creeper, helper.getLevel());
+		face(player, 90.0F);
+		helper.assertFalse(GeneCombat.test(creeper, When.UNSEEN, player), "the player looked at it a short time ago");
+		face(player, 180.0F);
+		helper.assertTrue(GeneCombat.test(creeper, When.UNSEEN, player), "the creeper is behind the player");
+		face(player, 90.0F);
+		long old = helper.getLevel().getGameTime() - 100L;
+		creeper.setAttached(ModAttachments.LOOK_TIMES, java.util.Map.of(player.getUUID(), old));
+		helper.assertTrue(GeneCombat.test(creeper, When.UNSEEN, player), "the last look is older than 3 seconds");
+		creeper.setTarget(player);
+		helper.assertTrue(GeneCombat.test(creeper, When.UNSEEN), "with no victim, the state asks about the target");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aSurpriseBlastHurtsOnlyThePlayersThatDidNotSeeIt(GameTestHelper helper) {
+		Creeper creeper = creeperWith(helper, new BlockPos(1, 1, 5), "test_surprise");
+		ServerPlayer watcher = playerFacing(helper, 0.0F);
+		ServerPlayer surprised = playerFacing(helper, 180.0F);
+		var blast = helper.getLevel().damageSources().explosion(creeper, creeper);
+		// One blast hits both players, and each player gets its own answer.
+		helper.assertValueEqual(GeneCombat.modifyDamage(watcher, blast, 10.0F), 10.0F, "the watcher takes normal damage");
+		helper.assertValueEqual(GeneCombat.modifyDamage(surprised, blast, 10.0F), 13.0F, "the surprised player");
+		helper.succeed();
+	}
+
+	/**
+	 * Makes a player at the north end of the test that faces in the direction of the yaw.
+	 */
+	static ServerPlayer playerFacing(GameTestHelper helper, float yaw) {
+		ServerPlayer player = survivalPlayer(helper).player();
+		player.setNoGravity(true);
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(1, 1, 1))));
+		face(player, yaw);
+		return player;
+	}
+
+	static void face(ServerPlayer player, float yaw) {
+		player.setYRot(yaw);
+		player.setYHeadRot(yaw);
+		player.setYBodyRot(yaw);
+		player.setXRot(0.0F);
 	}
 
 	/**

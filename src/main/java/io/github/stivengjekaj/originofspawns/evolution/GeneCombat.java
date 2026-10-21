@@ -82,6 +82,15 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Returns true if the state is true for the entity now, for one victim. Only the state {@code unseen} needs the
+	 * victim: it asks if this victim saw the mob, and not the target of the mob. A blast hits many victims at one
+	 * time, so each victim gets its own answer. The other states do not change with the victim.
+	 */
+	public static boolean test(LivingEntity entity, When when, LivingEntity victim) {
+		return when == When.UNSEEN ? Evolution.unseen(entity, victim) : test(entity, when);
+	}
+
+	/**
 	 * Returns true if the state is true for the entity now. The states {@code alone} and {@code grouped} use the
 	 * radius.
 	 */
@@ -139,6 +148,7 @@ public final class GeneCombat {
 					&& mob.getTarget().hasEffect(net.minecraft.world.effect.MobEffects.WEAKNESS);
 			case OFF_SOUL_GROUND -> !onSoulGround(entity);
 			case CHARGED -> entity instanceof Creeper creeper && creeper.isPowered();
+			case UNSEEN -> entity instanceof Mob mob && mob.getTarget() != null && Evolution.unseen(mob, mob.getTarget());
 		};
 	}
 
@@ -352,7 +362,7 @@ public final class GeneCombat {
 				switch (effect) {
 					case GeneEffect.DamageDealtWhen dealt when (!dealt.playersOnly() || victim instanceof Player)
 							&& dealt.hits().includes(source.getDirectEntity() instanceof Projectile)
-							&& test(attacker, dealt.when()) -> result *= dealt.multiplier();
+							&& test(attacker, dealt.when(), victim) -> result *= dealt.multiplier();
 					case GeneEffect.Lure lure when attacker.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE)
 							.lureArmed() -> {
 						result *= lure.multiplier();

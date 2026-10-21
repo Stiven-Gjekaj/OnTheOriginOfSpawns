@@ -150,6 +150,9 @@ public abstract class LivingEntityMixin {
 				if (mob.tickCount % 20 == 0) {
 					Evolution.trackSpotter(mob, level);
 				}
+				if (mob.tickCount % 10 == 0) {
+					Evolution.trackLooks(mob, level);
+				}
 			}
 		}
 	}

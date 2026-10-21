@@ -135,6 +135,12 @@ public final class ModAttachments {
 	 */
 	public static final AttachmentType<Boolean> NO_CHARGE = AttachmentRegistry.create(OriginOfSpawns.id("no_charge"));
 
+	/**
+	 * The game time when each player last looked at a mob, by the UUID of the player. The game does not save it.
+	 */
+	public static final AttachmentType<java.util.Map<java.util.UUID, Long>> LOOK_TIMES =
+			AttachmentRegistry.create(OriginOfSpawns.id("look_times"));
+
 	private ModAttachments() {
 	}
 

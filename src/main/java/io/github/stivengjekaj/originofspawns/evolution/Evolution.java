@@ -83,6 +83,14 @@ public final class Evolution {
 	 * The cosine of the half angle of the view of a player, about 70 degrees.
 	 */
 	private static final double SPOT_VIEW_COS = 0.34;
+	/**
+	 * A look at a mob counts for the unseen state for 3 seconds.
+	 */
+	private static final long LOOK_TICKS = 60L;
+	/**
+	 * A player looks at a mob only in this range.
+	 */
+	private static final double LOOK_RANGE = 32.0;
 	private static final CrowdTracker CROWDS = new CrowdTracker();
 
 	/**
@@ -360,6 +368,59 @@ public final class Evolution {
 		if (!next.equals(trace)) {
 			mob.setAttached(ModAttachments.TRACE, next);
 		}
+	}
+
+	/**
+	 * Records the time for each player near the mob who looks at it now. The unseen state needs the last look.
+	 * A record older than the look time goes away.
+	 */
+	public static void trackLooks(Mob mob, ServerLevel level) {
+		long now = level.getGameTime();
+		Map<java.util.UUID, Long> before = mob.getAttachedOrElse(ModAttachments.LOOK_TIMES, Map.of());
+		Map<java.util.UUID, Long> looks = new java.util.HashMap<>();
+		before.forEach((player, time) -> {
+			if (now - time <= LOOK_TICKS) {
+				looks.put(player, time);
+			}
+		});
+		for (Player player : level.players()) {
+			if (!player.isSpectator() && looksAt(player, mob)) {
+				looks.put(player.getUUID(), now);
+			}
+		}
+		if (!looks.equals(before)) {
+			mob.setAttached(ModAttachments.LOOK_TIMES, looks);
+		}
+	}
+
+	/**
+	 * Returns true if the mob is in the view of the player now, in the look range, with nothing between them.
+	 */
+	public static boolean looksAt(LivingEntity viewer, LivingEntity mob) {
+		Vec3 toMob = mob.getEyePosition().subtract(viewer.getEyePosition());
+		double distance = toMob.length();
+		if (distance > LOOK_RANGE) {
+			return false;
+		}
+		return (distance < 1.0E-4 || viewer.getViewVector(1.0F).dot(toMob.scale(1.0 / distance)) >= SPOT_VIEW_COS)
+				&& viewer.hasLineOfSight(mob);
+	}
+
+	/**
+	 * Returns true if the viewer did not see the mob: the mob is behind the viewer, or the viewer did not look at it
+	 * in the last 3 seconds. Only the looks of players are recorded.
+	 */
+	public static boolean unseen(LivingEntity mob, LivingEntity viewer) {
+		Vec3 facing = viewer.getViewVector(1.0F).multiply(1.0, 0.0, 1.0);
+		Vec3 toMob = mob.position().subtract(viewer.position()).multiply(1.0, 0.0, 1.0);
+		if (facing.lengthSqr() > 1.0E-4 && toMob.lengthSqr() > 1.0E-4 && facing.normalize().dot(toMob.normalize()) < 0.0) {
+			return true;
+		}
+		if (looksAt(viewer, mob)) {
+			return false;
+		}
+		Long last = mob.getAttachedOrElse(ModAttachments.LOOK_TIMES, Map.of()).get(viewer.getUUID());
+		return last == null || mob.level().getGameTime() - last > LOOK_TICKS;
 	}
 
 	private static boolean isSpottedBy(Mob mob, Player player) {

@@ -406,7 +406,13 @@ public sealed interface GeneEffect {
 		/**
 		 * The mob is a charged creeper.
 		 */
-		CHARGED;
+		CHARGED,
+		/**
+		 * A player did not see the mob: the mob is behind the player, or the player did not look at it in the last
+		 * 3 seconds. In {@code damage_dealt_when}, the state asks about the entity that takes the damage. In other
+		 * effects, it asks about the target of the mob.
+		 */
+		UNSEEN;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 

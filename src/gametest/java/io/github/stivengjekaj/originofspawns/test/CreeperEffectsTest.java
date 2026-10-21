@@ -335,6 +335,22 @@ public class CreeperEffectsTest {
 		});
 	}
 
+	@GameTest
+	public void groundedTakesNoDamageAndNoFireFromLightning(GameTestHelper helper) {
+		Creeper grounded = creeperWith(helper, new BlockPos(1, 1, 1), "test_grounded");
+		Creeper plain = creeperWith(helper, new BlockPos(1, 1, 3));
+		LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
+		// A bolt calls this on each entity near it.
+		plain.thunderHit(helper.getLevel(), bolt);
+		grounded.thunderHit(helper.getLevel(), bolt);
+		helper.assertTrue(plain.getHealth() < plain.getMaxHealth(), "the lightning hurts a plain creeper");
+		helper.assertTrue(plain.getRemainingFireTicks() > 0, "the lightning burns a plain creeper");
+		helper.assertValueEqual(grounded.getHealth(), grounded.getMaxHealth(), "no damage from the lightning");
+		helper.assertTrue(grounded.getRemainingFireTicks() <= 0, "no fire from the lightning");
+		helper.assertTrue(grounded.isPowered(), "the lightning still charges it");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes a player in survival 4 blocks east of the blast place, who holds a shield up to the west.
 	 */

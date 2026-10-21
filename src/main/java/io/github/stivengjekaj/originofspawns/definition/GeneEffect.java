@@ -147,7 +147,8 @@ public sealed interface GeneEffect {
 			Map.entry("silent_fuse", SilentFuse.CODEC),
 			Map.entry("charged_spawn", ChargedSpawn.CODEC),
 			Map.entry("charge_when", ChargeWhen.CODEC),
-			Map.entry("blast_lightning", BlastLightning.CODEC)
+			Map.entry("blast_lightning", BlastLightning.CODEC),
+			Map.entry("lightning_immunity", LightningImmunity.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2267,6 +2268,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "blast_lightning";
+		}
+	}
+
+	/**
+	 * A lightning strike does not hurt the mob and does not set it on fire. A creeper still becomes charged. A fire
+	 * block that the lightning makes still burns the mob, as other fire does.
+	 */
+	record LightningImmunity() implements GeneEffect {
+		public static final MapCodec<LightningImmunity> CODEC = MapCodec.unit(new LightningImmunity());
+
+		@Override
+		public String type() {
+			return "lightning_immunity";
 		}
 	}
 }

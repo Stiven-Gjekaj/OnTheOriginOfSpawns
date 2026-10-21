@@ -291,7 +291,34 @@ WITHER_SKELETON_CLOSEUPS = {
 
 # The close-ups of the parched. It has no babies.
 PARCHED = pg.PARCHED_FAMILIES
-PARCHED_CLOSEUPS = {}
+PARCHED_CLOSEUPS = {
+    "parched_enfeeblers": ("Enfeebler marks",
+                           [("Sap + Fumble", ["sap", "fumble"], False),
+                            ("Exploit + Unnerving Rattle", ["exploit", "unnerving_rattle"], False),
+                            ("Curse Cloud + Withering Glare", ["curse_cloud", "withering_glare"], False),
+                            ("All 6", PARCHED["enfeeblers"], False)], ALL_SIDES),
+    "parched_windcarvers": ("Windcarver marks and models",
+                            [("Long Wind + Quickwind", ["long_wind", "quickwind"], False),
+                             ("Gust Shot + Tailwind", ["gust_shot", "tailwind"], False),
+                             ("Wind Dodge + Whirlwind Volley", ["wind_dodge", "whirlwind_volley"], False),
+                             ("All 6", PARCHED["windcarvers"], False)], ALL_SIDES),
+    "parched_vultures": ("Vulture marks and models",
+                         [("Carrion Eye + Gorge", ["carrion_eye", "gorge"], False),
+                          ("Circler + Flock", ["circler", "flock"], False),
+                          ("Glide + Watcher", ["glide", "watcher"], False),
+                          ("All 6", PARCHED["vultures"], False)], ALL_SIDES),
+    "parched_scorpions": ("Scorpion marks and models",
+                          [("Stinger + Tail Whip", ["stinger", "tail_whip"], False),
+                           ("Pincers + Sand Hide", ["pincers", "sand_hide"], False),
+                           ("Carapace + Venom Sac", ["carapace", "venom_sac"], False),
+                           ("All 6", PARCHED["scorpions"], False)], ALL_SIDES),
+    "parched_fossils": ("Fossil marks and models",
+                        [("Petrified + Stoneskin", ["petrified", "stoneskin"], False),
+                         ("Amber Heart + Last Stand", ["amber_heart", "last_stand"], False),
+                         ("Bedrock Bones + Sediment", ["bedrock_bones", "sediment"], False),
+                         ("All 6", PARCHED["fossils"], False)],
+                        [FRONT, SIDE, BACK, THREE_QUARTER, ("front at night", 0, 0, 0.18), NIGHT_BEHIND]),
+}
 
 # Each species: its texture, its baby texture, and its close-ups.
 SPECIES = {

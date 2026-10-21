@@ -241,7 +241,14 @@ PARCHED_FAMILIES = {
     "fossils": ["petrified", "amber_heart", "bedrock_bones", "stoneskin", "sediment", "last_stand"],
 }
 
-PARCHED_EXTRA = {}
+PARCHED_EXTRA = {
+    "enfeeblers": [("All 6 + Vultures", ["carrion_eye", "circler"], True, {})],
+    "windcarvers": [("All 6 + Scorpions", ["stinger", "carapace"], True, {})],
+    "vultures": [("All 6 + Windcarvers", ["long_wind", "wind_dodge"], True, {})],
+    "scorpions": [("All 6 + Fossils", ["amber_heart", "petrified"], True, {})],
+    "fossils": [("All 6 at night", [], True, {"light": 0.18}),
+                ("All 6 + Enfeeblers", ["exploit", "fumble"], True, {})],
+}
 NIGHT = (18, 22, 38, 255)
 
 # The babies of BabyGenesClientTest, for a sheet to compare with the game.

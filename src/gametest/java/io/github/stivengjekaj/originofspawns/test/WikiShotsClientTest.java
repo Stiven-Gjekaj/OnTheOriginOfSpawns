@@ -47,7 +47,7 @@ import net.minecraft.world.level.block.LightBlock;
 public class WikiShotsClientTest implements FabricClientGameTest {
 	private static final Path OUTPUT = projectRoot().resolve("build/wiki_shots");
 	private static final List<EntityType<? extends Mob>> SPECIES = List.of(EntityTypes.ZOMBIE, EntityTypes.HUSK,
-			EntityTypes.DROWNED, EntityTypes.SKELETON, EntityTypes.STRAY, EntityTypes.BOGGED);
+			EntityTypes.DROWNED, EntityTypes.SKELETON, EntityTypes.STRAY, EntityTypes.BOGGED, EntityTypes.WITHER_SKELETON);
 	private static final int SHOT_ID = -424242;
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 960;
@@ -166,9 +166,11 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 		client.level.removeEntity(SHOT_ID, Entity.RemovalReason.DISCARDED);
 		Mob mob = type.create(client.level, EntitySpawnReason.COMMAND);
 		mob.setId(SHOT_ID);
-		// The bow is the natural weapon of the skeleton species.
-		mob.setItemSlot(EquipmentSlot.MAINHAND, mob instanceof net.minecraft.world.entity.monster.skeleton.AbstractSkeleton
-				? new ItemStack(Items.BOW) : ItemStack.EMPTY);
+		// The natural weapons: the stone sword of the wither skeleton, and the bow of the other skeleton species.
+		mob.setItemSlot(EquipmentSlot.MAINHAND, mob instanceof net.minecraft.world.entity.monster.skeleton.WitherSkeleton
+				? new ItemStack(Items.STONE_SWORD)
+				: mob instanceof net.minecraft.world.entity.monster.skeleton.AbstractSkeleton ? new ItemStack(Items.BOW)
+				: ItemStack.EMPTY);
 		mob.snapTo(base.getX() + 0.5, base.getY(), base.getZ() + 3.5, yaw, 0.0F);
 		mob.setYHeadRot(yaw);
 		mob.yHeadRotO = yaw;

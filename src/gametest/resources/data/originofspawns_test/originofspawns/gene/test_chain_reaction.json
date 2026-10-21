@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:creeper",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "chain_reaction", "radius": 5 }],
+	"mutation_rate": 0
+}

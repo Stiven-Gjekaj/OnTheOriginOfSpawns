@@ -124,6 +124,12 @@ public final class ModAttachments {
 	public static final AttachmentType<java.util.Map<io.github.stivengjekaj.originofspawns.definition.GeneEffect.EffectOnHurt, Long>>
 			HURT_EFFECT_TIMES = AttachmentRegistry.create(OriginOfSpawns.id("hurt_effect_times"));
 
+	/**
+	 * True when a chain reaction lit the fuse of a creeper. Such a creeper does not light more creepers.
+	 */
+	public static final AttachmentType<Boolean> CHAIN_LIT =
+			AttachmentRegistry.createPersistent(OriginOfSpawns.id("chain_lit"), com.mojang.serialization.Codec.BOOL);
+
 	private ModAttachments() {
 	}
 

@@ -141,7 +141,8 @@ public sealed interface GeneEffect {
 			Map.entry("blast_size", BlastSize.CODEC),
 			Map.entry("fuse_time", FuseTime.CODEC),
 			Map.entry("blast_cloud", BlastCloud.CODEC),
-			Map.entry("blast_effect", BlastEffect.CODEC)
+			Map.entry("blast_effect", BlastEffect.CODEC),
+			Map.entry("chain_reaction", ChainReaction.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2174,6 +2175,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "blast_effect";
+		}
+	}
+
+	/**
+	 * When the creeper explodes, it lights the fuses of the creepers in the radius whose fuses do not burn yet.
+	 * A creeper that a chain reaction lit does not light more creepers.
+	 */
+	record ChainReaction(float radius) implements GeneEffect {
+		public static final MapCodec<ChainReaction> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 32.0F).optionalFieldOf("radius", 5.0F).forGetter(ChainReaction::radius)
+		).apply(instance, ChainReaction::new));
+
+		@Override
+		public String type() {
+			return "chain_reaction";
 		}
 	}
 }

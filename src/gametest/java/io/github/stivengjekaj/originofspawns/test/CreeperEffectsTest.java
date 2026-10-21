@@ -173,6 +173,25 @@ public class CreeperEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = BLASTS, padding = 8)
+	public void aChainReactionLightsTheCreepersNearIt(GameTestHelper helper) {
+		Creeper first = creeperWith(helper, new BlockPos(1, 1, 1), "test_chain_reaction");
+		Creeper near = creeperWith(helper, new BlockPos(5, 1, 1), "test_chain_reaction");
+		Creeper swelling = creeperWith(helper, new BlockPos(1, 1, 5));
+		Creeper far = creeperWith(helper, new BlockPos(1, 1, 8));
+		swelling.setSwellDir(1);
+		explode(first);
+		helper.assertTrue(near.isIgnited(), "the near creeper burns its fuse");
+		helper.assertTrue(near.getAttachedOrElse(ModAttachments.CHAIN_LIT, false), "the chain lit the near creeper");
+		helper.assertFalse(swelling.hasAttached(ModAttachments.CHAIN_LIT), "a creeper that was lit stays as it was");
+		helper.assertFalse(far.isIgnited(), "a creeper out of the radius is not lit");
+		// The near creeper has the gene too, but a creeper that a chain lit does not light more creepers.
+		Creeper next = creeperWith(helper, new BlockPos(9, 1, 1));
+		explode(near);
+		helper.assertFalse(next.isIgnited(), "the chain stops after one step");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes a player in survival 4 blocks east of the blast place, who holds a shield up to the west.
 	 */

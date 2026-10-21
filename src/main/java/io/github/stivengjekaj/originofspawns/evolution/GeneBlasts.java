@@ -55,9 +55,23 @@ public final class GeneBlasts {
 		for (GeneEffect effect : GeneEffects.of(creeper).toList()) {
 			switch (effect) {
 				case GeneEffect.BlastCloud cloud -> blastCloud(creeper, level, cloud, radius);
+				case GeneEffect.ChainReaction chain when !creeper.getAttachedOrElse(ModAttachments.CHAIN_LIT, false) ->
+						chainReaction(creeper, level, chain);
 				default -> {
 				}
 			}
+		}
+	}
+
+	/**
+	 * Lights the fuses of the creepers near the creeper whose fuses do not burn yet, and marks them as lit by a chain.
+	 */
+	private static void chainReaction(Creeper creeper, ServerLevel level, GeneEffect.ChainReaction chain) {
+		for (Creeper other : level.getEntitiesOfClass(Creeper.class, creeper.getBoundingBox().inflate(chain.radius()),
+				other -> other != creeper && other.isAlive() && !other.isIgnited() && other.getSwellDir() <= 0
+						&& other.distanceTo(creeper) <= chain.radius())) {
+			other.setAttached(ModAttachments.CHAIN_LIT, true);
+			other.ignite();
 		}
 	}
 

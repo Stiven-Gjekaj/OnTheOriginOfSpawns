@@ -48,11 +48,15 @@ A pressure needs `damage_types`, `conditions`, or both.
 | `shears` | Someone sheared the mob before its death, for example the mushrooms of a bogged |
 | `smite` | The killer hit the mob with a weapon with the Smite enchantment |
 | `day` | The mob died while it was bright outside |
+| `fuse` | The mob is a creeper, and it died while its fuse burned |
 
 The mod has these pressures: `fire`, `projectile`, `melee`, `explosion`,
 `fall`, `unreached`, `sunlight`, `spotted`, `alone`, `crowd`, `critical`,
 `golem`, `player_death`, `in_water`, `on_land`, `cold`, `night`, `boat`,
-`contact`, `trident`, `wolf`, `shield`, `snow`, `warm`, `dry`, `shears`, `smite`, and `day`.
+`contact`, `trident`, `wolf`, `shield`, `snow`, `warm`, `dry`, `shears`, `smite`, `day`, and
+`fuse`.
+A creeper that explodes does not die, so its blast does not count for a
+pressure. A blast that kills a player counts for `player_death`.
 The `contact` pressure uses the tag `#originofspawns:contact`: cacti and sweet
 berry bushes. The `trident` pressure uses the tag `#originofspawns:trident`.
 The `melee` pressure uses the tag `#originofspawns:melee`.
@@ -166,13 +170,15 @@ The states for `when` are:
 | `healthy` | The health of the mob is half of its maximum or more |
 | `hunting_healthy` | The mob targets a player with half health or more |
 | `target_weakened` | The target of the mob has the Weakness effect |
+| `charged` | The mob is a charged creeper |
+| `unseen` | The mob is behind the player, or the player did not look at it in the last 3 seconds. In `damage_dealt_when`, it asks this of each player that the mob damages. In other effects, it asks it of the target |
 
 #### Hits
 
 | Type | Fields | Result |
 |---|---|---|
 | `ignite_target` | `chance`, `seconds`, `hits` (`melee`) | Each hit has this chance to set the target on fire |
-| `pierce_shields` | | The projectiles of the mob go through shields, with their full damage |
+| `pierce_shields` | `blasts` (`false`) | The projectiles of the mob go through shields, with their full damage. With `blasts`, the blast of a creeper also goes through shields, and the shield takes no damage |
 | `effect_on_hit` | `effect`, `seconds`, `amplifier` (`0`), `chance` (`1`), `when` (`always`), `hits` (`melee`) | Each hit gives the target a status effect, while the state is true. `hits` is `melee`, `projectile`, or `any`. A thrown trident is a projectile. A projectile that a shield blocks gives no effect |
 | `pull_down_on_hit` | `blocks` | Each hit on a player in water pulls the player down by up to this many blocks. A block stops the pull |
 | `drag_under` | `seconds`, `sink_speed` (`0.12`) | When the mob hits a player in water, it holds on, and both sink. The player breaks free with a hit on the mob, or when the player leaves the water |
@@ -215,7 +221,7 @@ The states for `when` are:
 | `no_weapon_drop` | | The item in the hand of the mob does not drop when the mob dies |
 | `hunt` | `invisible_radius` (`0`), `wounded_range_multiplier` (`1`) | The mob finds invisible players in the radius, and players under half health farther away |
 | `frenzied_targeting` | `chance`, `interval_seconds` (`10`), `radius` (`8`) | Now and then, the mob targets the nearest mob of a different species. A zombie, husk, or drowned does not target its kin |
-| `lurk` | `radius` (`6`) | The mob does not move while its target player faces it, until the player is in the radius |
+| `lurk` | `radius` (`6`), `ignite` (`false`) | The mob does not move while its target player faces it, until the player is in the radius. With `ignite`, a creeper lights its fuse when its target is in the radius and in sight |
 | `burrow` | `player_radius` (`24`), `rise_seconds` (`2`), `blocks` (`#originofspawns:burrowable`), `night_only` (`true`), `stun_seconds` (`0`), `near_player` (`false`) | The mob can spawn 2 blocks under the ground near a player and rise. It rises only through the blocks in the tag. After it rises, it cannot move for `stun_seconds`. With `near_player`, it rises next to the nearest player |
 | `sidestep` | `range` (`12`), `distance` (`4`), `cooldown_seconds` (`10`), `aimed` (`false`) | When a player looks at the mob from farther than the range, the mob moves to the side. With `aimed`, it moves when a player in the range draws a bow, a crossbow, or a trident and looks at it |
 | `climb` | | The mob climbs walls, like a spider. It cannot climb glass |
@@ -231,7 +237,7 @@ The states for `when` are:
 | Type | Fields | Result |
 |---|---|---|
 | `silence` | `idle` (`false`), `hurt` (`false`), `steps` (`false`), `death` (`false`) | Stops these sounds of the mob |
-| `loud` | `multiplier` | Multiplies the volume of the sounds of the mob, also its steps |
+| `loud` | `multiplier` | Multiplies the volume of the sounds of the mob, also its steps and the fuse of a creeper |
 | `translucent` | `max_light` (`7`), `opacity` (`0.1`), `blocks` (none), `night_only` (`false`), `when` (`always`), `also` (`always`) | The client draws the mob translucent at this light level or lower. With `blocks`, only while its feet or its eyes are in a block of this tag. With `night_only` (`false`), only while it is dark outside. With `when` (`always`) and `also` (`always`), only while both states are true. Other mobs still see it |
 | `glowing` | `when` (`always`) | The mob glows while the state is true, so that players see it through walls |
 | `aura` | `effect`, `amplifier` (`0`), `radius`, `interval_seconds` (`2`), `particles` (`false`), `in_water_only` (`false`), `seconds` (none), `allies` (`false`), `when` (`always`) | While the state is true, gives a status effect to the players near the mob. The effect lasts `seconds`, or until the next renewal when there is no `seconds`. With `in_water_only`, only the players in water get it. With `allies`, the mobs of its species get it instead of the players |
@@ -272,6 +278,25 @@ The states for `when` are:
 | `water_sensitive` | | Water hurts the mob, as it hurts a blaze or an enderman: splash water, rain, and water |
 | `disarm` | `chance`, `cooldown_seconds` (`10`), `hits` (`projectile`) | Each hit has the chance to make a player drop the item in the main hand. A player loses an item one time in each cooldown at most. An item with Curse of Binding does not drop |
 | `death_effect` | `effect`, `seconds`, `amplifier` (`0`), `radius`, `when` (`always`), `allies` (`false`) | When the mob dies while the state is true, the players in the radius get a status effect. With `allies`, the mobs of its species get it instead |
+
+#### Creepers
+
+These effects act only on a creeper. The vanilla blast has a radius of 3, or
+6 for a charged creeper. The vanilla fuse burns for 30 ticks.
+
+| Type | Fields | Result |
+|---|---|---|
+| `blast_size` | `multiplier`, `when` (`always`) | Multiplies the radius of the blast while the state is true. It also multiplies the radius of a charged creeper |
+| `fuse_time` | `multiplier` | Multiplies the time that the fuse burns |
+| `blast_cloud` | `effect`, `seconds`, `amplifier` (`0`), `effect_seconds` (the value of `seconds`) | The blast leaves a cloud of the status effect, with the radius of the blast. The cloud stays for `seconds`. It comes in addition to the vanilla cloud of a creeper with status effects |
+| `blast_effect` | `effect`, `seconds`, `amplifier` (`0`) | Each living entity that the blast damages gets the status effect. A shield that stops the blast also stops the effect. Use one entry for each effect |
+| `chain_reaction` | `radius` (`5`) | The blast lights the fuses of the creepers in the radius whose fuses do not burn yet. A creeper that a chain lit does not light more creepers |
+| `aftershock` | `seconds` (`2`), `fraction` (`0.5`) | After the time, a second blast goes off at the same place, with this part of the radius. It makes no more aftershocks, clouds, chains, or lightning. A save and quit before the second blast loses it |
+| `silent_fuse` | | The fuse makes no sound, also when flint and steel or a fire charge lights it. Sculk sensors still detect it |
+| `charged_spawn` | `chance` | The creeper has this chance to spawn charged |
+| `charge_when` | `when` (`storm`) | The creeper becomes charged when the state is true, and it stays charged |
+| `blast_lightning` | | Lightning strikes the place of the blast. This lightning does not charge creepers |
+| `lightning_immunity` | | A lightning strike does no damage to the mob and sets no fire on it. A creeper still becomes charged. A fire block from the lightning can still burn it |
 
 ### Gene visuals
 
@@ -320,7 +345,8 @@ A gene model adds cubes to the model of a mob.
 The file `assets/<namespace>/gene_models/<name>.json` is the model
 `<namespace>:<name>`.
 Each cube moves with one bone: `head`, `body`, `right_arm`, `left_arm`,
-`right_leg`, or `left_leg`.
+`right_leg`, or `left_leg`. A creeper has `head`, `body`, `right_hind_leg`,
+`left_hind_leg`, `right_front_leg`, and `left_front_leg`.
 The coordinates are in pixels, in the coordinates of the bone, as in the
 vanilla models.
 

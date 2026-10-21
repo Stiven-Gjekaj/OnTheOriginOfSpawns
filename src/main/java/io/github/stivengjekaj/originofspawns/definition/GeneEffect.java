@@ -146,7 +146,8 @@ public sealed interface GeneEffect {
 			Map.entry("aftershock", Aftershock.CODEC),
 			Map.entry("silent_fuse", SilentFuse.CODEC),
 			Map.entry("charged_spawn", ChargedSpawn.CODEC),
-			Map.entry("charge_when", ChargeWhen.CODEC)
+			Map.entry("charge_when", ChargeWhen.CODEC),
+			Map.entry("blast_lightning", BlastLightning.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2254,6 +2255,18 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "charge_when";
+		}
+	}
+
+	/**
+	 * When the mob explodes, lightning strikes the place of the blast. This lightning does not charge creepers.
+	 */
+	record BlastLightning() implements GeneEffect {
+		public static final MapCodec<BlastLightning> CODEC = MapCodec.unit(new BlastLightning());
+
+		@Override
+		public String type() {
+			return "blast_lightning";
 		}
 	}
 }

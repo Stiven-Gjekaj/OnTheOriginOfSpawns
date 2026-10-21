@@ -130,6 +130,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Boolean> CHAIN_LIT =
 			AttachmentRegistry.createPersistent(OriginOfSpawns.id("chain_lit"), com.mojang.serialization.Codec.BOOL);
 
+	/**
+	 * On a lightning bolt: true when the bolt does not charge the creepers that it hits.
+	 */
+	public static final AttachmentType<Boolean> NO_CHARGE = AttachmentRegistry.create(OriginOfSpawns.id("no_charge"));
+
 	private ModAttachments() {
 	}
 

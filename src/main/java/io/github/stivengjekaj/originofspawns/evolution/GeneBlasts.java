@@ -10,6 +10,9 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Creeper;
@@ -59,6 +62,14 @@ public final class GeneBlasts {
 				case GeneEffect.BlastCloud cloud -> blastCloud(creeper, level, cloud, radius);
 				case GeneEffect.ChainReaction chain when !creeper.getAttachedOrElse(ModAttachments.CHAIN_LIT, false) ->
 						chainReaction(creeper, level, chain);
+				case GeneEffect.BlastLightning lightning -> {
+					LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
+					if (bolt != null) {
+						bolt.snapTo(creeper.getX(), creeper.getY(), creeper.getZ());
+						bolt.setAttached(ModAttachments.NO_CHARGE, true);
+						level.addFreshEntity(bolt);
+					}
+				}
 				case GeneEffect.Aftershock aftershock -> {
 					double x = creeper.getX();
 					double y = creeper.getY();

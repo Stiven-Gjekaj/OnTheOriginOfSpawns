@@ -4,16 +4,22 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
+
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.level.Level;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -84,6 +90,18 @@ public abstract class CreeperMixin {
 			SoundSource source, float volume, float pitch, Operation<Void> original) {
 		if (!GeneCombat.has((Creeper) (Object) this, GeneEffect.SilentFuse.class)) {
 			original.call(level, except, x, y, z, sound, source, volume, pitch);
+		}
+	}
+
+	/**
+	 * The lightning of a blast does not charge the creeper. The lightning still burns and hurts it.
+	 */
+	@WrapOperation(method = "thunderHit", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/network/syncher/SynchedEntityData;set(Lnet/minecraft/network/syncher/EntityDataAccessor;Ljava/lang/Object;)V"))
+	private void originofspawns$noChargeFromBlast(SynchedEntityData data, EntityDataAccessor<?> accessor, Object value,
+			Operation<Void> original, @Local(argsOnly = true) LightningBolt bolt) {
+		if (!bolt.getAttachedOrElse(ModAttachments.NO_CHARGE, false)) {
+			original.call(data, accessor, value);
 		}
 	}
 }

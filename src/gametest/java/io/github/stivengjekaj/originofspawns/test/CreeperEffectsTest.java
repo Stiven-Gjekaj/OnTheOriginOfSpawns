@@ -31,6 +31,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.animal.pig.Pig;
@@ -317,6 +318,21 @@ public class CreeperEffectsTest {
 		listener.player().setNoGravity(true);
 		listener.player().setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(4, 1, 4))));
 		return listener;
+	}
+
+	@GameTest(environment = BLASTS, padding = 8, maxTicks = 40)
+	public void theLightningOfABlastDoesNotCharge(GameTestHelper helper) {
+		Creeper conductor = creeperWith(helper, new BlockPos(1, 1, 1), "test_conductor");
+		explode(conductor);
+		helper.assertValueEqual(helper.getLevel().getEntitiesOfClass(LightningBolt.class,
+				conductor.getBoundingBox().inflate(1.0)).size(), 1, "lightning at the blast");
+		// This creeper comes after the blast, so only the lightning hits it.
+		Creeper near = creeperWith(helper, new BlockPos(2, 1, 1));
+		helper.runAfterDelay(10, () -> {
+			helper.assertTrue(near.getHealth() < near.getMaxHealth(), "the lightning hits the near creeper");
+			helper.assertFalse(near.isPowered(), "the lightning of a blast does not charge it");
+			helper.succeed();
+		});
 	}
 
 	/**

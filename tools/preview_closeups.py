@@ -322,7 +322,34 @@ PARCHED_CLOSEUPS = {
 
 # The close-ups of the creeper. It has no babies.
 CREEPER = pg.CREEPER_FAMILIES
-CREEPER_CLOSEUPS = {}
+NIGHT_VIEWS = [FRONT, SIDE, BACK, THREE_QUARTER, ("front at night", 0, 0, 0.18), NIGHT_BEHIND]
+CREEPER_CLOSEUPS = {
+    "creeper_blasters": ("Blaster marks and models",
+                         [("Big Bang + Concussion", ["big_bang", "concussion"], False),
+                          ("Shrapnel + Aftershock", ["shrapnel", "aftershock"], False),
+                          ("Golem Breaker + Chain Reaction", ["golem_breaker", "chain_reaction"], False),
+                          ("All 6", CREEPER["blasters"], False)], ALL_SIDES),
+    "creeper_rushers": ("Rusher marks and models",
+                        [("Sprinter + Short Fuse", ["sprinter", "short_fuse"], False),
+                         ("Leaper + Dodger", ["leaper", "dodger"], False),
+                         ("Tracker + Wallcrawler", ["tracker", "wallcrawler"], False),
+                         ("All 6", CREEPER["rushers"], False)], ALL_SIDES),
+    "creeper_ambushers": ("Ambusher marks and models",
+                          [("Silent Fuse + Surprise", ["silent_fuse", "surprise"], False),
+                           ("Leafskin + Patient", ["leafskin", "patient"], False),
+                           ("Gloom + Veiled", ["gloom", "veiled"], False),
+                           ("All 6", CREEPER["ambushers"], False)], NIGHT_VIEWS),
+    "creeper_fumers": ("Fumer marks and models",
+                       [("Toxic Blast + Stink", ["toxic_blast", "stink"], False),
+                        ("Smoke Bomb + Gas Leak", ["smoke_bomb", "gas_leak"], False),
+                        ("Wither Gas + Spore Blast", ["wither_gas", "spore_blast"], False),
+                        ("All 6", CREEPER["fumers"], False)], ALL_SIDES),
+    "creeper_thunderheads": ("Thunderhead marks and models",
+                             [("Lightning Rod + Conductor", ["lightning_rod", "conductor"], False),
+                              ("Static + Overcharge", ["static", "overcharge"], False),
+                              ("Grounded + Thunderstruck", ["grounded", "thunderstruck"], False),
+                              ("All 6", CREEPER["thunderheads"], False)], NIGHT_VIEWS),
+}
 
 # Each species: its texture, its baby texture, and its close-ups.
 SPECIES = {

@@ -259,7 +259,15 @@ CREEPER_FAMILIES = {
     "thunderheads": ["lightning_rod", "static", "overcharge", "conductor", "grounded", "thunderstruck"],
 }
 
-CREEPER_EXTRA = {}
+CREEPER_EXTRA = {
+    "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
+    "rushers": [("All 6 + Ambushers", ["leafskin", "patient"], True, {})],
+    "ambushers": [("All 6 at night", [], True, {"light": 0.18}),
+                  ("All 6 + Fumers", ["stink", "spore_blast"], True, {})],
+    "fumers": [("All 6 + Thunderheads", ["lightning_rod", "grounded"], True, {})],
+    "thunderheads": [("All 6 at night", [], True, {"light": 0.18}),
+                     ("All 6 + Blasters", ["big_bang", "shrapnel"], True, {})],
+}
 NIGHT = (18, 22, 38, 255)
 
 # The babies of BabyGenesClientTest, for a sheet to compare with the game.

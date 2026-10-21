@@ -1,0 +1,21 @@
+{
+	"region_map": "originofspawns:textures/region/parched.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/quickwind_0.png",
+				"tint": "#FFF8E8"
+			},
+			"order": 1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/quickwind_1.png",
+				"tint": "#FFFFFF"
+			},
+			"order": 1
+		}
+	]
+}

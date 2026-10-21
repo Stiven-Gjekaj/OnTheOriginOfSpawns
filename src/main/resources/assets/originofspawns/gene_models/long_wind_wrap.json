@@ -1,0 +1,78 @@
+{
+	"texture": "originofspawns:textures/entity/long_wind_wrap.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-6,
+				4
+			],
+			"size": [
+				2,
+				2,
+				1
+			]
+		},
+		{
+			"bone": "head",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				-2,
+				-6,
+				4.6
+			],
+			"size": [
+				2,
+				1,
+				6
+			],
+			"pivot": [
+				-1,
+				-5.5,
+				4.6
+			],
+			"rotation": [
+				-10,
+				-12,
+				0
+			]
+		},
+		{
+			"bone": "head",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				0,
+				-5,
+				4.6
+			],
+			"size": [
+				2,
+				1,
+				6
+			],
+			"pivot": [
+				1,
+				-4.5,
+				4.6
+			],
+			"rotation": [
+				-18,
+				10,
+				0
+			]
+		}
+	]
+}

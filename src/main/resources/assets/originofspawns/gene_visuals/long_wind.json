@@ -1,0 +1,20 @@
+{
+	"region_map": "originofspawns:textures/region/parched.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/long_wind_0.png",
+				"tint": "#F2E6C2"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/long_wind_1.png",
+				"tint": "#8A7048"
+			}
+		}
+	],
+	"model": "originofspawns:long_wind_wrap"
+}

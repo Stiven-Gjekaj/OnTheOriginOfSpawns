@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/parched.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wind_dodge_0.png",
+				"tint": "#3E8A8E"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wind_dodge_1.png",
+				"tint": "#6AB0B0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wind_dodge_2.png",
+				"tint": "#2A5E62"
+			}
+		}
+	]
+}

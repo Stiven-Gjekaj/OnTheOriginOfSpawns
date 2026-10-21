@@ -36,6 +36,22 @@ Pixel plan for the Enfeeblers.
 - Unnerving Rattle has loose teeth: crooked pale teeth with dark gaps on the
   mouth (y 14), and one tooth that has dropped (y 15).
 - Withering Glare has a dull gray light in the eye sockets.
+
+Pixel plan for the Windcarvers.
+- Long Wind has a band of pale linen round the head wrap over the brow (y
+  40 to 42), and two strips of it blow back from the back of the skull,
+  the gene model long_wind_wrap.
+- Gust Shot has pale cloth strips wound round the bow arm (the right arm):
+  on the sleeve, rows 1 to 8, and on the bones of the forearm.
+- Tailwind has sand-scoured shins: polished, pale bone with fine scratches
+  on leg rows 7 to 11, and on the lower edge of the leg wraps.
+- Wind Dodge has a faded teal sash across the body, from the right shoulder
+  to the left hip, on the body wrap and on the ribs, with a loose end at
+  the left hip.
+- Whirlwind Volley: a quiver of woven reed with feathered arrows on the
+  back, the gene model whirlwind_volley_quiver.
+- Quickwind has worn, polished finger tips: arm rows 10 and 11 and the
+  bottom of both arms, over the Fumble fingers (order 1).
 This script needs Pillow.
 """
 import json
@@ -184,6 +200,150 @@ def withering_glare():
     return [dull, dark]
 
 
+
+def long_wind():
+    # A band of pale linen round the head wrap, over the brow (y 40 and 41
+    # of the head wrap, on all sides), with a dark edge under it, so that
+    # the wrap shows from the front. The strips that blow back from it are
+    # the gene model long_wind_wrap.
+    band = Mark("#F2E6C2")
+    edge = Mark("#8A7048")
+    for x in range(0, 32):
+        band.put((x, 40)).put((x, 41))
+        edge.put((x, 42))
+    return [band, edge]
+
+
+def long_wind_model():
+    # Two strips of cloth that blow back from the skull: a knot of cloth on
+    # the back of the head wrap, and two strips that stream back from it in
+    # the wind, a little apart and a little down, with torn ends. On the
+    # head bone, the back of the head wrap is at z 4.2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def strip(face, x, y):
+        if face in ("front", "back"):
+            return SAND[1]
+        if face in ("right", "left") and x == 5 and y == 0:
+            return None
+        return SAND[0] if x % 3 else SAND[2]
+
+    # The knot: 2x2x1 at uv (0, 0). A strip: 2x1x6 at uv (8, 0).
+    paint_box(im, 0, 0, 2, 2, 1, lambda face, x, y: SAND[1])
+    paint_box(im, 8, 0, 2, 1, 6, strip)
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-1, -6, 4], "size": [2, 2, 1]},
+        {"bone": "head", "uv": [8, 0], "from": [-2, -6, 4.6], "size": [2, 1, 6],
+         "pivot": [-1, -5.5, 4.6], "rotation": [-10, -12, 0]},
+        {"bone": "head", "uv": [8, 0], "from": [0, -5, 4.6], "size": [2, 1, 6],
+         "pivot": [1, -4.5, 4.6], "rotation": [-18, 10, 0]},
+    ]
+    save_model("long_wind_wrap", im, parts)
+
+
+def gust_shot():
+    # Pale cloth strips wound round the bow arm, the right arm: bands of
+    # pale cloth at a slant on the sleeve (rows 1 to 8), each with a dark
+    # edge under it, and the same bands on the bones of the forearm, where
+    # the sleeve ends.
+    band = Mark("#F2E6C2")
+    edge = Mark("#6E5A3A")
+    for face in SIDES:
+        shift = face // 2
+        for col in (0, 1, 2):
+            for row in (1, 4, 7):
+                band.put(sleeve(face, col, row + (col + shift) % 2))
+                edge.put(sleeve(face, col, row + 1 + (col + shift) % 2))
+        for col in (0, 1):
+            band.put(arm(face, col, 8 + (col + shift) % 2))
+    return [band, edge]
+
+
+def tailwind():
+    # Sand-scoured shins: the bones of the shins are worn to a smooth, pale
+    # polish (leg rows 7 to 11) with fine scratches across them, and the
+    # lower edge of the leg wraps is worn pale too.
+    polish = Mark("#F2ECDC")
+    scratch = Mark("#A09480")
+    for face in SIDES:
+        for col in (0, 1):
+            for row in range(7, 12):
+                (scratch if (row + col) % 3 == 0 else polish).put(leg(face, col, row))
+        for col in (0, 1, 2):
+            for p in leg_wrap(face, col, 6) + leg_wrap(face, col, 7):
+                polish.put(p, 230)
+    return [polish, scratch]
+
+
+SASH = ("#3E8A8E", "#6AB0B0", "#2A5E62")
+
+
+def wind_dodge():
+    # A faded teal sash across the body, from the right shoulder down to the
+    # left hip, 2 pixels wide, with a pale edge: on the wrap of the body, on
+    # the ribs under it (where the wrap is open), and on the back. A loose
+    # end hangs from the knot at the left hip, on the side of the wrap.
+    sash = Mark(SASH[0])
+    pale = Mark(SASH[1])
+    for top in (20, 52):
+        for y in range(top, top + 12):
+            step = (y - top) * 7 // 11
+            for x0, sign in ((20, 1), (39, -1)):
+                x = x0 + sign * step
+                sash.put((x, y)).put((x + sign, y))
+                if 16 <= x - sign < 40:
+                    pale.put((x - sign, y))
+    end = Mark(SASH[2])
+    for y in range(58, 64):
+        end.put((28, y)).put((29, y))
+    return [sash, pale, end]
+
+
+def whirlwind_volley():
+    # The quiver is the gene model whirlwind_volley_quiver.
+    return []
+
+
+def whirlwind_volley_model():
+    # A quiver of woven reed on the back, over the right shoulder, full of
+    # arrows with long feathers of black and white bands. Its front lies on
+    # the body wrap of the back (z 2.05). On the body bone, the back is at
+    # z 2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def reed(face, x, y):
+        if face == "top":
+            return "#4A3820"
+        return "#C8A868" if (x + y) % 2 else "#9A7A48"
+
+    def feather(face, x, y):
+        return "#F2F0EA" if y % 2 == 0 else "#202020"
+
+    # The quiver: 3x8x2 at uv (0, 0). A feathered arrow: 1x3x1 at uv (12, 0).
+    paint_box(im, 0, 0, 3, 8, 2, reed)
+    paint_box(im, 12, 0, 1, 3, 1, feather)
+    lean = {"pivot": [-2.5, 5, 3], "rotation": [0, 0, -25]}
+    parts = [dict({"bone": "body", "uv": [0, 0], "from": [-4, 1, 2.05], "size": [3, 8, 2]}, **lean)]
+    for x, z, y in ((-4, 2.05, -1.5), (-3, 3.05, -2.4), (-2, 2.05, -1.9), (-3.5, 2.6, -2.8), (-2.5, 3.05, -1.2)):
+        parts.append(dict({"bone": "body", "uv": [12, 0], "from": [x, y, z], "size": [1, 3, 1]}, **lean))
+    save_model("whirlwind_volley_quiver", im, parts)
+
+
+def quickwind():
+    # Worn, polished finger tips: the fingers (arm rows 10 and 11) and the
+    # bottom of both arms are worn smooth and bright, with a shine. They go
+    # over the Fumble fingers (order 1).
+    tip = Mark("#FFF8E8", order=1)
+    shine = Mark("#FFFFFF", order=1)
+    for face in SIDES:
+        for col in (0, 1):
+            for p in both_arms(face, col, 11) + both_arms(face, col, 10):
+                tip.put(p)
+    for u in (40, 56):
+        shine.put((u + 4, 16)).put((u + 5, 17))
+        tip.put((u + 5, 16)).put((u + 4, 17))
+    return [tip, shine]
+
 GENES = {
     "sap": sap,
     "fumble": fumble,
@@ -191,11 +351,20 @@ GENES = {
     "curse_cloud": curse_cloud,
     "unnerving_rattle": unnerving_rattle,
     "withering_glare": withering_glare,
+    "long_wind": long_wind,
+    "gust_shot": gust_shot,
+    "tailwind": tailwind,
+    "wind_dodge": wind_dodge,
+    "whirlwind_volley": whirlwind_volley,
+    "quickwind": quickwind,
 }
 
-MODELS = {}
+MODELS = {
+    "long_wind": "originofspawns:long_wind_wrap",
+    "whirlwind_volley": "originofspawns:whirlwind_volley_quiver",
+}
 
-MODEL_MAKERS = []
+MODEL_MAKERS = [long_wind_model, whirlwind_volley_model]
 
 
 def main():

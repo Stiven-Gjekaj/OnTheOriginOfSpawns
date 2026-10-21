@@ -218,7 +218,34 @@ STRAY_CLOSEUPS = {
 
 # The close-ups of the bogged. The bogged has no babies.
 BOGGED = pg.BOGGED_FAMILIES
-BOGGED_CLOSEUPS = {}
+BOGGED_CLOSEUPS = {
+    "bogged_sporecaps": ("Sporecap marks and models",
+                         [("Puffball + Regrowth", ["puffball", "regrowth"], False),
+                          ("Shelfback + Rot Mend", ["shelfback", "rot_mend"], False),
+                          ("Mushroom Shot + Spore Lung", ["mushroom_shot", "spore_lung"], False),
+                          ("All 6", BOGGED["sporecaps"], False)], ALL_SIDES),
+    "bogged_mirefolk": ("Mirefolk marks and models",
+                        [("Wader + Mire Grip", ["wader", "mire_grip"], False),
+                         ("Mudcake + Swamp Gas", ["mudcake", "swamp_gas"], False),
+                         ("Mudburrow + Leechbone", ["mudburrow", "leechbone"], False),
+                         ("All 6", BOGGED["mirefolk"], False)], ALL_SIDES),
+    "bogged_venomers": ("Venomer marks and models",
+                        [("Venom Gland + Toxic Tip", ["venom_gland", "toxic_tip"], False),
+                         ("Bile Shot + Rotting Touch", ["bile_shot", "rotting_touch"], False),
+                         ("Antivenom + Plague Carrier", ["antivenom", "plague_carrier"], False),
+                         ("All 6", BOGGED["venomers"], False)],
+                        [FRONT, SIDE, BACK, THREE_QUARTER, ("front at night", 0, 0, 0.18), NIGHT_BEHIND]),
+    "bogged_vinebound": ("Vinebound marks and models",
+                         [("Rootshot + Thornwrap", ["rootshot", "thornwrap"], False),
+                          ("Creeper Vines + Snare", ["creeper_vines", "snare"], False),
+                          ("Mossbed + Vine Swing", ["mossbed", "vine_swing"], False),
+                          ("All 6", BOGGED["vinebound"], False)], ALL_SIDES),
+    "bogged_mosshides": ("Mosshide marks and models",
+                         [("Lily Pad + Ambush Shot", ["lily_pad", "ambush_shot"], False),
+                          ("Swamp Shroud + Silent Rot", ["swamp_shroud", "silent_rot"], False),
+                          ("Bog Mist + Barkskin", ["bog_mist", "barkskin"], False),
+                          ("All 6", BOGGED["mosshides"], False)], ALL_SIDES),
+}
 
 # Each species: its texture, its baby texture, and its close-ups.
 SPECIES = {

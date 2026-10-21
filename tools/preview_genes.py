@@ -204,7 +204,14 @@ BOGGED_FAMILIES = {
     "mosshides": ["lily_pad", "ambush_shot", "silent_rot", "swamp_shroud", "bog_mist", "barkskin"],
 }
 
-BOGGED_EXTRA = {}
+BOGGED_EXTRA = {
+    "sporecaps": [("All 6 + Mosshides", ["lily_pad", "swamp_shroud"], True, {})],
+    "mirefolk": [("All 6 + Mosshides", ["silent_rot", "bog_mist"], True, {})],
+    "venomers": [("All 6 at night", [], True, {"light": 0.18}),
+                 ("All 6 + Sporecaps", ["puffball", "regrowth"], True, {})],
+    "vinebound": [("All 6 + Mirefolk", ["wader", "leechbone"], True, {})],
+    "mosshides": [("All 6 translucent", [], True, {"opacity": 0.55})],
+}
 NIGHT = (18, 22, 38, 255)
 
 # The babies of BabyGenesClientTest, for a sheet to compare with the game.

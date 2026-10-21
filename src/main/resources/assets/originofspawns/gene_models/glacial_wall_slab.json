@@ -1,0 +1,58 @@
+{
+	"texture": "originofspawns:textures/entity/glacial_wall_slab.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				1,
+				-3.2
+			],
+			"size": [
+				6,
+				8,
+				1
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				16,
+				0
+			],
+			"from": [
+				-3.5,
+				3,
+				-3
+			],
+			"size": [
+				1,
+				2,
+				1
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				16,
+				0
+			],
+			"from": [
+				2.5,
+				6,
+				-3
+			],
+			"size": [
+				1,
+				2,
+				1
+			]
+		}
+	]
+}

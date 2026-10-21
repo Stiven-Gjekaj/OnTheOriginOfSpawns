@@ -1,0 +1,75 @@
+{
+	"texture": "originofspawns:textures/entity/icebound_blocks.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2,
+				9,
+				-2
+			],
+			"size": [
+				4,
+				3,
+				4
+			]
+		},
+		{
+			"bone": "right_leg",
+			"uv": [
+				16,
+				0
+			],
+			"from": [
+				-1.5,
+				8,
+				-1
+			],
+			"size": [
+				2,
+				1,
+				2
+			]
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2,
+				9,
+				-2
+			],
+			"size": [
+				4,
+				3,
+				4
+			]
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				16,
+				0
+			],
+			"from": [
+				-1.5,
+				8,
+				-1
+			],
+			"size": [
+				2,
+				1,
+				2
+			]
+		}
+	]
+}

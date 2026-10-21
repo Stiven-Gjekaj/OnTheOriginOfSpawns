@@ -1,0 +1,43 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "erase",
+				"texture": "originofspawns:textures/gene_marks/permafrost_hole.png"
+			},
+			"target": "outer"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/permafrost_0.png",
+				"tint": "#A8DCF4"
+			},
+			"target": "outer"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/permafrost_1.png",
+				"tint": "#DDF4FF"
+			},
+			"target": "outer"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/permafrost_2.png",
+				"tint": "#F4FBFF"
+			},
+			"target": "outer"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/permafrost_3.png",
+				"tint": "#C8E6F4"
+			}
+		}
+	]
+}

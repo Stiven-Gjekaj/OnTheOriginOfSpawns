@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/rimeshell_0.png",
+				"tint": "#A8DCF4"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/rimeshell_1.png",
+				"tint": "#F4FBFF"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/rimeshell_2.png",
+				"tint": "#4A88B8"
+			}
+		}
+	]
+}

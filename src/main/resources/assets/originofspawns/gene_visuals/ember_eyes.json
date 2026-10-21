@@ -1,0 +1,27 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ember_eyes_0.png",
+				"tint": "#FF8A1E"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ember_eyes_1.png",
+				"tint": "#FFE090"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ember_eyes_2.png",
+				"tint": "#C83A10"
+			}
+		}
+	],
+	"model": "originofspawns:ember_eyes_flames"
+}

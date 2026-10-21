@@ -36,6 +36,19 @@ Pixel plan for the Blademasters.
   on arm rows 2, 5, and 8.
 - Executioner: a black hood with a pale edge and eye holes over the skull,
   the gene model executioner_hood.
+
+Pixel plan for the Ashborn.
+- Cinderblade has charred hands (arm rows 9 to 11) with cracks of ember,
+  and the gene model cinderblade_embers makes the cracks glow.
+- Pyre: coals that glow in the rib cage, the gene model pyre_coals.
+- Lavawalker has a crust of dried lava on the shins: leg rows 6 to 11.
+- Cauterize has orange seams of heat: the front of the legs (column 1,
+  rows 1 to 10), the inner side of the arms (column 0, rows 1 to 10), the
+  ribs, and the top of the skull.
+- Smoke Screen has gray smoke on the shoulders, and wisps of it that rise
+  up the sides and the back of the head (y 10 to 15).
+- Ember Eyes has orange flames in the eye sockets, and the gene model
+  ember_eyes_flames makes them glow.
 This script needs Pillow.
 """
 import json
@@ -200,6 +213,160 @@ def executioner_model():
     save_model("executioner_hood", im, parts)
 
 
+
+EMBER = ("#FF8A1E", "#FFD060", "#C83A10", "#3A1A10")
+
+
+def crack(face, x, y):
+    """Return True for a pixel of a crack of ember on a face of a hand."""
+    return (x + 2 * y + len(face)) % 4 == 0
+
+
+def cinderblade():
+    # Charred hands with cracks of ember: the hands (arm rows 9 to 11) are a
+    # dark, burnt red-brown, and the cracks in them are orange. The gene
+    # model cinderblade_embers puts the same cracks over them, and they
+    # glow.
+    char = Mark(EMBER[3])
+    hot = Mark(EMBER[0])
+    for face in SIDES:
+        for col in (0, 1):
+            for row in (9, 10, 11):
+                (hot if (col + 2 * row + face) % 4 == 0 else char).put(arm(face, col, row))
+    return [char, hot]
+
+
+def cinderblade_model():
+    # A thin shell round each hand (arm rows 9 to 11) that has only the
+    # cracks of ember on it, so that the cracks glow in the dark. On an arm
+    # bone, row r is at y r - 2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def shell(face, x, y):
+        if not crack(face, x, y):
+            return None
+        return EMBER[1] if (x + y) % 3 == 0 else EMBER[0]
+
+    # The shell: 2x3x2 at uv (0, 0).
+    paint_box(im, 0, 0, 2, 3, 2, shell)
+    parts = [{"bone": bone, "uv": [0, 0], "from": [-1, 7, -1], "size": [2, 3, 2], "inflate": 0.05, "glow": True}
+             for bone in ("right_arm", "left_arm")]
+    save_model("cinderblade_embers", im, parts)
+
+
+def pyre():
+    # The coals are the gene model pyre_coals.
+    return []
+
+
+def pyre_model():
+    # Coals that glow in the rib cage: three lumps of coal inside the body,
+    # red at the edges and orange to yellow in the middle. They show through
+    # the gaps between the ribs, in the front and in the back. On the body
+    # bone, the body is from x -4 to 4, from y 0 to 12, and from z -2 to 2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def coal(face, x, y):
+        return EMBER[1] if (x + y) % 3 == 0 else EMBER[0] if (x + y) % 3 == 1 else EMBER[2]
+
+    # A large coal: 2x2x2 at uv (0, 0). A flat coal: 3x1x2 at uv (8, 0).
+    paint_box(im, 0, 0, 2, 2, 2, coal)
+    paint_box(im, 8, 0, 3, 1, 2, coal)
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [-2.5, 4, -1], "size": [2, 2, 2], "glow": True},
+        {"bone": "body", "uv": [0, 0], "from": [0.5, 5.5, -0.5], "size": [2, 2, 2], "glow": True},
+        {"bone": "body", "uv": [8, 0], "from": [-1.5, 7.5, -1], "size": [3, 1, 2], "glow": True},
+    ]
+    save_model("pyre_coals", im, parts)
+
+
+def lavawalker():
+    # A crust of dried lava on the shins (leg rows 6 to 11): a gray crust of
+    # cooled rock, paler than the bone, with dull red cracks and a few
+    # orange spots that are still hot.
+    crust = Mark("#5A5450")
+    pale = Mark("#7A726C")
+    red = Mark("#8A2A10")
+    hot = Mark("#D0561C")
+    for face in SIDES:
+        for col in (0, 1):
+            for row in range(6, 12):
+                n = noise100(face + col, row, 301)
+                (hot if n < 8 else red if n < 30 else pale if n < 50 else crust).put(leg(face, col, row))
+    for x in (4, 5):
+        for y in (16, 17):
+            crust.put((x, y))
+    return [crust, pale, red, hot]
+
+
+def cauterize():
+    # Orange seams of heat along the bones, as if the bones were welded:
+    # a seam down the front of each leg (column 1, rows 1 to 10), down the
+    # inner side of each arm (column 0, rows 1 to 10), across the ribs, and
+    # over the top of the skull, with a yellow core in a few places.
+    seam = Mark("#E0701E")
+    core = Mark("#F8B048")
+    for row in range(1, 11):
+        (core if row % 4 == 0 else seam).put(leg(FRONT, 1, row))
+        (core if row % 4 == 2 else seam).put(arm(INNER, 0, row))
+    for x in (20, 22, 25, 27, 30, 33, 38):
+        seam.put((x, 22))
+    for x in (21, 24, 26, 29, 34, 37):
+        seam.put((x, 24))
+    for y in range(0, 8):
+        (core if y % 3 == 1 else seam).put((12, y))
+    for y in range(8, 11):
+        seam.put((12, y))
+    return [seam, core]
+
+
+def smoke_screen():
+    # Smoke that rises from the shoulders: gray smoke on the tops of the
+    # shoulders and the arms, and wisps of it that rise up the sides and the
+    # back of the head, thinner as they rise (y 15 to 10).
+    smoke = Mark("#8A8A86", alpha=220)
+    light = Mark("#BEBEB8", alpha=200)
+    for x in list(range(20, 28)) + [42, 43]:
+        for y in (16, 17, 18, 19):
+            if (x, y) != (42, 18) and not (x in (42, 43) and y > 17):
+                smoke.put((x, y))
+    for face in SIDES:
+        for col in (0, 1):
+            light.put(arm(face, col, 0))
+    for x in list(range(0, 8)) + list(range(16, 32)):
+        for y in range(10, 16):
+            if (x + y // 2) % 3 == 0 and (y > 12 or x % 2):
+                (light if y < 13 else smoke).put((x, y))
+    return [smoke, light]
+
+
+EYE_FLAME = ("#FF8A1E", "#FFE090", "#C83A10")
+# The pixels of the ember flames on the face, and their colors: a bright
+# core in each socket, a flame that rises from the inner side, and a dark
+# red tip.
+EYE_PIXELS = (((9, 12), 0), ((10, 12), 1), ((10, 11), 0), ((10, 10), 2),
+              ((14, 12), 0), ((13, 12), 1), ((13, 11), 0), ((13, 10), 2))
+
+
+def ember_eyes():
+    # The flames are on the texture, so they show in the day. The gene
+    # model ember_eyes_flames makes them glow.
+    marks = [Mark(color) for color in EYE_FLAME]
+    for p, color in EYE_PIXELS:
+        marks[color].put(p)
+    return marks
+
+
+def ember_eyes_model():
+    # A square that glows on each flame pixel, just in front of the face (z
+    # -4). Face pixel (x, y) is at x - 12, y - 16.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+    for n, color in enumerate(EYE_FLAME):
+        paint_box(im, 4 * n, 0, 1, 1, 0, lambda face, x, y, c=color: c)
+    parts = [{"bone": "head", "uv": [4 * color, 0], "from": [x - 12, y - 16, -4.05], "size": [1, 1, 0],
+              "glow": True} for (x, y), color in EYE_PIXELS]
+    save_model("ember_eyes_flames", im, parts)
+
 GENES = {
     "duelist": duelist,
     "parry": parry,
@@ -207,15 +374,24 @@ GENES = {
     "lunge": lunge,
     "bladestorm": bladestorm,
     "executioner": executioner,
+    "cinderblade": cinderblade,
+    "pyre": pyre,
+    "lavawalker": lavawalker,
+    "cauterize": cauterize,
+    "smoke_screen": smoke_screen,
+    "ember_eyes": ember_eyes,
 }
 
 MODELS = {
     "duelist": "originofspawns:duelist_cloth",
     "parry": "originofspawns:parry_guard",
     "executioner": "originofspawns:executioner_hood",
+    "cinderblade": "originofspawns:cinderblade_embers",
+    "pyre": "originofspawns:pyre_coals",
+    "ember_eyes": "originofspawns:ember_eyes_flames",
 }
 
-MODEL_MAKERS = [duelist_model, parry_model, executioner_model]
+MODEL_MAKERS = [duelist_model, parry_model, executioner_model, cinderblade_model, pyre_model, ember_eyes_model]
 
 
 def main():

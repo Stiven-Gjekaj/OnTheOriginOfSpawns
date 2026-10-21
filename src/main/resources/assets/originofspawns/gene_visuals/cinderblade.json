@@ -1,0 +1,20 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/cinderblade_0.png",
+				"tint": "#3A1A10"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/cinderblade_1.png",
+				"tint": "#FF8A1E"
+			}
+		}
+	],
+	"model": "originofspawns:cinderblade_embers"
+}

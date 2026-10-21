@@ -1,0 +1,33 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/lavawalker_0.png",
+				"tint": "#5A5450"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/lavawalker_1.png",
+				"tint": "#7A726C"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/lavawalker_2.png",
+				"tint": "#8A2A10"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/lavawalker_3.png",
+				"tint": "#D0561C"
+			}
+		}
+	]
+}

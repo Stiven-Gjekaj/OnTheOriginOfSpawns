@@ -68,8 +68,8 @@ Pixel plan for the Venomers.
 - Venom Gland: a green sac under the jaw, the gene model venom_gland_sac.
 - Toxic Tip has bright green finger tips: arm row 11 and the bottom of the
   arm.
-- Bile Shot has yellow stains on the lower ribs of the front (x 20 to 27,
-  y 24 to 27).
+- Bile Shot has large, yellow-green stains on the front of the ribs (x 20
+  to 27, y 23 to 25), with drips down to y 29.
 - Rotting Touch has green rot in the joints: the shoulders and the hips
   (row 0), the elbows (arm row 5), and the knees (leg rows 4 and 5).
 - Antivenom has a bright green light in the eyes of the outer face, and
@@ -445,18 +445,19 @@ def toxic_tip():
 
 
 def bile_shot():
-    # Yellow stains of bile: blotches of sick yellow on the lower ribs of
-    # the front (y 24 to 27), under the Rot Mend threads and over the Swamp
-    # Gas bubbles.
-    bile = Mark("#C8B030")
-    dark = Mark("#8A7418")
+    # Large, bright yellow-green stains of bile on the front of the ribs:
+    # blotches on y 23 to 25, and drips that run down the ribs from them to
+    # y 29, each drip a different length, with a darker edge.
+    bile = Mark("#D8E040")
+    dark = Mark("#9AA020")
     for x in range(20, 28):
-        for y in range(24, 28):
-            n = noise100(x, y, 291)
-            if n < 45:
+        for y in (23, 24, 25):
+            if noise100(x, y, 291) < 70:
                 bile.put((x, y))
-            elif n < 60:
-                dark.put((x, y))
+        end = 26 + (x * 5 + 1) % 4
+        if x % 2 == 0:
+            for y in range(26, end + 1):
+                (dark if y == end else bile).put((x, y))
     return [bile, dark]
 
 

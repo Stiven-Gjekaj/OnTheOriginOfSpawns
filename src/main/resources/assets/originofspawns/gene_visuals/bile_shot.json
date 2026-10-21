@@ -5,14 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/bile_shot_0.png",
-				"tint": "#C8B030"
+				"tint": "#D8E040"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/bile_shot_1.png",
-				"tint": "#8A7418"
+				"tint": "#9AA020"
 			}
 		}
 	]

@@ -1,6 +1,6 @@
-// The notebook page: the gene page and the family page of the zombie, and the
-// mob info panel. The pages read the state that the simulator and the Gene
-// Lab keep in the browser.
+// The notebook page: the gene page and the family page of each species, and
+// the mob info panel. The pages read the state that the simulator keeps in the
+// browser.
 
 import { genes, families, minors, hybrids } from "../data/site.json";
 import { familyOf, kindName, pct, fmt, t, loadState, url, speciesById } from "../lib/site.js";

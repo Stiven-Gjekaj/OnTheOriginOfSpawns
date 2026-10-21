@@ -8,21 +8,22 @@ import io.github.stivengjekaj.originofspawns.visual.BabyLayout;
 import io.github.stivengjekaj.originofspawns.visual.GeneModel;
 import io.github.stivengjekaj.originofspawns.visual.GeneVisual;
 
+import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
 
 /**
- * Draws the gene models of a mob with a humanoid body, such as a zombie or a skeleton. Each part moves with its bone.
+ * Draws the gene models of a mob, such as a zombie, a skeleton, or a creeper. Each part moves with its bone.
  */
-public class GeneModelLayer<S extends HumanoidRenderState, M extends HumanoidModel<S>> extends RenderLayer<S, M> {
+public class GeneModelLayer<S extends LivingEntityRenderState, M extends EntityModel<S>> extends RenderLayer<S, M> {
 	private final RenderLayerParent<S, M> parent;
 
 	public GeneModelLayer(RenderLayerParent<S, M> parent) {
@@ -63,10 +64,14 @@ public class GeneModelLayer<S extends HumanoidRenderState, M extends HumanoidMod
 
 	private void submit(PoseStack poseStack, SubmitNodeCollector collector, GeneModel.Bone bone, ModelPart part,
 			Identifier texture, int light, int overlay, boolean baby) {
+		ModelPart bonePart = bone(bone);
+		if (bonePart == null) {
+			return;
+		}
 		poseStack.pushPose();
 		// The root of some models has its own pose. The wither skeleton has a root that is 1.2 times larger.
 		getParentModel().root().translateAndRotate(poseStack);
-		bone(bone).translateAndRotate(poseStack);
+		bonePart.translateAndRotate(poseStack);
 		if (baby) {
 			// The parts are in adult bone coordinates. This moves and scales them onto the smaller baby bone.
 			float[] change = BabyLayout.boneChange(bone);
@@ -88,15 +93,24 @@ public class GeneModelLayer<S extends HumanoidRenderState, M extends HumanoidMod
 				: null;
 	}
 
+	/**
+	 * Returns the part of the mob model for the bone, or null if the model has no such part. A humanoid model gives
+	 * its own fields. Another model, such as the creeper, gives the child of its root with the name of the bone.
+	 */
 	private ModelPart bone(GeneModel.Bone bone) {
 		M model = getParentModel();
-		return switch (bone) {
-			case HEAD -> model.head;
-			case BODY -> model.body;
-			case RIGHT_ARM -> model.rightArm;
-			case LEFT_ARM -> model.leftArm;
-			case RIGHT_LEG -> model.rightLeg;
-			case LEFT_LEG -> model.leftLeg;
-		};
+		if (model instanceof HumanoidModel<?> humanoid) {
+			return switch (bone) {
+				case HEAD -> humanoid.head;
+				case BODY -> humanoid.body;
+				case RIGHT_ARM -> humanoid.rightArm;
+				case LEFT_ARM -> humanoid.leftArm;
+				case RIGHT_LEG -> humanoid.rightLeg;
+				case LEFT_LEG -> humanoid.leftLeg;
+				default -> null;
+			};
+		}
+		String name = bone.getSerializedName();
+		return model.root().hasChild(name) ? model.root().getChild(name) : null;
 	}
 }

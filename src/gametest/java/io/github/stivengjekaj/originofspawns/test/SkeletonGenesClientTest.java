@@ -34,7 +34,6 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.monster.skeleton.Parched;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -79,47 +78,50 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 					throw new AssertionError("No gene marks on " + base);
 				}
 			}
-			checkParchedMarkAndModel(context, singleplayer);
+			checkMarkAndModel(context, singleplayer, EntityTypes.PARCHED, "test_parched_mark",
+					Identifier.withDefaultNamespace("textures/entity/skeleton/parched.png"), "parched");
+			checkMarkAndModel(context, singleplayer, EntityTypes.CREEPER, "test_creeper_mark",
+					Identifier.withDefaultNamespace("textures/entity/creeper/creeper.png"), "creeper");
 		}
 	}
 
 	/**
-	 * Spawns a parched with a test gene after the screenshot, so the screenshot does not change. The gene darkens each
-	 * pixel that has a region in the parched region map, and it has a gene model. The check reads the texture that the
-	 * parched renderer gives, and it records the parts that the gene model layer draws.
+	 * Spawns a mob with a test gene after the screenshot, so the screenshot does not change. The gene darkens each
+	 * pixel that has a region in the region map of the species, and it has a gene model. The check reads the texture
+	 * that the renderer of the mob gives, and it records the parts that the gene model layer draws.
 	 */
-	private static void checkParchedMarkAndModel(ClientGameTestContext context, TestSingleplayerContext singleplayer) {
-		Identifier mark = Identifier.fromNamespaceAndPath("originofspawns_test", "test_parched_mark");
+	private static void checkMarkAndModel(ClientGameTestContext context, TestSingleplayerContext singleplayer,
+			EntityType<? extends Mob> type, String gene, Identifier base, String regionMap) {
+		Identifier mark = Identifier.fromNamespaceAndPath("originofspawns_test", gene);
 		singleplayer.getServer().runOnServer(server -> {
 			ServerPlayer player = server.getPlayerList().getPlayers().getFirst();
-			spawn(player, EntityTypes.PARCHED, player.position().add(0.0, 0.0, 2.0), List.of(mark));
+			spawn(player, type, player.position().add(0.0, 0.0, 2.0), List.of(mark));
 		});
 		context.waitTicks(20);
 		String failure = context.computeOnClient(client -> {
-			Parched parched = client.level.getEntitiesOfClass(Parched.class, client.player.getBoundingBox().inflate(8.0),
-					mob -> {
-						CarriedGenes genes = mob.getAttached(ModAttachments.GENES);
-						return genes != null && genes.genes().contains(mark);
+			Mob mob = client.level.getEntitiesOfClass(Mob.class, client.player.getBoundingBox().inflate(8.0),
+					other -> {
+						CarriedGenes genes = other.getAttached(ModAttachments.GENES);
+						return other.getType() == type && genes != null && genes.genes().contains(mark);
 					}).stream().findFirst().orElse(null);
-			if (parched == null) {
-				return "The client has no parched with the test gene";
+			if (mob == null) {
+				return "The client has no " + type + " with the test gene";
 			}
 			EntityRenderDispatcher dispatcher = client.getEntityRenderDispatcher();
-			EntityRenderState state = dispatcher.extractEntity(parched, 1.0F);
-			if (!(dispatcher.getRenderer(parched) instanceof LivingEntityRenderer<?, ?, ?> renderer)) {
-				return "The parched renderer is not a living entity renderer";
+			EntityRenderState state = dispatcher.extractEntity(mob, 1.0F);
+			if (!(dispatcher.getRenderer(mob) instanceof LivingEntityRenderer<?, ?, ?> renderer)) {
+				return "The renderer of " + type + " is not a living entity renderer";
 			}
-			Identifier base = Identifier.withDefaultNamespace("textures/entity/skeleton/parched.png");
 			Identifier baked = textureOf(renderer, state);
 			if (baked.equals(base)) {
-				return "The parched renderer gives the base texture, with no gene marks";
+				return "The renderer of " + type + " gives the base texture, with no gene marks";
 			}
-			String texture = checkRegionMark(client, base, baked);
+			String texture = checkRegionMark(client, base, baked, regionMap);
 			if (texture != null) {
 				return texture;
 			}
 			int drawn = drawnModelParts(renderer, state);
-			return drawn > 0 ? null : "The gene model layer draws no part of the gene model on the parched";
+			return drawn > 0 ? null : "The gene model layer draws no part of the gene model on " + type;
 		});
 		if (failure != null) {
 			throw new AssertionError(failure);
@@ -133,13 +135,13 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 	}
 
 	/**
-	 * Compares the baked texture with the base texture. A pixel with a region in the parched region map is black. A
-	 * pixel with no region has the base color.
+	 * Compares the baked texture with the base texture. A pixel with a region in the region map is black. A pixel with
+	 * no region has the base color.
 	 *
 	 * @return the failure, or null if each pixel is correct
 	 */
-	private static String checkRegionMark(Minecraft client, Identifier base, Identifier baked) {
-		Identifier regionMap = Identifier.fromNamespaceAndPath("originofspawns", "textures/region/parched.png");
+	private static String checkRegionMark(Minecraft client, Identifier base, Identifier baked, String name) {
+		Identifier regionMap = Identifier.fromNamespaceAndPath("originofspawns", "textures/region/" + name + ".png");
 		try (NativeImage source = read(client, base); NativeImage regions = read(client, regionMap)) {
 			if (!(client.getTextureManager().getTexture(baked) instanceof DynamicTexture dynamic)) {
 				return "The baked texture " + baked + " is not a dynamic texture";
@@ -161,7 +163,7 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 					}
 				}
 			}
-			return covered > 0 ? null : "The parched region map covers no pixel";
+			return covered > 0 ? null : "The region map " + name + " covers no pixel";
 		} catch (IOException exception) {
 			return "Cannot read a texture: " + exception;
 		}
@@ -174,7 +176,7 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 	}
 
 	/**
-	 * Sends the render state of the parched to its gene model layer, and counts the model parts that the layer draws.
+	 * Sends the render state of the mob to its gene model layer, and counts the model parts that the layer draws.
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	private static int drawnModelParts(LivingEntityRenderer<?, ?, ?> renderer, EntityRenderState state) {
@@ -184,7 +186,7 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			field.setAccessible(true);
 			layers = (List<RenderLayer>) field.get(renderer);
 		} catch (ReflectiveOperationException exception) {
-			throw new AssertionError("Cannot read the layers of the parched renderer", exception);
+			throw new AssertionError("Cannot read the layers of the renderer", exception);
 		}
 		int[] parts = {0};
 		Object[] collector = new Object[1];

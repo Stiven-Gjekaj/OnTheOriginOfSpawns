@@ -45,7 +45,14 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		RIGHT_ARM,
 		LEFT_ARM,
 		RIGHT_LEG,
-		LEFT_LEG;
+		LEFT_LEG,
+		/**
+		 * The four legs of a creeper.
+		 */
+		RIGHT_HIND_LEG,
+		LEFT_HIND_LEG,
+		RIGHT_FRONT_LEG,
+		LEFT_FRONT_LEG;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

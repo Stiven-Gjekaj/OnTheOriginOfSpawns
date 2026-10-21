@@ -78,6 +78,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Boolean> REASSEMBLE_USED =
 			AttachmentRegistry.createPersistent(OriginOfSpawns.id("reassemble_used"), com.mojang.serialization.Codec.BOOL);
 
+	/**
+	 * The game time of the last fan shot of a mob.
+	 */
+	public static final AttachmentType<Long> FAN_SHOT_TIME = AttachmentRegistry.create(OriginOfSpawns.id("fan_shot_time"));
+
 	private ModAttachments() {
 	}
 

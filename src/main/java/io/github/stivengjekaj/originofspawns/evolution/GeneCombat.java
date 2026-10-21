@@ -39,6 +39,9 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
 
 /**
@@ -49,6 +52,8 @@ public final class GeneCombat {
 	private static final int DARK_LIGHT = 6;
 	private static final int BRIGHT_LIGHT = 12;
 	private static final double ALONE_RADIUS = 8.0;
+	private static final double HEAL_ON_DEATH_REACH = 32.0;
+	private static final double KNOCKBACK = 0.4;
 	private static final int DEEP_BLOCKS = 10;
 	private static final double HEIGHT_DIFFERENCE = 2.0;
 	/**
@@ -111,6 +116,43 @@ public final class GeneCombat {
 			case NIGHT -> entity.level().isDarkOutside();
 			case TARGET_FROZEN -> entity instanceof Mob mob && mob.getTarget() != null && mob.getTarget().getTicksFrozen() > 0;
 		};
+	}
+
+	/**
+	 * Heals the mobs of the species of the dead mob that heal when an ally dies near them.
+	 */
+	private static void healAllies(Mob dead, ServerLevel level) {
+		AABB area = dead.getBoundingBox().inflate(HEAL_ON_DEATH_REACH);
+		for (Mob ally : level.getEntitiesOfClass(Mob.class, area, other -> other != dead && other.isAlive()
+				&& other.getType() == dead.getType())) {
+			for (GeneEffect effect : GeneEffects.of(ally).toList()) {
+				if (effect instanceof GeneEffect.HealOnAllyDeath heal && ally.distanceTo(dead) <= heal.radius()) {
+					ally.heal(heal.amount());
+				}
+			}
+		}
+	}
+
+	/**
+	 * Damages the armor of a player more after a projectile hit of a mob with an armor break effect.
+	 */
+	public static void breakArmor(Mob mob, LivingEntity target, float damage) {
+		if (!(target instanceof Player player)) {
+			return;
+		}
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.ArmorBreak armorBreak
+					&& (!armorBreak.frozenOnly() || player.getTicksFrozen() > 0)) {
+				// The game damages each armor piece by a quarter of the damage, and by 1 or more.
+				int extra = Math.round(Math.max(1.0F, damage / 4.0F) * (armorBreak.multiplier() - 1.0F));
+				for (EquipmentSlot slot : EquipmentSlotGroup.ARMOR) {
+					ItemStack stack = player.getItemBySlot(slot);
+					if (!stack.isEmpty() && stack.isDamageableItem() && extra > 0) {
+						stack.hurtAndBreak(extra, player, slot);
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -274,6 +316,15 @@ public final class GeneCombat {
 								onHit.amplifier()), mob);
 				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(true)
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(target, freeze.seconds());
+				case GeneEffect.ArrowKnockback knockback -> {
+					Vec3 away = new Vec3(target.getX() - mob.getX(), 0.0, target.getZ() - mob.getZ());
+					if (away.lengthSqr() > 1.0E-4) {
+						// An arrow pushes with about 0.4. The extra push makes the full push the multiplier times as far.
+						Vec3 push = away.normalize().scale(KNOCKBACK * (knockback.multiplier() - 1.0F));
+						target.push(push.x, 0.1, push.z);
+						target.needsSync = true;
+					}
+				}
 				case GeneEffect.CallOnHit call when call.hits().includes(true) && target instanceof Player player ->
 						GeneBehaviors.callAllies(mob, call.radius(), player);
 				case GeneEffect.IgniteTarget ignite when ignite.hits().includes(true)
@@ -455,8 +506,30 @@ public final class GeneCombat {
 	 * Runs the effects that act when the mob dies.
 	 */
 	public static void onDeath(Mob mob, ServerLevel level) {
+		onDeath(mob, level, null);
+	}
+
+	/**
+	 * Runs the effects that act when the mob dies. The source can be null.
+	 */
+	public static void onDeath(Mob mob, ServerLevel level, DamageSource source) {
+		healAllies(mob, level);
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
+				case GeneEffect.DeathBlock death -> {
+					BlockPos pos = mob.blockPosition();
+					if (level.getBlockState(pos).isAir()
+							&& level.getEntitiesOfClass(Player.class, new AABB(pos)).isEmpty()) {
+						level.setBlockAndUpdate(pos, death.block().defaultBlockState());
+					}
+				}
+				case GeneEffect.CallOnDeath call -> {
+					LivingEntity killer = source != null && source.getEntity() instanceof LivingEntity living
+							? living : mob.getLastHurtByMob();
+					if (killer instanceof Player player) {
+						GeneBehaviors.callAllies(mob, call.radius(), player);
+					}
+				}
 				case GeneEffect.DeathBurst burst -> {
 					AABB area = mob.getBoundingBox().inflate(burst.radius());
 					for (Player player : level.getEntitiesOfClass(Player.class, area)) {

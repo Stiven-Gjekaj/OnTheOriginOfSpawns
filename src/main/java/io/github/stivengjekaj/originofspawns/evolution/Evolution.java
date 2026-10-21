@@ -101,6 +101,7 @@ public final class Evolution {
 			if (!blocked && damageTaken > 0.0F && source.getDirectEntity() instanceof Projectile
 					&& source.getEntity() instanceof Mob mob && mob != entity && mob.hasAttached(ModAttachments.GENES)) {
 				GeneCombat.onProjectileHit(mob, entity);
+				GeneCombat.breakArmor(mob, entity, damageTaken);
 			}
 		});
 		ServerTickEvents.END_SERVER_TICK.register(Evolution::decay);
@@ -214,7 +215,7 @@ public final class Evolution {
 		if (source.getEntity() instanceof ServerPlayer killer) {
 			Discovery.learn(killer, mob);
 		}
-		GeneCombat.onDeath(mob, level);
+		GeneCombat.onDeath(mob, level, source);
 		Identifier species = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
 		BiomeCategory category = BiomeCategory.of(level.getBiome(mob.blockPosition()));
 		select(level, mob.getType(), category, new DeathContext(source, facts(mob, source, level)));

@@ -3,10 +3,15 @@ package io.github.stivengjekaj.originofspawns.mixin;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.Arrow;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractSkeleton.class)
 public abstract class AbstractSkeletonMixin {
@@ -54,5 +60,23 @@ public abstract class AbstractSkeletonMixin {
 			index = 1)
 	private float originofspawns$shotVolume(float volume) {
 		return volume * GeneBehaviors.volumeMultiplier((AbstractSkeleton) (Object) this);
+	}
+
+	@Inject(method = "performRangedAttack", at = @At("TAIL"))
+	private void originofspawns$fanShot(LivingEntity target, float power, CallbackInfo info) {
+		GeneBehaviors.fanShot((AbstractSkeleton) (Object) this, target);
+	}
+
+	@Inject(method = "getArrow", at = @At("RETURN"))
+	private void originofspawns$arrowEffects(ItemStack arrow, float power, ItemStack bow,
+			CallbackInfoReturnable<AbstractArrow> info) {
+		if (info.getReturnValue() instanceof Arrow tipped) {
+			GeneEffects.of((AbstractSkeleton) (Object) this).forEach(effect -> {
+				if (effect instanceof GeneEffect.ArrowEffect arrowEffect) {
+					tipped.addEffect(new MobEffectInstance(arrowEffect.effect(), Math.round(arrowEffect.seconds() * 20.0F),
+							arrowEffect.amplifier()));
+				}
+			});
+		}
 	}
 }

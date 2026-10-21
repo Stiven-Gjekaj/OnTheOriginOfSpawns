@@ -11,6 +11,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.resources.Identifier;
@@ -114,7 +115,16 @@ public sealed interface GeneEffect {
 			Map.entry("draw_time", DrawTime.CODEC),
 			Map.entry("freeze_on_hit", FreezeOnHit.CODEC),
 			Map.entry("freeze_attacker", FreezeAttacker.CODEC),
-			Map.entry("freeze_aura", FreezeAura.CODEC)
+			Map.entry("freeze_aura", FreezeAura.CODEC),
+			Map.entry("fan_shot", FanShot.CODEC),
+			Map.entry("arrow_knockback", ArrowKnockback.CODEC),
+			Map.entry("walk_on_powder_snow", WalkOnPowderSnow.CODEC),
+			Map.entry("arrow_effect", ArrowEffect.CODEC),
+			Map.entry("death_block", DeathBlock.CODEC),
+			Map.entry("armor_break", ArmorBreak.CODEC),
+			Map.entry("gaze_effect", GazeEffect.CODEC),
+			Map.entry("call_on_death", CallOnDeath.CODEC),
+			Map.entry("heal_on_ally_death", HealOnAllyDeath.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -1662,6 +1672,146 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "freeze_aura";
+		}
+	}
+
+	/**
+	 * When the mob shoots its bow, it also shoots more arrows in a fan, one time in each cooldown, while the state is
+	 * true. The arrows include the normal shot.
+	 */
+	record FanShot(int arrows, float angle, float cooldownSeconds, When when) implements GeneEffect {
+		public static final MapCodec<FanShot> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(2, 9).optionalFieldOf("arrows", 3).forGetter(FanShot::arrows),
+				Codec.floatRange(1.0F, 90.0F).optionalFieldOf("angle", 15.0F).forGetter(FanShot::angle),
+				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(FanShot::cooldownSeconds),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(FanShot::when)
+		).apply(instance, FanShot::new));
+
+		@Override
+		public String type() {
+			return "fan_shot";
+		}
+	}
+
+	/**
+	 * The projectiles of the mob push the target back more. A multiplier of 2 pushes two times as far.
+	 */
+	record ArrowKnockback(float multiplier) implements GeneEffect {
+		public static final MapCodec<ArrowKnockback> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 10.0F).fieldOf("multiplier").forGetter(ArrowKnockback::multiplier)
+		).apply(instance, ArrowKnockback::new));
+
+		@Override
+		public String type() {
+			return "arrow_knockback";
+		}
+	}
+
+	/**
+	 * The mob walks on powder snow and does not sink, as with leather boots.
+	 */
+	record WalkOnPowderSnow() implements GeneEffect {
+		public static final MapCodec<WalkOnPowderSnow> CODEC = MapCodec.unit(new WalkOnPowderSnow());
+
+		@Override
+		public String type() {
+			return "walk_on_powder_snow";
+		}
+	}
+
+	/**
+	 * The arrows of the mob carry a status effect, as a tipped arrow does. A stronger effect of the same kind replaces
+	 * a weaker one on the target.
+	 */
+	record ArrowEffect(Holder<MobEffect> effect, float seconds, int amplifier) implements GeneEffect {
+		public static final MapCodec<ArrowEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(ArrowEffect::effect),
+				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(ArrowEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(ArrowEffect::amplifier)
+		).apply(instance, ArrowEffect::new));
+
+		@Override
+		public String type() {
+			return "arrow_effect";
+		}
+	}
+
+	/**
+	 * When the mob dies, the block goes where it died. It goes only in air, and not where a player stands.
+	 */
+	record DeathBlock(Block block) implements GeneEffect {
+		public static final MapCodec<DeathBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				BuiltInRegistries.BLOCK.byNameCodec().fieldOf("block").forGetter(DeathBlock::block)
+		).apply(instance, DeathBlock::new));
+
+		@Override
+		public String type() {
+			return "death_block";
+		}
+	}
+
+	/**
+	 * The projectile hits of the mob damage the armor of a player more. A multiplier of 2 damages it two times as
+	 * much. With frozen_only, it acts only on a player that freezes.
+	 */
+	record ArmorBreak(float multiplier, boolean frozenOnly) implements GeneEffect {
+		public static final MapCodec<ArmorBreak> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 10.0F).fieldOf("multiplier").forGetter(ArmorBreak::multiplier),
+				Codec.BOOL.optionalFieldOf("frozen_only", false).forGetter(ArmorBreak::frozenOnly)
+		).apply(instance, ArmorBreak::new));
+
+		@Override
+		public String type() {
+			return "armor_break";
+		}
+	}
+
+	/**
+	 * A player in the range that looks at the mob gets the status effect. The look check is the one of the enderman,
+	 * with a clear line of sight. It checks each interval.
+	 */
+	record GazeEffect(Holder<MobEffect> effect, float seconds, int amplifier, float range, float intervalSeconds)
+			implements GeneEffect {
+		public static final MapCodec<GazeEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(GazeEffect::effect),
+				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(GazeEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(GazeEffect::amplifier),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 16.0F).forGetter(GazeEffect::range),
+				Codec.floatRange(1.0F, 600.0F).optionalFieldOf("interval_seconds", 2.0F).forGetter(GazeEffect::intervalSeconds)
+		).apply(instance, GazeEffect::new));
+
+		@Override
+		public String type() {
+			return "gaze_effect";
+		}
+	}
+
+	/**
+	 * When the mob dies, the mobs of its species in the radius target the player that killed it.
+	 */
+	record CallOnDeath(float radius) implements GeneEffect {
+		public static final MapCodec<CallOnDeath> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 128.0F).fieldOf("radius").forGetter(CallOnDeath::radius)
+		).apply(instance, CallOnDeath::new));
+
+		@Override
+		public String type() {
+			return "call_on_death";
+		}
+	}
+
+	/**
+	 * The mob heals by the amount when another mob of its species dies in the radius.
+	 */
+	record HealOnAllyDeath(float amount, float radius) implements GeneEffect {
+		public static final MapCodec<HealOnAllyDeath> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1000.0F).fieldOf("amount").forGetter(HealOnAllyDeath::amount),
+				Codec.floatRange(0.0F, 32.0F).fieldOf("radius").forGetter(HealOnAllyDeath::radius)
+		).apply(instance, HealOnAllyDeath::new));
+
+		@Override
+		public String type() {
+			return "heal_on_ally_death";
 		}
 	}
 }

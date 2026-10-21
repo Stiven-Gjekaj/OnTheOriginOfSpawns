@@ -9,6 +9,8 @@ import io.github.stivengjekaj.originofspawns.evolution.goal.LurkGoal;
 import io.github.stivengjekaj.originofspawns.evolution.goal.SiegeGoal;
 import io.github.stivengjekaj.originofspawns.mixin.AbstractSkeletonAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import io.github.stivengjekaj.originofspawns.mixin.RangedBowAttackGoalAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -57,6 +59,10 @@ public final class GeneBehaviors {
 	private static final int BURROW_DEPTH = 2;
 	private static final float CHICKEN_JOCKEY_CHANCE = 0.05F;
 	private static final int TICK_INTERVAL = 20;
+	/**
+	 * The look tolerance of the enderman.
+	 */
+	private static final double GAZE_TOLERANCE = 0.025;
 	/**
 	 * A player aims at a mob when its view is in about 14 degrees of the mob.
 	 */
@@ -324,6 +330,15 @@ public final class GeneBehaviors {
 						mob.heal(regenerate.amount());
 					}
 				}
+				case GeneEffect.GazeEffect gaze when now % Math.max(1, Math.round(gaze.intervalSeconds() * 20.0F)) < TICK_INTERVAL -> {
+					AABB area = mob.getBoundingBox().inflate(gaze.range());
+					for (Player player : level.getEntitiesOfClass(Player.class, area, player -> !player.isSpectator()
+							&& mob.isLookingAtMe(player, GAZE_TOLERANCE, true, false, mob.getEyeY())
+							&& player.hasLineOfSight(mob))) {
+						player.addEffect(new MobEffectInstance(gaze.effect(), Math.round(gaze.seconds() * 20.0F),
+								gaze.amplifier()), mob);
+					}
+				}
 				case GeneEffect.FreezeAura freeze when GeneCombat.test(mob, freeze.when()) -> {
 					AABB area = mob.getBoundingBox().inflate(freeze.radius());
 					for (Player player : level.getEntitiesOfClass(Player.class, area, Player::canFreeze)) {
@@ -560,6 +575,44 @@ public final class GeneBehaviors {
 		mob.setAttached(ModAttachments.STATE, state.withCollapseUntil(-1L));
 		level.sendParticles(new net.minecraft.core.particles.ItemParticleOption(ParticleTypes.ITEM,
 				Items.BONE), mob.getX(), mob.getY(0.5), mob.getZ(), 20, 0.3, 0.5, 0.3, 0.05);
+	}
+
+	/**
+	 * After a bow shot of a mob with a fan shot, shoots the other arrows of the fan, if the cooldown is over and the
+	 * state is true.
+	 */
+	public static void fanShot(AbstractSkeleton mob, LivingEntity target) {
+		if (!(mob.level() instanceof ServerLevel level) || target == null) {
+			return;
+		}
+		var fan = GeneEffects.of(mob).filter(GeneEffect.FanShot.class::isInstance).map(GeneEffect.FanShot.class::cast)
+				.filter(effect -> GeneCombat.test(mob, effect.when())).findFirst();
+		if (fan.isEmpty()) {
+			return;
+		}
+		long now = level.getGameTime();
+		long last = mob.getAttachedOrElse(ModAttachments.FAN_SHOT_TIME, Long.MIN_VALUE);
+		if (last != Long.MIN_VALUE && now - last < Math.round(fan.get().cooldownSeconds() * 20.0F)) {
+			return;
+		}
+		mob.setAttached(ModAttachments.FAN_SHOT_TIME, now);
+		ItemStack bow = mob.getMainHandItem();
+		int extra = fan.get().arrows() - 1;
+		for (int i = 0; i < extra; i++) {
+			// The arrows go to each side in turn: +1, -1, +2, -2, and so on, times the angle.
+			int step = i / 2 + 1;
+			float angle = (i % 2 == 0 ? step : -step) * fan.get().angle() * Mth.DEG_TO_RAD;
+			AbstractArrow arrow = ((AbstractSkeletonAccessor) mob).originofspawns$getArrow(new ItemStack(Items.ARROW), 1.0F,
+					bow);
+			double dx = target.getX() - mob.getX();
+			double dz = target.getZ() - mob.getZ();
+			double dy = target.getY(0.3333333333333333) - arrow.getY();
+			double distance = Math.sqrt(dx * dx + dz * dz);
+			double turnedX = dx * Mth.cos(angle) - dz * Mth.sin(angle);
+			double turnedZ = dx * Mth.sin(angle) + dz * Mth.cos(angle);
+			arrow.shoot(turnedX, dy + distance * 0.2, turnedZ, 1.6F, 14 - level.getDifficulty().getId() * 4);
+			level.addFreshEntity(arrow);
+		}
 	}
 
 	/**

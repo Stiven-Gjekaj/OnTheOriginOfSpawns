@@ -12,6 +12,12 @@ import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
+import io.github.stivengjekaj.originofspawns.mixin.AbstractSkeletonAccessor;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.level.block.PowderSnowBlock;
+
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -166,6 +172,114 @@ public class StrayEffectsTest {
 		helper.assertTrue(ally.hasEffect(MobEffects.SPEED), "the ally gets Speed");
 		helper.assertFalse(player.hasEffect(MobEffects.SPEED), "the player does not");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void aFanShotAddsArrowsOnceEachCooldown(GameTestHelper helper) {
+		Stray stray = strayWith(helper, new BlockPos(1, 1, 1), "test_fan_shot");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(1, 1, 6));
+		stray.performRangedAttack(pig, 1.0F);
+		helper.assertValueEqual(arrows(helper), 3, "the first shot is a fan of 3");
+		stray.performRangedAttack(pig, 1.0F);
+		helper.assertValueEqual(arrows(helper), 4, "the next shot in the cooldown is 1 arrow");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void galeArrowsPushTheTargetBack(GameTestHelper helper) {
+		Stray stray = strayWith(helper, new BlockPos(1, 1, 1), "test_gale");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(1, 1, 4));
+		pig.setDeltaMovement(Vec3.ZERO);
+		GeneCombat.onProjectileHit(stray, pig);
+		helper.assertTrue(pig.getDeltaMovement().z > 0.3, "the pig moves away from the stray: " + pig.getDeltaMovement());
+		helper.succeed();
+	}
+
+	@GameTest
+	public void snowshoesWalkOnPowderSnow(GameTestHelper helper) {
+		Stray walker = strayWith(helper, new BlockPos(1, 1, 1), "test_snowshoe");
+		Stray plain = strayWith(helper, new BlockPos(3, 1, 1));
+		helper.assertTrue(PowderSnowBlock.canEntityWalkOnPowderSnow(walker), "the gene walks on powder snow");
+		helper.assertFalse(PowderSnowBlock.canEntityWalkOnPowderSnow(plain), "a plain stray sinks");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void arrowEffectsGoOnTheArrows(GameTestHelper helper) {
+		Stray stray = strayWith(helper, new BlockPos(1, 1, 1), "test_coldsnap");
+		AbstractArrow arrow = ((AbstractSkeletonAccessor) stray).originofspawns$getArrow(new ItemStack(Items.ARROW), 1.0F,
+				new ItemStack(Items.BOW));
+		PotionContents contents = arrow.getPickupItemStackOrigin().getOrDefault(DataComponents.POTION_CONTENTS,
+				PotionContents.EMPTY);
+		helper.assertTrue(contents.customEffects().stream().anyMatch(effect -> effect.is(MobEffects.SLOWNESS)
+				&& effect.getAmplifier() == 1 && effect.getDuration() == 1200), "a Slowness II of 60 seconds: " + contents);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void rimefallLeavesPowderSnow(GameTestHelper helper) {
+		Stray stray = strayWith(helper, new BlockPos(1, 1, 1), "test_rimefall");
+		GeneCombat.onDeath(stray, helper.getLevel());
+		helper.assertBlockPresent(Blocks.POWDER_SNOW, new BlockPos(1, 1, 1));
+		Stray blocked = strayWith(helper, new BlockPos(4, 1, 1), "test_rimefall");
+		helper.setBlock(new BlockPos(4, 1, 1), Blocks.OAK_FENCE);
+		GeneCombat.onDeath(blocked, helper.getLevel());
+		helper.assertBlockPresent(Blocks.OAK_FENCE, new BlockPos(4, 1, 1));
+		helper.succeed();
+	}
+
+	@GameTest
+	public void brittleShotsBreakTheArmorOfAFrozenPlayer(GameTestHelper helper) {
+		Stray stray = strayWith(helper, new BlockPos(1, 1, 1), "test_brittle");
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		player.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.IRON_CHESTPLATE));
+		GeneCombat.breakArmor(stray, player, 8.0F);
+		helper.assertValueEqual(player.getItemBySlot(EquipmentSlot.CHEST).getDamageValue(), 0, "a warm player");
+		player.setTicksFrozen(100);
+		GeneCombat.breakArmor(stray, player, 8.0F);
+		helper.assertValueEqual(player.getItemBySlot(EquipmentSlot.CHEST).getDamageValue(), 2,
+				"2 more damage for a hit of 8");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aPlayerThatLooksAtTheGazeIsSlowed(GameTestHelper helper) {
+		Stray stray = strayWith(helper, new BlockPos(2, 1, 1), "test_gaze");
+		ServerPlayer looker = helper.makeMockServerPlayerInLevel();
+		looker.setGameMode(GameType.SURVIVAL);
+		Vec3 eyes = helper.absoluteVec(new Vec3(2.5, 1.0, 6.5));
+		// The player looks north, at the stray. The eye height of the player and the stray is near the same.
+		looker.snapTo(eyes.x, eyes.y, eyes.z, 180.0F, 0.0F);
+		looker.setYHeadRot(180.0F);
+		ServerPlayer away = helper.makeMockServerPlayerInLevel();
+		away.setGameMode(GameType.SURVIVAL);
+		away.snapTo(eyes.x + 1.0, eyes.y, eyes.z, 0.0F, 0.0F);
+		stray.tickCount = 20;
+		GeneBehaviors.tick(stray, helper.getLevel());
+		helper.assertTrue(looker.hasEffect(MobEffects.SLOWNESS), "the player that looks gets Slowness");
+		helper.assertFalse(away.hasEffect(MobEffects.SLOWNESS), "the player that looks away does not");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void hollowCryCallsAndMournerHeals(GameTestHelper helper) {
+		Stray crier = strayWith(helper, new BlockPos(1, 1, 1), "test_hollow_cry");
+		Stray mourner = strayWith(helper, new BlockPos(4, 1, 1), "test_mourner");
+		Stray far = strayWith(helper, new BlockPos(7, 1, 7), "test_mourner");
+		mourner.setHealth(10.0F);
+		far.setHealth(10.0F);
+		far.snapTo(far.position().add(0.0, 0.0, 20.0));
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		GeneCombat.onDeath(crier, helper.getLevel(), helper.getLevel().damageSources().playerAttack(player));
+		helper.assertTrue(mourner.getTarget() == player, "the ally targets the killer");
+		helper.assertValueEqual(mourner.getHealth(), 14.0F, "the mourner heals 4");
+		helper.assertValueEqual(far.getHealth(), 10.0F, "a mourner out of the radius does not heal");
+		helper.succeed();
+	}
+
+	private static int arrows(GameTestHelper helper) {
+		return helper.getLevel().getEntitiesOfClass(AbstractArrow.class,
+				new net.minecraft.world.phys.AABB(helper.absolutePos(BlockPos.ZERO)).inflate(16.0)).size();
 	}
 
 	private static void biome(GameTestHelper helper, String biome) {

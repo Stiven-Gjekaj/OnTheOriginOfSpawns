@@ -411,6 +411,8 @@ public final class GeneBehaviors {
 						scavengeTrident(mob, level, scavenge);
 				case GeneEffect.Glowing glowing when glowing.when() != GeneEffect.When.ALWAYS ->
 						mob.setGlowingTag(GeneCombat.test(mob, glowing.when()));
+				case GeneEffect.ChargeWhen charge when mob instanceof Creeper creeper && !creeper.isPowered()
+						&& GeneCombat.test(mob, charge.when()) -> GeneBlasts.charge(creeper);
 				default -> {
 				}
 			}

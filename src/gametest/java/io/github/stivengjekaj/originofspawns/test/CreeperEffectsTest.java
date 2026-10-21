@@ -48,6 +48,10 @@ public class CreeperEffectsTest {
 	 * The test environment for blasts: no block breaks, and players take the normal damage.
 	 */
 	static final String BLASTS = "originofspawns_test:blasts";
+	/**
+	 * The test environment with a thunderstorm.
+	 */
+	static final String THUNDER = "originofspawns_test:thunder";
 
 	@GameTest
 	public void aChargedCreeperIsInTheChargedState(GameTestHelper helper) {
@@ -69,6 +73,27 @@ public class CreeperEffectsTest {
 		helper.assertTrue(charged.isPowered(), "the gene spawns it charged");
 		helper.assertFalse(plain.isPowered(), "a plain creeper spawns with no charge");
 		helper.succeed();
+	}
+
+	@GameTest(environment = THUNDER, maxTicks = 200)
+	public void aLightningRodChargesInAThunderstorm(GameTestHelper helper) {
+		Creeper rod = creeperWith(helper, new BlockPos(1, 1, 1), "test_lightning_rod");
+		Creeper plain = creeperWith(helper, new BlockPos(3, 1, 1));
+		// The storm grows for some seconds before the world counts it as a thunderstorm.
+		helper.succeedWhen(() -> {
+			helper.assertTrue(rod.isPowered(), "the storm charges the creeper with the gene");
+			helper.assertFalse(plain.isPowered(), "the storm does not charge a plain creeper");
+		});
+	}
+
+	@GameTest(maxTicks = 30)
+	public void aLightningRodStaysPlainInClearWeather(GameTestHelper helper) {
+		Creeper rod = creeperWith(helper, new BlockPos(1, 1, 1), "test_lightning_rod");
+		helper.runAfterDelay(25, () -> {
+			helper.assertFalse(helper.getLevel().isThundering(), "no storm in this test");
+			helper.assertFalse(rod.isPowered(), "no charge with no storm");
+			helper.succeed();
+		});
 	}
 
 	@GameTest(environment = BLASTS, padding = 16)

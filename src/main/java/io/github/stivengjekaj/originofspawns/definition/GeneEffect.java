@@ -145,7 +145,8 @@ public sealed interface GeneEffect {
 			Map.entry("chain_reaction", ChainReaction.CODEC),
 			Map.entry("aftershock", Aftershock.CODEC),
 			Map.entry("silent_fuse", SilentFuse.CODEC),
-			Map.entry("charged_spawn", ChargedSpawn.CODEC)
+			Map.entry("charged_spawn", ChargedSpawn.CODEC),
+			Map.entry("charge_when", ChargeWhen.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2239,6 +2240,20 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "charged_spawn";
+		}
+	}
+
+	/**
+	 * The creeper becomes charged when the state is true, for example in a thunderstorm. It stays charged after.
+	 */
+	record ChargeWhen(When when) implements GeneEffect {
+		public static final MapCodec<ChargeWhen> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				When.CODEC.optionalFieldOf("when", When.STORM).forGetter(ChargeWhen::when)
+		).apply(instance, ChargeWhen::new));
+
+		@Override
+		public String type() {
+			return "charge_when";
 		}
 	}
 }

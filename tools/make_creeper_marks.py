@@ -46,6 +46,20 @@ Pixel plan for the Rushers.
 - Tracker has a wide, open mouth: the mouth is 2 pixels wider (x 9 and 14,
   y 13 and 14).
 - Wallcrawler: hooked claws on the feet, the gene model wallcrawler_claws.
+
+Pixel plan for the Ambushers.
+- Silent Fuse has a mouth that is sewn shut: the mouth is skin, with a dark
+  seam across it (y 13) and pale stitches over the seam.
+- Leafskin has a pattern of leaves on the skin of the body: dark green leaf
+  shapes with a pale vein, on all the side faces of the body.
+- Gloom has dark gray patches on the body.
+- Veiled has a faded, pale face: a pale wash over the skin of the face, and
+  dark gray eyes and mouth in place of black.
+- Patient: roots that grow round the feet and climb a little up the legs,
+  the gene model patient_roots.
+- Surprise has a wider grin: the corners of the mouth go up and out (x 9
+  and 14, y 12 and 13).
+
 This script needs Pillow.
 """
 import json
@@ -297,29 +311,120 @@ def wallcrawler_model():
     save_model("wallcrawler_claws", im, parts)
 
 
-GENES = {
-    "big_bang": big_bang,
-    "shrapnel": shrapnel,
-    "golem_breaker": golem_breaker,
-    "chain_reaction": chain_reaction,
-    "aftershock": aftershock,
-    "concussion": concussion,
-    "sprinter": sprinter,
-    "short_fuse": short_fuse,
-    "leaper": leaper,
-    "dodger": dodger,
-    "tracker": tracker,
-    "wallcrawler": wallcrawler,
-}
 
-MODELS = {
-    "big_bang": "originofspawns:big_bang_belly",
-    "short_fuse": "originofspawns:short_fuse_fuse",
-    "leaper": "originofspawns:leaper_haunches",
-    "wallcrawler": "originofspawns:wallcrawler_claws",
-}
+def silent_fuse():
+    # A mouth that is sewn shut: the black mouth is skin, a dark seam runs
+    # across it (y 13), and pale stitches cross the seam (x 10, 11, 12, and
+    # 13, y 12 and 14).
+    skin = Mark(SKIN[0])
+    seam = Mark(SKIN[3])
+    stitch = Mark("#E0D8C0")
+    for p in MOUTH:
+        skin.put(p)
+    for x in range(10, 14):
+        seam.put((x, 13))
+        stitch.put((x, 12 if x % 2 else 14))
+    return [skin, seam, stitch]
 
-MODEL_MAKERS = [big_bang_model, short_fuse_model, leaper_model, wallcrawler_model]
+
+def leafskin():
+    # A pattern of leaves on the skin of the body: dark green leaf shapes,
+    # 3 pixels long at a slant, each with a pale vein along it, on all the
+    # side faces of the body.
+    leaf = Mark("#1E4A12")
+    vein = Mark("#D8F8C0")
+    for x, y, face, col, row in pixels(BODY, SIDES):
+        if (col + 2 * row) % 6 == 0 and row % 3 == 0:
+            leaf.put((x, y))
+            if col + 1 < BODY[face][2]:
+                vein.put((x + 1, y))
+            if row + 1 < BODY[face][3]:
+                leaf.put((x, y + 1))
+                if col + 1 < BODY[face][2]:
+                    leaf.put((x + 1, y + 1))
+    return [leaf, vein]
+
+
+def gloom():
+    # Dark gray patches on the body, as a creeper that hides in the dark:
+    # wide patches of dark gray with a softer gray edge, on all the faces of
+    # the body.
+    patch = Mark("#3A3E3A")
+    edge = Mark("#5E625E")
+    for x, y, face, col, row in pixels(BODY, BODY):
+        n = noise100(x // 2, y // 2, 351)
+        if n < 30:
+            patch.put((x, y))
+        elif n < 40:
+            edge.put((x, y))
+    return [patch, edge]
+
+
+def veiled():
+    # A faded, pale face: a pale wash over the skin of the face, and dark
+    # gray eyes and mouth in place of black, as if the face fades away.
+    wash = Mark("#C8D8C0", alpha=190)
+    gray = Mark("#5A5E5A")
+    for x in range(8, 16):
+        for y in range(8, 16):
+            if (x, y) in EYES or (x, y) in MOUTH:
+                gray.put((x, y))
+            else:
+                wash.put((x, y))
+    return [wash, gray]
+
+
+ROOT = ("#6A4A2E", "#4A3220", "#A08060")
+
+
+def patient():
+    # The roots are the gene model patient_roots.
+    return []
+
+
+def patient_model():
+    # Roots that grow round the feet, as if the creeper waited so long
+    # that it took root: on each leg, a band of root round the foot, two
+    # roots that climb up the outer side and the back of the leg from it,
+    # and short roots that go down from it into the ground. Every root
+    # touches the leg. On a leg bone, the leg is from x -2 to 2 and from z
+    # -2 to 2, and the ground is at y 6.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def band(face, x, y):
+        if face in ("top", "bottom"):
+            return None
+        return ROOT[0] if (x + y) % 3 else ROOT[1]
+
+    def climb(face, x, y):
+        return ROOT[2] if y == 0 else ROOT[0] if y % 2 else ROOT[1]
+
+    # The band: 4x1x4 at uv (0, 0). A climbing root: 1x3x1 at uv (16, 0). A
+    # root into the ground: 1x2x1 at uv (20, 0).
+    paint_box(im, 0, 0, 4, 1, 4, band)
+    paint_box(im, 16, 0, 1, 3, 1, climb)
+    paint_box(im, 20, 0, 1, 2, 1, lambda face, x, y: ROOT[1])
+    parts = []
+    for bone, side in (("right_hind_leg", -1), ("left_hind_leg", 1), ("right_front_leg", -1),
+                       ("left_front_leg", 1)):
+        outer = -2.6 if side < 0 else 1.6
+        parts.append({"bone": bone, "uv": [0, 0], "from": [-2, 4, -2], "size": [4, 1, 4], "inflate": 0.3})
+        parts.append({"bone": bone, "uv": [16, 0], "from": [outer, 1.5, -0.5], "size": [1, 3, 1]})
+        parts.append({"bone": bone, "uv": [16, 0], "from": [0.5 * side - 0.5, 2.5, 1.6], "size": [1, 3, 1]})
+        parts.append({"bone": bone, "uv": [20, 0], "from": [outer, 5, -1.5], "size": [1, 2, 1],
+                      "pivot": [outer + 0.5, 5, -1], "rotation": [0, 0, 20 * side]})
+        parts.append({"bone": bone, "uv": [20, 0], "from": [-0.5, 5, -2.6], "size": [1, 2, 1],
+                      "pivot": [0, 5, -2.1], "rotation": [-20, 0, 0]})
+    save_model("patient_roots", im, parts)
+
+
+def surprise():
+    # A wider grin: the corners of the mouth go up and out, so the creeper
+    # grins (x 9 and 14 of y 13, and x 9 and 14 of y 12).
+    black = Mark("#0A0A0A")
+    for p in ((9, 13), (14, 13), (9, 12), (14, 12)):
+        black.put(p)
+    return [black]
 
 
 def main():

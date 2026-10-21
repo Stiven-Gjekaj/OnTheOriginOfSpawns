@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/creeper.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/silent_fuse_0.png",
+				"tint": "#4AA43A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/silent_fuse_1.png",
+				"tint": "#1E4A16"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/silent_fuse_2.png",
+				"tint": "#E0D8C0"
+			}
+		}
+	]
+}

@@ -50,6 +50,41 @@ const PALETTES = {
   },
 };
 
+// The stray: bone with a cold tint.
+PALETTES.stray = {
+  skin: Object.fromEntries(Object.entries(PALETTES.skeleton.skin).map(([k, c]) => [k, Number(k) === 13 ? c : [c[0] - 18, c[1] - 6, c[2] + 8]])),
+  cloth: {},
+  eyes: [30, 34, 40],
+  stripes: { 9: [112, 118, 126] },
+};
+
+// The cloth of the stray: a drawing of the wiki in the zombie layout. It
+// covers the body, the upper arms, and the legs, with torn holes that are
+// more common near the hem.
+function strayCloth(humanoid) {
+  const out = new ImageData(humanoid.width, humanoid.height);
+  const d = humanoid.data;
+  for (let y = 0; y < out.height; y++) {
+    for (let x = 0; x < out.width; x++) {
+      const i = (y * out.width + x) * 4;
+      if (!d[i + 3]) continue;
+      const region = d[i];
+      // The cloth: torso (3), arms (4), legs (6), and lower legs (7).
+      if (![3, 4, 6, 7].includes(region)) continue;
+      const h = spotHash(x, y, 4242) & 0xff;
+      const hole = region === 7 ? 0.45 : region === 4 ? 0.2 : 0.1;
+      if (h / 255 < hole) continue;
+      const n = ((spotHash(x, y, 77) & 0xff) / 255 - 0.5) * 0.16;
+      const c = region === 3 ? [150, 168, 176] : [134, 152, 162];
+      out.data[i] = c[0] * (1 + n);
+      out.data[i + 1] = c[1] * (1 + n);
+      out.data[i + 2] = c[2] * (1 + n);
+      out.data[i + 3] = 255;
+    }
+  }
+  return out;
+}
+
 // The body of each species: the region map, the cubes, and the pivots, as in
 // tools/preview_genes.py. The drowned has its own UV for the left limbs. The
 // skeleton has thin arms and legs, and its map is 64 x 32.
@@ -69,6 +104,11 @@ const BODIES = {
       ["left_leg", [0, 16], [-1, 0, -1], [2, 12, 2], true],
     ],
   },
+  stray: {
+    map: "originofspawns:textures/region/skeleton.png",
+    // The cloth layer uses the zombie cubes, 0.25 pixel larger.
+    outer: true,
+  },
   drowned: {
     split: true,
     cubes: [
@@ -81,6 +121,10 @@ const BODIES = {
     ],
   },
 };
+// The stray has the body of the skeleton.
+BODIES.stray.pivots = BODIES.skeleton.pivots;
+BODIES.stray.cubes = BODIES.skeleton.cubes;
+
 
 // The bones and the cubes of the zombie, as in tools/preview_genes.py.
 const PIVOTS = {
@@ -269,6 +313,7 @@ function baseTexture(map, species = "zombie") {
 
 async function applyLayer(out, gene, layer, maps, patternOf) {
   const map = maps[gene.visual.regionMap || DEFAULT_REGION_MAP];
+  const outer = layer.target === "outer";
   const seed = identifierHash("originofspawns:" + gene.id);
   const regions = new Set((layer.regions || []).map((r) => REGIONS[r]));
   const materials = new Set((layer.materials || []).map((m) => MATERIALS[m]));
@@ -280,10 +325,14 @@ async function applyLayer(out, gene, layer, maps, patternOf) {
   const o = out.data;
   for (let y = 0; y < out.height; y++) {
     for (let x = 0; x < out.width; x++) {
-      const mi = (Math.floor((y * map.height) / out.height) * map.width + Math.floor((x * map.width) / out.width)) * 4;
-      if (!map.data[mi + 3]) continue;
-      if (regions.size && !regions.has(map.data[mi])) continue;
-      if (materials.size && !materials.has(map.data[mi + 1])) continue;
+      // A layer with the target "outer" goes on the whole cloth texture of
+      // the stray. It does not use the region map.
+      if (!outer) {
+        const mi = (Math.floor((y * map.height) / out.height) * map.width + Math.floor((x * map.width) / out.width)) * 4;
+        if (!map.data[mi + 3]) continue;
+        if (regions.size && !regions.has(map.data[mi])) continue;
+        if (materials.size && !materials.has(map.data[mi + 1])) continue;
+      }
       const i = (y * out.width + x) * 4;
       if (e.type === "desaturate") {
         const gray = Math.floor((o[i] * 299 + o[i + 1] * 587 + o[i + 2] * 114) / 1000);
@@ -340,13 +389,21 @@ async function bake(genes, baby = false, species = genes[0]?.species ?? "zombie"
       for (const layer of g.visual.layers) steps.push({ order: layer.order || 0, gene: g, layer });
     });
     steps.sort((a, b) => a.order - b.order);
-    for (const s of steps) await applyLayer(base, s.gene, s.layer, maps, patternOf);
+    for (const s of steps) if (s.layer.target !== "outer") await applyLayer(base, s.gene, s.layer, maps, patternOf);
     const body = baby
       ? BABY_PAIRS.filter((p) => p[0]).map(([bone, , b]) => [bone, [b[0], b[1]], [b[5], b[6], b[7]], [b[2], b[3], b[4]], false])
       : bodyOf.cubes || ZOMBIE_CUBES;
     const cubes = body.map(([bone, uv, from, size, mirror]) => ({
       bone, uv, from, size, mirror, inflate: 0, tex: base, scale: 1, pivot: [0, 0, 0], rotation: [0, 0, 0], glow: false,
     }));
+    // The cloth layer of the stray, with the layers that have the target "outer".
+    if (bodyOf.outer && !baby) {
+      const cloth = strayCloth(await loadImage(DEFAULT_REGION_MAP));
+      for (const s of steps) if (s.layer.target === "outer") await applyLayer(cloth, s.gene, s.layer, maps, patternOf);
+      for (const [bone, uv, from, size, mirror] of ZOMBIE_CUBES) {
+        cubes.push({ bone, uv, from, size, mirror, inflate: 0.25, tex: cloth, scale: 1, pivot: [0, 0, 0], rotation: [0, 0, 0], glow: false });
+      }
+    }
     // Gene model cubes have adult UVs, so a model with mob_texture reads the
     // baby texture in the adult layout.
     const mobTex = baby ? toAdult(base) : base;

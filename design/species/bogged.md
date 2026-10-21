@@ -86,7 +86,7 @@ also uses these pressures.
 | Pressure | A bogged death counts when | State |
 |---|---|---|
 | `dry` | The bogged dies in a biome that is not wet | New |
-| `shears` | A player sheared the bogged before its death | New |
+| `shears` | Someone sheared the bogged before its death | New |
 
 ## Genes
 
@@ -100,7 +100,7 @@ The visual column gives the region and the mark.
 | Puffball | Sporecap | `melee` | When it dies, it leaves a cloud of Nausea for 5 seconds | 4 less maximum health | Head: a large puffball mushroom on the skull. This changes the model |
 | Shelfback | Sporecap | `projectile` | 4 more armor | 10% less speed | Back: shelf fungus in steps down the spine. This changes the model |
 | Mushroom Shot | Sporecap, sub Venomer | `spotted` | Its arrows give Nausea for 4 seconds | 10% less arrow damage | Arms: red mushroom caps on the bow arm |
-| Regrowth | Sporecap | `shears` | After a player shears it, its mushrooms grow back after 30 seconds, and it heals 6 health | 25% more fire damage | Skull: small mushrooms in the eye sockets |
+| Regrowth | Sporecap | `shears` | After a shear, its mushrooms grow back after 30 seconds, and it heals 6 health | 25% more fire damage | Skull: small mushrooms in the eye sockets |
 | Rot Mend | Sporecap | `critical` | It heals 1 health each 2 seconds while it stands on mud, moss, or mycelium | 4 less maximum health | Ribs: white threads of fungus between the ribs |
 | Spore Lung | Sporecap | `crowd` | Players in 3 blocks get Nausea each 10 seconds | Players hear it from two times farther | Mouth: spores that drift from the jaw |
 
@@ -124,7 +124,7 @@ The visual column gives the region and the mark.
 | Bile Shot | Venomer | `golem` | Its arrows give Hunger for 6 seconds | 10% less speed | Ribs: yellow stains |
 | Rotting Touch | Venomer | `melee` | A player that hits it in melee gets Poison for 3 seconds | 2 less armor | Bones: green rot in the joints |
 | Antivenom | Venomer | `wolf` | Poison and Wither do not affect it | 25% more fire damage | Eyes: green light in the sockets that glows. This changes the model |
-| Plague Carrier | Venomer, sub Sporecap | `critical` | When it dies, players in 3 blocks get Poison for 5 seconds | 4 less maximum health | Chest: green pustules on the cloth |
+| Blightburst | Venomer, sub Sporecap | `critical` | When it dies, players in 3 blocks get Poison for 5 seconds | 4 less maximum health | Chest: green pustules on the cloth |
 
 ### Vinebound genes
 
@@ -154,11 +154,11 @@ The visual column gives the region and the mark.
 |---|---|
 | Mirefolk, Mudcake, Rot Mend, Leechbone | "Mud" means the blocks mud, muddy mangrove roots, and mangrove roots. "Moss" means moss blocks and moss carpet |
 | Sporecaps, Spore Lung | The Nausea goes to players only |
-| Venomers, Venom Gland, Toxic Tip | They change the Poison that the bogged puts on its arrows in vanilla, 4 seconds of Poison I. "One level stronger" is Poison II |
+| Venomers, Venom Gland, Toxic Tip | They change the Poison that the bogged puts on its arrows in vanilla, 5 seconds of Poison I. "One level stronger" is Poison II |
 | Vinebound, Rootshot, Snare | A root is Slowness V for 1 second, so the target almost cannot move |
 | Mosshides, Lily Pad | It is drawn translucent, like the zombie Shade. Other mobs still see it |
 | Mosshides | "Tall plants" means tall grass, ferns, large ferns, and sugar cane. The feet or the eyes of the bogged must be in the block |
-| Regrowth | The gene counts a shear by a player only. A bogged with no mushrooms has no shear |
+| Regrowth | Each shear counts, by a player or by a dispenser. A bogged with no mushrooms has no shear |
 | Mudburrow | It works like the husk Sandswimmer, but only through mud |
 | Ambush Shot | "Out of combat" means no hit to it and no hit by it for 10 seconds |
 
@@ -173,8 +173,8 @@ The visual column gives the region and the mark.
 ## Shearing
 
 - A player can shear the mushrooms off a bogged, as in vanilla. Its genes stay.
-- The `shears` pressure counts the death of a bogged that a player sheared
-  before its death. It favors Regrowth.
+- The `shears` pressure counts the death of a bogged that was sheared before
+  its death. It favors Regrowth.
 
 ## Conversion
 

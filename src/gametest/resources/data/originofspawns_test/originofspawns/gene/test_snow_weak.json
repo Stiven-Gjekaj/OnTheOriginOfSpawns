@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "snowball_damage", "damage": 3 }, { "type": "water_sensitive" }],
+	"mutation_rate": 0
+}

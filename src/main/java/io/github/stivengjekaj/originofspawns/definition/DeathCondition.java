@@ -85,7 +85,11 @@ public enum DeathCondition implements StringRepresentable {
 	/**
 	 * Someone sheared the mob before its death.
 	 */
-	SHEARS;
+	SHEARS,
+	/**
+	 * The killer hit the mob with a weapon with the Smite enchantment.
+	 */
+	SMITE;
 
 	public static final Codec<DeathCondition> CODEC = StringRepresentable.fromEnum(DeathCondition::values);
 

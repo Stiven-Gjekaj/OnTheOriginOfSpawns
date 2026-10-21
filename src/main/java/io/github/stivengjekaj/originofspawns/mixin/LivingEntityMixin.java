@@ -38,7 +38,8 @@ public abstract class LivingEntityMixin {
 			CallbackInfoReturnable<Boolean> info) {
 		LivingEntity self = (LivingEntity) (Object) this;
 		if (self.hasAttached(ModAttachments.GENES)
-				&& (GeneCombat.dodges(self, source) || GeneCombat.protectedWhileDown(self, source))) {
+				&& (GeneCombat.dodges(self, source) || GeneCombat.protectedWhileDown(self, source)
+						|| GeneCombat.parries(self, source))) {
 			info.setReturnValue(false);
 		}
 	}
@@ -148,6 +149,13 @@ public abstract class LivingEntityMixin {
 					Evolution.trackSpotter(mob, level);
 				}
 			}
+		}
+	}
+
+	@Inject(method = "isSensitiveToWater", at = @At("RETURN"), cancellable = true)
+	private void originofspawns$waterSensitive(CallbackInfoReturnable<Boolean> info) {
+		if (!info.getReturnValueZ() && GeneCombat.has((LivingEntity) (Object) this, GeneEffect.WaterSensitive.class)) {
+			info.setReturnValue(true);
 		}
 	}
 }

@@ -125,6 +125,12 @@ public final class GeneCombat {
 			case ON_ROT_GROUND -> entity.level().getBlockState(entity.getBlockPosBelowThatAffectsMyMovement()).is(ROT_GROUND)
 					|| entity.level().getBlockState(entity.blockPosition()).is(ROT_GROUND);
 			case TARGET_IN_WATER -> entity instanceof Mob mob && mob.getTarget() != null && mob.getTarget().isInWater();
+			case IN_LAVA -> entity.level().getFluidState(entity.blockPosition()).is(net.minecraft.tags.FluidTags.LAVA);
+			case OUT_OF_LAVA -> !entity.level().getFluidState(entity.blockPosition()).is(net.minecraft.tags.FluidTags.LAVA);
+			case IN_FIRE -> entity.level().getBlockState(entity.blockPosition()).is(BlockTags.FIRE)
+					|| entity.level().getFluidState(entity.blockPosition()).is(net.minecraft.tags.FluidTags.LAVA);
+			case ON_SOUL_GROUND -> onSoulGround(entity);
+			case OFF_SOUL_GROUND -> !onSoulGround(entity);
 		};
 	}
 
@@ -147,11 +153,18 @@ public final class GeneCombat {
 	 * Damages the armor of a player more after a projectile hit of a mob with an armor break effect.
 	 */
 	public static void breakArmor(Mob mob, LivingEntity target, float damage) {
+		breakArmor(mob, target, damage, true);
+	}
+
+	/**
+	 * Damages the armor of a player more after a hit of a mob with an armor break effect for this kind of hit.
+	 */
+	public static void breakArmor(Mob mob, LivingEntity target, float damage, boolean projectile) {
 		if (!(target instanceof Player player)) {
 			return;
 		}
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
-			if (effect instanceof GeneEffect.ArmorBreak armorBreak
+			if (effect instanceof GeneEffect.ArmorBreak armorBreak && armorBreak.hits().includes(projectile)
 					&& (!armorBreak.frozenOnly() || player.getTicksFrozen() > 0)) {
 				// The game damages each armor piece by a quarter of the damage, and by 1 or more.
 				int extra = Math.round(Math.max(1.0F, damage / 4.0F) * (armorBreak.multiplier() - 1.0F));
@@ -191,6 +204,65 @@ public final class GeneCombat {
 	 */
 	public static boolean snowsAt(net.minecraft.world.level.Level level, BlockPos pos) {
 		return level.getBiome(pos).value().getPrecipitationAt(pos, level.getSeaLevel()) == Biome.Precipitation.SNOW;
+	}
+
+	/**
+	 * Returns true if the entity stands on soul sand or soul soil.
+	 */
+	public static boolean onSoulGround(Entity entity) {
+		return entity.level().getBlockState(entity.getBlockPosBelowThatAffectsMyMovement()).is(BlockTags.SOUL_SPEED_BLOCKS)
+				|| entity.level().getBlockState(entity.blockPosition()).is(BlockTags.SOUL_SPEED_BLOCKS);
+	}
+
+	/**
+	 * Returns true if the entity parries this hit: a melee hit, with the cooldown of its parry over. A parry records
+	 * its time and plays the sound of a shield block.
+	 */
+	public static boolean parries(LivingEntity entity, DamageSource source) {
+		if (!(source.getEntity() instanceof LivingEntity attacker) || source.getDirectEntity() != attacker
+				|| source.is(DamageTypeTags.IS_PROJECTILE)) {
+			return false;
+		}
+		var parry = GeneEffects.of(entity).filter(GeneEffect.Parry.class::isInstance).map(GeneEffect.Parry.class::cast)
+				.findFirst();
+		if (parry.isEmpty()) {
+			return false;
+		}
+		long now = entity.level().getGameTime();
+		long last = entity.getAttachedOrElse(ModAttachments.PARRY_TIME, Long.MIN_VALUE);
+		if (last != Long.MIN_VALUE && now - last < Math.round(parry.get().cooldownSeconds() * 20.0F)) {
+			return false;
+		}
+		entity.setAttached(ModAttachments.PARRY_TIME, now);
+		entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(),
+				net.minecraft.sounds.SoundEvents.SHIELD_BLOCK.value(), entity.getSoundSource(), 1.0F, 1.0F);
+		return true;
+	}
+
+	/**
+	 * Returns the damage that a snowball does to the entity: the most of the snowball damage of its genes and the
+	 * vanilla damage.
+	 */
+	public static float snowballDamage(Entity entity, float damage) {
+		float result = damage;
+		for (GeneEffect effect : GeneEffects.of(entity).toList()) {
+			if (effect instanceof GeneEffect.SnowballDamage snowball) {
+				result = Math.max(result, snowball.damage());
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Returns the number of players that the mob hit in melee in the last seconds.
+	 */
+	public static int recentPlayers(LivingEntity mob, float seconds) {
+		java.util.Map<java.util.UUID, Long> hits = mob.getAttached(ModAttachments.PLAYER_HITS);
+		if (hits == null) {
+			return 0;
+		}
+		long since = mob.level().getGameTime() - Math.round(seconds * 20.0F);
+		return (int) hits.values().stream().filter(time -> time >= since).count();
 	}
 
 	/**
@@ -262,6 +334,14 @@ public final class GeneCombat {
 					}
 					case GeneEffect.Rally rally ->
 							result *= 1.0F + Math.min(rally.max(), rally.perAlly() * sameSpeciesNear(attacker, rally.radius()));
+					case GeneEffect.SoulHunger hunger when source.getDirectEntity() == attacker ->
+							result *= 1.0F + Math.min(hunger.max(), hunger.perPlayer() * recentPlayers(attacker, hunger.seconds()));
+					case GeneEffect.DamageTo damageTo when victim.getType().builtInRegistryHolder().is(damageTo.targets()) -> {
+						result *= damageTo.multiplier();
+						if (damageTo.fireSeconds() > 0.0F) {
+							victim.igniteForSeconds(damageTo.fireSeconds());
+						}
+					}
 					default -> {
 					}
 				}
@@ -283,6 +363,12 @@ public final class GeneCombat {
 	 * Runs the effects that act when the mob hits a target.
 	 */
 	public static void onHit(Mob mob, Entity target) {
+		if (target instanceof Player player && has(mob, GeneEffect.SoulHunger.class)) {
+			java.util.Map<java.util.UUID, Long> hits = new java.util.HashMap<>(
+					mob.getAttachedOrElse(ModAttachments.PLAYER_HITS, java.util.Map.of()));
+			hits.put(player.getUUID(), mob.level().getGameTime());
+			mob.setAttached(ModAttachments.PLAYER_HITS, hits);
+		}
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
 				case GeneEffect.IgniteTarget ignite when ignite.hits().includes(false)
@@ -294,6 +380,15 @@ public final class GeneCombat {
 								onHit.amplifier()), mob);
 				case GeneEffect.HealOnHit heal when heal.hits().includes(false) && test(mob, heal.when()) ->
 						mob.heal(heal.amount());
+				case GeneEffect.Cleave cleave when mob.level() instanceof ServerLevel level -> {
+					float damage = (float) mob.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE)
+							* cleave.part();
+					AABB area = target.getBoundingBox().inflate(cleave.radius());
+					// The damage of a cleave is not a hit of the mob, so it does not cleave again.
+					for (Player other : level.getEntitiesOfClass(Player.class, area, other -> other != target)) {
+						other.hurtServer(level, level.damageSources().mobAttack(mob), damage);
+					}
+				}
 				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(false) && target instanceof LivingEntity living
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(living, freeze.seconds());
 				case GeneEffect.CallOnHit call when call.hits().includes(false) && target instanceof Player player ->
@@ -550,6 +645,20 @@ public final class GeneCombat {
 					if (level.getBlockState(pos).isAir()
 							&& level.getEntitiesOfClass(Player.class, new AABB(pos)).isEmpty()) {
 						level.setBlockAndUpdate(pos, death.block().defaultBlockState());
+					}
+				}
+				case GeneEffect.DeathSpawn spawn -> {
+					LivingEntity killer = source != null && source.getEntity() instanceof LivingEntity living
+							? living : mob.getLastHurtByMob();
+					if (spawn.entity().create(level, EntitySpawnReason.MOB_SUMMONED) instanceof Mob spirit) {
+						spirit.snapTo(mob.getX(), mob.getY() + 1.0, mob.getZ(), mob.getYRot(), 0.0F);
+						if (spirit instanceof net.minecraft.world.entity.monster.Vex vex) {
+							vex.setLimitedLife(Math.round(spawn.lifeSeconds() * 20.0F));
+						}
+						if (killer != null) {
+							spirit.setTarget(killer);
+						}
+						level.addFreshEntity(spirit);
 					}
 				}
 				case GeneEffect.CallOnDeath call -> {

@@ -17,6 +17,7 @@
 		"RangedAttackGoalMixin",
 		"RangedBowAttackGoalAccessor",
 		"RangedBowAttackGoalMixin",
+		"SnowballMixin",
 		"SpiderMixin",
 		"ZombieMixin"
 	],

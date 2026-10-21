@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombie",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "armor_break", "multiplier": 2, "hits": "melee" }],
+	"mutation_rate": 0
+}

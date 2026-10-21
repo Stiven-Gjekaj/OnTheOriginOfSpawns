@@ -101,7 +101,11 @@ public final class Evolution {
 			if (!blocked && damageTaken > 0.0F && source.getDirectEntity() instanceof Projectile
 					&& source.getEntity() instanceof Mob mob && mob != entity && mob.hasAttached(ModAttachments.GENES)) {
 				GeneCombat.onProjectileHit(mob, entity);
-				GeneCombat.breakArmor(mob, entity, damageTaken);
+				GeneCombat.breakArmor(mob, entity, damageTaken, true);
+			}
+			if (!blocked && damageTaken > 0.0F && source.getDirectEntity() instanceof Mob mob && mob != entity
+					&& mob.hasAttached(ModAttachments.GENES)) {
+				GeneCombat.breakArmor(mob, entity, damageTaken, false);
 			}
 		});
 		ServerTickEvents.END_SERVER_TICK.register(Evolution::decay);
@@ -316,6 +320,9 @@ public final class Evolution {
 		}
 		if (BiomeCategory.of(level.getBiome(mob.blockPosition())) != BiomeCategory.WET) {
 			facts.add(DeathCondition.DRY);
+		}
+		if (GeneCombat.hasEnchantment(source, net.minecraft.world.item.enchantment.Enchantments.SMITE)) {
+			facts.add(DeathCondition.SMITE);
 		}
 		if (mob instanceof net.minecraft.world.entity.monster.skeleton.Bogged bogged && bogged.isSheared()) {
 			facts.add(DeathCondition.SHEARS);

@@ -128,7 +128,15 @@ public sealed interface GeneEffect {
 			Map.entry("hidden_from_afar", HiddenFromAfar.CODEC),
 			Map.entry("ghost_arrows", GhostArrows.CODEC),
 			Map.entry("heal_on_hit", HealOnHit.CODEC),
-			Map.entry("regrow", Regrow.CODEC)
+			Map.entry("regrow", Regrow.CODEC),
+			Map.entry("parry", Parry.CODEC),
+			Map.entry("cleave", Cleave.CODEC),
+			Map.entry("skull_shot", SkullShot.CODEC),
+			Map.entry("death_spawn", DeathSpawn.CODEC),
+			Map.entry("soul_hunger", SoulHunger.CODEC),
+			Map.entry("damage_to", DamageTo.CODEC),
+			Map.entry("snowball_damage", SnowballDamage.CODEC),
+			Map.entry("water_sensitive", WaterSensitive.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -346,7 +354,27 @@ public sealed interface GeneEffect {
 		/**
 		 * The target of the mob is in water.
 		 */
-		TARGET_IN_WATER;
+		TARGET_IN_WATER,
+		/**
+		 * The feet of the mob are in lava.
+		 */
+		IN_LAVA,
+		/**
+		 * The feet of the mob are not in lava. This is the opposite of {@code in_lava}.
+		 */
+		OUT_OF_LAVA,
+		/**
+		 * The feet of the mob are in fire, soul fire, or lava.
+		 */
+		IN_FIRE,
+		/**
+		 * The mob stands on a block in the tag {@code minecraft:soul_speed_blocks}.
+		 */
+		ON_SOUL_GROUND,
+		/**
+		 * The mob does not stand on soul sand or soul soil. This is the opposite of {@code on_soul_ground}.
+		 */
+		OFF_SOUL_GROUND;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 
@@ -1785,13 +1813,14 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * The projectile hits of the mob damage the armor of a player more. A multiplier of 2 damages it two times as
-	 * much. With frozen_only, it acts only on a player that freezes.
+	 * The hits of the mob damage the armor of a player more. A multiplier of 2 damages it two times as much. With
+	 * frozen_only, it acts only on a player that freezes.
 	 */
-	record ArmorBreak(float multiplier, boolean frozenOnly) implements GeneEffect {
+	record ArmorBreak(float multiplier, boolean frozenOnly, Hits hits) implements GeneEffect {
 		public static final MapCodec<ArmorBreak> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(1.0F, 10.0F).fieldOf("multiplier").forGetter(ArmorBreak::multiplier),
-				Codec.BOOL.optionalFieldOf("frozen_only", false).forGetter(ArmorBreak::frozenOnly)
+				Codec.BOOL.optionalFieldOf("frozen_only", false).forGetter(ArmorBreak::frozenOnly),
+				Hits.CODEC.optionalFieldOf("hits", Hits.PROJECTILE).forGetter(ArmorBreak::hits)
 		).apply(instance, ArmorBreak::new));
 
 		@Override
@@ -1906,6 +1935,125 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "regrow";
+		}
+	}
+
+	/**
+	 * The mob takes no damage from one melee hit, one time in each cooldown.
+	 */
+	record Parry(float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<Parry> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("cooldown_seconds", 6.0F).forGetter(Parry::cooldownSeconds)
+		).apply(instance, Parry::new));
+
+		@Override
+		public String type() {
+			return "parry";
+		}
+	}
+
+	/**
+	 * Each melee hit of the mob also hurts the other players in the radius of the target, with a part of the attack
+	 * damage of the mob.
+	 */
+	record Cleave(float part, float radius) implements GeneEffect {
+		public static final MapCodec<Cleave> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("part", 0.5F).forGetter(Cleave::part),
+				Codec.floatRange(0.5F, 8.0F).optionalFieldOf("radius", 2.0F).forGetter(Cleave::radius)
+		).apply(instance, Cleave::new));
+
+		@Override
+		public String type() {
+			return "cleave";
+		}
+	}
+
+	/**
+	 * One time in each cooldown, the mob shoots a wither skull at its target player in the range, if it can see it.
+	 */
+	record SkullShot(float cooldownSeconds, float minRange, float maxRange) implements GeneEffect {
+		public static final MapCodec<SkullShot> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(SkullShot::cooldownSeconds),
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("min_range", 6.0F).forGetter(SkullShot::minRange),
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("max_range", 16.0F).forGetter(SkullShot::maxRange)
+		).apply(instance, SkullShot::new));
+
+		@Override
+		public String type() {
+			return "skull_shot";
+		}
+	}
+
+	/**
+	 * When the mob dies, a mob of the type comes out and attacks the killer. A vex lives for the seconds.
+	 */
+	record DeathSpawn(EntityType<?> entity, float lifeSeconds) implements GeneEffect {
+		public static final MapCodec<DeathSpawn> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				BuiltInRegistries.ENTITY_TYPE.byNameCodec().fieldOf("entity").forGetter(DeathSpawn::entity),
+				Codec.floatRange(1.0F, 3600.0F).optionalFieldOf("life_seconds", 30.0F).forGetter(DeathSpawn::lifeSeconds)
+		).apply(instance, DeathSpawn::new));
+
+		@Override
+		public String type() {
+			return "death_spawn";
+		}
+	}
+
+	/**
+	 * The mob does more melee damage for each player that it hit in melee in the last seconds, up to the most.
+	 */
+	record SoulHunger(float perPlayer, float max, float seconds) implements GeneEffect {
+		public static final MapCodec<SoulHunger> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("per_player").forGetter(SoulHunger::perPlayer),
+				Codec.floatRange(0.0F, 10.0F).fieldOf("max").forGetter(SoulHunger::max),
+				Codec.floatRange(1.0F, 600.0F).optionalFieldOf("seconds", 10.0F).forGetter(SoulHunger::seconds)
+		).apply(instance, SoulHunger::new));
+
+		@Override
+		public String type() {
+			return "soul_hunger";
+		}
+	}
+
+	/**
+	 * The hits of the mob do more damage to entities of the tag, and set them on fire for the seconds.
+	 */
+	record DamageTo(TagKey<EntityType<?>> targets, float multiplier, float fireSeconds) implements GeneEffect {
+		public static final MapCodec<DamageTo> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				TagKey.hashedCodec(Registries.ENTITY_TYPE).fieldOf("targets").forGetter(DamageTo::targets),
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("multiplier", 1.0F).forGetter(DamageTo::multiplier),
+				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("fire_seconds", 0.0F).forGetter(DamageTo::fireSeconds)
+		).apply(instance, DamageTo::new));
+
+		@Override
+		public String type() {
+			return "damage_to";
+		}
+	}
+
+	/**
+	 * Snowballs do this damage to the mob, as they do to a blaze.
+	 */
+	record SnowballDamage(float damage) implements GeneEffect {
+		public static final MapCodec<SnowballDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).fieldOf("damage").forGetter(SnowballDamage::damage)
+		).apply(instance, SnowballDamage::new));
+
+		@Override
+		public String type() {
+			return "snowball_damage";
+		}
+	}
+
+	/**
+	 * Water hurts the mob, as it hurts a blaze or an enderman: splash water, rain, and water.
+	 */
+	record WaterSensitive() implements GeneEffect {
+		public static final MapCodec<WaterSensitive> CODEC = MapCodec.unit(new WaterSensitive());
+
+		@Override
+		public String type() {
+			return "water_sensitive";
 		}
 	}
 }

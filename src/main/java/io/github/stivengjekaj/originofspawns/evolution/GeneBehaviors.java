@@ -340,6 +340,15 @@ public final class GeneBehaviors {
 								gaze.amplifier()), mob);
 					}
 				}
+				case GeneEffect.SkullShot skull when mob.getTarget() instanceof Player player && mob.hasLineOfSight(player) -> {
+					double distance = mob.distanceTo(player);
+					long last = mob.getAttachedOrElse(ModAttachments.SKULL_TIME, Long.MIN_VALUE);
+					if (distance >= skull.minRange() && distance <= skull.maxRange()
+							&& (last == Long.MIN_VALUE || now - last >= Math.round(skull.cooldownSeconds() * 20.0F))) {
+						mob.setAttached(ModAttachments.SKULL_TIME, now);
+						shootSkull(mob, level, player);
+					}
+				}
 				case GeneEffect.Regrow regrow when mob instanceof Bogged bogged && bogged.isSheared() -> {
 					long sheared = mob.getAttachedOrElse(ModAttachments.SHEAR_TIME, now);
 					if (!mob.hasAttached(ModAttachments.SHEAR_TIME)) {
@@ -587,6 +596,17 @@ public final class GeneBehaviors {
 		mob.setAttached(ModAttachments.STATE, state.withCollapseUntil(-1L));
 		level.sendParticles(new net.minecraft.core.particles.ItemParticleOption(ParticleTypes.ITEM,
 				Items.BONE), mob.getX(), mob.getY(0.5), mob.getZ(), 20, 0.3, 0.5, 0.3, 0.05);
+	}
+
+	/**
+	 * Shoots a wither skull from the eyes of the mob at the middle of the target.
+	 */
+	public static void shootSkull(Mob mob, ServerLevel level, LivingEntity target) {
+		Vec3 aim = new Vec3(target.getX() - mob.getX(), target.getY(0.5) - mob.getEyeY(), target.getZ() - mob.getZ())
+				.normalize();
+		var skull = new net.minecraft.world.entity.projectile.hurtingprojectile.WitherSkull(level, mob, aim);
+		skull.setPos(mob.getX() + aim.x, mob.getEyeY(), mob.getZ() + aim.z);
+		level.addFreshEntity(skull);
 	}
 
 	/**

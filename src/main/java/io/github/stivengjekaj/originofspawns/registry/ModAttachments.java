@@ -97,6 +97,22 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> SHEAR_TIME = AttachmentRegistry.createPersistent(OriginOfSpawns.id("shear_time"),
 			com.mojang.serialization.Codec.LONG);
 
+	/**
+	 * The game time of the last parry of a mob.
+	 */
+	public static final AttachmentType<Long> PARRY_TIME = AttachmentRegistry.create(OriginOfSpawns.id("parry_time"));
+
+	/**
+	 * The game time of the last melee hit of a mob on each player, by the UUID of the player.
+	 */
+	public static final AttachmentType<java.util.Map<java.util.UUID, Long>> PLAYER_HITS =
+			AttachmentRegistry.create(OriginOfSpawns.id("player_hits"));
+
+	/**
+	 * The game time of the last skull shot of a mob.
+	 */
+	public static final AttachmentType<Long> SKULL_TIME = AttachmentRegistry.create(OriginOfSpawns.id("skull_time"));
+
 	private ModAttachments() {
 	}
 

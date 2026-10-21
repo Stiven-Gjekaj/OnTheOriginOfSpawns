@@ -140,7 +140,8 @@ public sealed interface GeneEffect {
 			Map.entry("disarm", Disarm.CODEC),
 			Map.entry("blast_size", BlastSize.CODEC),
 			Map.entry("fuse_time", FuseTime.CODEC),
-			Map.entry("blast_cloud", BlastCloud.CODEC)
+			Map.entry("blast_cloud", BlastCloud.CODEC),
+			Map.entry("blast_effect", BlastEffect.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2149,6 +2150,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "blast_cloud";
+		}
+	}
+
+	/**
+	 * Gives a status effect to each living entity that the blast of the mob damages. A shield that stops the blast
+	 * stops the effect.
+	 */
+	record BlastEffect(Holder<MobEffect> effect, float seconds, int amplifier) implements GeneEffect {
+		public static final MapCodec<BlastEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(BlastEffect::effect),
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(BlastEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(BlastEffect::amplifier)
+		).apply(instance, BlastEffect::new));
+
+		@Override
+		public String type() {
+			return "blast_effect";
 		}
 	}
 }

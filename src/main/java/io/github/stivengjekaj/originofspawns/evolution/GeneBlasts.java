@@ -2,9 +2,15 @@ package io.github.stivengjekaj.originofspawns.evolution;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
+
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Creeper;
 
 /**
@@ -64,5 +70,30 @@ public final class GeneBlasts {
 		int effectTicks = Math.round(cloud.effectSeconds().orElse(cloud.seconds()) * 20.0F);
 		area.addEffect(new MobEffectInstance(cloud.effect(), effectTicks, cloud.amplifier()));
 		level.addFreshEntity(area);
+	}
+
+	/**
+	 * Returns the mob with genes whose own blast is the source, or null. The blast of a creeper has the creeper as
+	 * the direct entity and as the cause.
+	 */
+	public static Mob blaster(DamageSource source) {
+		return source.is(DamageTypeTags.IS_EXPLOSION) && source.getEntity() instanceof Mob mob
+				&& source.getDirectEntity() == mob && mob.hasAttached(ModAttachments.GENES) ? mob : null;
+	}
+
+	/**
+	 * Runs the effects that act on an entity that the blast of a mob damaged.
+	 */
+	public static void onBlastHit(LivingEntity victim, DamageSource source, float damage, boolean blocked) {
+		Mob mob = blaster(source);
+		if (mob == null || mob == victim || blocked || damage <= 0.0F) {
+			return;
+		}
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.BlastEffect blast) {
+				victim.addEffect(new MobEffectInstance(blast.effect(), Math.round(blast.seconds() * 20.0F),
+						blast.amplifier()), mob);
+			}
+		}
 	}
 }

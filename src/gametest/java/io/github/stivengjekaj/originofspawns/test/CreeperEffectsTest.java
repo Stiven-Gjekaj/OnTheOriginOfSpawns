@@ -129,6 +129,22 @@ public class CreeperEffectsTest {
 		helper.succeedWhen(() -> helper.assertTrue(pig.hasEffect(MobEffects.POISON), "the pig is poisoned"));
 	}
 
+	@GameTest(environment = BLASTS, padding = 8)
+	public void aBlastGivesItsEffectsToTheEntitiesThatItHurts(GameTestHelper helper) {
+		Creeper plain = creeperWith(helper, new BlockPos(1, 1, 1));
+		IronGolem plainGolem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(5, 1, 1));
+		explode(plain);
+		helper.assertTrue(plainGolem.getHealth() < plainGolem.getMaxHealth(), "the plain blast hurts the golem");
+		helper.assertTrue(plainGolem.getActiveEffects().isEmpty(), "the plain blast gives no effects");
+		plainGolem.discard();
+		Creeper stunner = creeperWith(helper, new BlockPos(1, 1, 1), "test_concussion");
+		IronGolem golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(5, 1, 1));
+		explode(stunner);
+		helper.assertTrue(golem.hasEffect(MobEffects.NAUSEA), "the blast gives Nausea");
+		helper.assertValueEqual(golem.getEffect(MobEffects.SLOWNESS).getDuration(), 100, "Slowness for 5 seconds");
+		helper.succeed();
+	}
+
 	static AreaEffectCloud cloudNear(GameTestHelper helper, Creeper creeper) {
 		// A large cloud reaches far, so only a cloud whose center is at the creeper counts.
 		var clouds = helper.getLevel().getEntitiesOfClass(AreaEffectCloud.class, creeper.getBoundingBox().inflate(0.5),

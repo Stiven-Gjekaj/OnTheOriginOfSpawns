@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:bogged",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "arrow_effect", "effect": "minecraft:poison", "seconds": 12, "amplifier": 1 }],
+	"mutation_rate": 0
+}

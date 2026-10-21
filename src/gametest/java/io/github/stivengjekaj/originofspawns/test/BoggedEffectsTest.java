@@ -8,21 +8,27 @@ import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.mixin.AbstractSkeletonAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.skeleton.Bogged;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
@@ -149,6 +155,24 @@ public class BoggedEffectsTest {
 		helper.assertTrue(pig.hasEffect(net.minecraft.world.effect.MobEffects.POISON), "Poison has no cooldown");
 		helper.assertFalse(pig.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "Blindness waits");
 		helper.assertFalse(pig.hasEffect(net.minecraft.world.effect.MobEffects.NAUSEA), "Nausea waits");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void venomArrowsCarryTheGenePoison(GameTestHelper helper) {
+		Bogged bogged = boggedWith(helper, new BlockPos(1, 1, 1), "test_venom_arrows");
+		AbstractArrow arrow = ((AbstractSkeletonAccessor) bogged).originofspawns$getArrow(new ItemStack(Items.ARROW), 1.0F,
+				new ItemStack(Items.BOW));
+		PotionContents contents = arrow.getPickupItemStackOrigin().getOrDefault(DataComponents.POTION_CONTENTS,
+				PotionContents.EMPTY);
+		helper.assertTrue(contents.customEffects().stream().anyMatch(effect -> effect.is(MobEffects.POISON)
+				&& effect.getAmplifier() == 1 && effect.getDuration() == 240), "a Poison II of 12 seconds: " + contents);
+		// The vanilla bogged arrow also has a Poison. The target keeps the stronger Poison, which is the Poison of the gene.
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 3));
+		contents.forEachEffect(effect -> pig.addEffect(new MobEffectInstance(effect)), 1.0F);
+		MobEffectInstance poison = pig.getEffect(MobEffects.POISON);
+		helper.assertTrue(poison != null && poison.getAmplifier() == 1 && poison.getDuration() == 240,
+				"the target gets a Poison II of 12 seconds: " + poison);
 		helper.succeed();
 	}
 

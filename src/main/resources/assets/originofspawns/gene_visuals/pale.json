@@ -1,0 +1,25 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"materials": [
+				"bone"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/pale_0.png",
+				"tint": "#EEF4FA"
+			},
+			"order": -1
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/pale_1.png",
+				"tint": "#FFFFFF"
+			},
+			"order": -1
+		}
+	],
+	"model": "originofspawns:pale_glow"
+}

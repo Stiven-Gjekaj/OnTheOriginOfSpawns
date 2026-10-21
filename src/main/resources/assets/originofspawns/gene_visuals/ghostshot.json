@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ghostshot_0.png",
+				"tint": "#DCEEFA"
+			}
+		},
+		{
+			"effect": {
+				"type": "erase",
+				"texture": "originofspawns:textures/gene_marks/ghostshot_hands.png"
+			},
+			"order": 1
+		}
+	]
+}

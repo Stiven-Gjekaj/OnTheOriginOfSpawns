@@ -1,0 +1,121 @@
+{
+	"mob_texture": true,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4,
+				-8,
+				-4
+			],
+			"size": [
+				8,
+				8,
+				8
+			],
+			"inflate": 0.02,
+			"glow": true
+		},
+		{
+			"bone": "body",
+			"uv": [
+				16,
+				16
+			],
+			"from": [
+				-4,
+				0,
+				-2
+			],
+			"size": [
+				8,
+				12,
+				4
+			],
+			"inflate": 0.02,
+			"glow": true
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				40,
+				16
+			],
+			"from": [
+				-1,
+				-2,
+				-1
+			],
+			"size": [
+				2,
+				12,
+				2
+			],
+			"inflate": 0.02,
+			"glow": true
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				40,
+				16
+			],
+			"from": [
+				-1,
+				-2,
+				-1
+			],
+			"size": [
+				2,
+				12,
+				2
+			],
+			"inflate": 0.02,
+			"glow": true,
+			"mirror": true
+		},
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				16
+			],
+			"from": [
+				-1,
+				0,
+				-1
+			],
+			"size": [
+				2,
+				12,
+				2
+			],
+			"inflate": 0.02,
+			"glow": true
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				16
+			],
+			"from": [
+				-1,
+				0,
+				-1
+			],
+			"size": [
+				2,
+				12,
+				2
+			],
+			"inflate": 0.02,
+			"glow": true,
+			"mirror": true
+		}
+	]
+}

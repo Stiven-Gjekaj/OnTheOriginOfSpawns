@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wail_0.png",
+				"tint": "#2A2E34"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wail_1.png",
+				"tint": "#0E1014"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wail_2.png",
+				"tint": "#E4ECEE"
+			}
+		}
+	]
+}

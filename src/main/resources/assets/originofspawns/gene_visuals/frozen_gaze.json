@@ -1,0 +1,20 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/frozen_gaze_0.png",
+				"tint": "#FFFFFF"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/frozen_gaze_1.png",
+				"tint": "#BEE6FF"
+			}
+		}
+	],
+	"model": "originofspawns:frozen_gaze_eyes"
+}

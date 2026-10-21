@@ -1,0 +1,29 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "erase",
+				"texture": "originofspawns:textures/gene_marks/hollow_cry_hole.png"
+			},
+			"order": 2
+		},
+		{
+			"effect": {
+				"type": "erase",
+				"texture": "originofspawns:textures/gene_marks/hollow_cry_cloth_hole.png"
+			},
+			"order": 2,
+			"target": "outer"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/hollow_cry_0.png",
+				"tint": "#1E2A2C"
+			},
+			"order": 1,
+			"target": "outer"
+		}
+	]
+}

@@ -1,0 +1,223 @@
+{
+	"texture": "originofspawns:textures/entity/frozen_gaze_eyes.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				-4,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2,
+				-4,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				1,
+				-4,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				2,
+				-4,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				-3,
+				-5,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				-3,
+				-3,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				-2,
+				-5,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				-2,
+				-3,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				1,
+				-5,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				1,
+				-3,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				2,
+				-5,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				2,
+				-3,
+				-4.05
+			],
+			"size": [
+				1,
+				1,
+				0
+			],
+			"glow": true
+		}
+	]
+}

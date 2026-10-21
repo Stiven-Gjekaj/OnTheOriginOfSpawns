@@ -85,6 +85,23 @@ Pixel plan for the Frostbiters.
 - Brittle Shot shows the ribs on the back and the sides of the chest:
   slits in the cloth at the ribs (y 22 and 24), with ice in the cracks of
   the ribs.
+
+Pixel plan for the Wailers.
+- Pale has a pale white on all the bone (order -1), whiter at the edges
+  of the face and the limbs. The gene model pale_glow is a copy of the
+  bones, with the texture of the mob, that glows in the dark.
+- Wail has a mouth that hangs open, as if it screams: a dark oval on face
+  rows 13 to 15 (x 10 to 13), with teeth at its corners.
+- Frozen Gaze has cold white lights in the eye sockets, with a pale blue
+  ring over and under them (rows 11 and 13). The gene model
+  frozen_gaze_eyes makes them glow.
+- Hollow Cry erases a hole through the ribs: the middle of the front (x 23
+  and 24) and of the back (x 35 and 36), y 22 to 25, on the bone and on
+  the cloth, with a dark edge on the cloth round it.
+- Mourner: a long, torn veil over the skull, the gene model mourner_veil.
+- Ghostshot has hands that fade: a pale blue-white on arm rows 8 and 9,
+  and the hands (rows 10 and 11, and the bottom of the arm) are erased in
+  a dither, so that they are half see-through.
 This script needs Pillow.
 """
 import json
@@ -720,6 +737,148 @@ def brittle_shot():
         (crack if (x + y // 2) % 2 else ice).put((x, y))
     return [erase("brittle_shot", "holes", holes, target="outer"), crack, ice]
 
+
+def pale():
+    # A pale white on all the bone, under the marks of other genes (order
+    # -1), and whiter at the edges: the border of the face and the outer
+    # columns of each limb. The gene model pale_glow makes the bones glow in
+    # the dark.
+    tint = Mark("#EEF4FA", alpha=150, order=-1, materials=["bone"], size=16).fill()
+    edge = Mark("#FFFFFF", alpha=210, order=-1)
+    for i in range(8, 16):
+        edge.put((i, 8)).put((i, 15)).put((8, i)).put((15, i))
+    for at in (arm, leg):
+        for face in SIDES:
+            for row in range(12):
+                edge.put(at(face, 0 if face in (OUTER, FRONT) else 1, row))
+    return [tint, edge]
+
+
+def pale_model():
+    # A copy of the bones of the head, the body, the arms, and the legs, a
+    # little larger, with the texture of the mob, that glows in the dark.
+    model = {"mob_texture": True, "parts": [
+        {"bone": "head", "uv": [0, 0], "from": [-4, -8, -4], "size": [8, 8, 8], "inflate": 0.02, "glow": True},
+        {"bone": "body", "uv": [16, 16], "from": [-4, 0, -2], "size": [8, 12, 4], "inflate": 0.02, "glow": True},
+    ]}
+    for bone, uv, start in (("right_arm", [40, 16], [-1, -2, -1]), ("left_arm", [40, 16], [-1, -2, -1]),
+                            ("right_leg", [0, 16], [-1, 0, -1]), ("left_leg", [0, 16], [-1, 0, -1])):
+        part = {"bone": bone, "uv": uv, "from": start, "size": [2, 12, 2], "inflate": 0.02, "glow": True}
+        if bone.startswith("left"):
+            part["mirror"] = True
+        model["parts"].append(part)
+    path = os.path.join(ROOT, "src/main/resources/assets/originofspawns/gene_models", "pale_glow.json")
+    with open(path, "w") as fh:
+        json.dump(model, fh, indent="\t")
+        fh.write("\n")
+
+
+def wail():
+    # The jaw hangs open, as if it screams: a tall dark oval for the mouth
+    # (x 10 to 13, rows 13 to 15), black in its middle, with pale teeth at
+    # the corners of row 14.
+    dark = Mark("#2A2E34")
+    black = Mark("#0E1014")
+    teeth = Mark("#E4ECEE")
+    for x in (10, 11, 12, 13):
+        dark.put((x, 13))
+        (black if x in (11, 12) else dark).put((x, 14)).put((x, 15))
+    teeth.put((9, 14)).put((14, 14))
+    return [dark, black, teeth]
+
+
+GAZE = ("#FFFFFF", "#BEE6FF")
+# The pixels of the cold lights and their colors: a white light in each
+# socket, and a pale blue ring over and under it.
+GAZE_PIXELS = tuple(((x, 12), 0) for x in (9, 10, 13, 14)) + \
+    tuple(((x, y), 1) for x in (9, 10, 13, 14) for y in (11, 13))
+
+
+def frozen_gaze():
+    # The lights are on the texture, so they show in the day. The gene
+    # model frozen_gaze_eyes makes them glow.
+    marks = [Mark(color) for color in GAZE]
+    for p, color in GAZE_PIXELS:
+        marks[color].put(p)
+    return marks
+
+
+def frozen_gaze_model():
+    # A square that glows on each light pixel, just in front of the face (z
+    # -4). Face pixel (x, y) is at x - 12, y - 16.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+    for n, color in enumerate(GAZE):
+        paint_box(im, 4 * n, 0, 1, 1, 0, lambda face, x, y, c=color: c)
+    parts = [{"bone": "head", "uv": [4 * color, 0], "from": [x - 12, y - 16, -4.05], "size": [1, 1, 0],
+              "glow": True} for (x, y), color in GAZE_PIXELS]
+    save_model("frozen_gaze_eyes", im, parts)
+
+
+def hollow_cry():
+    # A hole through the ribs: the middle of the front (x 23 and 24) and of
+    # the back (x 35 and 36), y 22 to 25, is gone on the bone and on the
+    # cloth, so that the light shows through. A dark edge on the cloth
+    # rims each hole. The erase goes after the other marks (order 2).
+    hole = [(x, y) for y in range(22, 26) for x in (23, 24, 35, 36)]
+    rim = Mark("#1E2A2C", target="outer", order=1)
+    for y in range(22, 26):
+        rim.put((22, y)).put((25, y)).put((34, y)).put((37, y))
+    for x in (23, 24, 35, 36):
+        rim.put((x, 21)).put((x, 26))
+    return [erase("hollow_cry", "hole", hole, order=2), erase("hollow_cry", "cloth_hole", hole, "outer", 2), rim]
+
+
+def mourner():
+    # The veil is the gene model mourner_veil.
+    return []
+
+
+def mourner_model():
+    # A long, torn veil over the skull: thin, pale gray cloth with soft
+    # folds that run down it, over the top of the hood, down the sides to
+    # the jaw, and down the back to the shoulders. The front is open under
+    # a hem across the brow, so the face shows. The lower edges are torn at
+    # different lengths. On the head bone, the hood is 0.25 pixel out of
+    # the head (x -4 to 4, y -8 to 0, z -4 to 4).
+    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+
+    def veil(face, x, y):
+        if face == "bottom" or face == "front" and y > 1:
+            return None
+        if face == "front":
+            return "#A8B4BA" if y else "#D4DCE0"
+        if face == "top":
+            return "#D4DCE0" if x % 3 else "#BAC6CC"
+        # The torn lower edge: each column ends at its own length.
+        end = (7 if face != "back" else 11) - (x * 5 + 3) % 4
+        if y > end:
+            return None
+        return "#BAC6CC" if x % 3 == 0 else "#D4DCE0" if y < end else "#A8B4BA"
+
+    # The veil: 9x12x9 at uv (0, 0).
+    paint_box(im, 0, 0, 9, 12, 9, veil)
+    parts = [{"bone": "head", "uv": [0, 0], "from": [-4.5, -8.5, -4.5], "size": [9, 12, 9]}]
+    save_model("mourner_veil", im, parts)
+
+
+def ghostshot():
+    # Hands that fade: a pale blue-white on arm rows 8 and 9, stronger on
+    # row 9, and the hands (rows 10 and 11, and the bottom of the arm) are
+    # erased in a dither, so that they are half see-through.
+    fade = Mark("#DCEEFA", alpha=200)
+    gone = []
+    for face in SIDES:
+        for col in (0, 1):
+            fade.put(arm(face, col, 8), 170).put(arm(face, col, 9))
+            for row in (10, 11):
+                if (col + row + face // 2) % 2 == 0 or row == 11 and col == face // 2 % 2:
+                    gone.append(arm(face, col, row))
+                else:
+                    fade.put(arm(face, col, row))
+    gone += [(44, 16), (45, 17)]
+    fade.put((45, 16)).put((44, 17))
+    return [fade, erase("ghostshot", "hands", gone, order=1)]
+
 GENES = {
     "iceplate": iceplate,
     "permafrost": permafrost,
@@ -745,6 +904,12 @@ GENES = {
     "coldsnap": coldsnap,
     "rimefall": rimefall,
     "brittle_shot": brittle_shot,
+    "pale": pale,
+    "wail": wail,
+    "frozen_gaze": frozen_gaze,
+    "hollow_cry": hollow_cry,
+    "mourner": mourner,
+    "ghostshot": ghostshot,
 }
 
 MODELS = {
@@ -759,11 +924,14 @@ MODELS = {
     "driftline": "originofspawns:driftline_banner",
     "icicle": "originofspawns:icicle_spikes",
     "coldsnap": "originofspawns:coldsnap_frost",
+    "pale": "originofspawns:pale_glow",
+    "frozen_gaze": "originofspawns:frozen_gaze_eyes",
+    "mourner": "originofspawns:mourner_veil",
 }
 
 MODEL_MAKERS = [iceplate_model, shatterhide_model, glacial_wall_model, icebound_model, hailshot_model,
                 gale_model, snowshoe_model, iceskate_model, driftline_model,
-                icicle_model, coldsnap_model]
+                icicle_model, coldsnap_model, pale_model, frozen_gaze_model, mourner_model]
 
 
 def changed_pixels(visual):

@@ -1,0 +1,51 @@
+{
+	"texture": "originofspawns:textures/entity/executioner_hood.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4.5,
+				-8.5,
+				-4.5
+			],
+			"size": [
+				9,
+				7,
+				9
+			]
+		},
+		{
+			"bone": "head",
+			"uv": [
+				40,
+				0
+			],
+			"from": [
+				-1.5,
+				-10,
+				0.5
+			],
+			"size": [
+				3,
+				2,
+				3
+			],
+			"pivot": [
+				0,
+				-8.5,
+				2
+			],
+			"rotation": [
+				-20,
+				0,
+				0
+			]
+		}
+	]
+}

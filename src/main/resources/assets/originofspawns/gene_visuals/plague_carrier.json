@@ -1,26 +1,29 @@
 {
+	"region_map": "originofspawns:textures/region/skeleton.png",
 	"layers": [
 		{
-			"materials": [
-				"skin"
-			],
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/plague_carrier_0.png",
-				"tint": "#A3AC93"
+				"tint": "#78B838"
 			},
-			"order": -2
+			"target": "outer"
 		},
 		{
-			"materials": [
-				"skin"
-			],
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/plague_carrier_1.png",
-				"tint": "#4C5644"
+				"tint": "#B8E878"
 			},
-			"order": -2
+			"target": "outer"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/plague_carrier_2.png",
+				"tint": "#2E4A16"
+			},
+			"target": "outer"
 		}
 	]
 }

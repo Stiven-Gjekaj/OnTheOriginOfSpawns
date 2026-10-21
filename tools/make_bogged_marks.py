@@ -61,6 +61,19 @@ Pixel plan for the Mirefolk.
   to 31 of the body.
 - Leechbone: black leeches on the forearms, the gene model
   leechbone_leeches.
+
+Pixel plan for the Venomers.
+- Venom Gland: a green sac under the jaw, the gene model venom_gland_sac.
+- Toxic Tip has bright green finger tips: arm row 11 and the bottom of the
+  arm.
+- Bile Shot has yellow stains on the lower ribs of the front (x 20 to 27,
+  y 24 to 27).
+- Rotting Touch has green rot in the joints: the shoulders and the hips
+  (row 0), the elbows (arm row 5), and the knees (leg rows 4 and 5).
+- Antivenom has a bright green light in the eyes of the outer face, and
+  the gene model antivenom_eyes makes it glow.
+- Plague Carrier has green pustules on the front of the outer layer of the
+  body (x 20 to 27), and on the leaves over the upper arms.
 This script needs Pillow.
 """
 import json
@@ -337,6 +350,128 @@ def leechbone_model():
         parts.append({"bone": bone, "uv": [0, 0], "from": [-0.5, 6.5, -1.6], "size": [1, 3, 1], "inflate": 0.1})
     save_model("leechbone_leeches", im, parts)
 
+
+VENOM = ("#78B838", "#3E6A1E", "#B8E878", "#A8F040")
+
+
+def venom_gland():
+    # The sac is the gene model venom_gland_sac.
+    return []
+
+
+def venom_gland_model():
+    # A green sac under the jaw: a swollen sac of venom that hangs from the
+    # bottom of the skull, in front of the neck, with dark veins and a
+    # bright, wet shine, and a smaller bulge under it. On the head bone, the
+    # bottom of the head is at y 0, the face is at z -4, and the front of
+    # the body is at z -2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def sac(face, x, y):
+        if face == "front" and x == 1 and y == 0:
+            return VENOM[2]
+        return VENOM[1] if (x + 2 * y) % 4 == 0 else VENOM[0]
+
+    # The sac: 4x2x2 at uv (0, 0). The bulge: 2x1x2 at uv (0, 6).
+    paint_box(im, 0, 0, 4, 2, 2, sac)
+    paint_box(im, 0, 6, 2, 1, 2, lambda face, x, y: VENOM[0] if face != "bottom" else VENOM[1])
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-2, 0, -4.4], "size": [4, 2, 2], "inflate": 0.2},
+        {"bone": "head", "uv": [0, 6], "from": [-1, 2, -4.2], "size": [2, 1, 2]},
+    ]
+    save_model("venom_gland_sac", im, parts)
+
+
+def toxic_tip():
+    # Bright green finger tips, as if the fingers were dipped in venom: the
+    # tips (arm row 11) and the bottom of the arm are a bright, toxic green
+    # with a pale shine. The bogged has dark hands, so the green reads.
+    green = Mark(VENOM[3])
+    shine = Mark("#E0FFB0")
+    for face in SIDES:
+        for col in (0, 1):
+            (shine if (face, col) in ((FRONT, 0), (BACK, 1)) else green).put(arm(face, col, 11))
+    for x in (44, 45):
+        for y in (16, 17):
+            green.put((x, y))
+    return [green, shine]
+
+
+def bile_shot():
+    # Yellow stains of bile: blotches of sick yellow on the lower ribs of
+    # the front (y 24 to 27), under the Rot Mend threads and over the Swamp
+    # Gas bubbles.
+    bile = Mark("#C8B030")
+    dark = Mark("#8A7418")
+    for x in range(20, 28):
+        for y in range(24, 28):
+            n = noise100(x, y, 291)
+            if n < 45:
+                bile.put((x, y))
+            elif n < 60:
+                dark.put((x, y))
+    return [bile, dark]
+
+
+def rotting_touch():
+    # Green rot in the joints: dark green rot with bright spots at the
+    # shoulders and the hips (row 0, and the tops of the limbs), at the
+    # elbows (arm row 5), and at the knees (leg rows 4 and 5).
+    rot = Mark("#3E6420")
+    spot = Mark("#8CC040")
+    for face in SIDES:
+        for col in (0, 1):
+            rot.put(arm(face, col, 0)).put(leg(face, col, 0))
+            (spot if col == face // 2 % 2 else rot).put(arm(face, col, 5))
+            rot.put(leg(face, col, 4))
+            (spot if col != face // 2 % 2 else rot).put(leg(face, col, 5))
+    for u, v in ((40, 16), (0, 16)):
+        rot.put((u + 2, v)).put((u + 3, v + 1))
+        spot.put((u + 3, v)).put((u + 2, v + 1))
+    return [rot, spot]
+
+
+ANTI = ("#50FF50", "#B0FFB0")
+# The eye pixels of the outer face and their colors: a bright core in the
+# inner pixel of each eye, and a pale rim in the outer pixel.
+ANTI_PIXELS = (((9, 12), 0), ((10, 12), 1), ((13, 12), 1), ((14, 12), 0))
+
+
+def antivenom():
+    # A bright green light in the eyes of the outer face. The light is on
+    # the texture, so it shows in the day, and the gene model antivenom_eyes
+    # makes it glow.
+    marks = [Mark(color, target="outer") for color in ANTI]
+    for p, color in ANTI_PIXELS:
+        marks[color].put(p)
+    return marks
+
+
+def antivenom_model():
+    # A square that glows on each eye pixel, just in front of the outer face
+    # (z -4.2). Face pixel (x, y) is at x - 12, y - 16.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+    for n, color in enumerate(ANTI):
+        paint_box(im, 4 * n, 0, 1, 1, 0, lambda face, x, y, c=color: c)
+    parts = [{"bone": "head", "uv": [4 * color, 0], "from": [x - 12, y - 16, -4.3], "size": [1, 1, 0],
+              "glow": True} for (x, y), color in ANTI_PIXELS]
+    save_model("antivenom_eyes", im, parts)
+
+
+def plague_carrier():
+    # Green pustules on the cloth of the chest: round, bright green
+    # pustules with a pale top and a dark rim, on the vines of the front of
+    # the outer layer (x 20 to 27), and on the leaves over the upper arms.
+    pus = Mark(VENOM[0], target="outer")
+    top = Mark(VENOM[2], target="outer")
+    rim = Mark("#2E4A16", target="outer")
+    for x, y in ((20, 20), (26, 21), (21, 23), (27, 24), (20, 26), (26, 27),
+                 (40, 21), (44, 22), (46, 20), (50, 21), (53, 23)):
+        pus.put((x, y))
+        top.put((x + 1, y))
+        rim.put((x, y + 1)).put((x + 1, y + 1))
+    return [pus, top, rim]
+
 GENES = {
     "puffball": puffball,
     "shelfback": shelfback,
@@ -350,6 +485,12 @@ GENES = {
     "mire_grip": mire_grip,
     "swamp_gas": swamp_gas,
     "leechbone": leechbone,
+    "venom_gland": venom_gland,
+    "toxic_tip": toxic_tip,
+    "bile_shot": bile_shot,
+    "rotting_touch": rotting_touch,
+    "antivenom": antivenom,
+    "plague_carrier": plague_carrier,
 }
 
 MODELS = {
@@ -357,9 +498,12 @@ MODELS = {
     "shelfback": "originofspawns:shelfback_shelves",
     "mushroom_shot": "originofspawns:mushroom_shot_caps",
     "leechbone": "originofspawns:leechbone_leeches",
+    "venom_gland": "originofspawns:venom_gland_sac",
+    "antivenom": "originofspawns:antivenom_eyes",
 }
 
-MODEL_MAKERS = [puffball_model, shelfback_model, mushroom_shot_model, leechbone_model]
+MODEL_MAKERS = [puffball_model, shelfback_model, mushroom_shot_model, leechbone_model, venom_gland_model,
+                antivenom_model]
 
 
 def main():

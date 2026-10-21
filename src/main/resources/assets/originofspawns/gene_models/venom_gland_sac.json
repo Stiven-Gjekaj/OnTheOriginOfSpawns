@@ -1,0 +1,42 @@
+{
+	"texture": "originofspawns:textures/entity/venom_gland_sac.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2,
+				0,
+				-4.4
+			],
+			"size": [
+				4,
+				2,
+				2
+			],
+			"inflate": 0.2
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				6
+			],
+			"from": [
+				-1,
+				2,
+				-4.2
+			],
+			"size": [
+				2,
+				1,
+				2
+			]
+		}
+	]
+}

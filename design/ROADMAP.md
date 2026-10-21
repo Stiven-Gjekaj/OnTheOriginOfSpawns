@@ -95,16 +95,13 @@ The husk and the drowned come out together in one alpha release.
 #### Milestone 2c: The other hostile and neutral mobs
 
 - The order is: skeletons (skeleton, stray, bogged, wither skeleton,
-  parched), the zombie villager, the creeper, spiders (spider, cave spider),
-  illagers (pillager, vindicator, evoker, witch), endermen (enderman,
-  endermite), slimes (slime, magma cube, sulfur cube), the Nether mobs
-  (zombified piglin, piglin, piglin brute, hoglin, zoglin), the flyers
-  (phantom, vex, ghast, blaze, breeze), the guardian, the undead mounts (camel
-  husk, zombie nautilus, zombie horse, skeleton horse), and the others
-  (silverfish, shulker, ravager, creaking).
-- The zombie villager comes first, because it acts as a zombie. It has the
-  body of a villager, with the arms and the walk of a zombie, and biome and
-  profession layers. Its gene marks need a region map of their own.
+  parched), the creeper, spiders (spider, cave spider), illagers (pillager,
+  vindicator, evoker, witch), endermen (enderman, endermite), slimes (slime,
+  magma cube, sulfur cube), the Nether mobs (zombified piglin, piglin, piglin
+  brute, hoglin, zoglin), the flyers (phantom, vex, ghast, blaze, breeze), the
+  guardian, the undead mounts (camel husk, zombie nautilus, zombie horse,
+  skeleton horse), and the others (silverfish, shulker, ravager, creaking).
+- The zombie villager comes in milestone 6, with the villagers.
 - The neutral mobs that fight the player come after the hostile mobs: polar
   bear, bee, wolf, goat, dolphin, panda, llama, and iron golem.
 
@@ -179,6 +176,10 @@ The husk and the drowned come out together in one alpha release.
 - Give genes to the wild mobs, and add habitat selection.
 - Give genes to the villagers and the wandering trader, and add social
   selection.
+- Give genes to the zombie villager from the same work as the villager. The
+  profession of a villager that turns sets the family of its genes. A zombie
+  villager that spawns naturally has a random profession, as in vanilla. A
+  cured zombie villager keeps its genes.
 - Give genes to the bosses, and add lineage.
 - Add selected traits and pedigree pages.
 - Add hybrids in border biomes.

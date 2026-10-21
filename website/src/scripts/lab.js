@@ -26,6 +26,7 @@ const chosen = new Set(start.slice(0, 5));
 let spin = !reduced;
 let walk = false;
 let baby = false;
+let sheared = false;
 let night = false;
 let turn = -0.5;
 let model = null;
@@ -49,7 +50,7 @@ function update() {
     <div class="k">${r.kind === "neutral" ? "No family effects" : kindName(r.kind)}</div></div>
     ${r.style ? `<div class="muted small">${r.style}</div>` : ""}
     <div class="row" style="justify-content:center">${r.points.map((p) => `<span class="badge fam" style="--fam:var(--${p.id})">${famName(p.id)} ${p.points}</span>`).join("")}</div>`;
-  Z.bake(list.filter((g) => g.visual), baby, species).then((m) => { model = m; });
+  Z.bake(list.filter((g) => g.visual), baby, species, { sheared }).then((m) => { model = m; });
   const u = new URL(location.href);
   u.searchParams.set("genes", [...chosen].join(","));
   history.replaceState(null, "", u);
@@ -66,6 +67,7 @@ const stopSpin = () => { spin = false; press($("lab-spin"), false); };
 document.addEventListener("species", (e) => {
   species = e.detail;
   syncBaby();
+  syncShear();
   chosen.clear();
   for (const id of defaultsFor(species).split(",")) if (byId[id]) chosen.add(id);
   $("lab-msg").textContent = "";
@@ -82,6 +84,14 @@ function syncBaby() {
   if (!can && baby) { baby = false; press($("lab-baby"), false); }
 }
 syncBaby();
+// A species with parts that a player can shear off, such as the bogged, has a
+// Sheared button.
+$("lab-shear").addEventListener("click", () => { sheared = !sheared; press($("lab-shear"), sheared); update(); });
+function syncShear() {
+  $("lab-shear").hidden = !Z.canShear(species);
+  if ($("lab-shear").hidden && sheared) { sheared = false; press($("lab-shear"), false); }
+}
+syncShear();
 $("lab-night").addEventListener("click", () => { night = !night; press($("lab-night"), night); $("lab-stage").classList.toggle("night", night); });
 $("lab-clear").addEventListener("click", () => { chosen.clear(); $("lab-msg").textContent = ""; update(); });
 $("lab-angle").addEventListener("input", (e) => { turn = (Number(e.target.value) * Math.PI) / 180; stopSpin(); });

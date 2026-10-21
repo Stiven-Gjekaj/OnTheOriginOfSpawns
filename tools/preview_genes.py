@@ -185,11 +185,13 @@ STRAY_FAMILIES = {
 }
 
 STRAY_EXTRA = {
-    "glaciers": [],
-    "blizzards": [],
-    "drifters": [],
-    "frostbiters": [],
-    "wailers": [],
+    "glaciers": [("All 6 + Frostbiters", ["frostbite", "icicle", "coldsnap"], True, {})],
+    "blizzards": [("All 6 but Gale", ["squall", "snowdrift", "hailshot", "frostwind", "stormborn"], False, {}),
+                  ("All 6 + Glaciers", ["iceplate", "shatterhide"], True, {})],
+    "drifters": [("All 6 + Blizzards", ["hailshot", "frostwind"], True, {})],
+    "frostbiters": [("All 6 + Glaciers", ["rimeshell", "permafrost"], True, {})],
+    "wailers": [("All 6 at night", [], True, {"light": 0.18}),
+                ("All 6 translucent", [], True, {"opacity": 0.55})],
 }
 NIGHT = (18, 22, 38, 255)
 

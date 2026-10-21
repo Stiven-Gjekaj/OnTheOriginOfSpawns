@@ -183,7 +183,38 @@ SKELETON_CLOSEUPS = {
 
 # The close-ups of the stray. The stray has no babies.
 STRAY = pg.STRAY_FAMILIES
-STRAY_CLOSEUPS = {}
+STRAY_CLOSEUPS = {
+    "stray_glaciers": ("Glacier marks and models",
+                       [("Iceplate + Icebound", ["iceplate", "icebound"], False),
+                        ("Permafrost + Rimeshell", ["permafrost", "rimeshell"], False),
+                        ("Shatterhide", ["shatterhide"], False),
+                        ("Glacial Wall", ["glacial_wall"], False),
+                        ("All 6", STRAY["glaciers"], False)], ALL_SIDES),
+    "stray_blizzards": ("Blizzard marks and models",
+                        [("Squall + Frostwind", ["squall", "frostwind"], False),
+                         ("Snowdrift + Stormborn", ["snowdrift", "stormborn"], False),
+                         ("Hailshot", ["hailshot"], False),
+                         ("Gale", ["gale"], False),
+                         ("All 6", STRAY["blizzards"], False)], ALL_SIDES),
+    "stray_drifters": ("Drifter marks and models",
+                       [("Snowshoe + Pathfinder", ["snowshoe", "pathfinder"], False),
+                        ("Iceskate + Avalanche", ["iceskate", "avalanche"], False),
+                        ("Snowburrow", ["snowburrow"], False),
+                        ("Driftline", ["driftline"], False),
+                        ("All 6", STRAY["drifters"], False)], ALL_SIDES),
+    "stray_frostbiters": ("Frostbiter marks and models",
+                          [("Frostbite + Numbing Shot", ["frostbite", "numbing_shot"], False),
+                           ("Icicle + Coldsnap", ["icicle", "coldsnap"], False),
+                           ("Rimefall", ["rimefall"], False),
+                           ("Brittle Shot", ["brittle_shot"], False),
+                           ("All 6", STRAY["frostbiters"], False)], ALL_SIDES),
+    "stray_wailers": ("Wailer marks and models",
+                      [("Pale", ["pale"], False), ("Wail + Frozen Gaze", ["wail", "frozen_gaze"], False),
+                       ("Hollow Cry + Ghostshot", ["hollow_cry", "ghostshot"], False),
+                       ("Mourner", ["mourner"], False),
+                       ("All 6", STRAY["wailers"], False)],
+                      [FRONT, SIDE, BACK, THREE_QUARTER, ("front at night", 0, 0, 0.18), NIGHT_BEHIND]),
+}
 
 # Each species: its texture, its baby texture, and its close-ups.
 SPECIES = {

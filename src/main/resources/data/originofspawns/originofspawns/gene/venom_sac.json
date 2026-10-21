@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:parched/scorpion",
+	"sub_family": "originofspawns:parched/fossil",
+	"gains": [
+		{
+			"type": "death_cloud",
+			"effect": "minecraft:poison",
+			"seconds": 4,
+			"radius": 3,
+			"cloud_seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

@@ -97,6 +97,20 @@ public class EquipmentTest {
 	}
 
 	@GameTest
+	public void parchedKeepOnlyAPlainBow(GameTestHelper helper) {
+		for (int i = 0; i < 100; i++) {
+			Mob parched = spawned(helper, EntityTypes.PARCHED);
+			helper.assertTrue(parched.getMainHandItem().is(Items.BOW), "a parched has its bow");
+			helper.assertTrue(parched.getMainHandItem().getEnchantments().isEmpty(), "the bow has no enchantments");
+			for (EquipmentSlot slot : List.of(EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET)) {
+				helper.assertTrue(parched.getItemBySlot(slot).isEmpty(), "a parched wears no " + slot.getName());
+			}
+			parched.discard();
+		}
+		helper.succeed();
+	}
+
+	@GameTest
 	public void witherSkeletonsKeepOnlyAPlainStoneSword(GameTestHelper helper) {
 		for (int i = 0; i < 100; i++) {
 			Mob wither = spawned(helper, EntityTypes.WITHER_SKELETON);

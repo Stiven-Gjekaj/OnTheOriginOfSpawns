@@ -1,0 +1,26 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:parched/vulture",
+	"sub_family": "originofspawns:parched/windcarver",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fall",
+			"multiplier": 0
+		},
+		{
+			"type": "attribute",
+			"attribute": "minecraft:jump_strength",
+			"amount": 0.5,
+			"operation": "add_multiplied_base"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_explosion",
+			"multiplier": 1.5
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:parched/scorpion",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:slowness",
+			"seconds": 2,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

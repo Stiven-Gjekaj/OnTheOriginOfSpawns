@@ -1,0 +1,59 @@
+{
+	"species": "minecraft:parched",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:poison",
+					"seconds": 4,
+					"hits": "projectile",
+					"chance": 0.25
+				}
+			],
+			"debuffs": [
+				{
+					"type": "speed_when",
+					"when": "day",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:poison",
+					"seconds": 4,
+					"hits": "projectile",
+					"chance": 0.4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "speed_when",
+					"when": "day",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:poison",
+					"seconds": 4,
+					"hits": "projectile",
+					"chance": 0.6
+				}
+			],
+			"debuffs": [
+				{
+					"type": "speed_when",
+					"when": "day",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

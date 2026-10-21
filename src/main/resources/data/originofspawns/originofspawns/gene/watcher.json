@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:parched/vulture",
+	"gains": [
+		{
+			"type": "see_invisible",
+			"radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:parched/vulture",
+	"gains": [
+		{
+			"type": "heal_on_hit",
+			"amount": 1,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

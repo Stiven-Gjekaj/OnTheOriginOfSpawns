@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:parched/vulture",
+	"gains": [
+		{
+			"type": "brood",
+			"extra": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.15,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

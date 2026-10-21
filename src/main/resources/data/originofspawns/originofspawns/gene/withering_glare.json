@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:parched/enfeebler",
+	"gains": [
+		{
+			"type": "gaze_effect",
+			"effect": "minecraft:weakness",
+			"seconds": 3,
+			"range": 16,
+			"interval_seconds": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

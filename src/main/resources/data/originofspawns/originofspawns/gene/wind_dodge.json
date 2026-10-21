@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:parched/windcarver",
+	"sub_family": "originofspawns:parched/fossil",
+	"gains": [
+		{
+			"type": "dodge_projectiles",
+			"chance": 0.25
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9,
+			"hits": "projectile"
+		}
+	]
+}

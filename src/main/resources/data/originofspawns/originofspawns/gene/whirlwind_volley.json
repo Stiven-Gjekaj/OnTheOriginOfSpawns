@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:parched/windcarver",
+	"gains": [
+		{
+			"type": "fan_shot",
+			"arrows": 3,
+			"angle": 15,
+			"cooldown_seconds": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.85,
+			"hits": "projectile"
+		}
+	]
+}

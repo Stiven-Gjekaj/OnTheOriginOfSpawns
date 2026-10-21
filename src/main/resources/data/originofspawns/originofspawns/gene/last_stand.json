@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:parched/fossil",
+	"gains": [
+		{
+			"type": "damage_dealt_when",
+			"when": "wounded",
+			"multiplier": 1.3,
+			"hits": "any"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "healthy",
+			"multiplier": 0.8,
+			"hits": "any"
+		}
+	]
+}

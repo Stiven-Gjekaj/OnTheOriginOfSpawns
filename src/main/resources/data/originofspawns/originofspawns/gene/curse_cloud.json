@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:parched/enfeebler",
+	"gains": [
+		{
+			"type": "death_cloud",
+			"effect": "minecraft:weakness",
+			"seconds": 5,
+			"radius": 3,
+			"cloud_seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

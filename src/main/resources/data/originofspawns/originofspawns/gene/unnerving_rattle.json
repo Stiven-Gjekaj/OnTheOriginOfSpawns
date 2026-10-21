@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:parched/enfeebler",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:weakness",
+			"radius": 6,
+			"interval_seconds": 10,
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

@@ -42,7 +42,7 @@ import net.minecraft.world.phys.Vec3;
  */
 public class HuskDrownedWorldClientTest implements FabricClientGameTest {
 	private static final String TAG = "originofspawns_world_test";
-	private static final Set<String> SPECIES = Set.of("zombie", "husk", "drowned", "skeleton", "stray", "bogged", "wither_skeleton");
+	private static final Set<String> SPECIES = Set.of("zombie", "husk", "drowned", "skeleton", "stray", "bogged", "wither_skeleton", "parched");
 
 	@Override
 	public void runTest(ClientGameTestContext context) {

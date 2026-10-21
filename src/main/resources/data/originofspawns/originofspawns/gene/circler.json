@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:parched/vulture",
+	"gains": [
+		{
+			"type": "keep_distance",
+			"blocks": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.9
+		}
+	]
+}

@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:parched/windcarver",
+	"gains": [
+		{
+			"type": "throw_rate",
+			"multiplier": 1.3
+		}
+	],
+	"downsides": [
+		{
+			"type": "arrow_spread",
+			"multiplier": 2
+		}
+	]
+}

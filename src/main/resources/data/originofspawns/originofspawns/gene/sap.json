@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:parched/enfeebler",
+	"gains": [
+		{
+			"type": "arrow_effect",
+			"effect": "minecraft:weakness",
+			"seconds": 30,
+			"amplifier": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.85
+		}
+	]
+}

@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:fire",
+	"family": "originofspawns:parched/fossil",
+	"sub_family": "originofspawns:parched/scorpion",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 3,
+			"idle_seconds": 0,
+			"when": "on_sand"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 1.25
+		}
+	]
+}

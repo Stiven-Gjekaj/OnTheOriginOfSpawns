@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:parched/scorpion",
+	"gains": [
+		{
+			"type": "thorns",
+			"damage": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9,
+			"hits": "projectile"
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:parched/windcarver",
+	"sub_family": "originofspawns:parched/vulture",
+	"gains": [
+		{
+			"type": "arrow_knockback",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.9
+		}
+	]
+}

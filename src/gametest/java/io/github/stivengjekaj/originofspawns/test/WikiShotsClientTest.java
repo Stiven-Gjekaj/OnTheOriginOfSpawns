@@ -47,7 +47,8 @@ import net.minecraft.world.level.block.LightBlock;
 public class WikiShotsClientTest implements FabricClientGameTest {
 	private static final Path OUTPUT = projectRoot().resolve("build/wiki_shots");
 	private static final List<EntityType<? extends Mob>> SPECIES = List.of(EntityTypes.ZOMBIE, EntityTypes.HUSK,
-			EntityTypes.DROWNED, EntityTypes.SKELETON, EntityTypes.STRAY, EntityTypes.BOGGED, EntityTypes.WITHER_SKELETON);
+			EntityTypes.DROWNED, EntityTypes.SKELETON, EntityTypes.STRAY, EntityTypes.BOGGED, EntityTypes.WITHER_SKELETON,
+			EntityTypes.PARCHED);
 	private static final int SHOT_ID = -424242;
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 960;

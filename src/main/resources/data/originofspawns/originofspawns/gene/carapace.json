@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:parched",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:parched/scorpion",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": 4,
+			"operation": "add_value"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

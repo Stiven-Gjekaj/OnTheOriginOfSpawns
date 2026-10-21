@@ -160,9 +160,10 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
   }
   .ribbons { position: absolute; top: -26px; left: 40px; display: flex; gap: 6px; }
   .ribbon {
-    width: 72px; padding: 7px 2px 18px; border: 0; color: #fff; cursor: pointer;
+    width: 72px; padding: 18px 2px 7px; border: 0; color: #fff; cursor: pointer;
     font: 500 var(--fs-xs) / 1 var(--font-display); background: var(--rib);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
+    /* The forked end of the ribbon points away from the book. */
+    clip-path: polygon(0 0, 50% 18%, 100% 0, 100% 100%, 0 100%);
     transform: translateY(var(--ty, 0)); transition: transform 140ms ease;
   }
   .ribbon:hover { --ty: -3px; }

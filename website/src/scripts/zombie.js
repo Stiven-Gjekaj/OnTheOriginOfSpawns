@@ -70,6 +70,7 @@ const BODIES = {
     ],
   },
   drowned: {
+    split: true,
     cubes: [
       ["head", [0, 0], [-4, -8, -4], [8, 8, 8], false],
       ["body", [16, 16], [-4, 0, -2], [8, 12, 4], false],
@@ -157,6 +158,24 @@ function toAdult(baby) {
     if (mirror) continue;
     const bf = uvFaces(b), af = uvFaces(a);
     for (let f = 0; f < 6; f++) copyFace(baby, bf[f], out, af[f], scale, false);
+  }
+  return out;
+}
+
+// BabyLayout.SPLIT_LIMBS in the mod: the right limb of the zombie layout, and
+// the left limb of a model with split limbs, such as the drowned.
+const SPLIT_PAIRS = [
+  [[40, 16, 4, 12, 4], [32, 48, 4, 12, 4]],
+  [[0, 16, 4, 12, 4], [16, 48, 4, 12, 4]],
+];
+
+// Copy the right limbs, mirrored, to the left limbs, like BabyLayout.toSplitLimbs.
+function toSplit(image) {
+  const scale = Math.max(Math.floor(image.width / 64), 1);
+  const out = new ImageData(new Uint8ClampedArray(image.data), image.width, image.height);
+  for (const [a, b] of SPLIT_PAIRS) {
+    const from = uvFaces(a), to = uvFaces(b);
+    for (let f = 0; f < 6; f++) copyFace(image, from[MIRRORED_FACE[f]], out, to[f], scale, true);
   }
   return out;
 }
@@ -303,13 +322,17 @@ async function bake(genes, baby = false, species = genes[0]?.species ?? "zombie"
     const baseMap = bodyOf.map || DEFAULT_REGION_MAP;
     const mapIds = new Set([baseMap]);
     for (const g of genes) if (g.visual && g.visual.regionMap) mapIds.add(g.visual.regionMap);
-    for (const id of mapIds) maps[id] = baby ? toBaby(await loadImage(id)) : await loadImage(id);
+    // A body with split limbs, such as the drowned, moves the marks of the
+    // right limbs to the left limbs too.
+    const split = bodyOf.split && !baby;
+    const layout = (img) => (baby ? toBaby(img) : split ? toSplit(img) : img);
+    for (const id of mapIds) maps[id] = layout(await loadImage(id));
     const base = baseTexture(maps[baseMap], species);
     // A pattern with the size of a whole mob texture is a mark in the adult
     // layout, so it moves to the baby layout. A smaller pattern is a tile.
     const patternOf = async (id) => {
       const img = await loadImage(id);
-      return baby && img.width >= 64 && img.height >= 64 ? toBaby(img) : img;
+      return img.width >= 64 && img.height >= 64 ? layout(img) : img;
     };
     const steps = [];
     [...genes].sort((a, b) => (a.id < b.id ? -1 : 1)).forEach((g) => {

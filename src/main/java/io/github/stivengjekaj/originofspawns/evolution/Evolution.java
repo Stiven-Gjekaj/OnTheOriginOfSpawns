@@ -11,6 +11,7 @@ import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
 import io.github.stivengjekaj.originofspawns.definition.DeathCondition;
 import io.github.stivengjekaj.originofspawns.definition.DeathContext;
 import io.github.stivengjekaj.originofspawns.definition.Gene;
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.definition.Pressure;
 import io.github.stivengjekaj.originofspawns.notebook.Discovery;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -376,9 +377,13 @@ public final class Evolution {
 
 	/**
 	 * Records the time for each player near the mob who looks at it now. The unseen state needs the last look.
-	 * A record older than the look time goes away.
+	 * A record older than the look time goes away. Only a mob whose effects use the unseen state keeps a record.
 	 */
 	public static void trackLooks(Mob mob, ServerLevel level) {
+		if (!GeneEffects.usesState(mob, GeneEffect.When.UNSEEN)) {
+			mob.removeAttached(ModAttachments.LOOK_TIMES);
+			return;
+		}
 		long now = level.getGameTime();
 		Map<java.util.UUID, Long> before = mob.getAttachedOrElse(ModAttachments.LOOK_TIMES, Map.of());
 		Map<java.util.UUID, Long> looks = new java.util.HashMap<>();

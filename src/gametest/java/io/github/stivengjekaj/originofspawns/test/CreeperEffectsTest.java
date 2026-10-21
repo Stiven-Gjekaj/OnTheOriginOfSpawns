@@ -478,6 +478,23 @@ public class CreeperEffectsTest {
 	}
 
 	@GameTest
+	public void onlyAMobWithTheUnseenStateRecordsLooks(GameTestHelper helper) {
+		Creeper plain = creeperWith(helper, new BlockPos(0, 1, 5));
+		Creeper surprise = creeperWith(helper, new BlockPos(1, 1, 5), "test_surprise");
+		Creeper fast = creeperWith(helper, new BlockPos(2, 1, 5), "test_unseen_speed");
+		// The player looks south at the three creepers.
+		ServerPlayer player = playerFacing(helper, 0.0F);
+		for (Creeper creeper : java.util.List.of(plain, surprise, fast)) {
+			helper.assertTrue(Evolution.looksAt(player, creeper), "the player looks at each creeper");
+			Evolution.trackLooks(creeper, helper.getLevel());
+		}
+		helper.assertFalse(plain.hasAttached(ModAttachments.LOOK_TIMES), "no gene needs the looks at a plain creeper");
+		helper.assertTrue(surprise.hasAttached(ModAttachments.LOOK_TIMES), "the damage gene needs the looks");
+		helper.assertTrue(fast.hasAttached(ModAttachments.LOOK_TIMES), "a gene with the state in another effect needs them");
+		helper.succeed();
+	}
+
+	@GameTest
 	public void aSurpriseBlastHurtsOnlyThePlayersThatDidNotSeeIt(GameTestHelper helper) {
 		Creeper creeper = creeperWith(helper, new BlockPos(1, 1, 5), "test_surprise");
 		ServerPlayer watcher = playerFacing(helper, 0.0F);

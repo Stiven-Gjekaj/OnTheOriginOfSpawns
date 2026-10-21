@@ -1,6 +1,8 @@
 package io.github.stivengjekaj.originofspawns.evolution;
 
+import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -32,7 +34,34 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
  * Applies the effects of the genes that a mob carries.
  */
 public final class GeneEffects {
+	/**
+	 * The parts of each kind of effect that hold a state, for example {@code when} and {@code also}.
+	 */
+	private static final ClassValue<List<RecordComponent>> STATE_PARTS = new ClassValue<>() {
+		@Override
+		protected List<RecordComponent> computeValue(Class<?> type) {
+			return type.isRecord() ? Arrays.stream(type.getRecordComponents())
+					.filter(part -> part.getType() == GeneEffect.When.class).toList() : List.of();
+		}
+	};
+
 	private GeneEffects() {
+	}
+
+	/**
+	 * Returns true if an effect of the genes or of the family of the entity uses the state in one of its fields.
+	 */
+	public static boolean usesState(Entity entity, GeneEffect.When when) {
+		return of(entity).anyMatch(effect -> STATE_PARTS.get(effect.getClass()).stream()
+				.anyMatch(part -> state(effect, part) == when));
+	}
+
+	private static GeneEffect.When state(GeneEffect effect, RecordComponent part) {
+		try {
+			return (GeneEffect.When) part.getAccessor().invoke(effect);
+		} catch (ReflectiveOperationException exception) {
+			throw new IllegalStateException("Cannot read the state of the effect " + effect.type(), exception);
+		}
 	}
 
 	/**

@@ -158,7 +158,7 @@ The visual column gives the region and the mark.
 | Pyre | It places fire only in air, on a block that can hold fire, and not where a player stands |
 | Lavawalker | "In lava" means that the feet of the wither skeleton are in lava |
 | Cauterize | "In fire" means that the feet of the wither skeleton are in fire or soul fire |
-| Skull Shot | It needs a clear line of sight. The skull is the black skull of the Wither boss. It gives Wither for 10 seconds |
+| Skull Shot | It needs a clear line of sight. The skull is the black skull of the Wither boss. It gives the Wither of the vanilla skull: Wither II for 10 seconds on Normal and for 40 seconds on Hard |
 | Black Rot | It works as the stray Brittle Shot, but for melee hits, and on each player |
 | Smite Ward | It works as the skeleton Holy Ward, with no effect on wolves |
 | Vengeful Spirit | The vex lives 30 seconds. It counts as a mob of the vex, with no genes |

@@ -12,6 +12,8 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.golem.IronGolem;
@@ -109,6 +111,30 @@ public class CreeperEffectsTest {
 		float lost = before - golem.getHealth();
 		golem.discard();
 		return lost;
+	}
+
+	@GameTest(environment = BLASTS, padding = 8, maxTicks = 80)
+	public void aBlastCloudHasTheRadiusOfTheBlast(GameTestHelper helper) {
+		Creeper plain = creeperWith(helper, new BlockPos(1, 1, 1), "test_toxic_blast");
+		Creeper big = creeperWith(helper, new BlockPos(6, 1, 6), "test_toxic_blast", "test_big_bang");
+		explode(plain);
+		explode(big);
+		AreaEffectCloud small = cloudNear(helper, plain);
+		AreaEffectCloud large = cloudNear(helper, big);
+		helper.assertValueEqual(small.getRadius(), 3.0F, "the radius of a plain blast");
+		helper.assertValueEqual(large.getRadius(), 6.0F, "the radius of a larger blast");
+		helper.assertValueEqual(small.getDuration(), 120, "the cloud stays 6 seconds");
+		// A pig that walks in after the blast gets the effect of the cloud.
+		Pig pig = pigAt(helper, new BlockPos(1, 1, 1));
+		helper.succeedWhen(() -> helper.assertTrue(pig.hasEffect(MobEffects.POISON), "the pig is poisoned"));
+	}
+
+	static AreaEffectCloud cloudNear(GameTestHelper helper, Creeper creeper) {
+		// A large cloud reaches far, so only a cloud whose center is at the creeper counts.
+		var clouds = helper.getLevel().getEntitiesOfClass(AreaEffectCloud.class, creeper.getBoundingBox().inflate(0.5),
+				cloud -> cloud.position().distanceTo(creeper.position()) < 0.5);
+		helper.assertValueEqual(clouds.size(), 1, "one cloud at the blast");
+		return clouds.getFirst();
 	}
 
 	static void explode(Creeper creeper) {

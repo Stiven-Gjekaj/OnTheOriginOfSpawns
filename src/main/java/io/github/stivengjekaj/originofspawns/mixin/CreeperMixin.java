@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.mixin;
 
 import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.monster.Creeper;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -10,7 +11,9 @@ import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Creeper.class)
 public abstract class CreeperMixin {
@@ -29,6 +32,17 @@ public abstract class CreeperMixin {
 	private float originofspawns$blastSize(float radius) {
 		originofspawns$blastRadius = radius * GeneBlasts.sizeMultiplier((Creeper) (Object) this);
 		return originofspawns$blastRadius;
+	}
+
+	/**
+	 * The effects after the blast run when the vanilla blast and the vanilla cloud are done, before the creeper goes.
+	 */
+	@Inject(method = "explodeCreeper", at = @At("TAIL"))
+	private void originofspawns$afterBlast(CallbackInfo info) {
+		Creeper self = (Creeper) (Object) this;
+		if (self.level() instanceof ServerLevel level) {
+			GeneBlasts.afterBlast(self, level, originofspawns$blastRadius);
+		}
 	}
 
 	/**

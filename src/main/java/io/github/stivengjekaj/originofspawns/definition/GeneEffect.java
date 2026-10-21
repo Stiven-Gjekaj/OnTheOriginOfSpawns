@@ -138,7 +138,8 @@ public sealed interface GeneEffect {
 			Map.entry("snowball_damage", SnowballDamage.CODEC),
 			Map.entry("water_sensitive", WaterSensitive.CODEC),
 			Map.entry("disarm", Disarm.CODEC),
-			Map.entry("blast_size", BlastSize.CODEC)
+			Map.entry("blast_size", BlastSize.CODEC),
+			Map.entry("fuse_time", FuseTime.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2110,6 +2111,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "blast_size";
+		}
+	}
+
+	/**
+	 * Multiplies the time that the fuse of the mob burns before its blast. The fuse of a creeper burns 1.5 seconds in
+	 * vanilla.
+	 */
+	record FuseTime(float multiplier) implements GeneEffect {
+		public static final MapCodec<FuseTime> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 10.0F).fieldOf("multiplier").forGetter(FuseTime::multiplier)
+		).apply(instance, FuseTime::new));
+
+		@Override
+		public String type() {
+			return "fuse_time";
 		}
 	}
 }

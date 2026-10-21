@@ -62,6 +62,22 @@ public class CreeperEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = BLASTS, padding = 8, maxTicks = 100)
+	public void aLongerFuseExplodesLater(GameTestHelper helper) {
+		Creeper slow = creeperWith(helper, new BlockPos(1, 1, 1), "test_long_fuse");
+		helper.assertValueEqual(GeneBlasts.fuseTicks(slow, 30), 60, "two times the vanilla fuse");
+		slow.ignite();
+		// The vanilla fuse ends after 30 ticks.
+		helper.runAfterDelay(45, () -> {
+			helper.assertFalse(slow.isRemoved(), "the slow creeper still burns its fuse");
+			helper.assertTrue(slow.getSwelling(1.0F) > 0.5F, "the fuse burns");
+		});
+		helper.runAfterDelay(70, () -> {
+			helper.assertTrue(slow.isRemoved(), "the slow creeper exploded after 60 ticks");
+			helper.succeed();
+		});
+	}
+
 	static void explode(Creeper creeper) {
 		((CreeperAccessor) creeper).originofspawns$explode();
 	}

@@ -4,6 +4,9 @@ import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 
 import net.minecraft.world.entity.monster.Creeper;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,5 +29,15 @@ public abstract class CreeperMixin {
 	private float originofspawns$blastSize(float radius) {
 		originofspawns$blastRadius = radius * GeneBlasts.sizeMultiplier((Creeper) (Object) this);
 		return originofspawns$blastRadius;
+	}
+
+	/**
+	 * The genes change the length of the fuse. The game saves the vanilla fuse, so the change does not add up after
+	 * a load. The swell on the client uses the same length.
+	 */
+	@ModifyExpressionValue(method = {"tick", "getSwelling", "causeFallDamage"}, at = @At(value = "FIELD",
+			target = "Lnet/minecraft/world/entity/monster/Creeper;maxSwell:I", opcode = Opcodes.GETFIELD))
+	private int originofspawns$fuseTime(int ticks) {
+		return GeneBlasts.fuseTicks((Creeper) (Object) this, ticks);
 	}
 }

@@ -23,4 +23,17 @@ public final class GeneBlasts {
 		}
 		return multiplier;
 	}
+
+	/**
+	 * Returns the ticks of the fuse of the creeper after its fuse time multipliers. The fuse lasts 1 tick or more.
+	 */
+	public static int fuseTicks(Creeper creeper, int ticks) {
+		float multiplier = 1.0F;
+		for (GeneEffect effect : GeneEffects.of(creeper).toList()) {
+			if (effect instanceof GeneEffect.FuseTime fuse) {
+				multiplier *= fuse.multiplier();
+			}
+		}
+		return multiplier == 1.0F ? ticks : Math.max(1, Math.round(ticks * multiplier));
+	}
 }

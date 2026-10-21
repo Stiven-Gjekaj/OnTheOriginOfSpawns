@@ -73,6 +73,19 @@ Pixel plan for the Fumers.
   puffs of pale green gas round them.
 - Spore Blast: small brown mushrooms on the head, the gene model
   spore_blast_mushrooms.
+
+Pixel plan for the Thunderheads.
+- Lightning Rod: a copper spike on the top of the head, the gene model
+  lightning_rod_spike.
+- Static has small blue sparks on the skin of the body: crosses of bright
+  blue with a white middle.
+- Overcharge has bright blue veins that branch over the front and the back
+  of the body.
+- Conductor has forked blue marks on the head: short forks of blue on the
+  sides, the back, and the top of the head.
+- Grounded has copper bands round the legs: leg rows 2 and 3.
+- Thunderstruck has a blue glow on the feet: leg rows 4 and 5 and the
+  bottom of the legs, brightest at the bottom.
 This script needs Pillow.
 """
 import json
@@ -540,6 +553,118 @@ def spore_blast_model():
     parts.append({"bone": "head", "uv": [0, 0], "from": [4.5, -6, 0], "size": [2, 1, 2]})
     save_model("spore_blast_mushrooms", im, parts)
 
+COPPER = ("#C86A3A", "#E89060", "#8A4422", "#5AA08A")
+BLUE = ("#40A0FF", "#A8E0FF", "#FFFFFF", "#2A60C0")
+
+
+def lightning_rod():
+    # A ring of copper where the spike goes into the head (x 11 and 12, y 3
+    # and 4 of the top of the head). The spike is the gene model
+    # lightning_rod_spike.
+    ring = Mark(COPPER[2])
+    for p in ((11, 3), (12, 3), (11, 4), (12, 4)):
+        ring.put(p)
+    return [ring]
+
+
+def lightning_rod_model():
+    # A copper spike on the top of the head, as a lightning rod: a wide base
+    # on the head, a thin rod that rises from it, and a point, in copper
+    # with a bright edge and a few green spots of old copper. On the head
+    # bone, the top of the head is at y -8.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def copper(face, x, y):
+        if (x + y + len(face)) % 5 == 0:
+            return COPPER[3]
+        return COPPER[1] if face in ("front", "right") else COPPER[0]
+
+    # The base: 2x1x2 at uv (0, 0). The rod: 1x4x1 at uv (8, 0). The point:
+    # 1x1x1 at uv (12, 0).
+    paint_box(im, 0, 0, 2, 1, 2, copper)
+    paint_box(im, 8, 0, 1, 4, 1, copper)
+    paint_box(im, 12, 0, 1, 1, 1, lambda face, x, y: COPPER[1])
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-1, -9, -1], "size": [2, 1, 2]},
+        {"bone": "head", "uv": [8, 0], "from": [-0.5, -13, -0.5], "size": [1, 4, 1]},
+        {"bone": "head", "uv": [12, 0], "from": [-0.5, -14, -0.5], "size": [1, 1, 1], "inflate": -0.2},
+    ]
+    save_model("lightning_rod_spike", im, parts)
+
+
+def static():
+    # Small blue sparks on the skin: crosses of bright blue, 3 pixels wide,
+    # with a white middle, on all the side faces of the body.
+    spark = Mark(BLUE[1])
+    core = Mark(BLUE[2])
+    for x, y, face, col, row in pixels(BODY, SIDES):
+        w, h = BODY[face][2], BODY[face][3]
+        if 0 < col < w - 1 and 0 < row < h - 1 and noise100(x // 3, y // 3, 371) < 30 and (col + row) % 3 == 0:
+            core.put((x, y))
+            spark.put((x - 1, y)).put((x + 1, y)).put((x, y - 1)).put((x, y + 1))
+    return [spark, core]
+
+
+def overcharge():
+    # Bright blue veins over the body, as if the power runs under the skin:
+    # lines of bright blue that branch, on the front and the back of the
+    # body, with paler blue where they branch.
+    vein = Mark(BLUE[0])
+    pale = Mark(BLUE[1])
+    path = ((3, 0), (3, 1), (4, 2), (4, 3), (3, 4), (2, 5), (2, 6), (5, 4), (6, 5), (6, 6), (5, 7),
+            (2, 7), (1, 8), (1, 9), (5, 8), (4, 9), (4, 10), (4, 11))
+    for x0 in (20, 32):
+        for x, y in path:
+            (pale if (x, y) in ((4, 3), (2, 7), (5, 8)) else vein).put((x0 + x, 20 + y))
+    return [vein, pale]
+
+
+def conductor():
+    # Forked blue marks on the head, as the marks of lightning: short forks
+    # of bright blue, each a stem that splits in two, on the sides, the
+    # back, and the top of the head. They keep off the face.
+    fork = Mark(BLUE[0])
+    tip = Mark(BLUE[1])
+    for x0, y0 in ((2, 9), (18, 9), (26, 10), (9, 1)):
+        for dx, dy in ((2, 0), (2, 1), (1, 2), (3, 2), (0, 3), (4, 3)):
+            (tip if dy == 3 else fork).put((x0 + dx, y0 + dy))
+    return [fork, tip]
+
+
+def grounded():
+    # Copper bands round the legs, to carry the power to the ground: a band
+    # of copper on leg rows 2 and 3 of all the faces, with a bright upper
+    # edge and a few green spots of old copper.
+    band = Mark(COPPER[0])
+    bright = Mark(COPPER[1])
+    old = Mark(COPPER[3])
+    for x, y, face, col, row in pixels(LEG, SIDES):
+        if row == 2:
+            bright.put((x, y))
+        elif row == 3:
+            (old if (col + len(face)) % 4 == 0 else band).put((x, y))
+    return [band, bright, old]
+
+
+def thunderstruck():
+    # A blue glow on the feet, as if the creeper stands in a strike: the
+    # feet (leg rows 4 and 5) and the bottom of the legs are blue, pale blue
+    # at the bottom, and deep blue specks on row 3 where the glow fades.
+    glow = Mark(BLUE[0])
+    pale = Mark(BLUE[1])
+    fade = Mark(BLUE[3])
+    for x, y, face, col, row in pixels(LEG, SIDES):
+        if row == 5:
+            pale.put((x, y))
+        elif row == 4:
+            glow.put((x, y))
+        elif row == 3 and (col + len(face)) % 2:
+            fade.put((x, y))
+    for x, y, face, col, row in pixels(LEG, ("bottom",)):
+        pale.put((x, y))
+    return [glow, pale, fade]
+
+
 
 GENES = {
     "big_bang": big_bang,
@@ -566,6 +691,12 @@ GENES = {
     "wither_gas": wither_gas,
     "gas_leak": gas_leak,
     "spore_blast": spore_blast,
+    "lightning_rod": lightning_rod,
+    "static": static,
+    "overcharge": overcharge,
+    "conductor": conductor,
+    "grounded": grounded,
+    "thunderstruck": thunderstruck,
 }
 
 MODELS = {
@@ -575,10 +706,11 @@ MODELS = {
     "wallcrawler": "originofspawns:wallcrawler_claws",
     "patient": "originofspawns:patient_roots",
     "spore_blast": "originofspawns:spore_blast_mushrooms",
+    "lightning_rod": "originofspawns:lightning_rod_spike",
 }
 
 MODEL_MAKERS = [big_bang_model, short_fuse_model, leaper_model, wallcrawler_model, patient_model,
-                spore_blast_model]
+                spore_blast_model, lightning_rod_model]
 
 
 def main():

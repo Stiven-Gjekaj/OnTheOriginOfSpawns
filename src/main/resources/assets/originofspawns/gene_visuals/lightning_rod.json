@@ -1,0 +1,13 @@
+{
+	"region_map": "originofspawns:textures/region/creeper.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/lightning_rod_0.png",
+				"tint": "#8A4422"
+			}
+		}
+	],
+	"model": "originofspawns:lightning_rod_spike"
+}

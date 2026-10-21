@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/creeper.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/grounded_0.png",
+				"tint": "#C86A3A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/grounded_1.png",
+				"tint": "#E89060"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/grounded_2.png",
+				"tint": "#5AA08A"
+			}
+		}
+	]
+}

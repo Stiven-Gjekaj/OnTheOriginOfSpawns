@@ -47,11 +47,12 @@ A pressure needs `damage_types`, `conditions`, or both.
 | `dry` | The mob died in a biome that is not wet |
 | `shears` | Someone sheared the mob before its death, for example the mushrooms of a bogged |
 | `smite` | The killer hit the mob with a weapon with the Smite enchantment |
+| `day` | The mob died while it was bright outside |
 
 The mod has these pressures: `fire`, `projectile`, `melee`, `explosion`,
 `fall`, `unreached`, `sunlight`, `spotted`, `alone`, `crowd`, `critical`,
 `golem`, `player_death`, `in_water`, `on_land`, `cold`, `night`, `boat`,
-`contact`, `trident`, `wolf`, `shield`, `snow`, `warm`, `dry`, `shears`, and `smite`.
+`contact`, `trident`, `wolf`, `shield`, `snow`, `warm`, `dry`, `shears`, `smite`, and `day`.
 The `contact` pressure uses the tag `#originofspawns:contact`: cacti and sweet
 berry bushes. The `trident` pressure uses the tag `#originofspawns:trident`.
 The `melee` pressure uses the tag `#originofspawns:melee`.
@@ -161,6 +162,10 @@ The states for `when` are:
 | `in_fire` | The feet of the mob are in fire, soul fire, or lava |
 | `on_soul_ground` | The mob stands on soul sand or soul soil, the blocks in the tag `#minecraft:soul_speed_blocks` |
 | `off_soul_ground` | The mob does not stand on soul sand or soul soil |
+| `day` | It is bright outside |
+| `healthy` | The health of the mob is half of its maximum or more |
+| `hunting_healthy` | The mob targets a player with half health or more |
+| `target_weakened` | The target of the mob has the Weakness effect |
 
 #### Hits
 
@@ -227,7 +232,7 @@ The states for `when` are:
 |---|---|---|
 | `silence` | `idle` (`false`), `hurt` (`false`), `steps` (`false`), `death` (`false`) | Stops these sounds of the mob |
 | `loud` | `multiplier` | Multiplies the volume of the sounds of the mob, also its steps |
-| `translucent` | `max_light` (`7`), `opacity` (`0.1`), `blocks` (none) | The client draws the mob translucent at this light level or lower. With `blocks`, only while its feet or its eyes are in a block of this tag. With `night_only` (`false`), only while it is dark outside. With `when` (`always`), only while the state is true. Other mobs still see it |
+| `translucent` | `max_light` (`7`), `opacity` (`0.1`), `blocks` (none) | The client draws the mob translucent at this light level or lower. With `blocks`, only while its feet or its eyes are in a block of this tag. With `night_only` (`false`), only while it is dark outside. With `when` (`always`) and `also` (`always`), only while both states are true. Other mobs still see it |
 | `glowing` | `when` (`always`) | The mob glows while the state is true, so that players see it through walls |
 | `aura` | `effect`, `amplifier` (`0`), `radius`, `interval_seconds` (`2`), `particles` (`false`), `in_water_only` (`false`), `seconds` (none), `allies` (`false`), `when` (`always`) | While the state is true, gives a status effect to the players near the mob. The effect lasts `seconds`, or until the next renewal when there is no `seconds`. With `in_water_only`, only the players in water get it. With `allies`, the mobs of its species get it instead of the players |
 | `ignored_by` | `mobs` | Mobs of these types do not target the mob |
@@ -265,6 +270,7 @@ The states for `when` are:
 | `damage_to` | `targets`, `multiplier` (`1`), `fire_seconds` (`0`) | The hits of the mob do more damage to entities of the tag in `targets`, and set them on fire for `fire_seconds` |
 | `snowball_damage` | `damage` | Snowballs do this damage to the mob, as they do to a blaze |
 | `water_sensitive` | | Water hurts the mob, as it hurts a blaze or an enderman: splash water, rain, and water |
+| `disarm` | `chance`, `cooldown_seconds` (`10`), `hits` (`projectile`) | Each hit has the chance to make a player drop the item in the main hand. A player loses an item one time in each cooldown at most. An item with Curse of Binding does not drop |
 | `death_effect` | `effect`, `seconds`, `amplifier` (`0`), `radius`, `when` (`always`), `allies` (`false`) | When the mob dies while the state is true, the players in the radius get a status effect. With `allies`, the mobs of its species get it instead |
 
 ### Gene visuals

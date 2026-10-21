@@ -46,13 +46,14 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 				spawn(player, EntityTypes.STRAY, front.add(-1.2, 0.0, 0.0), List.of(gene("venomtip"),
 						Identifier.fromNamespaceAndPath("originofspawns_test", "test_cloth_dye")));
 				spawn(player, EntityTypes.WITHER_SKELETON, front.add(-2.6, 0.0, 0.4), List.of(gene("executioner"), gene("ember_eyes")));
+				spawn(player, EntityTypes.PARCHED, front.add(-3.8, 0.0, 0.8), List.of(gene("venomtip")));
 				spawn(player, EntityTypes.BOGGED, front.add(3.6, 0.0, 0.4), List.of(gene("venomtip"),
 						Identifier.fromNamespaceAndPath("originofspawns_test", "test_cloth_dye")));
 			});
 			context.waitTicks(40);
 			context.takeScreenshot("skeleton_genes");
 			for (String texture : List.of("skeleton", "stray", "stray_overlay", "wither_skeleton", "bogged",
-					"bogged_overlay")) {
+					"bogged_overlay", "parched")) {
 				Identifier base = Identifier.withDefaultNamespace("textures/entity/skeleton/" + texture + ".png");
 				if (!context.computeOnClient(client -> GeneTextures.wasBakedFrom(base))) {
 					throw new AssertionError("No gene marks on " + base);

@@ -948,8 +948,8 @@ def changed_pixels(visual):
         _, path = layer["effect"]["texture"].split(":")
         im = Image.open(os.path.join(ROOT, "src/main/resources/assets/originofspawns", path)).convert("RGBA")
         where = layer.get("target", "bone")
-        for y in range(32):
-            for x in range(64):
+        for y in range(im.height):
+            for x in range(im.width):
                 if im.getpixel((x, y))[3]:
                     pixels.add((where, (x, y)))
     return pixels

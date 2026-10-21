@@ -17,6 +17,11 @@ can read the evolution of your world on the bodies of its mobs.
 ![Five zombies, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/zombies.png)
 ![Five husks, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/husks.png)
 ![Five drowned, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/drowned.png)
+![Five skeletons, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/skeletons.png)
+![Five strays, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/strays.png)
+![Five bogged, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/bogged.png)
+![Five wither skeletons, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/wither_skeletons.png)
+![Five parched, one of each family](https://raw.githubusercontent.com/Stiven-Gjekaj/OnTheOriginOfSpawns/main/assets/gallery/parched.png)
 
 > **Alpha.** The zombie, the husk, the drowned, the skeleton, the stray, the
 > bogged, the wither skeleton, and the parched are complete. Each one has

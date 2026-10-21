@@ -80,6 +80,12 @@ each other.
 | Zombies: Predators, Stalkers, Tanks, Hordes, and Blights | Husks: Scorchers, Dunecrawlers, Mummies, Caravans, and Parchers |
 | ![Five drowned, one of each family, each with three genes](assets/gallery/drowned.png) | ![The mob info panel over a husk of the Mummies family](assets/gallery/info_panel.png) |
 | Drowned: Riptides, Harpooners, Abyssals, Barnacled, and Sirens | The mob info panel shows what you know of a mob |
+| ![Five skeletons, one of each family, each with three genes](assets/gallery/skeletons.png) | ![Five strays, one of each family, each with three genes](assets/gallery/strays.png) |
+| Skeletons: Marksmen, Rattlers, Ossified, Legions, and Hexers | Strays: Glaciers, Blizzards, Drifters, Frostbiters, and Wailers |
+| ![Five bogged, one of each family, each with three genes](assets/gallery/bogged.png) | ![Five wither skeletons, one of each family, each with three genes](assets/gallery/wither_skeletons.png) |
+| Bogged: Sporecaps, Mirefolk, Venomers, Vinebound, and Mosshides | Wither skeletons: Blademasters, Ashborn, Witherlords, Ramparts, and Soul Reapers |
+| ![Five parched, one of each family, each with three genes](assets/gallery/parched.png) | |
+| Parched: Enfeeblers, Windcarvers, Vultures, Scorpions, and Fossils | |
 
 ## Download
 

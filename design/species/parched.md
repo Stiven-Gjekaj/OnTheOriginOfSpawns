@@ -18,7 +18,7 @@ the wither skeleton, or the husk.
 |---|---|
 | Major families | 5 |
 | Genes | 30, 6 for each major family |
-| Genes with a sub tag | 5 |
+| Genes with a sub tag | 6 |
 | Minor families | 20 |
 | Pure families | 5 |
 | Hybrids | 10 |
@@ -90,7 +90,7 @@ pressure.
 
 ## Genes
 
-Each gene has a main tag. Five genes also have a sub tag.
+Each gene has a main tag. Six genes also have a sub tag.
 The visual column gives the region and the mark.
 
 ### Enfeebler genes

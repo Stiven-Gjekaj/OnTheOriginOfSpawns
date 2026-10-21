@@ -2,11 +2,13 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.definition.DeathCondition;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect.When;
+import io.github.stivengjekaj.originofspawns.evolution.BiomeCategory;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.GenePools;
 import io.github.stivengjekaj.originofspawns.mixin.CreeperAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -402,6 +404,22 @@ public class CreeperEffectsTest {
 		// One blast hits both players, and each player gets its own answer.
 		helper.assertValueEqual(GeneCombat.modifyDamage(watcher, blast, 10.0F), 10.0F, "the watcher takes normal damage");
 		helper.assertValueEqual(GeneCombat.modifyDamage(surprised, blast, 10.0F), 13.0F, "the surprised player");
+		helper.succeed();
+	}
+
+	@GameTest(environment = BLASTS, padding = 8)
+	public void aBlastThatKillsAPlayerRaisesTheGenesOfTheCreeper(GameTestHelper helper) {
+		Creeper creeper = creeperWith(helper, new BlockPos(1, 1, 3), "test_big_bang");
+		ServerPlayer player = playerFacing(helper, 0.0F);
+		player.setHealth(1.0F);
+		Identifier gene = Identifier.fromNamespaceAndPath("originofspawns_test", "test_big_bang");
+		Identifier species = Identifier.withDefaultNamespace("creeper");
+		BiomeCategory category = BiomeCategory.of(helper.getLevel().getBiome(creeper.blockPosition()));
+		GenePools pools = GenePools.get(helper.getLevel().getServer());
+		float before = pools.frequency(species, category, gene);
+		explode(creeper);
+		helper.assertTrue(player.isDeadOrDying(), "the blast kills the player");
+		helper.assertTrue(pools.frequency(species, category, gene) > before, "the gene of the creeper rises");
 		helper.succeed();
 	}
 

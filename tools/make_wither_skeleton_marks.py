@@ -77,6 +77,20 @@ Pixel plan for the Ramparts.
 - Garrison has a red sash with a gold edge across the body, from the right
   shoulder to the left hip, on the front and on the back.
 - Smite Ward has gold runes on the brow: face rows 8 to 10, but x 12.
+
+Pixel plan for the Soul Reapers.
+- Soulstride: blue soul fire round the feet and the shins, the gene model
+  soulstride_flames, which glows.
+- Soul Link: a blue soul flame in the rib cage, the gene model
+  soul_link_flame, which glows.
+- Vengeful Spirit has a blue wisp that curls over the top of the skull,
+  and down the sides of the head to row 9.
+- Soul Hunger has a long, open jaw: a wide, dark mouth with a soul blue
+  inside (x 9 to 14, y 13 to 15), and pale teeth at its edges.
+- Ghost Step has faded legs: a pale blue-gray on leg rows 3 to 11, and an
+  erase in a dither on them, so that they are half see-through.
+- Soul Drain has blue light between the fingers: arm rows 10 and 11, and a
+  dim blue on row 9.
 This script needs Pillow.
 """
 import json
@@ -646,6 +660,133 @@ def smite_ward():
     dark.put((14, 9)).put((11, 9))
     return [gold, dark]
 
+
+SOUL = ("#50D8F0", "#C8F8FF", "#2A8AB0", "#123A48")
+
+
+def flame(x, y, w, h, seed):
+    """Return True for a pixel of a flame on a face of w by h pixels: each
+    column burns up to its own height from the bottom row."""
+    top = (0, 3, 1, 2)[(x + seed) % 4] if h > 3 else (x * 5 + seed) % (h - 1)
+    return y >= top
+
+
+def soulstride():
+    # The flames are the gene model soulstride_flames.
+    return []
+
+
+def soulstride_model():
+    # Blue soul fire round the feet: a shell of flames round each foot and
+    # shin (leg rows 7 to 11), each column of flame a different height,
+    # white-blue at the bottom and blue at the tips. It glows. On a leg
+    # bone, the ground is at y 12.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def fire(face, x, y):
+        if face in ("top", "bottom"):
+            return None
+        if not flame(x, y, 4, 5, len(face)):
+            return None
+        top = (0, 3, 1, 2)[(x + len(face)) % 4]
+        return SOUL[1] if y == 4 else SOUL[2] if y == top else SOUL[0]
+
+    # The shell: 4x5x4 at uv (0, 0).
+    paint_box(im, 0, 0, 4, 5, 4, fire)
+    parts = [{"bone": bone, "uv": [0, 0], "from": [-2, 7, -2], "size": [4, 5, 4], "glow": True}
+             for bone in ("right_leg", "left_leg")]
+    save_model("soulstride_flames", im, parts)
+
+
+def soul_link():
+    # The flame is the gene model soul_link_flame.
+    return []
+
+
+def soul_link_model():
+    # A blue soul flame in the rib cage: two crossed planes of flame inside
+    # the body, that rise from the lower ribs, white-blue in the core and
+    # blue at the edges and the tip. It glows, and it shows through the
+    # gaps between the ribs. On the body bone, the body is from z -2 to 2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def plane(face, x, y):
+        if face not in ("front", "back"):
+            return None
+        shape = {0: (1, 2), 1: (1, 2), 2: (0, 3), 3: (0, 3), 4: (0, 3)}
+        lo, hi = shape[y]
+        if not lo <= x <= hi:
+            return None
+        return SOUL[1] if 1 <= x <= 2 and y >= 2 else SOUL[0] if y >= 1 else SOUL[2]
+
+    # A plane: 4x5x0 at uv (0, 0).
+    paint_box(im, 0, 0, 4, 5, 0, plane)
+    parts = [{"bone": "body", "uv": [0, 0], "from": [-2, 3, 0], "size": [4, 5, 0], "glow": True,
+              "pivot": [0, 5, 0], "rotation": [0, angle, 0]} for angle in (45, 135)]
+    save_model("soul_link_flame", im, parts)
+
+
+def vengeful_spirit():
+    # A blue wisp over the skull: a curl of pale soul blue that winds over
+    # the top of the head, with a bright head and a fading tail, and two
+    # strands that come down the sides of the head to row 9.
+    wisp = Mark(SOUL[0])
+    bright = Mark(SOUL[1])
+    tail = Mark(SOUL[2], alpha=200)
+    for p in ((9, 6), (10, 5), (11, 4), (12, 4), (13, 5), (13, 6), (12, 7), (11, 6)):
+        wisp.put(p)
+    bright.put((9, 6)).put((10, 6))
+    for p in ((14, 3), (14, 2), (13, 1), (12, 1), (11, 2)):
+        tail.put(p)
+    for x in (2, 5, 18, 21, 26, 29):
+        wisp.put((x, 8))
+        tail.put((x, 9))
+    return [wisp, bright, tail]
+
+
+def soul_hunger():
+    # A long, open jaw that hungers for souls: a wide, dark mouth (x 9 to
+    # 14, y 13 to 15) with a soul blue inside, and pale teeth on its top and
+    # its bottom edges.
+    inside = Mark(SOUL[3])
+    deep = Mark("#081820")
+    teeth = Mark(ASH[0])
+    for x in range(9, 15):
+        inside.put((x, 14))
+        (teeth if x % 2 else deep).put((x, 13))
+        (teeth if x % 2 == 0 else deep).put((x, 15))
+    return [inside, deep, teeth]
+
+
+def ghost_step():
+    # Faded legs, as if the legs were half a ghost: a pale blue-gray over
+    # leg rows 3 to 11, and an erase in a dither on them, so that they are
+    # half see-through. The erase goes after the other marks (order 1).
+    fade = Mark("#7A96A4", alpha=220)
+    gone = []
+    for face in SIDES:
+        for col in (0, 1):
+            for row in range(3, 12):
+                if (col + row + face // 2) % 2 == 0 and row > 4:
+                    gone.append(leg(face, col, row))
+                else:
+                    fade.put(leg(face, col, row))
+    return [fade, erase("ghost_step", "legs", gone, order=1)]
+
+
+def soul_drain():
+    # Blue light between the fingers: on the hands (arm rows 10 and 11),
+    # every other column is a bright soul blue between the dark fingers,
+    # and a dim blue glow is on row 9.
+    light = Mark(SOUL[0])
+    dim = Mark(SOUL[2])
+    for face in SIDES:
+        for col in (0, 1):
+            if (col + face // 2) % 2 == 0:
+                light.put(arm(face, col, 10)).put(arm(face, col, 11))
+            dim.put(arm(face, col, 9), 200)
+    return [light, dim]
+
 GENES = {
     "duelist": duelist,
     "parry": parry,
@@ -671,6 +812,12 @@ GENES = {
     "brickshield": brickshield,
     "garrison": garrison,
     "smite_ward": smite_ward,
+    "soulstride": soulstride,
+    "soul_link": soul_link,
+    "vengeful_spirit": vengeful_spirit,
+    "soul_hunger": soul_hunger,
+    "ghost_step": ghost_step,
+    "soul_drain": soul_drain,
 }
 
 MODELS = {
@@ -685,10 +832,13 @@ MODELS = {
     "holdfast": "originofspawns:holdfast_feet",
     "sentinel": "originofspawns:sentinel_crest",
     "brickshield": "originofspawns:brickshield_shield",
+    "soulstride": "originofspawns:soulstride_flames",
+    "soul_link": "originofspawns:soul_link_flame",
 }
 
 MODEL_MAKERS = [duelist_model, parry_model, executioner_model, cinderblade_model, pyre_model, ember_eyes_model,
-                skull_shot_model, brickplate_model, holdfast_model, sentinel_model, brickshield_model]
+                skull_shot_model, brickplate_model, holdfast_model, sentinel_model, brickshield_model,
+                soulstride_model, soul_link_model]
 
 
 def main():

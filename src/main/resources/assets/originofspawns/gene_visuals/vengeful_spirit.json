@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/vengeful_spirit_0.png",
+				"tint": "#50D8F0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/vengeful_spirit_1.png",
+				"tint": "#C8F8FF"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/vengeful_spirit_2.png",
+				"tint": "#2A8AB0"
+			}
+		}
+	]
+}

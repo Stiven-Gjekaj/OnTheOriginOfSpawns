@@ -337,6 +337,10 @@ public final class Evolution {
 		if (mob instanceof net.minecraft.world.entity.monster.skeleton.Bogged bogged && bogged.isSheared()) {
 			facts.add(DeathCondition.SHEARS);
 		}
+		if (mob instanceof net.minecraft.world.entity.monster.Creeper creeper
+				&& (creeper.isIgnited() || creeper.getSwellDir() > 0)) {
+			facts.add(DeathCondition.FUSE);
+		}
 		if (level.isDarkOutside()) {
 			facts.add(DeathCondition.NIGHT);
 		} else {

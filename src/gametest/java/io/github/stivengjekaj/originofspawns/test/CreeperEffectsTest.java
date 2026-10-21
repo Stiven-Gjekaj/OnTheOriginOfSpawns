@@ -1,5 +1,6 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.definition.DeathCondition;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect.When;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
@@ -96,6 +97,23 @@ public class CreeperEffectsTest {
 			helper.assertFalse(rod.isPowered(), "no charge with no storm");
 			helper.succeed();
 		});
+	}
+
+	@GameTest
+	public void aDeathWhileTheFuseBurnsIsAFuseDeath(GameTestHelper helper) {
+		Creeper calm = creeperWith(helper, new BlockPos(1, 1, 1));
+		Creeper swelling = creeperWith(helper, new BlockPos(3, 1, 1));
+		Creeper lit = creeperWith(helper, new BlockPos(5, 1, 1));
+		swelling.setSwellDir(1);
+		lit.ignite();
+		var source = helper.getLevel().damageSources().generic();
+		helper.assertFalse(Evolution.facts(calm, source, helper.getLevel()).contains(DeathCondition.FUSE),
+				"no fuse burns");
+		helper.assertTrue(Evolution.facts(swelling, source, helper.getLevel()).contains(DeathCondition.FUSE),
+				"the fuse of a swelling creeper burns");
+		helper.assertTrue(Evolution.facts(lit, source, helper.getLevel()).contains(DeathCondition.FUSE),
+				"the fuse of a lit creeper burns");
+		helper.succeed();
 	}
 
 	@GameTest(environment = BLASTS, padding = 16)

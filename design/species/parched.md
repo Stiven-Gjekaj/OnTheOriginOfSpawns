@@ -181,8 +181,11 @@ The visual column gives the region and the mark.
 
 ## Body
 
-- The parched has the body of the skeleton.
-- It uses the skeleton region map.
+- The parched has the shape of the skeleton, with cloth wraps on the head, the
+  body, the arms, and the legs. Its texture is 64 x 64, and its left arm has
+  its own texture area.
+- It has its own region map, `textures/region/parched.png`, with the region
+  and material ids of the skeleton map. The wraps have the cloth material.
 
 ## Minor families
 

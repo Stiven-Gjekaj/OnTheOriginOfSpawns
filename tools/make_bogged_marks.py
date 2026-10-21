@@ -91,8 +91,9 @@ Pixel plan for the Vinebound.
   vine_swing_vines.
 
 Pixel plan for the Mosshides.
-- Lily Pad: a lily pad on the top of the skull, at the right back, the
-  gene model lily_pad_pad.
+- Lily Pad: a large lily pad with a small white flower on the top of the
+  skull, at the right back, tilted toward the front, the gene model
+  lily_pad_pad.
 - Ambush Shot has a clump of moss over the left eye of the outer face (x
   12 to 15, y 10 to 13). The right eye stays open.
 - Silent Rot has moss wrapped round the feet: leg rows 9 to 11 and the

@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import Icon from "../components/Icon.astro";
 import Status from "../components/Status.astro";
+import MobShot from "../components/MobShot.astro";
 import site from "../data/site.json";
 import { url, familiesOf } from "../lib/site.js";
 import { brandIcon } from "../lib/icons.js";
@@ -19,7 +20,15 @@ const stats = [
   [site.hybrids.length, "Hybrids", "horde"],
   [site.pressures.length, "Pressures", "tank"],
 ];
-const speciesIcon = { zombie: "temperate", husk: "hot", drowned: "wet", skeleton: "skeleton", stray: "stray", bogged: "bogged" };
+// The hero shows the family pictures of each species in turn.
+const heroShots = site.families.filter((f) => f.shot).map((f) => ({
+  src: url(f.shot.front),
+  name: f.name,
+  species: site.species.find((s) => s.id === f.species)?.name,
+  genes: site.genes.filter((g) => g.family === f.id).map((g) => g.name),
+  color: `var(--${f.id})`,
+}));
+const first = heroShots[0];
 
 const loop = [
   ["You kill a zombie", `The mod records the cause of the death. Fire, arrows, melee, and falls are some of the ${site.pressures.length} pressures.`],
@@ -32,7 +41,7 @@ const explore = [
   ["evolution/", "Evolution", "Gene pools, pressures, selection, and a pool simulator.", "temperate"],
   ["families/", "Families", "The major families, minor families, and hybrids of each species.", "stalker"],
   ["genes/", "Genes", `All ${site.genes.length} genes, with their gains, downsides, and marks.`, "blight"],
-  ["lab/", "Gene Lab", "Put genes on a mob and see the marks of the game.", "predator"],
+  ["roadmap/", "Roadmap", "The milestones to version 1.0.0, and the state of each one.", "predator"],
   ["notebook/", "Beagle Notebook", "The notebook, the mob info panel, and the perks.", "tank"],
   ["data-packs/", "Data packs", "Add your own genes, families, and pressures.", "horde"],
 ];
@@ -59,8 +68,14 @@ const explore = [
       </div>
       <div class="stage">
         <div class="glow" aria-hidden="true"></div>
-        <canvas id="hero-zombie" role="img" aria-label="A zombie that turns slowly. Its genes change every few seconds."></canvas>
-        <div class="mob-info" id="hero-label" aria-live="polite"></div>
+        <div class="hero-shots" id="hero-shots">
+          {first && <img class="show" src={first.src} alt={`A ${first.species.toLowerCase()} of the ${first.name}`} height="380" />}
+          <img alt="" height="380" />
+        </div>
+        <div class="mob-info" id="hero-label" aria-live="polite">
+          {first && <><div class="n" style={`color:${first.color}`}>{first.name}</div><div class="k">{first.species}</div><div class="g">{first.genes.join(", ")}</div></>}
+        </div>
+        <script type="application/json" id="hero-data" set:html={JSON.stringify(heroShots)}></script>
       </div>
     </div>
   </section>
@@ -102,19 +117,17 @@ const explore = [
         <div class="grid grid-3">
           {site.species.map((sp) => (
             <div class="card species">
+              <MobShot shot={sp.shot} alt={`A plain ${sp.name.toLowerCase()}`} height={150} />
               <div class="species-head">
-                <span class="mc-slot"><Icon name={speciesIcon[sp.id] || "neutral"} /></span>
-                <div>
-                  <h3>{sp.name}</h3>
-                  <Status status={sp.status} text={sp.status === "released" ? undefined : `${sp.milestone}, in development`} />
-                </div>
+                <h3>{sp.name}</h3>
+                <Status status={sp.status} text={sp.status === "released" ? undefined : `${sp.milestone}, in development`} />
               </div>
               <p class="muted small">{sp.intro || "The common zombie of the overworld. It is the first species of the mod."}</p>
               {sp.jockeys.filter((x) => /^Only/.test(x)).map((x) => <p class="small muted">{x}</p>)}
               <div class="row fams">{familiesOf(sp.id).map((f) => <span class="badge fam" style={`--fam:var(--${f.id})`}>{f.name}</span>)}</div>
               {(() => {
                 const total = site.genes.filter((g) => g.species === sp.id).length;
-                return sp.art < total && <p class="small muted">{sp.art} of {total} genes have their art. The other art comes later.</p>;
+                return sp.art < total && <p class="small muted">{sp.art} of {total} genes have a picture. The other pictures come later.</p>;
               })()}
               <div class="row actions">
                 <a class="btn sm" href={url(`genes/${sp.id === site.species[0].id ? "" : `?species=${sp.id}`}`)}>Genes</a>
@@ -217,7 +230,9 @@ const explore = [
   .meta .badge { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.14); color: #c7d6d1; }
   .meta .badge.ok { color: #8bd346; }
   .stage { position: relative; display: grid; justify-items: center; gap: var(--s-2); }
-  .stage canvas { width: min(100%, 320px); aspect-ratio: 300 / 380; image-rendering: pixelated; }
+  .hero-shots { display: grid; place-items: end center; height: 380px; width: 100%; }
+  .hero-shots img { grid-area: 1 / 1; height: 380px; width: auto; max-width: 100%; object-fit: contain; opacity: 0; transition: opacity 600ms ease; filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.45)); }
+  .hero-shots img.show { opacity: 1; }
   .glow {
     position: absolute; bottom: 82px; width: 60%; height: 26px; border-radius: 50%;
     background: radial-gradient(closest-side, rgba(139, 211, 70, 0.45), transparent);
@@ -227,7 +242,7 @@ const explore = [
   .stage .mob-info { min-height: 76px; }
   @media (max-width: 860px) {
     .hero-grid { grid-template-columns: 1fr; min-height: 0; gap: var(--s-4); }
-    .stage canvas { width: min(58vw, 240px); }
+    .hero-shots, .hero-shots img { height: 260px; }
     .glow { bottom: 78px; }
   }
 
@@ -266,8 +281,8 @@ const explore = [
   .features li::before { content: ""; flex: none; width: 8px; height: 8px; margin-top: 8px; background: var(--accent); }
   .xp-row { display: grid; grid-template-columns: 1fr auto; gap: var(--s-3); align-items: center; margin: var(--s-4) 0 var(--s-2); }
   .species { display: grid; gap: var(--s-3); align-content: start; }
-  .species-head { display: flex; gap: var(--s-3); align-items: center; }
-  .species-head h3 { font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 600; margin-bottom: 4px; }
+  .species-head { display: flex; gap: var(--s-3); align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .species-head h3 { font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 600; }
   .fams { gap: 6px; }
   .species .actions { margin-top: auto; }
   .notebook-card { display: flex; gap: var(--s-4); align-items: flex-start; }

@@ -47,9 +47,22 @@ public class BabyGenesClientTest implements FabricClientGameTest {
 				// A drowned has split limbs, so the marks on its left arm and left leg need their own copy.
 				spawnDrowned(player, front.add(0.9, 0.0, 2.6), false, List.of(gene("cinder"), gene("ironhide")));
 				spawnDrowned(player, front.add(-0.9, 0.0, 2.2), true, List.of(gene("cinder"), gene("ironhide")));
+				var husk = EntityTypes.HUSK.create(player.level(), EntitySpawnReason.COMMAND);
+				husk.setNoAi(true);
+				husk.setPersistenceRequired();
+				husk.setPos(front.add(2.6, 0.0, 2.2));
+				husk.setAttached(ModAttachments.GENES, new CarriedGenes(List.of(gene("kilnskin"), gene("wrapped"))));
+				player.level().addFreshEntity(husk);
 			});
 			context.waitTicks(40);
 			context.takeScreenshot("baby_genes");
+			// The husk and the drowned choose their own body textures, so each needs its own marks.
+			for (String texture : List.of("husk", "drowned")) {
+				Identifier body = Identifier.withDefaultNamespace("textures/entity/zombie/" + texture + ".png");
+				if (!context.computeOnClient(client -> GeneTextures.wasBakedFrom(body))) {
+					throw new AssertionError("No gene marks on " + body);
+				}
+			}
 			// The outer layer of the drowned covers its body, so the marks must be on the outer layer too.
 			for (String texture : List.of("drowned_outer_layer", "drowned_outer_layer_baby")) {
 				Identifier outer = Identifier.withDefaultNamespace("textures/entity/zombie/" + texture + ".png");

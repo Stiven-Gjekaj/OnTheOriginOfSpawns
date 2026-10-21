@@ -10,7 +10,8 @@
 		"EntityRenderDispatcherMixin",
 		"LivingEntityRendererMixin",
 		"SkeletonClothingLayerMixin",
-		"SkeletonTextureMixin"
+		"SkeletonTextureMixin",
+		"ZombieVariantTextureMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

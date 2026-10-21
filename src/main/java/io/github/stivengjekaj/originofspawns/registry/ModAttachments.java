@@ -118,6 +118,12 @@ public final class ModAttachments {
 	 */
 	public static final AttachmentType<Long> DISARM_TIME = AttachmentRegistry.create(OriginOfSpawns.id("disarm_time"));
 
+	/**
+	 * The game time of the last use of each effect on hurt of a mob. Each effect has its own cooldown.
+	 */
+	public static final AttachmentType<java.util.Map<io.github.stivengjekaj.originofspawns.definition.GeneEffect.EffectOnHurt, Long>>
+			HURT_EFFECT_TIMES = AttachmentRegistry.create(OriginOfSpawns.id("hurt_effect_times"));
+
 	private ModAttachments() {
 	}
 

@@ -609,9 +609,11 @@ public final class GeneCombat {
 	}
 
 	private static void effectOnHurt(Mob mob, ServerLevel level, GeneEffect.EffectOnHurt onHurt, LivingEntity attacker) {
-		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+		java.util.Map<GeneEffect.EffectOnHurt, Long> times = mob.getAttachedOrElse(ModAttachments.HURT_EFFECT_TIMES,
+				java.util.Map.of());
 		long now = level.getGameTime();
-		if (state.hurtEffectTime() >= 0L && now - state.hurtEffectTime() < Math.round(onHurt.cooldownSeconds() * 20.0F)) {
+		Long last = times.get(onHurt);
+		if (last != null && now - last < Math.round(onHurt.cooldownSeconds() * 20.0F)) {
 			return;
 		}
 		MobEffectInstance instance = new MobEffectInstance(onHurt.effect(), Math.round(onHurt.seconds() * 20.0F),
@@ -632,7 +634,9 @@ public final class GeneCombat {
 		if (onHurt.ink()) {
 			level.sendParticles(ParticleTypes.SQUID_INK, mob.getX(), mob.getY(0.6), mob.getZ(), 30, 0.5, 0.5, 0.5, 0.05);
 		}
-		mob.setAttached(ModAttachments.STATE, state.withHurtEffectTime(now));
+		java.util.Map<GeneEffect.EffectOnHurt, Long> updated = new java.util.HashMap<>(times);
+		updated.put(onHurt, now);
+		mob.setAttached(ModAttachments.HURT_EFFECT_TIMES, updated);
 	}
 
 	private static void graveCall(Mob mob, ServerLevel level, GeneEffect.GraveCall call) {

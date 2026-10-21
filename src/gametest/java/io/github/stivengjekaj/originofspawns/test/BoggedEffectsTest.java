@@ -135,6 +135,23 @@ public class BoggedEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void eachHurtEffectHasItsOwnCooldown(GameTestHelper helper) {
+		Bogged bogged = boggedWith(helper, new BlockPos(1, 1, 1), "test_rotting_touch", "test_hurt_blind",
+				"test_hurt_nausea");
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(3, 1, 1));
+		GeneCombat.onHurt(bogged, helper.getLevel().damageSources().mobAttack(pig));
+		helper.assertTrue(pig.hasEffect(net.minecraft.world.effect.MobEffects.POISON), "the first hit gives Poison");
+		helper.assertTrue(pig.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "the first hit gives Blindness");
+		helper.assertTrue(pig.hasEffect(net.minecraft.world.effect.MobEffects.NAUSEA), "the first hit gives Nausea");
+		pig.removeAllEffects();
+		GeneCombat.onHurt(bogged, helper.getLevel().damageSources().mobAttack(pig));
+		helper.assertTrue(pig.hasEffect(net.minecraft.world.effect.MobEffects.POISON), "Poison has no cooldown");
+		helper.assertFalse(pig.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "Blindness waits");
+		helper.assertFalse(pig.hasEffect(net.minecraft.world.effect.MobEffects.NAUSEA), "Nausea waits");
+		helper.succeed();
+	}
+
 	private static void biome(GameTestHelper helper, String biome) {
 		BlockPos from = helper.absolutePos(new BlockPos(0, 0, 0));
 		BlockPos to = helper.absolutePos(new BlockPos(5, 4, 5));

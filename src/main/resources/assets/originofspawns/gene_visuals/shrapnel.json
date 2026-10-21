@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/creeper.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shrapnel_0.png",
+				"tint": "#B8B8B8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shrapnel_1.png",
+				"tint": "#3A3A3A"
+			}
+		}
+	]
+}

@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/creeper.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/concussion_0.png",
+				"tint": "#F0E8A0"
+			}
+		}
+	]
+}

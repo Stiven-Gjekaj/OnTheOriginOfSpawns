@@ -1,0 +1,25 @@
+{
+	"texture": "originofspawns:textures/entity/big_bang_belly.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				3,
+				-3.5
+			],
+			"size": [
+				6,
+				6,
+				2
+			],
+			"inflate": 0.25
+		}
+	]
+}

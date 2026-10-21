@@ -46,6 +46,8 @@ DROWNED_BABY_PATH = "assets/minecraft/textures/entity/zombie/drowned_baby.png"
 DROWNED_OUTER_PATH = "assets/minecraft/textures/entity/zombie/drowned_outer_layer.png"
 DROWNED_OUTER_BABY_PATH = "assets/minecraft/textures/entity/zombie/drowned_outer_layer_baby.png"
 SKELETON_PATH = "assets/minecraft/textures/entity/skeleton/skeleton.png"
+STRAY_PATH = "assets/minecraft/textures/entity/skeleton/stray.png"
+STRAY_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/stray_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
 REGIONS = {"face": 1, "scalp": 2, "torso": 3, "arms": 4, "hands": 5, "legs": 6, "ribs": 9, "spine": 10,
@@ -172,6 +174,22 @@ SKELETON_EXTRA = {
                 ("All 6 + Marksmen", ["longdraw", "quickdraw", "high_ground"], True, {})],
     "hexers": [("All 6 at night", [], True, {"light": 0.18}),
                ("All 6 + others", ["calcified", "eagle_eye", "lightfoot"], True, {})],
+}
+# The families of the stray, from design/species/stray.md.
+STRAY_FAMILIES = {
+    "glaciers": ["iceplate", "permafrost", "shatterhide", "rimeshell", "glacial_wall", "icebound"],
+    "blizzards": ["squall", "snowdrift", "hailshot", "gale", "frostwind", "stormborn"],
+    "drifters": ["snowshoe", "iceskate", "pathfinder", "avalanche", "snowburrow", "driftline"],
+    "frostbiters": ["frostbite", "icicle", "numbing_shot", "coldsnap", "rimefall", "brittle_shot"],
+    "wailers": ["pale", "wail", "frozen_gaze", "hollow_cry", "mourner", "ghostshot"],
+}
+
+STRAY_EXTRA = {
+    "glaciers": [],
+    "blizzards": [],
+    "drifters": [],
+    "frostbiters": [],
+    "wailers": [],
 }
 NIGHT = (18, 22, 38, 255)
 
@@ -402,9 +420,10 @@ def split_image(identifier):
 
 
 # The look of the current species: True for split limbs, the outer layer
-# textures (adult, baby) of the drowned or None, and the cubes and the pivots
-# of the adult model. set_mob() sets it.
-MOB = {"split": False, "outer": None, "cubes": ZOMBIE_CUBES, "pivots": PIVOTS}
+# textures (adult, baby) of the drowned or the stray or None, the cubes and
+# the pivots of the adult model, and True when only the layers with the
+# target "outer" go on the outer layer (the stray). set_mob() sets it.
+MOB = {"split": False, "outer": None, "cubes": ZOMBIE_CUBES, "pivots": PIVOTS, "outer_target": False}
 
 BABY_IMAGES = {}
 
@@ -479,7 +498,15 @@ def bake_layer(out, gene, layer, baby=False):
     """Apply one visual layer of a gene to the texture, in place, like TextureBaker.bake.
 
     For a baby, the region map and the whole-texture marks move to the baby layout.
+    A layer with the target "outer" goes on the stray cloth, which has the
+    zombie layout. It does not use the region map.
     """
+    if layer.get("target") == "outer":
+        seed = identifier_hash("originofspawns:" + gene)
+        for y in range(out.height):
+            for x in range(out.width):
+                out.putpixel((x, y), apply(layer["effect"], out.getpixel((x, y)), x, y, seed, baby))
+        return
     vis = visual(gene)
     region_map = vis.get("region_map", DEFAULT_REGION_MAP)
     regions = (baby_image(region_map) if baby else split_image(region_map) if MOB["split"]
@@ -536,15 +563,18 @@ def cubes_of(tex, genes, baby=False):
 
     The drowned has split limbs, and an outer layer: the same cubes, 0.25
     pixel larger, with the outer layer texture. The genes put their marks on
-    the outer layer too, as DrownedOuterLayerMixin does.
+    the outer layer too, as DrownedOuterLayerMixin does. The stray has an
+    outer layer of cloth on the cubes of the zombie (4x12x4 limbs), and only
+    the layers with the target "outer" go on it.
     """
     body = BABY_CUBES if baby else MOB["cubes"]
     cubes = [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": m,
               "texture": tex, "scale": 1.0} for b, uv, f, s, m in body]
     if MOB["outer"]:
-        outer = zombie(MOB["outer"][1 if baby else 0], genes, baby)
+        outer = zombie(MOB["outer"][1 if baby else 0], genes, baby, outer=True)
+        outer_body = ZOMBIE_CUBES if MOB["outer_target"] else body
         cubes += [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.25, "mirror": m,
-                   "texture": outer, "scale": 1.0} for b, uv, f, s, m in body]
+                   "texture": outer, "scale": 1.0} for b, uv, f, s, m in outer_body]
     for gene in genes:
         cubes += gene_cubes(gene, tex, baby)
     return cubes
@@ -582,18 +612,27 @@ def label(gene):
     return gene.replace("_", " ").title()
 
 
-def zombie(tex, genes, baby=False):
+def zombie(tex, genes, baby=False, outer=False):
     """Return the baked texture of a zombie with the genes, like TextureBaker.bakeAll.
 
     The layers of all the genes go on in the order of their "order" field. The
     sort is stable: layers with the same order keep the order of the genes, by
     id, and the order in their recipe.
+
+    A layer with the target "outer" goes only on the outer layer of the
+    stray. With outer, the bake is for the outer layer: on the stray, only
+    the layers with the target "outer" go on it, and on the drowned, all the
+    layers go on it.
     """
     steps = []
     for gene in sorted(genes):
         vis = visual(gene)
         if vis is not None:
-            steps += [(layer.get("order", 0), gene, layer) for layer in vis.get("layers", [])]
+            for layer in vis.get("layers", []):
+                on_outer = layer.get("target") == "outer"
+                if on_outer != (outer and MOB["outer_target"]):
+                    continue
+                steps.append((layer.get("order", 0), gene, layer))
     steps.sort(key=lambda step: step[0])
     out = tex.copy()
     for _, gene, layer in steps:
@@ -643,17 +682,20 @@ SPECIES = {
     "husk": (HUSK_PATH, HUSK_BABY_PATH, HUSK_FAMILIES, HUSK_EXTRA, []),
     "drowned": (DROWNED_PATH, DROWNED_BABY_PATH, DROWNED_FAMILIES, DROWNED_EXTRA, []),
     "skeleton": (SKELETON_PATH, None, SKELETON_FAMILIES, SKELETON_EXTRA, []),
+    "stray": (STRAY_PATH, None, STRAY_FAMILIES, STRAY_EXTRA, []),
 }
 
 
 def set_mob(species):
     """Set the look of the species for the bake and the cubes."""
+    skeleton = species in ("skeleton", "stray")
     MOB["split"] = species == "drowned"
-    MOB["cubes"] = (DROWNED_CUBES if species == "drowned" else SKELETON_CUBES if species == "skeleton"
-                    else ZOMBIE_CUBES)
-    MOB["pivots"] = SKELETON_PIVOTS if species == "skeleton" else PIVOTS
+    MOB["cubes"] = DROWNED_CUBES if species == "drowned" else SKELETON_CUBES if skeleton else ZOMBIE_CUBES
+    MOB["pivots"] = SKELETON_PIVOTS if skeleton else PIVOTS
     MOB["outer"] = ((find_zombie_texture(DROWNED_OUTER_PATH), find_zombie_texture(DROWNED_OUTER_BABY_PATH))
-                    if species == "drowned" else None)
+                    if species == "drowned" else (find_zombie_texture(STRAY_OUTER_PATH), None)
+                    if species == "stray" else None)
+    MOB["outer_target"] = species == "stray"
 
 
 def main(species="zombie"):

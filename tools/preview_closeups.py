@@ -181,12 +181,17 @@ SKELETON_CLOSEUPS = {
                            [FRONT, SIDE, BACK, THREE_QUARTER]),
 }
 
+# The close-ups of the stray. The stray has no babies.
+STRAY = pg.STRAY_FAMILIES
+STRAY_CLOSEUPS = {}
+
 # Each species: its texture, its baby texture, and its close-ups.
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
     "husk": (pg.HUSK_PATH, pg.HUSK_BABY_PATH, HUSK_CLOSEUPS),
     "drowned": (pg.DROWNED_PATH, pg.DROWNED_BABY_PATH, DROWNED_CLOSEUPS),
     "skeleton": (pg.SKELETON_PATH, None, SKELETON_CLOSEUPS),
+    "stray": (pg.STRAY_PATH, None, STRAY_CLOSEUPS),
 }
 
 

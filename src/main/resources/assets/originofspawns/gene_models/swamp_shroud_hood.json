@@ -1,0 +1,24 @@
+{
+	"texture": "originofspawns:textures/entity/swamp_shroud_hood.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4.5,
+				-8.2,
+				-4.5
+			],
+			"size": [
+				9,
+				12,
+				9
+			]
+		}
+	]
+}

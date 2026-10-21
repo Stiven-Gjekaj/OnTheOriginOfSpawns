@@ -1,0 +1,21 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ambush_shot_0.png",
+				"tint": "#3E5420"
+			},
+			"target": "outer"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ambush_shot_1.png",
+				"tint": "#8EA848"
+			},
+			"target": "outer"
+		}
+	]
+}

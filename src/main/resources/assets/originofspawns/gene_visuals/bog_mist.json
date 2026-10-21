@@ -1,0 +1,21 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/bog_mist_0.png",
+				"tint": "#C8CCC8"
+			},
+			"target": "outer"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/bog_mist_1.png",
+				"tint": "#E8ECE8"
+			},
+			"target": "outer"
+		}
+	]
+}

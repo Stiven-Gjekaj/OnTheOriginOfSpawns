@@ -89,6 +89,19 @@ Pixel plan for the Vinebound.
   mossbed_moss.
 - Vine Swing: vines that trail from the hands, the gene model
   vine_swing_vines.
+
+Pixel plan for the Mosshides.
+- Lily Pad: a lily pad on the top of the skull, at the right back, the
+  gene model lily_pad_pad.
+- Ambush Shot has a clump of moss over the left eye of the outer face (x
+  12 to 15, y 10 to 13). The right eye stays open.
+- Silent Rot has moss wrapped round the feet: leg rows 9 to 11 and the
+  bottom of the leg, over the Wader mud (order 1).
+- Swamp Shroud: a hood of hanging moss, the gene model swamp_shroud_hood.
+- Bog Mist has a gray haze of mist over all of the outer layer, with
+  paler wisps in it.
+- Barkskin has plates of wet bark on the forearms (arm rows 6 to 8) and on
+  the thighs (leg rows 1 to 3).
 This script needs Pillow.
 """
 import json
@@ -666,6 +679,140 @@ def vine_swing_model():
         parts.append({"bone": bone, "uv": [8, 0], "from": [0, 9.5, 0.2], "size": [0, 4, 2]})
     save_model("vine_swing_vines", im, parts)
 
+
+LILY = ("#4E8A2E", "#6EAA40", "#36621E")
+
+
+def lily_pad():
+    # The pad is the gene model lily_pad_pad.
+    return []
+
+
+def lily_pad_model():
+    # A lily pad on the top of the skull, at the right back, where the
+    # mushrooms of the bogged leave room: a flat, round green leaf with
+    # pale veins, a dark rim, and the notch of a lily pad, that lies on the
+    # outer layer of the top of the head (y -8.2) and hangs out a little
+    # over the right side and the back, so that it shows from the side.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def pad(face, x, y):
+        if face not in ("top", "bottom"):
+            return None
+        corner = (x in (0, 4)) and (y in (0, 4))
+        notch = x == 2 and y < 2
+        if corner or notch:
+            return None
+        if x in (0, 4) or y in (0, 4):
+            return LILY[2]
+        return LILY[1] if x == y or x + y == 4 else LILY[0]
+
+    # The pad: 5x0x5 at uv (0, 0).
+    paint_box(im, 0, 0, 5, 0, 5, pad)
+    parts = [{"bone": "head", "uv": [0, 0], "from": [-5.4, -8.3, 0.4], "size": [5, 0, 5]}]
+    save_model("lily_pad_pad", im, parts)
+
+
+def ambush_shot():
+    # A clump of moss over the left eye of the outer face (x 12 to 15, y 10
+    # to 13), thick and dark, with bright tufts, so that the face has one
+    # open eye.
+    moss = Mark(MOSS[2], target="outer")
+    tuft = Mark(MOSS[3], target="outer")
+    for x in range(12, 16):
+        for y in range(10, 14):
+            if (x, y) in ((12, 10), (15, 13)):
+                continue
+            (tuft if (x + y) % 3 == 0 else moss).put((x, y))
+    return [moss, tuft]
+
+
+def silent_rot():
+    # Moss wrapped round the feet, so that they make no sound: soft moss on
+    # leg rows 9 to 11 of all the faces and on the bottom of the leg, with
+    # bright tufts. It goes over the Wader mud (order 1).
+    moss = Mark(MOSS[0], order=1)
+    tuft = Mark(MOSS[3], order=1)
+    dark = Mark(MOSS[2], order=1)
+    for face in SIDES:
+        for col in (0, 1):
+            dark.put(leg(face, col, 9)) if (col + face // 2) % 2 else tuft.put(leg(face, col, 9))
+            moss.put(leg(face, col, 10))
+            (tuft if col == face // 2 % 2 else moss).put(leg(face, col, 11))
+    for x in (4, 5):
+        for y in (16, 17):
+            dark.put((x, y))
+    return [moss, tuft, dark]
+
+
+def swamp_shroud():
+    # The hood is the gene model swamp_shroud_hood.
+    return []
+
+
+def swamp_shroud_model():
+    # A hood of hanging moss: long strands of moss that hang from the edge
+    # of the top of the head, down the sides to the jaw and down the back to
+    # the shoulders, each strand a different length. A short fringe hangs
+    # over the brow. The top stays open, so the mushrooms of the bogged grow
+    # out through it, and the back strands leave a gap round the brown
+    # mushroom on the back of the head. On the head bone, the outer layer
+    # is 0.2 pixel out of the head (x -4 to 4, y -8 to 0, z -4 to 4).
+    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+
+    def hood(face, x, y):
+        if face in ("top", "bottom"):
+            return None
+        if face == "front":
+            if y > 1 or y == 1 and x % 2:
+                return None
+            return MOSS[1]
+        end = (7 if face != "back" else 11) - (x * 5 + 2) % 4
+        if face == "back" and 4 <= x <= 8 and 5 <= y <= 8:
+            return None
+        if y > end:
+            return None
+        return MOSS[3] if y == end else MOSS[2] if x % 3 == 0 else MOSS[0] if y % 2 else MOSS[1]
+
+    # The hood: 9x12x9 at uv (0, 0).
+    paint_box(im, 0, 0, 9, 12, 9, hood)
+    parts = [{"bone": "head", "uv": [0, 0], "from": [-4.5, -8.2, -4.5], "size": [9, 12, 9]}]
+    save_model("swamp_shroud_hood", im, parts)
+
+
+def bog_mist():
+    # A gray haze of mist on all of the outer layer: a pale gray film over
+    # the moss and the vines, with paler wisps that drift across it.
+    haze = Mark("#C8CCC8", alpha=120, target="outer")
+    wisp = Mark("#E8ECE8", alpha=170, target="outer")
+    for x in range(64):
+        for y in range(32):
+            ((wisp if (x + 2 * y) % 9 < 2 else haze)).put((x, y))
+    return [haze, wisp]
+
+
+BARK = ("#5A4430", "#3E2E20", "#7A6044", "#8A7458")
+
+
+def barkskin():
+    # Plates of wet bark on the forearms (arm rows 6 to 8) and on the
+    # thighs (leg rows 1 to 3): brown plates with dark grooves between
+    # them, and a wet shine on the top edge of each plate.
+    bark = Mark(BARK[0])
+    groove = Mark(BARK[1])
+    shine = Mark(BARK[3])
+    for at, rows in ((arm, (6, 7, 8)), (leg, (1, 2, 3))):
+        for face in SIDES:
+            for col in (0, 1):
+                for row in rows:
+                    if col == (face // 2 + row) % 2 and row != rows[0]:
+                        groove.put(at(face, col, row))
+                    elif row == rows[0]:
+                        shine.put(at(face, col, row))
+                    else:
+                        bark.put(at(face, col, row))
+    return [bark, groove, shine]
+
 GENES = {
     "puffball": puffball,
     "shelfback": shelfback,
@@ -691,6 +838,12 @@ GENES = {
     "snare": snare,
     "mossbed": mossbed,
     "vine_swing": vine_swing,
+    "lily_pad": lily_pad,
+    "ambush_shot": ambush_shot,
+    "silent_rot": silent_rot,
+    "swamp_shroud": swamp_shroud,
+    "bog_mist": bog_mist,
+    "barkskin": barkskin,
 }
 
 MODELS = {
@@ -705,11 +858,13 @@ MODELS = {
     "snare": "originofspawns:snare_roots",
     "mossbed": "originofspawns:mossbed_moss",
     "vine_swing": "originofspawns:vine_swing_vines",
+    "lily_pad": "originofspawns:lily_pad_pad",
+    "swamp_shroud": "originofspawns:swamp_shroud_hood",
 }
 
 MODEL_MAKERS = [puffball_model, shelfback_model, mushroom_shot_model, leechbone_model, venom_gland_model,
                 antivenom_model, rootshot_model, creeper_vines_model, snare_model, mossbed_model,
-                vine_swing_model]
+                vine_swing_model, lily_pad_model, swamp_shroud_model]
 
 
 def main():

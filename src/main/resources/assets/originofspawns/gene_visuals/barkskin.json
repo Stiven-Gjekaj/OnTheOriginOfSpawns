@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/barkskin_0.png",
+				"tint": "#5A4430"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/barkskin_1.png",
+				"tint": "#3E2E20"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/barkskin_2.png",
+				"tint": "#8A7458"
+			}
+		}
+	]
+}

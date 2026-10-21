@@ -540,6 +540,7 @@ def spore_blast_model():
     parts.append({"bone": "head", "uv": [0, 0], "from": [4.5, -6, 0], "size": [2, 1, 2]})
     save_model("spore_blast_mushrooms", im, parts)
 
+
 GENES = {
     "big_bang": big_bang,
     "shrapnel": shrapnel,

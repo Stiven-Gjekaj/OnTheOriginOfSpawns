@@ -78,6 +78,7 @@ jobs:
           add assets/gallery/husks.png "Alpha Husks." "Scorchers, Dunecrawlers, Mummies, Caravans, and Parchers, each with three genes" false
           add assets/gallery/drowned.png "Alpha Drowned." "Riptides, Harpooners, Abyssals, Barnacled, and Sirens, each with three genes" false
           add assets/gallery/all_families.png "All 15 Alpha Families." "The 15 families of the zombie, the husk, and the drowned, from above" false
+          add assets/gallery/skeleton_families.png "All 25 Alpha Skeleton Families." "The 25 families of the skeleton, the stray, the bogged, the parched, and the wither skeleton, from above" false
           add assets/gallery/skeletons.png "Alpha Skeletons." "Marksmen, Rattlers, Ossified, Legions, and Hexers, each with three genes" false
           add assets/gallery/strays.png "Alpha Strays." "Glaciers, Blizzards, Drifters, Frostbiters, and Wailers, each with three genes" false
           add assets/gallery/bogged.png "Alpha Bogged." "Sporecaps, Mirefolk, Venomers, Vinebound, and Mosshides, each with three genes" false

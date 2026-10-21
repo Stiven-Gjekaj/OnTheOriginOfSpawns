@@ -11,6 +11,8 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 
+import net.minecraft.network.codec.ByteBufCodecs;
+
 /**
  * The data that the mod attaches to entities.
  */
@@ -82,6 +84,12 @@ public final class ModAttachments {
 	 * The game time of the last fan shot of a mob.
 	 */
 	public static final AttachmentType<Long> FAN_SHOT_TIME = AttachmentRegistry.create(OriginOfSpawns.id("fan_shot_time"));
+
+	/**
+	 * On an arrow: the distance past which players do not see the arrow while it flies. The clients get it.
+	 */
+	public static final AttachmentType<Float> GHOST_ARROW = AttachmentRegistry.create(OriginOfSpawns.id("ghost_arrow"),
+			builder -> builder.syncWith(ByteBufCodecs.FLOAT, AttachmentSyncPredicate.all()));
 
 	private ModAttachments() {
 	}

@@ -124,7 +124,9 @@ public sealed interface GeneEffect {
 			Map.entry("armor_break", ArmorBreak.CODEC),
 			Map.entry("gaze_effect", GazeEffect.CODEC),
 			Map.entry("call_on_death", CallOnDeath.CODEC),
-			Map.entry("heal_on_ally_death", HealOnAllyDeath.CODEC)
+			Map.entry("heal_on_ally_death", HealOnAllyDeath.CODEC),
+			Map.entry("hidden_from_afar", HiddenFromAfar.CODEC),
+			Map.entry("ghost_arrows", GhostArrows.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -1812,6 +1814,35 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "heal_on_ally_death";
+		}
+	}
+
+	/**
+	 * Players farther than the blocks do not see the mob while the state is true. It is not the invisibility effect.
+	 */
+	record HiddenFromAfar(float blocks, When when) implements GeneEffect {
+		public static final MapCodec<HiddenFromAfar> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 128.0F).fieldOf("blocks").forGetter(HiddenFromAfar::blocks),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(HiddenFromAfar::when)
+		).apply(instance, HiddenFromAfar::new));
+
+		@Override
+		public String type() {
+			return "hidden_from_afar";
+		}
+	}
+
+	/**
+	 * Players farther than the blocks do not see the arrows of the mob while they fly.
+	 */
+	record GhostArrows(float blocks) implements GeneEffect {
+		public static final MapCodec<GhostArrows> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 128.0F).fieldOf("blocks").forGetter(GhostArrows::blocks)
+		).apply(instance, GhostArrows::new));
+
+		@Override
+		public String type() {
+			return "ghost_arrows";
 		}
 	}
 }

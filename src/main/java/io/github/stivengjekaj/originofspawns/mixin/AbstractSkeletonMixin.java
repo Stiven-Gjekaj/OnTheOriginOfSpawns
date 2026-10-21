@@ -4,6 +4,7 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -70,6 +71,11 @@ public abstract class AbstractSkeletonMixin {
 	@Inject(method = "getArrow", at = @At("RETURN"))
 	private void originofspawns$arrowEffects(ItemStack arrow, float power, ItemStack bow,
 			CallbackInfoReturnable<AbstractArrow> info) {
+		GeneEffects.of((AbstractSkeleton) (Object) this).forEach(effect -> {
+			if (effect instanceof GeneEffect.GhostArrows ghost) {
+				info.getReturnValue().setAttached(ModAttachments.GHOST_ARROW, ghost.blocks());
+			}
+		});
 		if (info.getReturnValue() instanceof Arrow tipped) {
 			GeneEffects.of((AbstractSkeleton) (Object) this).forEach(effect -> {
 				if (effect instanceof GeneEffect.ArrowEffect arrowEffect) {

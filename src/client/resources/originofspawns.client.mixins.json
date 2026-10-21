@@ -6,6 +6,7 @@
 		"AbstractSkeletonRendererMixin",
 		"AbstractZombieRendererMixin",
 		"DrownedOuterLayerMixin",
+		"EntityRenderDispatcherMixin",
 		"LivingEntityRendererMixin",
 		"SkeletonClothingLayerMixin",
 		"SkeletonTextureMixin"

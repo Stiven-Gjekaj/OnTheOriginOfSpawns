@@ -9,6 +9,7 @@ import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
 import io.github.stivengjekaj.originofspawns.definition.Family;
 import io.github.stivengjekaj.originofspawns.definition.Gene;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
+import io.github.stivengjekaj.originofspawns.mixin.AbstractArrowAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 import io.github.stivengjekaj.originofspawns.registry.ModRegistries;
 
@@ -20,6 +21,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -66,6 +68,25 @@ public final class GeneEffects {
 						&& (!(entity instanceof net.minecraft.world.entity.LivingEntity living)
 								|| GeneCombat.test(living, translucent.when())))
 				.map(effect -> ((GeneEffect.Translucent) effect).opacity())
+				.min(Float::compare);
+	}
+
+	/**
+	 * Returns the distance past which players do not see the entity now, if there is one. It is for a mob with a gene
+	 * that hides it from far away, and for an arrow of a mob with ghost arrows while the arrow flies.
+	 */
+	public static Optional<Float> hiddenBeyond(Entity entity) {
+		Float ghost = entity.getAttached(ModAttachments.GHOST_ARROW);
+		if (ghost != null) {
+			return entity instanceof AbstractArrow arrow && ((AbstractArrowAccessor) arrow).originofspawns$isInGround()
+					? Optional.empty() : Optional.of(ghost);
+		}
+		if (!(entity instanceof LivingEntity living)) {
+			return Optional.empty();
+		}
+		return of(entity).filter(effect -> effect instanceof GeneEffect.HiddenFromAfar hidden
+						&& GeneCombat.test(living, hidden.when()))
+				.map(effect -> ((GeneEffect.HiddenFromAfar) effect).blocks())
 				.min(Float::compare);
 	}
 

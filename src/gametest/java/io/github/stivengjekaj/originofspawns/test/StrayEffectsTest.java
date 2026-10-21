@@ -277,6 +277,30 @@ public class StrayEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void snowdriftHidesOnlyInItsState(GameTestHelper helper) {
+		helper.setBlock(new BlockPos(1, 0, 1), Blocks.SNOW_BLOCK);
+		helper.setBlock(new BlockPos(4, 0, 1), Blocks.STONE);
+		Stray onSnow = strayWith(helper, new BlockPos(1, 1, 1), "test_snowdrift");
+		Stray onStone = strayWith(helper, new BlockPos(4, 1, 1), "test_snowdrift");
+		helper.assertValueEqual(GeneEffects.hiddenBeyond(onSnow).orElse(-1.0F), 8.0F, "hidden past 8 blocks on snow");
+		helper.assertTrue(GeneEffects.hiddenBeyond(onStone).isEmpty(), "seen from far on stone");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void ghostArrowsAreHiddenInFlight(GameTestHelper helper) {
+		Stray ghost = strayWith(helper, new BlockPos(1, 1, 1), "test_ghostshot");
+		Stray plain = strayWith(helper, new BlockPos(4, 1, 1));
+		AbstractArrow ghostArrow = ((AbstractSkeletonAccessor) ghost).originofspawns$getArrow(new ItemStack(Items.ARROW),
+				1.0F, new ItemStack(Items.BOW));
+		AbstractArrow plainArrow = ((AbstractSkeletonAccessor) plain).originofspawns$getArrow(new ItemStack(Items.ARROW),
+				1.0F, new ItemStack(Items.BOW));
+		helper.assertValueEqual(GeneEffects.hiddenBeyond(ghostArrow).orElse(-1.0F), 4.0F, "a flying ghost arrow");
+		helper.assertTrue(GeneEffects.hiddenBeyond(plainArrow).isEmpty(), "a plain arrow");
+		helper.succeed();
+	}
+
 	private static int arrows(GameTestHelper helper) {
 		return helper.getLevel().getEntitiesOfClass(AbstractArrow.class,
 				new net.minecraft.world.phys.AABB(helper.absolutePos(BlockPos.ZERO)).inflate(16.0)).size();

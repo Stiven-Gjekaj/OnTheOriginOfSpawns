@@ -65,6 +65,18 @@ Pixel plan for the Witherlords.
   the front and the back (y 22 to 24).
 - Grave Chill has frost in the eye sockets: pale blue sockets with white
   frost round them (y 11 and 13).
+
+Pixel plan for the Ramparts.
+- Brickplate: a plate of nether brick on the chest, the gene model
+  brickplate_plate.
+- Holdfast: wide feet of blackstone, the gene model holdfast_feet.
+- Sentinel: a tall crest of bone on the skull, the gene model
+  sentinel_crest.
+- Brickshield: a nether brick shield on the left arm, the gene model
+  brickshield_shield.
+- Garrison has a red sash with a gold edge across the body, from the right
+  shoulder to the left hip, on the front and on the back.
+- Smite Ward has gold runes on the brow: face rows 8 to 10, but x 12.
 This script needs Pillow.
 """
 import json
@@ -496,6 +508,144 @@ def grave_chill():
     frost.put((8, 12)).put((15, 12))
     return [ice, frost]
 
+
+BRICK = ("#6E2C34", "#56222A", "#24100F", "#8E4048")
+
+
+def brick(face, x, y):
+    """Return the color of a pixel of nether brick: rows of bricks with
+    dark mortar between them, each row offset by half a brick."""
+    if y % 2 == 1:
+        return BRICK[2]
+    if (x + (y // 2) * 2) % 4 == 3:
+        return BRICK[2]
+    return BRICK[3] if (x + y) % 5 == 0 else BRICK[0] if (x // 2 + y) % 2 else BRICK[1]
+
+
+def brickplate():
+    # The plate is the gene model brickplate_plate.
+    return []
+
+
+def brickplate_model():
+    # A plate of nether brick on the chest, as a wall of the fortress: a
+    # flat block of red nether bricks with dark mortar, on the front of the
+    # ribs. On the body bone, the front is at z -2.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+    # The plate: 6x7x1 at uv (0, 0).
+    paint_box(im, 0, 0, 6, 7, 1, lambda face, x, y: brick(face, x, y) if face == "front" else BRICK[1])
+    parts = [{"bone": "body", "uv": [0, 0], "from": [-3, 1, -3], "size": [6, 7, 1]}]
+    save_model("brickplate_plate", im, parts)
+
+
+BLACKSTONE = ("#3A3640", "#2A262E", "#5E5A66")
+
+
+def holdfast():
+    # The feet are the gene model holdfast_feet.
+    return []
+
+
+def holdfast_model():
+    # Wide feet of blackstone: a heavy block of blackstone round each foot,
+    # wider than the leg, with a paler top edge and pale specks, so that it
+    # reads against the black bone. On a leg bone, the ground is at y 12.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def stone(face, x, y):
+        if face == "top" or face != "bottom" and y == 0:
+            return BLACKSTONE[2]
+        return BLACKSTONE[2] if (x * 3 + y * 5) % 7 == 0 else BLACKSTONE[0] if (x + y) % 2 else BLACKSTONE[1]
+
+    # A foot: 4x2x5 at uv (0, 0).
+    paint_box(im, 0, 0, 4, 2, 5, stone)
+    parts = [{"bone": bone, "uv": [0, 0], "from": [-2, 10, -3], "size": [4, 2, 5]}
+             for bone in ("right_leg", "left_leg")]
+    save_model("holdfast_feet", im, parts)
+
+
+def sentinel():
+    # The crest is the gene model sentinel_crest.
+    return []
+
+
+def sentinel_model():
+    # A tall crest of pale bone on the skull, from the brow to the back of
+    # the head, highest in the middle, with dark grooves along it. On the
+    # head bone, the top of the head is at y -8.
+    im = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+
+    def crest(face, x, y):
+        if face in ("right", "left"):
+            return ASH[2] if x % 3 == 2 else ASH[0] if y == 0 else ASH[1]
+        return ASH[0] if face == "top" else ASH[1]
+
+    # The low crest: 1x2x8 at uv (0, 0). The high crest: 1x2x4 at uv (0, 12).
+    paint_box(im, 0, 0, 1, 2, 8, crest)
+    paint_box(im, 0, 12, 1, 2, 4, crest)
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-0.5, -10, -4], "size": [1, 2, 8]},
+        {"bone": "head", "uv": [0, 12], "from": [-0.5, -12, -2], "size": [1, 2, 4]},
+    ]
+    save_model("sentinel_crest", im, parts)
+
+
+def brickshield():
+    # The shield is the gene model brickshield_shield.
+    return []
+
+
+def brickshield_model():
+    # A shield of nether brick on the left arm, the arm that does not hold
+    # the sword: a flat slab of bricks on the outer side of the arm, with a
+    # gold boss in its middle. On the left arm bone, the outer side is at x
+    # 1, and the arm is from y -2 to 10.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def slab(face, x, y):
+        # The outer face and the inner face both show the bricks.
+        if face in ("left", "right"):
+            if x in (2, 3) and y in (3, 4):
+                return "#E8B830"
+            return brick(face, x, y)
+        return BRICK[1]
+
+    # The slab: 1x8x6 at uv (0, 0).
+    paint_box(im, 0, 0, 1, 8, 6, slab)
+    parts = [{"bone": "left_arm", "uv": [0, 0], "from": [1.2, 0, -3], "size": [1, 8, 6]}]
+    save_model("brickshield_shield", im, parts)
+
+
+def garrison():
+    # A red sash of the fortress across the body: a band of red, 2 pixels
+    # wide, with a gold edge, from the right shoulder down to the left hip,
+    # on the front and on the back. It shows on the bones of the ribs and
+    # the pelvis.
+    sash = Mark("#A01818")
+    gold = Mark("#D8A030")
+    for y in range(20, 32):
+        step = (y - 20) * 7 // 11
+        for x0, sign in ((20, 1), (39, -1)):
+            x = x0 + sign * step
+            sash.put((x, y)).put((x + sign, y))
+            gold.put((x + 2 * sign, y)) if 16 <= x + 2 * sign < 40 else None
+    return [sash, gold]
+
+
+def smite_ward():
+    # Gold runes on the brow: two bright gold glyphs on face rows 8 to 10 (a
+    # cross on the right side and a sun on the left side), with a darker
+    # gold edge, so that they read as holy gold on the black skull. They
+    # keep off the Cauterize seam (x 12).
+    gold = Mark("#F0C040")
+    dark = Mark("#9A7418")
+    for p in ((9, 8), (9, 9), (9, 10), (8, 9), (10, 9)):
+        gold.put(p)
+    for p in ((14, 8), (13, 9), (15, 9), (14, 10)):
+        gold.put(p)
+    dark.put((14, 9)).put((11, 9))
+    return [gold, dark]
+
 GENES = {
     "duelist": duelist,
     "parry": parry,
@@ -515,6 +665,12 @@ GENES = {
     "skull_shot": skull_shot,
     "black_rot": black_rot,
     "grave_chill": grave_chill,
+    "brickplate": brickplate,
+    "holdfast": holdfast,
+    "sentinel": sentinel,
+    "brickshield": brickshield,
+    "garrison": garrison,
+    "smite_ward": smite_ward,
 }
 
 MODELS = {
@@ -525,10 +681,14 @@ MODELS = {
     "pyre": "originofspawns:pyre_coals",
     "ember_eyes": "originofspawns:ember_eyes_flames",
     "skull_shot": "originofspawns:skull_shot_skull",
+    "brickplate": "originofspawns:brickplate_plate",
+    "holdfast": "originofspawns:holdfast_feet",
+    "sentinel": "originofspawns:sentinel_crest",
+    "brickshield": "originofspawns:brickshield_shield",
 }
 
 MODEL_MAKERS = [duelist_model, parry_model, executioner_model, cinderblade_model, pyre_model, ember_eyes_model,
-                skull_shot_model]
+                skull_shot_model, brickplate_model, holdfast_model, sentinel_model, brickshield_model]
 
 
 def main():

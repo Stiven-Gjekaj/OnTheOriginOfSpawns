@@ -58,10 +58,14 @@ PALETTES.stray = {
   stripes: { 9: [112, 118, 126] },
 };
 
-// The cloth of the stray: a drawing of the wiki in the zombie layout. It
-// covers the body, the upper arms, and the legs, with torn holes that are
-// more common near the hem.
-function strayCloth(humanoid) {
+// The outer cloth of the stray and the bogged: a drawing of the wiki in the
+// zombie layout. It covers the body, the upper arms, and the legs, with torn
+// holes that are more common near the hem.
+const CLOTHS = {
+  stray: { seed: 4242, holes: { 3: 0.1, 4: 0.2, 6: 0.1, 7: 0.45 }, colors: { 3: [150, 168, 176], other: [134, 152, 162] } },
+  bogged: { seed: 5151, holes: { 3: 0.15, 4: 0.3, 6: 0.2, 7: 0.55 }, colors: { 3: [74, 96, 52], other: [64, 84, 46] } },
+};
+function strayCloth(humanoid, style = CLOTHS.stray) {
   const out = new ImageData(humanoid.width, humanoid.height);
   const d = humanoid.data;
   for (let y = 0; y < out.height; y++) {
@@ -71,11 +75,10 @@ function strayCloth(humanoid) {
       const region = d[i];
       // The cloth: torso (3), arms (4), legs (6), and lower legs (7).
       if (![3, 4, 6, 7].includes(region)) continue;
-      const h = spotHash(x, y, 4242) & 0xff;
-      const hole = region === 7 ? 0.45 : region === 4 ? 0.2 : 0.1;
-      if (h / 255 < hole) continue;
+      const h = spotHash(x, y, style.seed) & 0xff;
+      if (h / 255 < style.holes[region]) continue;
       const n = ((spotHash(x, y, 77) & 0xff) / 255 - 0.5) * 0.16;
-      const c = region === 3 ? [150, 168, 176] : [134, 152, 162];
+      const c = style.colors[region] || style.colors.other;
       out.data[i] = c[0] * (1 + n);
       out.data[i + 1] = c[1] * (1 + n);
       out.data[i + 2] = c[2] * (1 + n);
@@ -83,6 +86,43 @@ function strayCloth(humanoid) {
     }
   }
   return out;
+}
+
+// The bogged: bone with moss and mud.
+PALETTES.bogged = {
+  skin: Object.fromEntries(Object.entries(PALETTES.skeleton.skin).map(([k, c]) => [k, Number(k) === 13 ? c : [c[0] - 30, c[1] - 22, c[2] - 44]])),
+  cloth: {},
+  eyes: [24, 30, 20],
+  stripes: { 9: [104, 104, 84] },
+};
+
+// The mushrooms on the head of the bogged, from BoggedModel: crossed planes of
+// 6 x 4 pixels with the texture of the mob. Each is [uv, from, size, pivot,
+// rotation in degrees]. The wiki draws its own mushrooms at these UVs.
+const BOGGED_MUSHROOMS = [
+  [[50, 16], [0, -11, 3], [6, 4, 0], [3, -8, 3], [0, 45, 0]],
+  [[50, 16], [0, -11, 3], [6, 4, 0], [3, -8, 3], [0, 135, 0]],
+  [[50, 22], [-6, -11, -3], [6, 4, 0], [-3, -8, -3], [0, 45, 0]],
+  [[50, 22], [-6, -11, -3], [6, 4, 0], [-3, -8, -3], [0, 135, 0]],
+  [[50, 28], [-5, -5, 4], [6, 4, 0], [-2, -1, 4], [-90, 0, 45]],
+  [[50, 28], [-5, -5, 4], [6, 4, 0], [-2, -1, 4], [-90, 0, 135]],
+];
+const MUSHROOM_ART = {
+  red: { c: [176, 40, 34], w: [236, 228, 214], s: [214, 200, 176] },
+  brown: { c: [138, 92, 60], w: [176, 128, 90], s: [204, 188, 160] },
+  rows: [".cccc.", "cwccwc", "..ss..", "..ss.."],
+};
+function paintMushrooms(tex) {
+  for (const [v, kind] of [[16, "red"], [22, "red"], [28, "brown"]]) {
+    for (const u of [50, 56]) {
+      MUSHROOM_ART.rows.forEach((row, j) => [...row].forEach((ch, i) => {
+        if (ch === ".") return;
+        const k = ((v + j) * tex.width + u + i) * 4;
+        const c = MUSHROOM_ART[kind][ch];
+        tex.data[k] = c[0]; tex.data[k + 1] = c[1]; tex.data[k + 2] = c[2]; tex.data[k + 3] = 255;
+      }));
+    }
+  }
 }
 
 // The body of each species: the region map, the cubes, and the pivots, as in
@@ -107,7 +147,13 @@ const BODIES = {
   stray: {
     map: "originofspawns:textures/region/skeleton.png",
     // The cloth layer uses the zombie cubes, 0.25 pixel larger.
-    outer: true,
+    outer: { cloth: "stray", inflate: 0.25 },
+  },
+  bogged: {
+    map: "originofspawns:textures/region/skeleton.png",
+    // The moss layer is 0.2 pixel larger. A sheared bogged has no mushrooms.
+    outer: { cloth: "bogged", inflate: 0.2 },
+    mushrooms: true,
   },
   drowned: {
     split: true,
@@ -124,6 +170,8 @@ const BODIES = {
 // The stray has the body of the skeleton.
 BODIES.stray.pivots = BODIES.skeleton.pivots;
 BODIES.stray.cubes = BODIES.skeleton.cubes;
+BODIES.bogged.pivots = BODIES.skeleton.pivots;
+BODIES.bogged.cubes = BODIES.skeleton.cubes;
 
 
 // The bones and the cubes of the zombie, as in tools/preview_genes.py.
@@ -362,8 +410,8 @@ const baked = new Map();
 // With baby, the region maps and the marks move to the baby layout, and the
 // gene models move onto the baby bones, as GeneTextures and GeneModelLayer
 // do in the game.
-async function bake(genes, baby = false, species = genes[0]?.species ?? "zombie") {
-  const key = `${species}|` + genes.map((g) => g.id).sort().join(",") + (baby ? "|baby" : "");
+async function bake(genes, baby = false, species = genes[0]?.species ?? "zombie", { sheared = false } = {}) {
+  const key = `${species}|` + genes.map((g) => g.id).sort().join(",") + (baby ? "|baby" : "") + (sheared ? "|sheared" : "");
   if (baked.has(key)) return baked.get(key);
   const job = (async () => {
     const maps = {};
@@ -377,6 +425,7 @@ async function bake(genes, baby = false, species = genes[0]?.species ?? "zombie"
     const layout = (img) => (baby ? toBaby(img) : split ? toSplit(img) : img);
     for (const id of mapIds) maps[id] = layout(await loadImage(id));
     const base = baseTexture(maps[baseMap], species);
+    if (bodyOf.mushrooms) paintMushrooms(base);
     // A pattern with the size of a whole mob texture is a mark in the adult
     // layout, so it moves to the baby layout. A smaller pattern is a tile.
     const patternOf = async (id) => {
@@ -398,10 +447,16 @@ async function bake(genes, baby = false, species = genes[0]?.species ?? "zombie"
     }));
     // The cloth layer of the stray, with the layers that have the target "outer".
     if (bodyOf.outer && !baby) {
-      const cloth = strayCloth(await loadImage(DEFAULT_REGION_MAP));
+      const cloth = strayCloth(await loadImage(DEFAULT_REGION_MAP), CLOTHS[bodyOf.outer.cloth]);
       for (const s of steps) if (s.layer.target === "outer") await applyLayer(cloth, s.gene, s.layer, maps, patternOf);
       for (const [bone, uv, from, size, mirror] of ZOMBIE_CUBES) {
-        cubes.push({ bone, uv, from, size, mirror, inflate: 0.25, tex: cloth, scale: 1, pivot: [0, 0, 0], rotation: [0, 0, 0], glow: false });
+        cubes.push({ bone, uv, from, size, mirror, inflate: bodyOf.outer.inflate, tex: cloth, scale: 1, pivot: [0, 0, 0], rotation: [0, 0, 0], glow: false });
+      }
+    }
+    // The mushrooms of the bogged move with the head.
+    if (bodyOf.mushrooms && !sheared && !baby) {
+      for (const [uv, from, size, pivot, rotation] of BOGGED_MUSHROOMS) {
+        cubes.push({ bone: "head", uv, from, size, mirror: false, inflate: 0, tex: base, scale: 1, pivot, rotation, glow: false });
       }
     }
     // Gene model cubes have adult UVs, so a model with mob_texture reads the
@@ -580,4 +635,7 @@ function opacityAt(genes, lightLevel) {
   return op;
 }
 
-export { bake, draw, pose, opacityAt, loadImage, toBaby, toAdult };
+// True if the body of the species has parts that a player can shear off.
+const canShear = (species) => !!BODIES[species]?.mushrooms;
+
+export { bake, draw, pose, opacityAt, loadImage, toBaby, toAdult, canShear };

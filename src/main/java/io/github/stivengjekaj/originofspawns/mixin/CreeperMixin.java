@@ -1,11 +1,19 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.level.Level;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
@@ -53,5 +61,29 @@ public abstract class CreeperMixin {
 			target = "Lnet/minecraft/world/entity/monster/Creeper;maxSwell:I", opcode = Opcodes.GETFIELD))
 	private int originofspawns$fuseTime(int ticks) {
 		return GeneBlasts.fuseTicks((Creeper) (Object) this, ticks);
+	}
+
+	/**
+	 * A silent fuse starts with no hiss.
+	 */
+	@WrapOperation(method = "tick", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/monster/Creeper;playSound(Lnet/minecraft/sounds/SoundEvent;FF)V"))
+	private void originofspawns$fuseSound(Creeper creeper, SoundEvent sound, float volume, float pitch,
+			Operation<Void> original) {
+		if (!GeneCombat.has(creeper, GeneEffect.SilentFuse.class)) {
+			original.call(creeper, sound, volume, pitch);
+		}
+	}
+
+	/**
+	 * The flint and steel or the fire charge that lights a silent fuse makes no sound.
+	 */
+	@WrapOperation(method = "mobInteract", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/Entity;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V"))
+	private void originofspawns$igniteSound(Level level, Entity except, double x, double y, double z, SoundEvent sound,
+			SoundSource source, float volume, float pitch, Operation<Void> original) {
+		if (!GeneCombat.has((Creeper) (Object) this, GeneEffect.SilentFuse.class)) {
+			original.call(level, except, x, y, z, sound, source, volume, pitch);
+		}
 	}
 }

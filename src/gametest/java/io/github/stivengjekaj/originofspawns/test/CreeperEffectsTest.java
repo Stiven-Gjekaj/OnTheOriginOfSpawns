@@ -19,9 +19,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerLoadedPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
@@ -215,11 +218,75 @@ public class CreeperEffectsTest {
 		});
 	}
 
+	@GameTest(environment = BLASTS, padding = 24, maxTicks = 20)
+	public void aPlainFuseHisses(GameTestHelper helper) {
+		Listener listener = listener(helper);
+		Creeper creeper = creeperWith(helper, new BlockPos(1, 1, 1));
+		lightWithFlintAndSteel(helper, creeper);
+		helper.runAfterDelay(3, () -> {
+			helper.assertTrue(listener.heard(SoundEvents.FLINTANDSTEEL_USE), "the flint and steel makes a sound");
+			helper.assertTrue(listener.heard(SoundEvents.CREEPER_PRIMED), "the fuse hisses");
+			creeper.discard();
+			helper.succeed();
+		});
+	}
+
+	@GameTest(environment = BLASTS, padding = 24, maxTicks = 20)
+	public void aSilentFuseMakesNoSound(GameTestHelper helper) {
+		Listener listener = listener(helper);
+		Creeper creeper = creeperWith(helper, new BlockPos(1, 1, 1), "test_silent_fuse");
+		lightWithFlintAndSteel(helper, creeper);
+		helper.runAfterDelay(3, () -> {
+			helper.assertTrue(creeper.getSwelling(1.0F) > 0.0F, "the fuse burns");
+			helper.assertFalse(listener.heard(SoundEvents.FLINTANDSTEEL_USE), "the flint and steel makes no sound");
+			helper.assertFalse(listener.heard(SoundEvents.CREEPER_PRIMED), "the fuse does not hiss");
+			creeper.discard();
+			helper.succeed();
+		});
+	}
+
+	/**
+	 * Lights the fuse of the creeper with the flint and steel of a second player, as a player does.
+	 */
+	static void lightWithFlintAndSteel(GameTestHelper helper, Creeper creeper) {
+		ServerPlayer lighter = survivalPlayer(helper).player();
+		lighter.setPos(creeper.position().add(1.0, 0.0, 0.0));
+		lighter.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.FLINT_AND_STEEL));
+		creeper.interact(lighter, InteractionHand.MAIN_HAND, creeper.position());
+	}
+
+	/**
+	 * A player next to the test that keeps the packets that the server sends to it.
+	 */
+	record Listener(ServerPlayer player, EmbeddedChannel channel) {
+		/**
+		 * Returns true if the server sent this sound to the player.
+		 */
+		boolean heard(SoundEvent sound) {
+			Object packet;
+			boolean heard = false;
+			java.util.List<Object> kept = new java.util.ArrayList<>();
+			while ((packet = channel.readOutbound()) != null) {
+				kept.add(packet);
+				heard |= packet instanceof ClientboundSoundPacket soundPacket && soundPacket.getSound().value() == sound;
+			}
+			kept.forEach(channel::writeOutbound);
+			return heard;
+		}
+	}
+
+	static Listener listener(GameTestHelper helper) {
+		Listener listener = survivalPlayer(helper);
+		listener.player().setNoGravity(true);
+		listener.player().setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(4, 1, 4))));
+		return listener;
+	}
+
 	/**
 	 * Makes a player in survival 4 blocks east of the blast place, who holds a shield up to the west.
 	 */
 	static ServerPlayer shieldedPlayer(GameTestHelper helper) {
-		ServerPlayer player = survivalPlayer(helper);
+		ServerPlayer player = survivalPlayer(helper).player();
 		player.setNoGravity(true);
 		player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.SHIELD));
 		player.startUsingItem(InteractionHand.OFF_HAND);
@@ -236,9 +303,9 @@ public class CreeperEffectsTest {
 
 	/**
 	 * Makes a player in the level in survival mode, who can take damage. The mock player of the test helper is always
-	 * in creative mode, so its items take no damage.
+	 * in creative mode, so its items take no damage. The channel keeps the packets that the server sends to the player.
 	 */
-	static ServerPlayer survivalPlayer(GameTestHelper helper) {
+	static Listener survivalPlayer(GameTestHelper helper) {
 		var server = helper.getLevel().getServer();
 		var cookie = CommonListenerCookie.createInitial(new GameProfile(UUID.randomUUID(), "test-survival-player"), false);
 		ServerPlayer player = new ServerPlayer(server, helper.getLevel(), cookie.gameProfile(), cookie.clientInformation()) {
@@ -248,12 +315,12 @@ public class CreeperEffectsTest {
 			}
 		};
 		Connection connection = new Connection(PacketFlow.SERVERBOUND);
-		new EmbeddedChannel(connection);
+		EmbeddedChannel channel = new EmbeddedChannel(connection);
 		server.getPlayerList().placeNewPlayer(connection, player, cookie);
 		player.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
 		// A player takes no damage until its client tells the server that the world loaded.
 		player.connection.handleAcceptPlayerLoad(new ServerboundPlayerLoadedPacket());
-		return player;
+		return new Listener(player, channel);
 	}
 
 	static AreaEffectCloud cloudNear(GameTestHelper helper, Creeper creeper) {

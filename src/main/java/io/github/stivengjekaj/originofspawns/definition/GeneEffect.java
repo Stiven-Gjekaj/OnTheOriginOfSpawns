@@ -143,7 +143,8 @@ public sealed interface GeneEffect {
 			Map.entry("blast_cloud", BlastCloud.CODEC),
 			Map.entry("blast_effect", BlastEffect.CODEC),
 			Map.entry("chain_reaction", ChainReaction.CODEC),
-			Map.entry("aftershock", Aftershock.CODEC)
+			Map.entry("aftershock", Aftershock.CODEC),
+			Map.entry("silent_fuse", SilentFuse.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2210,6 +2211,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "aftershock";
+		}
+	}
+
+	/**
+	 * The fuse of the creeper makes no sound: no hiss when it starts, and no sound of the flint and steel that lights
+	 * it.
+	 */
+	record SilentFuse() implements GeneEffect {
+		public static final MapCodec<SilentFuse> CODEC = MapCodec.unit(new SilentFuse());
+
+		@Override
+		public String type() {
+			return "silent_fuse";
 		}
 	}
 }

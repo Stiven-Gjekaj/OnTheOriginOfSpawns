@@ -133,6 +133,10 @@ The husk and the drowned come out together in one alpha release.
   tier 1.
 - Make the mobs counter the classes and the inherited families of the
   players.
+- If a perk adds an element to the weapons of the player, such as water, add
+  the other elements as a set at the same time: fire, water, frost, and the
+  others that the mob families use. One element alone is not fair to the
+  families that it counters.
 
 ### Milestone 4: Full notebook
 

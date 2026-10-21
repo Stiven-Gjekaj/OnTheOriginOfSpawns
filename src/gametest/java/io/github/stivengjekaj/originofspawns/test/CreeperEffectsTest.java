@@ -184,6 +184,19 @@ public class CreeperEffectsTest {
 		});
 	}
 
+	@GameTest
+	public void aShortFuseKeepsAFiniteSwell(GameTestHelper helper) {
+		Creeper quick = creeperWith(helper, new BlockPos(1, 1, 1), "test_tiny_fuse");
+		// The game divides the swell by the fuse less 2 ticks, so a fuse of 2 ticks or less breaks the drawing.
+		helper.assertValueEqual(GeneBlasts.fuseTicks(quick, 30), 3, "the shortest fuse");
+		helper.assertValueEqual(GeneBlasts.fuseTicks(quick, 2), 2, "a vanilla fuse that is already short stays");
+		quick.setSwellDir(1);
+		quick.tick();
+		helper.assertTrue(Float.isFinite(quick.getSwelling(1.0F)), "the swell is a number");
+		quick.discard();
+		helper.succeed();
+	}
+
 	@GameTest(environment = BLASTS, padding = 8)
 	public void damageEffectsChangeTheBlastDamage(GameTestHelper helper) {
 		// Each blast has the same place, so only the genes change the damage.

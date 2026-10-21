@@ -22,6 +22,11 @@ import net.minecraft.world.level.Level;
  * The effects of genes that act on the blast of a creeper: its size, its fuse, and what it leaves behind.
  */
 public final class GeneBlasts {
+	/**
+	 * The shortest fuse that the genes give.
+	 */
+	private static final int MIN_FUSE_TICKS = 3;
+
 	private GeneBlasts() {
 	}
 
@@ -39,7 +44,8 @@ public final class GeneBlasts {
 	}
 
 	/**
-	 * Returns the ticks of the fuse of the creeper after its fuse time multipliers. The fuse lasts 1 tick or more.
+	 * Returns the ticks of the fuse of the creeper after its fuse time multipliers. The genes do not make the fuse
+	 * shorter than 3 ticks, because the game divides the swell by the fuse less 2 ticks.
 	 */
 	public static int fuseTicks(Creeper creeper, int ticks) {
 		float multiplier = 1.0F;
@@ -48,7 +54,7 @@ public final class GeneBlasts {
 				multiplier *= fuse.multiplier();
 			}
 		}
-		return multiplier == 1.0F ? ticks : Math.max(1, Math.round(ticks * multiplier));
+		return multiplier == 1.0F ? ticks : Math.max(Math.min(ticks, MIN_FUSE_TICKS), Math.round(ticks * multiplier));
 	}
 
 	/**

@@ -3,9 +3,11 @@
 	"package": "io.github.stivengjekaj.originofspawns.client.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
+		"AbstractSkeletonRendererMixin",
 		"AbstractZombieRendererMixin",
 		"DrownedOuterLayerMixin",
-		"LivingEntityRendererMixin"
+		"LivingEntityRendererMixin",
+		"SkeletonTextureMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

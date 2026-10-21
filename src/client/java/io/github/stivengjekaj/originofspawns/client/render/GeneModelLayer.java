@@ -14,24 +14,24 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.client.renderer.entity.state.ZombieRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
 
 /**
- * Draws the gene models of a zombie. Each part moves with its bone.
+ * Draws the gene models of a mob with a humanoid body, such as a zombie or a skeleton. Each part moves with its bone.
  */
-public class GeneModelLayer extends RenderLayer<ZombieRenderState, HumanoidModel<ZombieRenderState>> {
-	private final RenderLayerParent<ZombieRenderState, HumanoidModel<ZombieRenderState>> parent;
+public class GeneModelLayer<S extends HumanoidRenderState, M extends HumanoidModel<S>> extends RenderLayer<S, M> {
+	private final RenderLayerParent<S, M> parent;
 
-	public GeneModelLayer(RenderLayerParent<ZombieRenderState, HumanoidModel<ZombieRenderState>> parent) {
+	public GeneModelLayer(RenderLayerParent<S, M> parent) {
 		super(parent);
 		this.parent = parent;
 	}
 
 	@Override
-	public void submit(PoseStack poseStack, SubmitNodeCollector collector, int light, ZombieRenderState state,
+	public void submit(PoseStack poseStack, SubmitNodeCollector collector, int light, S state,
 			float yRot, float xRot) {
 		List<Identifier> genes = state.getData(GeneTextures.GENES);
 		if (genes == null || genes.isEmpty() || state.isInvisible) {
@@ -80,14 +80,14 @@ public class GeneModelLayer extends RenderLayer<ZombieRenderState, HumanoidModel
 	 * Returns the texture that the mob uses now, with the marks of its genes.
 	 */
 	@SuppressWarnings("unchecked")
-	private Identifier mobTexture(ZombieRenderState state) {
+	private Identifier mobTexture(S state) {
 		return parent instanceof LivingEntityRenderer<?, ?, ?> renderer
-				? ((LivingEntityRenderer<?, ZombieRenderState, ?>) renderer).getTextureLocation(state)
+				? ((LivingEntityRenderer<?, S, ?>) renderer).getTextureLocation(state)
 				: null;
 	}
 
 	private ModelPart bone(GeneModel.Bone bone) {
-		HumanoidModel<ZombieRenderState> model = getParentModel();
+		M model = getParentModel();
 		return switch (bone) {
 			case HEAD -> model.head;
 			case BODY -> model.body;

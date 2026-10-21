@@ -75,11 +75,13 @@ class Mark:
 
     The order puts the layer before (lower) or after (higher) the layers of
     other genes. The regions and the materials limit the layer, as in a gene
-    visual. A mark of size 16 is a tile that covers the whole texture.
+    visual. A mark of size 16 is a tile that covers the whole texture. A
+    mark with the target "outer" goes on the outer layer of the stray.
     """
 
-    def __init__(self, tint, alpha=255, order=0, regions=None, materials=None, size=64):
+    def __init__(self, tint, alpha=255, order=0, regions=None, materials=None, size=64, target=None):
         self.tint = tint
+        self.target = target
         self.alpha = alpha
         self.order = order
         self.regions = regions
@@ -718,6 +720,8 @@ def write(gene, marks, models=None, region_map=None):
                            "tint": mark.tint}
         if mark.order:
             layer["order"] = mark.order
+        if mark.target:
+            layer["target"] = mark.target
         layers.append(layer)
     visual = {"layers": layers}
     if region_map:

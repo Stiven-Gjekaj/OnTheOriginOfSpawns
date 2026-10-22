@@ -21,6 +21,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -283,6 +284,19 @@ public class SpiderEffectsTest {
 			helper.assertFalse(cave.getAttachedOrElse(ModAttachments.GENES, new CarriedGenes(List.of())).genes()
 					.contains(motherGene), "the cave spider has no genes of the spider");
 		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void spitNeedsATargetPastTheShortestRange(GameTestHelper helper) {
+		Spider spider = spiderWith(helper, new BlockPos(1, 1, 1));
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 1));
+		spider.setTarget(pig);
+		var spit = new GeneEffect.ThrowEffect(MobEffects.POISON, 4.0F, 0, 10.0F, 6.0F, 3.0F);
+		helper.assertFalse(GeneBehaviors.throwEffect(spider, helper.getLevel(), spit), "the target is too near");
+		pig.snapTo(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(6, 1, 1))), 0.0F, 0.0F);
+		helper.assertTrue(GeneBehaviors.throwEffect(spider, helper.getLevel(), spit), "the target is in the range");
+		helper.assertTrue(pig.hasEffect(MobEffects.POISON), "the spit poisons the pig");
 		helper.succeed();
 	}
 

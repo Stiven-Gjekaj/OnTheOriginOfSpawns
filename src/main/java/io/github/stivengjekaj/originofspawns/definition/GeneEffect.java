@@ -1238,17 +1238,22 @@ public sealed interface GeneEffect {
 
 	/**
 	 * The mob throws at its target in the range, which gives a status effect, after each cooldown.
-	 * The throw needs a clear line of sight.
+	 * The throw needs a clear line of sight. A target nearer than the shortest range gets no throw.
 	 */
-	record ThrowEffect(Holder<MobEffect> effect, float seconds, int amplifier, float range, float cooldownSeconds)
-			implements GeneEffect {
+	record ThrowEffect(Holder<MobEffect> effect, float seconds, int amplifier, float range, float cooldownSeconds,
+			float minRange) implements GeneEffect {
 		public static final MapCodec<ThrowEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				MobEffect.CODEC.fieldOf("effect").forGetter(ThrowEffect::effect),
 				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(ThrowEffect::seconds),
 				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(ThrowEffect::amplifier),
 				Codec.floatRange(1.0F, 32.0F).optionalFieldOf("range", 8.0F).forGetter(ThrowEffect::range),
-				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 8.0F).forGetter(ThrowEffect::cooldownSeconds)
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 8.0F).forGetter(ThrowEffect::cooldownSeconds),
+				Codec.floatRange(0.0F, 32.0F).optionalFieldOf("min_range", 0.0F).forGetter(ThrowEffect::minRange)
 		).apply(instance, ThrowEffect::new));
+
+		public ThrowEffect(Holder<MobEffect> effect, float seconds, int amplifier, float range, float cooldownSeconds) {
+			this(effect, seconds, amplifier, range, cooldownSeconds, 0.0F);
+		}
 
 		@Override
 		public String type() {

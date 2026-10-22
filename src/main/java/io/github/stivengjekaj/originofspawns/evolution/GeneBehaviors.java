@@ -796,7 +796,8 @@ public final class GeneBehaviors {
 		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
 		long now = level.getGameTime();
 		LivingEntity target = mob.getTarget();
-		if (target == null || !target.isAlive() || mob.distanceTo(target) > thrown.range() || !mob.hasLineOfSight(target)
+		if (target == null || !target.isAlive() || mob.distanceTo(target) < thrown.minRange()
+				|| mob.distanceTo(target) > thrown.range() || !mob.hasLineOfSight(target)
 				|| state.throwTime() >= 0L && now - state.throwTime() < Math.round(thrown.cooldownSeconds() * 20.0F)) {
 			return false;
 		}

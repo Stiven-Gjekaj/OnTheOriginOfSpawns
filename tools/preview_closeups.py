@@ -389,7 +389,33 @@ SPIDER_CLOSEUPS = {
 # The close-ups of the cave spider. It has no babies. It uses the views of
 # the spider.
 CAVE_SPIDER = pg.CAVE_SPIDER_FAMILIES
-CAVE_SPIDER_CLOSEUPS = {}
+CAVE_SPIDER_CLOSEUPS = {
+    "cave_spider_toxins": ("Toxin marks",
+                           [("Neurotoxin + Toxic Cloud", ["neurotoxin", "toxic_cloud"], False),
+                            ("Hemotoxin + Venom Spray", ["hemotoxin", "venom_spray"], False),
+                            ("Lingering Venom + Corrosive", ["lingering_venom", "corrosive"], False),
+                            ("All 6", CAVE_SPIDER["toxins"], False)], SPIDER_VIEWS),
+    "cave_spider_gloomers": ("Gloomer marks",
+                             [("Lightsnuffer + Dread", ["lightsnuffer", "dread"], False),
+                              ("Echo Sense + Shade Skin", ["echo_sense", "shade_skin"], False),
+                              ("Night Eyes + Cave Ghost", ["night_eyes", "cave_ghost"], False),
+                              ("All 6", CAVE_SPIDER["gloomers"], False)], SPIDER_NIGHT_VIEWS),
+    "cave_spider_scurriers": ("Scurrier marks and models",
+                              [("Dash + Ceiling Crawler", ["dash", "ceiling_crawler"], False),
+                               ("Juke + Gap Runner", ["juke", "gap_runner"], False),
+                               ("Nimble + Frenzy Bite", ["nimble", "frenzy_bite"], False),
+                               ("All 6", CAVE_SPIDER["scurriers"], False)], SPIDER_VIEWS),
+    "cave_spider_broodkeepers": ("Broodkeeper marks and models",
+                                 [("Egg Layer + Brood Call", ["egg_layer", "brood_call"], False),
+                                  ("Nest Weaver + Nest Mend", ["nest_weaver", "nest_mend"], False),
+                                  ("Swarm Mind + Spawner Bond", ["swarm_mind", "spawner_bond"], False),
+                                  ("All 6", CAVE_SPIDER["broodkeepers"], False)], SPIDER_VIEWS),
+    "cave_spider_geodes": ("Geode marks and models",
+                           [("Amethyst Shell + Ore Skin", ["amethyst_shell", "ore_skin"], False),
+                            ("Shatter + Chime", ["shatter", "chime"], False),
+                            ("Stone Jaws + Deepslate Plates", ["stone_jaws", "deepslate_plates"], False),
+                            ("All 6", CAVE_SPIDER["geodes"], False)], SPIDER_NIGHT_VIEWS),
+}
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),

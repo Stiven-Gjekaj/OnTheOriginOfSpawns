@@ -289,7 +289,15 @@ CAVE_SPIDER_FAMILIES = {
     "geodes": ["amethyst_shell", "shatter", "chime", "ore_skin", "stone_jaws", "deepslate_plates"],
 }
 
-CAVE_SPIDER_EXTRA = {}
+CAVE_SPIDER_EXTRA = {
+    "toxins": [("All 6 + Gloomers", ["night_eyes", "dread"], True, {})],
+    "gloomers": [("All 6 at night", [], True, {"light": 0.18}),
+                 ("All 6 + Scurriers", ["dash", "ceiling_crawler"], True, {})],
+    "scurriers": [("All 6 + Broodkeepers", ["egg_layer", "spawner_bond"], True, {})],
+    "broodkeepers": [("All 6 + Geodes", ["amethyst_shell", "ore_skin"], True, {})],
+    "geodes": [("All 6 at night", [], True, {"light": 0.18}),
+               ("All 6 + Toxins", ["toxic_cloud", "neurotoxin"], True, {})],
+}
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],

@@ -6,9 +6,12 @@ import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
+import java.util.List;
+
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Difficulty;
@@ -25,6 +28,7 @@ import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -84,6 +88,48 @@ public class PillagerEffectsTest {
 			helper.assertFalse(SHOTS.containsKey(near), "the pillager with half the range does not shoot so far");
 			helper.succeed();
 		});
+	}
+
+	@GameTest
+	public void noSpreadShootsEachBoltOnTheSameLine(GameTestHelper helper) {
+		helper.assertTrue(directions(helper, new BlockPos(1, 1, 1)).size() > 1, "the vanilla bolts spread");
+		helper.assertValueEqual(directions(helper, new BlockPos(1, 1, 6), "test_true_bolt").size(), 1,
+				"with no spread, each bolt flies on the same line");
+		helper.succeed();
+	}
+
+	/**
+	 * Makes a pillager with the genes shoot 4 loaded bolts at a pig, and returns the directions of the bolts.
+	 */
+	static java.util.Set<Vec3> directions(GameTestHelper helper, BlockPos pos, String... genes) {
+		Pillager pillager = pillagerWith(helper, pos, genes);
+		Pig pig = CreeperEffectsTest.pigAt(helper, pos.east(5));
+		pillager.setTarget(pig);
+		java.util.Set<Vec3> directions = new java.util.HashSet<>();
+		for (int i = 0; i < 4; i++) {
+			List<AbstractArrow> before = boltsOf(helper, pillager);
+			load(pillager);
+			pillager.performRangedAttack(pig, 1.0F);
+			for (AbstractArrow bolt : boltsOf(helper, pillager)) {
+				if (!before.contains(bolt)) {
+					directions.add(bolt.getDeltaMovement());
+				}
+			}
+		}
+		return directions;
+	}
+
+	static List<AbstractArrow> boltsOf(GameTestHelper helper, Pillager pillager) {
+		return helper.getLevel().getEntitiesOfClass(AbstractArrow.class, pillager.getBoundingBox().inflate(8.0),
+				arrow -> arrow.getOwner() == pillager);
+	}
+
+	/**
+	 * Loads one arrow in the crossbow of the pillager, as a full load does.
+	 */
+	static void load(Pillager pillager) {
+		pillager.getMainHandItem().set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.ofNonEmpty(
+				List.of(new ItemStack(Items.ARROW))));
 	}
 
 	/**

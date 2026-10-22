@@ -11,15 +11,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.monster.spider.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -43,6 +46,39 @@ public class SpiderEffectsTest {
 		helper.assertTrue(Evolution.facts(spider, sources.playerAttack(player), helper.getLevel())
 				.contains(DeathCondition.BANE), "a Bane of Arthropods sword counts");
 		helper.succeed();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 24, maxTicks = 20)
+	public void aPlainSpiderHasNormalSteps(GameTestHelper helper) {
+		assertStepVolume(helper, 0.15F);
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 24, maxTicks = 20)
+	public void aLoudSpiderHasLouderSteps(GameTestHelper helper) {
+		assertStepVolume(helper, 0.3F, "test_spider_loud");
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 24, maxTicks = 20)
+	public void aQuietSpiderMakesNoSteps(GameTestHelper helper) {
+		assertStepVolume(helper, -1.0F, "test_spider_hush");
+	}
+
+	/**
+	 * Makes a spider with the genes walk a step on stone, and checks the volume of the step. A volume of -1 means
+	 * that the server sent no step.
+	 */
+	static void assertStepVolume(GameTestHelper helper, float volume, String... genes) {
+		helper.setBlock(new BlockPos(1, 0, 1), Blocks.STONE);
+		helper.setBlock(new BlockPos(2, 0, 1), Blocks.STONE);
+		helper.setBlock(new BlockPos(3, 0, 1), Blocks.STONE);
+		CreeperEffectsTest.Listener listener = CreeperEffectsTest.listener(helper);
+		Spider spider = spiderWith(helper, new BlockPos(1, 1, 1), genes);
+		helper.runAfterDelay(2, () -> spider.move(MoverType.SELF, new Vec3(2.0, -0.1, 0.0)));
+		helper.runAfterDelay(5, () -> {
+			helper.assertValueEqual(listener.volumeOf(SoundEvents.SPIDER_STEP), volume, "the step");
+			spider.discard();
+			helper.succeed();
+		});
 	}
 
 	static Spider spiderWith(GameTestHelper helper, BlockPos pos, String... genes) {

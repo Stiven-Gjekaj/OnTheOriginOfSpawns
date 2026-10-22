@@ -473,14 +473,8 @@ public final class GeneCombat {
 								breaker);
 				case GeneEffect.DrainFood drain when drain.hits().includes(false) && target instanceof Player player
 						&& mob.getRandom().nextFloat() < drain.chance() -> drainFood(mob, player, drain);
-				case GeneEffect.LeechXp leech when target instanceof Player player -> {
-					int taken = Math.min(leech.amount(), player.totalExperience);
-					if (taken > 0) {
-						player.giveExperiencePoints(-taken);
-						mob.setAttached(ModAttachments.COMBAT,
-								mob.getAttachedOrElse(ModAttachments.COMBAT, CombatRecord.NONE).withLeechedXp(taken));
-					}
-				}
+				case GeneEffect.LeechXp leech when leech.hits().includes(false) && target instanceof Player player ->
+						leechXp(mob, player, leech);
 				default -> {
 				}
 			}
@@ -549,6 +543,18 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Takes XP points from the player. The mob keeps them, and drops them when it dies.
+	 */
+	private static void leechXp(Mob mob, Player player, GeneEffect.LeechXp leech) {
+		int taken = Math.min(leech.amount(), player.totalExperience);
+		if (taken > 0) {
+			player.giveExperiencePoints(-taken);
+			mob.setAttached(ModAttachments.COMBAT,
+					mob.getAttachedOrElse(ModAttachments.COMBAT, CombatRecord.NONE).withLeechedXp(taken));
+		}
+	}
+
+	/**
 	 * Takes food points from the player, and heals the mob.
 	 */
 	private static void drainFood(Mob mob, Player player, GeneEffect.DrainFood drain) {
@@ -570,6 +576,8 @@ public final class GeneCombat {
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(target, freeze.seconds());
 				case GeneEffect.DrainFood drain when drain.hits().includes(true) && target instanceof Player player
 						&& mob.getRandom().nextFloat() < drain.chance() -> drainFood(mob, player, drain);
+				case GeneEffect.LeechXp leech when leech.hits().includes(true) && target instanceof Player player ->
+						leechXp(mob, player, leech);
 				case GeneEffect.WebOnHit web when web.hits().includes(true) && mob.level() instanceof ServerLevel level
 						&& mob.getRandom().nextFloat() < web.chance() -> putWeb(level, target, web.seconds());
 				case GeneEffect.HealOnHit heal when heal.hits().includes(true) && test(mob, heal.when()) ->

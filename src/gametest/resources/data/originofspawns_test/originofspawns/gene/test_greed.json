@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "leech_xp", "amount": 3, "hits": "projectile" }],
+	"mutation_rate": 0
+}

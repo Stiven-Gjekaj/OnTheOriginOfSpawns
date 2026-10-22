@@ -582,11 +582,13 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * Each hit takes XP points from a player. The mob drops the XP that it took when it dies, and no other XP.
+	 * Each hit of the kind in {@code hits} takes XP points from a player. The mob drops the XP that it took when it
+	 * dies, and no other XP.
 	 */
-	record LeechXp(int amount) implements GeneEffect {
+	record LeechXp(int amount, Hits hits) implements GeneEffect {
 		public static final MapCodec<LeechXp> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				Codec.intRange(1, 10000).fieldOf("amount").forGetter(LeechXp::amount)
+				Codec.intRange(1, 10000).fieldOf("amount").forGetter(LeechXp::amount),
+				Hits.CODEC.optionalFieldOf("hits", Hits.MELEE).forGetter(LeechXp::hits)
 		).apply(instance, LeechXp::new));
 
 		@Override

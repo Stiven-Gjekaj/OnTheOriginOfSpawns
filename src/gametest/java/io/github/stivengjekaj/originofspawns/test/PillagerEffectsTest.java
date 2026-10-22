@@ -277,6 +277,18 @@ public class PillagerEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void aGreedBoltTakesXp(GameTestHelper helper) {
+		Pillager greedy = pillagerWith(helper, new BlockPos(1, 1, 1), "test_greed");
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		player.giveExperiencePoints(20);
+		GeneCombat.onHit(greedy, player);
+		helper.assertValueEqual(player.totalExperience, 20, "a melee hit takes no XP from a bolt gene");
+		GeneCombat.onProjectileHit(greedy, player);
+		helper.assertValueEqual(player.totalExperience, 17, "a bolt takes 3 XP points");
+		helper.succeed();
+	}
+
 	static List<FireworkRocketEntity> rocketsOf(GameTestHelper helper, Pillager pillager) {
 		return helper.getLevel().getEntitiesOfClass(FireworkRocketEntity.class, pillager.getBoundingBox().inflate(8.0),
 				rocket -> rocket.getOwner() == pillager);

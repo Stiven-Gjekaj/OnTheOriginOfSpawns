@@ -2240,7 +2240,8 @@ public sealed interface GeneEffect {
 
 	/**
 	 * After the blast of the mob, a second blast goes off at the same place. The second blast does not cause more
-	 * aftershocks, and the other blast effects do not act on it.
+	 * aftershocks, a chain reaction, a blast cloud, or blast lightning. The damage effects of the genes and
+	 * {@code blast_effect} still act on it, because the mob is still its cause.
 	 *
 	 * @param seconds the time between the two blasts
 	 * @param fraction the radius of the second blast, as a part of the radius of the first blast

@@ -2,7 +2,9 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.definition.DeathCondition;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.TemporaryBlocks;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -126,6 +128,22 @@ public class SpiderEffectsTest {
 		helper.assertBlockPresent(Blocks.AIR, new BlockPos(4, 1, 1));
 		helper.assertValueEqual(stringNear(helper, temporary), 0, "no string from the gene cobweb");
 		helper.assertTrue(stringNear(helper, real) > 0, "a vanilla cobweb drops string");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aWebTrailLeavesACobwebWhileTheSpiderWalks(GameTestHelper helper) {
+		Spider spider = spiderWith(helper, new BlockPos(1, 1, 1), "test_web_trail");
+		GeneEffect.WebTrail trail = new GeneEffect.WebTrail(10.0F, 30.0F);
+		spider.setDeltaMovement(Vec3.ZERO);
+		helper.assertFalse(GeneBehaviors.webTrail(spider, helper.getLevel(), trail), "no cobweb while it stands");
+		spider.setDeltaMovement(0.2, 0.0, 0.0);
+		helper.assertTrue(GeneBehaviors.webTrail(spider, helper.getLevel(), trail), "a cobweb while it walks");
+		helper.assertBlockPresent(Blocks.COBWEB, new BlockPos(1, 1, 1));
+		spider.snapTo(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(4, 1, 1))), 0.0F, 0.0F);
+		spider.setDeltaMovement(0.2, 0.0, 0.0);
+		helper.assertFalse(GeneBehaviors.webTrail(spider, helper.getLevel(), trail), "one cobweb in each interval");
+		helper.assertBlockPresent(Blocks.AIR, new BlockPos(4, 1, 1));
 		helper.succeed();
 	}
 

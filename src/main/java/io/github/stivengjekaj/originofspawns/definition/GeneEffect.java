@@ -149,7 +149,8 @@ public sealed interface GeneEffect {
 			Map.entry("charge_when", ChargeWhen.CODEC),
 			Map.entry("blast_lightning", BlastLightning.CODEC),
 			Map.entry("lightning_immunity", LightningImmunity.CODEC),
-			Map.entry("web_on_hit", WebOnHit.CODEC)
+			Map.entry("web_on_hit", WebOnHit.CODEC),
+			Map.entry("web_trail", WebTrail.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2311,6 +2312,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "web_on_hit";
+		}
+	}
+
+	/**
+	 * While the mob walks, it leaves a cobweb at its place one time in each interval. The cobweb goes only in air,
+	 * and it goes away after the seconds with no drops.
+	 */
+	record WebTrail(float intervalSeconds, float seconds) implements GeneEffect {
+		public static final MapCodec<WebTrail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 600.0F).optionalFieldOf("interval_seconds", 10.0F).forGetter(WebTrail::intervalSeconds),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds", 30.0F).forGetter(WebTrail::seconds)
+		).apply(instance, WebTrail::new));
+
+		@Override
+		public String type() {
+			return "web_trail";
 		}
 	}
 }

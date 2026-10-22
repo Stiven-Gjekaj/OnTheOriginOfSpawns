@@ -62,6 +62,10 @@ public final class GeneBehaviors {
 	private static final float CHICKEN_JOCKEY_CHANCE = 0.05F;
 	private static final int TICK_INTERVAL = 20;
 	/**
+	 * A mob that moves faster than this, in blocks each tick, walks.
+	 */
+	private static final double WALK_SPEED_SQR = 1.0E-4;
+	/**
 	 * The look tolerance of the enderman.
 	 */
 	private static final double GAZE_TOLERANCE = 0.025;
@@ -395,6 +399,7 @@ public final class GeneBehaviors {
 				case GeneEffect.AttractGolems attract -> attractGolems(mob, level, attract);
 				case GeneEffect.Sidestep sidestep -> sidestep(mob, level, sidestep);
 				case GeneEffect.ThrowEffect thrown -> throwEffect(mob, level, thrown);
+				case GeneEffect.WebTrail trail -> webTrail(mob, level, trail);
 				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
 				case GeneEffect.FrenziedTargeting frenzy
 						when now % Math.max(1, Math.round(frenzy.intervalSeconds() * 20.0F)) < TICK_INTERVAL
@@ -803,6 +808,23 @@ public final class GeneBehaviors {
 					point.x, point.y, point.z, 2, 0.05, 0.05, 0.05, 0.0);
 		}
 		mob.setAttached(ModAttachments.STATE, state.withThrowTime(now));
+		return true;
+	}
+
+	/**
+	 * Leaves a cobweb at the place of the mob while it walks, one time in each interval.
+	 *
+	 * @return true if a cobweb went in the world
+	 */
+	public static boolean webTrail(Mob mob, ServerLevel level, GeneEffect.WebTrail trail) {
+		long now = level.getGameTime();
+		long last = mob.getAttachedOrElse(ModAttachments.WEB_TRAIL_TIME, Long.MIN_VALUE);
+		if (mob.getDeltaMovement().horizontalDistanceSqr() < WALK_SPEED_SQR
+				|| last != Long.MIN_VALUE && now - last < Math.round(trail.intervalSeconds() * 20.0F)
+				|| !GeneCombat.putWeb(level, mob, trail.seconds())) {
+			return false;
+		}
+		mob.setAttached(ModAttachments.WEB_TRAIL_TIME, now);
 		return true;
 	}
 

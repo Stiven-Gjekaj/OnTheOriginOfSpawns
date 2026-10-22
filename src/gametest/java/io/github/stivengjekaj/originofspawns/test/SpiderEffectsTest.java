@@ -6,7 +6,10 @@ import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.evolution.TemporaryBlocks;
+import io.github.stivengjekaj.originofspawns.evolution.goal.LeapGoal;
+import io.github.stivengjekaj.originofspawns.evolution.goal.LurkGoal;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -297,6 +300,67 @@ public class SpiderEffectsTest {
 		pig.snapTo(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(6, 1, 1))), 0.0F, 0.0F);
 		helper.assertTrue(GeneBehaviors.throwEffect(spider, helper.getLevel(), spit), "the target is in the range");
 		helper.assertTrue(pig.hasEffect(MobEffects.POISON), "the spit poisons the pig");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theGeneGoalsWorkOnASpider(GameTestHelper helper) {
+		Spider spider = spiderWith(helper, new BlockPos(1, 1, 1), "test_spider_moves");
+		GeneBehaviors.installGoals(spider);
+		var goals = ((MobAccessor) spider).originofspawns$goalSelector().getAvailableGoals().stream()
+				.map(WrappedGoal::getGoal).toList();
+		helper.assertTrue(goals.stream().anyMatch(LeapGoal.class::isInstance), "the spider has the leap goal");
+		helper.assertTrue(goals.stream().anyMatch(LurkGoal.class::isInstance), "the spider has the lurk goal");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aSpiderStepsAsideFromAnAimedBow(GameTestHelper helper) {
+		for (int x = 0; x < 8; x++) {
+			helper.setBlock(new BlockPos(x, 0, 1), Blocks.STONE);
+		}
+		Spider spider = spiderWith(helper, new BlockPos(4, 1, 1));
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setNoGravity(true);
+		player.setPos(spider.position().add(0.0, 0.0, 5.0));
+		CreeperEffectsTest.face(player, 180.0F);
+		var dart = new GeneEffect.Sidestep(12.0F, 3.0F, 10.0F, true);
+		helper.assertFalse(GeneBehaviors.sidestep(spider, helper.getLevel(), dart), "no bow, no step");
+		player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+		player.startUsingItem(InteractionHand.MAIN_HAND);
+		Vec3 before = spider.position();
+		helper.assertTrue(GeneBehaviors.sidestep(spider, helper.getLevel(), dart), "the spider steps aside");
+		helper.assertValueEqual(Math.round(Math.abs(spider.getX() - before.x)), 3L, "the side distance");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aDiggerSpiderRisesNextToThePlayer(GameTestHelper helper) {
+		for (int x = 0; x < 6; x++) {
+			for (int z = 0; z < 6; z++) {
+				helper.setBlock(new BlockPos(x, 1, z), Blocks.DIRT);
+				helper.setBlock(new BlockPos(x, 2, z), Blocks.DIRT);
+			}
+		}
+		Spider spider = spiderWith(helper, new BlockPos(0, 3, 0), "test_digger");
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(4, 3, 4))));
+		var burrow = (GeneEffect.Burrow) GeneEffects.of(spider).findFirst().orElseThrow();
+		helper.assertTrue(GeneBehaviors.burrow(spider, helper.getLevel(), burrow), "the spider goes under");
+		double distance = Math.hypot(spider.getX() - player.getX(), spider.getZ() - player.getZ());
+		helper.assertTrue(distance <= 3.0, "the spider is next to the player, at " + distance);
+		helper.assertTrue(spider.getY() < player.getY() - 1.0, "the spider is under the ground");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aHiveMindSharesTheDamageWithTheSpidersNearIt(GameTestHelper helper) {
+		Spider hit = spiderWith(helper, new BlockPos(1, 1, 1), "test_hive_mind");
+		Spider ally = spiderWith(helper, new BlockPos(3, 1, 1), "test_hive_mind");
+		float full = hit.getHealth();
+		hit.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 10.0F);
+		helper.assertValueEqual(hit.getHealth(), full - 5.0F, "the hit spider takes half");
+		helper.assertValueEqual(ally.getHealth(), full - 5.0F, "the ally takes the other half");
 		helper.succeed();
 	}
 

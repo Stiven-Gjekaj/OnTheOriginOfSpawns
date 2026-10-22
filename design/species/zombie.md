@@ -207,7 +207,7 @@ The major family comes first, and the sub family comes second.
 | Gloomrot | Stalker | Blight | Hidden carriers of disease |
 | Juggernauts | Tank | Predator | Slow walls that hit hard |
 | Stonewatchers | Tank | Stalker | Tough guards that wait in the dark |
-| Phalanx | Tank | Horde | Tough lines that move as one |
+| Shield Walls | Tank | Horde | Tough lines that move as one |
 | Bloatbacks | Tank | Blight | Swollen and slow, they poison when they die |
 | Ravagers | Horde | Predator | Fast swarms that run down the player |
 | Night Swarm | Horde | Stalker | Swarms that come from the dark with no sound |

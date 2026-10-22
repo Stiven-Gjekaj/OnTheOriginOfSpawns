@@ -47,9 +47,9 @@ Rushers run at the player. They carry less powder.
 | Tier 2 | 20% more speed | Its blast is 20% smaller |
 | Tier 1 | 15% more speed | Its blast is 25% smaller |
 
-### Ambushers
+### Skulkers
 
-Ambushers wait where the player cannot see them. They are slow.
+Skulkers wait where the player cannot see them. They are slow.
 
 | Tier | Buff | Debuff |
 |---|---|---|
@@ -123,16 +123,16 @@ The visual column gives the region and the mark.
 | Tracker | Rusher | `alone` | 50% more follow range | 10% less maximum health | Face: a wide, open mouth |
 | Wallcrawler | Rusher | `melee` | It climbs walls | 10% less maximum health | Feet: hooked claws. This changes the model |
 
-### Ambusher genes
+### Skulker genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Silent Fuse | Ambusher | `melee` | Its fuse makes no sound | 10% less speed | Face: a mouth that is sewn shut |
-| Leafskin | Ambusher | `spotted` | It is almost invisible while it stands in leaves or tall grass | 10% less maximum health | Body: a pattern of leaves on the skin |
-| Gloom | Ambusher | `night` | It is almost invisible at a light level of 7 or less | Its blast is 15% smaller | Body: dark gray patches |
-| Veiled | Ambusher, sub Fumer | `projectile` | Players farther than 12 blocks do not see it | 10% less speed | Head: a faded, pale face |
-| Patient | Ambusher | `alone` | It waits without a move until a player comes in 4 blocks, then it lights its fuse | Its blast is 10% smaller | Feet: roots that grow around the feet. This changes the model |
-| Surprise | Ambusher | `critical` | Its blast does 30% more damage to a player that did not see it | 10% less maximum health | Face: a wider grin |
+| Silent Fuse | Skulker | `melee` | Its fuse makes no sound | 10% less speed | Face: a mouth that is sewn shut |
+| Leafskin | Skulker | `spotted` | It is almost invisible while it stands in leaves or tall grass | 10% less maximum health | Body: a pattern of leaves on the skin |
+| Gloom | Skulker | `night` | It is almost invisible at a light level of 7 or less | Its blast is 15% smaller | Body: dark gray patches |
+| Veiled | Skulker, sub Fumer | `projectile` | Players farther than 12 blocks do not see it | 10% less speed | Head: a faded, pale face |
+| Patient | Skulker | `alone` | It waits without a move until a player comes in 4 blocks, then it lights its fuse | Its blast is 10% smaller | Feet: roots that grow around the feet. This changes the model |
+| Surprise | Skulker | `critical` | Its blast does 30% more damage to a player that did not see it | 10% less maximum health | Face: a wider grin |
 
 ### Fumer genes
 
@@ -165,7 +165,7 @@ The visual column gives the region and the mark.
 | Fumers, Toxic Blast, Smoke Bomb, Wither Gas, Spore Blast | The cloud has the radius of the blast and lasts the given time. It is added to the vanilla cloud that a creeper with status effects leaves |
 | Thunderheads | "Charged" is the vanilla charged creeper. A creeper that spawns charged has the blue aura |
 | Thunderheads, Lightning Rod | Water and rain damage it as they damage an enderman, but at the given rate |
-| Ambushers, Veiled | It works as the bogged Swamp Shroud |
+| Skulkers, Veiled | It works as the bogged Swamp Shroud |
 | Shrapnel | The blast still does its normal damage to a player that blocks with a shield. A shield takes no damage from it |
 | Chain Reaction | It lights only creepers that are not already lit. A lit creeper does not light more creepers |
 | Aftershock | The second blast does not light more aftershocks |
@@ -210,24 +210,24 @@ The major family comes first, and the sub family comes second.
 | Minor family | Major | Sub | Play style |
 |---|---|---|---|
 | Cannonballs | Blaster | Rusher | Big blasts that run at you |
-| Landmines | Blaster | Ambusher | Big blasts that wait in cover |
+| Landmines | Blaster | Skulker | Big blasts that wait in cover |
 | Dirty Bombs | Blaster | Fumer | Big blasts full of gas |
 | Thunderclaps | Blaster | Thunderhead | Big blasts with the charge of the storm |
 | Comets | Rusher | Blaster | Fast and still strong |
-| Pouncers | Rusher | Ambusher | They wait, then run |
+| Pouncers | Rusher | Skulker | They wait, then run |
 | Gas Runners | Rusher | Fumer | Fast clouds of gas |
 | Sparks | Rusher | Thunderhead | Fast in the storm |
-| Traps | Ambusher | Blaster | Hidden and strong |
-| Jumpscares | Ambusher | Rusher | Hidden, then fast |
-| Silent Fogs | Ambusher | Fumer | Hidden clouds of gas |
-| Dark Clouds | Ambusher | Thunderhead | Hidden in the storm |
+| Traps | Skulker | Blaster | Hidden and strong |
+| Jumpscares | Skulker | Rusher | Hidden, then fast |
+| Silent Fogs | Skulker | Fumer | Hidden clouds of gas |
+| Dark Clouds | Skulker | Thunderhead | Hidden in the storm |
 | Gas Bombs | Fumer | Blaster | Large clouds of gas |
 | Stink Runners | Fumer | Rusher | Gas that runs at you |
-| Creeping Mists | Fumer | Ambusher | Gas that waits |
+| Creeping Mists | Fumer | Skulker | Gas that waits |
 | Acid Rains | Fumer | Thunderhead | Gas in the storm |
 | Thunderbolts | Thunderhead | Blaster | Strong charged blasts |
 | Ball Lightning | Thunderhead | Rusher | Fast charged blasts |
-| Heat Lightning | Thunderhead | Ambusher | Hidden charge |
+| Heat Lightning | Thunderhead | Skulker | Hidden charge |
 | Ozone Clouds | Thunderhead | Fumer | Charged gas |
 
 ## Pure families
@@ -240,10 +240,10 @@ It gives the tier 3 effects of that family.
 
 | Hybrid | Families | Play style |
 |---|---|---|
-| Hidden Charges | Ambusher and Blaster | Strong blasts that wait in cover |
-| Silent Gas | Ambusher and Fumer | Gas that you do not see |
-| Shadow Runners | Ambusher and Rusher | Fast and hidden |
-| Night Storms | Ambusher and Thunderhead | Hidden in the dark storm |
+| Hidden Charges | Skulker and Blaster | Strong blasts that wait in cover |
+| Silent Gas | Skulker and Fumer | Gas that you do not see |
+| Shadow Runners | Skulker and Rusher | Fast and hidden |
+| Night Storms | Skulker and Thunderhead | Hidden in the dark storm |
 | Gas Mines | Blaster and Fumer | Strong blasts of gas |
 | Wrecking Balls | Blaster and Rusher | Strong and fast |
 | Supercells | Blaster and Thunderhead | The strongest charged blasts |

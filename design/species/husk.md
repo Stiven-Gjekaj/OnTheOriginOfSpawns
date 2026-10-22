@@ -205,7 +205,7 @@ The major family comes first, and the sub family comes second.
 | Funeral Train | Mummy | Caravan | Slow, tough processions that share their wounds |
 | Saltwraps | Mummy | Parcher | Dry, salted dead that drain the player |
 | Sunwalkers | Caravan | Scorcher | Travelers that march strong through the day |
-| Drifters | Caravan | Dunecrawler | Wanderers that follow the dunes |
+| Sand Drifters | Caravan | Dunecrawler | Wanderers that follow the dunes |
 | Processions | Caravan | Mummy | Long lines of tough, wrapped husks |
 | Dry Caravans | Caravan | Parcher | Thirsty groups that strip the player of food |
 | Sunstricken | Parcher | Scorcher | Thirst made worse by the heat |

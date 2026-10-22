@@ -206,7 +206,7 @@ The major family comes first, and the sub family comes second.
 | Moldering | Sporecap | Mosshide | Soft rot that hides in the green |
 | Bog Bodies | Mirefolk | Sporecap | The swamp dead, full of spores |
 | Mire Snakes | Mirefolk | Venomer | Poison that comes out of the water |
-| Sinkholes | Mirefolk | Vinebound | Mud and roots that pull the player down |
+| Quagmires | Mirefolk | Vinebound | Mud and roots that pull the player down |
 | Fen Lurkers | Mirefolk | Mosshide | Shapes under the water and the moss |
 | Blightcaps | Venomer | Sporecap | Poison arrows and sick clouds |
 | Marsh Fangs | Venomer | Mirefolk | Poison archers that wade fast |

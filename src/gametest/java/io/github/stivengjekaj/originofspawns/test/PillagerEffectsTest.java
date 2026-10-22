@@ -22,6 +22,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -571,6 +572,29 @@ public class PillagerEffectsTest {
 	static int bottlesNear(GameTestHelper helper, Pillager pillager) {
 		return helper.getLevel().getEntitiesOfClass(ItemEntity.class, pillager.getBoundingBox().inflate(2.0),
 				item -> item.getItem().is(Items.OMINOUS_BOTTLE)).size();
+	}
+
+	@GameTest
+	public void aPillagerGetsNoRandomCrossbowEnchantmentButTheRaidOnesStay(GameTestHelper helper) {
+		Pillager pillager = pillagerWith(helper, new BlockPos(1, 1, 1));
+		// On Hard, in a world that is old, with a full moon, the vanilla crossbow gets an enchantment on 1 spawn in 4.
+		DifficultyInstance hard = new DifficultyInstance(Difficulty.HARD, 10_000_000L, 10_000_000L, 1.0F);
+		for (int i = 0; i < 40; i++) {
+			pillager.finalizeSpawn(helper.getLevel(), hard, EntitySpawnReason.NATURAL, null);
+			helper.assertTrue(pillager.getMainHandItem().is(Items.CROSSBOW), "the pillager keeps its crossbow");
+			helper.assertFalse(pillager.getMainHandItem().isEnchanted(), "the crossbow has no random enchantment");
+		}
+		// A raid with the strongest omen enchants the crossbow on 3 raiders in 4, from wave 4.
+		Raid raid = new Raid(helper.absolutePos(new BlockPos(1, 1, 1)), Difficulty.HARD);
+		raid.setRaidOmenLevel(5);
+		pillager.setCurrentRaid(raid);
+		boolean enchanted = false;
+		for (int i = 0; i < 20 && !enchanted; i++) {
+			pillager.applyRaidBuffs(helper.getLevel(), 6, false);
+			enchanted = pillager.getMainHandItem().isEnchanted();
+		}
+		helper.assertTrue(enchanted, "the raid still enchants the crossbow");
+		helper.succeed();
 	}
 
 	static List<FireworkRocketEntity> rocketsOf(GameTestHelper helper, Pillager pillager) {

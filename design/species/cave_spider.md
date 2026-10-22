@@ -152,7 +152,7 @@ The visual column gives the region and the mark.
 | Gene | Rules |
 |---|---|
 | Toxins | They change the Poison that the cave spider gives with each bite in vanilla. On Easy, the bite gives no Poison, so the buff does nothing there. "One level stronger" is Poison II |
-| Gloomers, Nest Weaver | "Bright light" is a light level of 12 or more. "The dark" is a light level of 7 or less |
+| Gloomers, Night Eyes, Cave Ghost | "Bright light" is a light level of 12 or more. "The dark" is a light level of 6 or less, as for the other species |
 | Broodkeepers, Nest Mend, Spawner Bond | "A spawner" is any monster spawner block in the radius, not only the spawner that the cave spider came from |
 | Geodes | "A pickaxe" is an item in the tag `#minecraft:pickaxes` in the hand of the attacker |
 | Venom Spray, Chime | They work as the bogged Rotting Touch, for melee hits only |

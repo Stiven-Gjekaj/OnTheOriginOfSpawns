@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:vindicator",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:vindicator/guardsman",
+	"gains": [
+		{
+			"type": "share_damage",
+			"fraction": 0.5,
+			"radius": 8
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

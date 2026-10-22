@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:vindicator",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:vindicator/butcher",
+	"gains": [
+		{
+			"type": "knockback",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attack_interval",
+			"multiplier": 1.1
+		}
+	]
+}

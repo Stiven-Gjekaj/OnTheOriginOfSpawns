@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:vindicator",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:vindicator/berserker",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:slowness",
+			"radius": 6,
+			"interval_seconds": 15,
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

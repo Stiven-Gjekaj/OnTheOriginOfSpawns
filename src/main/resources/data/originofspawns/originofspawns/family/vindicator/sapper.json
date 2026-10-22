@@ -1,0 +1,56 @@
+{
+	"species": "minecraft:vindicator",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "siege",
+					"break_seconds": 10,
+					"door_seconds": 10
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "siege",
+					"break_seconds": 6,
+					"door_seconds": 6
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "siege",
+					"break_seconds": 3,
+					"door_seconds": 3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

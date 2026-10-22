@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:vindicator",
+	"counters": "originofspawns:fire",
+	"family": "originofspawns:vindicator/berserker",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 3,
+			"idle_seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 1.25
+		}
+	]
+}

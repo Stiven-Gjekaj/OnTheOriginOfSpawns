@@ -1,0 +1,71 @@
+{
+	"species": "minecraft:vindicator",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "damage_to",
+					"targets": "#originofspawns:villagers",
+					"multiplier": 1.3
+				},
+				{
+					"type": "damage_to",
+					"targets": "#originofspawns:all_golems",
+					"multiplier": 1.3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.8,
+					"players_only": true
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "damage_to",
+					"targets": "#originofspawns:villagers",
+					"multiplier": 1.4
+				},
+				{
+					"type": "damage_to",
+					"targets": "#originofspawns:all_golems",
+					"multiplier": 1.4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.85,
+					"players_only": true
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "damage_to",
+					"targets": "#originofspawns:villagers",
+					"multiplier": 1.5
+				},
+				{
+					"type": "damage_to",
+					"targets": "#originofspawns:all_golems",
+					"multiplier": 1.5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.9,
+					"players_only": true
+				}
+			]
+		}
+	]
+}

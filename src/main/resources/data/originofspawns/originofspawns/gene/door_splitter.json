@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:vindicator",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:vindicator/sapper",
+	"gains": [
+		{
+			"type": "siege",
+			"break_seconds": 10,
+			"door_seconds": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

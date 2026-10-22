@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:vindicator",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:vindicator/sapper",
+	"gains": [
+		{
+			"type": "web_on_hit",
+			"chance": 0.15
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9
+		}
+	]
+}

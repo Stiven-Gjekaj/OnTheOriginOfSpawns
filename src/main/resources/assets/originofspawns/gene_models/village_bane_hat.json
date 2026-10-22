@@ -1,0 +1,42 @@
+{
+	"texture": "originofspawns:textures/entity/village_bane_hat.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-6,
+				-10.4,
+				-6
+			],
+			"size": [
+				12,
+				1,
+				12
+			]
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				16
+			],
+			"from": [
+				-4,
+				-13,
+				-4
+			],
+			"size": [
+				8,
+				3,
+				8
+			],
+			"inflate": 0.3
+		}
+	]
+}

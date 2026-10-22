@@ -1,0 +1,33 @@
+{
+	"region_map": "originofspawns:textures/region/illager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/hunting_call_0.png",
+				"tint": "#D8C8A0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/hunting_call_1.png",
+				"tint": "#E8DCB8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/hunting_call_2.png",
+				"tint": "#C8A040"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/hunting_call_3.png",
+				"tint": "#2A2018"
+			}
+		}
+	]
+}

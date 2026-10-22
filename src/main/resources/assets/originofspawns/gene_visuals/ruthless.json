@@ -1,0 +1,33 @@
+{
+	"region_map": "originofspawns:textures/region/illager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ruthless_0.png",
+				"tint": "#141414"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ruthless_1.png",
+				"tint": "#7A8484"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ruthless_2.png",
+				"tint": "#C8E8F0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ruthless_3.png",
+				"tint": "#3A3E3E"
+			}
+		}
+	]
+}

@@ -1,0 +1,80 @@
+{
+	"texture": "originofspawns:textures/entity/torchbearer_torch.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				-2,
+				4.2
+			],
+			"size": [
+				1,
+				9,
+				1
+			],
+			"pivot": [
+				0,
+				5,
+				4.7
+			],
+			"rotation": [
+				0,
+				0,
+				30
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				-1,
+				-4,
+				3.7
+			],
+			"size": [
+				2,
+				2,
+				2
+			],
+			"pivot": [
+				0,
+				5,
+				4.7
+			],
+			"rotation": [
+				0,
+				0,
+				30
+			],
+			"glow": true
+		},
+		{
+			"bone": "body",
+			"uv": [
+				12,
+				0
+			],
+			"from": [
+				-4,
+				5,
+				3.5
+			],
+			"size": [
+				8,
+				1,
+				2
+			],
+			"inflate": 0.15
+		}
+	]
+}

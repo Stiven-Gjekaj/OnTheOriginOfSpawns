@@ -37,6 +37,32 @@ Pixel plan for the Berserkers.
 - Howl has a wide, open mouth: a dark, wide mouth with a red tongue.
 - Fury has red veins: red veins that branch on the sleeves.
 - Thick Blood has dark red cloth: the coat is dark red, with darker seams.
+
+Pixel plan for the Sappers.
+- Door Splitter has wood splinters on the sleeves: short splinters of pale
+  wood that stick in the sleeves.
+- Shatterer has heavy gloves: thick leather gloves with pale stitches, and a
+  cuff on the wrist.
+- Torchbearer: a lit torch on the back, the gene model torchbearer_torch.
+- Climber has climbing hooks: steel hooks on the knuckles, and dark straps
+  that hold them.
+- Battering has a padded gambeson: the coat is quilted padding, with dark
+  seams.
+- Netter: a coil of rope at the right hip, the gene model netter_rope.
+
+Pixel plan for the Ransackers.
+- Village Bane: a torn villager hat of straw on the head, the gene model
+  village_bane_hat.
+- Golem Smasher has iron-gray fist wraps: gray wraps with dark lines round
+  the hands and the wrists.
+- Looting: an open sack of loot on the back, with gold and emeralds at its
+  top, the gene model looting_sack.
+- Ruthless has a cold, narrow stare: a heavy black brow over the eyes, gray
+  eye whites, pale icy pupils, and dark lower lids.
+- Hunting Call has a horn on a cord: a pale cord across the coat, and a horn
+  at the left hip of the coat.
+- Pillage Run has muddy boots: brown mud on the boots, with splashes up the
+  trousers.
 This script needs Pillow.
 """
 import json
@@ -307,6 +333,259 @@ def thick_blood():
         (seam if edge else red).put((x, y))
     return [red, seam]
 
+WOOD = ("#C8A060", "#8A6430", "#5A3A1A")
+LEATHER = ("#5A3A20", "#8A6A40")
+ROPE = ("#C8B080", "#9A8458", "#5A4A30")
+
+
+def door_splitter():
+    # Wood splinters on the sleeves: short splinters of pale wood, each 2
+    # pixels on a slant, that stick in the sleeves, with a dark wood root.
+    pale = Mark(WOOD[0])
+    dark = Mark(WOOD[1])
+    for x, y, face, col, row in sleeve_pixels(0, 9):
+        n = noise100(x, y, 1103)
+        if n < 10:
+            pale.put((x, y))
+        elif n < 18:
+            dark.put((x, y))
+    return [pale, dark]
+
+
+def shatterer():
+    # Heavy gloves: the hands are thick brown leather, with pale stitches on
+    # every other pixel of the knuckles, and a leather cuff on the wrist (row 9
+    # of the arm).
+    glove = Mark(LEATHER[0])
+    stitch = Mark(LEATHER[1])
+    for x, y, face, col, row in hand_pixels():
+        (stitch if row == 10 and col % 2 == 0 else glove).put((x, y))
+    for x, y, face, col, row in pixels(ARM, SIDES):
+        if row == 9:
+            stitch.put((x, y))
+    return [glove, stitch]
+
+
+def torchbearer():
+    # The torch is the gene model torchbearer_torch.
+    return []
+
+
+def torchbearer_model():
+    # A torch on the back: a lit torch that hangs at a slant across the back,
+    # with a wooden stick, a glowing head of fire at its top, and a leather
+    # strap that holds it to the back. The fire has full light. On the body
+    # bone, the back of the coat is at z 3.5, and the back of the head is at
+    # z 4.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def stick(face, x, y):
+        return WOOD[1] if face in ("back", "left") else WOOD[2]
+
+    def fire(face, x, y):
+        if face == "top":
+            return "#FFF0A0"
+        return "#FFC030" if (x + y) % 2 else "#F08020"
+
+    # The stick: 1x9x1 at uv (0, 0). The fire: 2x2x2 at uv (4, 0). The strap:
+    # 8x1x2 at uv (12, 0).
+    paint_box(im, 0, 0, 1, 9, 1, stick)
+    paint_box(im, 4, 0, 2, 2, 2, fire)
+    paint_box(im, 12, 0, 8, 1, 2, lambda face, x, y: "#3A2A1A")
+    pivot = [0, 5, 4.7]
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [-0.5, -2, 4.2], "size": [1, 9, 1], "pivot": pivot,
+         "rotation": [0, 0, 30]},
+        {"bone": "body", "uv": [4, 0], "from": [-1, -4, 3.7], "size": [2, 2, 2], "pivot": pivot,
+         "rotation": [0, 0, 30], "glow": True},
+        {"bone": "body", "uv": [12, 0], "from": [-4, 5, 3.5], "size": [8, 1, 2], "inflate": 0.15},
+    ]
+    save_model("torchbearer_torch", im, parts)
+
+
+def climber():
+    # Climbing hooks: a steel hook on every other pixel of the bottom row of
+    # the hands, and a dark strap across the row above them.
+    hook = Mark(STEEL[0])
+    strap = Mark("#2A2420")
+    for x, y, face, col, row in hand_pixels():
+        if row == 11 and col % 2 == 0:
+            hook.put((x, y))
+        elif row == 10:
+            strap.put((x, y))
+    return [hook, strap]
+
+
+def battering():
+    # A padded gambeson: the coat is quilted padding of pale gray brown, with
+    # dark seams on every third row and column.
+    pad = Mark("#8A7E66")
+    seam = Mark("#5A5040")
+    for x, y, face, col, row in coat_pixels():
+        (seam if row % 3 == 2 or col % 3 == 2 else pad).put((x, y))
+    return [pad, seam]
+
+
+def netter():
+    # The rope is the gene model netter_rope.
+    return []
+
+
+def netter_model():
+    # A coil of rope at the right hip: a round coil of pale rope, with dark
+    # lines between the loops and a dark hole in its middle, that hangs on the
+    # side of the coat, and a short end of rope that hangs under it. On the
+    # body bone, the right side of the coat is at x -4.5.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def coil(face, x, y):
+        if face in ("right", "left") and 1 <= x <= 2 and 1 <= y <= 2:
+            return ROPE[2]
+        if face in ("right", "left") and (x in (0, 3) or y in (0, 3)):
+            return ROPE[0] if (x + y) % 2 else ROPE[1]
+        return ROPE[1] if (x + y) % 2 else ROPE[0]
+
+    # The coil: 2x4x4 at uv (0, 0). The end: 1x3x1 at uv (16, 0).
+    paint_box(im, 0, 0, 2, 4, 4, coil)
+    paint_box(im, 16, 0, 1, 3, 1, lambda face, x, y: ROPE[1])
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [-6.5, 5.5, -2], "size": [2, 4, 4]},
+        {"bone": "body", "uv": [16, 0], "from": [-6, 9.5, 0.5], "size": [1, 3, 1], "inflate": -0.2},
+    ]
+    save_model("netter_rope", im, parts)
+
+
+def village_bane():
+    # The hat is the gene model village_bane_hat.
+    return []
+
+
+def village_bane_model():
+    # A torn villager hat: a straw hat with a wide brim, taken from a farmer,
+    # on the head. Bites are torn out of the edge of the brim, and the crown
+    # has a hole. On the head bone, the top of the head is at y -10.
+    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+
+    def brim(face, x, y):
+        if face == "top" and ((x, y) in ((0, 3), (0, 4), (1, 4), (9, 7), (8, 9), (9, 8), (4, 0), (5, 0))):
+            return None
+        if face in ("right", "front", "left", "back") and x in (2, 7):
+            return None
+        return "#D8B860" if (x + y) % 3 else "#A88830"
+
+    def crown(face, x, y):
+        if face == "top" and (x, y) in ((4, 3), (5, 3), (4, 4)):
+            return None
+        if y == 2 and face != "top":
+            return "#8A3A20"
+        return "#D8B860" if (x + 2 * y) % 3 else "#B89840"
+
+    # The brim: 12x1x12 at uv (0, 0). The crown: 8x3x8 at uv (0, 16).
+    paint_box(im, 0, 0, 12, 1, 12, brim)
+    paint_box(im, 0, 16, 8, 3, 8, crown)
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-6, -10.4, -6], "size": [12, 1, 12]},
+        {"bone": "head", "uv": [0, 16], "from": [-4, -13, -4], "size": [8, 3, 8], "inflate": 0.3},
+    ]
+    save_model("village_bane_hat", im, parts)
+
+
+def golem_smasher():
+    # Iron-gray fist wraps: the hands and the wrist (row 9 of the arm) are
+    # wrapped in iron-gray cloth, with dark lines between the wraps.
+    wrap = Mark("#8A8E92")
+    line = Mark("#4A4E52")
+    for x, y, face, col, row in hand_pixels():
+        (line if (row + col) % 3 == 0 else wrap).put((x, y))
+    for x, y, face, col, row in pixels(ARM, SIDES):
+        if row == 9:
+            (line if col % 3 == 0 else wrap).put((x, y))
+    return [wrap, line]
+
+
+def looting():
+    # The sack is the gene model looting_sack.
+    return []
+
+
+def looting_model():
+    # A sack of loot on the back: an open sack of dark burlap, with a pale
+    # rim, full of loot: a gold ingot and an emerald stick out of its top. On
+    # the body bone, the back of the coat is at z 3.5.
+    im = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+
+    def sack(face, x, y):
+        if y == 0 and face != "bottom":
+            return "#A08458"
+        if (x + y) % 3 == 0:
+            return "#5A4028"
+        return "#7A5A38" if face in ("back", "top", "left") else "#6A4C30"
+
+    # The sack: 5x6x4 at uv (0, 0). The gold: 2x1x1 at uv (0, 12). The
+    # emerald: 1x2x1 at uv (8, 12).
+    paint_box(im, 0, 0, 5, 6, 4, sack)
+    paint_box(im, 0, 12, 2, 1, 1, lambda face, x, y: "#F8D840" if face == "top" else "#D0A020")
+    paint_box(im, 8, 12, 1, 2, 1, lambda face, x, y: "#60E080" if face in ("top", "front") else "#20A050")
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [-2.5, 2, 3.6], "size": [5, 6, 4], "inflate": 0.2},
+        {"bone": "body", "uv": [0, 12], "from": [-1.5, 1.2, 5], "size": [2, 1, 1], "pivot": [-0.5, 1.7, 5.5],
+         "rotation": [0, 20, 15]},
+        {"bone": "body", "uv": [8, 12], "from": [0.8, 0.3, 4.6], "size": [1, 2, 1]},
+    ]
+    save_model("looting_sack", im, parts)
+
+
+def ruthless():
+    # A cold, narrow stare: a heavy black brow across the face over the eyes
+    # (row 13), gray eye whites, pale icy pupils, and dark lower lids under
+    # the eyes.
+    brow = Mark("#141414")
+    white = Mark("#7A8484")
+    ice = Mark("#C8E8F0")
+    lid = Mark("#3A3E3E")
+    brow.put([(x, 13) for x in range(8, 16)])
+    white.put([(9, 14), (14, 14)])
+    ice.put([(10, 14), (13, 14)])
+    lid.put([(9, 15), (10, 15), (13, 15), (14, 15)])
+    return [brow, white, ice, lid]
+
+
+def hunting_call():
+    # A horn on a cord: a pale cord from the right shoulder to the left hip on
+    # the front of the coat, and back up on the back, and a horn of pale bone
+    # with a brass band and a dark mouth on the left side of the coat.
+    cord = Mark("#D8C8A0")
+    bone = Mark("#E8DCB8")
+    brass = Mark("#C8A040")
+    mouth = Mark("#2A2018")
+    for face, flip in (("front", False), ("back", True)):
+        x0, y0, w, h = COAT[face]
+        for row in range(3, 11):
+            col = row - 3 if not flip else 10 - row
+            cord.put((x0 + col, y0 + row))
+    x0, y0 = COAT["left"][:2]
+    bone.put([(x0 + 1, y0 + 8), (x0 + 2, y0 + 8), (x0 + 2, y0 + 9), (x0 + 3, y0 + 9)])
+    brass.put((x0 + 3, y0 + 8))
+    mouth.put([(x0 + 4, y0 + 8), (x0 + 4, y0 + 9)])
+    return [cord, bone, brass, mouth]
+
+
+def pillage_run():
+    # Muddy boots: the boots (rows 9 to 11 of the legs) and their soles are
+    # brown mud, and splashes of mud reach up the trousers to row 6.
+    mud = Mark("#4A3220")
+    splash = Mark("#6A4A2A")
+    for x, y, face, col, row in pixels(LEG, SIDES):
+        n = noise100(x, y, 1201)
+        if row >= 10 or row == 9 and n < 70:
+            mud.put((x, y))
+        elif row >= 6 and n < 30 - 5 * (8 - row):
+            splash.put((x, y))
+    for x, y, face, col, row in pixels(LEG, ("bottom",)):
+        mud.put((x, y))
+    return [mud, splash]
+
+
 
 GENES = {
     "heavy_swing": heavy_swing,
@@ -321,15 +600,32 @@ GENES = {
     "howl": howl,
     "fury": fury,
     "thick_blood": thick_blood,
+    "door_splitter": door_splitter,
+    "shatterer": shatterer,
+    "torchbearer": torchbearer,
+    "climber": climber,
+    "battering": battering,
+    "netter": netter,
+    "village_bane": village_bane,
+    "golem_smasher": golem_smasher,
+    "looting": looting,
+    "ruthless": ruthless,
+    "hunting_call": hunting_call,
+    "pillage_run": pillage_run,
 }
 
 MODELS = {
     "gash": "originofspawns:gash_apron",
     "hatchet": "originofspawns:hatchet_hatchets",
     "decapitator": "originofspawns:decapitator_hood",
+    "torchbearer": "originofspawns:torchbearer_torch",
+    "netter": "originofspawns:netter_rope",
+    "village_bane": "originofspawns:village_bane_hat",
+    "looting": "originofspawns:looting_sack",
 }
 
-MODEL_MAKERS = [gash_model, hatchet_model, decapitator_model]
+MODEL_MAKERS = [gash_model, hatchet_model, decapitator_model, torchbearer_model, netter_model, village_bane_model,
+                looting_model]
 
 
 def main():

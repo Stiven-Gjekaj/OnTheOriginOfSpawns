@@ -6,6 +6,7 @@ import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.goal.LeapGoal;
 import io.github.stivengjekaj.originofspawns.evolution.goal.LurkGoal;
+import io.github.stivengjekaj.originofspawns.evolution.goal.SiegeDoorGoal;
 import io.github.stivengjekaj.originofspawns.evolution.goal.SiegeGoal;
 import io.github.stivengjekaj.originofspawns.mixin.AbstractSkeletonAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
@@ -106,7 +107,7 @@ public final class GeneBehaviors {
 					if (mob instanceof Zombie zombie) {
 						zombie.setCanBreakDoors(true);
 					}
-					goals.addGoal(1, new BreakDoorGoal(mob, difficulty -> true));
+					goals.addGoal(1, new SiegeDoorGoal(mob, Math.round(siege.doorSeconds() * 20.0F)));
 					goals.addGoal(1, new SiegeGoal(mob, siege));
 				}
 				case GeneEffect.Glowing glowing when glowing.when() == GeneEffect.When.ALWAYS -> mob.setGlowingTag(true);

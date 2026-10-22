@@ -1007,17 +1007,22 @@ public sealed interface GeneEffect {
 
 	/**
 	 * The mob breaks doors on each difficulty, and breaks the blocks in the tag {@code originofspawns:siege_breakable}
-	 * slowly. With {@code also_breaks}, it also breaks the blocks of that tag, for example fences. It obeys the gamerule
-	 * that stops mobs from breaking blocks.
+	 * slowly. With {@code also_breaks}, it also breaks the blocks of that tag, for example fences. A door takes
+	 * {@code door_seconds}, 12 seconds as in vanilla. It obeys the gamerule that stops mobs from breaking blocks.
 	 */
-	record Siege(float breakSeconds, Optional<TagKey<Block>> alsoBreaks) implements GeneEffect {
+	record Siege(float breakSeconds, Optional<TagKey<Block>> alsoBreaks, float doorSeconds) implements GeneEffect {
 		public static final MapCodec<Siege> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("break_seconds", 10.0F).forGetter(Siege::breakSeconds),
-				TagKey.hashedCodec(Registries.BLOCK).optionalFieldOf("also_breaks").forGetter(Siege::alsoBreaks)
+				TagKey.hashedCodec(Registries.BLOCK).optionalFieldOf("also_breaks").forGetter(Siege::alsoBreaks),
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("door_seconds", 12.0F).forGetter(Siege::doorSeconds)
 		).apply(instance, Siege::new));
 
 		public Siege(float breakSeconds) {
-			this(breakSeconds, Optional.empty());
+			this(breakSeconds, Optional.empty(), 12.0F);
+		}
+
+		public Siege(float breakSeconds, Optional<TagKey<Block>> alsoBreaks) {
+			this(breakSeconds, alsoBreaks, 12.0F);
 		}
 
 		@Override

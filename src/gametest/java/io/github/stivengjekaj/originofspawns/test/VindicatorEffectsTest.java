@@ -2,8 +2,11 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.goal.SiegeDoorGoal;
 import io.github.stivengjekaj.originofspawns.evolution.goal.SiegeGoal;
+import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import java.util.Optional;
@@ -22,6 +25,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.illager.Vindicator;
 import net.minecraft.world.entity.raid.Raid;
@@ -109,6 +113,26 @@ public class VindicatorEffectsTest {
 		}
 		helper.assertTrue(sharpened, "the raid still gives the axe Sharpness");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void aDoorSplitterBreaksADoorFaster(GameTestHelper helper) {
+		helper.assertValueEqual(doorTicks(helper, new BlockPos(1, 1, 1), "test_siege_plain"), 240,
+				"a plain siege breaks a door in 12 seconds, as in vanilla");
+		helper.assertValueEqual(doorTicks(helper, new BlockPos(1, 1, 4), "test_door_splitter"), 40,
+				"a Door Splitter breaks a door in 2 seconds");
+		helper.succeed();
+	}
+
+	/**
+	 * Gives a vindicator with the genes its gene goals, and returns the ticks of its door goal.
+	 */
+	static int doorTicks(GameTestHelper helper, BlockPos pos, String... genes) {
+		Vindicator vindicator = vindicatorWith(helper, pos, genes);
+		GeneBehaviors.installGoals(vindicator);
+		return ((MobAccessor) vindicator).originofspawns$goalSelector().getAvailableGoals().stream()
+				.map(WrappedGoal::getGoal).filter(SiegeDoorGoal.class::isInstance).map(SiegeDoorGoal.class::cast)
+				.findFirst().orElseThrow().breakTicks();
 	}
 
 	/**

@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:vindicator",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "siege", "break_seconds": 3, "door_seconds": 2 }],
+	"mutation_rate": 0
+}

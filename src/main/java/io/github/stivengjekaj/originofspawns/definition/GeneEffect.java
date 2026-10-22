@@ -150,7 +150,8 @@ public sealed interface GeneEffect {
 			Map.entry("blast_lightning", BlastLightning.CODEC),
 			Map.entry("lightning_immunity", LightningImmunity.CODEC),
 			Map.entry("web_on_hit", WebOnHit.CODEC),
-			Map.entry("web_trail", WebTrail.CODEC)
+			Map.entry("web_trail", WebTrail.CODEC),
+			Map.entry("web_shot", WebShot.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2328,6 +2329,24 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "web_trail";
+		}
+	}
+
+	/**
+	 * One time in each cooldown, the mob spits silk at its target in the range, if it sees the target. The silk puts
+	 * a cobweb at the target. The cobweb goes only in air, and it goes away after the seconds with no drops.
+	 */
+	record WebShot(float minRange, float range, float cooldownSeconds, float seconds) implements GeneEffect {
+		public static final MapCodec<WebShot> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 32.0F).optionalFieldOf("min_range", 4.0F).forGetter(WebShot::minRange),
+				Codec.floatRange(1.0F, 32.0F).optionalFieldOf("range", 12.0F).forGetter(WebShot::range),
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 8.0F).forGetter(WebShot::cooldownSeconds),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds", 30.0F).forGetter(WebShot::seconds)
+		).apply(instance, WebShot::new));
+
+		@Override
+		public String type() {
+			return "web_shot";
 		}
 	}
 }

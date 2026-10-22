@@ -124,6 +124,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> WEB_TRAIL_TIME = AttachmentRegistry.create(OriginOfSpawns.id("web_trail_time"));
 
 	/**
+	 * The game time of the last web shot of a mob.
+	 */
+	public static final AttachmentType<Long> WEB_SHOT_TIME = AttachmentRegistry.create(OriginOfSpawns.id("web_shot_time"));
+
+	/**
 	 * The game time of the last use of each effect on hurt of a mob. Each effect has its own cooldown.
 	 */
 	public static final AttachmentType<java.util.Map<io.github.stivengjekaj.originofspawns.definition.GeneEffect.EffectOnHurt, Long>>

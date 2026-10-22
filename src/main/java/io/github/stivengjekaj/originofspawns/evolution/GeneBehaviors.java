@@ -400,6 +400,7 @@ public final class GeneBehaviors {
 				case GeneEffect.Sidestep sidestep -> sidestep(mob, level, sidestep);
 				case GeneEffect.ThrowEffect thrown -> throwEffect(mob, level, thrown);
 				case GeneEffect.WebTrail trail -> webTrail(mob, level, trail);
+				case GeneEffect.WebShot shot -> webShot(mob, level, shot);
 				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
 				case GeneEffect.FrenziedTargeting frenzy
 						when now % Math.max(1, Math.round(frenzy.intervalSeconds() * 20.0F)) < TICK_INTERVAL
@@ -825,6 +826,33 @@ public final class GeneBehaviors {
 			return false;
 		}
 		mob.setAttached(ModAttachments.WEB_TRAIL_TIME, now);
+		return true;
+	}
+
+	/**
+	 * Spits silk at the target of the mob in the range, one time in each cooldown. The silk puts a cobweb at the
+	 * target.
+	 *
+	 * @return true if the mob spat
+	 */
+	public static boolean webShot(Mob mob, ServerLevel level, GeneEffect.WebShot shot) {
+		long now = level.getGameTime();
+		long last = mob.getAttachedOrElse(ModAttachments.WEB_SHOT_TIME, Long.MIN_VALUE);
+		LivingEntity target = mob.getTarget();
+		if (target == null || !target.isAlive() || mob.distanceTo(target) < shot.minRange()
+				|| mob.distanceTo(target) > shot.range() || !mob.hasLineOfSight(target)
+				|| last != Long.MIN_VALUE && now - last < Math.round(shot.cooldownSeconds() * 20.0F)) {
+			return false;
+		}
+		Vec3 from = mob.getEyePosition();
+		Vec3 step = target.position().subtract(from).scale(0.1);
+		for (int i = 0; i <= 10; i++) {
+			Vec3 point = from.add(step.scale(i));
+			level.sendParticles(new BlockParticleOption(ParticleTypes.FALLING_DUST, Blocks.COBWEB.defaultBlockState()),
+					point.x, point.y, point.z, 2, 0.05, 0.05, 0.05, 0.0);
+		}
+		GeneCombat.putWeb(level, target, shot.seconds());
+		mob.setAttached(ModAttachments.WEB_SHOT_TIME, now);
 		return true;
 	}
 

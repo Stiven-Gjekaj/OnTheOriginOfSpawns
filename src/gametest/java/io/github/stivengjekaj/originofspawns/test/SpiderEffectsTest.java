@@ -147,6 +147,24 @@ public class SpiderEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(padding = 16)
+	public void aWebShotHitsATargetInItsRange(GameTestHelper helper) {
+		Spider spider = spiderWith(helper, new BlockPos(1, 1, 1), "test_web_shot");
+		GeneEffect.WebShot shot = new GeneEffect.WebShot(4.0F, 12.0F, 8.0F, 30.0F);
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 1));
+		spider.setTarget(pig);
+		helper.assertFalse(GeneBehaviors.webShot(spider, helper.getLevel(), shot), "the target is too near");
+		pig.snapTo(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(15, 1, 1))), 0.0F, 0.0F);
+		helper.assertFalse(GeneBehaviors.webShot(spider, helper.getLevel(), shot), "the target is too far");
+		pig.snapTo(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(7, 1, 1))), 0.0F, 0.0F);
+		helper.assertTrue(GeneBehaviors.webShot(spider, helper.getLevel(), shot), "the target is in the range");
+		helper.assertBlockPresent(Blocks.COBWEB, new BlockPos(7, 1, 1));
+		pig.snapTo(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(9, 1, 1))), 0.0F, 0.0F);
+		helper.assertFalse(GeneBehaviors.webShot(spider, helper.getLevel(), shot), "one shot in each cooldown");
+		helper.assertBlockPresent(Blocks.AIR, new BlockPos(9, 1, 1));
+		helper.succeed();
+	}
+
 	static int stringNear(GameTestHelper helper, BlockPos pos) {
 		return helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(1.0),
 				item -> item.getItem().is(Items.STRING)).size();

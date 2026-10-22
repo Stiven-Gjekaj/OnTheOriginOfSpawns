@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "web_shot", "min_range": 4, "range": 12, "cooldown_seconds": 8 }],
+	"mutation_rate": 0
+}

@@ -62,6 +62,10 @@ public final class GeneBehaviors {
 	private static final float CHICKEN_JOCKEY_CHANCE = 0.05F;
 	private static final int TICK_INTERVAL = 20;
 	/**
+	 * The color of the star of the rocket of a mob.
+	 */
+	private static final int RED_STAR = 0xB3312C;
+	/**
 	 * A mob that moves faster than this, in blocks each tick, walks.
 	 */
 	private static final double WALK_SPEED_SQR = 1.0E-4;
@@ -881,6 +885,31 @@ public final class GeneBehaviors {
 						arrowEffect.amplifier()));
 			}
 		}
+	}
+
+	/**
+	 * Returns a firework rocket with one red star. Its blast hurts the entities near it, and it breaks no blocks.
+	 */
+	public static ItemStack rocket() {
+		ItemStack rocket = new ItemStack(Items.FIREWORK_ROCKET);
+		rocket.set(net.minecraft.core.component.DataComponents.FIREWORKS, new net.minecraft.world.item.component.Fireworks(1,
+				List.of(new net.minecraft.world.item.component.FireworkExplosion(
+						net.minecraft.world.item.component.FireworkExplosion.Shape.SMALL_BALL,
+						it.unimi.dsi.fastutil.ints.IntList.of(RED_STAR), it.unimi.dsi.fastutil.ints.IntList.of(), false, false))));
+		return rocket;
+	}
+
+	/**
+	 * Returns true if the next crossbow shot of the mob is a firework rocket. Each rocket chance of the genes has its
+	 * own roll.
+	 */
+	public static boolean rollsRocket(Mob mob) {
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.RocketChance chance && mob.getRandom().nextFloat() < chance.chance()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

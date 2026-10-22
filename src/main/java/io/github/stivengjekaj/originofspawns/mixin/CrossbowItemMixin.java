@@ -3,12 +3,17 @@ package io.github.stivengjekaj.originofspawns.mixin;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
+import java.util.List;
+
+import net.minecraft.core.component.DataComponents;
+
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.level.Level;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -17,6 +22,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(CrossbowItem.class)
@@ -38,6 +44,18 @@ public abstract class CrossbowItemMixin {
 			boolean isCrit, CallbackInfoReturnable<Projectile> info) {
 		if (shooter instanceof Mob mob && mob.hasAttached(ModAttachments.GENES)) {
 			GeneBehaviors.armArrow(mob, info.getReturnValue());
+		}
+	}
+
+	/**
+	 * A mob with a rocket chance can shoot a firework rocket in place of its loaded arrow.
+	 */
+	@Inject(method = "performShooting", at = @At("HEAD"))
+	private void originofspawns$rocket(Level level, LivingEntity shooter, InteractionHand hand, ItemStack weapon,
+			float power, float uncertainty, LivingEntity target, CallbackInfo info) {
+		if (shooter instanceof Mob mob && mob.hasAttached(ModAttachments.GENES) && CrossbowItem.isCharged(weapon)
+				&& GeneBehaviors.rollsRocket(mob)) {
+			weapon.set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.ofNonEmpty(List.of(GeneBehaviors.rocket())));
 		}
 	}
 

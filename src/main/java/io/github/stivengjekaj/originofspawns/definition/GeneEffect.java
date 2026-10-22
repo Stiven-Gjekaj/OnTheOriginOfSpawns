@@ -156,7 +156,8 @@ public sealed interface GeneEffect {
 			Map.entry("first_strike", FirstStrike.CODEC),
 			Map.entry("hunt_in_light", HuntInLight.CODEC),
 			Map.entry("bite_poison", BitePoison.CODEC),
-			Map.entry("damage_from_item", DamageFromItem.CODEC)
+			Map.entry("damage_from_item", DamageFromItem.CODEC),
+			Map.entry("rocket_chance", RocketChance.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2453,6 +2454,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "damage_from_item";
+		}
+	}
+
+	/**
+	 * Each crossbow shot of the mob has this chance to be a firework rocket with one red star, in place of an arrow.
+	 * The rocket explodes at the target, as a rocket from the crossbow of a player does. It breaks no blocks.
+	 */
+	record RocketChance(float chance) implements GeneEffect {
+		public static final MapCodec<RocketChance> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(RocketChance::chance)
+		).apply(instance, RocketChance::new));
+
+		@Override
+		public String type() {
+			return "rocket_chance";
 		}
 	}
 }

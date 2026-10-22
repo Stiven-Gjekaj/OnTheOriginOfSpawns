@@ -26,6 +26,7 @@ import net.minecraft.world.entity.ai.goal.RangedCrossbowAttackGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.illager.Pillager;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.entity.raid.Raid;
@@ -170,6 +171,31 @@ public class PillagerEffectsTest {
 		float before = player.getHealth();
 		player.hurtServer(helper.getLevel(), helper.getLevel().damageSources().arrow(bolt, pillager), 4.0F);
 		return player.getHealth() < before;
+	}
+
+	@GameTest
+	public void aRocketChanceShootsARocketInPlaceOfTheBolt(GameTestHelper helper) {
+		Pillager plain = pillagerWith(helper, new BlockPos(1, 1, 1));
+		Pillager bomber = pillagerWith(helper, new BlockPos(1, 1, 4), "test_rocket_chance");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 2));
+		for (Pillager pillager : List.of(plain, bomber)) {
+			pillager.setTarget(pig);
+			load(pillager);
+			pillager.performRangedAttack(pig, 1.0F);
+		}
+		helper.assertValueEqual(boltsOf(helper, plain).size(), 1, "the plain pillager shoots a bolt");
+		helper.assertTrue(rocketsOf(helper, plain).isEmpty(), "the plain pillager shoots no rocket");
+		helper.assertTrue(boltsOf(helper, bomber).isEmpty(), "the bomber shoots no bolt");
+		List<FireworkRocketEntity> rockets = rocketsOf(helper, bomber);
+		helper.assertValueEqual(rockets.size(), 1, "the bomber shoots a rocket");
+		helper.assertValueEqual(rockets.getFirst().getItem().get(DataComponents.FIREWORKS).explosions().size(), 1,
+				"the rocket has one star, so its blast hurts");
+		helper.succeed();
+	}
+
+	static List<FireworkRocketEntity> rocketsOf(GameTestHelper helper, Pillager pillager) {
+		return helper.getLevel().getEntitiesOfClass(FireworkRocketEntity.class, pillager.getBoundingBox().inflate(8.0),
+				rocket -> rocket.getOwner() == pillager);
 	}
 
 	/**

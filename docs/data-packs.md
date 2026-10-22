@@ -231,9 +231,9 @@ The states for `when` are:
 | `sidestep` | `range` (`12`), `distance` (`4`), `cooldown_seconds` (`10`), `aimed` (`false`) | When a player looks at the mob from farther than the range, the mob moves to the side. With `aimed`, it moves when a player in the range draws a bow, a crossbow, or a trident and looks at it |
 | `climb` | | The mob climbs walls, like a spider. It cannot climb glass |
 | `throw_effect` | `effect`, `seconds`, `amplifier` (`0`), `min_range` (`0`), `range` (`8`), `cooldown_seconds` (`8`) | The mob throws at its target, which gives a status effect. The target must be between `min_range` and `range` |
-| `pick_up_items` | | The mob picks up items. A pillager keeps them in a sack of 5 slots, and drops them when it dies |
+| `pick_up_items` | | The mob picks up items. A raider with no inventory of its own, such as a pillager or a vindicator, keeps them in a sack of 5 slots, and drops them when it dies. A vindicator keeps its axe |
 | `no_conversion` | | The mob does not convert to a different species in water |
-| `siege` | `break_seconds` (`10`) | The mob breaks doors on each difficulty, and breaks the blocks in the tag `#originofspawns:siege_breakable`. It obeys the `mobGriefing` gamerule |
+| `siege` | `break_seconds` (`10`), `door_seconds` (`12`), `also_breaks` (none) | The mob breaks doors on each difficulty, and breaks the blocks in the tag `#originofspawns:siege_breakable`. A block takes `break_seconds`, and a door takes `door_seconds`. The vanilla door time is 12 seconds. `also_breaks` is a block tag that the mob also breaks, for example `#originofspawns:shatterable`. It obeys the `mobGriefing` gamerule |
 | `raise_victim` | | A player that the mob kills rises as a mob of its species, with its genes |
 | `attract_golems` | `radius` (`16`) | Iron golems in the radius attack the mob before other targets |
 
@@ -279,6 +279,7 @@ The states for `when` are:
 | `death_spawn` | `entity`, `count` (`1`), `life_seconds` (`30`) | When the mob dies, this many mobs of this type come out and attack the killer. A vex lives for `life_seconds` |
 | `soul_hunger` | `per_player`, `max`, `seconds` (`10`) | The mob does more melee damage for each player that it hit in melee in the last `seconds`, up to `max`. `0.2` is 20% for each player |
 | `damage_to` | `targets`, `multiplier` (`1`), `fire_seconds` (`0`) | The hits of the mob do more damage to entities of the tag in `targets`, and set them on fire for `fire_seconds` |
+| `knockback` | `multiplier`, `hits` (`melee`) | The hits of the mob push the target back more. `2` pushes two times as far |
 | `snowball_damage` | `damage` | Snowballs do this damage to the mob, as they do to a blaze |
 | `water_sensitive` | | Water hurts the mob, as it hurts a blaze or an enderman: splash water, rain, and water |
 | `disarm` | `chance`, `cooldown_seconds` (`10`), `hits` (`projectile`) | Each hit has the chance to make a player drop the item in the main hand. A player loses an item one time in each cooldown at most. An item with Curse of Binding does not drop |
@@ -391,6 +392,9 @@ Each cube moves with one bone: `head`, `body`, `right_arm`, `left_arm`,
 `left_hind_leg`, `right_middle_hind_leg`, `left_middle_hind_leg`,
 `right_middle_front_leg`, `left_middle_front_leg`, `right_front_leg`, and
 `left_front_leg`. A cave spider has the same bones as the spider.
+A pillager and a vindicator have the humanoid bones. The crossed arms of a
+vindicator are a different part, so a model on an arm shows only while the
+arms are apart, when it attacks.
 The coordinates are in pixels, in the coordinates of the bone, as in the
 vanilla models.
 
@@ -451,6 +455,17 @@ species to them.
 | `#originofspawns:no_item_pickup` | The species does not pick up items, unless a gene gives it pickup |
 | `#originofspawns:no_vanilla_babies` | The species spawns no babies in vanilla ways. Its babies come only from a gene |
 | `#originofspawns:no_vanilla_jockeys` | The species spawns with no rider in vanilla ways, for example the spider that carries a skeleton. A rider comes only from a gene |
+
+These tags are for the fields of effects, such as the `targets` of
+`damage_to`.
+
+| Tag | Contents |
+|---|---|
+| `#originofspawns:golems` | The iron golem |
+| `#originofspawns:all_golems` | The iron golem and the snow golem |
+| `#originofspawns:villagers` | The villager and the wandering trader |
+| `#originofspawns:siege_breakable` (block) | Glass blocks and glass panes, the weak blocks that `siege` breaks |
+| `#originofspawns:shatterable` (block) | Fences, fence gates, glass blocks, and glass panes |
 
 ## Family
 

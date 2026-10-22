@@ -1,0 +1,35 @@
+{
+	"texture": "originofspawns:textures/entity/web_walker_dragline.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "abdomen",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				-3.5,
+				5
+			],
+			"size": [
+				1,
+				1,
+				16
+			],
+			"inflate": -0.3,
+			"pivot": [
+				0,
+				-3,
+				5.5
+			],
+			"rotation": [
+				-50,
+				0,
+				0
+			]
+		}
+	]
+}

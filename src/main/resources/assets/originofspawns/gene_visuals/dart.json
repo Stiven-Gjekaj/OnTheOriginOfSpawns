@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/spider.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dart_0.png",
+				"tint": "#C8B898"
+			}
+		}
+	]
+}

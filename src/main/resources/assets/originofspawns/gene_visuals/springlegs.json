@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/spider.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/springlegs_0.png",
+				"tint": "#E8C838"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/springlegs_1.png",
+				"tint": "#141010"
+			}
+		}
+	]
+}

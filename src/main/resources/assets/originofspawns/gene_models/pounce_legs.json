@@ -1,0 +1,44 @@
+{
+	"mob_texture": true,
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "right_hind_leg",
+			"uv": [
+				18,
+				0
+			],
+			"from": [
+				-16.5,
+				-1,
+				-1
+			],
+			"size": [
+				16,
+				2,
+				2
+			],
+			"inflate": 0.7
+		},
+		{
+			"bone": "left_hind_leg",
+			"uv": [
+				18,
+				0
+			],
+			"from": [
+				0.5,
+				-1,
+				-1
+			],
+			"size": [
+				16,
+				2,
+				2
+			],
+			"inflate": 0.7,
+			"mirror": true
+		}
+	]
+}

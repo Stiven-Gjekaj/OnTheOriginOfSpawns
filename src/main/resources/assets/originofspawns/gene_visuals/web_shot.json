@@ -1,0 +1,20 @@
+{
+	"region_map": "originofspawns:textures/region/spider.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/web_shot_0.png",
+				"tint": "#F0F0E8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/web_shot_1.png",
+				"tint": "#C8C8C0"
+			}
+		}
+	],
+	"model": "originofspawns:web_shot_spinneret"
+}

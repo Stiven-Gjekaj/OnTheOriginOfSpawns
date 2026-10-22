@@ -7,6 +7,7 @@ import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.TemporaryBlocks;
+import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -22,6 +23,8 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.ai.goal.LeapAtTargetGoal;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.spider.Spider;
@@ -163,6 +166,35 @@ public class SpiderEffectsTest {
 		helper.assertFalse(GeneBehaviors.webShot(spider, helper.getLevel(), shot), "one shot in each cooldown");
 		helper.assertBlockPresent(Blocks.AIR, new BlockPos(9, 1, 1));
 		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 40)
+	public void theFirstHitAfterAVanillaLeapDoesMoreDamage(GameTestHelper helper) {
+		Spider spider = spiderWith(helper, new BlockPos(1, 1, 1), "test_leap_strike");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 1));
+		var bite = helper.getLevel().damageSources().mobAttack(spider);
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, bite, 4.0F), 4.0F, "no bonus before a leap");
+		// The vanilla leap needs the spider on the ground, and it starts on a roll of 1 in 3. A mob with no AI does
+		// not move, so the test puts it on the ground.
+		helper.runAfterDelay(5, () -> {
+			spider.setOnGround(true);
+			spider.setTarget(pig);
+			LeapAtTargetGoal leap = (LeapAtTargetGoal) ((MobAccessor) spider).originofspawns$goalSelector()
+					.getAvailableGoals().stream().map(WrappedGoal::getGoal)
+					.filter(LeapAtTargetGoal.class::isInstance).findFirst().orElseThrow();
+			boolean ready = false;
+			for (int i = 0; i < 100 && !ready; i++) {
+				ready = leap.canUse();
+			}
+			helper.assertTrue(ready, "the spider can leap");
+			leap.start();
+			helper.assertValueEqual(GeneCombat.modifyDamage(pig, bite, 4.0F), 6.0F, "the first hit after the leap");
+			helper.assertValueEqual(GeneCombat.modifyDamage(pig, bite, 4.0F), 4.0F, "the second hit has no bonus");
+			leap.start();
+			spider.setAttached(ModAttachments.LEAP_TIME, helper.getLevel().getGameTime() - 100L);
+			helper.assertValueEqual(GeneCombat.modifyDamage(pig, bite, 4.0F), 4.0F, "no bonus long after the leap");
+			helper.succeed();
+		});
 	}
 
 	static int stringNear(GameTestHelper helper, BlockPos pos) {

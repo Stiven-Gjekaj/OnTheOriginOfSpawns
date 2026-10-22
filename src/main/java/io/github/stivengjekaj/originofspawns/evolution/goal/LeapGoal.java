@@ -3,6 +3,7 @@ package io.github.stivengjekaj.originofspawns.evolution.goal;
 import java.util.EnumSet;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.BehaviorState;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -94,6 +95,7 @@ public class LeapGoal extends Goal {
 		}
 		airborne = false;
 		hit = false;
+		GeneBehaviors.markLeap(mob);
 		readyTime = mob.level().getGameTime() + Math.round(leap.cooldownSeconds() * 20.0F);
 	}
 

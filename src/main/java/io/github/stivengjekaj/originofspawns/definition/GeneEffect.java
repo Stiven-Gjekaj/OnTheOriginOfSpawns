@@ -151,7 +151,8 @@ public sealed interface GeneEffect {
 			Map.entry("lightning_immunity", LightningImmunity.CODEC),
 			Map.entry("web_on_hit", WebOnHit.CODEC),
 			Map.entry("web_trail", WebTrail.CODEC),
-			Map.entry("web_shot", WebShot.CODEC)
+			Map.entry("web_shot", WebShot.CODEC),
+			Map.entry("leap_strike", LeapStrike.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2347,6 +2348,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "web_shot";
+		}
+	}
+
+	/**
+	 * The first melee hit of the mob in the seconds after a leap does more damage. A leap is the vanilla leap of a
+	 * spider or a wolf, or the leap of a gene.
+	 */
+	record LeapStrike(float multiplier, float seconds) implements GeneEffect {
+		public static final MapCodec<LeapStrike> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(LeapStrike::multiplier),
+				Codec.floatRange(0.05F, 60.0F).optionalFieldOf("seconds", 2.0F).forGetter(LeapStrike::seconds)
+		).apply(instance, LeapStrike::new));
+
+		@Override
+		public String type() {
+			return "leap_strike";
 		}
 	}
 }

@@ -369,6 +369,15 @@ public final class GeneCombat {
 						BehaviorState state = attacker.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
 						attacker.setAttached(ModAttachments.STATE, state.withLure(state.lureNearTime(), false));
 					}
+					case GeneEffect.LeapStrike strike when source.getDirectEntity() == attacker
+							&& attacker.hasAttached(ModAttachments.LEAP_TIME) -> {
+						if (attacker.level().getGameTime() - attacker.getAttached(ModAttachments.LEAP_TIME)
+								<= Math.round(strike.seconds() * 20.0F)) {
+							result *= strike.multiplier();
+						}
+						// Only the first hit after a leap counts.
+						attacker.removeAttached(ModAttachments.LEAP_TIME);
+					}
 					case GeneEffect.Rally rally ->
 							result *= 1.0F + Math.min(rally.max(), rally.perAlly() * sameSpeciesNear(attacker, rally.radius()));
 					case GeneEffect.SoulHunger hunger when source.getDirectEntity() == attacker ->

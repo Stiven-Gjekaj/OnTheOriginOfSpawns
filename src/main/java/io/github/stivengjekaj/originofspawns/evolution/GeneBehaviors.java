@@ -857,6 +857,15 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Records the leap of a mob with genes now. The first melee hit after it can do more damage.
+	 */
+	public static void markLeap(Mob mob) {
+		if (mob.hasAttached(ModAttachments.GENES)) {
+			mob.setAttached(ModAttachments.LEAP_TIME, mob.level().getGameTime());
+		}
+	}
+
+	/**
 	 * Turns the iron golems near the mob to the mob, unless they already attack a mob that attracts golems.
 	 */
 	public static void attractGolems(Mob mob, ServerLevel level, GeneEffect.AttractGolems attract) {

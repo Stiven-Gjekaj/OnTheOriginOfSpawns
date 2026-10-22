@@ -15,6 +15,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -28,6 +29,7 @@ import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.phys.Vec3;
 
@@ -95,6 +97,22 @@ public class PillagerEffectsTest {
 		helper.assertTrue(directions(helper, new BlockPos(1, 1, 1)).size() > 1, "the vanilla bolts spread");
 		helper.assertValueEqual(directions(helper, new BlockPos(1, 1, 6), "test_true_bolt").size(), 1,
 				"with no spread, each bolt flies on the same line");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theArrowGenesActOnTheBolts(GameTestHelper helper) {
+		Pillager pillager = pillagerWith(helper, new BlockPos(1, 1, 1), "test_splinter");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 1));
+		pillager.setTarget(pig);
+		load(pillager);
+		pillager.performRangedAttack(pig, 1.0F);
+		AbstractArrow bolt = boltsOf(helper, pillager).getFirst();
+		PotionContents contents = bolt.getPickupItemStackOrigin().getOrDefault(DataComponents.POTION_CONTENTS,
+				PotionContents.EMPTY);
+		helper.assertTrue(contents.customEffects().stream().anyMatch(effect -> effect.is(MobEffects.SLOWNESS)
+				&& effect.getDuration() == 40), "the bolt carries Slowness for 2 seconds: " + contents);
+		helper.assertValueEqual(bolt.getAttached(ModAttachments.GHOST_ARROW), 12.0F, "the bolt is a ghost arrow");
 		helper.succeed();
 	}
 

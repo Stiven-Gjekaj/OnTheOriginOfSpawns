@@ -868,6 +868,22 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Gives an arrow that the mob shoots the effects of the arrow genes of the mob: the status effects of the arrow,
+	 * and the ghost arrows. The bow of a skeleton and the crossbow of a pillager use it.
+	 */
+	public static void armArrow(Mob mob, net.minecraft.world.entity.projectile.Projectile projectile) {
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.GhostArrows ghost) {
+				projectile.setAttached(ModAttachments.GHOST_ARROW, ghost.blocks());
+			} else if (effect instanceof GeneEffect.ArrowEffect arrowEffect
+					&& projectile instanceof net.minecraft.world.entity.projectile.arrow.Arrow tipped) {
+				tipped.addEffect(new MobEffectInstance(arrowEffect.effect(), Math.round(arrowEffect.seconds() * 20.0F),
+						arrowEffect.amplifier()));
+			}
+		}
+	}
+
+	/**
 	 * Records the leap of a mob with genes now. The first melee hit after it can do more damage.
 	 */
 	public static void markLeap(Mob mob) {

@@ -3,15 +3,11 @@ package io.github.stivengjekaj.originofspawns.mixin;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
-import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
-import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
-import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -71,18 +67,6 @@ public abstract class AbstractSkeletonMixin {
 	@Inject(method = "getArrow", at = @At("RETURN"))
 	private void originofspawns$arrowEffects(ItemStack arrow, float power, ItemStack bow,
 			CallbackInfoReturnable<AbstractArrow> info) {
-		GeneEffects.of((AbstractSkeleton) (Object) this).forEach(effect -> {
-			if (effect instanceof GeneEffect.GhostArrows ghost) {
-				info.getReturnValue().setAttached(ModAttachments.GHOST_ARROW, ghost.blocks());
-			}
-		});
-		if (info.getReturnValue() instanceof Arrow tipped) {
-			GeneEffects.of((AbstractSkeleton) (Object) this).forEach(effect -> {
-				if (effect instanceof GeneEffect.ArrowEffect arrowEffect) {
-					tipped.addEffect(new MobEffectInstance(arrowEffect.effect(), Math.round(arrowEffect.seconds() * 20.0F),
-							arrowEffect.amplifier()));
-				}
-			});
-		}
+		GeneBehaviors.armArrow((AbstractSkeleton) (Object) this, info.getReturnValue());
 	}
 }

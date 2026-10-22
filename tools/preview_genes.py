@@ -55,6 +55,7 @@ CREEPER_PATH = "assets/minecraft/textures/entity/creeper/creeper.png"
 SPIDER_PATH = "assets/minecraft/textures/entity/spider/spider.png"
 SPIDER_EYES_PATH = "assets/minecraft/textures/entity/spider/spider_eyes.png"
 CAVE_SPIDER_PATH = "assets/minecraft/textures/entity/spider/cave_spider.png"
+PILLAGER_PATH = "assets/minecraft/textures/entity/illager/pillager.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -299,6 +300,17 @@ CAVE_SPIDER_EXTRA = {
                ("All 6 + Toxins", ["toxic_cloud", "neurotoxin"], True, {})],
 }
 
+# The families of the pillager, from design/species/pillager.md.
+PILLAGER_FAMILIES = {
+    "crossbowmen": ["piercer", "long_bolt", "heavy_bolt", "overdraw", "quick_charge", "splinter"],
+    "bombardiers": ["rocketeer", "flak", "incendiary", "smoke_shell", "powder_keg", "blast_proof"],
+    "captains": ["banner_bearer", "war_horn", "rally_cry", "patrol_leader", "grudge", "formation"],
+    "scouts": ["fleet_foot", "spyglass", "pathseeker", "evasion", "camouflage", "signal_smoke"],
+    "looters": ["pickpocket", "plunder", "hunger_raid", "saboteur", "greed", "escape_artist"],
+}
+
+PILLAGER_EXTRA = {}
+
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
     "rushers": [("All 6 + Skulkers", ["leafskin", "patient"], True, {})],
@@ -405,6 +417,27 @@ SPIDER_CUBES = [
     ("abdomen", (0, 12), (-5, -4, -6), (10, 8, 12), False),
 ] + [(side + "_" + leg, (18, 0), (-15 if side == "right" else -1, -1, -1), (16, 2, 2), side == "left")
      for leg in ("hind_leg", "middle_hind_leg", "middle_front_leg", "front_leg") for side in ("right", "left")]
+
+# The pillager, from IllagerModel: a head of 8x10x8 with a nose, a body with
+# a coat over it, arms, and legs. The pillager holds a crossbow, so its arms
+# have the pose of AnimationUtils.animateCrossbowHold with the head straight:
+# both arms point forward, and turn in toward the crossbow.
+PILLAGER_PIVOTS = {
+    "head": (0, 0, 0), "body": (0, 0, 0), "right_arm": (-5, 2, 0, -84.3, -17.2, 0),
+    "left_arm": (5, 2, 0, -85.9, 34.4, 0), "right_leg": (-2, 12, 0), "left_leg": (2, 12, 0),
+}
+PILLAGER_CUBES = [
+    ("head", (0, 0), (-4, -10, -4), (8, 10, 8), False),
+    ("head", (24, 0), (-1, -3, -6), (2, 4, 2), False),
+    ("body", (16, 20), (-4, 0, -3), (8, 12, 6), False),
+    ("right_arm", (40, 46), (-3, -2, -2), (4, 12, 4), False),
+    ("left_arm", (40, 46), (-1, -2, -2), (4, 12, 4), True),
+    ("right_leg", (0, 22), (-2, 0, -2), (4, 12, 4), False),
+    ("left_leg", (0, 22), (-2, 0, -2), (4, 12, 4), True),
+]
+# The coat of the pillager: 0.5 pixel larger than the body, and 20 pixels
+# long, so that it hangs over the legs.
+PILLAGER_COAT = [("body", (0, 38), (-4, 0, -3), (8, 20, 6), False, 0.5)]
 
 SKELETON_CUBES = ZOMBIE_CUBES[:2] + [
     ("right_arm", (40, 16), (-1, -2, -1), (2, 12, 2), False),
@@ -901,6 +934,7 @@ SPECIES = {
     "creeper": (CREEPER_PATH, None, CREEPER_FAMILIES, CREEPER_EXTRA, []),
     "spider": (SPIDER_PATH, None, SPIDER_FAMILIES, SPIDER_EXTRA, []),
     "cave_spider": (CAVE_SPIDER_PATH, None, CAVE_SPIDER_FAMILIES, CAVE_SPIDER_EXTRA, []),
+    "pillager": (PILLAGER_PATH, None, PILLAGER_FAMILIES, PILLAGER_EXTRA, []),
 }
 
 
@@ -915,16 +949,17 @@ def set_mob(species):
     spider = species in ("spider", "cave_spider")
     MOB["cubes"] = (DROWNED_CUBES if species == "drowned" else PARCHED_CUBES if species == "parched"
                     else CREEPER_CUBES if species == "creeper" else SPIDER_CUBES if spider
-                    else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
+                    else PILLAGER_CUBES if species == "pillager" else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
     MOB["pivots"] = (PARCHED_PIVOTS if species == "parched" else CREEPER_PIVOTS if species == "creeper"
-                     else SPIDER_PIVOTS if spider else SKELETON_PIVOTS if skeleton else PIVOTS)
+                     else SPIDER_PIVOTS if spider else PILLAGER_PIVOTS if species == "pillager"
+                     else SKELETON_PIVOTS if skeleton else PIVOTS)
     # The spider is wide and low. The sheets look down on it, so that its
     # back shows.
     VIEW_X, VIEW_Y, VIEW_W, VIEW_H = (20, -2, 40, 26) if spider else (11, 11, 22, 37)
     MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if spider else [(0, 0), (180, 0), (-35, 15)]
     MOB["closeup_view"] = ((40, 34), (0, 13)) if spider else ((26, 40), (0, 5))
     MOB["eyes"] = find_zombie_texture(SPIDER_EYES_PATH) if spider else None
-    MOB["wraps"] = PARCHED_WRAPS if species == "parched" else []
+    MOB["wraps"] = PARCHED_WRAPS if species == "parched" else PILLAGER_COAT if species == "pillager" else []
     MOB["outer"] = ((find_zombie_texture(DROWNED_OUTER_PATH), find_zombie_texture(DROWNED_OUTER_BABY_PATH))
                     if species == "drowned" else (find_zombie_texture(STRAY_OUTER_PATH), None)
                     if species == "stray" else (find_zombie_texture(BOGGED_OUTER_PATH), None)

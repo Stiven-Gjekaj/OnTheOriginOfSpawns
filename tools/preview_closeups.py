@@ -417,6 +417,10 @@ CAVE_SPIDER_CLOSEUPS = {
                             ("All 6", CAVE_SPIDER["geodes"], False)], SPIDER_NIGHT_VIEWS),
 }
 
+# The close-ups of the pillager. It has no babies.
+PILLAGER = pg.PILLAGER_FAMILIES
+PILLAGER_CLOSEUPS = {}
+
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
     "husk": (pg.HUSK_PATH, pg.HUSK_BABY_PATH, HUSK_CLOSEUPS),
@@ -429,6 +433,7 @@ SPECIES = {
     "creeper": (pg.CREEPER_PATH, None, CREEPER_CLOSEUPS),
     "spider": (pg.SPIDER_PATH, None, SPIDER_CLOSEUPS),
     "cave_spider": (pg.CAVE_SPIDER_PATH, None, CAVE_SPIDER_CLOSEUPS),
+    "pillager": (pg.PILLAGER_PATH, None, PILLAGER_CLOSEUPS),
 }
 
 

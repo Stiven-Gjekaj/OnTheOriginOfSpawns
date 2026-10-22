@@ -78,7 +78,8 @@ Pixel plan for the Trapdoors.
 - Lurking Fangs has a dark hood of hair: the top of the head, and the top
   rows of its sides, its back, and the face, are black hair with a ragged
   lower edge.
-- Day Hunter has yellow eyes: the eye pixels are yellow.
+- Day Hunter has yellow eyes: a yellow rim round the eyes. The vanilla eye
+  layer draws over the eye pixels, so the rim is on the pixels next to them.
 - Shadow Skin has black hairs on the body: the body is black with dark gray
   hair, and black hair reaches onto the front of the abdomen and the roots
   of the legs.
@@ -632,12 +633,17 @@ def lurking_fangs():
 
 
 def day_hunter():
-    # Yellow eyes: the eye pixels are yellow, and pale yellow on the two
-    # middle pairs of the front.
+    # Yellow eyes: the vanilla eye layer draws over the eye pixels, so a
+    # yellow rim goes round the eyes. Each pixel of the head next to an eye,
+    # which is not an eye or a fang, is yellow, and pale yellow under the
+    # middle eyes. The red eyes glow in the yellow rim.
     yellow = Mark("#F0D020")
     pale = Mark("#F8F0A0")
-    for p in sorted(EYES):
-        (pale if p in ((43, 15), (44, 15)) else yellow).put(p)
+    for x, y, face, col, row in pixels(HEAD, ("right", "front", "left")):
+        if (x, y) in EYES or (x, y) in FANGS:
+            continue
+        if any((x + dx, y + dy) in EYES for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+            (pale if y == 17 else yellow).put((x, y))
     return [yellow, pale]
 
 

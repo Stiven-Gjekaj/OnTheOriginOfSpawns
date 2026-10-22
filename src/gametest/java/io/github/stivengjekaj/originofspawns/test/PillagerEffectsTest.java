@@ -17,6 +17,7 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -434,6 +435,113 @@ public class PillagerEffectsTest {
 		helper.assertTrue(GeneBehaviors.sidestep(pillager, helper.getLevel(), evasion), "the pillager steps aside");
 		helper.assertValueEqual(Math.round(Math.abs(pillager.getX() - before.x)), 3L, "the side distance");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void aPatrolGetsItsCaptainFromTheCaptainGene(GameTestHelper helper) {
+		// The game makes the first member the captain, before the genes exist.
+		Pillager first = patrolMember(helper, new BlockPos(1, 1, 1), true);
+		Pillager captain = patrolMember(helper, new BlockPos(3, 1, 1), false, "test_captain");
+		Pillager other = patrolMember(helper, new BlockPos(5, 1, 1), false);
+		helper.assertFalse(first.isPatrolLeader() || first.isCaptain(), "the first member has no Captain gene");
+		helper.assertTrue(first.getItemBySlot(EquipmentSlot.HEAD).isEmpty(), "the first member has no banner");
+		helper.assertTrue(captain.isCaptain(), "the pillager with the Captain gene is the captain, with the banner");
+		helper.assertFalse(other.isPatrolLeader(), "only one captain");
+		helper.assertTrue(captain.hasPatrolTarget() && other.hasPatrolTarget(), "each member goes to the place of the patrol");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aPatrolWithNoCaptainGeneHasNoCaptain(GameTestHelper helper) {
+		List<Pillager> patrol = List.of(patrolMember(helper, new BlockPos(1, 1, 1), true),
+				patrolMember(helper, new BlockPos(3, 1, 1), false), patrolMember(helper, new BlockPos(5, 1, 1), false));
+		for (Pillager member : patrol) {
+			helper.assertFalse(member.isPatrolLeader(), "no captain");
+			helper.assertTrue(member.getItemBySlot(EquipmentSlot.HEAD).isEmpty(), "no banner");
+			helper.assertTrue(member.hasPatrolTarget(), "each member goes to the place of the patrol");
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void onlyTheDeathOfACaptainGivesBadOmen(GameTestHelper helper) {
+		Pillager first = patrolMember(helper, new BlockPos(1, 1, 1), true);
+		Pillager captain = patrolMember(helper, new BlockPos(1, 1, 5), false, "test_captain");
+		var source = helper.getLevel().damageSources().generic();
+		first.hurtServer(helper.getLevel(), source, 100.0F);
+		captain.hurtServer(helper.getLevel(), source, 100.0F);
+		helper.assertValueEqual(bottlesNear(helper, first), 0, "the first member was not a captain");
+		helper.assertValueEqual(bottlesNear(helper, captain), 1, "the captain drops the ominous bottle of Bad Omen");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aRaidWaveGetsItsLeaderFromTheCaptainGene(GameTestHelper helper) {
+		Raid raid = new Raid(helper.absolutePos(new BlockPos(3, 1, 3)), Difficulty.NORMAL);
+		// The game makes the first raider of the wave the leader, before the genes exist.
+		Vindicator first = raidMember(helper, raid, EntityTypes.VINDICATOR.create(helper.getLevel(), EntitySpawnReason.EVENT),
+				new BlockPos(1, 1, 1), true);
+		Pillager captain = raidMember(helper, raid, EntityTypes.PILLAGER.create(helper.getLevel(), EntitySpawnReason.EVENT),
+				new BlockPos(3, 1, 1), false, "test_captain");
+		Pillager other = raidMember(helper, raid, EntityTypes.PILLAGER.create(helper.getLevel(), EntitySpawnReason.EVENT),
+				new BlockPos(5, 1, 1), false);
+		helper.assertTrue(raid.getLeader(1) == captain, "the pillager with the Captain gene leads the wave");
+		helper.assertTrue(captain.isCaptain(), "the leader wears the banner");
+		helper.assertFalse(first.isPatrolLeader(), "the vindicator does not lead");
+		helper.assertTrue(first.getItemBySlot(EquipmentSlot.HEAD).isEmpty(), "the vindicator has no banner");
+		helper.assertFalse(other.isPatrolLeader(), "only one leader");
+		Raid plainRaid = new Raid(helper.absolutePos(new BlockPos(3, 1, 5)), Difficulty.NORMAL);
+		Vindicator plainFirst = raidMember(helper, plainRaid,
+				EntityTypes.VINDICATOR.create(helper.getLevel(), EntitySpawnReason.EVENT), new BlockPos(1, 1, 5), true);
+		raidMember(helper, plainRaid, EntityTypes.PILLAGER.create(helper.getLevel(), EntitySpawnReason.EVENT),
+				new BlockPos(3, 1, 5), false);
+		helper.assertTrue(plainRaid.getLeader(1) == null, "a wave with no Captain gene has no leader");
+		helper.assertTrue(plainFirst.getItemBySlot(EquipmentSlot.HEAD).isEmpty(), "no banner");
+		helper.succeed();
+	}
+
+	/**
+	 * Spawns a patrol member as the patrol spawner does: the first member is the captain, and the genes come when the
+	 * member joins the world.
+	 */
+	static Pillager patrolMember(GameTestHelper helper, BlockPos pos, boolean first, String... genes) {
+		Pillager pillager = EntityTypes.PILLAGER.create(helper.getLevel(), EntitySpawnReason.PATROL);
+		pillager.setAttached(ModAttachments.GENES, new CarriedGenes(java.util.Arrays.stream(genes)
+				.map(gene -> Identifier.fromNamespaceAndPath("originofspawns_test", gene)).toList()));
+		pillager.setNoAi(true);
+		pillager.setPersistenceRequired();
+		BlockPos absolute = helper.absolutePos(pos);
+		if (first) {
+			pillager.setPatrolLeader(true);
+			pillager.setPatrolTarget(absolute.east(40));
+		}
+		pillager.snapTo(Vec3.atBottomCenterOf(absolute), 0.0F, 0.0F);
+		pillager.finalizeSpawn(helper.getLevel(), helper.getLevel().getCurrentDifficultyAt(absolute), EntitySpawnReason.PATROL,
+				null);
+		helper.getLevel().addFreshEntity(pillager);
+		return pillager;
+	}
+
+	/**
+	 * Adds a raider to wave 1 of the raid, as the raid does: the first raider is the leader, and the genes come when the
+	 * raider joins the world.
+	 */
+	static <T extends net.minecraft.world.entity.raid.Raider> T raidMember(GameTestHelper helper, Raid raid, T raider,
+			BlockPos pos, boolean first, String... genes) {
+		raider.setAttached(ModAttachments.GENES, new CarriedGenes(java.util.Arrays.stream(genes)
+				.map(gene -> Identifier.fromNamespaceAndPath("originofspawns_test", gene)).toList()));
+		raider.setNoAi(true);
+		if (first) {
+			raider.setPatrolLeader(true);
+			raid.setLeader(1, raider);
+		}
+		raid.joinRaid(helper.getLevel(), 1, raider, helper.absolutePos(pos).below(), false);
+		return raider;
+	}
+
+	static int bottlesNear(GameTestHelper helper, Pillager pillager) {
+		return helper.getLevel().getEntitiesOfClass(ItemEntity.class, pillager.getBoundingBox().inflate(2.0),
+				item -> item.getItem().is(Items.OMINOUS_BOTTLE)).size();
 	}
 
 	static List<FireworkRocketEntity> rocketsOf(GameTestHelper helper, Pillager pillager) {

@@ -152,6 +152,11 @@ public final class Evolution {
 				GeneBehaviors.onSpawn(mob, level, reason);
 			}
 		}
+		// The genes exist now, so the captain of a new patrol or raid wave can be chosen.
+		if (mob instanceof net.minecraft.world.entity.monster.PatrollingMonster patroller
+				&& mob.hasAttached(ModAttachments.SPAWN_REASON)) {
+			Captains.onJoin(patroller, level);
+		}
 		if (mob.hasAttached(ModAttachments.GENES)) {
 			// A mob from an older version has no birth time, so its age starts now.
 			if (!mob.hasAttached(ModAttachments.BORN)) {

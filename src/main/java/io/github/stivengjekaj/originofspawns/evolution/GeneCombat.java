@@ -481,6 +481,32 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Returns the ticks of the Poison of the bite of the mob, after the duration multipliers of its genes.
+	 */
+	public static int bitePoisonTicks(LivingEntity mob, int ticks) {
+		float multiplier = 1.0F;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.BitePoison poison) {
+				multiplier *= poison.durationMultiplier();
+			}
+		}
+		return multiplier == 1.0F ? ticks : Math.round(ticks * multiplier);
+	}
+
+	/**
+	 * Returns the amplifier of the Poison of the bite of the mob, after the extra levels of its genes.
+	 */
+	public static int bitePoisonAmplifier(LivingEntity mob, int amplifier) {
+		int result = amplifier;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.BitePoison poison) {
+				result += poison.extraLevels();
+			}
+		}
+		return result;
+	}
+
+	/**
 	 * Puts a temporary cobweb at the feet of the target for the seconds.
 	 */
 	public static boolean putWeb(ServerLevel level, Entity target, float seconds) {

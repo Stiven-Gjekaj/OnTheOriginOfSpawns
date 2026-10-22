@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:cave_spider",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "bite_poison", "duration_multiplier": 1.5, "extra_levels": 1 }],
+	"mutation_rate": 0
+}

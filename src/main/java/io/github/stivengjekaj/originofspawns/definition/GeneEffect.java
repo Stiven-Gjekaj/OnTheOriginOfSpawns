@@ -154,7 +154,8 @@ public sealed interface GeneEffect {
 			Map.entry("web_shot", WebShot.CODEC),
 			Map.entry("leap_strike", LeapStrike.CODEC),
 			Map.entry("first_strike", FirstStrike.CODEC),
-			Map.entry("hunt_in_light", HuntInLight.CODEC)
+			Map.entry("hunt_in_light", HuntInLight.CODEC),
+			Map.entry("bite_poison", BitePoison.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2406,6 +2407,26 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "hunt_in_light";
+		}
+	}
+
+	/**
+	 * Changes the Poison that the bite of a cave spider gives in vanilla. The bite gives no Poison on Easy, so the
+	 * change does nothing there.
+	 *
+	 * @param durationMultiplier multiplies the time of the Poison
+	 * @param extraLevels adds levels to the Poison. {@code 1} makes Poison I into Poison II
+	 */
+	record BitePoison(float durationMultiplier, int extraLevels) implements GeneEffect {
+		public static final MapCodec<BitePoison> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 20.0F).optionalFieldOf("duration_multiplier", 1.0F)
+						.forGetter(BitePoison::durationMultiplier),
+				Codec.intRange(0, 10).optionalFieldOf("extra_levels", 0).forGetter(BitePoison::extraLevels)
+		).apply(instance, BitePoison::new));
+
+		@Override
+		public String type() {
+			return "bite_poison";
 		}
 	}
 }

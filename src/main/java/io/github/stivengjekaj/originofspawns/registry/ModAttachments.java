@@ -134,6 +134,13 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> ROCKET_TIME = AttachmentRegistry.create(OriginOfSpawns.id("rocket_time"));
 
 	/**
+	 * The items in the sack of a mob that picks up items and has no inventory of its own, such as a vindicator.
+	 */
+	public static final AttachmentType<java.util.List<net.minecraft.world.item.ItemStack>> SACK =
+			AttachmentRegistry.createPersistent(OriginOfSpawns.id("sack"),
+					net.minecraft.world.item.ItemStack.CODEC.listOf());
+
+	/**
 	 * True on a raider that dies as a part of a raid. The raid lets the raider go before the death event.
 	 */
 	public static final AttachmentType<Boolean> RAID_DEATH = AttachmentRegistry.create(OriginOfSpawns.id("raid_death"));

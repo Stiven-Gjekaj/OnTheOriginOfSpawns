@@ -1,11 +1,15 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.Captains;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.illager.Pillager;
 import net.minecraft.world.entity.raid.Raider;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,6 +26,20 @@ public abstract class RaiderMixin {
 	private void originofspawns$onlyCaptainsTakeTheBanner(ServerLevel level, ItemEntity entity, CallbackInfo info) {
 		Raider self = (Raider) (Object) this;
 		if (Captains.isBanner(level, entity.getItem()) && !Captains.canLead(self)) {
+			info.cancel();
+		}
+	}
+
+	/**
+	 * A raider with no inventory of its own, such as a vindicator, puts the items that it picks up in a sack. The
+	 * pillager has its own inventory, and the banner of a raid goes on the head as in vanilla.
+	 */
+	@Inject(method = "pickUpItem", at = @At("HEAD"), cancellable = true)
+	private void originofspawns$sack(ServerLevel level, ItemEntity entity, CallbackInfo info) {
+		Raider self = (Raider) (Object) this;
+		if (!(self instanceof Pillager) && !Captains.isBanner(level, entity.getItem())
+				&& GeneCombat.has(self, GeneEffect.PickUpItems.class)) {
+			GeneBehaviors.putInSack(self, entity);
 			info.cancel();
 		}
 	}

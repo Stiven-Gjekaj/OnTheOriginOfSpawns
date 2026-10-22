@@ -27,6 +27,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.illager.Vindicator;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.ItemStack;
@@ -133,6 +134,31 @@ public class VindicatorEffectsTest {
 		return ((MobAccessor) vindicator).originofspawns$goalSelector().getAvailableGoals().stream()
 				.map(WrappedGoal::getGoal).filter(SiegeDoorGoal.class::isInstance).map(SiegeDoorGoal.class::cast)
 				.findFirst().orElseThrow().breakTicks();
+	}
+
+	@GameTest
+	public void aLooterKeepsWhatItPicksUpAndDropsItWhenItDies(GameTestHelper helper) {
+		Vindicator plain = vindicatorWith(helper, new BlockPos(1, 1, 1));
+		Vindicator looter = vindicatorWith(helper, new BlockPos(1, 1, 4), "test_looting");
+		GeneBehaviors.onSpawn(looter, helper.getLevel(), EntitySpawnReason.NATURAL);
+		ItemEntity plainLoot = breadAt(helper, plain);
+		ItemEntity loot = breadAt(helper, looter);
+		((MobAccessor) plain).originofspawns$pickUpItem(helper.getLevel(), plainLoot);
+		((MobAccessor) looter).originofspawns$pickUpItem(helper.getLevel(), loot);
+		helper.assertFalse(plainLoot.isRemoved(), "a plain vindicator does not pick up the bread");
+		helper.assertTrue(loot.isRemoved(), "the looter takes the bread");
+		helper.assertTrue(looter.getMainHandItem().is(Items.IRON_AXE), "the looter keeps its axe");
+		looter.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 100.0F);
+		helper.assertFalse(helper.getLevel().getEntitiesOfClass(ItemEntity.class, looter.getBoundingBox().inflate(2.0),
+				item -> item.getItem().is(Items.BREAD)).isEmpty(), "the looter drops the bread when it dies");
+		helper.succeed();
+	}
+
+	static ItemEntity breadAt(GameTestHelper helper, Vindicator vindicator) {
+		ItemEntity item = new ItemEntity(helper.getLevel(), vindicator.getX(), vindicator.getY(), vindicator.getZ(),
+				new ItemStack(Items.BREAD, 3));
+		helper.getLevel().addFreshEntity(item);
+		return item;
 	}
 
 	/**

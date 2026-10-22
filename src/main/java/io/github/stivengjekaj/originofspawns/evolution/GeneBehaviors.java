@@ -68,6 +68,10 @@ public final class GeneBehaviors {
 	 */
 	private static final int RED_STAR = 0xB3312C;
 	/**
+	 * A sack holds as many stacks as the inventory of a pillager.
+	 */
+	private static final int SACK_SLOTS = 5;
+	/**
 	 * The speed of a rocket that a mob shoots, the same as from a crossbow.
 	 */
 	private static final float ROCKET_SPEED = 1.6F;
@@ -971,6 +975,28 @@ public final class GeneBehaviors {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Puts the item in the sack of the mob, up to 5 stacks, as a pillager puts items in its inventory. The part that
+	 * does not fit stays on the ground.
+	 */
+	public static void putInSack(Mob mob, net.minecraft.world.entity.item.ItemEntity entity) {
+		net.minecraft.world.SimpleContainer sack = new net.minecraft.world.SimpleContainer(SACK_SLOTS);
+		mob.getAttachedOrElse(ModAttachments.SACK, List.of()).forEach(sack::addItem);
+		ItemStack remainder = sack.addItem(entity.getItem().copy());
+		int taken = entity.getItem().getCount() - remainder.getCount();
+		if (taken <= 0) {
+			return;
+		}
+		mob.onItemPickup(entity);
+		mob.take(entity, taken);
+		if (remainder.isEmpty()) {
+			entity.discard();
+		} else {
+			entity.getItem().setCount(remainder.getCount());
+		}
+		mob.setAttached(ModAttachments.SACK, sack.getItems().stream().filter(stack -> !stack.isEmpty()).toList());
 	}
 
 	/**

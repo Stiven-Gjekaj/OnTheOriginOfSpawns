@@ -801,6 +801,11 @@ public final class GeneCombat {
 	 */
 	public static void onDeath(Mob mob, ServerLevel level, DamageSource source) {
 		healAllies(mob, level);
+		// A mob with a sack drops what it took.
+		for (net.minecraft.world.item.ItemStack stack : mob.getAttachedOrElse(ModAttachments.SACK, java.util.List.of())) {
+			mob.spawnAtLocation(level, stack);
+		}
+		mob.removeAttached(ModAttachments.SACK);
 		// A pillager that picks up items drops what it took. A vanilla pillager keeps its sack.
 		if (mob instanceof net.minecraft.world.entity.monster.illager.Pillager pillager && has(mob, GeneEffect.PickUpItems.class)) {
 			for (net.minecraft.world.item.ItemStack stack : pillager.getInventory().removeAllItems()) {

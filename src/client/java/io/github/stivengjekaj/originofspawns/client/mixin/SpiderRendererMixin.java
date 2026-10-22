@@ -20,8 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Puts the genes of a spider in its render state, and gives the spider the texture with the marks of its genes. The
- * spider region map has the size of the spider texture, so the marks use the adult layout. The cave spider has its
- * own texture method, so this does not change the cave spider.
+ * spider region map has the size of the spider texture, so the marks use the adult layout. The cave spider uses the
+ * same render state. It has its own texture method, so its mixin gives its texture.
  */
 @Mixin(SpiderRenderer.class)
 public abstract class SpiderRendererMixin {

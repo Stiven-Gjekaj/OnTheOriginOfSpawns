@@ -140,7 +140,7 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Deflect | Guardsman | `melee` | It blocks one melee hit each 8 seconds | 10% less damage | Arms: a steel bracer. This changes the model |
 | Bodyguard | Guardsman | `crowd` | It shares the damage that it takes with the vindicators in 8 blocks | 10% less speed | Body: a gray tabard |
-| Watchman | Guardsman | `spotted` | It sees invisible players in 16 blocks | 10% less speed | Head: a lantern at the belt. This changes the model |
+| Watchman | Guardsman | `spotted` | It sees invisible players in 16 blocks | 10% less speed | Body: a lantern at the belt. This changes the model |
 | Stand Ground | Guardsman | `explosion` | Full knockback resistance | 10% less speed | Legs: heavy greaves |
 | Bracer | Guardsman, sub Berserker | `projectile` | 30% less damage from projectiles | 15% less speed | Arms: thick leather bracers |
 | Alarm Bell | Guardsman | `alone` | When something hurts it, it calls the vindicators in 16 blocks | 10% less damage | Body: a small bell on the belt |

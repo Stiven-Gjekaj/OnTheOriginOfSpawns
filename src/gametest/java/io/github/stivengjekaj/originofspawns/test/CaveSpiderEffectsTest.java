@@ -47,8 +47,9 @@ public class CaveSpiderEffectsTest {
 		CaveSpider spider = caveSpiderWith(helper, new BlockPos(1, 1, 1));
 		helper.assertFalse(GeneCombat.test(spider, When.NEAR_SPAWNER), "no spawner yet");
 		helper.assertTrue(GeneCombat.test(spider, When.FAR_FROM_SPAWNER), "far from a spawner");
-		helper.setBlock(new BlockPos(1, 1, 20), Blocks.SPAWNER);
-		helper.assertFalse(GeneCombat.test(spider, When.NEAR_SPAWNER), "a spawner 19 blocks away is too far");
+		// This spawner is 12 blocks away on each axis, so its chunk is in the search, but it is 17 blocks away.
+		helper.setBlock(new BlockPos(13, 1, 13), Blocks.SPAWNER);
+		helper.assertFalse(GeneCombat.test(spider, When.NEAR_SPAWNER), "a spawner 17 blocks away is too far");
 		helper.setBlock(new BlockPos(1, 1, 14), Blocks.SPAWNER);
 		helper.assertTrue(GeneCombat.test(spider, When.NEAR_SPAWNER), "a spawner 13 blocks away");
 		helper.assertFalse(GeneCombat.test(spider, When.FAR_FROM_SPAWNER), "not far from a spawner");

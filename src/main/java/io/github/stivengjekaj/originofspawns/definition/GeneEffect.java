@@ -148,7 +148,8 @@ public sealed interface GeneEffect {
 			Map.entry("charged_spawn", ChargedSpawn.CODEC),
 			Map.entry("charge_when", ChargeWhen.CODEC),
 			Map.entry("blast_lightning", BlastLightning.CODEC),
-			Map.entry("lightning_immunity", LightningImmunity.CODEC)
+			Map.entry("lightning_immunity", LightningImmunity.CODEC),
+			Map.entry("web_on_hit", WebOnHit.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2293,6 +2294,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "lightning_immunity";
+		}
+	}
+
+	/**
+	 * Each hit of the mob has a chance to put a cobweb at the target. The cobweb goes only in air, and it goes away
+	 * after the seconds with no drops.
+	 */
+	record WebOnHit(float chance, float seconds, Hits hits) implements GeneEffect {
+		public static final MapCodec<WebOnHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(WebOnHit::chance),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds", 30.0F).forGetter(WebOnHit::seconds),
+				Hits.CODEC.optionalFieldOf("hits", Hits.MELEE).forGetter(WebOnHit::hits)
+		).apply(instance, WebOnHit::new));
+
+		@Override
+		public String type() {
+			return "web_on_hit";
 		}
 	}
 }

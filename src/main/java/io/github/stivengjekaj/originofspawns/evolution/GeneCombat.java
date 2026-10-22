@@ -430,6 +430,8 @@ public final class GeneCombat {
 				}
 				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(false) && target instanceof LivingEntity living
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(living, freeze.seconds());
+				case GeneEffect.WebOnHit web when web.hits().includes(false) && mob.level() instanceof ServerLevel level
+						&& mob.getRandom().nextFloat() < web.chance() -> putWeb(level, target, web.seconds());
 				case GeneEffect.CallOnHit call when call.hits().includes(false) && target instanceof Player player ->
 						GeneBehaviors.callAllies(mob, call.radius(), player);
 				case GeneEffect.PullDownOnHit pull when target instanceof Player player && player.isInWater() ->
@@ -460,6 +462,14 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Puts a temporary cobweb at the feet of the target for the seconds.
+	 */
+	public static boolean putWeb(ServerLevel level, Entity target, float seconds) {
+		return TemporaryBlocks.place(level, target.blockPosition(), net.minecraft.world.level.block.Blocks.COBWEB
+				.defaultBlockState(), Math.round(seconds * 20.0F));
+	}
+
+	/**
 	 * Runs the effects that act when a projectile of the mob hits a target, for example a thrown trident.
 	 */
 	public static void onProjectileHit(Mob mob, LivingEntity target) {
@@ -471,6 +481,8 @@ public final class GeneCombat {
 								onHit.amplifier()), mob);
 				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(true)
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(target, freeze.seconds());
+				case GeneEffect.WebOnHit web when web.hits().includes(true) && mob.level() instanceof ServerLevel level
+						&& mob.getRandom().nextFloat() < web.chance() -> putWeb(level, target, web.seconds());
 				case GeneEffect.HealOnHit heal when heal.hits().includes(true) && test(mob, heal.when()) ->
 						mob.heal(heal.amount());
 				case GeneEffect.Disarm disarm when disarm.hits().includes(true) && target instanceof Player player

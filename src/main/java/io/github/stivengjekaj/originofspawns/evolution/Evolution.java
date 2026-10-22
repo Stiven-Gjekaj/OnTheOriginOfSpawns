@@ -120,6 +120,7 @@ public final class Evolution {
 		});
 		ServerTickEvents.END_SERVER_TICK.register(Evolution::decay);
 		DelayedTasks.register();
+		TemporaryBlocks.register();
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> CROWDS.clear());
 	}
 

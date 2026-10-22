@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "draw_time", "multiplier": 0.7 }],
+	"mutation_rate": 0
+}

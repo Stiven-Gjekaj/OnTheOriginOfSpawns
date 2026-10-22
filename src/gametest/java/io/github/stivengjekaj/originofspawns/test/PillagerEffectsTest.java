@@ -3,6 +3,7 @@ package io.github.stivengjekaj.originofspawns.test;
 import io.github.stivengjekaj.originofspawns.definition.DeathCondition;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
+import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -14,8 +15,14 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.RangedCrossbowAttackGoal;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
+import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.illager.Pillager;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.raid.Raid;
+import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
@@ -41,6 +48,67 @@ public class PillagerEffectsTest {
 		helper.assertFalse(Evolution.facts(patroller, source, helper.getLevel()).contains(DeathCondition.RAID),
 				"a death out of a raid");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void theDrawTimeChangesTheLoadTimeOfTheCrossbow(GameTestHelper helper) {
+		Pillager plain = pillagerWith(helper, new BlockPos(1, 1, 1));
+		Pillager quick = pillagerWith(helper, new BlockPos(3, 1, 1), "test_quick_charge");
+		ItemStack crossbow = new ItemStack(Items.CROSSBOW);
+		helper.assertValueEqual(CrossbowItem.getChargeDuration(crossbow, plain), 25, "the vanilla load time");
+		helper.assertValueEqual(CrossbowItem.getChargeDuration(crossbow, quick), 18, "30% faster");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 120)
+	public void aFastShooterShootsItsCrossbowSooner(GameTestHelper helper) {
+		// The goal sees the target for 5 ticks first. Then the plain pillager loads for 25 ticks and waits 20 to 39
+		// ticks, so it shoots at 52 or later. The fast one shoots 4 times as often, so it loads for 6 ticks and waits 5
+		// to 10 ticks, and it shoots at 23 or sooner. With the vanilla load or the vanilla wait, it shoots at 32 or later.
+		long plain = firstShotTick(helper, new BlockPos(1, 1, 1));
+		long fast = firstShotTick(helper, new BlockPos(1, 1, 6), "test_fast_crossbow");
+		helper.runAfterDelay(90, () -> {
+			helper.assertTrue(SHOTS.containsKey(plain) && SHOTS.get(plain) >= 50, "the plain shot, at " + SHOTS.get(plain));
+			helper.assertTrue(SHOTS.containsKey(fast) && SHOTS.get(fast) <= 25, "the fast shot, at " + SHOTS.get(fast));
+			helper.succeed();
+		});
+	}
+
+	/**
+	 * The tick of the first shot of each pillager that {@link #firstShotTick} watches, by the id of the watch.
+	 */
+	static final java.util.Map<Long, Long> SHOTS = new java.util.concurrent.ConcurrentHashMap<>();
+	static final java.util.concurrent.atomic.AtomicLong WATCHES = new java.util.concurrent.atomic.AtomicLong();
+
+	/**
+	 * Makes a pillager with the genes and a pig 5 blocks from it. Each tick runs its crossbow goal, and the tick of its
+	 * first arrow goes in {@link #SHOTS}.
+	 *
+	 * @return the id of the watch
+	 */
+	static long firstShotTick(GameTestHelper helper, BlockPos pos, String... genes) {
+		Pillager pillager = pillagerWith(helper, pos, genes);
+		Pig pig = CreeperEffectsTest.pigAt(helper, pos.east(5));
+		pillager.setTarget(pig);
+		Goal goal = crossbowGoal(pillager);
+		long watch = WATCHES.incrementAndGet();
+		long start = helper.getLevel().getGameTime();
+		helper.onEachTick(() -> {
+			if (SHOTS.containsKey(watch)) {
+				return;
+			}
+			goal.tick();
+			if (!helper.getLevel().getEntitiesOfClass(AbstractArrow.class, pillager.getBoundingBox().inflate(8.0),
+					arrow -> arrow.getOwner() == pillager).isEmpty()) {
+				SHOTS.put(watch, helper.getLevel().getGameTime() - start);
+			}
+		});
+		return watch;
+	}
+
+	static Goal crossbowGoal(Pillager pillager) {
+		return ((MobAccessor) pillager).originofspawns$goalSelector().getAvailableGoals().stream()
+				.map(WrappedGoal::getGoal).filter(RangedCrossbowAttackGoal.class::isInstance).findFirst().orElseThrow();
 	}
 
 	static Pillager pillagerWith(GameTestHelper helper, BlockPos pos, String... genes) {

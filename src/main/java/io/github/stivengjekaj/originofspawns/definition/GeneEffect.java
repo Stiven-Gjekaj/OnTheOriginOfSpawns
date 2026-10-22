@@ -155,7 +155,8 @@ public sealed interface GeneEffect {
 			Map.entry("leap_strike", LeapStrike.CODEC),
 			Map.entry("first_strike", FirstStrike.CODEC),
 			Map.entry("hunt_in_light", HuntInLight.CODEC),
-			Map.entry("bite_poison", BitePoison.CODEC)
+			Map.entry("bite_poison", BitePoison.CODEC),
+			Map.entry("damage_from_item", DamageFromItem.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2435,6 +2436,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "bite_poison";
+		}
+	}
+
+	/**
+	 * Multiplies the damage of a melee hit from an attacker that holds an item of the tag in its main hand, for
+	 * example a pickaxe.
+	 */
+	record DamageFromItem(TagKey<net.minecraft.world.item.Item> items, float multiplier) implements GeneEffect {
+		public static final MapCodec<DamageFromItem> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				TagKey.hashedCodec(Registries.ITEM).fieldOf("items").forGetter(DamageFromItem::items),
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(DamageFromItem::multiplier)
+		).apply(instance, DamageFromItem::new));
+
+		@Override
+		public String type() {
+			return "damage_from_item";
 		}
 	}
 }

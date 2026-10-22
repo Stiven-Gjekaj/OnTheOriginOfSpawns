@@ -14,8 +14,14 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.spider.CaveSpider;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
@@ -55,6 +61,21 @@ public class CaveSpiderEffectsTest {
 		helper.assertFalse(GeneCombat.test(spider, When.FAR_FROM_SPAWNER), "not far from a spawner");
 		helper.setBlock(new BlockPos(1, 1, 14), Blocks.STONE);
 		helper.assertFalse(GeneCombat.test(spider, When.NEAR_SPAWNER), "the spawner is gone");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aPickaxeDoesMoreDamageToAGeode(GameTestHelper helper) {
+		CaveSpider geode = caveSpiderWith(helper, new BlockPos(1, 1, 1), "test_geode");
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		var sources = helper.getLevel().damageSources();
+		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
+		helper.assertValueEqual(GeneCombat.modifyDamage(geode, sources.playerAttack(player), 4.0F), 4.0F, "a sword");
+		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_PICKAXE));
+		helper.assertValueEqual(GeneCombat.modifyDamage(geode, sources.playerAttack(player), 4.0F), 8.0F, "a pickaxe");
+		Snowball snowball = EntityTypes.SNOWBALL.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
+		helper.assertValueEqual(GeneCombat.modifyDamage(geode, sources.thrown(snowball, player), 4.0F), 4.0F,
+				"a thrown snowball is not a hit of the pickaxe");
 		helper.succeed();
 	}
 

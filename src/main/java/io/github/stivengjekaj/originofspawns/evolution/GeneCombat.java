@@ -353,6 +353,9 @@ public final class GeneCombat {
 						result *= front.multiplier();
 				case GeneEffect.DamageFromEnchantment enchanted when hasEnchantment(source, enchanted.enchantment()) ->
 						result *= enchanted.multiplier();
+				case GeneEffect.DamageFromItem item when source.getEntity() instanceof LivingEntity attacker
+						&& source.getDirectEntity() == attacker && attacker.getMainHandItem().is(item.items()) ->
+						result *= item.multiplier();
 				case GeneEffect.DamageFrom from when source.getEntity() != null
 						&& from.attackers().stream().anyMatch(type -> type.value() == source.getEntity().getType()) ->
 						result *= from.multiplier();

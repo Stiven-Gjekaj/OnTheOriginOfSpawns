@@ -376,8 +376,9 @@ VIEW_X, VIEW_Y, VIEW_W, VIEW_H = 11, 11, 22, 37
 
 def find_zombie_texture(path=ZOMBIE_PATH):
     """Return a vanilla zombie texture from a Minecraft jar of Loom."""
-    caches = os.path.expanduser("~/.gradle/caches/fabric-loom")
-    jars = sorted(glob.glob(os.path.join(caches, "**", "*.jar"), recursive=True))
+    # Loom keeps the jars in the user cache, or in the cache of the project.
+    caches = [os.path.expanduser("~/.gradle/caches/fabric-loom"), os.path.join(ROOT, ".gradle/loom-cache")]
+    jars = sorted(j for c in caches for j in glob.glob(os.path.join(c, "**", "*.jar"), recursive=True))
     # The client jar is the most likely place. Look at it first.
     jars.sort(key=lambda p: "client" not in os.path.basename(p))
     for jar in jars:

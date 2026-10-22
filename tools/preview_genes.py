@@ -54,6 +54,7 @@ PARCHED_PATH = "assets/minecraft/textures/entity/skeleton/parched.png"
 CREEPER_PATH = "assets/minecraft/textures/entity/creeper/creeper.png"
 SPIDER_PATH = "assets/minecraft/textures/entity/spider/spider.png"
 SPIDER_EYES_PATH = "assets/minecraft/textures/entity/spider/spider_eyes.png"
+CAVE_SPIDER_PATH = "assets/minecraft/textures/entity/spider/cave_spider.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -278,6 +279,17 @@ SPIDER_EXTRA = {
     "trapdoors": [("All 6 at night", [], True, {"light": 0.18}),
                   ("All 6 + Weavers", ["web_shot", "cocoon"], True, {})],
 }
+
+# The families of the cave spider, from design/species/cave_spider.md.
+CAVE_SPIDER_FAMILIES = {
+    "toxins": ["neurotoxin", "hemotoxin", "toxic_cloud", "venom_spray", "lingering_venom", "corrosive"],
+    "gloomers": ["lightsnuffer", "shade_skin", "echo_sense", "night_eyes", "dread", "cave_ghost"],
+    "scurriers": ["dash", "juke", "gap_runner", "nimble", "frenzy_bite", "ceiling_crawler"],
+    "broodkeepers": ["brood_call", "nest_weaver", "egg_layer", "nest_mend", "swarm_mind", "spawner_bond"],
+    "geodes": ["amethyst_shell", "shatter", "chime", "ore_skin", "stone_jaws", "deepslate_plates"],
+}
+
+CAVE_SPIDER_EXTRA = {}
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -880,6 +892,7 @@ SPECIES = {
     "parched": (PARCHED_PATH, None, PARCHED_FAMILIES, PARCHED_EXTRA, []),
     "creeper": (CREEPER_PATH, None, CREEPER_FAMILIES, CREEPER_EXTRA, []),
     "spider": (SPIDER_PATH, None, SPIDER_FAMILIES, SPIDER_EXTRA, []),
+    "cave_spider": (CAVE_SPIDER_PATH, None, CAVE_SPIDER_FAMILIES, CAVE_SPIDER_EXTRA, []),
 }
 
 
@@ -888,7 +901,10 @@ def set_mob(species):
     skeleton = species in ("skeleton", "stray", "bogged", "wither_skeleton", "parched")
     MOB["split"] = species == "drowned"
     global VIEW_X, VIEW_Y, VIEW_W, VIEW_H
-    spider = species == "spider"
+    # The cave spider has the model of the spider. The game draws it at 0.7
+    # times the size. The previews draw it at full size, so that the marks
+    # show.
+    spider = species in ("spider", "cave_spider")
     MOB["cubes"] = (DROWNED_CUBES if species == "drowned" else PARCHED_CUBES if species == "parched"
                     else CREEPER_CUBES if species == "creeper" else SPIDER_CUBES if spider
                     else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)

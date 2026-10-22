@@ -386,6 +386,11 @@ SPIDER_CLOSEUPS = {
                           ("All 6", SPIDER["trapdoors"], False)], SPIDER_NIGHT_VIEWS),
 }
 
+# The close-ups of the cave spider. It has no babies. It uses the views of
+# the spider.
+CAVE_SPIDER = pg.CAVE_SPIDER_FAMILIES
+CAVE_SPIDER_CLOSEUPS = {}
+
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
     "husk": (pg.HUSK_PATH, pg.HUSK_BABY_PATH, HUSK_CLOSEUPS),
@@ -397,6 +402,7 @@ SPECIES = {
     "parched": (pg.PARCHED_PATH, None, PARCHED_CLOSEUPS),
     "creeper": (pg.CREEPER_PATH, None, CREEPER_CLOSEUPS),
     "spider": (pg.SPIDER_PATH, None, SPIDER_CLOSEUPS),
+    "cave_spider": (pg.CAVE_SPIDER_PATH, None, CAVE_SPIDER_CLOSEUPS),
 }
 
 

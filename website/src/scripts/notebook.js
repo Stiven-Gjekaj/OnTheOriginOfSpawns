@@ -118,3 +118,12 @@ document.addEventListener("species", (e) => {
 renderGenes();
 renderFamilies();
 nextZombie();
+
+// On a phone the ribbons scroll. Keep the ribbon of the species in view.
+function showRibbon() {
+  const b = document.querySelector(".ribbon[aria-pressed='true']");
+  const row = b?.parentElement;
+  if (row && row.scrollWidth > row.clientWidth) row.scrollLeft = b.offsetLeft - (row.clientWidth - b.offsetWidth) / 2;
+}
+document.addEventListener("species", showRibbon);
+showRibbon();

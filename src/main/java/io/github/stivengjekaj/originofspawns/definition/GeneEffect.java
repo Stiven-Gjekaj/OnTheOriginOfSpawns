@@ -159,7 +159,8 @@ public sealed interface GeneEffect {
 			Map.entry("damage_from_item", DamageFromItem.CODEC),
 			Map.entry("rocket_chance", RocketChance.CODEC),
 			Map.entry("rocket_shot", RocketShot.CODEC),
-			Map.entry("rocket_blast", RocketBlast.CODEC)
+			Map.entry("rocket_blast", RocketBlast.CODEC),
+			Map.entry("patrol_size", PatrolSize.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2501,6 +2502,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "rocket_blast";
+		}
+	}
+
+	/**
+	 * When the mob spawns in a patrol, this many more mobs with the same genes join the patrol. A raid does not
+	 * change.
+	 */
+	record PatrolSize(int extra) implements GeneEffect {
+		public static final MapCodec<PatrolSize> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 8).optionalFieldOf("extra", 1).forGetter(PatrolSize::extra)
+		).apply(instance, PatrolSize::new));
+
+		@Override
+		public String type() {
+			return "patrol_size";
 		}
 	}
 }

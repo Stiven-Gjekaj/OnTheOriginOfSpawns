@@ -232,6 +232,34 @@ public class PillagerEffectsTest {
 		((FireworkRocketEntityAccessor) rocket).originofspawns$dealExplosionDamage(helper.getLevel());
 	}
 
+	@GameTest
+	public void aPatrolLeaderBringsOneMorePillagerToAPatrol(GameTestHelper helper) {
+		// Each case uses the same place in the test area, so each pillager is in a loaded chunk.
+		helper.assertValueEqual(patrolAfter(helper, EntitySpawnReason.PATROL), 2, "a patrol gets one more pillager");
+		helper.assertValueEqual(patrolAfter(helper, EntitySpawnReason.EVENT), 1, "a raid does not change");
+		helper.assertValueEqual(patrolAfter(helper, EntitySpawnReason.NATURAL), 1, "an outpost does not change");
+		helper.succeed();
+	}
+
+	/**
+	 * Spawns a Patrol Leader for the reason, and returns the number of pillagers with its gene near it. Each extra
+	 * pillager must follow the patrol. Then it removes them, so that the next case starts with none.
+	 */
+	static int patrolAfter(GameTestHelper helper, EntitySpawnReason reason) {
+		Pillager leader = pillagerWith(helper, new BlockPos(2, 1, 2), "test_patrol_leader");
+		leader.setPatrolTarget(helper.absolutePos(new BlockPos(2, 1, 6)));
+		Identifier gene = Identifier.fromNamespaceAndPath("originofspawns_test", "test_patrol_leader");
+		GeneBehaviors.onSpawn(leader, helper.getLevel(), reason);
+		List<Pillager> patrol = helper.getLevel().getEntitiesOfClass(Pillager.class, leader.getBoundingBox().inflate(3.0),
+				other -> other.getAttachedOrElse(ModAttachments.GENES, CarriedGenes.NONE).genes().contains(gene));
+		for (Pillager member : patrol) {
+			helper.assertTrue(member.hasPatrolTarget() && helper.absolutePos(new BlockPos(2, 1, 6)).equals(member.getPatrolTarget()),
+					"each pillager follows the patrol");
+		}
+		patrol.forEach(Pillager::discard);
+		return patrol.size();
+	}
+
 	static List<FireworkRocketEntity> rocketsOf(GameTestHelper helper, Pillager pillager) {
 		return helper.getLevel().getEntitiesOfClass(FireworkRocketEntity.class, pillager.getBoundingBox().inflate(8.0),
 				rocket -> rocket.getOwner() == pillager);

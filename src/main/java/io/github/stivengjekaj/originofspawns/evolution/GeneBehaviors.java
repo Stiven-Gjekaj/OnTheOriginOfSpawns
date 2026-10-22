@@ -46,6 +46,7 @@ import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.monster.PatrollingMonster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
@@ -126,7 +127,10 @@ public final class GeneBehaviors {
 				case GeneEffect.TridentChance trident -> rollTrident(mob, trident);
 				case GeneEffect.Runt runt when mob instanceof Zombie zombie && mob.getRandom().nextFloat() < runt.chance() ->
 						makeRunt(zombie, level, runt);
-				case GeneEffect.Brood brood when broodReason(reason) -> spawnBrood(mob, level, brood);
+				case GeneEffect.Brood brood when broodReason(reason) ->
+						spawnBrood(mob, level, brood.extra(), EntitySpawnReason.REINFORCEMENT);
+				case GeneEffect.PatrolSize patrol when reason == EntitySpawnReason.PATROL ->
+						spawnBrood(mob, level, patrol.extra(), EntitySpawnReason.PATROL);
 				case GeneEffect.Jockey jockey when reason == EntitySpawnReason.NATURAL
 						&& mob.getRandom().nextFloat() < jockey.chance() -> mount(mob, level, jockey);
 				case GeneEffect.Burrow burrow when reason == EntitySpawnReason.NATURAL -> burrow(mob, level, burrow);
@@ -215,17 +219,25 @@ public final class GeneBehaviors {
 		}
 	}
 
-	private static void spawnBrood(Mob mob, ServerLevel level, GeneEffect.Brood brood) {
+	/**
+	 * Spawns the count of extra mobs with the genes of the mob near it. The reason is the reason of their vanilla
+	 * spawn: a reinforcement for a brood, or a patrol for the extra member of a patrol.
+	 */
+	private static void spawnBrood(Mob mob, ServerLevel level, int count, EntitySpawnReason spawnReason) {
 		CarriedGenes genes = mob.getAttached(ModAttachments.GENES);
-		for (int i = 0; i < brood.extra(); i++) {
+		for (int i = 0; i < count; i++) {
 			if (!(mob.getType().create(level, EntitySpawnReason.REINFORCEMENT) instanceof Mob extra)) {
 				return;
 			}
 			extra.snapTo(mob.getX() + mob.getRandom().nextInt(3) - 1, mob.getY(), mob.getZ() + mob.getRandom().nextInt(3) - 1,
 					mob.getRandom().nextFloat() * 360.0F, 0.0F);
 			// The vanilla spawn gives the extra mob its natural gear, for example the bow of a skeleton.
-			extra.finalizeSpawn(level, level.getCurrentDifficultyAt(extra.blockPosition()), EntitySpawnReason.REINFORCEMENT,
-					null);
+			extra.finalizeSpawn(level, level.getCurrentDifficultyAt(extra.blockPosition()), spawnReason, null);
+			// An extra mob of a patrol follows the patrol, to the same place.
+			if (mob instanceof PatrollingMonster leader && extra instanceof PatrollingMonster member
+					&& leader.getPatrolTarget() != null) {
+				member.setPatrolTarget(leader.getPatrolTarget());
+			}
 			// The brood has the genes of the first mob. Its genes are set before it joins, so it does not roll new ones.
 			extra.setAttached(ModAttachments.GENES, genes);
 			GeneEffects.applyAttributes(extra, GeneEffects.sources(level.registryAccess(), genes));

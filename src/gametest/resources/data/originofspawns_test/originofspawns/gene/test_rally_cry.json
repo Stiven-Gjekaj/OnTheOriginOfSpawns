@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "rally", "per_ally": 0.05, "max": 0.2, "radius": 8 }],
+	"mutation_rate": 0
+}

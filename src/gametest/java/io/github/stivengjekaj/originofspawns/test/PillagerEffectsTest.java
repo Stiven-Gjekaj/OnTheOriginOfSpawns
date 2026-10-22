@@ -6,6 +6,7 @@ import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.mixin.FireworkRocketEntityAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -20,10 +21,12 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.RangedCrossbowAttackGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
@@ -31,6 +34,7 @@ import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.monster.illager.Pillager;
+import net.minecraft.world.entity.monster.illager.Vindicator;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.entity.projectile.arrow.Arrow;
@@ -41,6 +45,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -313,6 +318,121 @@ public class PillagerEffectsTest {
 				new ItemStack(Items.BREAD, 3));
 		helper.getLevel().addFreshEntity(item);
 		return item;
+	}
+
+	@GameTest(maxTicks = 80)
+	public void aBannerBearerAuraReachesOnlyPillagers(GameTestHelper helper) {
+		pillagerWith(helper, new BlockPos(1, 1, 1), "test_banner_bearer");
+		Pillager ally = pillagerWith(helper, new BlockPos(4, 1, 1));
+		Vindicator vindicator = helper.spawnWithNoFreeWill(EntityTypes.VINDICATOR, new BlockPos(1, 1, 4));
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		helper.succeedWhen(() -> {
+			helper.assertTrue(ally.hasEffect(MobEffects.RESISTANCE), "the pillager gets Resistance");
+			helper.assertFalse(vindicator.hasEffect(MobEffects.RESISTANCE), "the vindicator is not a pillager");
+			helper.assertFalse(player.hasEffect(MobEffects.RESISTANCE), "the player is not an ally");
+		});
+	}
+
+	@GameTest
+	public void camouflageHidesAPillagerInGrass(GameTestHelper helper) {
+		helper.setBlock(new BlockPos(1, 0, 1), Blocks.GRASS_BLOCK);
+		helper.setBlock(new BlockPos(1, 1, 1), Blocks.SHORT_GRASS);
+		helper.setBlock(new BlockPos(4, 0, 1), Blocks.STONE);
+		Pillager inGrass = pillagerWith(helper, new BlockPos(1, 1, 1), "test_camouflage");
+		Pillager inOpen = pillagerWith(helper, new BlockPos(4, 1, 1), "test_camouflage");
+		helper.assertTrue(GeneEffects.translucentOpacity(inGrass).isPresent(), "short grass hides the pillager");
+		helper.assertTrue(GeneEffects.translucentOpacity(inOpen).isEmpty(), "the pillager in the open is solid");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void signalSmokeCallsOnlyThePillagers(GameTestHelper helper) {
+		Pillager caller = pillagerWith(helper, new BlockPos(1, 1, 1), "test_signal_smoke");
+		Pillager ally = pillagerWith(helper, new BlockPos(4, 1, 1));
+		Vindicator vindicator = helper.spawnWithNoFreeWill(EntityTypes.VINDICATOR, new BlockPos(1, 1, 4));
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		caller.hurtServer(helper.getLevel(), helper.getLevel().damageSources().playerAttack(player), 1.0F);
+		helper.assertTrue(ally.getTarget() == player, "the pillager attacks the attacker");
+		helper.assertTrue(vindicator.getTarget() != player, "the vindicator does not answer the call");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 60)
+	public void aWarHornCallsThePillagersWhenItSeesAPlayer(GameTestHelper helper) {
+		Pillager horn = pillagerWith(helper, new BlockPos(1, 1, 1), "test_war_horn");
+		Pillager ally = pillagerWith(helper, new BlockPos(4, 1, 1));
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		horn.setTarget(player);
+		helper.succeedWhen(() -> helper.assertTrue(ally.getTarget() == player, "the pillager targets the player"));
+	}
+
+	@GameTest
+	public void rallyCryAddsDamageForEachPillagerNear(GameTestHelper helper) {
+		Pillager crier = pillagerWith(helper, new BlockPos(1, 1, 1), "test_rally_cry");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 4));
+		var bite = helper.getLevel().damageSources().mobAttack(crier);
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, bite, 10.0F), 10.0F, "no pillager near");
+		pillagerWith(helper, new BlockPos(3, 1, 1));
+		pillagerWith(helper, new BlockPos(4, 1, 1));
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(pig, bite, 10.0F) - 11.0F) < 0.001F, "two pillagers add 10%");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void grudgeAndPowderKegActWhenThePillagerDies(GameTestHelper helper) {
+		Pillager pillager = pillagerWith(helper, new BlockPos(1, 1, 1), "test_grudge", "test_powder_keg");
+		Pillager ally = pillagerWith(helper, new BlockPos(4, 1, 1));
+		Vindicator vindicator = helper.spawnWithNoFreeWill(EntityTypes.VINDICATOR, new BlockPos(1, 1, 4));
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(2, 1, 1))));
+		float before = player.getHealth();
+		pillager.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 100.0F);
+		helper.assertTrue(ally.hasEffect(MobEffects.STRENGTH), "the pillager gets Strength");
+		helper.assertFalse(vindicator.hasEffect(MobEffects.STRENGTH), "the vindicator is not a pillager");
+		helper.assertTrue(player.getHealth() < before, "the keg hurts the player near it");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 20)
+	public void escapeArtistIsFastOnlyWhenWounded(GameTestHelper helper) {
+		Pillager pillager = pillagerWith(helper, new BlockPos(1, 1, 1), "test_escape_artist");
+		double base = pillager.getAttributeBaseValue(Attributes.MOVEMENT_SPEED);
+		GeneBehaviors.tick(pillager, helper.getLevel());
+		helper.assertTrue(pillager.getAttributeValue(Attributes.MOVEMENT_SPEED) < base, "slower while healthy");
+		pillager.setHealth(pillager.getMaxHealth() / 4.0F);
+		GeneBehaviors.tick(pillager, helper.getLevel());
+		helper.assertTrue(pillager.getAttributeValue(Attributes.MOVEMENT_SPEED) > base, "faster while wounded");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void formationIsStrongInAGroupAndWeakAlone(GameTestHelper helper) {
+		Pillager pillager = pillagerWith(helper, new BlockPos(1, 1, 1), "test_formation");
+		var hit = helper.getLevel().damageSources().generic();
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(pillager, hit, 10.0F) - 12.0F) < 0.001F, "more damage alone");
+		pillagerWith(helper, new BlockPos(4, 1, 1));
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(pillager, hit, 10.0F) - 8.0F) < 0.001F, "less damage in a group");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void evasionStepsAsideFromAnAimedBow(GameTestHelper helper) {
+		for (int x = 0; x < 8; x++) {
+			helper.setBlock(new BlockPos(x, 0, 1), Blocks.STONE);
+		}
+		Pillager pillager = pillagerWith(helper, new BlockPos(4, 1, 1));
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setNoGravity(true);
+		player.setPos(pillager.position().add(0.0, 0.0, 5.0));
+		CreeperEffectsTest.face(player, 180.0F);
+		var evasion = new GeneEffect.Sidestep(12.0F, 3.0F, 10.0F, true);
+		helper.assertFalse(GeneBehaviors.sidestep(pillager, helper.getLevel(), evasion), "no bow, no step");
+		player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+		player.startUsingItem(InteractionHand.MAIN_HAND);
+		Vec3 before = pillager.position();
+		helper.assertTrue(GeneBehaviors.sidestep(pillager, helper.getLevel(), evasion), "the pillager steps aside");
+		helper.assertValueEqual(Math.round(Math.abs(pillager.getX() - before.x)), 3L, "the side distance");
+		helper.succeed();
 	}
 
 	static List<FireworkRocketEntity> rocketsOf(GameTestHelper helper, Pillager pillager) {

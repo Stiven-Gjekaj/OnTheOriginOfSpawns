@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "speed_when", "when": "wounded", "multiplier": 1.3 }, { "type": "speed_when", "when": "healthy", "multiplier": 0.9 }],
+	"mutation_rate": 0
+}

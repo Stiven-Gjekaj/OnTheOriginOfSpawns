@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "sidestep", "range": 12, "distance": 3, "cooldown_seconds": 10, "aimed": true }],
+	"mutation_rate": 0
+}

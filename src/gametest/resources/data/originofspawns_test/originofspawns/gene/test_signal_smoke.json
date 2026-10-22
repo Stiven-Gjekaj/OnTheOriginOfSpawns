@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "call_on_hurt", "radius": 24, "smoke": true }],
+	"mutation_rate": 0
+}

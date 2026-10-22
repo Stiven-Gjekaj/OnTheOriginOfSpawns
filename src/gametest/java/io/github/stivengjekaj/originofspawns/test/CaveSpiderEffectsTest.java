@@ -1,15 +1,23 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect.When;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
+import io.github.stivengjekaj.originofspawns.evolution.TemporaryBlocks;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
+
+import java.util.List;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -77,6 +85,74 @@ public class CaveSpiderEffectsTest {
 		helper.assertValueEqual(GeneCombat.modifyDamage(geode, sources.thrown(snowball, player), 4.0F), 4.0F,
 				"a thrown snowball is not a hit of the pickaxe");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void aNestWeaverPutsACobwebAtTheTarget(GameTestHelper helper) {
+		CaveSpider weaver = caveSpiderWith(helper, new BlockPos(1, 1, 1), "test_cave_web");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 1));
+		GeneCombat.onHit(weaver, pig);
+		helper.assertBlockPresent(Blocks.COBWEB, new BlockPos(3, 1, 1));
+		helper.assertTrue(TemporaryBlocks.isTemporary(helper.getLevel(), helper.absolutePos(new BlockPos(3, 1, 1))),
+				"the cobweb goes away later");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void anEggLayerSpawnsOneMoreCaveSpiderWithItsGenes(GameTestHelper helper) {
+		CaveSpider layer = caveSpiderWith(helper, new BlockPos(2, 1, 2), "test_egg_layer");
+		Identifier gene = Identifier.fromNamespaceAndPath("originofspawns_test", "test_egg_layer");
+		GeneBehaviors.onSpawn(layer, helper.getLevel(), EntitySpawnReason.NATURAL);
+		List<CaveSpider> group = helper.getLevel().getEntitiesOfClass(CaveSpider.class, layer.getBoundingBox().inflate(3.0),
+				other -> other.getAttachedOrElse(ModAttachments.GENES, CarriedGenes.NONE).genes().contains(gene));
+		helper.assertValueEqual(group.size(), 2, "the cave spider and one more");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aSwarmMindSharesTheDamageWithTheCaveSpidersNearIt(GameTestHelper helper) {
+		CaveSpider hit = caveSpiderWith(helper, new BlockPos(1, 1, 1), "test_swarm_mind");
+		CaveSpider ally = caveSpiderWith(helper, new BlockPos(3, 1, 1), "test_swarm_mind");
+		float full = hit.getHealth();
+		hit.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 6.0F);
+		helper.assertValueEqual(hit.getHealth(), full - 3.0F, "the hit cave spider takes half");
+		helper.assertValueEqual(ally.getHealth(), full - 3.0F, "the ally takes the other half");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aJukeCaveSpiderStepsAsideFromAnAimedBow(GameTestHelper helper) {
+		for (int x = 0; x < 8; x++) {
+			helper.setBlock(new BlockPos(x, 0, 1), Blocks.STONE);
+		}
+		CaveSpider spider = caveSpiderWith(helper, new BlockPos(4, 1, 1));
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setNoGravity(true);
+		player.setPos(spider.position().add(0.0, 0.0, 5.0));
+		CreeperEffectsTest.face(player, 180.0F);
+		var juke = new GeneEffect.Sidestep(12.0F, 3.0F, 10.0F, true);
+		helper.assertFalse(GeneBehaviors.sidestep(spider, helper.getLevel(), juke), "no bow, no step");
+		player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+		player.startUsingItem(InteractionHand.MAIN_HAND);
+		Vec3 before = spider.position();
+		helper.assertTrue(GeneBehaviors.sidestep(spider, helper.getLevel(), juke), "the cave spider steps aside");
+		helper.assertValueEqual(Math.round(Math.abs(spider.getX() - before.x)), 3L, "the side distance");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aGapRunnerIsSmaller(GameTestHelper helper) {
+		CaveSpider plain = caveSpiderWith(helper, new BlockPos(1, 1, 1));
+		CaveSpider small = caveSpiderWith(helper, new BlockPos(4, 1, 1), "test_gap_runner");
+		GeneEffects.applyAttributes(small, GeneEffects.sources(helper.getLevel().registryAccess(),
+				small.getAttached(ModAttachments.GENES)));
+		helper.assertTrue(Math.abs(small.getScale() - 0.8F) < 0.001F, "the scale is 0.8, was " + small.getScale());
+		// The game changes the box in the next tick, when it reads the changed attributes.
+		helper.runAfterDelay(2, () -> {
+			helper.assertTrue(Math.abs(small.getBbWidth() - plain.getBbWidth() * 0.8F) < 0.001F,
+					"the box is 20% narrower, was " + small.getBbWidth());
+			helper.succeed();
+		});
 	}
 
 	static CaveSpider caveSpiderWith(GameTestHelper helper, BlockPos pos, String... genes) {

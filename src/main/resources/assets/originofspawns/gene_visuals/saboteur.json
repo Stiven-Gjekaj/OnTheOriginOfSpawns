@@ -1,0 +1,33 @@
+{
+	"region_map": "originofspawns:textures/region/illager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/saboteur_0.png",
+				"tint": "#7A8288"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/saboteur_1.png",
+				"tint": "#B8C0C4"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/saboteur_2.png",
+				"tint": "#7A5030"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/saboteur_3.png",
+				"tint": "#B82020"
+			}
+		}
+	]
+}

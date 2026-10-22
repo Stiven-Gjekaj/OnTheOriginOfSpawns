@@ -1,0 +1,42 @@
+{
+	"texture": "originofspawns:textures/entity/plunder_sack.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				1.5,
+				3.6
+			],
+			"size": [
+				6,
+				7,
+				4
+			],
+			"inflate": 0.3
+		},
+		{
+			"bone": "body",
+			"uv": [
+				24,
+				0
+			],
+			"from": [
+				-1,
+				-0.2,
+				4.6
+			],
+			"size": [
+				2,
+				2,
+				2
+			]
+		}
+	]
+}

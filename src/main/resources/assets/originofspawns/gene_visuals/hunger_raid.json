@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/illager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/hunger_raid_0.png",
+				"tint": "#C8A870"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/hunger_raid_1.png",
+				"tint": "#9A7A48"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/hunger_raid_2.png",
+				"tint": "#3A2A1A"
+			}
+		}
+	]
+}

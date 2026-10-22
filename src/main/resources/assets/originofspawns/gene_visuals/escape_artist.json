@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/illager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/escape_artist_0.png",
+				"tint": "#959B9B"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/escape_artist_1.png",
+				"tint": "#0E1414"
+			}
+		}
+	]
+}

@@ -69,6 +69,19 @@ Pixel plan for the Scouts.
   the shoulders.
 - Signal Smoke has a smoke pot on the belt: a dark pot at the back of the
   belt, with puffs of gray smoke above it on the back.
+
+Pixel plan for the Looters. The coat hides rows 9 to 11 of the body, so the
+things on the belt are on body rows 4 to 8 and on the coat.
+- Pickpocket has long, quick fingers: pale, long fingers with dark gaps on
+  the hands, and on the end of the arm.
+- Plunder: a full sack on the back, the gene model plunder_sack.
+- Hunger Raid has a belt of empty food bags: small, limp bags of pale cloth
+  that hang from the belt over the coat.
+- Saboteur has a file and pliers on the belt: a steel file at the right hip,
+  and pliers with red handles at the left hip.
+- Greed has a gold tooth at the corner of the mouth, beside the nose.
+- Escape Artist has torn trousers: holes and frayed threads on the rows of
+  the trousers under the coat.
 This script needs Pillow.
 """
 import json
@@ -579,6 +592,120 @@ def signal_smoke():
     return [pot, rim, smoke, shade]
 
 
+def pickpocket():
+    # Long, quick fingers: on the hands (rows 10 and 11 of the arm), and up
+    # onto row 9, pale fingers with dark gaps between them. The end of the
+    # arm, which points forward, shows four fingers.
+    finger = Mark("#B8C0C0")
+    gap = Mark("#3A3E3E")
+    for x, y, face, col, row in pixels(ARM, SIDES):
+        if row >= 9:
+            (finger if col % 2 == 0 else gap if row >= 10 else finger).put((x, y))
+    for x, y, face, col, row in pixels(ARM, ("bottom",)):
+        (finger if col % 2 == 0 else gap).put((x, y))
+    return [finger, gap]
+
+
+def plunder():
+    # The sack is the gene model plunder_sack.
+    return []
+
+
+def plunder_model():
+    # A full sack on the back: a round sack of burlap, full and heavy, with a
+    # dark weave, a patch, and a tied neck at its top. It hangs on the back
+    # under the head. On the body bone, the back is at z 3, and the coat is
+    # 0.5 pixel larger.
+    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+
+    def sack(face, x, y):
+        if face == "back" and 1 <= x <= 2 and 2 <= y <= 3:
+            return "#6A7A5A"
+        if (x + y) % 3 == 0:
+            return "#806038"
+        return "#A08050" if face in ("top", "back", "left") else "#8A6A40"
+
+    def neck(face, x, y):
+        return "#5A4028" if y == 0 else "#A08050"
+
+    # The sack: 6x7x4 at uv (0, 0). The neck: 2x2x2 at uv (24, 0).
+    paint_box(im, 0, 0, 6, 7, 4, sack)
+    paint_box(im, 24, 0, 2, 2, 2, neck)
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [-3, 1.5, 3.6], "size": [6, 7, 4], "inflate": 0.3},
+        {"bone": "body", "uv": [24, 0], "from": [-1, -0.2, 4.6], "size": [2, 2, 2]},
+    ]
+    save_model("plunder_sack", im, parts)
+
+
+def hunger_raid():
+    # A belt of empty food bags: small, limp bags of pale cloth, 2 pixels
+    # wide, that hang from the belt over the top rows of the coat (rows 9 to
+    # 11), each with a dark tie at its top and a fold down its middle.
+    bag = Mark("#C8A870")
+    fold = Mark("#9A7A48")
+    tie = Mark("#3A2A1A")
+    for face in ("front", "right", "left", "back"):
+        x0, y0, w, h = COAT[face]
+        for c0 in ((1, 5) if w == 8 else (2,)):
+            tie.put([(x0 + c0, y0 + 9), (x0 + c0 + 1, y0 + 9)])
+            bag.put([(x0 + c0, y0 + 10), (x0 + c0, y0 + 11), (x0 + c0 + 1, y0 + 10)])
+            fold.put((x0 + c0 + 1, y0 + 11))
+    return [bag, fold, tie]
+
+
+def saboteur():
+    # A file and pliers on the belt: a steel file with a wooden handle on the
+    # right side of the body, and pliers with steel jaws and red handles on
+    # the left side, on rows 4 to 8 and on the top rows of the coat.
+    steel = Mark(STEEL[1])
+    bright = Mark(STEEL[0])
+    wood = Mark("#7A5030")
+    red = Mark("#B82020")
+    rx, ry = BODY["right"][:2]
+    wood.put([(rx + 2, ry + 4), (rx + 2, ry + 5)])
+    steel.put([(rx + 2, ry + 6), (rx + 2, ry + 7), (rx + 2, ry + 8)])
+    bright.put((rx + 3, ry + 7))
+    cx, cy = COAT["right"][:2]
+    steel.put([(cx + 2, cy + 9), (cx + 2, cy + 10)])
+    lx, ly = BODY["left"][:2]
+    steel.put([(lx + 2, ly + 4), (lx + 3, ly + 4), (lx + 2, ly + 5), (lx + 3, ly + 5)])
+    bright.put((lx + 2, ly + 4))
+    red.put([(lx + 1, ly + 6), (lx + 1, ly + 7), (lx + 4, ly + 6), (lx + 4, ly + 7), (lx + 1, ly + 8),
+             (lx + 4, ly + 8)])
+    cx, cy = COAT["left"][:2]
+    red.put([(cx + 1, cy + 9), (cx + 4, cy + 9)])
+    return [steel, bright, wood, red]
+
+
+def greed():
+    # A gold tooth: a tooth at the left corner of the mouth is bright gold,
+    # with a darker gold root under it. The nose hides the middle of the
+    # mouth (x 11 and 12), so the tooth is at x 13.
+    gold = Mark("#F0C830")
+    root = Mark("#B08A20")
+    gold.put((13, 16))
+    root.put((13, 17))
+    return [gold, root]
+
+
+def escape_artist():
+    # Torn trousers: on the rows of the trousers under the coat (rows 4 and
+    # 5 of the legs), holes that show the gray skin, and dark frayed threads
+    # that hang down onto the top row of the boots.
+    hole = Mark("#959B9B")
+    fray = Mark("#0E1414")
+    for x, y, face, col, row in pixels(LEG, SIDES):
+        k = (col + len(face)) % 4
+        if row == 5 and k in (0, 1) or row == 4 and k == 1:
+            hole.put((x, y))
+        elif row == 6 and k == 2:
+            fray.put((x, y))
+        elif row == 5 and k == 3:
+            fray.put((x, y))
+    return [hole, fray]
+
+
 
 GENES = {
     "piercer": piercer,
@@ -605,6 +732,12 @@ GENES = {
     "evasion": evasion,
     "camouflage": camouflage,
     "signal_smoke": signal_smoke,
+    "pickpocket": pickpocket,
+    "plunder": plunder,
+    "hunger_raid": hunger_raid,
+    "saboteur": saboteur,
+    "greed": greed,
+    "escape_artist": escape_artist,
 }
 
 MODELS = {
@@ -615,10 +748,11 @@ MODELS = {
     "banner_bearer": "originofspawns:banner_bearer_banner",
     "war_horn": "originofspawns:war_horn_horn",
     "spyglass": "originofspawns:spyglass_glass",
+    "plunder": "originofspawns:plunder_sack",
 }
 
 MODEL_MAKERS = [piercer_model, long_bolt_model, rocketeer_model, powder_keg_model, banner_bearer_model,
-                war_horn_model, spyglass_model]
+                war_horn_model, spyglass_model, plunder_model]
 
 
 def main():

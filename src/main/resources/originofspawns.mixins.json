@@ -12,6 +12,8 @@
 		"CreeperMixin",
 		"CrossbowItemMixin",
 		"EntityMixin",
+		"FireworkRocketEntityAccessor",
+		"FireworkRocketEntityMixin",
 		"LeapAtTargetGoalMixin",
 		"LivingEntityMixin",
 		"MeleeAttackGoalMixin",

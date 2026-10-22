@@ -932,6 +932,22 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the product of the rocket blast multipliers of the owner of a rocket. A rocket of a player or of a mob
+	 * with no genes gives 1.
+	 */
+	public static float rocketBlastMultiplier(net.minecraft.world.entity.Entity owner) {
+		float multiplier = 1.0F;
+		if (owner instanceof Mob mob && mob.hasAttached(ModAttachments.GENES)) {
+			for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+				if (effect instanceof GeneEffect.RocketBlast blast) {
+					multiplier *= blast.multiplier();
+				}
+			}
+		}
+		return multiplier;
+	}
+
+	/**
 	 * Returns true if the next crossbow shot of the mob is a firework rocket. Each rocket chance of the genes has its
 	 * own roll.
 	 */

@@ -6,6 +6,7 @@ import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.mixin.FireworkRocketEntityAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -208,6 +209,27 @@ public class PillagerEffectsTest {
 		rocketeer.setAttached(ModAttachments.ROCKET_TIME, helper.getLevel().getGameTime() - 300L);
 		helper.assertTrue(GeneBehaviors.rocketShot(rocketeer, helper.getLevel(), shot), "a rocket after the cooldown");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void aFlakRocketHasALargerBlast(GameTestHelper helper) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(7, 1, 1));
+		// The vanilla blast reaches 5 blocks, so the pig 6 blocks away is safe. The Flak blast reaches 7.5 blocks.
+		blastRocketOf(helper, pillagerWith(helper, new BlockPos(1, 1, 3)));
+		helper.assertValueEqual(pig.getHealth(), pig.getMaxHealth(), "the plain blast does not reach the pig");
+		blastRocketOf(helper, pillagerWith(helper, new BlockPos(1, 1, 4), "test_flak"));
+		helper.assertTrue(pig.getHealth() < pig.getMaxHealth(), "the Flak blast reaches the pig");
+		helper.succeed();
+	}
+
+	/**
+	 * Makes the blast of a rocket of the pillager 6 blocks west of the pig.
+	 */
+	static void blastRocketOf(GameTestHelper helper, Pillager pillager) {
+		Vec3 place = helper.absoluteVec(new Vec3(1.5, 1.5, 1.5));
+		FireworkRocketEntity rocket = new FireworkRocketEntity(helper.getLevel(), GeneBehaviors.rocket(), pillager,
+				place.x, place.y, place.z, true);
+		((FireworkRocketEntityAccessor) rocket).originofspawns$dealExplosionDamage(helper.getLevel());
 	}
 
 	static List<FireworkRocketEntity> rocketsOf(GameTestHelper helper, Pillager pillager) {

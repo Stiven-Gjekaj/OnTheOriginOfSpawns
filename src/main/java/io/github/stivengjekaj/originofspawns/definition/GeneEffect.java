@@ -158,7 +158,8 @@ public sealed interface GeneEffect {
 			Map.entry("bite_poison", BitePoison.CODEC),
 			Map.entry("damage_from_item", DamageFromItem.CODEC),
 			Map.entry("rocket_chance", RocketChance.CODEC),
-			Map.entry("rocket_shot", RocketShot.CODEC)
+			Map.entry("rocket_shot", RocketShot.CODEC),
+			Map.entry("rocket_blast", RocketBlast.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2486,6 +2487,20 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "rocket_shot";
+		}
+	}
+
+	/**
+	 * Multiplies the radius of the blast of the firework rockets of the mob. The radius is 5 blocks in vanilla.
+	 */
+	record RocketBlast(float multiplier) implements GeneEffect {
+		public static final MapCodec<RocketBlast> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 10.0F).fieldOf("multiplier").forGetter(RocketBlast::multiplier)
+		).apply(instance, RocketBlast::new));
+
+		@Override
+		public String type() {
+			return "rocket_blast";
 		}
 	}
 }

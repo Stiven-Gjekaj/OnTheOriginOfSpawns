@@ -51,7 +51,8 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 	private static final Path OUTPUT = projectRoot().resolve("build/wiki_shots");
 	private static final List<EntityType<? extends Mob>> SPECIES = List.of(EntityTypes.ZOMBIE, EntityTypes.HUSK,
 			EntityTypes.DROWNED, EntityTypes.SKELETON, EntityTypes.STRAY, EntityTypes.BOGGED, EntityTypes.WITHER_SKELETON,
-			EntityTypes.PARCHED, EntityTypes.CREEPER, EntityTypes.SPIDER, EntityTypes.CAVE_SPIDER, EntityTypes.PILLAGER);
+			EntityTypes.PARCHED, EntityTypes.CREEPER, EntityTypes.SPIDER, EntityTypes.CAVE_SPIDER, EntityTypes.PILLAGER,
+			EntityTypes.VINDICATOR);
 	private static final int SHOT_ID = -424242;
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 960;
@@ -184,12 +185,16 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 		Mob mob = type.create(client.level, EntitySpawnReason.COMMAND);
 		mob.setId(SHOT_ID);
 		// The natural weapons: the stone sword of the wither skeleton, the bow of the other skeleton species, and the
-		// crossbow of the pillager.
+		// crossbow of the pillager. The vindicator holds no axe, because the raised axe covers its face.
 		mob.setItemSlot(EquipmentSlot.MAINHAND, mob instanceof net.minecraft.world.entity.monster.skeleton.WitherSkeleton
 				? new ItemStack(Items.STONE_SWORD)
 				: mob instanceof net.minecraft.world.entity.monster.skeleton.AbstractSkeleton ? new ItemStack(Items.BOW)
 				: mob.getType() == EntityTypes.PILLAGER ? new ItemStack(Items.CROSSBOW)
 				: ItemStack.EMPTY);
+		// A vindicator crosses its arms until it attacks. The attack pose shows the marks and the models on the arms.
+		if (mob.getType() == EntityTypes.VINDICATOR) {
+			mob.setAggressive(true);
+		}
 		mob.snapTo(base.getX() + 0.5, base.getY(), base.getZ() + 3.5, yaw, 0.0F);
 		mob.setYHeadRot(yaw);
 		mob.yHeadRotO = yaw;

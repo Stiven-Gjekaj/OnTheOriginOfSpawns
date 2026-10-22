@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/illager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fleet_foot_0.png",
+				"tint": "#C8A878"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fleet_foot_1.png",
+				"tint": "#7A5A38"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fleet_foot_2.png",
+				"tint": "#4A3A28"
+			}
+		}
+	]
+}

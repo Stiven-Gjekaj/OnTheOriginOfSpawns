@@ -1,0 +1,77 @@
+{
+	"texture": "originofspawns:textures/entity/banner_bearer_banner.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				24,
+				0
+			],
+			"from": [
+				-1,
+				5,
+				3.4
+			],
+			"size": [
+				2,
+				2,
+				2
+			],
+			"inflate": 0.1
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				-12,
+				4.4
+			],
+			"size": [
+				1,
+				20,
+				1
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				-3,
+				-12,
+				4.4
+			],
+			"size": [
+				6,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				8,
+				4
+			],
+			"from": [
+				-2.5,
+				-11,
+				5.4
+			],
+			"size": [
+				5,
+				8,
+				1
+			],
+			"inflate": -0.1
+		}
+	]
+}

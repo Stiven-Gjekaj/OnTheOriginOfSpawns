@@ -42,6 +42,33 @@ Pixel plan for the Bombardiers.
 - Powder Keg: a small keg on the belt, the gene model powder_keg_keg.
 - Blast Proof has a padded vest: the body is quilted tan padding, with dark
   seams.
+
+Pixel plan for the Captains.
+- Banner Bearer: a small ominous banner on a pole on the back, the gene
+  model banner_bearer_banner.
+- War Horn: a horn on a cord at the left hip, the gene model war_horn_horn,
+  and the cord across the chest and the back.
+- Rally Cry has a red plume: a red crest along the middle of the top of the
+  head, from the brow to the back.
+- Patrol Leader has a dark hood: the top, the sides, and the back of the
+  head are a dark hood, with a frame round the face.
+- Grudge has a black band over the brow: a black band round the head, over
+  the brows, with a knot and two tails at the back.
+- Formation has a gray tabard: a gray tabard with dark edges on the front
+  and the back of the body, under the belt, and on the coat.
+
+Pixel plan for the Scouts.
+- Fleet Foot has light boots: the boots are pale tan leather, with laces on
+  the front and dark soles.
+- Spyglass: a brass spyglass at the right hip, the gene model spyglass_glass.
+- Pathseeker has pale, sharp eyes: pale, icy eyes, with a pale point at the
+  outer corner of each eye.
+- Evasion has patched trousers: square patches of other cloth, with pale
+  stitches, on the rows of the trousers under the coat.
+- Camouflage has a cloak of leaves: green leaves on the body, the coat, and
+  the shoulders.
+- Signal Smoke has a smoke pot on the belt: a dark pot at the back of the
+  belt, with puffs of gray smoke above it on the back.
 This script needs Pillow.
 """
 import json
@@ -304,6 +331,254 @@ def blast_proof():
             (seam if row % 3 == 2 or col % 3 == 2 else pad).put((x, y))
     return [pad, seam]
 
+def banner_bearer():
+    # The banner is the gene model banner_bearer_banner.
+    return []
+
+
+def banner_bearer_model():
+    # A small ominous banner on the back: a dark pole that rises behind the
+    # head from a holder on the back, a crossbar at its top, and a small
+    # banner that hangs from the crossbar, white with a cyan diamond, a gray
+    # border, and black bands, as the ominous banner. On the body bone, the
+    # back is at z 3, the coat is 0.5 pixel larger, and the back of the head
+    # is at z 4.
+    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+
+    def pole(face, x, y):
+        return "#4A3A2A" if face in ("right", "back") else "#6A5038"
+
+    def cloth(face, x, y):
+        if face not in ("front", "back"):
+            return "#A8A8A0"
+        if y in (0, 7):
+            return "#202020"
+        if x in (0, 4):
+            return "#8A8A8A"
+        if (x, y) in ((2, 2), (1, 3), (3, 3), (2, 4), (2, 3)):
+            return "#3A9A9A"
+        return "#202020" if y == 5 else "#E8E8E0"
+
+    # The pole: 1x20x1 at uv (0, 0). The crossbar: 6x1x1 at uv (8, 0). The
+    # banner: 5x8x1 at uv (8, 4). The holder: 2x2x2 at uv (24, 0).
+    paint_box(im, 0, 0, 1, 20, 1, pole)
+    paint_box(im, 8, 0, 6, 1, 1, pole)
+    paint_box(im, 8, 4, 5, 8, 1, cloth)
+    paint_box(im, 24, 0, 2, 2, 2, lambda face, x, y: LEATHER[1])
+    parts = [
+        {"bone": "body", "uv": [24, 0], "from": [-1, 5, 3.4], "size": [2, 2, 2], "inflate": 0.1},
+        {"bone": "body", "uv": [0, 0], "from": [-0.5, -12, 4.4], "size": [1, 20, 1]},
+        {"bone": "body", "uv": [8, 0], "from": [-3, -12, 4.4], "size": [6, 1, 1]},
+        {"bone": "body", "uv": [8, 4], "from": [-2.5, -11, 5.4], "size": [5, 8, 1], "inflate": -0.1},
+    ]
+    save_model("banner_bearer_banner", im, parts)
+
+
+def war_horn():
+    # The cord of the horn of the gene model war_horn_horn: a pale cord from
+    # the right shoulder to the left hip on the front of the body, and from
+    # the left hip back up to the right shoulder on the back.
+    cord = Mark("#D8C8A0")
+    for face, flip in (("front", False), ("back", True)):
+        x0, y0, w, h = BODY[face]
+        for row in range(8):
+            col = row if not flip else 7 - row
+            cord.put((x0 + col, y0 + row))
+    return [cord]
+
+
+def war_horn_model():
+    # A horn on a cord: a curved horn of pale bone at the left hip, with a
+    # brass band, a wide bell that points out to the side, and a thin
+    # mouthpiece. On the body bone, the front is at z -3, the left side is at
+    # x 4, and the coat is 0.5 pixel larger.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def horn(face, x, y):
+        if x == 1:
+            return "#C8A040"
+        return "#E8DCB8" if face in ("top", "front") else "#C8B890"
+
+    def bell(face, x, y):
+        return "#2A2018" if face == "left" else "#E8DCB8" if face in ("top", "front") else "#C8B890"
+
+    # The horn: 4x2x2 at uv (0, 0). The bell: 2x3x3 at uv (16, 0). The
+    # mouthpiece: 1x1x1 at uv (0, 8).
+    paint_box(im, 0, 0, 4, 2, 2, horn)
+    paint_box(im, 16, 0, 2, 3, 3, bell)
+    paint_box(im, 0, 8, 1, 1, 1, lambda face, x, y: "#C8A040")
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [0.5, 8, -5.5], "size": [4, 2, 2]},
+        {"bone": "body", "uv": [16, 0], "from": [4.3, 7.5, -6], "size": [2, 3, 3]},
+        {"bone": "body", "uv": [0, 8], "from": [-0.5, 8.5, -5], "size": [1, 1, 1]},
+    ]
+    save_model("war_horn_horn", im, parts)
+
+
+def rally_cry():
+    # A red plume: a red crest, two pixels wide, along the middle of the top
+    # of the head from the brow to the back, that runs down the top two rows
+    # of the back of the head, with bright red on alternate pixels.
+    red = Mark("#C81818")
+    bright = Mark("#F05050")
+    for row in range(8):
+        for x in (11, 12):
+            (bright if (row + x) % 2 else red).put((x, row))
+    for y in (8, 9):
+        for x in (27, 28):
+            red.put((x, y))
+    red.put([(11, 8), (12, 8)])
+    return [red, bright]
+
+
+def patrol_leader():
+    # A dark hood: the top of the head, rows 0 to 7 of the sides and the
+    # back, and a frame round the face (the top two rows and the outer
+    # columns down to row 6) are a dark hood, with paler folds.
+    hood = Mark("#1E1A24")
+    fold = Mark("#34303C")
+    for x, y, face, col, row in pixels(HEAD, ("top", "right", "left", "back")):
+        if face == "top" or row <= 7:
+            (fold if (col + 2 * row) % 7 == 0 else hood).put((x, y))
+    for x, y, face, col, row in pixels(HEAD, ("front",)):
+        if row <= 1 or col in (0, 7) and row <= 6:
+            hood.put((x, y))
+    return [hood, fold]
+
+
+def grudge():
+    # A black band over the brow: a black band on rows 2 and 3 of all the
+    # sides of the head, over the brows, and a knot with two short tails in
+    # the middle of the back.
+    band = Mark("#121212")
+    for x, y, face, col, row in pixels(HEAD, SIDES):
+        if row in (2, 3):
+            band.put((x, y))
+        elif face == "back" and row in (4, 5) and col in (3, 4):
+            band.put((x, y))
+    return [band]
+
+
+def formation():
+    # A gray tabard: a gray tabard with dark edges on columns 1 to 6 of the
+    # front and the back of the body, on rows 0 to 7 and 10 and 11 (the belt
+    # stays on rows 8 and 9), and on the drawn rows of the coat.
+    gray = Mark("#80868A")
+    edge = Mark("#55585C")
+    for part, faces, rows in ((BODY, ("front", "back"), (0, 1, 2, 3, 4, 5, 6, 7, 10, 11)),
+                              (COAT, ("front", "back"), COAT_ROWS)):
+        for x, y, face, col, row in pixels(part, faces):
+            if 1 <= col <= 6 and row in rows:
+                (edge if col in (1, 6) else gray).put((x, y))
+    return [gray, edge]
+
+
+def fleet_foot():
+    # Light boots: the boots (rows 6 to 11 of the legs) are pale tan leather,
+    # with crossed laces on the front and dark soles.
+    tan = Mark("#C8A878")
+    lace = Mark("#7A5A38")
+    sole = Mark("#4A3A28")
+    for x, y, face, col, row in pixels(LEG, SIDES):
+        if row == 11:
+            sole.put((x, y))
+        elif row >= 6:
+            lace_here = face == "front" and row in (7, 9) and col in (1, 2)
+            (lace if lace_here else tan).put((x, y))
+    for x, y, face, col, row in pixels(LEG, ("bottom",)):
+        sole.put((x, y))
+    return [tan, lace, sole]
+
+
+def spyglass():
+    # The spyglass is the gene model spyglass_glass.
+    return []
+
+
+def spyglass_model():
+    # A spyglass at the belt: a brass tube that hangs at the right hip, with
+    # dark bands, a wide end, and a pale blue lens at the bottom. On the body
+    # bone, the right side is at x -4, the coat is 0.5 pixel larger, and the
+    # belt is at y 8.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def tube(face, x, y):
+        if face == "bottom":
+            return "#A8D8E8"
+        if y in (1, 3):
+            return "#8A5A28"
+        return "#D8A048" if face in ("front", "right") else "#B07830"
+
+    # The tube: 2x5x2 at uv (0, 0).
+    paint_box(im, 0, 0, 2, 5, 2, tube)
+    parts = [{"bone": "body", "uv": [0, 0], "from": [-6.3, 6.5, -1], "size": [2, 5, 2],
+              "pivot": [-5.3, 6.5, 0], "rotation": [0, 0, -10]}]
+    save_model("spyglass_glass", im, parts)
+
+
+def pathseeker():
+    # Pale, sharp eyes: the pupils are pale and icy, and a pale point at the
+    # outer corner of each eye makes the eyes look long and sharp.
+    ice = Mark("#D8FAFF")
+    corner = Mark("#B8E0E8")
+    ice.put([(10, 14), (13, 14)])
+    corner.put([(8, 14), (15, 14)])
+    return [ice, corner]
+
+
+def evasion():
+    # Patched trousers: square patches of 2x2 pixels of other cloth, green and
+    # brown, with pale stitches at their corners. The coat hides rows 0 to 3
+    # of the trousers, so the patches are on rows 4 and 5, which show.
+    green = Mark("#5A8A5A")
+    brown = Mark("#9A6A3A")
+    stitch = Mark("#E8E0C0")
+    spots = {"front": ((0, 4, green), (2, 4, brown)), "right": ((1, 4, brown),), "left": ((1, 4, green),),
+             "back": ((0, 4, brown), (2, 4, green))}
+    for face, patches in spots.items():
+        x0, y0, w, h = LEG[face]
+        for col, row, mark in patches:
+            mark.put([(x0 + col, y0 + row), (x0 + col + 1, y0 + row), (x0 + col, y0 + row + 1),
+                      (x0 + col + 1, y0 + row + 1)])
+            stitch.put([(x0 + col, y0 + row), (x0 + col + 1, y0 + row + 1)])
+    return [green, brown, stitch]
+
+
+def camouflage():
+    # A cloak of leaves: green leaves of three shades on all the faces of the
+    # body, on the drawn rows of the coat, and on the top two rows of the
+    # arms, as a cloak over the shoulders.
+    dark = Mark("#2A4A1A")
+    mid = Mark("#3A6A2A")
+    light = Mark("#5A8A3A")
+    spots = list(pixels(BODY, ALL)) + [p for p in pixels(COAT, SIDES) if p[4] in COAT_ROWS]
+    spots += [p for p in pixels(ARM, ("top",) + SIDES) if p[2] == "top" or p[4] <= 1]
+    for x, y, face, col, row in spots:
+        n = noise100(x, y, 907)
+        (light if n < 25 else mid if n < 65 else dark).put((x, y))
+    return [dark, mid, light]
+
+
+def signal_smoke():
+    # A smoke pot on the belt: a dark pot at the middle of the back, on the
+    # belt (rows 8 to 11 of the back of the body), with a pale rim, and three
+    # puffs of gray smoke above it on rows 1 to 6.
+    pot = Mark("#2E2E2E")
+    rim = Mark("#6A6A6A")
+    smoke = Mark("#C8C8C8")
+    shade = Mark("#9A9A9A")
+    x0, y0 = BODY["back"][:2]
+    for row in range(8, 12):
+        pot.put([(x0 + c, y0 + row) for c in range(2, 6)])
+    rim.put([(x0 + c, y0 + 7) for c in range(2, 6)])
+    # Three round puffs of 2x2 pixels that rise and drift, each with a shade
+    # on its lower right pixel.
+    for c, r in ((2, 5), (4, 3), (3, 1)):
+        smoke.put([(x0 + c, y0 + r), (x0 + c + 1, y0 + r), (x0 + c, y0 + r + 1)])
+        shade.put((x0 + c + 1, y0 + r + 1))
+    return [pot, rim, smoke, shade]
+
+
 
 GENES = {
     "piercer": piercer,
@@ -318,6 +593,18 @@ GENES = {
     "smoke_shell": smoke_shell,
     "powder_keg": powder_keg,
     "blast_proof": blast_proof,
+    "banner_bearer": banner_bearer,
+    "war_horn": war_horn,
+    "rally_cry": rally_cry,
+    "patrol_leader": patrol_leader,
+    "grudge": grudge,
+    "formation": formation,
+    "fleet_foot": fleet_foot,
+    "spyglass": spyglass,
+    "pathseeker": pathseeker,
+    "evasion": evasion,
+    "camouflage": camouflage,
+    "signal_smoke": signal_smoke,
 }
 
 MODELS = {
@@ -325,9 +612,13 @@ MODELS = {
     "long_bolt": "originofspawns:long_bolt_quiver",
     "rocketeer": "originofspawns:rocketeer_rockets",
     "powder_keg": "originofspawns:powder_keg_keg",
+    "banner_bearer": "originofspawns:banner_bearer_banner",
+    "war_horn": "originofspawns:war_horn_horn",
+    "spyglass": "originofspawns:spyglass_glass",
 }
 
-MODEL_MAKERS = [piercer_model, long_bolt_model, rocketeer_model, powder_keg_model]
+MODEL_MAKERS = [piercer_model, long_bolt_model, rocketeer_model, powder_keg_model, banner_bearer_model,
+                war_horn_model, spyglass_model]
 
 
 def main():

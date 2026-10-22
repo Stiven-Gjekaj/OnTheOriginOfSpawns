@@ -1,0 +1,33 @@
+{
+	"region_map": "originofspawns:textures/region/illager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/signal_smoke_0.png",
+				"tint": "#2E2E2E"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/signal_smoke_1.png",
+				"tint": "#6A6A6A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/signal_smoke_2.png",
+				"tint": "#C8C8C8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/signal_smoke_3.png",
+				"tint": "#9A9A9A"
+			}
+		}
+	]
+}

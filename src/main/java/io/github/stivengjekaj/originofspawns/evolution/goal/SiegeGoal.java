@@ -44,7 +44,7 @@ public class SiegeGoal extends Goal {
 
 	@Override
 	public boolean canContinueToUse() {
-		return block != null && mob.level().getBlockState(block).is(BREAKABLE) && mob.getTarget() != null
+		return block != null && breaks(mob.level().getBlockState(block)) && mob.getTarget() != null
 				&& mob.blockPosition().closerThan(block, 2.5);
 	}
 
@@ -80,6 +80,13 @@ public class SiegeGoal extends Goal {
 	}
 
 	/**
+	 * Returns true if the mob can break the block: a block of the tag, or of the tag of {@code also_breaks}.
+	 */
+	private boolean breaks(net.minecraft.world.level.block.state.BlockState state) {
+		return state.is(BREAKABLE) || siege.alsoBreaks().map(state::is).orElse(false);
+	}
+
+	/**
 	 * Finds a breakable block next to the mob, on the side of its target, at its feet or its head.
 	 */
 	private BlockPos blockToBreak() {
@@ -90,7 +97,7 @@ public class SiegeGoal extends Goal {
 		Direction direction = Direction.getApproximateNearest(target.getX() - mob.getX(), 0.0, target.getZ() - mob.getZ());
 		BlockPos front = mob.blockPosition().relative(direction);
 		for (BlockPos pos : new BlockPos[] {front, front.above()}) {
-			if (mob.level().getBlockState(pos).is(BREAKABLE)) {
+			if (breaks(mob.level().getBlockState(pos))) {
 				return pos;
 			}
 		}

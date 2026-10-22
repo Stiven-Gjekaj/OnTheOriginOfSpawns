@@ -1,14 +1,20 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.goal.SiegeGoal;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
+
+import java.util.Optional;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
@@ -18,6 +24,7 @@ import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.illager.Vindicator;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -59,6 +66,20 @@ public class VindicatorEffectsTest {
 		helper.assertTrue(Math.abs(target.getDeltaMovement().x - 0.4) < 0.001, "a Chop hit adds one more push away, was "
 				+ target.getDeltaMovement().x);
 		helper.assertValueEqual(shot.getDeltaMovement().x, 0.0, "a projectile is not a melee hit");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void shattererAlsoBreaksFences(GameTestHelper helper) {
+		BlockPos pos = new BlockPos(1, 1, 1);
+		Vindicator vindicator = vindicatorWith(helper, pos);
+		helper.setBlock(pos.east(), Blocks.OAK_FENCE);
+		Pig pig = CreeperEffectsTest.pigAt(helper, pos.east(4));
+		vindicator.setTarget(pig);
+		var shatterable = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("originofspawns", "shatterable"));
+		helper.assertFalse(new SiegeGoal(vindicator, new GeneEffect.Siege(3.0F)).canUse(), "a plain siege leaves a fence");
+		helper.assertTrue(new SiegeGoal(vindicator, new GeneEffect.Siege(3.0F, Optional.of(shatterable))).canUse(),
+				"a siege that also breaks fences finds the fence");
 		helper.succeed();
 	}
 

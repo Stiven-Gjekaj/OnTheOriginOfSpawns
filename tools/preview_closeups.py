@@ -358,7 +358,33 @@ SPIDER = pg.SPIDER_FAMILIES
 SPIDER_VIEWS = [("front", 0, 20, 1.0), ("back", 180, 30, 1.0), ("right side", -90, 10, 1.0),
                 ("3/4", -35, 30, 1.0), ("3/4 from behind", -145, 30, 1.0), ("from above", -150, 60, 1.0)]
 SPIDER_NIGHT_VIEWS = SPIDER_VIEWS[:5] + [("3/4 at night", -35, 30, 0.18)]
-SPIDER_CLOSEUPS = {}
+SPIDER_CLOSEUPS = {
+    "spider_weavers": ("Weaver marks and models",
+                       [("Web Shot + Web Walker", ["web_shot", "web_walker"], False),
+                        ("Tripwire + Silk Armor", ["tripwire", "silk_armor"], False),
+                        ("Cocoon + Snare Line", ["cocoon", "snare_line"], False),
+                        ("All 6", SPIDER["weavers"], False)], SPIDER_VIEWS),
+    "spider_jumpers": ("Jumper marks and models",
+                       [("Pounce + Springlegs", ["pounce", "springlegs"], False),
+                        ("Big Eyes + Quickbite", ["big_eyes", "quickbite"], False),
+                        ("Dart + Bound", ["dart", "bound"], False),
+                        ("All 6", SPIDER["jumpers"], False)], SPIDER_VIEWS),
+    "spider_fangs": ("Fang marks",
+                     [("Venom Bite + Venom Blood", ["venom_bite", "venom_blood"], False),
+                      ("Necrotic + Hunger Venom", ["necrotic", "hunger_venom"], False),
+                      ("Paralyze + Spit", ["paralyze", "spit"], False),
+                      ("All 6", SPIDER["fangs"], False)], SPIDER_VIEWS),
+    "spider_swarms": ("Swarm marks and models",
+                      [("Clutch + Nest Call", ["clutch", "nest_call"], False),
+                       ("Hive Mind + Pack Hunter", ["hive_mind", "pack_hunter"], False),
+                       ("Mother + Silk Signal", ["mother", "silk_signal"], False),
+                       ("All 6", SPIDER["swarms"], False)], SPIDER_VIEWS),
+    "spider_trapdoors": ("Trapdoor marks",
+                         [("Digger + Silent Steps", ["digger", "silent_steps"], False),
+                          ("Lurking Fangs + Day Hunter", ["lurking_fangs", "day_hunter"], False),
+                          ("Shadow Skin + Ceiling Drop", ["shadow_skin", "ceiling_drop"], False),
+                          ("All 6", SPIDER["trapdoors"], False)], SPIDER_NIGHT_VIEWS),
+}
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),

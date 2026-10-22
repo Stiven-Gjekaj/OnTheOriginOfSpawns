@@ -270,7 +270,14 @@ SPIDER_FAMILIES = {
     "trapdoors": ["digger", "lurking_fangs", "day_hunter", "shadow_skin", "ceiling_drop", "silent_steps"],
 }
 
-SPIDER_EXTRA = {}
+SPIDER_EXTRA = {
+    "weavers": [("All 6 + Jumpers", ["pounce", "quickbite"], True, {})],
+    "jumpers": [("All 6 + Fangs", ["venom_bite", "hunger_venom"], True, {})],
+    "fangs": [("All 6 + Swarms", ["clutch", "pack_hunter"], True, {})],
+    "swarms": [("All 6 + Trapdoors", ["lurking_fangs", "silent_steps"], True, {})],
+    "trapdoors": [("All 6 at night", [], True, {"light": 0.18}),
+                  ("All 6 + Weavers", ["web_shot", "cocoon"], True, {})],
+}
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],

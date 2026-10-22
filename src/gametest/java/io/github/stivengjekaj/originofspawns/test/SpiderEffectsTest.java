@@ -32,6 +32,7 @@ import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.monster.spider.CaveSpider;
 import net.minecraft.world.entity.monster.spider.Spider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -266,6 +267,23 @@ public class SpiderEffectsTest {
 			}
 		}
 		return false;
+	}
+
+	@GameTest
+	public void aMotherReleasesTwoCaveSpidersThatAttackTheKiller(GameTestHelper helper) {
+		Spider mother = spiderWith(helper, new BlockPos(1, 1, 1), "test_mother");
+		ServerPlayer killer = CreeperEffectsTest.survivalPlayer(helper).player();
+		killer.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(4, 1, 1))));
+		mother.hurtServer(helper.getLevel(), helper.getLevel().damageSources().playerAttack(killer), 100.0F);
+		List<CaveSpider> young = helper.getLevel().getEntitiesOfClass(CaveSpider.class, mother.getBoundingBox().inflate(3.0));
+		helper.assertValueEqual(young.size(), 2, "two cave spiders");
+		Identifier motherGene = Identifier.fromNamespaceAndPath("originofspawns_test", "test_mother");
+		for (CaveSpider cave : young) {
+			helper.assertTrue(cave.getTarget() == killer, "the cave spider attacks the killer");
+			helper.assertFalse(cave.getAttachedOrElse(ModAttachments.GENES, new CarriedGenes(List.of())).genes()
+					.contains(motherGene), "the cave spider has no genes of the spider");
+		}
+		helper.succeed();
 	}
 
 	static int stringNear(GameTestHelper helper, BlockPos pos) {

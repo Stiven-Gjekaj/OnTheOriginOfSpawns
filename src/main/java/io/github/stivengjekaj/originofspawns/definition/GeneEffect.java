@@ -2043,13 +2043,19 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * When the mob dies, a mob of the type comes out and attacks the killer. A vex lives for the seconds.
+	 * When the mob dies, the count of mobs of the type come out and attack the killer. A vex lives for the seconds.
+	 * The new mobs get their genes from the pool of their own species.
 	 */
-	record DeathSpawn(EntityType<?> entity, float lifeSeconds) implements GeneEffect {
+	record DeathSpawn(EntityType<?> entity, float lifeSeconds, int count) implements GeneEffect {
 		public static final MapCodec<DeathSpawn> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				BuiltInRegistries.ENTITY_TYPE.byNameCodec().fieldOf("entity").forGetter(DeathSpawn::entity),
-				Codec.floatRange(1.0F, 3600.0F).optionalFieldOf("life_seconds", 30.0F).forGetter(DeathSpawn::lifeSeconds)
+				Codec.floatRange(1.0F, 3600.0F).optionalFieldOf("life_seconds", 30.0F).forGetter(DeathSpawn::lifeSeconds),
+				Codec.intRange(1, 16).optionalFieldOf("count", 1).forGetter(DeathSpawn::count)
 		).apply(instance, DeathSpawn::new));
+
+		public DeathSpawn(EntityType<?> entity, float lifeSeconds) {
+			this(entity, lifeSeconds, 1);
+		}
 
 		@Override
 		public String type() {

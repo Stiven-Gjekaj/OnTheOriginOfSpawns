@@ -726,15 +726,17 @@ public final class GeneCombat {
 				case GeneEffect.DeathSpawn spawn -> {
 					LivingEntity killer = source != null && source.getEntity() instanceof LivingEntity living
 							? living : mob.getLastHurtByMob();
-					if (spawn.entity().create(level, EntitySpawnReason.MOB_SUMMONED) instanceof Mob spirit) {
-						spirit.snapTo(mob.getX(), mob.getY() + 1.0, mob.getZ(), mob.getYRot(), 0.0F);
-						if (spirit instanceof net.minecraft.world.entity.monster.Vex vex) {
-							vex.setLimitedLife(Math.round(spawn.lifeSeconds() * 20.0F));
+					for (int i = 0; i < spawn.count(); i++) {
+						if (spawn.entity().create(level, EntitySpawnReason.MOB_SUMMONED) instanceof Mob spirit) {
+							spirit.snapTo(mob.getX(), mob.getY() + 1.0, mob.getZ(), mob.getYRot(), 0.0F);
+							if (spirit instanceof net.minecraft.world.entity.monster.Vex vex) {
+								vex.setLimitedLife(Math.round(spawn.lifeSeconds() * 20.0F));
+							}
+							if (killer != null) {
+								spirit.setTarget(killer);
+							}
+							level.addFreshEntity(spirit);
 						}
-						if (killer != null) {
-							spirit.setTarget(killer);
-						}
-						level.addFreshEntity(spirit);
 					}
 				}
 				case GeneEffect.CallOnDeath call -> {

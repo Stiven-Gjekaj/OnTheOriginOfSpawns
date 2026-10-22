@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/illager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/stand_ground_0.png",
+				"tint": "#9AA0A4"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/stand_ground_1.png",
+				"tint": "#C8CED2"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/stand_ground_2.png",
+				"tint": "#2A2A2A"
+			}
+		}
+	]
+}

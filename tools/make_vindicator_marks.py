@@ -63,6 +63,20 @@ Pixel plan for the Ransackers.
   at the left hip of the coat.
 - Pillage Run has muddy boots: brown mud on the boots, with splashes up the
   trousers.
+
+Pixel plan for the Guardsmen.
+- Deflect: a steel bracer on the left arm, the gene model deflect_bracer. It
+  shows only while the arms are apart.
+- Bodyguard has a gray tabard: a gray tabard with dark edges on the front and
+  the back of the coat, under the V neck.
+- Watchman: a lantern at the belt on the left hip, with glowing panes, the
+  gene model watchman_lantern.
+- Stand Ground has heavy greaves: steel plates on the shins, with a pale
+  upper edge and a dark strap.
+- Bracer has thick leather bracers: brown leather on the forearms, with pale
+  laces on the front.
+- Alarm Bell has a small bell on the belt: a small gold bell with a dark
+  mouth on the left hip of the coat.
 This script needs Pillow.
 """
 import json
@@ -586,6 +600,118 @@ def pillage_run():
     return [mud, splash]
 
 
+def deflect():
+    # The bracer is the gene model deflect_bracer.
+    return []
+
+
+def deflect_model():
+    # A steel bracer on the left arm: a steel cuff round the forearm, with a
+    # pale upper edge and a row of dark rivets. It shows only while the arms
+    # are apart. On the left arm bone, the arm is from y -2 to 10, and from x
+    # -1 to 3.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def steel(face, x, y):
+        if face in ("top", "bottom"):
+            return STEEL[1]
+        if y == 0:
+            return STEEL[0]
+        return STEEL[2] if y == 2 and x % 2 == 0 else STEEL[1]
+
+    # The bracer: 4x4x4 at uv (0, 0).
+    paint_box(im, 0, 0, 4, 4, 4, steel)
+    parts = [{"bone": "left_arm", "uv": [0, 0], "from": [-1, 4, -2], "size": [4, 4, 4], "inflate": 0.35}]
+    save_model("deflect_bracer", im, parts)
+
+
+def bodyguard():
+    # A gray tabard: columns 1 to 6 of the front and the back of the coat are
+    # gray, with dark edges. On the front, the tabard starts under the V neck.
+    gray = Mark("#80868A")
+    edge = Mark("#55585C")
+    for x, y, face, col, row in coat_pixels(("front", "back")):
+        if 1 <= col <= 6 and (face == "back" or row >= 3):
+            (edge if col in (1, 6) else gray).put((x, y))
+    return [gray, edge]
+
+
+def watchman():
+    # The lantern is the gene model watchman_lantern.
+    return []
+
+
+def watchman_model():
+    # A lantern at the belt: an iron lantern at the left hip, with open panes
+    # that show a glowing light inside, and a ring on its top. The light has
+    # full light. On the body bone, the left side of the coat is at x 4.5.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def frame(face, x, y):
+        if face in ("top", "bottom"):
+            return "#3A3A3E"
+        if 1 <= x <= 1 and 1 <= y <= 2:
+            return None
+        return "#3A3A3E" if (x + y) % 2 else "#4E4E54"
+
+    def light(face, x, y):
+        return "#FFE070" if (x + y) % 2 else "#FFC040"
+
+    # The frame: 3x4x3 at uv (0, 0). The light: 2x3x2 at uv (16, 0). The ring:
+    # 1x1x1 at uv (0, 8).
+    paint_box(im, 0, 0, 3, 4, 3, frame)
+    paint_box(im, 16, 0, 2, 3, 2, light)
+    paint_box(im, 0, 8, 1, 1, 1, lambda face, x, y: "#3A3A3E")
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [4.6, 6.5, -1.5], "size": [3, 4, 3]},
+        {"bone": "body", "uv": [16, 0], "from": [5.1, 7, -1], "size": [2, 3, 2], "glow": True},
+        {"bone": "body", "uv": [0, 8], "from": [5.6, 5.6, -0.5], "size": [1, 1, 1]},
+    ]
+    save_model("watchman_lantern", im, parts)
+
+
+def stand_ground():
+    # Heavy greaves: steel plates on the front and the sides of the shins
+    # (rows 2 to 8 of the legs), with a pale upper edge, and a dark strap on
+    # row 5 that goes round the back.
+    steel = Mark("#9AA0A4")
+    bright = Mark("#C8CED2")
+    strap = Mark("#2A2A2A")
+    for x, y, face, col, row in pixels(LEG, SIDES):
+        if row == 5:
+            strap.put((x, y))
+        elif 2 <= row <= 8 and face != "back":
+            (bright if row == 2 else steel).put((x, y))
+    return [steel, bright, strap]
+
+
+def bracer():
+    # Thick leather bracers: the forearms (rows 5 to 9, and the crossed
+    # forearms) are brown leather, with pale laces that cross on the front.
+    leather = Mark("#6A4428")
+    lace = Mark("#C8A878")
+    for x, y, face, col, row in sleeve_pixels(5, 9):
+        crossed = face == "front" and (col + row) % 3 == 0
+        (lace if crossed else leather).put((x, y))
+    return [leather, lace]
+
+
+def alarm_bell():
+    # A small bell on the belt: a gold bell with a pale top, a dark mouth, and
+    # a clapper, on the left side of the coat at the hip, and its top on the
+    # edge of the front.
+    gold = Mark("#E0B030")
+    pale = Mark("#F8E080")
+    dark = Mark("#6A4A10")
+    x0, y0 = COAT["left"][:2]
+    pale.put((x0 + 2, y0 + 6))
+    gold.put([(x0 + 1, y0 + 7), (x0 + 2, y0 + 7), (x0 + 3, y0 + 7), (x0 + 1, y0 + 8), (x0 + 3, y0 + 8)])
+    dark.put([(x0 + 2, y0 + 8), (x0 + 2, y0 + 9)])
+    fx, fy = COAT["front"][:2]
+    gold.put([(fx + 7, fy + 7), (fx + 7, fy + 8)])
+    return [gold, pale, dark]
+
+
 
 GENES = {
     "heavy_swing": heavy_swing,
@@ -612,6 +738,12 @@ GENES = {
     "ruthless": ruthless,
     "hunting_call": hunting_call,
     "pillage_run": pillage_run,
+    "deflect": deflect,
+    "bodyguard": bodyguard,
+    "watchman": watchman,
+    "stand_ground": stand_ground,
+    "bracer": bracer,
+    "alarm_bell": alarm_bell,
 }
 
 MODELS = {
@@ -622,10 +754,12 @@ MODELS = {
     "netter": "originofspawns:netter_rope",
     "village_bane": "originofspawns:village_bane_hat",
     "looting": "originofspawns:looting_sack",
+    "deflect": "originofspawns:deflect_bracer",
+    "watchman": "originofspawns:watchman_lantern",
 }
 
 MODEL_MAKERS = [gash_model, hatchet_model, decapitator_model, torchbearer_model, netter_model, village_bane_model,
-                looting_model]
+                looting_model, deflect_model, watchman_model]
 
 
 def main():

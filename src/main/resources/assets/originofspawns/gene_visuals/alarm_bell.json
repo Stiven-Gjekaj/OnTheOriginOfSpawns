@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/illager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/alarm_bell_0.png",
+				"tint": "#E0B030"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/alarm_bell_1.png",
+				"tint": "#F8E080"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/alarm_bell_2.png",
+				"tint": "#6A4A10"
+			}
+		}
+	]
+}

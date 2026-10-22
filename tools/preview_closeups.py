@@ -448,6 +448,13 @@ PILLAGER_CLOSEUPS = {
                           ("All 6", PILLAGER["looters"], False)], ALL_SIDES),
 }
 
+# The close-ups of the vindicator. It has no babies. The close-ups of
+# "vindicator_attacking" show it with its arms apart, as when it attacks, so
+# that the gene models on the arms show.
+VINDICATOR = pg.VINDICATOR_FAMILIES
+VINDICATOR_CLOSEUPS = {}
+VINDICATOR_ATTACK_CLOSEUPS = {}
+
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
     "husk": (pg.HUSK_PATH, pg.HUSK_BABY_PATH, HUSK_CLOSEUPS),
@@ -461,6 +468,8 @@ SPECIES = {
     "spider": (pg.SPIDER_PATH, None, SPIDER_CLOSEUPS),
     "cave_spider": (pg.CAVE_SPIDER_PATH, None, CAVE_SPIDER_CLOSEUPS),
     "pillager": (pg.PILLAGER_PATH, None, PILLAGER_CLOSEUPS),
+    "vindicator": (pg.VINDICATOR_PATH, None, VINDICATOR_CLOSEUPS),
+    "vindicator_attacking": (pg.VINDICATOR_PATH, None, VINDICATOR_ATTACK_CLOSEUPS),
 }
 
 

@@ -56,6 +56,7 @@ SPIDER_PATH = "assets/minecraft/textures/entity/spider/spider.png"
 SPIDER_EYES_PATH = "assets/minecraft/textures/entity/spider/spider_eyes.png"
 CAVE_SPIDER_PATH = "assets/minecraft/textures/entity/spider/cave_spider.png"
 PILLAGER_PATH = "assets/minecraft/textures/entity/illager/pillager.png"
+VINDICATOR_PATH = "assets/minecraft/textures/entity/illager/vindicator.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -318,6 +319,17 @@ PILLAGER_EXTRA = {
     "looters": [("All 6 + Crossbowmen", ["long_bolt", "piercer"], True, {})],
 }
 
+# The families of the vindicator, from design/species/vindicator.md.
+VINDICATOR_FAMILIES = {
+    "butchers": ["heavy_swing", "sunder", "gash", "hatchet", "chop", "decapitator"],
+    "berserkers": ["bloodlust", "rage", "death_wish", "howl", "fury", "thick_blood"],
+    "sappers": ["door_splitter", "shatterer", "torchbearer", "climber", "battering", "netter"],
+    "ransackers": ["village_bane", "golem_smasher", "looting", "ruthless", "hunting_call", "pillage_run"],
+    "guardsmen": ["deflect", "bodyguard", "watchman", "stand_ground", "bracer", "alarm_bell"],
+}
+
+VINDICATOR_EXTRA = {}
+
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
     "rushers": [("All 6 + Skulkers", ["leafskin", "patient"], True, {})],
@@ -442,6 +454,20 @@ PILLAGER_CUBES = [
     ("right_leg", (0, 22), (-2, 0, -2), (4, 12, 4), False),
     ("left_leg", (0, 22), (-2, 0, -2), (4, 12, 4), True),
 ]
+# The vindicator, from IllagerModel. When it does not attack, it crosses its
+# arms: the part "arms" (on the bone "arms") shows, and the arms right_arm and
+# left_arm do not. When it attacks, its arms are apart, with the pose of
+# AnimationUtils.swingWeaponDown at the start of a swing: the right arm holds
+# the axe up, and the left arm hangs down.
+VINDICATOR_PIVOTS = dict(PILLAGER_PIVOTS, arms=(0, 3, -1, -43, 0, 0))
+VINDICATOR_CUBES = PILLAGER_CUBES[:3] + [
+    ("arms", (44, 22), (-8, -2, -2), (4, 8, 4), False),
+    ("arms", (40, 38), (-4, 2, -2), (8, 4, 4), False),
+    ("arms", (44, 22), (4, -2, -2), (4, 8, 4), True),
+] + PILLAGER_CUBES[5:]
+VINDICATOR_ATTACK_PIVOTS = dict(PILLAGER_PIVOTS, right_arm=(-5, 2, 0, -108, 9, 0), left_arm=(5, 2, 0, 0, -9, 0))
+VINDICATOR_ATTACK_CUBES = PILLAGER_CUBES
+
 # The coat of the pillager: 0.5 pixel larger than the body, and 20 pixels
 # long, so that it hangs over the legs.
 PILLAGER_COAT = [("body", (0, 38), (-4, 0, -3), (8, 20, 6), False, 0.5)]
@@ -635,7 +661,8 @@ def split_image(identifier):
 # target "outer" go on the outer layer (the stray). set_mob() sets it.
 MOB = {"split": False, "outer": None, "cubes": ZOMBIE_CUBES, "pivots": PIVOTS, "outer_target": False,
        "outer_inflate": 0.25, "extra": [], "held": [], "wraps": [], "eyes": None,
-       "sheet_views": [(0, 0), (180, 0), (-35, 15)], "closeup_view": ((26, 40), (0, 5))}
+       "sheet_views": [(0, 0), (180, 0), (-35, 15)], "closeup_view": ((26, 40), (0, 5)),
+       "hidden": ()}
 
 # The mushrooms on the head of the bogged, from BoggedModel: crossed planes
 # of 6x4 pixels, with the texture of the mob. Each is (uv, from, size,
@@ -829,7 +856,7 @@ def cubes_of(tex, genes, baby=False):
     cubes += [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": inflate, "mirror": m, "texture": tex,
                "scale": 1.0} for b, uv, f, s, m, inflate in MOB["wraps"]]
     for gene in genes:
-        cubes += gene_cubes(gene, tex, baby)
+        cubes += [c for c in gene_cubes(gene, tex, baby) if c["bone"] not in MOB["hidden"]]
     return cubes
 
 
@@ -942,6 +969,7 @@ SPECIES = {
     "spider": (SPIDER_PATH, None, SPIDER_FAMILIES, SPIDER_EXTRA, []),
     "cave_spider": (CAVE_SPIDER_PATH, None, CAVE_SPIDER_FAMILIES, CAVE_SPIDER_EXTRA, []),
     "pillager": (PILLAGER_PATH, None, PILLAGER_FAMILIES, PILLAGER_EXTRA, []),
+    "vindicator": (VINDICATOR_PATH, None, VINDICATOR_FAMILIES, VINDICATOR_EXTRA, []),
 }
 
 
@@ -956,10 +984,17 @@ def set_mob(species):
     spider = species in ("spider", "cave_spider")
     MOB["cubes"] = (DROWNED_CUBES if species == "drowned" else PARCHED_CUBES if species == "parched"
                     else CREEPER_CUBES if species == "creeper" else SPIDER_CUBES if spider
-                    else PILLAGER_CUBES if species == "pillager" else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
+                    else PILLAGER_CUBES if species == "pillager" else VINDICATOR_CUBES if species == "vindicator"
+                    else VINDICATOR_ATTACK_CUBES if species == "vindicator_attacking"
+                    else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
     MOB["pivots"] = (PARCHED_PIVOTS if species == "parched" else CREEPER_PIVOTS if species == "creeper"
                      else SPIDER_PIVOTS if spider else PILLAGER_PIVOTS if species == "pillager"
+                     else VINDICATOR_PIVOTS if species == "vindicator"
+                     else VINDICATOR_ATTACK_PIVOTS if species == "vindicator_attacking"
                      else SKELETON_PIVOTS if skeleton else PIVOTS)
+    # With its arms crossed, the vindicator hides the arms right_arm and
+    # left_arm, and their gene models.
+    MOB["hidden"] = ("right_arm", "left_arm") if species == "vindicator" else ()
     # The spider is wide and low. The sheets look down on it, so that its
     # back shows.
     # The banner of the pillager rises 2 pixels above the head.
@@ -968,7 +1003,8 @@ def set_mob(species):
     MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if spider else [(0, 0), (180, 0), (-35, 15)]
     MOB["closeup_view"] = ((40, 34), (0, 13)) if spider else ((26, 40), (0, 5))
     MOB["eyes"] = find_zombie_texture(SPIDER_EYES_PATH) if spider else None
-    MOB["wraps"] = PARCHED_WRAPS if species == "parched" else PILLAGER_COAT if species == "pillager" else []
+    illager = species in ("pillager", "vindicator", "vindicator_attacking")
+    MOB["wraps"] = PARCHED_WRAPS if species == "parched" else PILLAGER_COAT if illager else []
     MOB["outer"] = ((find_zombie_texture(DROWNED_OUTER_PATH), find_zombie_texture(DROWNED_OUTER_BABY_PATH))
                     if species == "drowned" else (find_zombie_texture(STRAY_OUTER_PATH), None)
                     if species == "stray" else (find_zombie_texture(BOGGED_OUTER_PATH), None)

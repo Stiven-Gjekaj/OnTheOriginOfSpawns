@@ -1,0 +1,20 @@
+{
+	"region_map": "originofspawns:textures/region/spider.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shatter_0.png",
+				"tint": "#081010"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shatter_1.png",
+				"tint": "#A8D8E0"
+			}
+		}
+	],
+	"model": "originofspawns:shatter_shards"
+}

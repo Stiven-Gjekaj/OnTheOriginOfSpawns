@@ -1,0 +1,20 @@
+{
+	"region_map": "originofspawns:textures/region/spider.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/amethyst_shell_0.png",
+				"tint": "#9A5AD8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/amethyst_shell_1.png",
+				"tint": "#D8B0FF"
+			}
+		}
+	],
+	"model": "originofspawns:amethyst_shell_crystals"
+}

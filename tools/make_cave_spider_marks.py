@@ -58,6 +58,21 @@ Pixel plan for the Broodkeepers.
   edge of the top of the head, with tips on the top row of its sides.
 - Spawner Bond has iron gray bands on the legs: three bands of iron round
   each leg, with a bright upper edge.
+
+Pixel plan for the Geodes.
+- Amethyst Shell: purple crystals that grow from the top of the abdomen,
+  the gene model amethyst_shell_crystals, and purple glints on the top of
+  the abdomen round them.
+- Shatter: sharp, pale crystal shards along the middle of the back, the
+  gene model shatter_shards, and dark cracks with pale edges on the top of
+  the abdomen.
+- Chime has thin crystal lines on the body: pale violet lines that cross
+  each face of the body.
+- Ore Skin has flecks of iron ore on the body: tan and pale flecks on the
+  body, and a few on the sides of the abdomen.
+- Stone Jaws has gray stone fangs, on a jaw of pale stone with dark specks.
+- Deepslate Plates has dark deepslate plates on the body: tiles of dark
+  gray, with black seams and a pale upper edge.
 This script needs Pillow.
 """
 import json
@@ -427,6 +442,141 @@ def spawner_bond():
     return [iron, bright]
 
 
+AMETHYST = ("#9A5AD8", "#D8B0FF", "#5A2A8A")
+
+
+def amethyst_shell():
+    # Purple glints on the top of the abdomen, round the crystals of the
+    # gene model amethyst_shell_crystals.
+    glint = Mark(AMETHYST[0])
+    pale = Mark(AMETHYST[1])
+    glint.put([(13, 15), (15, 18), (19, 14), (20, 19), (16, 21), (14, 22)])
+    pale.put([(17, 16), (19, 20)])
+    return [glint, pale]
+
+
+def amethyst_shell_model():
+    # Purple crystals that grow from the top of the abdomen: five prisms of
+    # amethyst, tall and short, that lean in different directions. Each has
+    # its root in the abdomen, so that none floats. On the abdomen bone, the
+    # top is at y -4.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def crystal(face, x, y):
+        if face == "top" or face in ("front", "left") and x == 0:
+            return AMETHYST[1]
+        return AMETHYST[2] if face in ("back", "right", "bottom") else AMETHYST[0]
+
+    # A large crystal: 2x4x2 at uv (0, 0). A small crystal: 1x3x1 at uv (8, 0).
+    paint_box(im, 0, 0, 2, 4, 2, crystal)
+    paint_box(im, 8, 0, 1, 3, 1, crystal)
+    parts = []
+    for x, z, rot in ((-3, -3, [10, 0, 15]), (1.5, 1.5, [-10, 0, -15])):
+        parts.append({"bone": "abdomen", "uv": [0, 0], "from": [x, -7.5, z], "size": [2, 4, 2],
+                      "pivot": [x + 1, -4, z + 1], "rotation": rot})
+    for x, z, rot in ((0, -1, [0, 0, -20]), (-2.5, 2.5, [15, 0, 10]), (3, -2.5, [-15, 0, -10])):
+        parts.append({"bone": "abdomen", "uv": [8, 0], "from": [x, -6.5, z], "size": [1, 3, 1],
+                      "pivot": [x + 0.5, -4, z + 0.5], "rotation": rot})
+    save_model("amethyst_shell_crystals", im, parts)
+
+
+def shatter():
+    # Dark cracks with pale edges on the top of the abdomen, where the
+    # shards of the gene model shatter_shards break out.
+    crack = Mark("#081010")
+    edge = Mark("#A8D8E0")
+    path = ((4, 0), (4, 1), (5, 2), (5, 3), (4, 4), (3, 5), (4, 6), (5, 7), (6, 8), (5, 9), (5, 10), (2, 4),
+            (1, 3), (7, 6), (8, 5))
+    for col, row in path:
+        crack.put((12 + col, 12 + row))
+    edge.put([(12 + c + 1, 12 + r) for c, r in path if (c + 1, r) not in path and c < 9][::2])
+    return [crack, edge]
+
+
+def shatter_model():
+    # Sharp crystal shards along the middle of the back: thin, pale shards
+    # of crystal that stick out of the top of the abdomen at sharp angles,
+    # two by two, from the rear to the front. Each has its root in the
+    # abdomen. On the abdomen bone, the top is at y -4.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def shard(face, x, y):
+        if y == 0:
+            return "#F0FCFF"
+        return "#C8F0F8" if face in ("front", "left", "top") else "#80C0D0"
+
+    # A shard: 1x4x1 at uv (0, 0).
+    paint_box(im, 0, 0, 1, 4, 1, shard)
+    parts = []
+    for z, lean in ((-4, 1), (-1, -1), (2, 1), (4.5, -1)):
+        for side in (-1, 1):
+            x = 1 if side > 0 else -2
+            parts.append({"bone": "abdomen", "uv": [0, 0], "from": [x, -7.5, z], "size": [1, 4, 1],
+                          "pivot": [x + 0.5, -4, z + 0.5], "rotation": [25 * lean, 0, -30 * side]})
+    save_model("shatter_shards", im, parts)
+
+
+def chime():
+    # Thin crystal lines on the body: pale violet lines that cross each face
+    # of the body on the two diagonals, with a bright point where they meet.
+    line = Mark("#B8A0F0")
+    bright = Mark("#E8DCFF")
+    for x, y, face, col, row in pixels(BODY, ALL):
+        if col == row or col + row == 5:
+            (bright if col in (2, 3) and row in (2, 3) else line).put((x, y))
+    return [line, bright]
+
+
+def ore_skin():
+    # Flecks of iron ore on the body: tan flecks with pale points on all the
+    # faces of the body, and a few on the sides of the abdomen.
+    tan = Mark("#C8A080")
+    pale = Mark("#E8D0B8")
+    for x, y, face, col, row in pixels(BODY, ALL):
+        n = noise100(x, y, 701)
+        if n < 12:
+            pale.put((x, y))
+        elif n < 32:
+            tan.put((x, y))
+    for x, y, face, col, row in pixels(ABDOMEN, ("right", "left", "back")):
+        n = noise100(x, y, 703)
+        if n < 5:
+            pale.put((x, y))
+        elif n < 14:
+            tan.put((x, y))
+    return [tan, pale]
+
+
+def stone_jaws():
+    # Gray stone fangs: the fangs and the whole bottom row of the face are
+    # pale gray stone, with dark specks, and the fang tips are dark stone.
+    # The jaw of stone also shows on the front row under the head.
+    stone = Mark("#B4B4B8")
+    dark = Mark("#4A4A4E")
+    stone.put([(41, 18), (46, 18)] + [(x, 19) for x in range(40, 48) if x not in (41, 43, 46)])
+    dark.put([(41, 19), (46, 19), (43, 19), (40, 18), (47, 18)])
+    stone.put([(x, 4) for x in range(48, 56) if x % 3])
+    dark.put([(x, 4) for x in range(48, 56) if x % 3 == 0])
+    return [stone, dark]
+
+
+def deepslate_plates():
+    # Dark deepslate plates on the body: on each face of the body, tiles of
+    # 3x3 pixels in dark gray, with black seams between them and a pale
+    # upper edge on each tile.
+    plate = Mark("#4A4A52")
+    seam = Mark("#16161A")
+    edge = Mark("#74747E")
+    for x, y, face, col, row in pixels(BODY, ALL):
+        if col == 3 or row == 3:
+            seam.put((x, y))
+        elif row in (0, 4):
+            edge.put((x, y))
+        else:
+            plate.put((x, y))
+    return [plate, seam, edge]
+
+
 
 GENES = {
     "neurotoxin": neurotoxin,
@@ -453,14 +603,22 @@ GENES = {
     "nest_mend": nest_mend,
     "swarm_mind": swarm_mind,
     "spawner_bond": spawner_bond,
+    "amethyst_shell": amethyst_shell,
+    "shatter": shatter,
+    "chime": chime,
+    "ore_skin": ore_skin,
+    "stone_jaws": stone_jaws,
+    "deepslate_plates": deepslate_plates,
 }
 
 MODELS = {
     "ceiling_crawler": "originofspawns:ceiling_crawler_claws",
     "egg_layer": "originofspawns:egg_layer_eggs",
+    "amethyst_shell": "originofspawns:amethyst_shell_crystals",
+    "shatter": "originofspawns:shatter_shards",
 }
 
-MODEL_MAKERS = [ceiling_crawler_model, egg_layer_model]
+MODEL_MAKERS = [ceiling_crawler_model, egg_layer_model, amethyst_shell_model, shatter_model]
 
 
 def main():

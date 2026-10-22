@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/spider.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/deepslate_plates_0.png",
+				"tint": "#4A4A52"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/deepslate_plates_1.png",
+				"tint": "#16161A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/deepslate_plates_2.png",
+				"tint": "#74747E"
+			}
+		}
+	]
+}

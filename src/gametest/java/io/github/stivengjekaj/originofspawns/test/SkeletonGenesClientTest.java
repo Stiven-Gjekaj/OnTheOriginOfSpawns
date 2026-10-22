@@ -82,6 +82,8 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 					Identifier.withDefaultNamespace("textures/entity/skeleton/parched.png"), "parched");
 			checkMarkAndModel(context, singleplayer, EntityTypes.CREEPER, "test_creeper_mark",
 					Identifier.withDefaultNamespace("textures/entity/creeper/creeper.png"), "creeper");
+			checkMarkAndModel(context, singleplayer, EntityTypes.SPIDER, "test_spider_mark",
+					Identifier.withDefaultNamespace("textures/entity/spider/spider.png"), "spider");
 		}
 	}
 

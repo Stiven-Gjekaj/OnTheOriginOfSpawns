@@ -95,7 +95,9 @@ public class GeneModelLayer<S extends LivingEntityRenderState, M extends EntityM
 
 	/**
 	 * Returns the part of the mob model for the bone, or null if the model has no such part. A humanoid model gives
-	 * its own fields. Another model, such as the creeper, gives the child of its root with the name of the bone.
+	 * its own fields. Another model, such as the creeper or the spider, gives the child of its root with the name of
+	 * the bone. A model with no part of that name, such as the spider, uses {@code body0} for the body and
+	 * {@code body1} for the abdomen.
 	 */
 	private ModelPart bone(GeneModel.Bone bone) {
 		M model = getParentModel();
@@ -110,7 +112,15 @@ public class GeneModelLayer<S extends LivingEntityRenderState, M extends EntityM
 				default -> null;
 			};
 		}
+		ModelPart root = model.root();
 		String name = bone.getSerializedName();
-		return model.root().hasChild(name) ? model.root().getChild(name) : null;
+		if (!root.hasChild(name)) {
+			name = switch (bone) {
+				case BODY -> "body0";
+				case ABDOMEN -> "body1";
+				default -> name;
+			};
+		}
+		return root.hasChild(name) ? root.getChild(name) : null;
 	}
 }

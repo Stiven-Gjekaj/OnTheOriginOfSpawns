@@ -12,6 +12,7 @@
 		"LivingEntityRendererMixin",
 		"SkeletonClothingLayerMixin",
 		"SkeletonTextureMixin",
+		"SpiderRendererMixin",
 		"ZombieVariantTextureMixin"
 	],
 	"injectors": {

@@ -47,12 +47,23 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		RIGHT_LEG,
 		LEFT_LEG,
 		/**
-		 * The four legs of a creeper.
+		 * The four legs of a creeper. A spider also has these legs, at the back and at the front.
 		 */
 		RIGHT_HIND_LEG,
 		LEFT_HIND_LEG,
 		RIGHT_FRONT_LEG,
-		LEFT_FRONT_LEG;
+		LEFT_FRONT_LEG,
+		/**
+		 * The four middle legs of a spider.
+		 */
+		RIGHT_MIDDLE_HIND_LEG,
+		LEFT_MIDDLE_HIND_LEG,
+		RIGHT_MIDDLE_FRONT_LEG,
+		LEFT_MIDDLE_FRONT_LEG,
+		/**
+		 * The large back part of the body of a spider. The spider model calls it {@code body1}.
+		 */
+		ABDOMEN;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

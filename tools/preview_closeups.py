@@ -419,7 +419,34 @@ CAVE_SPIDER_CLOSEUPS = {
 
 # The close-ups of the pillager. It has no babies.
 PILLAGER = pg.PILLAGER_FAMILIES
-PILLAGER_CLOSEUPS = {}
+PILLAGER_NIGHT_VIEWS = [FRONT, BACK, SIDE, THREE_QUARTER, BEHIND, NIGHT_BEHIND]
+PILLAGER_CLOSEUPS = {
+    "pillager_crossbowmen": ("Crossbowman marks and models",
+                             [("Piercer + Overdraw", ["piercer", "overdraw"], False),
+                              ("Long Bolt + Splinter", ["long_bolt", "splinter"], False),
+                              ("Heavy Bolt + Quick Charge", ["heavy_bolt", "quick_charge"], False),
+                              ("All 6", PILLAGER["crossbowmen"], False)], ALL_SIDES),
+    "pillager_bombardiers": ("Bombardier marks and models",
+                             [("Rocketeer + Flak", ["rocketeer", "flak"], False),
+                              ("Powder Keg + Smoke Shell", ["powder_keg", "smoke_shell"], False),
+                              ("Incendiary + Blast Proof", ["incendiary", "blast_proof"], False),
+                              ("All 6", PILLAGER["bombardiers"], False)], ALL_SIDES),
+    "pillager_captains": ("Captain marks and models",
+                          [("Banner Bearer + Rally Cry", ["banner_bearer", "rally_cry"], False),
+                           ("War Horn + Formation", ["war_horn", "formation"], False),
+                           ("Patrol Leader + Grudge", ["patrol_leader", "grudge"], False),
+                           ("All 6", PILLAGER["captains"], False)], ALL_SIDES),
+    "pillager_scouts": ("Scout marks and models",
+                        [("Spyglass + Pathseeker", ["spyglass", "pathseeker"], False),
+                         ("Fleet Foot + Evasion", ["fleet_foot", "evasion"], False),
+                         ("Camouflage + Signal Smoke", ["camouflage", "signal_smoke"], False),
+                         ("All 6", PILLAGER["scouts"], False)], PILLAGER_NIGHT_VIEWS),
+    "pillager_looters": ("Looter marks and models",
+                         [("Plunder + Greed", ["plunder", "greed"], False),
+                          ("Pickpocket + Saboteur", ["pickpocket", "saboteur"], False),
+                          ("Hunger Raid + Escape Artist", ["hunger_raid", "escape_artist"], False),
+                          ("All 6", PILLAGER["looters"], False)], ALL_SIDES),
+}
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),

@@ -309,7 +309,14 @@ PILLAGER_FAMILIES = {
     "looters": ["pickpocket", "plunder", "hunger_raid", "saboteur", "greed", "escape_artist"],
 }
 
-PILLAGER_EXTRA = {}
+PILLAGER_EXTRA = {
+    "crossbowmen": [("All 6 + Bombardiers", ["rocketeer", "flak"], True, {})],
+    "bombardiers": [("All 6 + Captains", ["banner_bearer", "patrol_leader"], True, {})],
+    "captains": [("All 6 + Scouts", ["spyglass", "fleet_foot"], True, {})],
+    "scouts": [("All 6 at night", [], True, {"light": 0.18}),
+               ("All 6 + Looters", ["plunder", "greed"], True, {})],
+    "looters": [("All 6 + Crossbowmen", ["long_bolt", "piercer"], True, {})],
+}
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -955,7 +962,9 @@ def set_mob(species):
                      else SKELETON_PIVOTS if skeleton else PIVOTS)
     # The spider is wide and low. The sheets look down on it, so that its
     # back shows.
-    VIEW_X, VIEW_Y, VIEW_W, VIEW_H = (20, -2, 40, 26) if spider else (11, 11, 22, 37)
+    # The banner of the pillager rises 2 pixels above the head.
+    VIEW_X, VIEW_Y, VIEW_W, VIEW_H = ((20, -2, 40, 26) if spider else (11, 13, 22, 39) if species == "pillager"
+                                      else (11, 11, 22, 37))
     MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if spider else [(0, 0), (180, 0), (-35, 15)]
     MOB["closeup_view"] = ((40, 34), (0, 13)) if spider else ((26, 40), (0, 5))
     MOB["eyes"] = find_zombie_texture(SPIDER_EYES_PATH) if spider else None

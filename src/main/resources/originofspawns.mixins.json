@@ -22,7 +22,9 @@
 		"RangedBowAttackGoalAccessor",
 		"RangedBowAttackGoalMixin",
 		"SnowballMixin",
+		"SpiderAttackGoalMixin",
 		"SpiderMixin",
+		"SpiderTargetGoalMixin",
 		"ZombieMixin"
 	],
 	"injectors": {

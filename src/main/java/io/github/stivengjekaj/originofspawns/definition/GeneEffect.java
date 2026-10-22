@@ -153,7 +153,8 @@ public sealed interface GeneEffect {
 			Map.entry("web_trail", WebTrail.CODEC),
 			Map.entry("web_shot", WebShot.CODEC),
 			Map.entry("leap_strike", LeapStrike.CODEC),
-			Map.entry("first_strike", FirstStrike.CODEC)
+			Map.entry("first_strike", FirstStrike.CODEC),
+			Map.entry("hunt_in_light", HuntInLight.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2381,6 +2382,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "first_strike";
+		}
+	}
+
+	/**
+	 * The spider attacks players in bright light too. In vanilla, a spider in bright light does not look for a
+	 * target, and it stops its attack now and then.
+	 */
+	record HuntInLight() implements GeneEffect {
+		public static final MapCodec<HuntInLight> CODEC = MapCodec.unit(new HuntInLight());
+
+		@Override
+		public String type() {
+			return "hunt_in_light";
 		}
 	}
 }

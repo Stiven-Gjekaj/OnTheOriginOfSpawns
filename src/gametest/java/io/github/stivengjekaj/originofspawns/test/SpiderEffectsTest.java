@@ -1,14 +1,16 @@
 package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.definition.DeathCondition;
-import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
+import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.TemporaryBlocks;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
+
+import java.util.List;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
@@ -23,7 +25,10 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LeapAtTargetGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -210,6 +215,57 @@ public class SpiderEffectsTest {
 				java.util.Map.of(player.getUUID(), helper.getLevel().getGameTime() - 300L));
 		helper.assertValueEqual(GeneCombat.modifyDamage(player, bite, 4.0F), 6.0F, "a first hit again after 10 seconds");
 		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 60)
+	public void aDayHunterHuntsInBrightLight(GameTestHelper helper) {
+		helper.setBlock(new BlockPos(1, 2, 1), Blocks.LIGHT);
+		helper.setBlock(new BlockPos(4, 2, 1), Blocks.LIGHT);
+		Spider plain = spiderWith(helper, new BlockPos(1, 1, 1));
+		Spider hunter = spiderWith(helper, new BlockPos(4, 1, 1), "test_day_hunter");
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setNoGravity(true);
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(2, 1, 4))));
+		// The light spreads in the next ticks.
+		helper.succeedWhen(() -> {
+			helper.assertTrue(plain.getLightLevelDependentMagicValue() >= 0.5F, "the plain spider is in bright light");
+			helper.assertTrue(hunter.getLightLevelDependentMagicValue() >= 0.5F, "the hunter is in bright light");
+			helper.assertFalse(findsTarget(plain), "a plain spider does not look for a target in bright light");
+			helper.assertTrue(findsTarget(hunter), "the hunter looks for a target in bright light");
+			helper.assertTrue(dropsTarget(plain, player), "a plain spider stops its attack in bright light");
+			helper.assertFalse(dropsTarget(hunter, player), "the hunter does not stop its attack");
+		});
+	}
+
+	/**
+	 * Returns true if a target goal of the spider can start in 200 tries. A target goal tries on a roll of 1 in 5.
+	 */
+	static boolean findsTarget(Spider spider) {
+		List<Goal> goals = ((MobAccessor) spider).originofspawns$targetSelector().getAvailableGoals().stream()
+				.map(WrappedGoal::getGoal).filter(goal -> goal.getClass().getSimpleName().equals("SpiderTargetGoal"))
+				.toList();
+		for (int i = 0; i < 200; i++) {
+			if (goals.stream().anyMatch(Goal::canUse)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns true if the attack goal of the spider stops in 2000 tries. In bright light it stops on a roll of 1 in
+	 * 100.
+	 */
+	static boolean dropsTarget(Spider spider, LivingEntity target) {
+		Goal attack = ((MobAccessor) spider).originofspawns$goalSelector().getAvailableGoals().stream()
+				.map(WrappedGoal::getGoal).filter(MeleeAttackGoal.class::isInstance).findFirst().orElseThrow();
+		for (int i = 0; i < 2000; i++) {
+			spider.setTarget(target);
+			if (!attack.canContinueToUse()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	static int stringNear(GameTestHelper helper, BlockPos pos) {

@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "hunt_in_light" }],
+	"mutation_rate": 0
+}

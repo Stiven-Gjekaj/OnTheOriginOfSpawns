@@ -134,6 +134,12 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> LEAP_TIME = AttachmentRegistry.create(OriginOfSpawns.id("leap_time"));
 
 	/**
+	 * The game time of the last hit of a mob on each player, by the UUID of the player. The first strike uses it.
+	 */
+	public static final AttachmentType<java.util.Map<java.util.UUID, Long>> STRIKE_TIMES =
+			AttachmentRegistry.create(OriginOfSpawns.id("strike_times"));
+
+	/**
 	 * The game time of the last use of each effect on hurt of a mob. Each effect has its own cooldown.
 	 */
 	public static final AttachmentType<java.util.Map<io.github.stivengjekaj.originofspawns.definition.GeneEffect.EffectOnHurt, Long>>

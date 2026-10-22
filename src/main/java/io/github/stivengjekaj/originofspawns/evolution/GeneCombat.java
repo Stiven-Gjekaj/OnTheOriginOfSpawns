@@ -378,6 +378,16 @@ public final class GeneCombat {
 						// Only the first hit after a leap counts.
 						attacker.removeAttached(ModAttachments.LEAP_TIME);
 					}
+					case GeneEffect.FirstStrike first when victim instanceof Player player -> {
+						long now = attacker.level().getGameTime();
+						java.util.Map<java.util.UUID, Long> strikes = new java.util.HashMap<>(
+								attacker.getAttachedOrElse(ModAttachments.STRIKE_TIMES, java.util.Map.of()));
+						Long last = strikes.put(player.getUUID(), now);
+						if (last == null || now - last > Math.round(first.resetSeconds() * 20.0F)) {
+							result *= first.multiplier();
+						}
+						attacker.setAttached(ModAttachments.STRIKE_TIMES, strikes);
+					}
 					case GeneEffect.Rally rally ->
 							result *= 1.0F + Math.min(rally.max(), rally.perAlly() * sameSpeciesNear(attacker, rally.radius()));
 					case GeneEffect.SoulHunger hunger when source.getDirectEntity() == attacker ->

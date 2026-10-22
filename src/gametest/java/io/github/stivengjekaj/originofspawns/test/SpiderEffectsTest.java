@@ -197,6 +197,21 @@ public class SpiderEffectsTest {
 		});
 	}
 
+	@GameTest
+	public void theFirstHitOnAPlayerDoesMoreDamage(GameTestHelper helper) {
+		Spider spider = spiderWith(helper, new BlockPos(1, 1, 1), "test_first_strike");
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 1));
+		var bite = helper.getLevel().damageSources().mobAttack(spider);
+		helper.assertValueEqual(GeneCombat.modifyDamage(player, bite, 4.0F), 6.0F, "the first hit on the player");
+		helper.assertValueEqual(GeneCombat.modifyDamage(player, bite, 4.0F), 4.0F, "the next hit has no bonus");
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, bite, 4.0F), 4.0F, "a pig is not a player");
+		spider.setAttached(ModAttachments.STRIKE_TIMES,
+				java.util.Map.of(player.getUUID(), helper.getLevel().getGameTime() - 300L));
+		helper.assertValueEqual(GeneCombat.modifyDamage(player, bite, 4.0F), 6.0F, "a first hit again after 10 seconds");
+		helper.succeed();
+	}
+
 	static int stringNear(GameTestHelper helper, BlockPos pos) {
 		return helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(1.0),
 				item -> item.getItem().is(Items.STRING)).size();

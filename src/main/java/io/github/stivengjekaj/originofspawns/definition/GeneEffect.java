@@ -152,7 +152,8 @@ public sealed interface GeneEffect {
 			Map.entry("web_on_hit", WebOnHit.CODEC),
 			Map.entry("web_trail", WebTrail.CODEC),
 			Map.entry("web_shot", WebShot.CODEC),
-			Map.entry("leap_strike", LeapStrike.CODEC)
+			Map.entry("leap_strike", LeapStrike.CODEC),
+			Map.entry("first_strike", FirstStrike.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2364,6 +2365,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "leap_strike";
+		}
+	}
+
+	/**
+	 * The first hit of the mob on a player does more damage. A hit counts as the first again when the mob did not hit
+	 * that player for the reset seconds.
+	 */
+	record FirstStrike(float multiplier, float resetSeconds) implements GeneEffect {
+		public static final MapCodec<FirstStrike> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(FirstStrike::multiplier),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("reset_seconds", 10.0F).forGetter(FirstStrike::resetSeconds)
+		).apply(instance, FirstStrike::new));
+
+		@Override
+		public String type() {
+			return "first_strike";
 		}
 	}
 }

@@ -28,6 +28,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.RangedCrossbowAttackGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.monster.illager.Pillager;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
@@ -287,6 +288,31 @@ public class PillagerEffectsTest {
 		GeneCombat.onProjectileHit(greedy, player);
 		helper.assertValueEqual(player.totalExperience, 17, "a bolt takes 3 XP points");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void aPlundererKeepsWhatItPicksUpAndDropsItWhenItDies(GameTestHelper helper) {
+		Pillager plain = pillagerWith(helper, new BlockPos(1, 1, 1));
+		Pillager plunderer = pillagerWith(helper, new BlockPos(1, 1, 4), "test_plunder");
+		GeneBehaviors.onSpawn(plunderer, helper.getLevel(), EntitySpawnReason.NATURAL);
+		ItemEntity plainLoot = lootAt(helper, plain);
+		ItemEntity loot = lootAt(helper, plunderer);
+		((MobAccessor) plain).originofspawns$pickUpItem(helper.getLevel(), plainLoot);
+		((MobAccessor) plunderer).originofspawns$pickUpItem(helper.getLevel(), loot);
+		helper.assertFalse(plainLoot.isRemoved(), "a plain pillager does not pick up the bread");
+		helper.assertTrue(plunderer.getInventory().hasAnyMatching(stack -> stack.is(Items.BREAD)), "the bread is in the sack");
+		helper.assertTrue(loot.isRemoved(), "the bread is gone from the ground");
+		plunderer.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 100.0F);
+		helper.assertFalse(helper.getLevel().getEntitiesOfClass(ItemEntity.class, plunderer.getBoundingBox().inflate(2.0),
+				item -> item.getItem().is(Items.BREAD)).isEmpty(), "the plunderer drops the bread when it dies");
+		helper.succeed();
+	}
+
+	static ItemEntity lootAt(GameTestHelper helper, Pillager pillager) {
+		ItemEntity item = new ItemEntity(helper.getLevel(), pillager.getX(), pillager.getY(), pillager.getZ(),
+				new ItemStack(Items.BREAD, 3));
+		helper.getLevel().addFreshEntity(item);
+		return item;
 	}
 
 	static List<FireworkRocketEntity> rocketsOf(GameTestHelper helper, Pillager pillager) {

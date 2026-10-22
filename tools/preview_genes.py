@@ -256,7 +256,7 @@ PARCHED_EXTRA = {
 CREEPER_FAMILIES = {
     "blasters": ["big_bang", "shrapnel", "golem_breaker", "chain_reaction", "aftershock", "concussion"],
     "rushers": ["sprinter", "short_fuse", "leaper", "dodger", "tracker", "wallcrawler"],
-    "ambushers": ["silent_fuse", "leafskin", "gloom", "veiled", "patient", "surprise"],
+    "skulkers": ["silent_fuse", "leafskin", "gloom", "veiled", "patient", "surprise"],
     "fumers": ["toxic_blast", "smoke_bomb", "stink", "wither_gas", "gas_leak", "spore_blast"],
     "thunderheads": ["lightning_rod", "static", "overcharge", "conductor", "grounded", "thunderstruck"],
 }
@@ -274,8 +274,8 @@ SPIDER_EXTRA = {}
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
-    "rushers": [("All 6 + Ambushers", ["leafskin", "patient"], True, {})],
-    "ambushers": [("All 6 at night", [], True, {"light": 0.18}),
+    "rushers": [("All 6 + Skulkers", ["leafskin", "patient"], True, {})],
+    "skulkers": [("All 6 at night", [], True, {"light": 0.18}),
                   ("All 6 + Fumers", ["stink", "spore_blast"], True, {})],
     "fumers": [("All 6 + Thunderheads", ["lightning_rod", "grounded"], True, {})],
     "thunderheads": [("All 6 at night", [], True, {"light": 0.18}),

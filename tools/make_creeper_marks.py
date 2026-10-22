@@ -47,7 +47,7 @@ Pixel plan for the Rushers.
   y 13 and 14).
 - Wallcrawler: hooked claws on the feet, the gene model wallcrawler_claws.
 
-Pixel plan for the Ambushers.
+Pixel plan for the Skulkers.
 - Silent Fuse has a mouth that is sewn shut: the mouth is skin, with a dark
   seam across it (y 13) and pale stitches over the seam.
 - Leafskin has a pattern of leaves on the skin of the body: dark green leaf

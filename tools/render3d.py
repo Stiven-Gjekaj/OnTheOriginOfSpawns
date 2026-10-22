@@ -13,6 +13,8 @@ of a gene model, "glow": True to keep its full light in the dark, and
 point p then goes to move + (p - adult) * scale, after the part turns. The faces use the box UV layout of the vanilla ModelPart: in the
 side row, the faces are the right side (-x), the front, the left side (+x),
 and the back.
+A bone pivot is (x, y, z), or (x, y, z, rx, ry, rz) for a bone that turns,
+as the legs of the spider. The angles are in degrees.
 This script needs Pillow.
 """
 import math
@@ -55,6 +57,7 @@ def faces(cube, bone_pivot):
         rects["right"], rects["left"] = rects["left"], rects["right"]
 
     change = cube.get("bone_change")
+    bone_turn = part_rotation(bone_pivot[3:]) if len(bone_pivot) > 3 else None
 
     def place(origin, du, dv, normal, rect):
         local = [origin[n] - part_pivot[n] for n in range(3)]
@@ -66,6 +69,8 @@ def faces(cube, bone_pivot):
             origin = [move[n] + (origin[n] - adult[n]) * scale[n] for n in range(3)]
             du = tuple(du[n] * scale[n] for n in range(3))
             dv = tuple(dv[n] * scale[n] for n in range(3))
+        if bone_turn:
+            origin, du, dv, normal = bone_turn(origin), bone_turn(du), bone_turn(dv), bone_turn(normal)
         origin = tuple(bone_pivot[n] + origin[n] for n in range(3))
         return origin, du, dv, normal, rect
 

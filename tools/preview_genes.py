@@ -52,6 +52,8 @@ BOGGED_PATH = "assets/minecraft/textures/entity/skeleton/bogged.png"
 WITHER_SKELETON_PATH = "assets/minecraft/textures/entity/skeleton/wither_skeleton.png"
 PARCHED_PATH = "assets/minecraft/textures/entity/skeleton/parched.png"
 CREEPER_PATH = "assets/minecraft/textures/entity/creeper/creeper.png"
+SPIDER_PATH = "assets/minecraft/textures/entity/spider/spider.png"
+SPIDER_EYES_PATH = "assets/minecraft/textures/entity/spider/spider_eyes.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -259,6 +261,17 @@ CREEPER_FAMILIES = {
     "thunderheads": ["lightning_rod", "static", "overcharge", "conductor", "grounded", "thunderstruck"],
 }
 
+# The families of the spider, from design/species/spider.md.
+SPIDER_FAMILIES = {
+    "weavers": ["web_shot", "tripwire", "silk_armor", "cocoon", "snare_line", "web_walker"],
+    "jumpers": ["pounce", "springlegs", "big_eyes", "dart", "quickbite", "bound"],
+    "fangs": ["venom_bite", "necrotic", "paralyze", "hunger_venom", "venom_blood", "spit"],
+    "swarms": ["clutch", "nest_call", "hive_mind", "mother", "pack_hunter", "silk_signal"],
+    "trapdoors": ["digger", "lurking_fangs", "day_hunter", "shadow_skin", "ceiling_drop", "silent_steps"],
+}
+
+SPIDER_EXTRA = {}
+
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
     "rushers": [("All 6 + Ambushers", ["leafskin", "patient"], True, {})],
@@ -348,6 +361,24 @@ CREEPER_CUBES = [
     ("body", (16, 16), (-4, 0, -2), (8, 12, 4), False),
 ] + [(leg, (0, 16), (-2, 0, -2), (4, 6, 4), False)
      for leg in ("right_hind_leg", "left_hind_leg", "right_front_leg", "left_front_leg")]
+# The spider, from SpiderModel: a head, a body (body0), an abdomen (body1),
+# and eight legs of 16x2x2 that all use uv (18, 0). The legs turn on their
+# bones. The left legs mirror the right legs. The gene models use the bone
+# "body" for body0 and "abdomen" for body1.
+SPIDER_PIVOTS = {
+    "head": (0, 15, -3), "body": (0, 15, 0), "abdomen": (0, 15, 9),
+    "right_hind_leg": (-4, 15, 2, 0, 45, -45), "left_hind_leg": (4, 15, 2, 0, -45, 45),
+    "right_middle_hind_leg": (-4, 15, 1, 0, 22.5, -33.3), "left_middle_hind_leg": (4, 15, 1, 0, -22.5, 33.3),
+    "right_middle_front_leg": (-4, 15, 0, 0, -22.5, -33.3), "left_middle_front_leg": (4, 15, 0, 0, 22.5, 33.3),
+    "right_front_leg": (-4, 15, -1, 0, -45, -45), "left_front_leg": (4, 15, -1, 0, 45, 45),
+}
+SPIDER_CUBES = [
+    ("head", (32, 4), (-4, -4, -8), (8, 8, 8), False),
+    ("body", (0, 0), (-3, -3, -3), (6, 6, 6), False),
+    ("abdomen", (0, 12), (-5, -4, -6), (10, 8, 12), False),
+] + [(side + "_" + leg, (18, 0), (-15 if side == "right" else -1, -1, -1), (16, 2, 2), side == "left")
+     for leg in ("hind_leg", "middle_hind_leg", "middle_front_leg", "front_leg") for side in ("right", "left")]
+
 SKELETON_CUBES = ZOMBIE_CUBES[:2] + [
     ("right_arm", (40, 16), (-1, -2, -1), (2, 12, 2), False),
     ("left_arm", (40, 16), (-1, -2, -1), (2, 12, 2), True),
@@ -536,7 +567,8 @@ def split_image(identifier):
 # the pivots of the adult model, and True when only the layers with the
 # target "outer" go on the outer layer (the stray). set_mob() sets it.
 MOB = {"split": False, "outer": None, "cubes": ZOMBIE_CUBES, "pivots": PIVOTS, "outer_target": False,
-       "outer_inflate": 0.25, "extra": [], "held": [], "wraps": []}
+       "outer_inflate": 0.25, "extra": [], "held": [], "wraps": [], "eyes": None,
+       "sheet_views": [(0, 0), (180, 0), (-35, 15)], "closeup_view": ((26, 40), (0, 5))}
 
 # The mushrooms on the head of the bogged, from BoggedModel: crossed planes
 # of 6x4 pixels, with the texture of the mob. Each is (uv, from, size,
@@ -723,6 +755,10 @@ def cubes_of(tex, genes, baby=False):
     cubes += [{"bone": "head", "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": False, "texture": tex,
                "scale": 1.0, "pivot": p, "rotation": rot} for uv, f, s, p, rot in MOB["extra"]]
     cubes += MOB["held"]
+    # The glowing eyes of the spider draw over the marks, with full light.
+    if MOB["eyes"]:
+        cubes += [{"bone": "head", "uv": (32, 4), "from": (-4, -4, -8), "size": (8, 8, 8), "inflate": 0.01,
+                   "mirror": False, "texture": MOB["eyes"], "scale": 1.0, "glow": True}]
     cubes += [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": inflate, "mirror": m, "texture": tex,
                "scale": 1.0} for b, uv, f, s, m, inflate in MOB["wraps"]]
     for gene in genes:
@@ -818,10 +854,9 @@ def sheet(title, columns):
         if options.get("light", 1.0) < 1:
             for y in (top, top + h + gap, top + 2 * (h + gap)):
                 draw.rectangle((x, y, x + w - 1, y + h - 1), fill=NIGHT)
-        im.alpha_composite(view(tex, genes, False, **options), (x, top))
-        im.alpha_composite(view(tex, genes, True, **options), (x, top + h + gap))
-        im.alpha_composite(view(tex, genes, False, turn=-35, tilt=15, **options),
-                           (x, top + 2 * (h + gap)))
+        for row, (turn, tilt) in enumerate(MOB["sheet_views"]):
+            im.alpha_composite(view(tex, genes, False, turn=turn, tilt=tilt, **options),
+                               (x, top + row * (h + gap)))
     return im
 
 
@@ -837,6 +872,7 @@ SPECIES = {
     "wither_skeleton": (WITHER_SKELETON_PATH, None, WITHER_SKELETON_FAMILIES, WITHER_SKELETON_EXTRA, []),
     "parched": (PARCHED_PATH, None, PARCHED_FAMILIES, PARCHED_EXTRA, []),
     "creeper": (CREEPER_PATH, None, CREEPER_FAMILIES, CREEPER_EXTRA, []),
+    "spider": (SPIDER_PATH, None, SPIDER_FAMILIES, SPIDER_EXTRA, []),
 }
 
 
@@ -844,10 +880,19 @@ def set_mob(species):
     """Set the look of the species for the bake and the cubes."""
     skeleton = species in ("skeleton", "stray", "bogged", "wither_skeleton", "parched")
     MOB["split"] = species == "drowned"
+    global VIEW_X, VIEW_Y, VIEW_W, VIEW_H
+    spider = species == "spider"
     MOB["cubes"] = (DROWNED_CUBES if species == "drowned" else PARCHED_CUBES if species == "parched"
-                    else CREEPER_CUBES if species == "creeper" else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
+                    else CREEPER_CUBES if species == "creeper" else SPIDER_CUBES if spider
+                    else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
     MOB["pivots"] = (PARCHED_PIVOTS if species == "parched" else CREEPER_PIVOTS if species == "creeper"
-                     else SKELETON_PIVOTS if skeleton else PIVOTS)
+                     else SPIDER_PIVOTS if spider else SKELETON_PIVOTS if skeleton else PIVOTS)
+    # The spider is wide and low. The sheets look down on it, so that its
+    # back shows.
+    VIEW_X, VIEW_Y, VIEW_W, VIEW_H = (20, -2, 40, 26) if spider else (11, 11, 22, 37)
+    MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if spider else [(0, 0), (180, 0), (-35, 15)]
+    MOB["closeup_view"] = ((40, 34), (0, 13)) if spider else ((26, 40), (0, 5))
+    MOB["eyes"] = find_zombie_texture(SPIDER_EYES_PATH) if spider else None
     MOB["wraps"] = PARCHED_WRAPS if species == "parched" else []
     MOB["outer"] = ((find_zombie_texture(DROWNED_OUTER_PATH), find_zombie_texture(DROWNED_OUTER_BABY_PATH))
                     if species == "drowned" else (find_zombie_texture(STRAY_OUTER_PATH), None)

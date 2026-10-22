@@ -352,6 +352,14 @@ CREEPER_CLOSEUPS = {
 }
 
 # Each species: its texture, its baby texture, and its close-ups.
+# The close-ups of the spider. It has no babies. The views look down on it,
+# so that its back shows.
+SPIDER = pg.SPIDER_FAMILIES
+SPIDER_VIEWS = [("front", 0, 20, 1.0), ("back", 180, 30, 1.0), ("right side", -90, 10, 1.0),
+                ("3/4", -35, 30, 1.0), ("3/4 from behind", -145, 30, 1.0), ("from above", -150, 60, 1.0)]
+SPIDER_NIGHT_VIEWS = SPIDER_VIEWS[:5] + [("3/4 at night", -35, 30, 0.18)]
+SPIDER_CLOSEUPS = {}
+
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
     "husk": (pg.HUSK_PATH, pg.HUSK_BABY_PATH, HUSK_CLOSEUPS),
@@ -362,11 +370,12 @@ SPECIES = {
     "wither_skeleton": (pg.WITHER_SKELETON_PATH, None, WITHER_SKELETON_CLOSEUPS),
     "parched": (pg.PARCHED_PATH, None, PARCHED_CLOSEUPS),
     "creeper": (pg.CREEPER_PATH, None, CREEPER_CLOSEUPS),
+    "spider": (pg.SPIDER_PATH, None, SPIDER_CLOSEUPS),
 }
 
 
 def closeup(title, rows, views, adult_tex, baby_tex):
-    scale, size = pg.SCALE, (26, 40)
+    scale, (size, center) = pg.SCALE, pg.MOB["closeup_view"]
     cell_w, cell_h = size[0] * scale, size[1] * scale
     pad, top, label_h = 16, 70, 40
     out = Image.new("RGBA", (pad + len(views) * (cell_w + pad), top + len(rows) * (cell_h + label_h + pad)),
@@ -383,7 +392,7 @@ def closeup(title, rows, views, adult_tex, baby_tex):
             x = pad + c * (cell_w + pad)
             if light < 1:
                 draw.rectangle((x, y + label_h, x + cell_w, y + label_h + cell_h), fill=NIGHT)
-            im = pg.render3d.render(cubes, pivots, turn, tilt, scale, size, center=(0, 5), light=light)
+            im = pg.render3d.render(cubes, pivots, turn, tilt, scale, size, center=center, light=light)
             out.alpha_composite(im, (x, y + label_h))
             color = (255, 255, 255, 255) if light < 1 else (0, 0, 0, 255)
             font = pg.ImageFont.load_default(size=18)

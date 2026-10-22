@@ -4,7 +4,7 @@
 import { url } from "../lib/site.js";
 
 interface Props {
-  shot: { front: string; back: string | null } | null;
+  shot: { front: string; back: string | null; wide?: boolean } | null;
   alt: string;
   height?: number;
   class?: string;
@@ -12,7 +12,7 @@ interface Props {
 const { shot, alt, height = 160, class: cls = "" } = Astro.props;
 ---
 {shot && (
-  <figure class={`mob-shot ${cls}`} style={`--h:${height}px`} tabindex={shot.back ? 0 : undefined} title={shot.back ? "Point at the picture to see the back" : undefined}>
+  <figure class={`mob-shot ${shot.wide ? "wide " : ""}${cls}`} style={`--h:${height}px`} tabindex={shot.back ? 0 : undefined} title={shot.back ? "Point at the picture to see the back" : undefined}>
     <img class="front" src={url(shot.front)} alt={`${alt}, front`} loading="lazy" decoding="async" height={height} />
     {shot.back && <img class="back" src={url(shot.back)} alt={`${alt}, back`} loading="lazy" decoding="async" height={height} />}
   </figure>

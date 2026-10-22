@@ -46,6 +46,9 @@ const text = [g.name, g.gains, g.downsides, g.look, g.counters, g.details, famNa
   .gene:target { border-color: var(--fam); box-shadow: 0 0 0 3px color-mix(in srgb, var(--fam) 25%, transparent); }
   .gene-top { display: flex; gap: var(--s-4); align-items: center; }
   .gene-top :global(.gene-shot) { flex: none; width: 108px; }
+  /* A wide mob takes the full width, and the name goes under it. */
+  .gene-top:has(:global(.wide)) { flex-wrap: wrap; }
+  .gene-top :global(.gene-shot.wide) { width: 100%; }
   h3[data-tip-ref] { cursor: help; }
   .gene-title { display: grid; gap: var(--s-2); min-width: 0; }
   h3 { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-lg); }

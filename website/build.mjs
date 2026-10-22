@@ -239,7 +239,11 @@ function shotOf(sp, kind, name) {
   const front = fs.existsSync(path.join(SITE, "public", base + "-front.png"));
   const back = fs.existsSync(path.join(SITE, "public", base + "-back.png"));
   if (!front) return null;
-  return { front: base + "-front.png", back: back ? base + "-back.png" : null };
+  // The size of a PNG is in its header. A wide mob, such as the spider, gets
+  // a wide frame on the pages.
+  const head = fs.readFileSync(path.join(SITE, "public", base + "-front.png")).subarray(16, 24);
+  const wide = head.readUInt32BE(0) > 1.2 * head.readUInt32BE(4);
+  return { front: base + "-front.png", back: back ? base + "-back.png" : null, wide };
 }
 
 const geneJson = jsonDir(path.join(DATA, "gene"));

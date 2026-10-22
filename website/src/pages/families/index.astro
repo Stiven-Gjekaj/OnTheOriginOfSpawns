@@ -160,9 +160,11 @@ const minorsOf = (sp) => site.minors.filter((m) => m.species === sp);
 
 <style>
   .species-intro { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: var(--s-5); align-items: center; margin-bottom: var(--s-7); }
+  /* A wide mob, such as the spider, gets a wider column. */
+  .species-intro:has(:global(.wide)) { grid-template-columns: 300px minmax(0, 1fr); }
   .species-intro .lead { margin-top: var(--s-2); }
   .species-intro .small { margin-top: var(--s-2); }
-  @media (max-width: 560px) { .species-intro { grid-template-columns: 1fr; } .species-intro :global(.plain-shot) { max-width: 200px; } }
+  @media (max-width: 560px) { .species-intro, .species-intro:has(:global(.wide)) { grid-template-columns: 1fr; } .species-intro :global(.plain-shot) { max-width: 200px; } .species-intro :global(.plain-shot.wide) { max-width: 300px; } }
   .family { border-top: 3px solid var(--fam); display: grid; gap: var(--s-4); align-content: start; }
   .family-head { display: flex; gap: var(--s-3); align-items: flex-start; }
   .family h3 { color: var(--fam); font-family: var(--font-display); font-size: var(--fs-lg); font-weight: 600; }

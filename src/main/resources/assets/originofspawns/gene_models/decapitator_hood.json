@@ -1,0 +1,42 @@
+{
+	"texture": "originofspawns:textures/entity/decapitator_hood.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4,
+				-10,
+				-4
+			],
+			"size": [
+				8,
+				10,
+				8
+			],
+			"inflate": 0.55
+		},
+		{
+			"bone": "head",
+			"uv": [
+				32,
+				0
+			],
+			"from": [
+				-1,
+				-12,
+				-1
+			],
+			"size": [
+				2,
+				2,
+				2
+			]
+		}
+	]
+}

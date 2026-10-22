@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/illager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/howl_0.png",
+				"tint": "#140A0A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/howl_1.png",
+				"tint": "#A83030"
+			}
+		}
+	]
+}

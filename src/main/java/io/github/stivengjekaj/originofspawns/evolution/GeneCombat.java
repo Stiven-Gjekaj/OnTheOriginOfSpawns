@@ -50,6 +50,10 @@ import net.minecraft.world.level.biome.Biome;
  * The effects of genes and families that act in combat: on damage, on a hit, on a hurt, and on a death.
  */
 public final class GeneCombat {
+	/**
+	 * A monster spawner in this many blocks counts for the state {@code near_spawner}.
+	 */
+	private static final double SPAWNER_RADIUS = 16.0;
 	private static final long AMBUSH_TICKS = 200L;
 	private static final int DARK_LIGHT = 6;
 	private static final int BRIGHT_LIGHT = 12;
@@ -148,6 +152,8 @@ public final class GeneCombat {
 					&& mob.getTarget().hasEffect(net.minecraft.world.effect.MobEffects.WEAKNESS);
 			case OFF_SOUL_GROUND -> !onSoulGround(entity);
 			case CHARGED -> entity instanceof Creeper creeper && creeper.isPowered();
+			case NEAR_SPAWNER -> nearSpawner(entity);
+			case FAR_FROM_SPAWNER -> !nearSpawner(entity);
 			case UNSEEN -> entity instanceof Mob mob && mob.getTarget() != null && Evolution.unseen(mob, mob.getTarget());
 		};
 	}
@@ -478,6 +484,33 @@ public final class GeneCombat {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns true if a monster spawner is in 16 blocks of the entity. The search reads only the block entities of the
+	 * loaded chunks near the entity, so it is fast.
+	 */
+	public static boolean nearSpawner(Entity entity) {
+		net.minecraft.world.level.Level level = entity.level();
+		double radius = SPAWNER_RADIUS;
+		int minX = net.minecraft.core.SectionPos.blockToSectionCoord(entity.getX() - radius);
+		int maxX = net.minecraft.core.SectionPos.blockToSectionCoord(entity.getX() + radius);
+		int minZ = net.minecraft.core.SectionPos.blockToSectionCoord(entity.getZ() - radius);
+		int maxZ = net.minecraft.core.SectionPos.blockToSectionCoord(entity.getZ() + radius);
+		for (int x = minX; x <= maxX; x++) {
+			for (int z = minZ; z <= maxZ; z++) {
+				if (!level.hasChunk(x, z)) {
+					continue;
+				}
+				for (net.minecraft.world.level.block.entity.BlockEntity block : level.getChunk(x, z).getBlockEntities().values()) {
+					if (block instanceof net.minecraft.world.level.block.entity.SpawnerBlockEntity
+							&& Vec3.atCenterOf(block.getBlockPos()).distanceToSqr(entity.position()) <= radius * radius) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	/**

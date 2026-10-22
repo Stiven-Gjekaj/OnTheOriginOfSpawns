@@ -419,7 +419,15 @@ public sealed interface GeneEffect {
 		 * 3 seconds. In {@code damage_dealt_when}, the state asks about the entity that takes the damage. In other
 		 * effects, it asks about the target of the mob.
 		 */
-		UNSEEN;
+		UNSEEN,
+		/**
+		 * A monster spawner is in 16 blocks of the mob.
+		 */
+		NEAR_SPAWNER,
+		/**
+		 * No monster spawner is in 16 blocks of the mob. This is the opposite of {@code near_spawner}.
+		 */
+		FAR_FROM_SPAWNER;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 

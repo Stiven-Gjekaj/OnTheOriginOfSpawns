@@ -1,6 +1,8 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect.When;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -14,6 +16,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.spider.CaveSpider;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -36,6 +39,21 @@ public class CaveSpiderEffectsTest {
 		MobEffectInstance stronger = toxinTarget.getEffect(MobEffects.POISON);
 		helper.assertValueEqual(stronger.getDuration(), 210, "50% longer");
 		helper.assertValueEqual(stronger.getAmplifier(), 1, "Poison II");
+		helper.succeed();
+	}
+
+	@GameTest(padding = 24)
+	public void aSpawnerIn16BlocksIsAState(GameTestHelper helper) {
+		CaveSpider spider = caveSpiderWith(helper, new BlockPos(1, 1, 1));
+		helper.assertFalse(GeneCombat.test(spider, When.NEAR_SPAWNER), "no spawner yet");
+		helper.assertTrue(GeneCombat.test(spider, When.FAR_FROM_SPAWNER), "far from a spawner");
+		helper.setBlock(new BlockPos(1, 1, 20), Blocks.SPAWNER);
+		helper.assertFalse(GeneCombat.test(spider, When.NEAR_SPAWNER), "a spawner 19 blocks away is too far");
+		helper.setBlock(new BlockPos(1, 1, 14), Blocks.SPAWNER);
+		helper.assertTrue(GeneCombat.test(spider, When.NEAR_SPAWNER), "a spawner 13 blocks away");
+		helper.assertFalse(GeneCombat.test(spider, When.FAR_FROM_SPAWNER), "not far from a spawner");
+		helper.setBlock(new BlockPos(1, 1, 14), Blocks.STONE);
+		helper.assertFalse(GeneCombat.test(spider, When.NEAR_SPAWNER), "the spawner is gone");
 		helper.succeed();
 	}
 

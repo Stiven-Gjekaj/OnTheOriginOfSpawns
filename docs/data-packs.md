@@ -50,12 +50,13 @@ A pressure needs `damage_types`, `conditions`, or both.
 | `day` | The mob died while it was bright outside |
 | `fuse` | The mob is a creeper, and it died while its fuse burned |
 | `bane` | The killer hit the mob with a weapon with the Bane of Arthropods enchantment |
+| `raid` | The mob died as a part of a raid |
 
 The mod has these pressures: `fire`, `projectile`, `melee`, `explosion`,
 `fall`, `unreached`, `sunlight`, `spotted`, `alone`, `crowd`, `critical`,
 `golem`, `player_death`, `in_water`, `on_land`, `cold`, `night`, `boat`,
 `contact`, `trident`, `wolf`, `shield`, `snow`, `warm`, `dry`, `shears`, `smite`, `day`,
-`fuse`, and `bane`.
+`fuse`, `bane`, and `raid`.
 A creeper that explodes does not die, so its blast does not count for a
 pressure. A blast that kills a player counts for `player_death`.
 The `contact` pressure uses the tag `#originofspawns:contact`: cacti and sweet
@@ -188,8 +189,8 @@ The states for `when` are:
 | `drag_under` | `seconds`, `sink_speed` (`0.12`) | When the mob hits a player in water, it holds on, and both sink. The player breaks free with a hit on the mob, or when the player leaves the water |
 | `break_boats` | `hits` (`3`) | The hits on a boat or on its rider break the boat after this many hits. The riders fall out |
 | `lightning_on_hit` | `storm_only` (`true`) | A projectile hit calls lightning on a target under the open sky. With `storm_only`, only in a thunderstorm |
-| `drain_food` | `amount`, `heal` (`0`) | Each hit on a player takes food points, and heals the mob |
-| `leech_xp` | `amount` | Each hit takes XP points from a player. The mob drops the XP that it took when it dies, and no other XP |
+| `drain_food` | `amount`, `heal` (`0`), `chance` (`1`), `hits` (`melee`) | Each hit of the kind in `hits` has the chance to take food points from a player, and heals the mob |
+| `leech_xp` | `amount`, `hits` (`melee`) | Each hit of the kind in `hits` takes XP points from a player. The mob drops the XP that it took when it dies, and no other XP |
 | `rally` | `per_ally`, `max`, `radius` (`6`) | Adds damage for each mob of the same species in the radius, up to `max`. `0.1` is 10% |
 | `convert_villagers` | | A villager that the mob kills always becomes a zombie villager |
 
@@ -217,7 +218,7 @@ The states for `when` are:
 | `water_pull` | `radius`, `strength` (`0.01`) | Pulls the players in water in the radius slowly toward the mob. Players in creative or spectator mode do not move |
 | `trident_chance` | `chance` | The mob has this chance to spawn with a trident in an empty hand or in place of a fishing rod. This adds to the vanilla chance |
 | `throw_rate` | `multiplier`, `when` (`always`) | While the state is true, multiplies how often the mob throws or shoots with a ranged attack, also with a bow. `2` throws two times as often. With a bow, it changes the draw and the wait together |
-| `draw_time` | `multiplier` | Multiplies the time that the mob draws its bow. `1.25` draws 25% slower |
+| `draw_time` | `multiplier` | Multiplies the time that the mob draws its bow, or loads its crossbow. `1.25` draws 25% slower |
 | `throw_range` | `multiplier`, `target`, `when` (`always`) | While the state is true, multiplies the throw range at a target. A range past the follow range of the mob needs more follow range too. `target` is `wet`, for a target in water or in a boat, `dry`, or `any` |
 | `keep_distance` | `blocks` | While the mob shoots with a bow, it walks back from a target nearer than this |
 | `arrow_spread` | `multiplier` | Multiplies the spread of the arrows of the mob. `0` makes each arrow fly straight |
@@ -230,7 +231,7 @@ The states for `when` are:
 | `sidestep` | `range` (`12`), `distance` (`4`), `cooldown_seconds` (`10`), `aimed` (`false`) | When a player looks at the mob from farther than the range, the mob moves to the side. With `aimed`, it moves when a player in the range draws a bow, a crossbow, or a trident and looks at it |
 | `climb` | | The mob climbs walls, like a spider. It cannot climb glass |
 | `throw_effect` | `effect`, `seconds`, `amplifier` (`0`), `min_range` (`0`), `range` (`8`), `cooldown_seconds` (`8`) | The mob throws at its target, which gives a status effect. The target must be between `min_range` and `range` |
-| `pick_up_items` | | The mob picks up items |
+| `pick_up_items` | | The mob picks up items. A pillager keeps them in a sack of 5 slots, and drops them when it dies |
 | `no_conversion` | | The mob does not convert to a different species in water |
 | `siege` | `break_seconds` (`10`) | The mob breaks doors on each difficulty, and breaks the blocks in the tag `#originofspawns:siege_breakable`. It obeys the `mobGriefing` gamerule |
 | `raise_victim` | | A player that the mob kills rises as a mob of its species, with its genes |
@@ -282,6 +283,21 @@ The states for `when` are:
 | `water_sensitive` | | Water hurts the mob, as it hurts a blaze or an enderman: splash water, rain, and water |
 | `disarm` | `chance`, `cooldown_seconds` (`10`), `hits` (`projectile`) | Each hit has the chance to make a player drop the item in the main hand. A player loses an item one time in each cooldown at most. An item with Curse of Binding does not drop |
 | `death_effect` | `effect`, `seconds`, `amplifier` (`0`), `radius`, `when` (`always`), `allies` (`false`) | When the mob dies while the state is true, the players in the radius get a status effect. With `allies`, the mobs of its species get it instead |
+
+#### Pillagers
+
+The bow and arrow effects of the skeletons also act on the crossbow of a
+pillager: `draw_time`, `throw_rate`, `throw_range`, `arrow_spread`,
+`arrow_effect`, `arrow_knockback`, `ghost_arrows`, and `pierce_shields`. A bolt
+that hits counts as a `projectile` hit. `throw_rate` divides both the load and
+the wait after the load.
+
+| Type | Fields | Result |
+|---|---|---|
+| `rocket_chance` | `chance` | Each crossbow shot has this chance to be a firework rocket with one red star. The rocket breaks no blocks |
+| `rocket_shot` | `cooldown_seconds` (`10`), `range` (`16`) | After each cooldown, the mob shoots a firework rocket at a target in the range |
+| `rocket_blast` | `multiplier` | Multiplies the blast radius of the rockets of the mob. The vanilla radius is 5 |
+| `patrol_size` | `extra` (`1`) | A patrol that this mob spawns in gets this many more pillagers. A raid does not change |
 
 #### Spiders
 

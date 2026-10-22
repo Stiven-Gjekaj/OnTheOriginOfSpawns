@@ -160,7 +160,8 @@ public sealed interface GeneEffect {
 			Map.entry("rocket_chance", RocketChance.CODEC),
 			Map.entry("rocket_shot", RocketShot.CODEC),
 			Map.entry("rocket_blast", RocketBlast.CODEC),
-			Map.entry("patrol_size", PatrolSize.CODEC)
+			Map.entry("patrol_size", PatrolSize.CODEC),
+			Map.entry("knockback", Knockback.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2521,6 +2522,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "patrol_size";
+		}
+	}
+
+	/**
+	 * The hits of the mob of the kind in {@code hits} push the target back more. {@code 2} pushes two times as far.
+	 */
+	record Knockback(float multiplier, Hits hits) implements GeneEffect {
+		public static final MapCodec<Knockback> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(Knockback::multiplier),
+				Hits.CODEC.optionalFieldOf("hits", Hits.MELEE).forGetter(Knockback::hits)
+		).apply(instance, Knockback::new));
+
+		@Override
+		public String type() {
+			return "knockback";
 		}
 	}
 }

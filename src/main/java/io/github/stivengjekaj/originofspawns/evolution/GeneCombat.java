@@ -458,6 +458,8 @@ public final class GeneCombat {
 				}
 				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(false) && target instanceof LivingEntity living
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(living, freeze.seconds());
+				case GeneEffect.Knockback knockback when knockback.hits().includes(false) ->
+						pushBack(mob, target, knockback.multiplier());
 				case GeneEffect.WebOnHit web when web.hits().includes(false) && mob.level() instanceof ServerLevel level
 						&& mob.getRandom().nextFloat() < web.chance() -> putWeb(level, target, web.seconds());
 				case GeneEffect.CallOnHit call when call.hits().includes(false) && target instanceof Player player ->
@@ -543,6 +545,19 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Pushes the target away from the mob, so that the full push of a hit is the multiplier times as far.
+	 */
+	private static void pushBack(Mob mob, Entity target, float multiplier) {
+		Vec3 away = new Vec3(target.getX() - mob.getX(), 0.0, target.getZ() - mob.getZ());
+		if (away.lengthSqr() > 1.0E-4) {
+			// A hit pushes with about 0.4. The extra push makes the full push the multiplier times as far.
+			Vec3 push = away.normalize().scale(KNOCKBACK * (multiplier - 1.0F));
+			target.push(push.x, 0.1, push.z);
+			target.needsSync = true;
+		}
+	}
+
+	/**
 	 * Takes XP points from the player. The mob keeps them, and drops them when it dies.
 	 */
 	private static void leechXp(Mob mob, Player player, GeneEffect.LeechXp leech) {
@@ -584,15 +599,9 @@ public final class GeneCombat {
 						mob.heal(heal.amount());
 				case GeneEffect.Disarm disarm when disarm.hits().includes(true) && target instanceof Player player
 						&& mob.getRandom().nextFloat() < disarm.chance() -> disarm(player, disarm);
-				case GeneEffect.ArrowKnockback knockback -> {
-					Vec3 away = new Vec3(target.getX() - mob.getX(), 0.0, target.getZ() - mob.getZ());
-					if (away.lengthSqr() > 1.0E-4) {
-						// An arrow pushes with about 0.4. The extra push makes the full push the multiplier times as far.
-						Vec3 push = away.normalize().scale(KNOCKBACK * (knockback.multiplier() - 1.0F));
-						target.push(push.x, 0.1, push.z);
-						target.needsSync = true;
-					}
-				}
+				case GeneEffect.ArrowKnockback knockback -> pushBack(mob, target, knockback.multiplier());
+				case GeneEffect.Knockback knockback when knockback.hits().includes(true) ->
+						pushBack(mob, target, knockback.multiplier());
 				case GeneEffect.CallOnHit call when call.hits().includes(true) && target instanceof Player player ->
 						GeneBehaviors.callAllies(mob, call.radius(), player);
 				case GeneEffect.IgniteTarget ignite when ignite.hits().includes(true)

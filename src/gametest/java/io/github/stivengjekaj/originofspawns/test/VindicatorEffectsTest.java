@@ -14,6 +14,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.illager.Vindicator;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -41,6 +42,23 @@ public class VindicatorEffectsTest {
 		helper.assertValueEqual(damageTo(helper, EntityTypes.IRON_GOLEM, hit), 8.0F, "an iron golem takes two times the damage");
 		helper.assertValueEqual(damageTo(helper, EntityTypes.SNOW_GOLEM, hit), 8.0F, "a snow golem too");
 		helper.assertValueEqual(damageTo(helper, EntityTypes.VILLAGER, hit), 4.0F, "a villager is not a golem");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void chopKnocksTheTargetBackFarther(GameTestHelper helper) {
+		Vindicator plain = vindicatorWith(helper, new BlockPos(1, 1, 1));
+		Vindicator chopper = vindicatorWith(helper, new BlockPos(1, 1, 4), "test_chop");
+		Pig plainTarget = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 1));
+		Pig target = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 4));
+		Pig shot = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 4));
+		GeneCombat.onHit(plain, plainTarget);
+		GeneCombat.onHit(chopper, target);
+		GeneCombat.onProjectileHit(chopper, shot);
+		helper.assertValueEqual(plainTarget.getDeltaMovement().x, 0.0, "a plain hit adds no push");
+		helper.assertTrue(Math.abs(target.getDeltaMovement().x - 0.4) < 0.001, "a Chop hit adds one more push away, was "
+				+ target.getDeltaMovement().x);
+		helper.assertValueEqual(shot.getDeltaMovement().x, 0.0, "a projectile is not a melee hit");
 		helper.succeed();
 	}
 

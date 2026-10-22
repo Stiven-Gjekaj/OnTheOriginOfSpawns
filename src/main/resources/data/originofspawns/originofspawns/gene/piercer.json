@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:pillager/crossbowman",
+	"gains": [
+		{
+			"type": "pierce_shields"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

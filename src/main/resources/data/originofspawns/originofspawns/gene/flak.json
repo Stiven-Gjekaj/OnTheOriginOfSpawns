@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:pillager/bombardier",
+	"sub_family": "originofspawns:pillager/captain",
+	"gains": [
+		{
+			"type": "rocket_blast",
+			"multiplier": 1.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.9
+		}
+	]
+}

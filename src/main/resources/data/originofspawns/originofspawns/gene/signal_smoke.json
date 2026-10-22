@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:pillager/scout",
+	"gains": [
+		{
+			"type": "call_on_hurt",
+			"radius": 24,
+			"smoke": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9,
+			"hits": "projectile"
+		}
+	]
+}

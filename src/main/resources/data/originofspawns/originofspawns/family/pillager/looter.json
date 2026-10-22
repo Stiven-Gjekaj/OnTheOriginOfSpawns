@@ -1,0 +1,54 @@
+{
+	"species": "minecraft:pillager",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "drain_food",
+					"amount": 1,
+					"hits": "any",
+					"chance": 0.5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "healthy",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "drain_food",
+					"amount": 1,
+					"hits": "any"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "healthy",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "drain_food",
+					"amount": 2,
+					"hits": "any"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "healthy",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

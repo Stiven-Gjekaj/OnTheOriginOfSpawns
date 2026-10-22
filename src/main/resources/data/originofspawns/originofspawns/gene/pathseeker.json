@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:pillager/scout",
+	"gains": [
+		{
+			"type": "see_invisible",
+			"radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:pillager/captain",
+	"gains": [
+		{
+			"type": "call_on_sight",
+			"radius": 32
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

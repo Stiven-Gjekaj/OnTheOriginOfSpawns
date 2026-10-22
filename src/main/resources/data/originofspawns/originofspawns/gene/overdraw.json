@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:pillager/crossbowman",
+	"gains": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 1.25,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.85
+		}
+	]
+}

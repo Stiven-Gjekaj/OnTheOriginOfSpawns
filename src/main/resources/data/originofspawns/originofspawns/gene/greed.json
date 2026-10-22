@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:pillager/looter",
+	"gains": [
+		{
+			"type": "leech_xp",
+			"amount": 3,
+			"hits": "any"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

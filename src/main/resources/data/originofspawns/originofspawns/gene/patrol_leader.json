@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:pillager/captain",
+	"gains": [
+		{
+			"type": "patrol_size",
+			"extra": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.15,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

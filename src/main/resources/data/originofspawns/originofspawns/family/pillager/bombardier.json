@@ -1,0 +1,50 @@
+{
+	"species": "minecraft:pillager",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "rocket_chance",
+					"chance": 0.05
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_explosion",
+					"multiplier": 1.75
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "rocket_chance",
+					"chance": 0.1
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_explosion",
+					"multiplier": 1.5
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "rocket_chance",
+					"chance": 0.15
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_explosion",
+					"multiplier": 1.25
+				}
+			]
+		}
+	]
+}

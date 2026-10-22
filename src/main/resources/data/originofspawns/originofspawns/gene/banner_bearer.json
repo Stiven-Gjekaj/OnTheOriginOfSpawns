@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:pillager/captain",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:speed",
+			"radius": 8,
+			"interval_seconds": 2,
+			"seconds": 3,
+			"allies": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,65 @@
+{
+	"species": "minecraft:pillager",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "aura",
+					"effect": "minecraft:resistance",
+					"radius": 4,
+					"interval_seconds": 2,
+					"seconds": 3,
+					"allies": true
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.25,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "aura",
+					"effect": "minecraft:resistance",
+					"radius": 8,
+					"interval_seconds": 2,
+					"seconds": 3,
+					"allies": true
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "aura",
+					"effect": "minecraft:resistance",
+					"radius": 12,
+					"interval_seconds": 2,
+					"seconds": 3,
+					"allies": true
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

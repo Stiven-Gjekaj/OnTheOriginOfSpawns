@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:pillager/scout",
+	"sub_family": "originofspawns:pillager/looter",
+	"gains": [
+		{
+			"type": "sidestep",
+			"range": 24,
+			"distance": 3,
+			"cooldown_seconds": 8,
+			"aimed": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9,
+			"hits": "projectile"
+		}
+	]
+}

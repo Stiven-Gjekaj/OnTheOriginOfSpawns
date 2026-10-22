@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:pillager/crossbowman",
+	"gains": [
+		{
+			"type": "draw_time",
+			"multiplier": 0.7
+		}
+	],
+	"downsides": [
+		{
+			"type": "arrow_spread",
+			"multiplier": 2
+		}
+	]
+}

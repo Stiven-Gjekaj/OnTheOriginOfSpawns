@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:pillager/bombardier",
+	"gains": [
+		{
+			"type": "rocket_shot",
+			"cooldown_seconds": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_explosion",
+			"multiplier": 1.25
+		}
+	]
+}

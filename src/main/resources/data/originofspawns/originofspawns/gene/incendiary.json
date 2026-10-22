@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns:fire",
+	"family": "originofspawns:pillager/bombardier",
+	"gains": [
+		{
+			"type": "ignite_target",
+			"chance": 1,
+			"seconds": 4,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 1.25
+		}
+	]
+}

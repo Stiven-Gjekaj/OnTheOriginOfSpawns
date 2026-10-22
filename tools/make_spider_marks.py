@@ -71,6 +71,22 @@ Pixel plan for the Swarms.
 - Pack Hunter has banded legs: three pale bands round each leg.
 - Silk Signal has stiff hairs on the back: short pale hairs with white tips
   on the top of the abdomen, and hair tips on the top edge of its sides.
+
+Pixel plan for the Trapdoors.
+- Digger has dirt in the hairs: clumps of brown dirt on the body and on the
+  low rows of the sides of the abdomen.
+- Lurking Fangs has a dark hood of hair: the top of the head, and the top
+  rows of its sides, its back, and the face, are black hair with a ragged
+  lower edge.
+- Day Hunter has yellow eyes: the eye pixels are yellow.
+- Shadow Skin has black hairs on the body: the body is black with dark gray
+  hair, and black hair reaches onto the front of the abdomen and the roots
+  of the legs.
+- Ceiling Drop has dark chevrons on the back: two black chevrons that point
+  to the head, on the rear half of the top of the abdomen, each with a pale
+  edge behind it.
+- Silent Steps has soft, furred feet: the feet are pale gray fur, paler at
+  the tip, with a ring of fur tufts above them.
 This script needs Pillow.
 """
 import json
@@ -580,6 +596,106 @@ def silk_signal():
     return [hair, tip]
 
 
+def digger():
+    # Dirt in the hairs: clumps of brown dirt on all the faces of the body,
+    # and on the low rows of the sides and the rear end of the abdomen, where
+    # the soil sticks when it digs.
+    dirt = Mark("#6A4A2A")
+    clod = Mark("#9A7448")
+    for x, y, face, col, row in pixels(BODY, ALL):
+        n = noise100(x, y, 517)
+        if n < 22:
+            clod.put((x, y))
+        elif n < 50:
+            dirt.put((x, y))
+    for x, y, face, col, row in pixels(ABDOMEN, ("right", "left", "back")):
+        n = noise100(x, y, 523)
+        if row >= 5 and n < 55 or row == 4 and n < 20:
+            (clod if n < 18 else dirt).put((x, y))
+    return [dirt, clod]
+
+
+def lurking_fangs():
+    # A dark hood of hair: the top of the head is black hair, and the hood
+    # comes down over the sides and the back of the head, with a ragged
+    # lower edge, and over the top row of the face, but not the eyes.
+    hood = Mark("#1A1612")
+    hair = Mark("#2E2620")
+    for x, y, face, col, row in pixels(HEAD, ("top",)):
+        (hair if (col + 2 * row) % 5 == 0 else hood).put((x, y))
+    for x, y, face, col, row in pixels(HEAD, ("right", "left", "back")):
+        if row < 2 or row == 2 and col % 2 == 0 or row == 3 and col % 4 == 1:
+            if (x, y) not in EYES:
+                (hair if (col + row) % 4 == 0 else hood).put((x, y))
+    hood.put([(x, 12) for x in range(40, 48) if (x, 12) not in EYES])
+    return [hood, hair]
+
+
+def day_hunter():
+    # Yellow eyes: the eye pixels are yellow, and pale yellow on the two
+    # middle pairs of the front.
+    yellow = Mark("#F0D020")
+    pale = Mark("#F8F0A0")
+    for p in sorted(EYES):
+        (pale if p in ((43, 15), (44, 15)) else yellow).put(p)
+    return [yellow, pale]
+
+
+def shadow_skin():
+    # Black hairs on the body: the body is black, with strokes of dark gray
+    # hair. Black hair also reaches onto the front of the abdomen and the
+    # first rows of its top and sides, and onto the roots of the legs.
+    black = Mark("#121010")
+    hair = Mark("#2A2622")
+    for x, y, face, col, row in pixels(BODY, ALL):
+        (hair if (col + row) % 3 == 0 else black).put((x, y))
+    for x, y, face, col, row in pixels(ABDOMEN, ("front",)):
+        black.put((x, y))
+    for x, y, face, col, row in pixels(ABDOMEN, ("top",)):
+        if row == 11 or row == 10 and col % 2 == 0:
+            black.put((x, y))
+    for x, y, face, col, row in pixels(ABDOMEN, ("right", "left")):
+        near = col if face == "left" else 11 - col
+        if near == 0 or near == 1 and row % 2 == 0:
+            black.put((x, y))
+    for x, y, face, t, row in leg_pixels():
+        if t >= 14:
+            black.put((x, y))
+    return [black, hair]
+
+
+def ceiling_drop():
+    # Dark chevrons on the back: two black chevrons that point to the head,
+    # on the rear half of the top of the abdomen, from row 0 to row 5. A pale
+    # edge runs behind each chevron, so that it shows on the dark back.
+    dark = Mark("#141010")
+    edge = Mark("#B8AA96")
+    for base in (1, 3):
+        for k, cols in enumerate(((1, 8), (2, 7), (3, 6), (4, 5))):
+            row = base - 1 + k
+            dark.put([(12 + c, 12 + row) for c in cols])
+            if row >= 1:
+                edge.put([(12 + c, 11 + row) for c in cols])
+    return [edge, dark]
+
+
+def silent_steps():
+    # Soft, furred feet: the 3 pixels at the tip of each leg are pale gray
+    # fur, paler at the tip and on its end, and a ring of fur tufts sits
+    # above them, 3 pixels from the tip.
+    fur = Mark("#B0A496")
+    tip = Mark("#D8D0C4")
+    tuft = Mark("#8A7E70")
+    for x, y, face, t, row in leg_pixels():
+        if t == 0:
+            tip.put((x, y))
+        elif t <= 2:
+            fur.put((x, y))
+        elif t == 3 and (row + len(face)) % 2 == 0:
+            tuft.put((x, y))
+    return [fur, tip, tuft]
+
+
 
 GENES = {
     "web_shot": web_shot,
@@ -606,6 +722,12 @@ GENES = {
     "mother": mother,
     "pack_hunter": pack_hunter,
     "silk_signal": silk_signal,
+    "digger": digger,
+    "lurking_fangs": lurking_fangs,
+    "day_hunter": day_hunter,
+    "shadow_skin": shadow_skin,
+    "ceiling_drop": ceiling_drop,
+    "silent_steps": silent_steps,
 }
 
 MODELS = {

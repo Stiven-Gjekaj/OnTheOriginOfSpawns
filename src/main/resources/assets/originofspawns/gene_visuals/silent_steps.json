@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/spider.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/silent_steps_0.png",
+				"tint": "#B0A496"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/silent_steps_1.png",
+				"tint": "#D8D0C4"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/silent_steps_2.png",
+				"tint": "#8A7E70"
+			}
+		}
+	]
+}

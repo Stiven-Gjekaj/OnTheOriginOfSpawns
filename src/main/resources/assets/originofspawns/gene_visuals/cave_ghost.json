@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/spider.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/cave_ghost_0.png",
+				"tint": "#7A9490"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/cave_ghost_1.png",
+				"tint": "#9AB4B0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/cave_ghost_2.png",
+				"tint": "#C0D4D0"
+			}
+		}
+	]
+}

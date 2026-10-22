@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/spider.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/corrosive_0.png",
+				"tint": "#E8D040"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/corrosive_1.png",
+				"tint": "#B89A20"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/corrosive_2.png",
+				"tint": "#7A6A20"
+			}
+		}
+	]
+}

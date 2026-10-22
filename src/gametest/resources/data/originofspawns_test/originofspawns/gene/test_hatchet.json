@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:vindicator",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "throw_effect", "effect": "minecraft:slowness", "seconds": 3, "range": 10, "min_range": 4, "cooldown_seconds": 8 }],
+	"mutation_rate": 0
+}

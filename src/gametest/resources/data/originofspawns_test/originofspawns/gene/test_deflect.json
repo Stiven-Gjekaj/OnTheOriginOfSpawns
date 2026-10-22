@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:vindicator",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "parry", "cooldown_seconds": 8 }],
+	"mutation_rate": 0
+}

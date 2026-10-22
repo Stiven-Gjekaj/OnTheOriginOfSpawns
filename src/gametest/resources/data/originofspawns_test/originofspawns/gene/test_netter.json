@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:vindicator",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "web_on_hit", "chance": 1 }],
+	"mutation_rate": 0
+}

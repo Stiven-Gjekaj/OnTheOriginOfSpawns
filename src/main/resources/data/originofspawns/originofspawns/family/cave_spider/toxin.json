@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:cave_spider",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "bite_poison",
+					"duration_multiplier": 1.25,
+					"extra_levels": 0
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "bite_poison",
+					"duration_multiplier": 1.5,
+					"extra_levels": 0
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "bite_poison",
+					"duration_multiplier": 1.5,
+					"extra_levels": 1
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

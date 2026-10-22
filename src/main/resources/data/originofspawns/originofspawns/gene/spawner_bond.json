@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:cave_spider",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:cave_spider/broodkeeper",
+	"sub_family": "originofspawns:cave_spider/geode",
+	"gains": [
+		{
+			"type": "attribute_when",
+			"when": "near_spawner",
+			"attribute": "minecraft:armor",
+			"amount": 4,
+			"operation": "add_value"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:cave_spider",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:cave_spider/gloomer",
+	"sub_family": "originofspawns:cave_spider/scurrier",
+	"gains": [
+		{
+			"type": "attribute_when",
+			"when": "dark",
+			"attribute": "minecraft:follow_range",
+			"amount": 0.5,
+			"operation": "add_multiplied_base"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

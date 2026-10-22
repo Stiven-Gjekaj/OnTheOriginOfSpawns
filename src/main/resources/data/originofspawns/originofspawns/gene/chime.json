@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:cave_spider",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:cave_spider/geode",
+	"gains": [
+		{
+			"type": "effect_on_hurt",
+			"effect": "minecraft:nausea",
+			"seconds": 3,
+			"hits": "melee"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9
+		}
+	]
+}

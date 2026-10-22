@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:cave_spider",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:cave_spider/gloomer",
+	"gains": [
+		{
+			"type": "see_invisible",
+			"radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

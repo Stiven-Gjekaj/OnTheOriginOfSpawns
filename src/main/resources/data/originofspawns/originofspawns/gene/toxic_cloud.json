@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:cave_spider",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:cave_spider/toxin",
+	"sub_family": "originofspawns:cave_spider/broodkeeper",
+	"gains": [
+		{
+			"type": "death_cloud",
+			"effect": "minecraft:poison",
+			"seconds": 4,
+			"radius": 3,
+			"cloud_seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

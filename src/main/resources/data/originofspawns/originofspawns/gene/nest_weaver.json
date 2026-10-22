@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:cave_spider",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:cave_spider/broodkeeper",
+	"gains": [
+		{
+			"type": "web_on_hit",
+			"chance": 0.2
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 1.25
+		}
+	]
+}

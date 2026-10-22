@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:cave_spider",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:cave_spider/geode",
+	"gains": [
+		{
+			"type": "death_burst",
+			"damage": 3,
+			"radius": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

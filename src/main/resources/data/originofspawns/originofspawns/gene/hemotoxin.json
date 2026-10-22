@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:cave_spider",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:cave_spider/toxin",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:wither",
+			"seconds": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

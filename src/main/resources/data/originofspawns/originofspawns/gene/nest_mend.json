@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:cave_spider",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:cave_spider/broodkeeper",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 3,
+			"idle_seconds": 0,
+			"when": "near_spawner"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

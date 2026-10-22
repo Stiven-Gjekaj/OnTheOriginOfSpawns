@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:cave_spider",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:darkness",
+					"seconds": 2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "bright",
+					"multiplier": 1.25
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:darkness",
+					"seconds": 3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "bright",
+					"multiplier": 1.2
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:darkness",
+					"seconds": 4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "bright",
+					"multiplier": 1.1
+				}
+			]
+		}
+	]
+}

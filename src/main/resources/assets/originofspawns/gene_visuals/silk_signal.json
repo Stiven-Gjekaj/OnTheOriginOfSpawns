@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/spider.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/silk_signal_0.png",
+				"tint": "#A89880"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/silk_signal_1.png",
+				"tint": "#E8E0D0"
+			}
+		}
+	]
+}

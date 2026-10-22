@@ -1,0 +1,42 @@
+{
+	"texture": "originofspawns:textures/entity/mother_egg_sac.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "abdomen",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				2.5,
+				-0.5
+			],
+			"size": [
+				6,
+				5,
+				6
+			],
+			"inflate": 0.3
+		},
+		{
+			"bone": "abdomen",
+			"uv": [
+				0,
+				11
+			],
+			"from": [
+				-2,
+				3,
+				5
+			],
+			"size": [
+				4,
+				3,
+				3
+			]
+		}
+	]
+}

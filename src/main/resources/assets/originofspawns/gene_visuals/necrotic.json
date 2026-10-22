@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/spider.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/necrotic_0.png",
+				"tint": "#141010"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/necrotic_1.png",
+				"tint": "#5A3A5A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/necrotic_2.png",
+				"tint": "#9AB040"
+			}
+		}
+	]
+}

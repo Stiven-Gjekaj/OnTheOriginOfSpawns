@@ -43,6 +43,34 @@ Pixel plan for the Jumpers.
 - Bound has thin, long legs: a pale line along the top of each leg from the
   tip to the body, and a dark line along the bottom, so that the legs look
   thinner and longer.
+
+Pixel plan for the Fangs. Venom is green.
+- Venom Bite has green tips on the fangs: pale green fangs with bright green
+  tips, and green drops under them.
+- Necrotic has black, rotten fangs: black fangs, and dark rot round the
+  mouth, with sick green spots.
+- Paralyze has yellow venom glands: yellow sacs on the face and the sides of
+  the head, at the sides of the fangs.
+- Hunger Venom has a red hourglass mark on the back, in the front half of
+  the top of the abdomen, and on the bottom of the abdomen.
+- Venom Blood has green veins on the body: a vein that branches on each
+  face of the body.
+- Spit has a swollen jaw: a pale, swollen band on the bottom rows of the
+  face and the sides of the head, and green venom between the fangs.
+
+Pixel plan for the Swarms.
+- Clutch: three small spiderlings on the back, the gene model
+  clutch_spiderlings.
+- Nest Call has a red ring round the eyes: the pixels on the outer edge of
+  the group of eyes turn red.
+- Hive Mind has a pale ring pattern on the body: a pale ring on each face
+  of the body, with a pale dot in the middle.
+- Mother: a swollen egg sac under the rear of the abdomen, the gene model
+  mother_egg_sac, and pale, stretched skin on the low rows of the sides of
+  the abdomen.
+- Pack Hunter has banded legs: three pale bands round each leg.
+- Silk Signal has stiff hairs on the back: short pale hairs with white tips
+  on the top of the abdomen, and hair tips on the top edge of its sides.
 This script needs Pillow.
 """
 import json
@@ -339,6 +367,219 @@ def bound():
             dark.put((x, y))
     return [pale, dark]
 
+VENOM = ("#5CD040", "#2E8A1E", "#B8F0A0")
+
+
+def venom_bite():
+    # Green tips on the fangs: the upper half of each fang is pale green, the
+    # tip is bright green, and a green drop hangs under each fang on the
+    # bottom of the head.
+    pale = Mark(VENOM[2])
+    tip = Mark(VENOM[0])
+    pale.put([(41, 18), (46, 18)])
+    tip.put([(41, 19), (46, 19), (49, 4), (54, 4)])
+    return [pale, tip]
+
+
+def necrotic():
+    # Black, rotten fangs: the fangs are black, the mouth round them is dark
+    # with rot, and sick green spots show in the rot.
+    black = Mark("#141010")
+    rot = Mark("#5A3A5A")
+    spot = Mark("#9AB040")
+    black.put(sorted(FANGS))
+    rot.put([(42, 18), (43, 18), (44, 18), (45, 18), (42, 19), (43, 19), (44, 19), (45, 19), (40, 19), (47, 19),
+             (42, 17), (45, 17)])
+    spot.put([(43, 17), (44, 19), (40, 18)])
+    return [black, rot, spot]
+
+
+def paralyze():
+    # Yellow venom glands: a yellow sac at each side of the fangs, on the
+    # face and on the side of the head next to the face, with a pale shine
+    # and a dark rim.
+    gland = Mark("#E8C830")
+    shine = Mark("#F8F0A0")
+    rim = Mark("#8A6A18")
+    gland.put([(40, 18), (47, 18), (38, 18), (39, 18), (48, 18), (49, 18), (39, 17), (48, 17)])
+    shine.put([(40, 17), (47, 17), (38, 17), (49, 17)])
+    rim.put([(37, 17), (37, 18), (50, 17), (50, 18), (40, 16), (47, 16)])
+    return [gland, shine, rim]
+
+
+def hunger_venom():
+    # A red hourglass mark: two red triangles that meet at their points, in
+    # the front half of the top of the abdomen (rows 6 to 11), with a dark
+    # red edge. A smaller one is on the bottom of the abdomen.
+    red = Mark("#D81818")
+    edge = Mark("#8A0E0E")
+    shape = {6: (3, 6), 7: (3, 6), 8: (4, 5), 9: (4, 5), 10: (3, 6), 11: (3, 6)}
+    for row, (a, b) in shape.items():
+        for col in range(a, b + 1):
+            (edge if col in (a, b) and a == 3 else red).put((12 + col, 12 + row))
+    for row in (4, 5, 6, 7):
+        for col in ((4, 5) if row in (5, 6) else (3, 4, 5, 6)):
+            red.put((22 + col, 12 + row))
+    return [red, edge]
+
+
+def venom_blood():
+    # Green veins on the body: on each face of the body, a vein that comes in
+    # at one edge and branches in two, bright green with pale green where it
+    # branches.
+    vein = Mark(VENOM[0])
+    pale = Mark(VENOM[2])
+    path = ((0, 1), (1, 1), (2, 2), (3, 2), (4, 1), (5, 0), (3, 3), (3, 4), (4, 5), (2, 5))
+    for face in ("top", "right", "front", "left", "back"):
+        x0, y0, w, h = BODY[face]
+        for col, row in path:
+            (pale if (col, row) == (3, 2) else vein).put((x0 + col, y0 + row))
+    return [vein, pale]
+
+
+def spit():
+    # A swollen jaw: the bottom three rows of the face and of the sides of
+    # the head, next to the face, are a pale, swollen band, brighter on the
+    # top row. Green venom is between the fangs.
+    jaw = Mark("#7A6A58")
+    bright = Mark("#A09078")
+    venom = Mark(VENOM[0])
+    for x in range(40, 48):
+        if (x, 18) not in FANGS:
+            jaw.put([(x, 18), (x, 19)])
+        bright.put((x, 17))
+    jaw.put([(36, 18), (37, 18), (38, 18), (39, 18), (48, 18), (49, 18), (50, 18), (51, 18)])
+    jaw.put([(37, 19), (38, 19), (39, 19), (48, 19), (49, 19), (50, 19)])
+    bright.put([(37, 17), (38, 17), (49, 17), (50, 17)])
+    venom.put([(43, 19), (44, 19)])
+    return [jaw, bright, venom]
+
+
+def clutch():
+    # The spiderlings are the gene model clutch_spiderlings.
+    return []
+
+
+def clutch_model():
+    # Three small spiderlings that ride on the back: each has a body of 2x1x2
+    # with a head of 1x1x1 in front, two thin bars of legs across it, and a
+    # red eye. They sit on the top of the abdomen and look in different
+    # directions. On the abdomen bone, the top is at y -4.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def body(face, x, y):
+        return "#9A8468" if face == "top" else "#6A5A46"
+
+    def head(face, x, y):
+        return "#C81818" if face == "front" else "#5A4A3A"
+
+    # The body: 2x1x2 at uv (0, 0). The head: 1x1x1 at uv (8, 0). The legs:
+    # 4x1x1 at uv (0, 4).
+    paint_box(im, 0, 0, 2, 1, 2, body)
+    paint_box(im, 8, 0, 1, 1, 1, head)
+    paint_box(im, 0, 4, 4, 1, 1, lambda face, x, y: "#3A3028")
+    parts = []
+    for x, z, turn in ((-2.5, -2, 20), (2, 1, -30), (-1, 4, 160)):
+        pivot = [x, -4.5, z]
+        for uv, f, size, inflate in (([0, 0], [x - 1, -5, z - 1], [2, 1, 2], 0),
+                                     ([8, 0], [x - 0.5, -5, z - 2], [1, 1, 1], 0),
+                                     ([0, 4], [x - 2, -4.8, z - 0.9], [4, 1, 1], -0.3),
+                                     ([0, 4], [x - 2, -4.8, z - 0.1], [4, 1, 1], -0.3)):
+            parts.append({"bone": "abdomen", "uv": uv, "from": f, "size": size, "inflate": inflate,
+                          "pivot": pivot, "rotation": [0, turn, 0]})
+    save_model("clutch_spiderlings", im, parts)
+
+
+def nest_call():
+    # A red ring round the eyes: each pixel of the head next to an eye, which
+    # is not an eye or a fang, turns red. Only the outer edge of the group of
+    # eyes gets the ring: the top and the bottom rows, the edges of the face,
+    # and the sides of the head. The pixels between the eyes stay dark, so
+    # that the eyes stand out.
+    ring = Mark("#E83030")
+    for x, y, face, col, row in pixels(HEAD, ("right", "front", "left")):
+        if (x, y) in EYES or (x, y) in FANGS:
+            continue
+        outer = y <= 12 or y >= 17 or x <= 40 or x >= 47
+        if outer and any((x + dx, y + dy) in EYES for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+            ring.put((x, y))
+    return [ring]
+
+
+def hive_mind():
+    # A pale ring pattern on the body: on each face of the body, a pale ring
+    # of 4x4 pixels, with a pale dot in the middle.
+    ring = Mark("#D8C8A8")
+    for x, y, face, col, row in pixels(BODY, ("top", "right", "front", "left", "back")):
+        if 1 <= col <= 4 and 1 <= row <= 4 and (col in (1, 4) or row in (1, 4)):
+            if (col, row) not in ((1, 1), (4, 1), (1, 4), (4, 4)):
+                ring.put((x, y))
+        elif (col, row) in ((2, 2), (3, 3)):
+            ring.put((x, y))
+    return [ring]
+
+
+def mother():
+    # Pale, stretched skin: the two low rows of the sides of the abdomen are
+    # pale, with paler lines where the egg sac pulls the skin.
+    skin = Mark("#7A6A5A")
+    line = Mark("#9A8A76")
+    for x, y, face, col, row in pixels(ABDOMEN, ("right", "left", "back")):
+        if row == 7:
+            skin.put((x, y))
+        elif row == 6 and col % 3 == 1:
+            line.put((x, y))
+    return [skin, line]
+
+
+def mother_model():
+    # A swollen egg sac under the rear of the abdomen: a round sac of pale
+    # silk, full of eggs that show as pale yellow bumps, with a smaller sac
+    # behind it. It hangs from the bottom of the abdomen. On the abdomen
+    # bone, the bottom is at y 4, and the rear end is at z 6.
+    im = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+
+    def sac(face, x, y):
+        if (x * 3 + y * 2 + len(face)) % 5 == 0:
+            return "#D8C88A"
+        return "#C8C0A8" if face in ("bottom", "back", "left") else "#E8E2CE"
+
+    # The sac: 6x5x6 at uv (0, 0). The small sac: 4x3x3 at uv (0, 11).
+    paint_box(im, 0, 0, 6, 5, 6, sac)
+    paint_box(im, 0, 11, 4, 3, 3, sac)
+    parts = [
+        {"bone": "abdomen", "uv": [0, 0], "from": [-3, 2.5, -0.5], "size": [6, 5, 6], "inflate": 0.3},
+        {"bone": "abdomen", "uv": [0, 11], "from": [-2, 3, 5], "size": [4, 3, 3]},
+    ]
+    save_model("mother_egg_sac", im, parts)
+
+
+def pack_hunter():
+    # Banded legs: three pale bands round each leg, 2 and 3, 7 and 8, and 12
+    # and 13 pixels from the tip. They are between the joints.
+    band = Mark("#C8A878")
+    for x, y, face, t, row in leg_pixels():
+        if t in (2, 3, 7, 8, 12, 13):
+            band.put((x, y))
+    return [band]
+
+
+def silk_signal():
+    # Stiff hairs on the back: short hairs of 2 pixels on the top of the
+    # abdomen, pale with a white tip, in rows across the back, and hair tips
+    # on the top row of the sides of the abdomen.
+    hair = Mark("#A89880")
+    tip = Mark("#E8E0D0")
+    for x, y, face, col, row in pixels(ABDOMEN, ("top",)):
+        if row % 2 == 0 and row < 11 and (col + 3 * (row // 2)) % 4 == 0:
+            tip.put((x, y))
+            hair.put((x, y + 1))
+    for x, y, face, col, row in pixels(ABDOMEN, ("right", "left", "back")):
+        if row == 0 and col % 3 == 1:
+            tip.put((x, y))
+    return [hair, tip]
+
+
 
 GENES = {
     "web_shot": web_shot,
@@ -353,6 +594,18 @@ GENES = {
     "dart": dart,
     "quickbite": quickbite,
     "bound": bound,
+    "venom_bite": venom_bite,
+    "necrotic": necrotic,
+    "paralyze": paralyze,
+    "hunger_venom": hunger_venom,
+    "venom_blood": venom_blood,
+    "spit": spit,
+    "clutch": clutch,
+    "nest_call": nest_call,
+    "hive_mind": hive_mind,
+    "mother": mother,
+    "pack_hunter": pack_hunter,
+    "silk_signal": silk_signal,
 }
 
 MODELS = {
@@ -360,9 +613,11 @@ MODELS = {
     "web_walker": "originofspawns:web_walker_dragline",
     "pounce": "originofspawns:pounce_legs",
     "quickbite": "originofspawns:quickbite_fangs",
+    "clutch": "originofspawns:clutch_spiderlings",
+    "mother": "originofspawns:mother_egg_sac",
 }
 
-MODEL_MAKERS = [web_shot_model, web_walker_model, pounce_model, quickbite_model]
+MODEL_MAKERS = [web_shot_model, web_walker_model, pounce_model, quickbite_model, clutch_model, mother_model]
 
 
 def main():

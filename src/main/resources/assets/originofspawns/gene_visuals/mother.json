@@ -1,0 +1,20 @@
+{
+	"region_map": "originofspawns:textures/region/spider.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mother_0.png",
+				"tint": "#7A6A5A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mother_1.png",
+				"tint": "#9A8A76"
+			}
+		}
+	],
+	"model": "originofspawns:mother_egg_sac"
+}

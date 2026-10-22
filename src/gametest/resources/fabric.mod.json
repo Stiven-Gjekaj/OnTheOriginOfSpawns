@@ -35,6 +35,7 @@
 			"io.github.stivengjekaj.originofspawns.test.CreeperEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.SpiderEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.CaveSpiderEffectsTest",
+			"io.github.stivengjekaj.originofspawns.test.PillagerEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.DelayedTasksTest"
 		],
 		"fabric-client-gametest": [

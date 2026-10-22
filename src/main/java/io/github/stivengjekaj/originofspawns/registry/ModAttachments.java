@@ -129,6 +129,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> WEB_SHOT_TIME = AttachmentRegistry.create(OriginOfSpawns.id("web_shot_time"));
 
 	/**
+	 * True on a raider that dies as a part of a raid. The raid lets the raider go before the death event.
+	 */
+	public static final AttachmentType<Boolean> RAID_DEATH = AttachmentRegistry.create(OriginOfSpawns.id("raid_death"));
+
+	/**
 	 * The game time of the last leap of a mob with genes. The first melee hit after it removes it.
 	 */
 	public static final AttachmentType<Long> LEAP_TIME = AttachmentRegistry.create(OriginOfSpawns.id("leap_time"));

@@ -19,6 +19,7 @@
 		"PlayerMixin",
 		"PowderSnowBlockMixin",
 		"ProjectileMixin",
+		"RaiderMixin",
 		"RangedAttackGoalMixin",
 		"RangedBowAttackGoalAccessor",
 		"RangedBowAttackGoalMixin",

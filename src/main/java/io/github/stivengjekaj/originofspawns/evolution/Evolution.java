@@ -339,6 +339,9 @@ public final class Evolution {
 		if (GeneCombat.hasEnchantment(source, net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS)) {
 			facts.add(DeathCondition.BANE);
 		}
+		if (mob.getAttachedOrElse(ModAttachments.RAID_DEATH, false)) {
+			facts.add(DeathCondition.RAID);
+		}
 		if (mob instanceof net.minecraft.world.entity.monster.skeleton.Bogged bogged && bogged.isSheared()) {
 			facts.add(DeathCondition.SHEARS);
 		}

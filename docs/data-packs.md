@@ -102,11 +102,12 @@ Times are in seconds, and distances are in blocks.
 
 | Type | Fields | Result |
 |---|---|---|
-| `attribute` | `attribute`, `amount`, `operation` | Changes an attribute of the mob. `operation` is `add_value`, `add_multiplied_base`, or `add_multiplied_total` |
+| `attribute` | `attribute`, `amount`, `operation` | Changes an attribute of the mob. `operation` is `add_value`, `add_multiplied_base`, or `add_multiplied_total`. The `scale` attribute changes the size of the mob from the next tick |
 | `damage_taken` | `damage_types`, `multiplier` | Multiplies the damage from these damage types. `0` makes the mob immune |
 | `damage_taken_when` | `when`, `multiplier`, `radius` (`8`), `damage_types` (all) | Multiplies the damage that the mob takes while the state is true. The states `alone` and `grouped` use the radius. With `damage_types`, only the damage of this tag counts |
 | `damage_dealt_when` | `when`, `multiplier`, `players_only` (`false`), `hits` (`any`) | Multiplies the damage that the mob deals while the state is true. With `players_only`, only the damage to players. `hits` is `melee`, `projectile`, or `any` |
 | `damage_from` | `attackers`, `multiplier` | Multiplies the damage from these entity types, for example `minecraft:iron_golem` |
+| `damage_from_item` | `items`, `multiplier` | Multiplies the melee damage from an attacker that holds an item of this tag, for example `#minecraft:pickaxes` |
 | `sunburn` | `multiplier` | Multiplies the fire damage while the sun burns the mob. Other fire does normal damage |
 | `critical_immunity` | | A critical hit of a player does no extra damage to the mob |
 | `speed_when` | `when`, `multiplier` | Multiplies the speed of the mob while the state is true |
@@ -173,6 +174,8 @@ The states for `when` are:
 | `target_weakened` | The target of the mob has the Weakness effect |
 | `charged` | The mob is a charged creeper |
 | `unseen` | The mob is behind the player, or the player did not look at it in the last 3 seconds. In `damage_dealt_when`, it asks this of each player that the mob damages. In other effects, it asks it of the target |
+| `near_spawner` | A monster spawner is in 16 blocks of the mob |
+| `far_from_spawner` | No monster spawner is in 16 blocks of the mob |
 
 #### Hits
 
@@ -294,6 +297,7 @@ also after a restart of the server.
 | `leap_strike` | `multiplier`, `seconds` (`2`) | The first hit in this time after a leap does more damage. A leap is the vanilla leap of a spider or a wolf, or a gene leap |
 | `first_strike` | `multiplier`, `reset_seconds` (`10`) | The first hit of the mob on a player does more damage. It counts again after this time with no hit on that player |
 | `hunt_in_light` | | A spider attacks players in bright light too |
+| `bite_poison` | `duration_multiplier` (`1`), `extra_levels` (`0`) | Changes the Poison of the vanilla bite of a cave spider: a longer time, and more levels. On Easy the bite gives no Poison, so this does nothing |
 
 #### Creepers
 
@@ -370,7 +374,7 @@ Each cube moves with one bone: `head`, `body`, `right_arm`, `left_arm`,
 `body` (the front part), `abdomen`, and the eight legs: `right_hind_leg`,
 `left_hind_leg`, `right_middle_hind_leg`, `left_middle_hind_leg`,
 `right_middle_front_leg`, `left_middle_front_leg`, `right_front_leg`, and
-`left_front_leg`.
+`left_front_leg`. A cave spider has the same bones as the spider.
 The coordinates are in pixels, in the coordinates of the bone, as in the
 vanilla models.
 

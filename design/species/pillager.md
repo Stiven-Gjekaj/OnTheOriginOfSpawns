@@ -175,7 +175,11 @@ The visual column gives the region and the mark.
   no random enchantment on its crossbow from its spawn.
 - In a raid, the vanilla raid enchantments stay: Quick Charge, Multishot, and
   Piercing.
-- A captain keeps its ominous banner, and Bad Omen works as in vanilla.
+- Only a pillager with at least one gene of the Captain family can be the
+  captain of a patrol or the leader of a raid wave. Only that pillager wears
+  the ominous banner, and only its death gives Bad Omen.
+- When a patrol or a raid wave has a pillager with a Captain gene, that
+  pillager becomes the captain. When it has none, it has no captain.
 
 ## Conversion
 

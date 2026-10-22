@@ -471,10 +471,8 @@ public final class GeneCombat {
 						&& (target instanceof AbstractBoat || target.getVehicle() instanceof AbstractBoat) ->
 						hitBoat(mob, level, target instanceof AbstractBoat boat ? boat : (AbstractBoat) target.getVehicle(),
 								breaker);
-				case GeneEffect.DrainFood drain when target instanceof Player player -> {
-					player.getFoodData().setFoodLevel(Math.max(0, player.getFoodData().getFoodLevel() - drain.amount()));
-					mob.heal(drain.heal());
-				}
+				case GeneEffect.DrainFood drain when drain.hits().includes(false) && target instanceof Player player
+						&& mob.getRandom().nextFloat() < drain.chance() -> drainFood(mob, player, drain);
 				case GeneEffect.LeechXp leech when target instanceof Player player -> {
 					int taken = Math.min(leech.amount(), player.totalExperience);
 					if (taken > 0) {
@@ -551,6 +549,14 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Takes food points from the player, and heals the mob.
+	 */
+	private static void drainFood(Mob mob, Player player, GeneEffect.DrainFood drain) {
+		player.getFoodData().setFoodLevel(Math.max(0, player.getFoodData().getFoodLevel() - drain.amount()));
+		mob.heal(drain.heal());
+	}
+
+	/**
 	 * Runs the effects that act when a projectile of the mob hits a target, for example a thrown trident.
 	 */
 	public static void onProjectileHit(Mob mob, LivingEntity target) {
@@ -562,6 +568,8 @@ public final class GeneCombat {
 								onHit.amplifier()), mob);
 				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(true)
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(target, freeze.seconds());
+				case GeneEffect.DrainFood drain when drain.hits().includes(true) && target instanceof Player player
+						&& mob.getRandom().nextFloat() < drain.chance() -> drainFood(mob, player, drain);
 				case GeneEffect.WebOnHit web when web.hits().includes(true) && mob.level() instanceof ServerLevel level
 						&& mob.getRandom().nextFloat() < web.chance() -> putWeb(level, target, web.seconds());
 				case GeneEffect.HealOnHit heal when heal.hits().includes(true) && test(mob, heal.when()) ->

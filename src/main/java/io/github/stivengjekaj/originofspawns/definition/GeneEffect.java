@@ -1182,12 +1182,14 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * Each hit on a player takes food points, and heals the mob.
+	 * Each hit on a player of the kind in {@code hits} has the chance to take food points, and to heal the mob.
 	 */
-	record DrainFood(int amount, float heal) implements GeneEffect {
+	record DrainFood(int amount, float heal, float chance, Hits hits) implements GeneEffect {
 		public static final MapCodec<DrainFood> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.intRange(1, 20).fieldOf("amount").forGetter(DrainFood::amount),
-				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("heal", 0.0F).forGetter(DrainFood::heal)
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("heal", 0.0F).forGetter(DrainFood::heal),
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("chance", 1.0F).forGetter(DrainFood::chance),
+				Hits.CODEC.optionalFieldOf("hits", Hits.MELEE).forGetter(DrainFood::hits)
 		).apply(instance, DrainFood::new));
 
 		@Override

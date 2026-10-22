@@ -28,6 +28,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.RangedCrossbowAttackGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.monster.illager.Pillager;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
@@ -38,6 +39,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.component.ChargedProjectiles;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -258,6 +260,21 @@ public class PillagerEffectsTest {
 		}
 		patrol.forEach(Pillager::discard);
 		return patrol.size();
+	}
+
+	@GameTest
+	public void aLooterBoltTakesFoodWithItsChance(GameTestHelper helper) {
+		Pillager always = pillagerWith(helper, new BlockPos(1, 1, 1), "test_looter");
+		Pillager never = pillagerWith(helper, new BlockPos(1, 1, 3), "test_looter_never");
+		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+		player.getFoodData().setFoodLevel(20);
+		GeneCombat.onHit(always, player);
+		helper.assertValueEqual(player.getFoodData().getFoodLevel(), 20, "a melee hit takes no food from a bolt gene");
+		GeneCombat.onProjectileHit(always, player);
+		helper.assertValueEqual(player.getFoodData().getFoodLevel(), 18, "a bolt takes 2 food points");
+		GeneCombat.onProjectileHit(never, player);
+		helper.assertValueEqual(player.getFoodData().getFoodLevel(), 18, "a chance of 0 takes no food");
+		helper.succeed();
 	}
 
 	static List<FireworkRocketEntity> rocketsOf(GameTestHelper helper, Pillager pillager) {

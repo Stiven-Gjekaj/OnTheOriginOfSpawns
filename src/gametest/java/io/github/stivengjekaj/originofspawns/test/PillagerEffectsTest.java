@@ -74,6 +74,18 @@ public class PillagerEffectsTest {
 		});
 	}
 
+	@GameTest(maxTicks = 120)
+	public void theRangeGenesChangeTheRangeOfTheCrossbow(GameTestHelper helper) {
+		// The vanilla range is 8 blocks, so a target 6 blocks away is in it. With half the range, it is not.
+		long plain = firstShotTick(helper, new BlockPos(1, 1, 1), 6);
+		long near = firstShotTick(helper, new BlockPos(1, 1, 6), 6, "test_short_bolt");
+		helper.runAfterDelay(100, () -> {
+			helper.assertTrue(SHOTS.containsKey(plain), "the plain pillager shoots");
+			helper.assertFalse(SHOTS.containsKey(near), "the pillager with half the range does not shoot so far");
+			helper.succeed();
+		});
+	}
+
 	/**
 	 * The tick of the first shot of each pillager that {@link #firstShotTick} watches, by the id of the watch.
 	 */
@@ -81,14 +93,18 @@ public class PillagerEffectsTest {
 	static final java.util.concurrent.atomic.AtomicLong WATCHES = new java.util.concurrent.atomic.AtomicLong();
 
 	/**
-	 * Makes a pillager with the genes and a pig 5 blocks from it. Each tick runs its crossbow goal, and the tick of its
+	 * Makes a pillager with the genes and a pig 5 blocks from it, or at the distance. Each tick runs its crossbow goal, and the tick of its
 	 * first arrow goes in {@link #SHOTS}.
 	 *
 	 * @return the id of the watch
 	 */
 	static long firstShotTick(GameTestHelper helper, BlockPos pos, String... genes) {
+		return firstShotTick(helper, pos, 5, genes);
+	}
+
+	static long firstShotTick(GameTestHelper helper, BlockPos pos, int distance, String... genes) {
 		Pillager pillager = pillagerWith(helper, pos, genes);
-		Pig pig = CreeperEffectsTest.pigAt(helper, pos.east(5));
+		Pig pig = CreeperEffectsTest.pigAt(helper, pos.east(distance));
 		pillager.setTarget(pig);
 		Goal goal = crossbowGoal(pillager);
 		long watch = WATCHES.incrementAndGet();

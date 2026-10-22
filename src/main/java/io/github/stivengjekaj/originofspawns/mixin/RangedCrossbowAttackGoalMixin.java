@@ -5,6 +5,8 @@ import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import net.minecraft.world.entity.ai.goal.RangedCrossbowAttackGoal;
 import net.minecraft.world.entity.monster.Monster;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,6 +23,13 @@ public abstract class RangedCrossbowAttackGoalMixin {
 
 	@Shadow
 	private int attackDelay;
+
+	@ModifyExpressionValue(method = "tick", at = @At(value = "FIELD",
+			target = "Lnet/minecraft/world/entity/ai/goal/RangedCrossbowAttackGoal;attackRadiusSqr:F", opcode = Opcodes.GETFIELD))
+	private float originofspawns$shotRange(float radiusSquared) {
+		float multiplier = GeneBehaviors.throwRangeMultiplier(mob, mob.getTarget());
+		return radiusSquared * multiplier * multiplier;
+	}
 
 	// The first write of the attack delay in the tick comes after the load. The second write counts the delay down.
 	@Inject(method = "tick", at = @At(value = "FIELD", opcode = Opcodes.PUTFIELD, ordinal = 0, shift = At.Shift.AFTER,

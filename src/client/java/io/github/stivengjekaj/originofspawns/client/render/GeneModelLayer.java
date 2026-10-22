@@ -65,7 +65,8 @@ public class GeneModelLayer<S extends LivingEntityRenderState, M extends EntityM
 	private void submit(PoseStack poseStack, SubmitNodeCollector collector, GeneModel.Bone bone, ModelPart part,
 			Identifier texture, int light, int overlay, boolean baby) {
 		ModelPart bonePart = bone(bone);
-		if (bonePart == null) {
+		// A bone that the pose hides, such as the arm of an illager with crossed arms, hides its gene models too.
+		if (bonePart == null || !bonePart.visible) {
 			return;
 		}
 		poseStack.pushPose();

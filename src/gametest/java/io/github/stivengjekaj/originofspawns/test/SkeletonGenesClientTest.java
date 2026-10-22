@@ -34,6 +34,7 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.illager.Vindicator;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -90,6 +91,7 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 					Identifier.withDefaultNamespace("textures/entity/illager/pillager.png"), "illager");
 			checkMarkAndModel(context, singleplayer, EntityTypes.VINDICATOR, "test_vindicator_mark",
 					Identifier.withDefaultNamespace("textures/entity/illager/vindicator.png"), "illager");
+			checkArmModelOnlyWhileTheArmsAreApart(context, singleplayer);
 		}
 	}
 
@@ -134,6 +136,61 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 		if (failure != null) {
 			throw new AssertionError(failure);
 		}
+	}
+
+	/**
+	 * Spawns two vindicators with a gene model on the right arm. One attacks, so its arms are apart. The other has its
+	 * arms crossed, and the crossed arms are a different part. Only the vindicator that attacks shows the model.
+	 */
+	private static void checkArmModelOnlyWhileTheArmsAreApart(ClientGameTestContext context,
+			TestSingleplayerContext singleplayer) {
+		Identifier gene = Identifier.fromNamespaceAndPath("originofspawns_test", "test_vindicator_arm");
+		singleplayer.getServer().runOnServer(server -> {
+			ServerPlayer player = server.getPlayerList().getPlayers().getFirst();
+			spawn(player, EntityTypes.VINDICATOR, player.position().add(1.5, 0.0, 2.0), List.of(gene));
+			spawn(player, EntityTypes.VINDICATOR, player.position().add(-1.5, 0.0, 2.0), List.of(gene));
+			player.level().getEntitiesOfClass(Vindicator.class, player.getBoundingBox().inflate(8.0),
+					vindicator -> vindicator.getX() > player.getX() && vindicator.getAttached(ModAttachments.GENES) != null
+							&& vindicator.getAttached(ModAttachments.GENES).genes().contains(gene))
+					.forEach(vindicator -> vindicator.setAggressive(true));
+		});
+		context.waitTicks(20);
+		String failure = context.computeOnClient(client -> {
+			List<Vindicator> vindicators = client.level.getEntitiesOfClass(Vindicator.class,
+					client.player.getBoundingBox().inflate(8.0), vindicator -> {
+						CarriedGenes genes = vindicator.getAttached(ModAttachments.GENES);
+						return genes != null && genes.genes().contains(gene);
+					});
+			if (vindicators.size() != 2) {
+				return "The client has " + vindicators.size() + " vindicators with the arm gene, not 2";
+			}
+			EntityRenderDispatcher dispatcher = client.getEntityRenderDispatcher();
+			for (Vindicator vindicator : vindicators) {
+				EntityRenderState state = dispatcher.extractEntity(vindicator, 1.0F);
+				var renderer = (LivingEntityRenderer<?, ?, ?>) dispatcher.getRenderer(vindicator);
+				poseModel(renderer, state);
+				int drawn = drawnModelParts(renderer, state);
+				if (vindicator.isAggressive() && drawn == 0) {
+					return "The vindicator that attacks shows no arm model";
+				}
+				if (!vindicator.isAggressive() && drawn > 0) {
+					return "The vindicator with crossed arms shows the arm model";
+				}
+			}
+			return null;
+		});
+		if (failure != null) {
+			throw new AssertionError(failure);
+		}
+	}
+
+	/**
+	 * Poses the model of the renderer for the state, as the renderer does before it draws its layers.
+	 */
+	@SuppressWarnings("unchecked")
+	private static <S extends LivingEntityRenderState> void poseModel(LivingEntityRenderer<?, ?, ?> renderer,
+			EntityRenderState state) {
+		((net.minecraft.client.model.EntityModel<S>) renderer.getModel()).setupAnim((S) state);
 	}
 
 	@SuppressWarnings("unchecked")

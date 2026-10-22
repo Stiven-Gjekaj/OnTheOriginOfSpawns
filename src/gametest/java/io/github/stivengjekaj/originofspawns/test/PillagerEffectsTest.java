@@ -500,6 +500,35 @@ public class PillagerEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void onlyACaptainPicksUpTheOminousBanner(GameTestHelper helper) {
+		// In a raid, a raider that picks up the ominous banner leads its wave, if the wave has no leader.
+		Raid plainRaid = new Raid(helper.absolutePos(new BlockPos(1, 1, 1)), Difficulty.NORMAL);
+		Pillager plain = raidMember(helper, plainRaid, EntityTypes.PILLAGER.create(helper.getLevel(), EntitySpawnReason.EVENT),
+				new BlockPos(1, 1, 1), false);
+		Raid raid = new Raid(helper.absolutePos(new BlockPos(1, 1, 4)), Difficulty.NORMAL);
+		Pillager captain = raidMember(helper, raid, EntityTypes.PILLAGER.create(helper.getLevel(), EntitySpawnReason.EVENT),
+				new BlockPos(1, 1, 4), false, "test_captain");
+		// The captain lost its banner, so its wave has no leader now.
+		raid.removeLeader(1);
+		captain.setPatrolLeader(false);
+		captain.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
+		helper.assertTrue(plainRaid.getLeader(1) == null && raid.getLeader(1) == null, "no wave has a leader");
+		((MobAccessor) plain).originofspawns$pickUpItem(helper.getLevel(), bannerAt(helper, plain));
+		((MobAccessor) captain).originofspawns$pickUpItem(helper.getLevel(), bannerAt(helper, captain));
+		helper.assertTrue(plainRaid.getLeader(1) == null && plain.getItemBySlot(EquipmentSlot.HEAD).isEmpty(),
+				"a pillager with no Captain gene leaves the banner");
+		helper.assertTrue(raid.getLeader(1) == captain && captain.isCaptain(), "the pillager with the Captain gene leads");
+		helper.succeed();
+	}
+
+	static ItemEntity bannerAt(GameTestHelper helper, Pillager pillager) {
+		ItemStack banner = Raid.getOminousBannerInstance(helper.getLevel().registryAccess().lookupOrThrow(Registries.BANNER_PATTERN));
+		ItemEntity item = new ItemEntity(helper.getLevel(), pillager.getX(), pillager.getY(), pillager.getZ(), banner);
+		helper.getLevel().addFreshEntity(item);
+		return item;
+	}
+
 	/**
 	 * Spawns a patrol member as the patrol spawner does: the first member is the captain, and the genes come when the
 	 * member joins the world.

@@ -88,6 +88,8 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 					Identifier.withDefaultNamespace("textures/entity/spider/cave_spider.png"), "spider");
 			checkMarkAndModel(context, singleplayer, EntityTypes.PILLAGER, "test_pillager_mark",
 					Identifier.withDefaultNamespace("textures/entity/illager/pillager.png"), "illager");
+			checkMarkAndModel(context, singleplayer, EntityTypes.VINDICATOR, "test_vindicator_mark",
+					Identifier.withDefaultNamespace("textures/entity/illager/vindicator.png"), "illager");
 		}
 	}
 

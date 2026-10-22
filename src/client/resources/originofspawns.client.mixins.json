@@ -16,6 +16,7 @@
 		"SkeletonClothingLayerMixin",
 		"SkeletonTextureMixin",
 		"SpiderRendererMixin",
+		"VindicatorRendererMixin",
 		"ZombieVariantTextureMixin"
 	],
 	"injectors": {

@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.entity.CreeperRenderer;
 import net.minecraft.client.renderer.entity.PillagerRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.SpiderRenderer;
+import net.minecraft.client.renderer.entity.VindicatorRenderer;
 import net.minecraft.client.renderer.entity.state.CreeperRenderState;
 import net.minecraft.client.renderer.entity.state.IllagerRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
@@ -58,6 +59,8 @@ public class OriginOfSpawnsClient implements ClientModInitializer {
 				helper.register(new GeneModelLayer<CreeperRenderState, CreeperModel>(creeper));
 			} else if (renderer instanceof PillagerRenderer pillager) {
 				helper.register(new GeneModelLayer<IllagerRenderState, IllagerModel<IllagerRenderState>>(pillager));
+			} else if (renderer instanceof VindicatorRenderer vindicator) {
+				helper.register(new GeneModelLayer<IllagerRenderState, IllagerModel<IllagerRenderState>>(vindicator));
 			} else if (renderer instanceof SpiderRenderer<?>) {
 				helper.register(new GeneModelLayer<>(
 						(RenderLayerParent<LivingEntityRenderState, SpiderModel>) renderer));

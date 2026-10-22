@@ -97,7 +97,11 @@ public enum DeathCondition implements StringRepresentable {
 	/**
 	 * The creeper died while its fuse burned.
 	 */
-	FUSE;
+	FUSE,
+	/**
+	 * The killer hit the mob with a weapon with the Bane of Arthropods enchantment.
+	 */
+	BANE;
 
 	public static final Codec<DeathCondition> CODEC = StringRepresentable.fromEnum(DeathCondition::values);
 

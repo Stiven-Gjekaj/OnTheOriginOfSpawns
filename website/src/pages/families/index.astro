@@ -34,7 +34,9 @@ const minorsOf = (sp) => site.minors.filter((m) => m.species === sp);
         <h2>The {sp.name.toLowerCase()}</h2>
         {sp.intro && <p class="lead">{sp.intro}</p>}
         {sp.equipment[0] && <p class="small">{sp.equipment[0]}</p>}
-        {sp.equipment.slice(1).filter((x) => /^Only/.test(x)).map((x) => <p class="small">{x}</p>)}
+        {sp.equipment.length > 1 && (
+          <ul class="equip-rules small">{sp.equipment.slice(1).map((x) => <li>{x}</li>)}</ul>
+        )}
         <p class="muted small">The picture shows a {sp.name.toLowerCase()} with no genes. Each family picture shows a {sp.name.toLowerCase()} with all 6 genes of the family.</p>
       </div>
     </div>
@@ -165,6 +167,8 @@ const minorsOf = (sp) => site.minors.filter((m) => m.species === sp);
   .species-intro:has(:global(.wide)) { grid-template-columns: 300px minmax(0, 1fr); }
   .species-intro .lead { margin-top: var(--s-2); }
   .species-intro .small { margin-top: var(--s-2); }
+  .equip-rules { margin: var(--s-2) 0 0; padding-left: 1.2em; }
+  .equip-rules li + li { margin-top: 4px; }
   @media (max-width: 560px) { .species-intro, .species-intro:has(:global(.wide)) { grid-template-columns: 1fr; } .species-intro :global(.plain-shot) { max-width: 200px; } .species-intro :global(.plain-shot.wide) { max-width: 300px; } }
   .family { border-top: 3px solid var(--fam); display: grid; gap: var(--s-4); align-content: start; }
   .family-head { display: flex; gap: var(--s-3); align-items: flex-start; }

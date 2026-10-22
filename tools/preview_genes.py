@@ -328,7 +328,15 @@ VINDICATOR_FAMILIES = {
     "guardsmen": ["deflect", "bodyguard", "watchman", "stand_ground", "bracer", "alarm_bell"],
 }
 
-VINDICATOR_EXTRA = {}
+VINDICATOR_EXTRA = {
+    "butchers": [("All 6 + Berserkers", ["bloodlust", "thick_blood"], True, {})],
+    "berserkers": [("All 6 + Sappers", ["torchbearer", "battering"], True, {})],
+    "sappers": [("All 6 at night", [], True, {"light": 0.18}),
+                ("All 6 + Ransackers", ["village_bane", "looting"], True, {})],
+    "ransackers": [("All 6 + Guardsmen", ["watchman", "bodyguard"], True, {})],
+    "guardsmen": [("All 6 at night", [], True, {"light": 0.18}),
+                  ("All 6 + Butchers", ["gash", "decapitator"], True, {})],
+}
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -997,9 +1005,10 @@ def set_mob(species):
     MOB["hidden"] = ("right_arm", "left_arm") if species == "vindicator" else ()
     # The spider is wide and low. The sheets look down on it, so that its
     # back shows.
-    # The banner of the pillager rises 2 pixels above the head.
-    VIEW_X, VIEW_Y, VIEW_W, VIEW_H = ((20, -2, 40, 26) if spider else (11, 13, 22, 39) if species == "pillager"
-                                      else (11, 11, 22, 37))
+    # The banner of the pillager and the hood of the vindicator rise 2 pixels
+    # above the head.
+    VIEW_X, VIEW_Y, VIEW_W, VIEW_H = ((20, -2, 40, 26) if spider else (11, 13, 22, 39)
+                                      if species in ("pillager", "vindicator") else (11, 11, 22, 37))
     MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if spider else [(0, 0), (180, 0), (-35, 15)]
     MOB["closeup_view"] = ((40, 34), (0, 13)) if spider else ((26, 40), (0, 5))
     MOB["eyes"] = find_zombie_texture(SPIDER_EYES_PATH) if spider else None

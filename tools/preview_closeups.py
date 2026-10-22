@@ -452,8 +452,42 @@ PILLAGER_CLOSEUPS = {
 # "vindicator_attacking" show it with its arms apart, as when it attacks, so
 # that the gene models on the arms show.
 VINDICATOR = pg.VINDICATOR_FAMILIES
-VINDICATOR_CLOSEUPS = {}
-VINDICATOR_ATTACK_CLOSEUPS = {}
+VINDICATOR_NIGHT_VIEWS = [FRONT, BACK, SIDE, THREE_QUARTER, BEHIND, NIGHT_BEHIND]
+VINDICATOR_CLOSEUPS = {
+    "vindicator_butchers": ("Butcher marks and models",
+                            [("Gash + Decapitator", ["gash", "decapitator"], False),
+                             ("Hatchet + Sunder", ["hatchet", "sunder"], False),
+                             ("Heavy Swing + Chop", ["heavy_swing", "chop"], False),
+                             ("All 6", VINDICATOR["butchers"], False)], ALL_SIDES),
+    "vindicator_berserkers": ("Berserker marks",
+                              [("Bloodlust + Death Wish", ["bloodlust", "death_wish"], False),
+                               ("Rage + Fury", ["rage", "fury"], False),
+                               ("Howl + Thick Blood", ["howl", "thick_blood"], False),
+                               ("All 6", VINDICATOR["berserkers"], False)], ALL_SIDES),
+    "vindicator_sappers": ("Sapper marks and models",
+                           [("Torchbearer + Climber", ["torchbearer", "climber"], False),
+                            ("Netter + Battering", ["netter", "battering"], False),
+                            ("Door Splitter + Shatterer", ["door_splitter", "shatterer"], False),
+                            ("All 6", VINDICATOR["sappers"], False)], VINDICATOR_NIGHT_VIEWS),
+    "vindicator_ransackers": ("Ransacker marks and models",
+                              [("Village Bane + Ruthless", ["village_bane", "ruthless"], False),
+                               ("Looting + Hunting Call", ["looting", "hunting_call"], False),
+                               ("Golem Smasher + Pillage Run", ["golem_smasher", "pillage_run"], False),
+                               ("All 6", VINDICATOR["ransackers"], False)], ALL_SIDES),
+    "vindicator_guardsmen": ("Guardsman marks and models",
+                             [("Watchman + Alarm Bell", ["watchman", "alarm_bell"], False),
+                              ("Bodyguard + Stand Ground", ["bodyguard", "stand_ground"], False),
+                              ("Deflect + Bracer", ["deflect", "bracer"], False),
+                              ("All 6", VINDICATOR["guardsmen"], False)], VINDICATOR_NIGHT_VIEWS),
+}
+VINDICATOR_ATTACK_CLOSEUPS = {
+    "vindicator_arms_apart": ("Arm and hand marks with the arms apart, when it attacks",
+                              [("Deflect + Bracer", ["deflect", "bracer"], False),
+                               ("Heavy Swing + Sunder", ["heavy_swing", "sunder"], False),
+                               ("Chop + Fury", ["chop", "fury"], False),
+                               ("Door Splitter + Shatterer", ["door_splitter", "shatterer"], False),
+                               ("Climber + Golem Smasher", ["climber", "golem_smasher"], False)], ALL_SIDES),
+}
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),

@@ -49,12 +49,13 @@ A pressure needs `damage_types`, `conditions`, or both.
 | `smite` | The killer hit the mob with a weapon with the Smite enchantment |
 | `day` | The mob died while it was bright outside |
 | `fuse` | The mob is a creeper, and it died while its fuse burned |
+| `bane` | The killer hit the mob with a weapon with the Bane of Arthropods enchantment |
 
 The mod has these pressures: `fire`, `projectile`, `melee`, `explosion`,
 `fall`, `unreached`, `sunlight`, `spotted`, `alone`, `crowd`, `critical`,
 `golem`, `player_death`, `in_water`, `on_land`, `cold`, `night`, `boat`,
-`contact`, `trident`, `wolf`, `shield`, `snow`, `warm`, `dry`, `shears`, `smite`, `day`, and
-`fuse`.
+`contact`, `trident`, `wolf`, `shield`, `snow`, `warm`, `dry`, `shears`, `smite`, `day`,
+`fuse`, and `bane`.
 A creeper that explodes does not die, so its blast does not count for a
 pressure. A blast that kills a player counts for `player_death`.
 The `contact` pressure uses the tag `#originofspawns:contact`: cacti and sweet
@@ -225,7 +226,7 @@ The states for `when` are:
 | `burrow` | `player_radius` (`24`), `rise_seconds` (`2`), `blocks` (`#originofspawns:burrowable`), `night_only` (`true`), `stun_seconds` (`0`), `near_player` (`false`) | The mob can spawn 2 blocks under the ground near a player and rise. It rises only through the blocks in the tag. After it rises, it cannot move for `stun_seconds`. With `near_player`, it rises next to the nearest player |
 | `sidestep` | `range` (`12`), `distance` (`4`), `cooldown_seconds` (`10`), `aimed` (`false`) | When a player looks at the mob from farther than the range, the mob moves to the side. With `aimed`, it moves when a player in the range draws a bow, a crossbow, or a trident and looks at it |
 | `climb` | | The mob climbs walls, like a spider. It cannot climb glass |
-| `throw_effect` | `effect`, `seconds`, `amplifier` (`0`), `range` (`8`), `cooldown_seconds` (`8`) | The mob throws at its target, which gives a status effect |
+| `throw_effect` | `effect`, `seconds`, `amplifier` (`0`), `min_range` (`0`), `range` (`8`), `cooldown_seconds` (`8`) | The mob throws at its target, which gives a status effect. The target must be between `min_range` and `range` |
 | `pick_up_items` | | The mob picks up items |
 | `no_conversion` | | The mob does not convert to a different species in water |
 | `siege` | `break_seconds` (`10`) | The mob breaks doors on each difficulty, and breaks the blocks in the tag `#originofspawns:siege_breakable`. It obeys the `mobGriefing` gamerule |
@@ -271,13 +272,28 @@ The states for `when` are:
 | `parry` | `cooldown_seconds` (`6`) | The mob takes no damage from one melee hit, one time in each cooldown. A shield sound plays |
 | `cleave` | `part` (`0.5`), `radius` (`2`) | Each melee hit also hurts the other players in the radius of the target, with this part of the attack damage of the mob. A cleave does not cleave again |
 | `skull_shot` | `cooldown_seconds` (`10`), `min_range` (`6`), `max_range` (`16`) | One time in each cooldown, the mob shoots a wither skull at its target player in the range, if it can see the player |
-| `death_spawn` | `entity`, `life_seconds` (`30`) | When the mob dies, a mob of this type comes out and attacks the killer. A vex lives for `life_seconds` |
+| `death_spawn` | `entity`, `count` (`1`), `life_seconds` (`30`) | When the mob dies, this many mobs of this type come out and attack the killer. A vex lives for `life_seconds` |
 | `soul_hunger` | `per_player`, `max`, `seconds` (`10`) | The mob does more melee damage for each player that it hit in melee in the last `seconds`, up to `max`. `0.2` is 20% for each player |
 | `damage_to` | `targets`, `multiplier` (`1`), `fire_seconds` (`0`) | The hits of the mob do more damage to entities of the tag in `targets`, and set them on fire for `fire_seconds` |
 | `snowball_damage` | `damage` | Snowballs do this damage to the mob, as they do to a blaze |
 | `water_sensitive` | | Water hurts the mob, as it hurts a blaze or an enderman: splash water, rain, and water |
 | `disarm` | `chance`, `cooldown_seconds` (`10`), `hits` (`projectile`) | Each hit has the chance to make a player drop the item in the main hand. A player loses an item one time in each cooldown at most. An item with Curse of Binding does not drop |
 | `death_effect` | `effect`, `seconds`, `amplifier` (`0`), `radius`, `when` (`always`), `allies` (`false`) | When the mob dies while the state is true, the players in the radius get a status effect. With `allies`, the mobs of its species get it instead |
+
+#### Spiders
+
+These effects suit a spider, but other mobs can also use them. A gene cobweb
+does not replace a block. It goes away after its time and drops no string,
+also after a restart of the server.
+
+| Type | Fields | Result |
+|---|---|---|
+| `web_on_hit` | `chance`, `seconds` (`30`), `hits` (`melee`) | Each hit has this chance to put a cobweb at the target |
+| `web_trail` | `interval_seconds` (`10`), `seconds` (`30`) | While the mob walks, it leaves a cobweb behind it after each interval |
+| `web_shot` | `min_range` (`4`), `range` (`12`), `cooldown_seconds` (`8`), `seconds` (`30`) | The mob spits silk at a player between the two ranges. The silk makes a cobweb where it lands |
+| `leap_strike` | `multiplier`, `seconds` (`2`) | The first hit in this time after a leap does more damage. A leap is the vanilla leap of a spider or a wolf, or a gene leap |
+| `first_strike` | `multiplier`, `reset_seconds` (`10`) | The first hit of the mob on a player does more damage. It counts again after this time with no hit on that player |
+| `hunt_in_light` | | A spider attacks players in bright light too |
 
 #### Creepers
 
@@ -350,7 +366,11 @@ The file `assets/<namespace>/gene_models/<name>.json` is the model
 `<namespace>:<name>`.
 Each cube moves with one bone: `head`, `body`, `right_arm`, `left_arm`,
 `right_leg`, or `left_leg`. A creeper has `head`, `body`, `right_hind_leg`,
-`left_hind_leg`, `right_front_leg`, and `left_front_leg`.
+`left_hind_leg`, `right_front_leg`, and `left_front_leg`. A spider has `head`,
+`body` (the front part), `abdomen`, and the eight legs: `right_hind_leg`,
+`left_hind_leg`, `right_middle_hind_leg`, `left_middle_hind_leg`,
+`right_middle_front_leg`, `left_middle_front_leg`, `right_front_leg`, and
+`left_front_leg`.
 The coordinates are in pixels, in the coordinates of the bone, as in the
 vanilla models.
 

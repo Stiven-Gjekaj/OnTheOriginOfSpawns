@@ -18,7 +18,9 @@ needed:
 - torso (3): the front, the sides, the top, and the bottom of the body.
 - arms (4): rows 0 to 9 of the arms, the top of the arms, and the crossed
   arms.
-- hands (5): rows 10 and 11 of the arms, and the bottom of the arms.
+- hands (5): rows 10 and 11 of the arms, the bottom of the arms, and the
+  hands in the middle of the bar of the crossed arms (HAND_PIXELS). The
+  vindicator shows its hands there.
 - legs (6): rows 0 to 5 of the legs, and the top of the legs.
 - feet (8): rows 6 to 11 of the legs, and the bottom of the legs. On the
   pillager, these are the boots.
@@ -45,6 +47,14 @@ SKIN, CLOTH, EYES = 1, 2, 3
 # The white and the green pixels of the eyes on the face.
 EYE_PIXELS = {(9, 14), (10, 14), (13, 14), (14, 14)}
 
+# The hands on the bar of the crossed arms (8x4x4 at uv (40, 38)): the middle
+# of its top, its front, its bottom, and its back. The vindicator draws its
+# hands there.
+HAND_PIXELS = ({(x, y) for x in range(46, 51) for y in range(38, 42)}
+               | {(x, y) for x in range(46, 51) for y in range(42, 46)}
+               | {(x, y) for x in range(54, 59) for y in range(38, 42)}
+               | {(x, y) for x in range(57, 62) for y in range(42, 46)})
+
 
 def head(x, y, face, row):
     if (x, y) in EYE_PIXELS:
@@ -69,6 +79,8 @@ def coat(x, y, face, row):
 
 
 def crossed_arms(x, y, face, row):
+    if (x, y) in HAND_PIXELS:
+        return HANDS, SKIN
     return ARMS, CLOTH
 
 

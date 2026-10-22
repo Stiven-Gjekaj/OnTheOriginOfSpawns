@@ -1,0 +1,118 @@
+{
+	"texture": "originofspawns:textures/entity/long_bolt_quiver.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				2,
+				3.5
+			],
+			"size": [
+				3,
+				8,
+				2
+			],
+			"pivot": [
+				0,
+				6,
+				4.5
+			],
+			"rotation": [
+				0,
+				0,
+				25
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				12,
+				0
+			],
+			"from": [
+				-1.7,
+				-2,
+				4
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"inflate": -0.15,
+			"pivot": [
+				0,
+				6,
+				4.5
+			],
+			"rotation": [
+				0,
+				0,
+				25
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				12,
+				0
+			],
+			"from": [
+				-0.5,
+				-2,
+				4
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"inflate": -0.15,
+			"pivot": [
+				0,
+				6,
+				4.5
+			],
+			"rotation": [
+				0,
+				0,
+				25
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				12,
+				0
+			],
+			"from": [
+				0.7,
+				-2,
+				4
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"inflate": -0.15,
+			"pivot": [
+				0,
+				6,
+				4.5
+			],
+			"rotation": [
+				0,
+				0,
+				25
+			]
+		}
+	]
+}

@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:spider/weaver",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": 4,
+			"operation": "add_value"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 1.25
+		}
+	]
+}

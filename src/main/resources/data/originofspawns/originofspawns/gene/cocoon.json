@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:spider/weaver",
+	"sub_family": "originofspawns:spider/swarm",
+	"gains": [
+		{
+			"type": "heal_once",
+			"threshold": 0.25
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

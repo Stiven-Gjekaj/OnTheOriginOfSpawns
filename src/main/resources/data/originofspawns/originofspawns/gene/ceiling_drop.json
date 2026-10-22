@@ -1,0 +1,26 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:spider/trapdoor",
+	"sub_family": "originofspawns:spider/jumper",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fall",
+			"multiplier": 0
+		},
+		{
+			"type": "damage_dealt_when",
+			"when": "target_below",
+			"multiplier": 1.3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

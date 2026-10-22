@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:spider/weaver",
+	"gains": [
+		{
+			"type": "web_shot",
+			"min_range": 4,
+			"range": 12,
+			"cooldown_seconds": 8
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

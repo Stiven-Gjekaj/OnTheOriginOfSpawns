@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:spider/jumper",
+	"sub_family": "originofspawns:spider/trapdoor",
+	"gains": [
+		{
+			"type": "sidestep",
+			"range": 24,
+			"distance": 3,
+			"cooldown_seconds": 8,
+			"aimed": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9
+		}
+	]
+}

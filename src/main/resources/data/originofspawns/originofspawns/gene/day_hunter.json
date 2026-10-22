@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns:day",
+	"family": "originofspawns:spider/trapdoor",
+	"gains": [
+		{
+			"type": "hunt_in_light"
+		}
+	],
+	"downsides": [
+		{
+			"type": "speed_when",
+			"when": "bright",
+			"multiplier": 0.9
+		}
+	]
+}

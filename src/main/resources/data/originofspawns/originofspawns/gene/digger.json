@@ -1,0 +1,13 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:spider/trapdoor",
+	"gains": [
+		{
+			"type": "burrow",
+			"night_only": false,
+			"stun_seconds": 1,
+			"near_player": true
+		}
+	]
+}

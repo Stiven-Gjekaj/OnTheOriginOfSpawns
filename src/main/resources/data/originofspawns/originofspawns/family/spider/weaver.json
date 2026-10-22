@@ -1,0 +1,50 @@
+{
+	"species": "minecraft:spider",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "web_on_hit",
+					"chance": 0.1
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_fire",
+					"multiplier": 1.25
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "web_on_hit",
+					"chance": 0.2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_fire",
+					"multiplier": 1.2
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "web_on_hit",
+					"chance": 0.3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_fire",
+					"multiplier": 1.1
+				}
+			]
+		}
+	]
+}

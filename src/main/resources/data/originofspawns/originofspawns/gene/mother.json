@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:spider/swarm",
+	"sub_family": "originofspawns:spider/fang",
+	"gains": [
+		{
+			"type": "death_spawn",
+			"entity": "minecraft:cave_spider",
+			"count": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

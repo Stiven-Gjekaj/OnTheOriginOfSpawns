@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:spider/fang",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:poison",
+			"seconds": 4,
+			"amplifier": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

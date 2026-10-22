@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:spider/weaver",
+	"gains": [
+		{
+			"type": "web_trail",
+			"interval_seconds": 10,
+			"seconds": 30
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

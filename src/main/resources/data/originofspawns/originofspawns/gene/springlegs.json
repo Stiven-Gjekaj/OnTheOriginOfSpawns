@@ -1,0 +1,25 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:spider/jumper",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fall",
+			"multiplier": 0
+		},
+		{
+			"type": "attribute",
+			"attribute": "minecraft:jump_strength",
+			"amount": 0.5,
+			"operation": "add_multiplied_base"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_explosion",
+			"multiplier": 1.5
+		}
+	]
+}

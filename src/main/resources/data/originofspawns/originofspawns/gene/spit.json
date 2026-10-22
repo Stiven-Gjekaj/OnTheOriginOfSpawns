@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:spider/fang",
+	"gains": [
+		{
+			"type": "throw_effect",
+			"effect": "minecraft:poison",
+			"seconds": 4,
+			"min_range": 3,
+			"range": 10,
+			"cooldown_seconds": 6
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9
+		}
+	]
+}

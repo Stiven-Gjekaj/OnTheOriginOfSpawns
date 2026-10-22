@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:spider/fang",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:slowness",
+			"seconds": 1,
+			"amplifier": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9
+		}
+	]
+}

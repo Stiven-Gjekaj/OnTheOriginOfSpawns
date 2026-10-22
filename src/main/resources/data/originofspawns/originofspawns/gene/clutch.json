@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:spider",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:spider/swarm",
+	"gains": [
+		{
+			"type": "brood",
+			"extra": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.15,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

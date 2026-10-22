@@ -9,8 +9,6 @@ import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.evolution.TemporaryBlocks;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
-import java.util.List;
-
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import net.minecraft.core.BlockPos;
@@ -98,15 +96,27 @@ public class CaveSpiderEffectsTest {
 		helper.succeed();
 	}
 
-	@GameTest
-	public void anEggLayerSpawnsOneMoreCaveSpiderWithItsGenes(GameTestHelper helper) {
-		CaveSpider layer = caveSpiderWith(helper, new BlockPos(2, 1, 2), "test_egg_layer");
-		Identifier gene = Identifier.fromNamespaceAndPath("originofspawns_test", "test_egg_layer");
-		GeneBehaviors.onSpawn(layer, helper.getLevel(), EntitySpawnReason.NATURAL);
-		List<CaveSpider> group = helper.getLevel().getEntitiesOfClass(CaveSpider.class, layer.getBoundingBox().inflate(3.0),
-				other -> other.getAttachedOrElse(ModAttachments.GENES, CarriedGenes.NONE).genes().contains(gene));
-		helper.assertValueEqual(group.size(), 2, "the cave spider and one more");
+	@GameTest(padding = 8)
+	public void anEggLayerFromASpawnerSpawnsOneMoreCaveSpider(GameTestHelper helper) {
+		// Cave spiders come from spawners, so a spawner spawn must give the brood too.
+		helper.assertValueEqual(broodAfter(helper, new BlockPos(2, 1, 2), EntitySpawnReason.SPAWNER), 2,
+				"a spawner spawn gives one more cave spider");
+		helper.assertValueEqual(broodAfter(helper, new BlockPos(10, 1, 2), EntitySpawnReason.TRIAL_SPAWNER), 2,
+				"a trial spawner spawn gives one more cave spider");
+		helper.assertValueEqual(broodAfter(helper, new BlockPos(2, 1, 10), EntitySpawnReason.MOB_SUMMONED), 1,
+				"a summoned cave spider gives no brood");
 		helper.succeed();
+	}
+
+	/**
+	 * Spawns an Egg Layer cave spider for the reason, and returns the number of cave spiders with its gene near it.
+	 */
+	static int broodAfter(GameTestHelper helper, BlockPos pos, EntitySpawnReason reason) {
+		CaveSpider layer = caveSpiderWith(helper, pos, "test_egg_layer");
+		Identifier gene = Identifier.fromNamespaceAndPath("originofspawns_test", "test_egg_layer");
+		GeneBehaviors.onSpawn(layer, helper.getLevel(), reason);
+		return helper.getLevel().getEntitiesOfClass(CaveSpider.class, layer.getBoundingBox().inflate(3.0),
+				other -> other.getAttachedOrElse(ModAttachments.GENES, CarriedGenes.NONE).genes().contains(gene)).size();
 	}
 
 	@GameTest

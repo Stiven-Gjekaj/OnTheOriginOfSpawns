@@ -118,7 +118,7 @@ public final class GeneBehaviors {
 				case GeneEffect.TridentChance trident -> rollTrident(mob, trident);
 				case GeneEffect.Runt runt when mob instanceof Zombie zombie && mob.getRandom().nextFloat() < runt.chance() ->
 						makeRunt(zombie, level, runt);
-				case GeneEffect.Brood brood when reason == EntitySpawnReason.NATURAL -> spawnBrood(mob, level, brood);
+				case GeneEffect.Brood brood when broodReason(reason) -> spawnBrood(mob, level, brood);
 				case GeneEffect.Jockey jockey when reason == EntitySpawnReason.NATURAL
 						&& mob.getRandom().nextFloat() < jockey.chance() -> mount(mob, level, jockey);
 				case GeneEffect.Burrow burrow when reason == EntitySpawnReason.NATURAL -> burrow(mob, level, burrow);
@@ -128,6 +128,16 @@ public final class GeneBehaviors {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns true if a spawn for the reason gives a brood: a natural spawn, or a spawn from a spawner or a trial
+	 * spawner. Some mobs, such as the cave spider, come mostly from spawners. The extra mobs of a brood are
+	 * reinforcements, so they give no brood of their own.
+	 */
+	private static boolean broodReason(EntitySpawnReason reason) {
+		return reason == EntitySpawnReason.NATURAL || reason == EntitySpawnReason.SPAWNER
+				|| reason == EntitySpawnReason.TRIAL_SPAWNER;
 	}
 
 	/**

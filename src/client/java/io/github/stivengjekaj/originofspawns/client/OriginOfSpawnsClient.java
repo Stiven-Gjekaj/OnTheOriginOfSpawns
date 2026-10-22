@@ -19,14 +19,17 @@ import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.monster.creeper.CreeperModel;
+import net.minecraft.client.model.monster.illager.IllagerModel;
 import net.minecraft.client.model.monster.skeleton.SkeletonModel;
 import net.minecraft.client.model.monster.spider.SpiderModel;
 import net.minecraft.client.renderer.entity.AbstractSkeletonRenderer;
 import net.minecraft.client.renderer.entity.AbstractZombieRenderer;
 import net.minecraft.client.renderer.entity.CreeperRenderer;
+import net.minecraft.client.renderer.entity.PillagerRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.SpiderRenderer;
 import net.minecraft.client.renderer.entity.state.CreeperRenderState;
+import net.minecraft.client.renderer.entity.state.IllagerRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.entity.state.SkeletonRenderState;
 import net.minecraft.client.renderer.entity.state.ZombieRenderState;
@@ -53,6 +56,8 @@ public class OriginOfSpawnsClient implements ClientModInitializer {
 						(RenderLayerParent<SkeletonRenderState, SkeletonModel<SkeletonRenderState>>) renderer));
 			} else if (renderer instanceof CreeperRenderer creeper) {
 				helper.register(new GeneModelLayer<CreeperRenderState, CreeperModel>(creeper));
+			} else if (renderer instanceof PillagerRenderer pillager) {
+				helper.register(new GeneModelLayer<IllagerRenderState, IllagerModel<IllagerRenderState>>(pillager));
 			} else if (renderer instanceof SpiderRenderer<?>) {
 				helper.register(new GeneModelLayer<>(
 						(RenderLayerParent<LivingEntityRenderState, SpiderModel>) renderer));

@@ -31,12 +31,42 @@ Pixel plan for the Gloomers.
   the top of the abdomen.
 - Cave Ghost has faded, pale legs: the legs are pale gray teal, palest at
   the tip.
+
+Pixel plan for the Scurriers.
+- Dash has thin blue stripes on the legs: a line of short blue dashes along
+  each leg, pale blue at the tip.
+- Juke has a zigzag pattern on the body: a pale zigzag line across each face
+  of the body.
+- Gap Runner has a smaller, flat body: a pale line along the middle of the
+  sides of the body and the abdomen, with dark bands above and below it,
+  so that the body looks flat. The game makes it smaller with the scale
+  attribute.
+- Nimble has pale joints: pale bands on the joints of the legs.
+- Frenzy Bite has chipped fangs: each fang lacks its tip or its root, and a
+  bright chip edge shows where it broke.
+- Ceiling Crawler: hooked claws at the tip of each leg, the gene model
+  ceiling_crawler_claws.
+
+Pixel plan for the Broodkeepers.
+- Brood Call has red hairs on the back: short red hairs with bright tips on
+  the top of the abdomen.
+- Nest Weaver has a web pattern on the abdomen: a web of pale silk on the
+  top of the abdomen, with lines from the middle and two rings.
+- Egg Layer: white eggs on the back, the gene model egg_layer_eggs.
+- Nest Mend has a pale silk band round the middle of the body.
+- Swarm Mind has a pale crown of hairs on the head: pale hairs round the
+  edge of the top of the head, with tips on the top row of its sides.
+- Spawner Bond has iron gray bands on the legs: three bands of iron round
+  each leg, with a bright upper edge.
 This script needs Pillow.
 """
 import json
 import os
 
+from PIL import Image
+
 from make_gene_marks import MARK_DIR, VISUAL_DIR, Mark, noise100, write
+from make_husk_marks import paint_box, save_model
 from make_spider_marks import ABDOMEN, ALL, BODY, EYES, FANGS, HEAD, leg_pixels, pixels
 from make_stray_marks import changed_pixels
 
@@ -206,6 +236,197 @@ def cave_ghost():
         (tip if t <= 5 else middle if t <= 10 else root).put((x, y))
     return [root, middle, tip]
 
+def dash():
+    # Thin blue stripes on the legs: a line of short blue dashes along the
+    # top row of the front and the back of each leg, pale blue at the tip.
+    blue = Mark("#40A0FF")
+    pale = Mark("#A8E0FF")
+    for x, y, face, t, row in leg_pixels(("front", "back")):
+        if row == 0 and t % 4 != 3:
+            (pale if t <= 2 else blue).put((x, y))
+    return [blue, pale]
+
+
+def juke():
+    # A zigzag pattern on the body: a pale zigzag line across each face of
+    # the body, that goes down from row 1 to row 4 and up again.
+    zig = Mark("#C8E8D8")
+    for x, y, face, col, row in pixels(BODY, ALL):
+        if row == (1, 2, 3, 4, 3, 2)[col]:
+            zig.put((x, y))
+    return [zig]
+
+
+def gap_runner():
+    # A smaller, flat body: a pale line along the middle of the sides of the
+    # body and the abdomen, and dark bands on the top and the bottom rows of
+    # the sides, so that the body looks thin and flat.
+    pale = Mark("#5A8A80")
+    dark = Mark("#061210")
+    for part, mid, edges in ((BODY, (3,), (0, 5)), (ABDOMEN, (3, 4), (0, 7))):
+        for x, y, face, col, row in pixels(part, ("right", "left", "back")):
+            if row in mid:
+                pale.put((x, y))
+            elif row in edges:
+                dark.put((x, y))
+    return [pale, dark]
+
+
+def nimble():
+    # Pale joints: on each joint, 5 and 10 pixels from the tip, a pale band,
+    # with a softer band on each side of it.
+    pale = Mark("#C8E0D8")
+    soft = Mark("#7A9A94")
+    for x, y, face, t, row in leg_pixels():
+        if t in (5, 10):
+            pale.put((x, y))
+        elif t in (4, 6, 9, 11):
+            soft.put((x, y))
+    return [pale, soft]
+
+
+def frenzy_bite():
+    # Chipped fangs: the right fang lacks its tip, and the left fang lacks
+    # its root, so that both look broken. A bright chip edge shows where each
+    # fang broke.
+    gone = Mark("#0B1B18")
+    chip = Mark("#F0ECE0")
+    gone.put([(41, 19), (46, 18)])
+    chip.put([(41, 18), (46, 19)])
+    return [gone, chip]
+
+
+def ceiling_crawler():
+    # The claws are the gene model ceiling_crawler_claws.
+    return []
+
+
+def ceiling_crawler_model():
+    # Hooked claws at the tip of each leg: a short claw that goes on from
+    # the tip of the leg, and a hook that bends down from it, pale with a
+    # dark point. On a leg bone, the tip of a right leg is at x -15, and the
+    # tip of a left leg is at x 15.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def claw(face, x, y):
+        return "#D8D0C0" if face in ("top", "front", "left") else "#A89C88"
+
+    def hook(face, x, y):
+        return "#3A3028" if y == 1 or face == "bottom" else claw(face, x, y)
+
+    # The claw: 2x1x1 at uv (0, 0). The hook: 1x2x1 at uv (8, 0).
+    paint_box(im, 0, 0, 2, 1, 1, claw)
+    paint_box(im, 8, 0, 1, 2, 1, hook)
+    parts = []
+    for leg in ("hind_leg", "middle_hind_leg", "middle_front_leg", "front_leg"):
+        for side, x, hx, turn in (("right", -16.5, -17, 35), ("left", 14.5, 16, -35)):
+            bone = side + "_" + leg
+            parts.append({"bone": bone, "uv": [0, 0], "from": [x, -0.5, -0.5], "size": [2, 1, 1],
+                          "mirror": side == "left"})
+            parts.append({"bone": bone, "uv": [8, 0], "from": [hx, 0, -0.5], "size": [1, 2, 1],
+                          "mirror": side == "left", "pivot": [hx + 0.5, 0.2, 0], "rotation": [0, 0, turn]})
+    save_model("ceiling_crawler_claws", im, parts)
+
+
+def brood_call():
+    # Red hairs on the back: short red hairs of 2 pixels, with bright red
+    # tips, in rows across the top of the abdomen.
+    hair = Mark("#A01818")
+    tip = Mark("#F04040")
+    for x, y, face, col, row in pixels(ABDOMEN, ("top",)):
+        if row % 2 == 0 and row < 11 and (col + 3 * (row // 2)) % 4 == 0:
+            tip.put((x, y))
+            hair.put((x, y + 1))
+    return [hair, tip]
+
+
+def nest_weaver():
+    # A web pattern on the abdomen: on the top of the abdomen, pale silk
+    # lines that run out from the middle (column 4, row 6) in eight
+    # directions, and two square rings of silk round the middle.
+    silk = Mark("#D8D8D0")
+    shade = Mark("#9AA8A4")
+    cx, cy = 4, 6
+    for x, y, face, col, row in pixels(ABDOMEN, ("top",)):
+        dx, dy = col - cx, row - cy
+        ring = max(abs(dx), abs(dy)) in (2, 4)
+        spoke = dx == 0 or dy == 0 or abs(dx) == abs(dy)
+        if spoke:
+            silk.put((x, y))
+        elif ring:
+            shade.put((x, y))
+    return [shade, silk]
+
+
+def egg_layer():
+    # The eggs are the gene model egg_layer_eggs.
+    return []
+
+
+def egg_layer_model():
+    # White eggs on the back: a cluster of round, white eggs on the top of
+    # the abdomen, some large and some small, with one egg on the others.
+    # On the abdomen bone, the top is at y -4.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def egg(face, x, y):
+        if face == "top":
+            return "#FFFFF4"
+        return "#D8D4C4" if face in ("bottom", "back", "left") else "#F0EEE2"
+
+    # A large egg: 2x2x2 at uv (0, 0). A small egg: 1x1x1 at uv (8, 0).
+    paint_box(im, 0, 0, 2, 2, 2, egg)
+    paint_box(im, 8, 0, 1, 1, 1, egg)
+    parts = []
+    for x, z in ((-2.5, -1), (0.5, 0), (-1, 2.5)):
+        parts.append({"bone": "abdomen", "uv": [0, 0], "from": [x, -5.6, z], "size": [2, 2, 2], "inflate": -0.15})
+    for x, y, z in ((2.8, -4.9, 2.5), (-3.6, -4.9, 1.8), (1.6, -4.9, 3.6), (-0.6, -6.6, 0.6)):
+        parts.append({"bone": "abdomen", "uv": [8, 0], "from": [x, y, z], "size": [1, 1, 1], "inflate": 0.1})
+    save_model("egg_layer_eggs", im, parts)
+
+
+def nest_mend():
+    # A pale silk band round the middle of the body: rows 2 and 3 of the top
+    # and the bottom of the body, and columns 2 and 3 of its sides, white
+    # with a pale gray edge.
+    silk = Mark("#E8E8E0")
+    edge = Mark("#A8B4B0")
+    for x, y, face, col, row in pixels(BODY, ("top", "bottom", "right", "left")):
+        k = row if face in ("top", "bottom") else col
+        if k in (2, 3):
+            silk.put((x, y))
+        elif k in (1, 4):
+            edge.put((x, y))
+    return [edge, silk]
+
+
+def swarm_mind():
+    # A pale crown of hairs on the head: pale hairs round the edge of the top
+    # of the head, with a gap at every third pixel, and pale tips on the top
+    # row of the sides and the back of the head.
+    hair = Mark("#D0E4DC")
+    tip = Mark("#8AA8A0")
+    for x, y, face, col, row in pixels(HEAD, ("top",)):
+        if (col in (0, 7) or row in (0, 7)) and (col + row) % 3 != 2:
+            hair.put((x, y))
+    for x, y, face, col, row in pixels(HEAD, ("right", "left", "back")):
+        if row == 0 and col % 2 == 0 and (x, y) not in EYES:
+            tip.put((x, y))
+    return [hair, tip]
+
+
+def spawner_bond():
+    # Iron gray bands on the legs: three bands of iron round each leg, 3 and
+    # 4, 8 and 9, and 12 and 13 pixels from the tip, with a bright upper
+    # edge on the top row.
+    iron = Mark("#8A8E92")
+    bright = Mark("#C8CCD0")
+    for x, y, face, t, row in leg_pixels():
+        if t in (3, 4, 8, 9, 12, 13):
+            (bright if row == 0 and face != "top" else iron).put((x, y))
+    return [iron, bright]
+
+
 
 GENES = {
     "neurotoxin": neurotoxin,
@@ -220,11 +441,26 @@ GENES = {
     "night_eyes": night_eyes,
     "dread": dread,
     "cave_ghost": cave_ghost,
+    "dash": dash,
+    "juke": juke,
+    "gap_runner": gap_runner,
+    "nimble": nimble,
+    "frenzy_bite": frenzy_bite,
+    "ceiling_crawler": ceiling_crawler,
+    "brood_call": brood_call,
+    "nest_weaver": nest_weaver,
+    "egg_layer": egg_layer,
+    "nest_mend": nest_mend,
+    "swarm_mind": swarm_mind,
+    "spawner_bond": spawner_bond,
 }
 
-MODELS = {}
+MODELS = {
+    "ceiling_crawler": "originofspawns:ceiling_crawler_claws",
+    "egg_layer": "originofspawns:egg_layer_eggs",
+}
 
-MODEL_MAKERS = []
+MODEL_MAKERS = [ceiling_crawler_model, egg_layer_model]
 
 
 def main():

@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/spider.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/nest_weaver_0.png",
+				"tint": "#9AA8A4"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/nest_weaver_1.png",
+				"tint": "#D8D8D0"
+			}
+		}
+	]
+}

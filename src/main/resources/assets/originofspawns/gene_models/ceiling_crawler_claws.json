@@ -1,0 +1,375 @@
+{
+	"texture": "originofspawns:textures/entity/ceiling_crawler_claws.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-16.5,
+				-0.5,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			],
+			"mirror": false
+		},
+		{
+			"bone": "right_hind_leg",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				-17,
+				0,
+				-0.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"mirror": false,
+			"pivot": [
+				-16.5,
+				0.2,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				35
+			]
+		},
+		{
+			"bone": "left_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				14.5,
+				-0.5,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			],
+			"mirror": true
+		},
+		{
+			"bone": "left_hind_leg",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				16,
+				0,
+				-0.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"mirror": true,
+			"pivot": [
+				16.5,
+				0.2,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				-35
+			]
+		},
+		{
+			"bone": "right_middle_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-16.5,
+				-0.5,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			],
+			"mirror": false
+		},
+		{
+			"bone": "right_middle_hind_leg",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				-17,
+				0,
+				-0.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"mirror": false,
+			"pivot": [
+				-16.5,
+				0.2,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				35
+			]
+		},
+		{
+			"bone": "left_middle_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				14.5,
+				-0.5,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			],
+			"mirror": true
+		},
+		{
+			"bone": "left_middle_hind_leg",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				16,
+				0,
+				-0.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"mirror": true,
+			"pivot": [
+				16.5,
+				0.2,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				-35
+			]
+		},
+		{
+			"bone": "right_middle_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-16.5,
+				-0.5,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			],
+			"mirror": false
+		},
+		{
+			"bone": "right_middle_front_leg",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				-17,
+				0,
+				-0.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"mirror": false,
+			"pivot": [
+				-16.5,
+				0.2,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				35
+			]
+		},
+		{
+			"bone": "left_middle_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				14.5,
+				-0.5,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			],
+			"mirror": true
+		},
+		{
+			"bone": "left_middle_front_leg",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				16,
+				0,
+				-0.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"mirror": true,
+			"pivot": [
+				16.5,
+				0.2,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				-35
+			]
+		},
+		{
+			"bone": "right_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-16.5,
+				-0.5,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			],
+			"mirror": false
+		},
+		{
+			"bone": "right_front_leg",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				-17,
+				0,
+				-0.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"mirror": false,
+			"pivot": [
+				-16.5,
+				0.2,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				35
+			]
+		},
+		{
+			"bone": "left_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				14.5,
+				-0.5,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			],
+			"mirror": true
+		},
+		{
+			"bone": "left_front_leg",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				16,
+				0,
+				-0.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"mirror": true,
+			"pivot": [
+				16.5,
+				0.2,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				-35
+			]
+		}
+	]
+}

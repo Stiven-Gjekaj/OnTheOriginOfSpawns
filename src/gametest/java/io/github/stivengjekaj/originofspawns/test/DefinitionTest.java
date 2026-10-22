@@ -70,6 +70,35 @@ public class DefinitionTest {
 		helper.succeed();
 	}
 
+	/**
+	 * Each gene and each family of the mod has a name that no other gene or family has. A name with an "s" at the end
+	 * counts as the same name, so "Sinkhole" and "Sinkholes" clash.
+	 */
+	@GameTest
+	public void modNamesAreUnique(GameTestHelper helper) {
+		JsonObject lang;
+		try (var reader = new java.io.InputStreamReader(DefinitionTest.class.getResourceAsStream(
+				"/assets/originofspawns/lang/en_us.json"), java.nio.charset.StandardCharsets.UTF_8)) {
+			lang = JsonParser.parseReader(reader).getAsJsonObject();
+		} catch (java.io.IOException exception) {
+			throw new AssertionError("Cannot read the names of the mod", exception);
+		}
+		java.util.Map<String, String> seen = new java.util.HashMap<>();
+		int checked = 0;
+		for (var entry : lang.entrySet()) {
+			String key = entry.getKey();
+			if (!key.startsWith("gene.originofspawns.") && !key.startsWith("family.originofspawns.")) {
+				continue;
+			}
+			String name = entry.getValue().getAsString().toLowerCase(java.util.Locale.ROOT).replaceAll("s$", "");
+			String other = seen.putIfAbsent(name, key);
+			helper.assertTrue(other == null, key + " has the same name as " + other);
+			checked++;
+		}
+		helper.assertTrue(checked > 0, "the mod has names");
+		helper.succeed();
+	}
+
 	@GameTest
 	public void pressureReadsDamageTag(GameTestHelper helper) {
 		Pressure pressure = get(helper, ModRegistries.PRESSURE, "test_heat");

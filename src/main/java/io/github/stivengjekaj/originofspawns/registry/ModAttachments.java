@@ -129,6 +129,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> WEB_SHOT_TIME = AttachmentRegistry.create(OriginOfSpawns.id("web_shot_time"));
 
 	/**
+	 * The game time of the last timed rocket shot of a mob.
+	 */
+	public static final AttachmentType<Long> ROCKET_TIME = AttachmentRegistry.create(OriginOfSpawns.id("rocket_time"));
+
+	/**
 	 * True on a raider that dies as a part of a raid. The raid lets the raider go before the death event.
 	 */
 	public static final AttachmentType<Boolean> RAID_DEATH = AttachmentRegistry.create(OriginOfSpawns.id("raid_death"));

@@ -157,7 +157,8 @@ public sealed interface GeneEffect {
 			Map.entry("hunt_in_light", HuntInLight.CODEC),
 			Map.entry("bite_poison", BitePoison.CODEC),
 			Map.entry("damage_from_item", DamageFromItem.CODEC),
-			Map.entry("rocket_chance", RocketChance.CODEC)
+			Map.entry("rocket_chance", RocketChance.CODEC),
+			Map.entry("rocket_shot", RocketShot.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2469,6 +2470,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "rocket_chance";
+		}
+	}
+
+	/**
+	 * One time in each cooldown, the mob shoots a firework rocket at its target in the range, if it sees the target.
+	 * It is the rocket of {@code rocket_chance}, and it comes in addition to the normal shots.
+	 */
+	record RocketShot(float cooldownSeconds, float range) implements GeneEffect {
+		public static final MapCodec<RocketShot> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(RocketShot::cooldownSeconds),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 16.0F).forGetter(RocketShot::range)
+		).apply(instance, RocketShot::new));
+
+		@Override
+		public String type() {
+			return "rocket_shot";
 		}
 	}
 }

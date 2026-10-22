@@ -1,8 +1,10 @@
 package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.definition.DeathCondition;
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -190,6 +192,21 @@ public class PillagerEffectsTest {
 		helper.assertValueEqual(rockets.size(), 1, "the bomber shoots a rocket");
 		helper.assertValueEqual(rockets.getFirst().getItem().get(DataComponents.FIREWORKS).explosions().size(), 1,
 				"the rocket has one star, so its blast hurts");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aRocketeerShootsARocketOneTimeInEachCooldown(GameTestHelper helper) {
+		Pillager rocketeer = pillagerWith(helper, new BlockPos(1, 1, 1), "test_rocketeer");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 1));
+		var shot = new GeneEffect.RocketShot(10.0F, 16.0F);
+		helper.assertFalse(GeneBehaviors.rocketShot(rocketeer, helper.getLevel(), shot), "no target, no rocket");
+		rocketeer.setTarget(pig);
+		helper.assertTrue(GeneBehaviors.rocketShot(rocketeer, helper.getLevel(), shot), "the first rocket");
+		helper.assertValueEqual(rocketsOf(helper, rocketeer).size(), 1, "one rocket flies");
+		helper.assertFalse(GeneBehaviors.rocketShot(rocketeer, helper.getLevel(), shot), "no rocket in the cooldown");
+		rocketeer.setAttached(ModAttachments.ROCKET_TIME, helper.getLevel().getGameTime() - 300L);
+		helper.assertTrue(GeneBehaviors.rocketShot(rocketeer, helper.getLevel(), shot), "a rocket after the cooldown");
 		helper.succeed();
 	}
 

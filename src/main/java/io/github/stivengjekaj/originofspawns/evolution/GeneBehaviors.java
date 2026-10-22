@@ -66,6 +66,10 @@ public final class GeneBehaviors {
 	 */
 	private static final int RED_STAR = 0xB3312C;
 	/**
+	 * The speed of a rocket that a mob shoots, the same as from a crossbow.
+	 */
+	private static final float ROCKET_SPEED = 1.6F;
+	/**
 	 * A mob that moves faster than this, in blocks each tick, walks.
 	 */
 	private static final double WALK_SPEED_SQR = 1.0E-4;
@@ -415,6 +419,7 @@ public final class GeneBehaviors {
 				case GeneEffect.ThrowEffect thrown -> throwEffect(mob, level, thrown);
 				case GeneEffect.WebTrail trail -> webTrail(mob, level, trail);
 				case GeneEffect.WebShot shot -> webShot(mob, level, shot);
+				case GeneEffect.RocketShot shot -> rocketShot(mob, level, shot);
 				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
 				case GeneEffect.FrenziedTargeting frenzy
 						when now % Math.max(1, Math.round(frenzy.intervalSeconds() * 20.0F)) < TICK_INTERVAL
@@ -897,6 +902,33 @@ public final class GeneBehaviors {
 						net.minecraft.world.item.component.FireworkExplosion.Shape.SMALL_BALL,
 						it.unimi.dsi.fastutil.ints.IntList.of(RED_STAR), it.unimi.dsi.fastutil.ints.IntList.of(), false, false))));
 		return rocket;
+	}
+
+	/**
+	 * Shoots a firework rocket at the target of the mob in the range, one time in each cooldown.
+	 *
+	 * @return true if the mob shot
+	 */
+	public static boolean rocketShot(Mob mob, ServerLevel level, GeneEffect.RocketShot shot) {
+		long now = level.getGameTime();
+		long last = mob.getAttachedOrElse(ModAttachments.ROCKET_TIME, Long.MIN_VALUE);
+		LivingEntity target = mob.getTarget();
+		if (target == null || !target.isAlive() || mob.distanceTo(target) > shot.range() || !mob.hasLineOfSight(target)
+				|| last != Long.MIN_VALUE && now - last < Math.round(shot.cooldownSeconds() * 20.0F)) {
+			return false;
+		}
+		net.minecraft.world.entity.projectile.FireworkRocketEntity rocket = new net.minecraft.world.entity.projectile.FireworkRocketEntity(
+				level, rocket(), mob, mob.getX(), mob.getEyeY() - 0.15, mob.getZ(), true);
+		// The rocket flies as a crossbow shot does: at a third of the height of the target, a little higher when far.
+		double dx = target.getX() - mob.getX();
+		double dz = target.getZ() - mob.getZ();
+		double dy = target.getY(1.0 / 3.0) - rocket.getY() + Math.sqrt(dx * dx + dz * dz) * 0.2;
+		rocket.shoot(dx, dy, dz, ROCKET_SPEED, 1.0F);
+		level.addFreshEntity(rocket);
+		level.playSound(null, mob.getX(), mob.getY(), mob.getZ(), net.minecraft.sounds.SoundEvents.CROSSBOW_SHOOT,
+				mob.getSoundSource(), 1.0F, 1.0F);
+		mob.setAttached(ModAttachments.ROCKET_TIME, now);
+		return true;
 	}
 
 	/**

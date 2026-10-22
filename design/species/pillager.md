@@ -133,7 +133,7 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Fleet Foot | Scout | `projectile` | 20% more speed | 10% less maximum health | Legs: light boots |
-| Spyglass | Scout | `unreached` | 50% more follow range | 10% less maximum health | Head: a spyglass at the belt. This changes the model |
+| Spyglass | Scout | `unreached` | 50% more follow range | 10% less maximum health | Body: a spyglass at the belt. This changes the model |
 | Pathseeker | Scout | `spotted` | It sees invisible players in 16 blocks | 10% less speed | Head: pale, sharp eyes |
 | Evasion | Scout, sub Looter | `projectile` | It steps to the side when a player aims at it from far away | 10% less bolt damage | Legs: patched trousers |
 | Camouflage | Scout | `night` | It is almost invisible while it stands in leaves or tall grass | 10% less maximum health | Body: a cloak of leaves |

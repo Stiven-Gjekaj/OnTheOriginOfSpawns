@@ -320,11 +320,12 @@ public class PillagerEffectsTest {
 		return item;
 	}
 
+	// The genes of these tests reach only 4 blocks, so they do not reach the pillagers of other tests.
 	@GameTest(maxTicks = 80)
 	public void aBannerBearerAuraReachesOnlyPillagers(GameTestHelper helper) {
 		pillagerWith(helper, new BlockPos(1, 1, 1), "test_banner_bearer");
 		Pillager ally = pillagerWith(helper, new BlockPos(4, 1, 1));
-		Vindicator vindicator = helper.spawnWithNoFreeWill(EntityTypes.VINDICATOR, new BlockPos(1, 1, 4));
+		Vindicator vindicator = helper.spawnWithNoFreeWill(EntityTypes.VINDICATOR, new BlockPos(1, 1, 3));
 		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
 		helper.succeedWhen(() -> {
 			helper.assertTrue(ally.hasEffect(MobEffects.RESISTANCE), "the pillager gets Resistance");
@@ -349,7 +350,7 @@ public class PillagerEffectsTest {
 	public void signalSmokeCallsOnlyThePillagers(GameTestHelper helper) {
 		Pillager caller = pillagerWith(helper, new BlockPos(1, 1, 1), "test_signal_smoke");
 		Pillager ally = pillagerWith(helper, new BlockPos(4, 1, 1));
-		Vindicator vindicator = helper.spawnWithNoFreeWill(EntityTypes.VINDICATOR, new BlockPos(1, 1, 4));
+		Vindicator vindicator = helper.spawnWithNoFreeWill(EntityTypes.VINDICATOR, new BlockPos(1, 1, 3));
 		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
 		caller.hurtServer(helper.getLevel(), helper.getLevel().damageSources().playerAttack(player), 1.0F);
 		helper.assertTrue(ally.getTarget() == player, "the pillager attacks the attacker");
@@ -360,7 +361,7 @@ public class PillagerEffectsTest {
 	@GameTest(maxTicks = 60)
 	public void aWarHornCallsThePillagersWhenItSeesAPlayer(GameTestHelper helper) {
 		Pillager horn = pillagerWith(helper, new BlockPos(1, 1, 1), "test_war_horn");
-		Pillager ally = pillagerWith(helper, new BlockPos(4, 1, 1));
+		Pillager ally = pillagerWith(helper, new BlockPos(3, 1, 1));
 		Player player = helper.makeMockPlayer(GameType.SURVIVAL);
 		horn.setTarget(player);
 		helper.succeedWhen(() -> helper.assertTrue(ally.getTarget() == player, "the pillager targets the player"));
@@ -382,7 +383,7 @@ public class PillagerEffectsTest {
 	public void grudgeAndPowderKegActWhenThePillagerDies(GameTestHelper helper) {
 		Pillager pillager = pillagerWith(helper, new BlockPos(1, 1, 1), "test_grudge", "test_powder_keg");
 		Pillager ally = pillagerWith(helper, new BlockPos(4, 1, 1));
-		Vindicator vindicator = helper.spawnWithNoFreeWill(EntityTypes.VINDICATOR, new BlockPos(1, 1, 4));
+		Vindicator vindicator = helper.spawnWithNoFreeWill(EntityTypes.VINDICATOR, new BlockPos(1, 1, 3));
 		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
 		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(2, 1, 1))));
 		float before = player.getHealth();

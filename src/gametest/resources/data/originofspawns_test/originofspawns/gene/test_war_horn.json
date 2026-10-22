@@ -2,6 +2,6 @@
 	"species": "minecraft:pillager",
 	"counters": "originofspawns_test:test_heat",
 	"family": "originofspawns_test:test",
-	"gains": [{ "type": "call_on_sight", "radius": 32 }],
+	"gains": [{ "type": "call_on_sight", "radius": 4 }],
 	"mutation_rate": 0
 }

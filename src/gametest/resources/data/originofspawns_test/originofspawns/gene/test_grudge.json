@@ -2,6 +2,6 @@
 	"species": "minecraft:pillager",
 	"counters": "originofspawns_test:test_heat",
 	"family": "originofspawns_test:test",
-	"gains": [{ "type": "death_effect", "effect": "minecraft:strength", "seconds": 10, "radius": 16, "allies": true }],
+	"gains": [{ "type": "death_effect", "effect": "minecraft:strength", "seconds": 10, "radius": 4, "allies": true }],
 	"mutation_rate": 0
 }

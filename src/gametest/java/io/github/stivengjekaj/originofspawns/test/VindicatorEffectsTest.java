@@ -15,6 +15,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
@@ -22,8 +24,10 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.illager.Vindicator;
+import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
@@ -80,6 +84,30 @@ public class VindicatorEffectsTest {
 		helper.assertFalse(new SiegeGoal(vindicator, new GeneEffect.Siege(3.0F)).canUse(), "a plain siege leaves a fence");
 		helper.assertTrue(new SiegeGoal(vindicator, new GeneEffect.Siege(3.0F, Optional.of(shatterable))).canUse(),
 				"a siege that also breaks fences finds the fence");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aVindicatorGetsNoRandomAxeEnchantmentButTheRaidSharpnessStays(GameTestHelper helper) {
+		Vindicator vindicator = vindicatorWith(helper, new BlockPos(1, 1, 1));
+		// On Hard, in a world that is old, with a full moon, the vanilla axe gets an enchantment on 1 spawn in 4.
+		DifficultyInstance hard = new DifficultyInstance(Difficulty.HARD, 10_000_000L, 10_000_000L, 1.0F);
+		for (int i = 0; i < 40; i++) {
+			vindicator.finalizeSpawn(helper.getLevel(), hard, EntitySpawnReason.NATURAL, null);
+			helper.assertTrue(vindicator.getMainHandItem().is(Items.IRON_AXE), "the vindicator keeps its axe");
+			helper.assertFalse(vindicator.getMainHandItem().isEnchanted(), "the axe has no random enchantment");
+		}
+		// A raid with the strongest omen enchants the axe on 3 raiders in 4.
+		Raid raid = new Raid(helper.absolutePos(new BlockPos(1, 1, 1)), Difficulty.HARD);
+		raid.setRaidOmenLevel(5);
+		vindicator.setCurrentRaid(raid);
+		boolean sharpened = false;
+		for (int i = 0; i < 20 && !sharpened; i++) {
+			vindicator.applyRaidBuffs(helper.getLevel(), 1, false);
+			sharpened = vindicator.getMainHandItem().getEnchantments().keySet().stream()
+					.anyMatch(enchantment -> enchantment.is(Enchantments.SHARPNESS));
+		}
+		helper.assertTrue(sharpened, "the raid still gives the axe Sharpness");
 		helper.succeed();
 	}
 

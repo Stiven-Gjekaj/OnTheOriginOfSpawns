@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:pillager",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "effect_on_hit", "effect": "minecraft:slowness", "seconds": 2, "hits": "projectile" }, { "type": "ignite_target", "chance": 1, "seconds": 4, "hits": "projectile" }, { "type": "damage_dealt_when", "when": "always", "multiplier": 1.5, "hits": "projectile" }, { "type": "pierce_shields" }, { "type": "arrow_spread", "multiplier": 0 }],
+	"mutation_rate": 0
+}

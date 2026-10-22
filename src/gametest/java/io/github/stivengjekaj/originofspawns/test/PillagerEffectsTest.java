@@ -3,6 +3,7 @@ package io.github.stivengjekaj.originofspawns.test;
 import io.github.stivengjekaj.originofspawns.definition.DeathCondition;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -14,6 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -25,6 +27,7 @@ import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.illager.Pillager;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
@@ -114,6 +117,59 @@ public class PillagerEffectsTest {
 				&& effect.getDuration() == 40), "the bolt carries Slowness for 2 seconds: " + contents);
 		helper.assertValueEqual(bolt.getAttached(ModAttachments.GHOST_ARROW), 12.0F, "the bolt is a ghost arrow");
 		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 60)
+	public void theHitGenesActOnABoltThatHits(GameTestHelper helper) {
+		Pillager pillager = pillagerWith(helper, new BlockPos(1, 1, 1), "test_bolt_hits");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 1));
+		pillager.setTarget(pig);
+		load(pillager);
+		pillager.performRangedAttack(pig, 1.0F);
+		AbstractArrow bolt = boltsOf(helper, pillager).getFirst();
+		// A bolt is a projectile hit, so the bonus for projectile hits acts on it, and a melee hit gets none.
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, helper.getLevel().damageSources().arrow(bolt, pillager), 4.0F),
+				6.0F, "the bolt damage");
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, helper.getLevel().damageSources().mobAttack(pillager), 4.0F),
+				4.0F, "the melee damage");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 60)
+	public void aBoltThatHitsGivesItsEffectsAndItsFire(GameTestHelper helper) {
+		Pillager pillager = pillagerWith(helper, new BlockPos(1, 1, 1), "test_bolt_hits");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 1));
+		pillager.setTarget(pig);
+		load(pillager);
+		pillager.performRangedAttack(pig, 1.0F);
+		helper.succeedWhen(() -> {
+			helper.assertTrue(pig.hasEffect(MobEffects.SLOWNESS), "the bolt gives Slowness");
+			helper.assertTrue(pig.getRemainingFireTicks() > 0, "the bolt sets the pig on fire");
+		});
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8, maxTicks = 40)
+	public void aPiercerBoltGoesThroughAShield(GameTestHelper helper) {
+		ServerPlayer plainTarget = CreeperEffectsTest.shieldedPlayer(helper);
+		helper.assertFalse(boltHurts(helper, pillagerWith(helper, new BlockPos(1, 1, 1)), plainTarget),
+				"the shield stops a plain bolt");
+		helper.assertTrue(plainTarget.getOffhandItem().getDamageValue() > 0, "a plain bolt damages the shield");
+		ServerPlayer target = CreeperEffectsTest.shieldedPlayer(helper);
+		helper.assertTrue(boltHurts(helper, pillagerWith(helper, new BlockPos(1, 1, 3), "test_bolt_hits"), target),
+				"the bolt hurts the player behind the shield");
+		helper.assertValueEqual(target.getOffhandItem().getDamageValue(), 0, "the shield takes no damage");
+		helper.succeed();
+	}
+
+	/**
+	 * Hits the player with a bolt of the pillager from the west, and returns true if the player lost health.
+	 */
+	static boolean boltHurts(GameTestHelper helper, Pillager pillager, ServerPlayer player) {
+		Arrow bolt = new Arrow(helper.getLevel(), pillager, new ItemStack(Items.ARROW), new ItemStack(Items.CROSSBOW));
+		bolt.setPos(helper.absoluteVec(new Vec3(2.0, 1.5, 1.5)));
+		float before = player.getHealth();
+		player.hurtServer(helper.getLevel(), helper.getLevel().damageSources().arrow(bolt, pillager), 4.0F);
+		return player.getHealth() < before;
 	}
 
 	/**

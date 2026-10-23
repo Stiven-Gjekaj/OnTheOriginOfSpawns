@@ -1,0 +1,27 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:witch/bog_hag",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:jump_strength",
+			"amount": 1,
+			"operation": "add_multiplied_base"
+		},
+		{
+			"type": "attribute",
+			"attribute": "minecraft:fall_damage_multiplier",
+			"amount": -0.5,
+			"operation": "add_multiplied_base"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

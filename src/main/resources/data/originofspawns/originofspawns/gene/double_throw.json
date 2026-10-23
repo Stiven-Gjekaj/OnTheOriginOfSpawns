@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:witch/slinger",
+	"gains": [
+		{
+			"type": "potion_count",
+			"count": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.9
+		}
+	]
+}

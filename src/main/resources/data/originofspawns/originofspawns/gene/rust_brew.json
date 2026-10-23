@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:witch/brewer",
+	"gains": [
+		{
+			"type": "potion_damage",
+			"multiplier": 2,
+			"targets": "#originofspawns:all_golems"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

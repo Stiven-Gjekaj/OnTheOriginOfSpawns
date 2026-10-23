@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:witch/alchemist",
+	"sub_family": "originofspawns:witch/coven",
+	"gains": [
+		{
+			"type": "shared_drink",
+			"radius": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

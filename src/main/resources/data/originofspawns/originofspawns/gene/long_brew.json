@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:witch/brewer",
+	"gains": [
+		{
+			"type": "potion_duration",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.9
+		}
+	]
+}

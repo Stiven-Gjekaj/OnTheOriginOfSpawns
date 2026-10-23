@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:witch/coven",
+	"gains": [
+		{
+			"type": "heal_on_ally_death",
+			"amount": 6,
+			"radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "potion_damage",
+			"multiplier": 0.9
+		}
+	]
+}

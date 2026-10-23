@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:witch/brewer",
+	"gains": [
+		{
+			"type": "potion_swap",
+			"from": "minecraft:slowness",
+			"to": "minecraft:blindness"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

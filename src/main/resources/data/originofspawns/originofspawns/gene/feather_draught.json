@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:witch/alchemist",
+	"gains": [
+		{
+			"type": "drink",
+			"potion": "minecraft:slow_falling",
+			"when": "falling"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

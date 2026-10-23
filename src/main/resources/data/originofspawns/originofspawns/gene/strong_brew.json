@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:witch/brewer",
+	"gains": [
+		{
+			"type": "potion_level",
+			"levels": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

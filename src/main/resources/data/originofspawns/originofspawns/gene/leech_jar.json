@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:wolf",
+	"family": "originofspawns:witch/bog_hag",
+	"gains": [
+		{
+			"type": "potion_heal",
+			"amount": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

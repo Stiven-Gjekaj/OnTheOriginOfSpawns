@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:witch/brewer",
+	"sub_family": "originofspawns:witch/slinger",
+	"gains": [
+		{
+			"type": "potion_extra",
+			"with": "minecraft:instant_damage",
+			"effect": "minecraft:wither",
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:dry",
+	"family": "originofspawns:witch/bog_hag",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 3,
+			"idle_seconds": 0,
+			"when": "in_rain"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

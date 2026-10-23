@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:witch/alchemist",
+	"gains": [
+		{
+			"type": "drink",
+			"potion": "minecraft:healing",
+			"when": "wounded",
+			"cooldown_seconds": 30
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

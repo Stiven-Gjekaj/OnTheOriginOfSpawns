@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:witch/coven",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:resistance",
+			"radius": 8,
+			"interval_seconds": 2,
+			"seconds": 3,
+			"allies": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

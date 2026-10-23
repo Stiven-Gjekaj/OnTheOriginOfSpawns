@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:witch/brewer",
+	"gains": [
+		{
+			"type": "potion_lingering"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:witch/slinger",
+	"gains": [
+		{
+			"type": "potion_shards",
+			"damage": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,59 @@
+{
+	"species": "minecraft:witch",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "drink",
+					"potion": "minecraft:healing",
+					"when": "wounded",
+					"cooldown_seconds": 40
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "drink",
+					"potion": "minecraft:healing",
+					"when": "wounded",
+					"cooldown_seconds": 30
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "drink",
+					"potion": "minecraft:healing",
+					"when": "wounded",
+					"cooldown_seconds": 20
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

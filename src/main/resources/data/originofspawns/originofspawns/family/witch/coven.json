@@ -1,0 +1,50 @@
+{
+	"species": "minecraft:witch",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "heal_throw",
+					"radius": 8,
+					"cooldown_seconds": 20
+				}
+			],
+			"debuffs": [
+				{
+					"type": "potion_damage",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "heal_throw",
+					"radius": 8,
+					"cooldown_seconds": 15
+				}
+			],
+			"debuffs": [
+				{
+					"type": "potion_damage",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "heal_throw",
+					"radius": 8,
+					"cooldown_seconds": 10
+				}
+			],
+			"debuffs": [
+				{
+					"type": "potion_damage",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

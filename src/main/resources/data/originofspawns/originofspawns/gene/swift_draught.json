@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:witch/alchemist",
+	"gains": [
+		{
+			"type": "drink",
+			"potion": "minecraft:strong_swiftness",
+			"when": "target_far"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

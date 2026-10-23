@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:witch",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "potion_duration",
+					"multiplier": 1.2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "potion_duration",
+					"multiplier": 1.3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "potion_duration",
+					"multiplier": 1.5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

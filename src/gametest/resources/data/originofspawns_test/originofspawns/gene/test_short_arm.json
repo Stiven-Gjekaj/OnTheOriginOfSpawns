@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "throw_range", "multiplier": 0.3, "target": "any" }],
+	"mutation_rate": 0
+}

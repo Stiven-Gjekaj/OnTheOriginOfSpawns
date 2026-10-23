@@ -19,8 +19,8 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(Witch.class)
 public abstract class WitchMixin {
 	/**
-	 * A witch with gene effects throws its potion with the changes of its genes. The potions that heal a raider do not
-	 * change.
+	 * A witch with gene effects throws its potion with the changes of its genes, and with the arrow spread of its genes.
+	 * The potions that heal a raider do not change.
 	 */
 	@WrapOperation(method = "performRangedAttack", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/world/entity/projectile/Projectile;spawnProjectileUsingShoot(Lnet/minecraft/world/entity/projectile/Projectile$ProjectileFactory;Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/LivingEntity;DDDFF)Lnet/minecraft/world/entity/projectile/Projectile;"))
@@ -30,6 +30,7 @@ public abstract class WitchMixin {
 		if (target instanceof Raider || GeneEffects.of(source).findAny().isEmpty()) {
 			return original.call(factory, level, stack, source, x, y, z, power, uncertainty);
 		}
-		return GeneBehaviors.throwPotion((Witch) source, level, stack, x, y, z, power, uncertainty);
+		return GeneBehaviors.throwPotion((Witch) source, level, stack, x, y, z, power,
+				uncertainty * GeneBehaviors.arrowSpreadMultiplier(source));
 	}
 }

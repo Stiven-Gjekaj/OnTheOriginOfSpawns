@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -22,6 +23,8 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.monster.illager.Pillager;
@@ -191,6 +194,67 @@ public class WitchEffectsTest {
 		helper.assertValueEqual(ally.getHealth(), ally.getMaxHealth(), "a potion with no mark does no damage");
 		helper.assertValueEqual(witch.getHealth(), 11.0F, "and it does not heal the witch");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void throwRateMakesTheWitchThrowMoreOften(GameTestHelper helper) {
+		Witch plain = witchWith(helper, new BlockPos(2, 1, 1));
+		Witch quick = witchWith(helper, new BlockPos(2, 1, 5), "test_quick_hand");
+		RangedAttackGoal plainGoal = rangedGoal(plain, CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 1)));
+		RangedAttackGoal quickGoal = rangedGoal(quick, CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 5)));
+		// The vanilla witch throws each 60 ticks. Two times as often is each 30 ticks.
+		for (int i = 0; i < 35; i++) {
+			plainGoal.tick();
+			quickGoal.tick();
+		}
+		List<AbstractThrownPotion> potions = helper.getLevel().getEntitiesOfClass(AbstractThrownPotion.class,
+				new AABB(helper.absolutePos(BlockPos.ZERO)).inflate(8.0));
+		long plainThrows = potions.stream().filter(potion -> potion.getOwner() == plain).count();
+		long quickThrows = potions.stream().filter(potion -> potion.getOwner() == quick).count();
+		potions.forEach(AbstractThrownPotion::discard);
+		helper.assertValueEqual(plainThrows, 0L, "a plain witch does not throw in 35 ticks");
+		helper.assertValueEqual(quickThrows, 1L, "the quick witch throws in 35 ticks");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void throwRangeChangesTheRangeOfTheWitch(GameTestHelper helper) {
+		// A shorter range tests the same code as the longer range of Long Arm, and it stays in the test area.
+		Witch plain = witchWith(helper, new BlockPos(2, 1, 1));
+		Witch near = witchWith(helper, new BlockPos(2, 1, 5), "test_short_arm");
+		// A mob with no AI is not on the ground, and a mob in the air makes no path.
+		plain.setOnGround(true);
+		near.setOnGround(true);
+		RangedAttackGoal plainGoal = rangedGoal(plain, CreeperEffectsTest.pigAt(helper, new BlockPos(7, 1, 1)));
+		RangedAttackGoal nearGoal = rangedGoal(near, CreeperEffectsTest.pigAt(helper, new BlockPos(7, 1, 5)));
+		for (int i = 0; i < 6; i++) {
+			plainGoal.tick();
+			nearGoal.tick();
+		}
+		helper.assertTrue(plain.getNavigation().isDone(), "a plain witch stays, the target is in 10 blocks");
+		helper.assertFalse(near.getNavigation().isDone(), "the witch walks, the target is out of 3 blocks");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void sureAimThrowsStraight(GameTestHelper helper) {
+		Witch witch = witchWith(helper, new BlockPos(2, 1, 3), "test_sure_aim");
+		witch.performRangedAttack(CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 3)), 1.0F);
+		AbstractThrownPotion potion = potionOf(helper, witch);
+		Vec3 flight = potion.getDeltaMovement();
+		potion.discard();
+		helper.assertTrue(Math.abs(flight.z) < 1.0E-6, "the potion flies straight at the target, z was " + flight.z);
+		helper.succeed();
+	}
+
+	static RangedAttackGoal rangedGoal(Witch witch, Pig target) {
+		witch.setTarget(target);
+		RangedAttackGoal goal = ((MobAccessor) witch).originofspawns$goalSelector().getAvailableGoals().stream()
+				.map(WrappedGoal::getGoal).filter(RangedAttackGoal.class::isInstance).map(RangedAttackGoal.class::cast)
+				.findFirst().orElseThrow();
+		goal.canUse();
+		goal.start();
+		return goal;
 	}
 
 	/**

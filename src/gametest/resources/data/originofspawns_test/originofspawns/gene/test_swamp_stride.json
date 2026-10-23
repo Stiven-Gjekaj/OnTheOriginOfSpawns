@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "speed_when", "when": "in_water", "multiplier": 1.3 }],
+	"mutation_rate": 0
+}

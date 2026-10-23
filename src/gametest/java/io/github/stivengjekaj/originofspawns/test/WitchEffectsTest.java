@@ -1,11 +1,14 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
+import io.github.stivengjekaj.originofspawns.mixin.WitchAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import java.util.List;
@@ -18,6 +21,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -25,6 +29,9 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
@@ -32,13 +39,16 @@ import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.monster.illager.Pillager;
+import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.AbstractThrownPotion;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownLingeringPotion;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -346,6 +356,139 @@ public class WitchEffectsTest {
 		zombie.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200));
 		// The behavior tick of the witch throws the potion, and the potion flies 2 blocks to the zombie.
 		helper.succeedWhen(() -> helper.assertTrue(zombie.getHealth() > 5.0F, "health was " + zombie.getHealth()));
+	}
+
+	// The genes of these tests reach only 4 blocks, so they do not reach the witches of other tests.
+	@GameTest(maxTicks = 60)
+	public void covenCallCallsTheWitchesWhenItSeesAPlayer(GameTestHelper helper) {
+		Witch caller = witchWith(helper, new BlockPos(1, 1, 1), "test_coven_call");
+		Witch ally = witchWith(helper, new BlockPos(3, 1, 1));
+		Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+		caller.setTarget(player);
+		helper.succeedWhen(() -> helper.assertTrue(ally.getTarget() == player, "the witch targets the player"));
+	}
+
+	@GameTest(maxTicks = 80)
+	public void covenWardGivesResistanceToWitchesOnly(GameTestHelper helper) {
+		witchWith(helper, new BlockPos(1, 1, 1), "test_coven_ward");
+		Witch ally = witchWith(helper, new BlockPos(4, 1, 1));
+		Pillager pillager = PillagerEffectsTest.pillagerWith(helper, new BlockPos(1, 1, 3));
+		helper.succeedWhen(() -> {
+			helper.assertTrue(ally.hasEffect(MobEffects.RESISTANCE), "the witch gets Resistance");
+			helper.assertFalse(pillager.hasEffect(MobEffects.RESISTANCE), "the pillager is not a witch");
+		});
+	}
+
+	@GameTest
+	public void bloodPactSharesTheDamageWithAWitch(GameTestHelper helper) {
+		Witch pact = witchWith(helper, new BlockPos(1, 1, 1), "test_blood_pact");
+		Witch ally = witchWith(helper, new BlockPos(3, 1, 1));
+		Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+		float full = pact.getHealth();
+		pact.hurtServer(helper.getLevel(), helper.getLevel().damageSources().playerAttack(player), 10.0F);
+		helper.assertValueEqual(pact.getHealth(), full - 5.0F, "the witch takes half");
+		helper.assertValueEqual(ally.getHealth(), full - 5.0F, "the ally takes the other half");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void lastRitesHealsWhenAWitchDiesNear(GameTestHelper helper) {
+		Witch dead = witchWith(helper, new BlockPos(2, 1, 2));
+		Witch mourner = witchWith(helper, new BlockPos(4, 1, 2), "test_last_rites");
+		mourner.setHealth(10.0F);
+		GeneCombat.onDeath(dead, helper.getLevel(), helper.getLevel().damageSources().generic());
+		helper.assertValueEqual(mourner.getHealth(), 16.0F, "the witch heals 6");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 60)
+	public void rainDanceHealsOnlyInAStorm(GameTestHelper helper) {
+		// The test does not start a storm, because the weather of the level reaches each test that runs now.
+		Witch dancer = witchWith(helper, new BlockPos(1, 1, 1), "test_rain_dance");
+		Witch healer = witchWith(helper, new BlockPos(1, 1, 4), "test_witch_regen");
+		dancer.setHealth(10.0F);
+		healer.setHealth(10.0F);
+		holdVanillaDrinks(dancer);
+		holdVanillaDrinks(healer);
+		helper.runAfterDelay(50, () -> {
+			if (!helper.getLevel().isThundering()) {
+				helper.assertValueEqual(dancer.getHealth(), 10.0F, "no heal out of a storm");
+			}
+			helper.assertTrue(healer.getHealth() > 10.0F, "the regeneration heals a witch");
+			helper.succeed();
+		});
+	}
+
+	@GameTest(maxTicks = 60)
+	public void swampStrideIsFasterInWater(GameTestHelper helper) {
+		BlockPos pos = new BlockPos(1, 1, 1);
+		helper.setBlock(pos, Blocks.WATER);
+		Witch wet = witchWith(helper, pos, "test_swamp_stride");
+		Witch dry = witchWith(helper, new BlockPos(1, 1, 4), "test_swamp_stride");
+		helper.runAfterDelay(10, () -> {
+			helper.assertTrue(wet.getAttribute(Attributes.MOVEMENT_SPEED).hasModifier(OriginOfSpawns.id("speed_when/0")),
+					"the water modifier is on");
+			helper.assertFalse(dry.getAttribute(Attributes.MOVEMENT_SPEED).hasModifier(OriginOfSpawns.id("speed_when/0")),
+					"no modifier on land");
+			helper.succeed();
+		});
+	}
+
+	@GameTest
+	public void anAttributeGeneChangesTheHealthOfTheWitch(GameTestHelper helper) {
+		Witch witch = witchWith(helper, new BlockPos(1, 1, 1), "test_witch_health");
+		GeneEffects.applyAttributes(witch, GeneEffects.sources(helper.getLevel().registryAccess(),
+				witch.getAttached(ModAttachments.GENES)));
+		helper.assertTrue(Math.abs(witch.getMaxHealth() - 23.4F) < 0.001F, "10% less of 26 health, was " + witch.getMaxHealth());
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theWardsChangeTheDamageThatTheWitchTakes(GameTestHelper helper) {
+		Witch witch = witchWith(helper, new BlockPos(1, 1, 1), "test_witch_wards");
+		var sources = helper.getLevel().damageSources();
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(witch, sources.onFire(), 10.0F) - 13.75F) < 0.001F,
+				"25% more fire damage, then 10% more");
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(witch, sources.explosion(null, null), 10.0F) - 7.7F) < 0.001F,
+				"30% less explosion damage, then 10% more");
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(witch, sources.generic(), 10.0F) - 11.0F) < 0.001F,
+				"10% more damage from the rest");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aWitchCannotLeadARaidWave(GameTestHelper helper) {
+		Raid raid = new Raid(helper.absolutePos(new BlockPos(3, 1, 3)), Difficulty.NORMAL);
+		// The game makes the first raider of the wave the leader, before the genes exist.
+		Witch first = PillagerEffectsTest.raidMember(helper, raid,
+				EntityTypes.WITCH.create(helper.getLevel(), EntitySpawnReason.EVENT), new BlockPos(1, 1, 1), true,
+				"test_long_brew");
+		helper.assertTrue(raid.getLeader(1) == null, "the witch does not lead the wave");
+		helper.assertFalse(first.isPatrolLeader(), "the witch is not a captain");
+		helper.assertTrue(first.getItemBySlot(EquipmentSlot.HEAD).isEmpty(), "the witch has no banner");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aVillagerThatLightningHitsBecomesAWitchWithGenes(GameTestHelper helper) {
+		Villager villager = helper.spawnWithNoFreeWill(EntityTypes.VILLAGER, new BlockPos(3, 1, 3));
+		helper.assertFalse(villager.hasAttached(ModAttachments.GENES), "a villager has no genes");
+		LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
+		bolt.snapTo(villager.position());
+		villager.thunderHit(helper.getLevel(), bolt);
+		List<Witch> witches = helper.getLevel().getEntitiesOfClass(Witch.class, villager.getBoundingBox().inflate(1.0));
+		helper.assertValueEqual(witches.size(), 1, "the villager becomes a witch");
+		helper.assertTrue(witches.getFirst().hasAttached(ModAttachments.GENES), "the new witch gets genes");
+		helper.succeed();
+	}
+
+	/**
+	 * Makes the witch drink an empty hand for a long time. A vanilla witch that is hurt drinks Healing at random, and
+	 * a witch that drinks starts no other drink.
+	 */
+	static void holdVanillaDrinks(Witch witch) {
+		((WitchAccessor) witch).originofspawns$setUsingTime(10_000);
+		witch.setUsingItem(true);
 	}
 
 	static RangedAttackGoal rangedGoal(Witch witch, Pig target) {

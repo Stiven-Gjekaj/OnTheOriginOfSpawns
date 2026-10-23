@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "damage_taken", "damage_types": "#minecraft:is_fire", "multiplier": 1.25 }, { "type": "damage_taken", "damage_types": "#minecraft:is_explosion", "multiplier": 0.7 }, { "type": "damage_taken_when", "when": "always", "multiplier": 1.1 }],
+	"mutation_rate": 0
+}

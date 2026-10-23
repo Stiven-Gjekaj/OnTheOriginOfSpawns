@@ -183,7 +183,8 @@ public sealed interface GeneEffect {
 			Map.entry("potion_extra", PotionExtra.CODEC),
 			Map.entry("potion_lingering", PotionLingering.CODEC),
 			Map.entry("potion_count", PotionCount.CODEC),
-			Map.entry("potion_splash", PotionSplash.CODEC)
+			Map.entry("potion_splash", PotionSplash.CODEC),
+			Map.entry("potion_damage", PotionDamage.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2910,6 +2911,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "potion_splash";
+		}
+	}
+
+	/**
+	 * Multiplies the damage of the potions that the mob throws, for example the damage of Harming. With
+	 * {@code targets}, it multiplies only the damage to the mobs of the tag.
+	 */
+	record PotionDamage(float multiplier, Optional<TagKey<EntityType<?>>> targets) implements GeneEffect {
+		public static final MapCodec<PotionDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).fieldOf("multiplier").forGetter(PotionDamage::multiplier),
+				TagKey.hashedCodec(Registries.ENTITY_TYPE).optionalFieldOf("targets").forGetter(PotionDamage::targets)
+		).apply(instance, PotionDamage::new));
+
+		@Override
+		public String type() {
+			return "potion_damage";
 		}
 	}
 }

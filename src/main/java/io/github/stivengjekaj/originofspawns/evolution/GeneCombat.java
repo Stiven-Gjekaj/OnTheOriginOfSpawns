@@ -30,6 +30,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.world.entity.projectile.EvokerFangs;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.AbstractThrownPotion;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.util.RandomSource;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
@@ -402,6 +403,9 @@ public final class GeneCombat {
 							result *= 1.0F + Math.min(rally.max(), rally.perAlly() * sameSpeciesNear(attacker, rally.radius()));
 					case GeneEffect.SoulHunger hunger when source.getDirectEntity() == attacker ->
 							result *= 1.0F + Math.min(hunger.max(), hunger.perPlayer() * recentPlayers(attacker, hunger.seconds()));
+					case GeneEffect.PotionDamage potion when source.getDirectEntity() instanceof AbstractThrownPotion
+							&& potion.targets().map(tag -> victim.getType().builtInRegistryHolder().is(tag)).orElse(true) ->
+							result *= potion.multiplier();
 					case GeneEffect.FangDamage fang when source.getDirectEntity() instanceof EvokerFangs
 							&& fang.targets().map(tag -> victim.getType().builtInRegistryHolder().is(tag)).orElse(true) ->
 							result *= fang.multiplier();

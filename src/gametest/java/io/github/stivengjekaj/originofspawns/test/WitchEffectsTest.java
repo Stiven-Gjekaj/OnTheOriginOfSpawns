@@ -15,6 +15,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -149,6 +150,23 @@ public class WitchEffectsTest {
 		helper.assertValueEqual(clouds.stream().filter(cloud -> cloud.getOwner() == witch).findFirst().orElseThrow()
 				.getRadius(), 4.5F, "a wide cloud starts at 4.5 blocks");
 		clouds.forEach(AreaEffectCloud::discard);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void rustBrewHurtsOnlyTheGolemsMore(GameTestHelper helper) {
+		Witch witch = witchWith(helper, new BlockPos(1, 1, 1), "test_rust_brew");
+		AbstractThrownPotion potion = new net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion(
+				helper.getLevel(), witch, splash(Potions.HARMING));
+		DamageSource harm = helper.getLevel().damageSources().indirectMagic(potion, witch);
+		DamageSource hit = helper.getLevel().damageSources().mobAttack(witch);
+		helper.assertValueEqual(VindicatorEffectsTest.damageTo(helper, EntityTypes.IRON_GOLEM, harm), 8.0F,
+				"an iron golem takes two times the damage");
+		helper.assertValueEqual(VindicatorEffectsTest.damageTo(helper, EntityTypes.SNOW_GOLEM, harm), 8.0F,
+				"a snow golem too");
+		helper.assertValueEqual(VindicatorEffectsTest.damageTo(helper, EntityTypes.PIG, harm), 4.0F, "a pig is not a golem");
+		helper.assertValueEqual(VindicatorEffectsTest.damageTo(helper, EntityTypes.IRON_GOLEM, hit), 4.0F,
+				"a hit that is not a potion does not change");
 		helper.succeed();
 	}
 

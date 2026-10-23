@@ -166,7 +166,9 @@ public sealed interface GeneEffect {
 			Map.entry("fang_effect", FangEffect.CODEC),
 			Map.entry("fang_launch", FangLaunch.CODEC),
 			Map.entry("fang_heal", FangHeal.CODEC),
-			Map.entry("spell_interval", SpellInterval.CODEC)
+			Map.entry("spell_interval", SpellInterval.CODEC),
+			Map.entry("fang_line", FangLine.CODEC),
+			Map.entry("fang_ring", FangRing.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2629,6 +2631,36 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "spell_interval";
+		}
+	}
+
+	/**
+	 * Sets the number of fangs in the line of the fang spell of an evoker. The line has 16 fangs in vanilla, one each
+	 * 1.25 blocks. With more than one effect, the largest number counts.
+	 */
+	record FangLine(int fangs) implements GeneEffect {
+		public static final MapCodec<FangLine> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 64).fieldOf("fangs").forGetter(FangLine::fangs)
+		).apply(instance, FangLine::new));
+
+		@Override
+		public String type() {
+			return "fang_line";
+		}
+	}
+
+	/**
+	 * Sets the range in blocks in which an evoker casts the ring of fangs in place of the line. The range is 3 blocks
+	 * in vanilla. With more than one effect, the largest range counts.
+	 */
+	record FangRing(float range) implements GeneEffect {
+		public static final MapCodec<FangRing> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 16.0F).fieldOf("range").forGetter(FangRing::range)
+		).apply(instance, FangRing::new));
+
+		@Override
+		public String type() {
+			return "fang_ring";
 		}
 	}
 }

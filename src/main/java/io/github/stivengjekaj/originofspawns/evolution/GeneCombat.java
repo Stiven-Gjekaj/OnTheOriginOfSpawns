@@ -522,6 +522,23 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Returns the number of fangs in the line of the fang spell of the mob. The genes can change the vanilla number.
+	 */
+	public static int fangLine(Mob mob, int fangs) {
+		return GeneEffects.of(mob).filter(GeneEffect.FangLine.class::isInstance).mapToInt(effect ->
+				((GeneEffect.FangLine) effect).fangs()).max().orElse(fangs);
+	}
+
+	/**
+	 * Returns the square of the range in which the mob casts the ring of fangs. The genes can change the vanilla range.
+	 */
+	public static double fangRingSquared(Mob mob, double squared) {
+		return GeneEffects.of(mob).filter(GeneEffect.FangRing.class::isInstance).mapToDouble(effect ->
+				((GeneEffect.FangRing) effect).range()).max().stream().map(range -> range * range).findFirst()
+				.orElse(squared);
+	}
+
+	/**
 	 * Returns the upward speed that lifts an entity this many blocks, with the gravity and the drag of a living
 	 * entity: 0.08 blocks each tick, then 2% less speed each tick.
 	 */

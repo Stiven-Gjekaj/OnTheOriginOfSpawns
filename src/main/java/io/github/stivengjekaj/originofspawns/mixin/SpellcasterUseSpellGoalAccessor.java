@@ -10,4 +10,10 @@ public interface SpellcasterUseSpellGoalAccessor {
 	 */
 	@Invoker("getCastingInterval")
 	int originofspawns$castingInterval();
+
+	/**
+	 * Casts the spell now.
+	 */
+	@Invoker("performSpellCasting")
+	void originofspawns$performSpellCasting();
 }

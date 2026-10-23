@@ -110,6 +110,50 @@ public class EvokerEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void fangLineSetsTheNumberOfFangsInTheLine(GameTestHelper helper) {
+		// A short line stays in the test area. The same constant makes a long line.
+		Evoker evoker = evokerWith(helper, new BlockPos(1, 1, 1), "test_fang_line");
+		evoker.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(7, 1, 1)));
+		castFangs(evoker);
+		helper.assertValueEqual(fangsOf(helper, evoker).size(), 4, "the line has 4 fangs, not 16");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void fangRingCastsTheRingAtATargetInFiveBlocks(GameTestHelper helper) {
+		Evoker plain = evokerWith(helper, new BlockPos(1, 1, 1));
+		plain.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 1)));
+		castFangs(plain);
+		helper.assertTrue(fangsOf(helper, plain).stream().anyMatch(fang -> across(fang, plain) > 3.0),
+				"a plain evoker casts the line at a target 4 blocks away");
+		Evoker ringer = evokerWith(helper, new BlockPos(1, 1, 4), "test_fang_ring");
+		ringer.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 4)));
+		castFangs(ringer);
+		java.util.List<EvokerFangs> ring = fangsOf(helper, ringer);
+		helper.assertValueEqual(ring.size(), 13, "the ring has 13 fangs");
+		helper.assertTrue(ring.stream().allMatch(fang -> across(fang, ringer) < 3.0), "the ring is near the evoker");
+		helper.succeed();
+	}
+
+	/**
+	 * Returns the distance in the flat plane. A fang can stand on a block that is higher than the evoker.
+	 */
+	static double across(EvokerFangs fang, Evoker evoker) {
+		return Math.hypot(fang.getX() - evoker.getX(), fang.getZ() - evoker.getZ());
+	}
+
+	static void castFangs(Evoker evoker) {
+		((MobAccessor) evoker).originofspawns$goalSelector().getAvailableGoals().stream().map(WrappedGoal::getGoal)
+				.filter(each -> each.getClass().getSimpleName().equals("EvokerAttackSpellGoal"))
+				.forEach(each -> ((SpellcasterUseSpellGoalAccessor) each).originofspawns$performSpellCasting());
+	}
+
+	static java.util.List<EvokerFangs> fangsOf(GameTestHelper helper, Evoker evoker) {
+		return helper.getLevel().getEntitiesOfClass(EvokerFangs.class, evoker.getBoundingBox().inflate(32.0),
+				fang -> fang.getOwner() == evoker);
+	}
+
 	static int castingInterval(Evoker evoker, String goal) {
 		return ((MobAccessor) evoker).originofspawns$goalSelector().getAvailableGoals().stream()
 				.map(WrappedGoal::getGoal).filter(each -> each.getClass().getSimpleName().equals(goal))

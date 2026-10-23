@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/witch.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/strong_brew_0.png",
+				"tint": "#A39483"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/strong_brew_1.png",
+				"tint": "#8A3AA0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/strong_brew_2.png",
+				"tint": "#5A1A70"
+			}
+		}
+	]
+}

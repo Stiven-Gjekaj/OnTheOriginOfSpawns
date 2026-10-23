@@ -1,0 +1,25 @@
+{
+	"texture": "originofspawns:textures/entity/blinding_brew_veil.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "hat",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				2,
+				-0.2
+			],
+			"size": [
+				9,
+				6,
+				1
+			],
+			"inflate": -0.3
+		}
+	]
+}

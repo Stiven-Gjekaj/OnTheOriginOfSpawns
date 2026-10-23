@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/witch.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wide_splash_0.png",
+				"tint": "#A050D0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wide_splash_1.png",
+				"tint": "#50C050"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wide_splash_2.png",
+				"tint": "#5080E0"
+			}
+		}
+	]
+}

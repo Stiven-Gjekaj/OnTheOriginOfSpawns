@@ -95,7 +95,7 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Fang Line | Fangcaller | `unreached` | Its line of fangs is 24 blocks long, not 16 | 10% less maximum health | Body: a row of teeth on the robe |
+| Fang Line | Fangcaller | `unreached` | Its line of fangs has 24 fangs, not 16 | 10% less maximum health | Body: a row of teeth on the robe |
 | Fang Ring | Fangcaller | `melee` | It casts the ring of fangs at a target in 5 blocks, not 3 | 10% more time between spells | Arms: rings of teeth on the sleeves |
 | Barbed Fangs | Fangcaller, sub Curser | `spotted` | Its fangs give Slowness II for 2 seconds | 10% less fang damage | Hands: hooked claws. This changes the model |
 | Swift Cast | Fangcaller | `crowd` | 30% less time between spells | 10% less maximum health | Head: bright, glowing eyes |

@@ -76,10 +76,12 @@ class Mark:
     The order puts the layer before (lower) or after (higher) the layers of
     other genes. The regions and the materials limit the layer, as in a gene
     visual. A mark of size 16 is a tile that covers the whole texture. A
-    mark with the target "outer" goes on the outer layer of the stray.
+    mark with a height is that many pixels high, for a texture that is not
+    square. A mark with the target "outer" goes on the outer layer of the
+    stray.
     """
 
-    def __init__(self, tint, alpha=255, order=0, regions=None, materials=None, size=64, target=None):
+    def __init__(self, tint, alpha=255, order=0, regions=None, materials=None, size=64, target=None, height=None):
         self.tint = tint
         self.target = target
         self.alpha = alpha
@@ -87,6 +89,10 @@ class Mark:
         self.regions = regions
         self.materials = materials
         self.size = size
+        # A mark is square, unless it has a height. The witch texture is
+        # 64x128, and a pattern repeats over the texture, so its marks are
+        # 64 wide and 128 high.
+        self.height = height or size
         self.pixels = {}
 
     def put(self, pixels, gray=255):
@@ -95,7 +101,7 @@ class Mark:
         return self
 
     def fill(self, gray=255):
-        for y in range(self.size):
+        for y in range(self.height):
             for x in range(self.size):
                 self.pixels[(x, y)] = gray
         return self
@@ -713,7 +719,7 @@ def write(gene, marks, models=None, region_map=None):
             # A layer that is not a pattern, for example a desaturate layer.
             layers.append(mark)
             continue
-        im = Image.new("RGBA", (mark.size, mark.size), (0, 0, 0, 0))
+        im = Image.new("RGBA", (mark.size, mark.height), (0, 0, 0, 0))
         for (x, y), gray in mark.pixels.items():
             im.putpixel((x, y), (gray, gray, gray, mark.alpha))
         name = f"{gene}_{n}"

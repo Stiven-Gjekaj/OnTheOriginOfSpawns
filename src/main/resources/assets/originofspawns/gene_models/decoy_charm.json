@@ -1,0 +1,78 @@
+{
+	"texture": "originofspawns:textures/entity/decoy_charm.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				10,
+				-0.5
+			],
+			"size": [
+				1,
+				1,
+				1
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				4,
+				0
+			],
+			"from": [
+				-2,
+				10.8,
+				-0.5
+			],
+			"size": [
+				2,
+				3,
+				1
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				12,
+				0
+			],
+			"from": [
+				-3,
+				11,
+				-0.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				12,
+				0
+			],
+			"from": [
+				0,
+				11,
+				-0.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.1
+		}
+	]
+}

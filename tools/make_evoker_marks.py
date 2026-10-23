@@ -66,6 +66,19 @@ Pixel plan for the Lifebinders.
   hip on the front of the robe, and back up on the back.
 - Blast Ward has gold greaves: gold plates on the boots, with a pale upper
   edge.
+
+Pixel plan for the Tricksters.
+- Blink has a purple glint in the eyes: purple pupils, and pale lavender eye
+  whites.
+- Smoke Veil has a gray smoke on the robe: wisps of gray smoke on the lower
+  robe, thicker at the hem.
+- Fleet has light, soft boots: the boots are pale tan, with soft folds.
+- Shimmer has a shimmer on the robe: small points of pale violet and pale
+  blue light all over the robe.
+- Decoy: a small vex charm in the right hand, the gene model decoy_charm. It
+  shows while the arms are raised.
+- Mind Trick: a purple mask over the eyes, tied round the head, the gene
+  model mind_trick_mask.
 This script needs Pillow.
 """
 import json
@@ -513,6 +526,130 @@ def blast_ward():
     return [gold, pale]
 
 
+PURPLE = ("#7A3AA0", "#5A2A7A", "#C060F0")
+
+
+def blink():
+    # A purple glint in the eyes: the pupils are bright purple, and the eye
+    # whites are pale lavender.
+    pupil = Mark(PURPLE[2])
+    white = Mark("#E8D0FF")
+    pupil.put([(10, 14), (13, 14)])
+    white.put([(9, 14), (14, 14)])
+    return [pupil, white]
+
+
+def smoke_veil():
+    # A gray smoke on the robe: wisps of gray smoke on the lower robe (rows 11
+    # to 19), thicker toward the hem.
+    smoke = Mark("#6A6A6A")
+    pale = Mark("#9A9A9A")
+    for x, y, face, col, row in robe_pixels():
+        if row >= 11:
+            n = noise100(x // 2 + row % 2, y, 1401)
+            thick = (row - 10) * 5
+            if n < thick // 2:
+                pale.put((x, y))
+            elif n < thick:
+                smoke.put((x, y))
+    return [smoke, pale]
+
+
+def fleet():
+    # Light, soft boots: the boots are pale tan, with soft folds on rows 9 and
+    # 11.
+    tan = Mark("#C8B898")
+    fold = Mark("#9A8A6A")
+    for x, y, face, col, row in boot_pixels():
+        (fold if row in (9, 11) and col % 2 == 0 else tan).put((x, y))
+    for x, y, face, col, row in pixels(LEG, ("bottom",)):
+        fold.put((x, y))
+    return [tan, fold]
+
+
+def shimmer():
+    # A shimmer on the robe: small points of pale violet and pale blue light
+    # all over the robe.
+    violet = Mark("#E0D0FF")
+    blue = Mark("#A0C0FF")
+    for x, y, face, col, row in robe_pixels():
+        n = noise100(x, y, 1403)
+        if n < 6:
+            violet.put((x, y))
+        elif n < 11:
+            blue.put((x, y))
+    return [violet, blue]
+
+
+def decoy():
+    # The charm is the gene model decoy_charm.
+    return []
+
+
+def decoy_model():
+    # A vex charm: a small charm in the shape of a vex, pale gray blue with
+    # dark eyes and two small wings, on a short cord from the right hand. It
+    # shows while the arms are raised. On the right arm bone, the hand ends at
+    # y 10, and the arm is from x -3 to 1.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def vex(face, x, y):
+        if face == "front" and y == 0 and x in (0, 1):
+            return "#201830"
+        return "#C8D4E4" if face in ("front", "top", "left") else "#98A4B8"
+
+    def wing(face, x, y):
+        return "#E0E8F4"
+
+    # The cord: 1x1x1 at uv (0, 0). The body: 2x3x1 at uv (4, 0). A wing: 1x2x1
+    # at uv (12, 0).
+    paint_box(im, 0, 0, 1, 1, 1, lambda face, x, y: "#3A3028")
+    paint_box(im, 4, 0, 2, 3, 1, vex)
+    paint_box(im, 12, 0, 1, 2, 1, wing)
+    parts = [
+        {"bone": "right_arm", "uv": [0, 0], "from": [-1.5, 10, -0.5], "size": [1, 1, 1], "inflate": -0.2},
+        {"bone": "right_arm", "uv": [4, 0], "from": [-2, 10.8, -0.5], "size": [2, 3, 1]},
+        {"bone": "right_arm", "uv": [12, 0], "from": [-3, 11, -0.5], "size": [1, 2, 1], "inflate": -0.1},
+        {"bone": "right_arm", "uv": [12, 0], "from": [0, 11, -0.5], "size": [1, 2, 1], "inflate": -0.1},
+    ]
+    save_model("decoy_charm", im, parts)
+
+
+def mind_trick():
+    # The mask is the gene model mind_trick_mask.
+    return []
+
+
+def mind_trick_model():
+    # A purple mask: a mask of purple cloth over the upper face, with holes
+    # for the eyes and a pale trim on its top edge, and a dark purple band
+    # that ties it round the head. The band has no top and no bottom. The
+    # nose sticks out under the mask. On the head bone, the face is at z -4,
+    # and the eyes are on row -4, from x -3 to -1 and from x 1 to 3.
+    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+
+    def mask(face, x, y):
+        if face == "front" and y == 1 and x in (1, 2, 5, 6):
+            return None
+        if face == "front" and y == 0:
+            return "#D8B8F0"
+        return PURPLE[0] if face == "front" else PURPLE[1]
+
+    # The band has no front either, so that it does not cover the eye holes
+    # of the mask.
+    def band(face, x, y):
+        return None if face in ("top", "bottom", "front") else PURPLE[1]
+
+    # The mask: 8x3x1 at uv (0, 0). The band: 8x2x8 at uv (0, 8).
+    paint_box(im, 0, 0, 8, 3, 1, mask)
+    paint_box(im, 0, 8, 8, 2, 8, band)
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-4, -5, -4.7], "size": [8, 3, 1]},
+        {"bone": "head", "uv": [0, 8], "from": [-4, -5, -4], "size": [8, 2, 8], "inflate": 0.3},
+    ]
+    save_model("mind_trick_mask", im, parts)
+
+
 
 GENES = {
     "fang_line": fang_line,
@@ -539,6 +676,12 @@ GENES = {
     "arrow_ward": arrow_ward,
     "fire_ward": fire_ward,
     "blast_ward": blast_ward,
+    "blink": blink,
+    "smoke_veil": smoke_veil,
+    "fleet": fleet,
+    "shimmer": shimmer,
+    "decoy": decoy,
+    "mind_trick": mind_trick,
 }
 
 MODELS = {
@@ -550,10 +693,12 @@ MODELS = {
     "blind_hex": "originofspawns:blind_hex_cloth",
     "totem_bearer": "originofspawns:totem_bearer_totem",
     "soul_mend": "originofspawns:soul_mend_eyes",
+    "decoy": "originofspawns:decoy_charm",
+    "mind_trick": "originofspawns:mind_trick_mask",
 }
 
 MODEL_MAKERS = [barbed_fangs_model, swift_cast_model, golem_jaws_model, vex_swarm_model, sharp_vexes_model,
-                blind_hex_model, totem_bearer_model, soul_mend_model]
+                blind_hex_model, totem_bearer_model, soul_mend_model, decoy_model, mind_trick_model]
 
 
 def main():

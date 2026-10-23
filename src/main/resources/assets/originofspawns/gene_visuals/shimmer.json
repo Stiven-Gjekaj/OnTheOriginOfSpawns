@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/illager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shimmer_0.png",
+				"tint": "#E0D0FF"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shimmer_1.png",
+				"tint": "#A0C0FF"
+			}
+		}
+	]
+}

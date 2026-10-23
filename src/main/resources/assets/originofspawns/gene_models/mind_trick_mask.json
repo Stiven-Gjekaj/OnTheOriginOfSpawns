@@ -1,0 +1,42 @@
+{
+	"texture": "originofspawns:textures/entity/mind_trick_mask.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4,
+				-5,
+				-4.7
+			],
+			"size": [
+				8,
+				3,
+				1
+			]
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-4,
+				-5,
+				-4
+			],
+			"size": [
+				8,
+				2,
+				8
+			],
+			"inflate": 0.3
+		}
+	]
+}

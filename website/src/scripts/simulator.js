@@ -2,7 +2,7 @@
 // files and keeps the pools in the browser, so that the notebook can read them.
 
 import { genes } from "../data/site.json";
-import { familyOf, kindName, pct, t, loadState, saveState, url, speciesById } from "../lib/site.js";
+import { familyOf, kindName, pct, t, loadState, saveState, url, speciesById, an } from "../lib/site.js";
 import { getSpecies } from "./species.js";
 
 const state = loadState();
@@ -59,9 +59,9 @@ function draw() {
   const top = zombie[0];
   const shot = top?.shot || sp?.shot;
   if (shot) img.src = url(shot.front); else img.removeAttribute("src");
-  img.alt = top ? `A ${sp.name.toLowerCase()} with the gene ${top.name}` : `A plain ${sp?.name.toLowerCase()}`;
-  $("sim-caption").textContent = !top ? `The picture shows a ${sp?.name.toLowerCase()} with no genes.`
-    : zombie.length === 1 ? `The picture shows a ${sp.name.toLowerCase()} with ${top.name}.`
+  img.alt = top ? `${an(sp.name)} ${sp.name.toLowerCase()} with the gene ${top.name}` : `A plain ${sp?.name.toLowerCase()}`;
+  $("sim-caption").textContent = !top ? `The picture shows ${an(sp?.name ?? "")} ${sp?.name.toLowerCase()} with no genes.`
+    : zombie.length === 1 ? `The picture shows ${an(sp.name)} ${sp.name.toLowerCase()} with ${top.name}.`
     : `The wiki has no picture of this mix. The picture shows only ${top.name}, the gene with the highest frequency.`;
 }
 

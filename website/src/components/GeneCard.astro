@@ -2,7 +2,7 @@
 // One gene: its look, its tags, its pressure, its gains, and its downsides.
 import Status from "./Status.astro";
 import MobShot from "./MobShot.astro";
-import { famName } from "../lib/site.js";
+import { famName, an } from "../lib/site.js";
 import site from "../data/site.json";
 
 interface Props { gene: any }
@@ -12,7 +12,7 @@ const text = [g.name, g.gains, g.downsides, g.look, g.counters, g.details, famNa
 ---
 <article class="gene" id={`gene-${g.id}`} style={`--fam:var(--${g.family})`} data-species={g.species} data-family={g.family} data-sub={g.sub || ""} data-text={text}>
   <div class="gene-top">
-    <MobShot shot={g.shot} alt={`A ${g.species} with the gene ${g.name}`} height={128} class="gene-shot" />
+    <MobShot shot={g.shot} alt={`${an(g.species)} ${g.species.replace(/_/g, " ")} with the gene ${g.name}`} height={128} class="gene-shot" />
     <div class="gene-title">
       <h3 data-tip-ref={`tip-gene-${g.id}`}>{g.name}</h3>
       <div class="row tags">

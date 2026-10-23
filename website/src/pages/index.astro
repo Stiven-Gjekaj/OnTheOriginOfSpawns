@@ -4,7 +4,7 @@ import Icon from "../components/Icon.astro";
 import Status from "../components/Status.astro";
 import MobShot from "../components/MobShot.astro";
 import site from "../data/site.json";
-import { url, familiesOf, speciesStatus } from "../lib/site.js";
+import { url, familiesOf, speciesStatus, an } from "../lib/site.js";
 import { brandIcon } from "../lib/icons.js";
 
 const { links, version, minecraft, fabric, tagline, overview, features, roadmap } = site;
@@ -69,7 +69,7 @@ const explore = [
       <div class="stage">
         <div class="glow" aria-hidden="true"></div>
         <div class="hero-shots" id="hero-shots">
-          {first && <img class="show" src={first.src} alt={`A ${first.species.toLowerCase()} of the ${first.name}`} height="380" />}
+          {first && <img class="show" src={first.src} alt={`${an(first.species)} ${first.species.toLowerCase()} of the ${first.name}`} height="380" />}
           <img alt="" height="380" />
         </div>
         <div class="mob-info" id="hero-label" aria-live="polite">

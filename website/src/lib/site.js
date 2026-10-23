@@ -22,6 +22,8 @@ export const label = (id) => {
   const s = String(id).replace(/_/g, " ");
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
+// "a" or "an" for a word, as in "an evoker".
+export const an = (word) => (/^[aeiou]/i.test(word) ? "an" : "a");
 export const pct = (x) => (x * 100).toFixed(x >= 0.1 || x === 0 ? 0 : 1) + "%";
 
 const lang = notebook.lang;

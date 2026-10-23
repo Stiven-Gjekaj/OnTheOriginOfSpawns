@@ -1,6 +1,8 @@
 // The hero of the home page: the game pictures of the families, one after
 // the other, and pixel particles that rise.
 
+import { an } from "../lib/site.js";
+
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const box = document.getElementById("hero-shots");
 const label = document.getElementById("hero-label");
@@ -14,7 +16,7 @@ if (box && shots.length > 1 && !reduced) {
     index = (index + 1) % shots.length;
     const s = shots[index];
     next.onload = () => {
-      next.alt = `A ${s.species.toLowerCase()} of the ${s.name}`;
+      next.alt = `${an(s.species)} ${s.species.toLowerCase()} of the ${s.name}`;
       front.alt = "";
       next.classList.add("show");
       front.classList.remove("show");

@@ -3,7 +3,7 @@
 // browser.
 
 import { genes, families, minors, hybrids } from "../data/site.json";
-import { familyOf, kindName, pct, t, loadState, url, speciesById } from "../lib/site.js";
+import { familyOf, kindName, pct, t, loadState, url, speciesById, an } from "../lib/site.js";
 import { getSpecies } from "./species.js";
 
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -29,7 +29,7 @@ function renderGenes() {
   const shot = known[0]?.shot || speciesById[species]?.shot;
   const img = $("sketch");
   if (shot) img.src = url(shot.front); else img.removeAttribute("src");
-  img.alt = known[0] ? `A field sketch of a ${species} with ${known[0].name}` : `A field sketch of a plain ${species}`;
+  img.alt = known[0] ? `A field sketch of ${an(species)} ${species.replace(/_/g, " ")} with ${known[0].name}` : `A field sketch of a plain ${species}`;
 }
 
 function renderFamilies() {
@@ -98,7 +98,7 @@ function drawInfo() {
   const shot = zombie[0]?.shot || speciesById[species]?.shot;
   const img = $("scene-shot");
   if (shot) img.src = url(shot.front); else img.removeAttribute("src");
-  img.alt = zombie[0] ? `A ${species} with the gene ${zombie[0].name}` : `A plain ${species}`;
+  img.alt = zombie[0] ? `${an(species)} ${species.replace(/_/g, " ")} with the gene ${zombie[0].name}` : `A plain ${species}`;
 }
 $("info-next").addEventListener("click", nextZombie);
 $("info-night").addEventListener("click", (e) => {

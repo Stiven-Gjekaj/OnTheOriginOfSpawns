@@ -5,7 +5,7 @@ import Icon from "../../components/Icon.astro";
 import site from "../../data/site.json";
 import SpeciesSwitch from "../../components/SpeciesSwitch.astro";
 import MobShot from "../../components/MobShot.astro";
-import { url, famName, kindName, familiesOf } from "../../lib/site.js";
+import { url, famName, kindName, familiesOf, an } from "../../lib/site.js";
 
 const rules = [
   ["Neutral", "No family has 4 points.", "No family effects. At the start of a world, all mobs are neutral."],
@@ -37,7 +37,7 @@ const minorsOf = (sp) => site.minors.filter((m) => m.species === sp);
         {sp.equipment.length > 1 && (
           <ul class="equip-rules small">{sp.equipment.slice(1).map((x) => <li>{x}</li>)}</ul>
         )}
-        <p class="muted small">The picture shows a {sp.name.toLowerCase()} with no genes. Each family picture shows a {sp.name.toLowerCase()} with all 6 genes of the family.</p>
+        <p class="muted small">The picture shows {an(sp.name)} {sp.name.toLowerCase()} with no genes. Each family picture shows {an(sp.name)} {sp.name.toLowerCase()} with all 6 genes of the family.</p>
       </div>
     </div>
     <section>
@@ -48,7 +48,7 @@ const minorsOf = (sp) => site.minors.filter((m) => m.species === sp);
       <div class="grid grid-3">
         {familiesOf(sp.id).map((f) => (
           <article class="card family" style={`--fam:var(--${f.id})`} id={f.id} data-family={f.id}>
-            <MobShot shot={f.shot} alt={`A ${sp.name.toLowerCase()} with all the genes of the ${f.name}`} height={170} />
+            <MobShot shot={f.shot} alt={`${an(sp.name)} ${sp.name.toLowerCase()} with all the genes of the ${f.name}`} height={170} />
             <div class="family-head">
               <span class="mc-slot"><Icon name={f.id} /></span>
               <div>

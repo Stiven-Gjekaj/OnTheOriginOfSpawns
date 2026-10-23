@@ -148,6 +148,11 @@ The states for `when` are:
 | `deep` | The mob is 10 or more blocks under the sea level of the world |
 | `above_sea_level` | The mob is at the sea level of the world or above it |
 | `storm` | A thunderstorm is in the world |
+| `on_fire` | The mob burns |
+| `target_far` | The target of the mob is farther than 11 blocks |
+| `falling` | The mob is in the air, out of water, and it fell more than 2 blocks |
+| `sees_player` | The target of the mob is a player, and the mob sees the player |
+| `in_rain` | Rain falls on the mob: the world has rain, the biome has rain and not snow, and nothing is above the mob. `storm` is different: it is true in a thunderstorm, also under a roof |
 | `sunlit` | The mob is out of water and rain, in the daylight, under the open sky |
 | `target_below` | The target of the mob is 2 or more blocks lower than the mob |
 | `target_above` | The target of the mob is 2 or more blocks higher than the mob |
@@ -325,6 +330,30 @@ change them. A vex has no genes of its own.
 | `hex` | `effect`, `seconds`, `amplifier` (`0`), `range` (`16`), `cooldown_seconds` (`15`) | One time in each cooldown, the mob gives its target the effect, if the target is in the range and the mob sees it. It throws no item. The mob and the target show the spell particles of the evoker, in the color of the effect. Each hex has its own cooldown |
 | `decoy` | `count` (`1`), `cooldown_seconds` (`20`) | When an attacker hurts the mob, the mob summons this many vexes that attack the attacker, one time in each cooldown |
 
+#### Witches
+
+"Thrown potions" are the potions that a witch throws at a target. The
+potions that heal a raider in a raid do not change. `throw_rate` changes the
+time between two throws (vanilla 3 seconds), `throw_range` multiplies the
+range of the throw (vanilla 10 blocks), and `arrow_spread` multiplies the
+spread of the thrown potions.
+
+| Type | Fields | Result |
+|---|---|---|
+| `potion_duration` | `multiplier` | Multiplies the time of the effects of the thrown potions. An effect with no time, such as Harming or Healing, does not change. More than one effect multiplies together. It also changes the effect of `potion_extra` |
+| `potion_level` | `levels` (`1`) | Makes the effects of the thrown potions this many levels stronger. An effect with no time, such as Harming, does not change |
+| `potion_swap` | `from`, `to`, `seconds` (none) | The effect `to` takes the place of the effect `from`. It keeps the time and the level, or it lasts `seconds` |
+| `potion_extra` | `with`, `effect`, `seconds`, `amplifier` (`0`) | A thrown potion with the effect `with` also gives `effect` |
+| `potion_lingering` | | The thrown potions are lingering potions. They leave a cloud, as the lingering potion of a player does |
+| `potion_count` | `count` (`2`), `spread_degrees` (`8`) | The mob throws this many potions in one throw, this many degrees apart. With more than one effect, the largest number counts |
+| `potion_splash` | `multiplier` | Multiplies the radius of the splash (vanilla 4 blocks) and the start radius of a lingering cloud (vanilla 3 blocks) |
+| `potion_damage` | `multiplier`, `targets` (none) | Multiplies the damage of the potions of the mob, for example Harming. With `targets`, only the damage to the entities of this tag changes |
+| `potion_shards` | `damage` | A thrown potion that breaks on a living entity does this much damage to it |
+| `potion_heal` | `amount` | A thrown potion that breaks on a living entity heals the mob this much health |
+| `drink` | `potion`, `when`, `cooldown_seconds` (`0`), `seconds` (none) | The mob drinks the potion while the state is true, one time in each cooldown. It does not drink when it already has each lasting effect of the potion. A drink takes the vanilla time, and the mob is slow while it drinks. With `seconds`, the effects last this long. `potion` is a potion id, such as `minecraft:strong_swiftness` |
+| `shared_drink` | `radius` (`4`) | When the mob ends a drink, the monsters in the radius get the same effects. Each drink counts, also a vanilla drink. A monster is a hostile mob |
+| `heal_throw` | `radius` (`8`), `cooldown_seconds` (`15`) | One time in each cooldown, the mob throws a splash potion of Healing at the nearest hurt monster in the radius that it sees. It does not throw at its own target. An undead monster gets Harming, which heals it. The vanilla raid heal stays |
+
 #### Spiders
 
 These effects suit a spider, but other mobs can also use them. A gene cobweb
@@ -420,6 +449,14 @@ Each cube moves with one bone: `head`, `body`, `right_arm`, `left_arm`,
 A pillager, a vindicator, and an evoker have the humanoid bones. The crossed
 arms of a vindicator or an evoker are a different part, so a model on an arm
 shows only while the arms are apart, when it attacks or casts a spell.
+A witch has `head`, `body`, `arms`, `right_leg`, `left_leg`, `hat`, and
+`nose`. The arms are one part, and they are always crossed. The `hat` is the
+flat brim of the hat. It is a part of the head, so a cube on it moves with
+the head. The cube is in the coordinates of the brim, which start at the
+corner of the brim, 5 pixels left, 10 pixels up, and 5 pixels to the front
+of the head pivot. The higher parts of the hat do not have a bone. The
+`nose` is also a part of the head. The gene marks of a witch are 64 x 128,
+the size of the witch texture.
 The coordinates are in pixels, in the coordinates of the bone, as in the
 vanilla models.
 

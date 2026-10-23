@@ -58,6 +58,7 @@ CAVE_SPIDER_PATH = "assets/minecraft/textures/entity/spider/cave_spider.png"
 PILLAGER_PATH = "assets/minecraft/textures/entity/illager/pillager.png"
 VINDICATOR_PATH = "assets/minecraft/textures/entity/illager/vindicator.png"
 EVOKER_PATH = "assets/minecraft/textures/entity/illager/evoker.png"
+WITCH_PATH = "assets/minecraft/textures/entity/witch/witch.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -358,6 +359,18 @@ EVOKER_EXTRA = {
     "tricksters": [("All 6 + Fangcallers", ["fang_line", "swift_cast"], True, {})],
 }
 
+# The families of the witch, from design/species/witch.md.
+WITCH_FAMILIES = {
+    "brewers": ["strong_brew", "long_brew", "lingering_brew", "blinding_brew", "wither_brew", "rust_brew"],
+    "slingers": ["long_arm", "quick_hand", "double_throw", "sure_aim", "wide_splash", "glass_shards"],
+    "alchemists": ["healing_draught", "fire_draught", "swift_draught", "shade_draught", "shared_draught",
+                   "feather_draught"],
+    "covens": ["mending_hand", "coven_call", "coven_ward", "blood_pact", "bog_circle", "last_rites"],
+    "bog_hags": ["swamp_stride", "rain_dance", "mudskin", "toad_leap", "bog_breath", "leech_jar"],
+}
+
+WITCH_EXTRA = {}
+
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
     "rushers": [("All 6 + Skulkers", ["leafskin", "patient"], True, {})],
@@ -499,6 +512,25 @@ VINDICATOR_ATTACK_CUBES = PILLAGER_CUBES
 # raises its arms out to the sides, with the pose of IllagerModel for the
 # arm pose SPELLCASTING.
 EVOKER_CAST_PIVOTS = dict(PILLAGER_PIVOTS, right_arm=(-5, 2, 0, 0, 0, 135), left_arm=(5, 2, 0, 0, 0, -135))
+
+# The witch, from WitchModel: the villager body, which is the illager body
+# with its arms always crossed, a nose with a mole, and a hat in four parts.
+# Each part of the hat is a child of the part under it, and turns a little
+# more. The previews add their offsets and their angles, which is near enough
+# for small angles. The texture is 64x128.
+WITCH_PIVOTS = dict(VINDICATOR_PIVOTS, hat=(-5, -10.03, -5), hat2=(-3.25, -14.03, -3, -3, 0, 1.5),
+                    hat3=(-1.5, -18.03, -1, -9, 0, 4.5), hat4=(0.25, -20.03, 1, -21, 0, 10.5))
+WITCH_CUBES = [
+    ("head", (0, 0), (-4, -10, -4), (8, 10, 8), False),
+    ("head", (24, 0), (-1, -3, -6), (2, 4, 2), False),
+    ("hat", (0, 64), (0, 0, 0), (10, 2, 10), False),
+    ("hat2", (0, 76), (0, 0, 0), (7, 4, 7), False),
+    ("hat3", (0, 87), (0, 0, 0), (4, 4, 4), False),
+] + VINDICATOR_CUBES[3:]
+# The mole on the nose, and the tip of the hat, are 0.25 pixel smaller and
+# larger than their boxes.
+WITCH_WRAPS = [("head", (0, 0), (0, 1, -6.75), (1, 1, 1), False, -0.25),
+               ("hat4", (0, 95), (0, 0, 0), (1, 2, 1), False, 0.25)]
 
 # The coat of the pillager: 0.5 pixel larger than the body, and 20 pixels
 # long, so that it hangs over the legs.
@@ -1003,6 +1035,7 @@ SPECIES = {
     "pillager": (PILLAGER_PATH, None, PILLAGER_FAMILIES, PILLAGER_EXTRA, []),
     "vindicator": (VINDICATOR_PATH, None, VINDICATOR_FAMILIES, VINDICATOR_EXTRA, []),
     "evoker": (EVOKER_PATH, None, EVOKER_FAMILIES, EVOKER_EXTRA, []),
+    "witch": (WITCH_PATH, None, WITCH_FAMILIES, WITCH_EXTRA, []),
 }
 
 
@@ -1019,6 +1052,7 @@ def set_mob(species):
                     else CREEPER_CUBES if species == "creeper" else SPIDER_CUBES if spider
                     else PILLAGER_CUBES if species in ("pillager", "evoker_casting")
                     else VINDICATOR_CUBES if species in ("vindicator", "evoker")
+                    else WITCH_CUBES if species == "witch"
                     else VINDICATOR_ATTACK_CUBES if species == "vindicator_attacking"
                     else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
     MOB["pivots"] = (PARCHED_PIVOTS if species == "parched" else CREEPER_PIVOTS if species == "creeper"
@@ -1026,6 +1060,7 @@ def set_mob(species):
                      else VINDICATOR_PIVOTS if species in ("vindicator", "evoker")
                      else VINDICATOR_ATTACK_PIVOTS if species == "vindicator_attacking"
                      else EVOKER_CAST_PIVOTS if species == "evoker_casting"
+                     else WITCH_PIVOTS if species == "witch"
                      else SKELETON_PIVOTS if skeleton else PIVOTS)
     # With its arms crossed, the vindicator or the evoker hides the arms
     # right_arm and left_arm, and their gene models.
@@ -1034,13 +1069,17 @@ def set_mob(species):
     # back shows.
     # The banner of the pillager, the hood of the vindicator, and the skull of
     # the evoker rise 2 pixels above the head.
+    # The hat of the witch rises 12 pixels above the head.
     VIEW_X, VIEW_Y, VIEW_W, VIEW_H = ((20, -2, 40, 26) if spider else (11, 13, 22, 39)
-                                      if species in ("pillager", "vindicator", "evoker") else (11, 11, 22, 37))
+                                      if species in ("pillager", "vindicator", "evoker")
+                                      else (12, 24, 24, 49) if species == "witch" else (11, 11, 22, 37))
     MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if spider else [(0, 0), (180, 0), (-35, 15)]
-    MOB["closeup_view"] = ((40, 34), (0, 13)) if spider else ((26, 40), (0, 5))
+    MOB["closeup_view"] = (((40, 34), (0, 13)) if spider else ((26, 50), (0, 0)) if species == "witch"
+                           else ((26, 40), (0, 5)))
     MOB["eyes"] = find_zombie_texture(SPIDER_EYES_PATH) if spider else None
     illager = species in ("pillager", "vindicator", "vindicator_attacking", "evoker", "evoker_casting")
-    MOB["wraps"] = PARCHED_WRAPS if species == "parched" else PILLAGER_COAT if illager else []
+    MOB["wraps"] = (PARCHED_WRAPS if species == "parched" else PILLAGER_COAT if illager
+                    else PILLAGER_COAT + WITCH_WRAPS if species == "witch" else [])
     MOB["outer"] = ((find_zombie_texture(DROWNED_OUTER_PATH), find_zombie_texture(DROWNED_OUTER_BABY_PATH))
                     if species == "drowned" else (find_zombie_texture(STRAY_OUTER_PATH), None)
                     if species == "stray" else (find_zombie_texture(BOGGED_OUTER_PATH), None)

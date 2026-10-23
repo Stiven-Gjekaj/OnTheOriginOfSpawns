@@ -530,6 +530,11 @@ EVOKER_CAST_CLOSEUPS = {
                             ("Iron Vexes + Venom Vexes", ["iron_vexes", "venom_vexes"], False)], ALL_SIDES),
 }
 
+# The close-ups of the witch. It has no babies, and its arms are always
+# crossed.
+WITCH = pg.WITCH_FAMILIES
+WITCH_CLOSEUPS = {}
+
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
     "husk": (pg.HUSK_PATH, pg.HUSK_BABY_PATH, HUSK_CLOSEUPS),
@@ -547,6 +552,7 @@ SPECIES = {
     "vindicator_attacking": (pg.VINDICATOR_PATH, None, VINDICATOR_ATTACK_CLOSEUPS),
     "evoker": (pg.EVOKER_PATH, None, EVOKER_CLOSEUPS),
     "evoker_casting": (pg.EVOKER_PATH, None, EVOKER_CAST_CLOSEUPS),
+    "witch": (pg.WITCH_PATH, None, WITCH_CLOSEUPS),
 }
 
 

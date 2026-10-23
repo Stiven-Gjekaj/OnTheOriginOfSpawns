@@ -36,6 +36,7 @@
 		"SpiderAttackGoalMixin",
 		"SpiderMixin",
 		"SpiderTargetGoalMixin",
+		"VexAccessor",
 		"ZombieMixin"
 	],
 	"injectors": {

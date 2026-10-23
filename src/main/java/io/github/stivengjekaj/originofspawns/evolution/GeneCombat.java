@@ -432,6 +432,10 @@ public final class GeneCombat {
 	 * Runs the effects that act when the mob hits a target.
 	 */
 	public static void onHit(Mob mob, Entity target) {
+		if (mob instanceof net.minecraft.world.entity.monster.Vex vex && vex.getOwner() instanceof Mob owner
+				&& target instanceof LivingEntity living) {
+			onVexHit(owner, living);
+		}
 		if (target instanceof Player player && has(mob, GeneEffect.SoulHunger.class)) {
 			java.util.Map<java.util.UUID, Long> hits = new java.util.HashMap<>(
 					mob.getAttachedOrElse(ModAttachments.PLAYER_HITS, java.util.Map.of()));
@@ -502,6 +506,22 @@ public final class GeneCombat {
 					target.needsSync = true;
 				}
 				case GeneEffect.FangHeal heal -> mob.heal(heal.amount());
+				default -> {
+				}
+			}
+		}
+	}
+
+	/**
+	 * Runs the effects of the owner of a vex when the vex hits a target.
+	 */
+	public static void onVexHit(Mob owner, LivingEntity target) {
+		for (GeneEffect effect : GeneEffects.of(owner).toList()) {
+			switch (effect) {
+				case GeneEffect.VexEffect vex when owner.getRandom().nextFloat() < vex.chance() ->
+						target.addEffect(new MobEffectInstance(vex.effect(), Math.round(vex.seconds() * 20.0F),
+								vex.amplifier()), owner);
+				case GeneEffect.VexHeal heal when owner.isAlive() -> owner.heal(heal.amount());
 				default -> {
 				}
 			}

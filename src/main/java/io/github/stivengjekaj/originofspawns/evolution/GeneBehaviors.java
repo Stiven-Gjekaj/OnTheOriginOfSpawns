@@ -3,6 +3,7 @@ package io.github.stivengjekaj.originofspawns.evolution;
 import java.util.List;
 
 import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
+import io.github.stivengjekaj.originofspawns.mixin.VexAccessor;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.goal.LeapGoal;
 import io.github.stivengjekaj.originofspawns.evolution.goal.LurkGoal;
@@ -34,6 +35,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
 import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.entity.animal.golem.IronGolem;
@@ -1103,6 +1105,46 @@ public final class GeneBehaviors {
 				toggle(mob, mob.getAttribute(when.attribute()), OriginOfSpawns.id("attribute_when/" + attributeIndex++),
 						GeneCombat.test(mob, when.when()), when.amount(), when.operation());
 			}
+		}
+	}
+
+	/**
+	 * Returns the number of vexes that the vex spell of the mob summons. The genes can change the vanilla number.
+	 */
+	public static int vexCount(Mob mob, int count) {
+		return GeneEffects.of(mob).filter(GeneEffect.VexCount.class::isInstance).mapToInt(effect ->
+				((GeneEffect.VexCount) effect).count()).max().orElse(count);
+	}
+
+	/**
+	 * Gives a vex that the mob summons the health, the damage, and the life of the genes of the mob. A vex has no
+	 * genes of its own.
+	 */
+	public static void shapeVex(Mob mob, Vex vex) {
+		double health = 1.0;
+		double damage = 1.0;
+		double life = 1.0;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			switch (effect) {
+				case GeneEffect.VexHealth more -> health *= more.multiplier();
+				case GeneEffect.VexDamage more -> damage *= more.multiplier();
+				case GeneEffect.VexLife more -> life *= more.multiplier();
+				default -> {
+				}
+			}
+		}
+		if (health != 1.0) {
+			vex.getAttribute(Attributes.MAX_HEALTH).addPermanentModifier(new AttributeModifier(
+					OriginOfSpawns.id("vex_health"), health - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+			vex.setHealth(vex.getMaxHealth());
+		}
+		if (damage != 1.0) {
+			vex.getAttribute(Attributes.ATTACK_DAMAGE).addPermanentModifier(new AttributeModifier(
+					OriginOfSpawns.id("vex_damage"), damage - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+		}
+		VexAccessor accessor = (VexAccessor) vex;
+		if (life != 1.0 && accessor.originofspawns$hasLimitedLife()) {
+			vex.setLimitedLife(Math.max(1, (int) Math.round(accessor.originofspawns$limitedLifeTicks() * life)));
 		}
 	}
 

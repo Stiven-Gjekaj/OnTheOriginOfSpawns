@@ -1,9 +1,11 @@
 package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.SpellcasterUseSpellGoalAccessor;
+import io.github.stivengjekaj.originofspawns.mixin.VexAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -15,8 +17,10 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.monster.illager.Evoker;
 import net.minecraft.world.entity.projectile.EvokerFangs;
 import net.minecraft.world.phys.Vec3;
@@ -134,6 +138,71 @@ public class EvokerEffectsTest {
 		helper.assertValueEqual(ring.size(), 13, "the ring has 13 fangs");
 		helper.assertTrue(ring.stream().allMatch(fang -> across(fang, ringer) < 3.0), "the ring is near the evoker");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void theVexSpellSummonsMoreAndStrongerVexes(GameTestHelper helper) {
+		Evoker plain = evokerWith(helper, new BlockPos(1, 1, 1));
+		plain.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 7)));
+		castVexes(plain);
+		java.util.List<Vex> plainVexes = vexesOf(helper, plain);
+		helper.assertValueEqual(plainVexes.size(), 3, "a plain evoker summons 3 vexes");
+		helper.assertValueEqual(plainVexes.getFirst().getMaxHealth(), 14.0F, "a plain vex has 14 health");
+		helper.assertValueEqual(plainVexes.getFirst().getAttributeValue(Attributes.ATTACK_DAMAGE), 4.0,
+				"a plain vex does 4 damage");
+		Evoker swarm = evokerWith(helper, new BlockPos(5, 1, 1), "test_vex_swarm");
+		swarm.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 7)));
+		castVexes(swarm);
+		java.util.List<Vex> vexes = vexesOf(helper, swarm);
+		helper.assertValueEqual(vexes.size(), 4, "the evoker summons 4 vexes");
+		for (Vex vex : vexes) {
+			helper.assertValueEqual(vex.getMaxHealth(), 28.0F, "a vex has two times the health");
+			helper.assertValueEqual(vex.getHealth(), 28.0F, "a vex starts with full health");
+			helper.assertValueEqual(vex.getAttributeValue(Attributes.ATTACK_DAMAGE), 6.0, "a vex does 1.5 times the damage");
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void longBondMakesTheVexesLiveLonger(GameTestHelper helper) {
+		Evoker evoker = evokerWith(helper, new BlockPos(1, 1, 1), "test_long_bond");
+		Vex vex = helper.spawnWithNoFreeWill(EntityTypes.VEX, new BlockPos(2, 2, 1));
+		vex.setLimitedLife(600);
+		GeneBehaviors.shapeVex(evoker, vex);
+		helper.assertValueEqual(((VexAccessor) vex).originofspawns$limitedLifeTicks(), 1200, "the vex lives two times as long");
+		Vex free = helper.spawnWithNoFreeWill(EntityTypes.VEX, new BlockPos(2, 2, 3));
+		GeneBehaviors.shapeVex(evoker, free);
+		helper.assertFalse(((VexAccessor) free).originofspawns$hasLimitedLife(), "a vex with no limit gets no limit");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theHitsOfTheVexesOfAnEvokerPoisonAndHealIt(GameTestHelper helper) {
+		Evoker evoker = evokerWith(helper, new BlockPos(1, 1, 1), "test_venom_vexes");
+		evoker.setHealth(10.0F);
+		Vex vex = helper.spawnWithNoFreeWill(EntityTypes.VEX, new BlockPos(2, 2, 1));
+		vex.setOwner(evoker);
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 1));
+		GeneCombat.onHit(vex, pig);
+		helper.assertTrue(pig.hasEffect(MobEffects.POISON), "the vex hit gives Poison");
+		helper.assertValueEqual(pig.getEffect(MobEffects.POISON).getDuration(), 60, "the Poison lasts 3 seconds");
+		helper.assertValueEqual(evoker.getHealth(), 11.0F, "the vex hit heals the evoker 1 health");
+		Vex wild = helper.spawnWithNoFreeWill(EntityTypes.VEX, new BlockPos(2, 2, 4));
+		Pig other = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 4));
+		GeneCombat.onHit(wild, other);
+		helper.assertFalse(other.hasEffect(MobEffects.POISON), "a vex with no owner gives nothing");
+		helper.succeed();
+	}
+
+	static void castVexes(Evoker evoker) {
+		((MobAccessor) evoker).originofspawns$goalSelector().getAvailableGoals().stream().map(WrappedGoal::getGoal)
+				.filter(each -> each.getClass().getSimpleName().equals("EvokerSummonSpellGoal"))
+				.forEach(each -> ((SpellcasterUseSpellGoalAccessor) each).originofspawns$performSpellCasting());
+	}
+
+	static java.util.List<Vex> vexesOf(GameTestHelper helper, Evoker evoker) {
+		return helper.getLevel().getEntitiesOfClass(Vex.class, evoker.getBoundingBox().inflate(8.0),
+				vex -> vex.getOwner() == evoker);
 	}
 
 	/**

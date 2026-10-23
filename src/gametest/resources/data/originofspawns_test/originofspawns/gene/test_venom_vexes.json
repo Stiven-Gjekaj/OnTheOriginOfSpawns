@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "vex_effect", "effect": "minecraft:poison", "seconds": 3 }, { "type": "vex_heal", "amount": 1 }],
+	"mutation_rate": 0
+}

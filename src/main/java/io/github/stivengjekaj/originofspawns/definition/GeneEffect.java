@@ -168,7 +168,13 @@ public sealed interface GeneEffect {
 			Map.entry("fang_heal", FangHeal.CODEC),
 			Map.entry("spell_interval", SpellInterval.CODEC),
 			Map.entry("fang_line", FangLine.CODEC),
-			Map.entry("fang_ring", FangRing.CODEC)
+			Map.entry("fang_ring", FangRing.CODEC),
+			Map.entry("vex_count", VexCount.CODEC),
+			Map.entry("vex_health", VexHealth.CODEC),
+			Map.entry("vex_damage", VexDamage.CODEC),
+			Map.entry("vex_life", VexLife.CODEC),
+			Map.entry("vex_effect", VexEffect.CODEC),
+			Map.entry("vex_heal", VexHeal.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2661,6 +2667,94 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "fang_ring";
+		}
+	}
+
+	/**
+	 * Sets the number of vexes that the vex spell of an evoker summons. The spell summons 3 vexes in vanilla. With more
+	 * than one effect, the largest number counts.
+	 */
+	record VexCount(int count) implements GeneEffect {
+		public static final MapCodec<VexCount> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(0, 16).fieldOf("count").forGetter(VexCount::count)
+		).apply(instance, VexCount::new));
+
+		@Override
+		public String type() {
+			return "vex_count";
+		}
+	}
+
+	/**
+	 * Multiplies the maximum health of the vexes that the mob summons. A vex has 14 health in vanilla.
+	 */
+	record VexHealth(float multiplier) implements GeneEffect {
+		public static final MapCodec<VexHealth> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 20.0F).fieldOf("multiplier").forGetter(VexHealth::multiplier)
+		).apply(instance, VexHealth::new));
+
+		@Override
+		public String type() {
+			return "vex_health";
+		}
+	}
+
+	/**
+	 * Multiplies the attack damage of the vexes that the mob summons.
+	 */
+	record VexDamage(float multiplier) implements GeneEffect {
+		public static final MapCodec<VexDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 20.0F).fieldOf("multiplier").forGetter(VexDamage::multiplier)
+		).apply(instance, VexDamage::new));
+
+		@Override
+		public String type() {
+			return "vex_damage";
+		}
+	}
+
+	/**
+	 * Multiplies the life of the vexes that the mob summons. A vex lives 30 to 119 seconds in vanilla.
+	 */
+	record VexLife(float multiplier) implements GeneEffect {
+		public static final MapCodec<VexLife> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 20.0F).fieldOf("multiplier").forGetter(VexLife::multiplier)
+		).apply(instance, VexLife::new));
+
+		@Override
+		public String type() {
+			return "vex_life";
+		}
+	}
+
+	/**
+	 * Gives a status effect to the target of each hit of a vex that the mob summoned.
+	 */
+	record VexEffect(Holder<MobEffect> effect, float seconds, int amplifier, float chance) implements GeneEffect {
+		public static final MapCodec<VexEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(VexEffect::effect),
+				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(VexEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(VexEffect::amplifier),
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("chance", 1.0F).forGetter(VexEffect::chance)
+		).apply(instance, VexEffect::new));
+
+		@Override
+		public String type() {
+			return "vex_effect";
+		}
+	}
+
+	/**
+	 * Each hit of a vex that the mob summoned heals the mob this much health.
+	 */
+	record VexHeal(float amount) implements GeneEffect {
+		public static final MapCodec<VexHeal> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).fieldOf("amount").forGetter(VexHeal::amount)
+		).apply(instance, VexHeal::new));
+
+		@Override
+		public String type() {
+			return "vex_heal";
 		}
 	}
 }

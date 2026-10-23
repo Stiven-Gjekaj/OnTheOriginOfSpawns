@@ -52,7 +52,7 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 	private static final List<EntityType<? extends Mob>> SPECIES = List.of(EntityTypes.ZOMBIE, EntityTypes.HUSK,
 			EntityTypes.DROWNED, EntityTypes.SKELETON, EntityTypes.STRAY, EntityTypes.BOGGED, EntityTypes.WITHER_SKELETON,
 			EntityTypes.PARCHED, EntityTypes.CREEPER, EntityTypes.SPIDER, EntityTypes.CAVE_SPIDER, EntityTypes.PILLAGER,
-			EntityTypes.VINDICATOR, EntityTypes.EVOKER);
+			EntityTypes.VINDICATOR, EntityTypes.EVOKER, EntityTypes.WITCH);
 	private static final int SHOT_ID = -424242;
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 960;

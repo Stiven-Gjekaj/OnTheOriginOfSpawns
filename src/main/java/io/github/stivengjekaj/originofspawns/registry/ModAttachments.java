@@ -175,6 +175,12 @@ public final class ModAttachments {
 	public static final AttachmentType<Boolean> GENE_POTION = AttachmentRegistry.create(OriginOfSpawns.id("gene_potion"));
 
 	/**
+	 * The game time of the last drink of each drink effect of a witch. Each drink has its own cooldown.
+	 */
+	public static final AttachmentType<java.util.Map<io.github.stivengjekaj.originofspawns.definition.GeneEffect.Drink, Long>>
+			DRINK_TIMES = AttachmentRegistry.create(OriginOfSpawns.id("drink_times"));
+
+	/**
 	 * The game time of the last decoy summon of a mob.
 	 */
 	public static final AttachmentType<Long> DECOY_TIME = AttachmentRegistry.create(OriginOfSpawns.id("decoy_time"));

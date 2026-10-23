@@ -1,7 +1,9 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -27,7 +29,9 @@ import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Witch;
+import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.monster.illager.Pillager;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.AbstractThrownPotion;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownLingeringPotion;
 import net.minecraft.world.item.ItemStack;
@@ -245,6 +249,65 @@ public class WitchEffectsTest {
 		potion.discard();
 		helper.assertTrue(Math.abs(flight.z) < 1.0E-6, "the potion flies straight at the target, z was " + flight.z);
 		helper.succeed();
+	}
+
+	@GameTest
+	public void theNewStatesOfTheDrinks(GameTestHelper helper) {
+		Witch witch = witchWith(helper, new BlockPos(2, 1, 2));
+		helper.assertFalse(GeneCombat.test(witch, GeneEffect.When.ON_FIRE), "the witch does not burn");
+		witch.setRemainingFireTicks(100);
+		helper.assertTrue(GeneCombat.test(witch, GeneEffect.When.ON_FIRE), "the witch burns");
+		witch.clearFire();
+		// The chunk column of the test is loaded at each height, so a target high up stays in the test area.
+		Pig high = CreeperEffectsTest.pigAt(helper, new BlockPos(2, 14, 2));
+		Pig near = CreeperEffectsTest.pigAt(helper, new BlockPos(2, 1, 6));
+		witch.setTarget(near);
+		helper.assertFalse(GeneCombat.test(witch, GeneEffect.When.TARGET_FAR), "a target 4 blocks away is near");
+		witch.setTarget(high);
+		helper.assertTrue(GeneCombat.test(witch, GeneEffect.When.TARGET_FAR), "a target 13 blocks away is far");
+		witch.setOnGround(false);
+		witch.fallDistance = 1.0;
+		helper.assertFalse(GeneCombat.test(witch, GeneEffect.When.FALLING), "a short drop is not a fall");
+		witch.fallDistance = 4.0;
+		helper.assertTrue(GeneCombat.test(witch, GeneEffect.When.FALLING), "the witch falls");
+		witch.setOnGround(true);
+		helper.assertFalse(GeneCombat.test(witch, GeneEffect.When.FALLING), "a witch on the ground does not fall");
+		helper.assertFalse(GeneCombat.test(witch, GeneEffect.When.SEES_PLAYER), "a pig is not a player");
+		Player player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(5, 1, 2))));
+		witch.setTarget(player);
+		helper.assertTrue(GeneCombat.test(witch, GeneEffect.When.SEES_PLAYER), "the witch sees the player");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 100)
+	public void shadeDraughtDrinksInvisibilityAndSharesItWithTheMonstersNear(GameTestHelper helper) {
+		Witch plain = witchWith(helper, new BlockPos(1, 1, 1));
+		Witch witch = witchWith(helper, new BlockPos(3, 1, 3), "test_shade_draught", "test_shared_draught");
+		Zombie ally = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(5, 1, 3));
+		Zombie far = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(3, 1, 7));
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 5));
+		Player player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(6, 1, 1))));
+		plain.setTarget(player);
+		witch.setTarget(player);
+		GeneEffect.Drink shade = new GeneEffect.Drink(Potions.INVISIBILITY, GeneEffect.When.SEES_PLAYER, 60.0F,
+				java.util.Optional.of(10.0F));
+		helper.assertFalse(GeneBehaviors.drink(plain, helper.getLevel(), new GeneEffect.Drink(Potions.INVISIBILITY,
+				GeneEffect.When.ON_FIRE, 0.0F, java.util.Optional.empty())), "a witch that does not burn does not drink");
+		helper.assertTrue(GeneBehaviors.drink(witch, helper.getLevel(), shade), "the witch starts to drink");
+		helper.assertTrue(witch.isDrinkingPotion(), "the witch drinks");
+		helper.assertFalse(GeneBehaviors.drink(witch, helper.getLevel(), shade), "one drink at a time");
+		helper.succeedWhen(() -> {
+			helper.assertFalse(witch.isDrinkingPotion(), "the drink ends");
+			helper.assertTrue(witch.hasEffect(MobEffects.INVISIBILITY), "the witch is invisible");
+			helper.assertTrue(witch.getEffect(MobEffects.INVISIBILITY).getDuration() <= 200, "for 10 seconds");
+			helper.assertTrue(ally.hasEffect(MobEffects.INVISIBILITY), "a zombie in 3 blocks shares the drink");
+			helper.assertFalse(far.hasEffect(MobEffects.INVISIBILITY), "a zombie 4 blocks away does not");
+			helper.assertFalse(pig.hasEffect(MobEffects.INVISIBILITY), "a pig is not a monster");
+			witch.removeAllEffects();
+			helper.assertFalse(GeneBehaviors.drink(witch, helper.getLevel(), shade), "the drink waits for its cooldown");
+		});
 	}
 
 	static RangedAttackGoal rangedGoal(Witch witch, Pig target) {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
 import io.github.stivengjekaj.originofspawns.mixin.VexAccessor;
+import io.github.stivengjekaj.originofspawns.mixin.WitchAccessor;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.goal.LeapGoal;
 import io.github.stivengjekaj.originofspawns.evolution.goal.LurkGoal;
@@ -36,6 +37,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Vex;
+import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
 import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.entity.animal.golem.IronGolem;
@@ -367,6 +369,7 @@ public final class GeneBehaviors {
 				case GeneEffect.Lurk lurk when lurk.ignite() && mob instanceof Creeper creeper && !creeper.isIgnited()
 						&& mob.getTarget() instanceof Player player && mob.distanceTo(player) <= lurk.radius()
 						&& mob.hasLineOfSight(player) -> creeper.ignite();
+				case GeneEffect.Drink drink when mob instanceof Witch witch -> drink(witch, level, drink);
 				default -> {
 				}
 			}
@@ -1112,6 +1115,73 @@ public final class GeneBehaviors {
 			} else if (effect instanceof GeneEffect.AttributeWhen when) {
 				toggle(mob, mob.getAttribute(when.attribute()), OriginOfSpawns.id("attribute_when/" + attributeIndex++),
 						GeneCombat.test(mob, when.when()), when.amount(), when.operation());
+			}
+		}
+	}
+
+	/**
+	 * Lets the witch drink the potion of the drink effect, if the state is true, the cooldown is over, and the witch
+	 * does not drink now. The vanilla witch then ends the drink and gets the effects.
+	 *
+	 * @return true if the witch started to drink
+	 */
+	public static boolean drink(Witch witch, ServerLevel level, GeneEffect.Drink drink) {
+		if (witch.isDrinkingPotion() || !GeneCombat.test(witch, drink.when())) {
+			return false;
+		}
+		long now = level.getGameTime();
+		java.util.Map<GeneEffect.Drink, Long> times = witch.getAttachedOrElse(ModAttachments.DRINK_TIMES, java.util.Map.of());
+		Long last = times.get(drink);
+		if (last != null && now - last < Math.round(drink.cooldownSeconds() * 20.0F)) {
+			return false;
+		}
+		List<MobEffectInstance> effects = new java.util.ArrayList<>();
+		for (MobEffectInstance instance : drink.potion().value().getEffects()) {
+			int ticks = drink.seconds().map(seconds -> Math.round(seconds * 20.0F)).orElse(instance.getDuration());
+			effects.add(new MobEffectInstance(instance.getEffect(), ticks, instance.getAmplifier()));
+		}
+		// A witch that has each lasting effect of the potion already does not need it.
+		if (!effects.isEmpty() && effects.stream().allMatch(instance -> !instance.getEffect().value().isInstantaneous()
+				&& witch.hasEffect(instance.getEffect()))) {
+			return false;
+		}
+		ItemStack potion = PotionContents.createItemStack(Items.POTION, drink.potion());
+		if (drink.seconds().isPresent()) {
+			potion.set(DataComponents.POTION_CONTENTS, new PotionContents(java.util.Optional.empty(),
+					java.util.Optional.of(new PotionContents(drink.potion()).getColor()), effects, java.util.Optional.empty()));
+		}
+		// The same steps as the vanilla drink of the witch.
+		witch.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, potion);
+		((WitchAccessor) witch).originofspawns$setUsingTime(potion.getUseDuration(witch));
+		witch.setUsingItem(true);
+		if (!witch.isSilent()) {
+			level.playSound(null, witch.getX(), witch.getY(), witch.getZ(), net.minecraft.sounds.SoundEvents.WITCH_DRINK,
+					witch.getSoundSource(), 1.0F, 0.8F + witch.getRandom().nextFloat() * 0.4F);
+		}
+		AttributeInstance speed = witch.getAttribute(Attributes.MOVEMENT_SPEED);
+		AttributeModifier slow = WitchAccessor.originofspawns$drinkingModifier();
+		speed.removeModifier(slow.id());
+		speed.addTransientModifier(slow);
+		java.util.Map<GeneEffect.Drink, Long> updated = new java.util.HashMap<>(times);
+		updated.put(drink, now);
+		witch.setAttached(ModAttachments.DRINK_TIMES, updated);
+		return true;
+	}
+
+	/**
+	 * Gives the effects of the potion that the witch drank to the monsters near it, if a gene shares its drinks.
+	 */
+	public static void shareDrink(Witch witch, PotionContents contents, float durationScale) {
+		if (!(witch.level() instanceof ServerLevel level)) {
+			return;
+		}
+		for (GeneEffect effect : GeneEffects.of(witch).toList()) {
+			if (effect instanceof GeneEffect.SharedDrink shared) {
+				AABB area = witch.getBoundingBox().inflate(shared.radius());
+				for (Mob ally : level.getEntitiesOfClass(Mob.class, area,
+						other -> other != witch && other instanceof net.minecraft.world.entity.monster.Enemy)) {
+					contents.forEachEffect(instance -> ally.addEffect(instance, witch), durationScale);
+				}
 			}
 		}
 	}

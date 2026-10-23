@@ -186,7 +186,9 @@ public sealed interface GeneEffect {
 			Map.entry("potion_splash", PotionSplash.CODEC),
 			Map.entry("potion_damage", PotionDamage.CODEC),
 			Map.entry("potion_shards", PotionShards.CODEC),
-			Map.entry("potion_heal", PotionHeal.CODEC)
+			Map.entry("potion_heal", PotionHeal.CODEC),
+			Map.entry("drink", Drink.CODEC),
+			Map.entry("shared_drink", SharedDrink.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -458,7 +460,23 @@ public sealed interface GeneEffect {
 		/**
 		 * No monster spawner is in 16 blocks of the mob. This is the opposite of {@code near_spawner}.
 		 */
-		FAR_FROM_SPAWNER;
+		FAR_FROM_SPAWNER,
+		/**
+		 * The mob burns.
+		 */
+		ON_FIRE,
+		/**
+		 * The target of the mob is farther than 11 blocks.
+		 */
+		TARGET_FAR,
+		/**
+		 * The mob falls: it is in the air, out of water, and it fell more than 2 blocks.
+		 */
+		FALLING,
+		/**
+		 * The target of the mob is a player, and the mob sees the player.
+		 */
+		SEES_PLAYER;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 
@@ -2957,6 +2975,41 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "potion_heal";
+		}
+	}
+
+	/**
+	 * A witch drinks the potion when the state is true, one time in each cooldown. It does not drink when it already
+	 * has each effect of the potion. A drink takes the vanilla drink time, and the witch is slow while it drinks. With
+	 * {@code seconds}, the effects of the potion last this long.
+	 */
+	record Drink(Holder<net.minecraft.world.item.alchemy.Potion> potion, When when, float cooldownSeconds,
+			Optional<Float> seconds) implements GeneEffect {
+		public static final MapCodec<Drink> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				net.minecraft.world.item.alchemy.Potion.CODEC.fieldOf("potion").forGetter(Drink::potion),
+				When.CODEC.fieldOf("when").forGetter(Drink::when),
+				Codec.floatRange(0.0F, 3600.0F).optionalFieldOf("cooldown_seconds", 0.0F).forGetter(Drink::cooldownSeconds),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds").forGetter(Drink::seconds)
+		).apply(instance, Drink::new));
+
+		@Override
+		public String type() {
+			return "drink";
+		}
+	}
+
+	/**
+	 * When a witch drinks a potion, the monsters in the radius get the same effects. Each drink counts, also a vanilla
+	 * drink.
+	 */
+	record SharedDrink(float radius) implements GeneEffect {
+		public static final MapCodec<SharedDrink> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 32.0F).optionalFieldOf("radius", 4.0F).forGetter(SharedDrink::radius)
+		).apply(instance, SharedDrink::new));
+
+		@Override
+		public String type() {
+			return "shared_drink";
 		}
 	}
 }

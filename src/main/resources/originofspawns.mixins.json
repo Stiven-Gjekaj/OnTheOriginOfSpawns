@@ -41,6 +41,7 @@
 		"ThrownLingeringPotionMixin",
 		"ThrownSplashPotionMixin",
 		"VexAccessor",
+		"WitchAccessor",
 		"WitchMixin",
 		"ZombieMixin"
 	],

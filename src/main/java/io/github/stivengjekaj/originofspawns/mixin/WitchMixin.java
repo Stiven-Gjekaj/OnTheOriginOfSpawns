@@ -3,12 +3,16 @@ package io.github.stivengjekaj.originofspawns.mixin;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 
+import java.util.function.Consumer;
+
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.PotionContents;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -32,5 +36,16 @@ public abstract class WitchMixin {
 		}
 		return GeneBehaviors.throwPotion((Witch) source, level, stack, x, y, z, power,
 				uncertainty * GeneBehaviors.arrowSpreadMultiplier(source));
+	}
+
+	/**
+	 * A witch with a gene that shares its drinks gives the effects of each drink to the monsters near it.
+	 */
+	@WrapOperation(method = "aiStep", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/item/alchemy/PotionContents;forEachEffect(Ljava/util/function/Consumer;F)V"))
+	private void originofspawns$shareDrink(PotionContents contents, Consumer<MobEffectInstance> consumer,
+			float durationScale, Operation<Void> original) {
+		original.call(contents, consumer, durationScale);
+		GeneBehaviors.shareDrink((Witch) (Object) this, contents, durationScale);
 	}
 }

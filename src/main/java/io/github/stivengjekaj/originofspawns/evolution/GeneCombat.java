@@ -83,6 +83,15 @@ public final class GeneCombat {
 		return entity.level().getBlockState(entity.getBlockPosBelowThatAffectsMyMovement()).is(BlockTags.SAND);
 	}
 
+	/**
+	 * The distance past which the target is far. A vanilla witch drinks Swiftness past this distance.
+	 */
+	private static final double TARGET_FAR_BLOCKS = 11.0;
+	/**
+	 * The fall past which a mob falls.
+	 */
+	private static final double FALLING_BLOCKS = 2.0;
+
 	public static boolean test(LivingEntity entity, When when) {
 		return test(entity, when, ALONE_RADIUS);
 	}
@@ -157,6 +166,12 @@ public final class GeneCombat {
 			case NEAR_SPAWNER -> nearSpawner(entity);
 			case FAR_FROM_SPAWNER -> !nearSpawner(entity);
 			case UNSEEN -> entity instanceof Mob mob && mob.getTarget() != null && Evolution.unseen(mob, mob.getTarget());
+			case ON_FIRE -> entity.isOnFire();
+			case TARGET_FAR -> entity instanceof Mob mob && mob.getTarget() != null
+					&& mob.distanceToSqr(mob.getTarget()) > TARGET_FAR_BLOCKS * TARGET_FAR_BLOCKS;
+			case FALLING -> !entity.onGround() && !entity.isInWater() && entity.fallDistance > FALLING_BLOCKS;
+			case SEES_PLAYER -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
+					&& mob.hasLineOfSight(player);
 		};
 	}
 

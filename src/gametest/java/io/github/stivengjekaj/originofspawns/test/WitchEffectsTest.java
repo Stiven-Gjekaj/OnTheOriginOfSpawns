@@ -106,6 +106,22 @@ public class WitchEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void doubleThrowThrowsTwoPotionsALittleApart(GameTestHelper helper) {
+		Witch witch = witchWith(helper, new BlockPos(2, 1, 3), "test_double_throw");
+		// With no aim spread, only the angle of the gene parts the potions.
+		GeneBehaviors.throwPotion(witch, helper.getLevel(), splash(Potions.POISON), 1.0, 0.2, 0.0, 0.75F, 0.0F);
+		List<AbstractThrownPotion> potions = helper.getLevel().getEntitiesOfClass(AbstractThrownPotion.class,
+				witch.getBoundingBox().inflate(4.0), potion -> potion.getOwner() == witch);
+		helper.assertValueEqual(potions.size(), 2, "the witch throws two potions");
+		Vec3 one = potions.get(0).getDeltaMovement();
+		Vec3 two = potions.get(1).getDeltaMovement();
+		double apart = Math.toDegrees(Math.abs(Math.atan2(one.z, one.x) - Math.atan2(two.z, two.x)));
+		potions.forEach(AbstractThrownPotion::discard);
+		helper.assertTrue(Math.abs(apart - 10.0) < 0.5, "the potions fly 10 degrees apart, " + apart);
+		helper.succeed();
+	}
+
 	static ItemStack splash(Holder<net.minecraft.world.item.alchemy.Potion> potion) {
 		return PotionContents.createItemStack(Items.SPLASH_POTION, potion);
 	}

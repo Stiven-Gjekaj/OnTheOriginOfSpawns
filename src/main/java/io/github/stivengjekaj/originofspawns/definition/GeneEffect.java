@@ -181,7 +181,8 @@ public sealed interface GeneEffect {
 			Map.entry("potion_level", PotionLevel.CODEC),
 			Map.entry("potion_swap", PotionSwap.CODEC),
 			Map.entry("potion_extra", PotionExtra.CODEC),
-			Map.entry("potion_lingering", PotionLingering.CODEC)
+			Map.entry("potion_lingering", PotionLingering.CODEC),
+			Map.entry("potion_count", PotionCount.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2877,6 +2878,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "potion_lingering";
+		}
+	}
+
+	/**
+	 * The mob throws this many potions at a target in one throw. The potions fly a little apart, {@code spread_degrees}
+	 * from each other. With more than one effect, the largest number counts.
+	 */
+	record PotionCount(int count, float spreadDegrees) implements GeneEffect {
+		public static final MapCodec<PotionCount> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 8).optionalFieldOf("count", 2).forGetter(PotionCount::count),
+				Codec.floatRange(0.0F, 45.0F).optionalFieldOf("spread_degrees", 8.0F).forGetter(PotionCount::spreadDegrees)
+		).apply(instance, PotionCount::new));
+
+		@Override
+		public String type() {
+			return "potion_count";
 		}
 	}
 }

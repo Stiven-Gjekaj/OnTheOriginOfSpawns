@@ -1124,11 +1124,26 @@ public final class GeneBehaviors {
 	 */
 	public static AbstractThrownPotion throwPotion(Mob mob, ServerLevel level, ItemStack stack, double x, double y,
 			double z, float power, float uncertainty) {
-		ItemStack brewed = brew(mob, stack);
-		AbstractThrownPotion potion = brewed.is(Items.LINGERING_POTION)
-				? new ThrownLingeringPotion(level, mob, brewed) : new ThrownSplashPotion(level, mob, brewed);
-		potion.setAttached(ModAttachments.GENE_POTION, true);
-		return Projectile.spawnProjectileUsingShoot(potion, level, brewed, x, y, z, power, uncertainty);
+		GeneEffect.PotionCount count = GeneEffects.of(mob).filter(GeneEffect.PotionCount.class::isInstance)
+				.map(GeneEffect.PotionCount.class::cast)
+				.max(java.util.Comparator.comparingInt(GeneEffect.PotionCount::count))
+				.orElse(new GeneEffect.PotionCount(1, 0.0F));
+		AbstractThrownPotion first = null;
+		for (int i = 0; i < count.count(); i++) {
+			// The potions fan out to both sides of the aim, by the same angle each.
+			double angle = Math.toRadians((i - (count.count() - 1) / 2.0) * count.spreadDegrees());
+			double turnedX = x * Math.cos(angle) - z * Math.sin(angle);
+			double turnedZ = x * Math.sin(angle) + z * Math.cos(angle);
+			ItemStack brewed = brew(mob, stack);
+			AbstractThrownPotion potion = brewed.is(Items.LINGERING_POTION)
+					? new ThrownLingeringPotion(level, mob, brewed) : new ThrownSplashPotion(level, mob, brewed);
+			potion.setAttached(ModAttachments.GENE_POTION, true);
+			Projectile.spawnProjectileUsingShoot(potion, level, brewed, turnedX, y, turnedZ, power, uncertainty);
+			if (first == null) {
+				first = potion;
+			}
+		}
+		return first;
 	}
 
 	/**

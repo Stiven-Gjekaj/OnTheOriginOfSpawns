@@ -181,6 +181,11 @@ public final class ModAttachments {
 			DRINK_TIMES = AttachmentRegistry.create(OriginOfSpawns.id("drink_times"));
 
 	/**
+	 * The game time of the last heal throw of a mob.
+	 */
+	public static final AttachmentType<Long> HEAL_THROW_TIME = AttachmentRegistry.create(OriginOfSpawns.id("heal_throw_time"));
+
+	/**
 	 * The game time of the last decoy summon of a mob.
 	 */
 	public static final AttachmentType<Long> DECOY_TIME = AttachmentRegistry.create(OriginOfSpawns.id("decoy_time"));

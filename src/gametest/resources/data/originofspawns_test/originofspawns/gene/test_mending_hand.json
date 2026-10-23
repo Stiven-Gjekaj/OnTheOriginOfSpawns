@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "heal_throw", "radius": 5, "cooldown_seconds": 15 }],
+	"mutation_rate": 0
+}

@@ -188,7 +188,8 @@ public sealed interface GeneEffect {
 			Map.entry("potion_shards", PotionShards.CODEC),
 			Map.entry("potion_heal", PotionHeal.CODEC),
 			Map.entry("drink", Drink.CODEC),
-			Map.entry("shared_drink", SharedDrink.CODEC)
+			Map.entry("shared_drink", SharedDrink.CODEC),
+			Map.entry("heal_throw", HealThrow.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3010,6 +3011,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "shared_drink";
+		}
+	}
+
+	/**
+	 * One time in each cooldown, the mob throws a splash potion of Healing at the nearest hurt monster in the radius
+	 * that it sees. It does not throw at its own target. An undead monster gets a potion of Harming, which heals it.
+	 */
+	record HealThrow(float radius, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<HealThrow> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 32.0F).optionalFieldOf("radius", 8.0F).forGetter(HealThrow::radius),
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 15.0F).forGetter(HealThrow::cooldownSeconds)
+		).apply(instance, HealThrow::new));
+
+		@Override
+		public String type() {
+			return "heal_throw";
 		}
 	}
 }

@@ -450,6 +450,7 @@ public final class GeneBehaviors {
 				case GeneEffect.WebShot shot -> webShot(mob, level, shot);
 				case GeneEffect.RocketShot shot -> rocketShot(mob, level, shot);
 				case GeneEffect.Hex hex -> hex(mob, level, hex);
+				case GeneEffect.HealThrow heal -> healThrow(mob, level, heal);
 				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
 				case GeneEffect.FrenziedTargeting frenzy
 						when now % Math.max(1, Math.round(frenzy.intervalSeconds() * 20.0F)) < TICK_INTERVAL
@@ -1166,6 +1167,46 @@ public final class GeneBehaviors {
 		updated.put(drink, now);
 		witch.setAttached(ModAttachments.DRINK_TIMES, updated);
 		return true;
+	}
+
+	/**
+	 * Throws a splash potion of Healing at the nearest hurt monster in the radius, one time in each cooldown. The
+	 * potion of an undead monster is Harming, which heals it. A witch that drinks does not throw.
+	 *
+	 * @return the monster that the mob threw at, or null
+	 */
+	public static Mob healThrow(Mob mob, ServerLevel level, GeneEffect.HealThrow heal) {
+		long now = level.getGameTime();
+		long last = mob.getAttachedOrElse(ModAttachments.HEAL_THROW_TIME, Long.MIN_VALUE);
+		if (mob instanceof Witch witch && witch.isDrinkingPotion()
+				|| last != Long.MIN_VALUE && now - last < Math.round(heal.cooldownSeconds() * 20.0F)) {
+			return null;
+		}
+		AABB area = mob.getBoundingBox().inflate(heal.radius());
+		Mob hurt = level.getEntitiesOfClass(Mob.class, area, other -> other != mob && other != mob.getTarget()
+						&& other instanceof net.minecraft.world.entity.monster.Enemy && other.isAlive()
+						&& other.getHealth() < other.getMaxHealth() && mob.distanceTo(other) <= heal.radius()
+						&& mob.hasLineOfSight(other))
+				.stream().min(java.util.Comparator.comparingDouble(mob::distanceToSqr)).orElse(null);
+		if (hurt == null) {
+			return null;
+		}
+		ItemStack potion = PotionContents.createItemStack(Items.SPLASH_POTION,
+				hurt.isInvertedHealAndHarm() ? net.minecraft.world.item.alchemy.Potions.HARMING
+						: net.minecraft.world.item.alchemy.Potions.HEALING);
+		// The same aim as the vanilla throw of the witch.
+		double x = hurt.getX() + hurt.getDeltaMovement().x - mob.getX();
+		double y = hurt.getEyeY() - 1.1F - mob.getY();
+		double z = hurt.getZ() + hurt.getDeltaMovement().z - mob.getZ();
+		double distance = Math.sqrt(x * x + z * z);
+		Projectile.spawnProjectileUsingShoot(ThrownSplashPotion::new, level, potion, mob, x, y + distance * 0.2, z,
+				distance <= 2.0 ? 0.45F : 0.75F, 0.0F);
+		if (!mob.isSilent()) {
+			level.playSound(null, mob.getX(), mob.getY(), mob.getZ(), net.minecraft.sounds.SoundEvents.WITCH_THROW,
+					mob.getSoundSource(), 1.0F, 0.8F + mob.getRandom().nextFloat() * 0.4F);
+		}
+		mob.setAttached(ModAttachments.HEAL_THROW_TIME, now);
+		return hurt;
 	}
 
 	/**

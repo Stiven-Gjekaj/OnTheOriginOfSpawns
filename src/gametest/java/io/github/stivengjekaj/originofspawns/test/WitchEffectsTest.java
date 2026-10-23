@@ -28,6 +28,7 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.monster.illager.Pillager;
@@ -308,6 +309,43 @@ public class WitchEffectsTest {
 			witch.removeAllEffects();
 			helper.assertFalse(GeneBehaviors.drink(witch, helper.getLevel(), shade), "the drink waits for its cooldown");
 		});
+	}
+
+	@GameTest
+	public void mendingHandThrowsHealingAtAHurtMonsterButNotAtItsTarget(GameTestHelper helper) {
+		Witch witch = witchWith(helper, new BlockPos(3, 1, 3));
+		GeneEffect.HealThrow mending = new GeneEffect.HealThrow(5.0F, 15.0F);
+		Creeper full = helper.spawnWithNoFreeWill(EntityTypes.CREEPER, new BlockPos(5, 1, 3));
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 5));
+		pig.setHealth(5.0F);
+		helper.assertTrue(GeneBehaviors.healThrow(witch, helper.getLevel(), mending) == null,
+				"no throw at a monster with full health or at a pig");
+		Creeper target = helper.spawnWithNoFreeWill(EntityTypes.CREEPER, new BlockPos(1, 1, 3));
+		target.setHealth(5.0F);
+		witch.setTarget(target);
+		helper.assertTrue(GeneBehaviors.healThrow(witch, helper.getLevel(), mending) == null, "no throw at its target");
+		full.setHealth(5.0F);
+		helper.assertTrue(GeneBehaviors.healThrow(witch, helper.getLevel(), mending) == full,
+				"the witch throws at the hurt creeper");
+		AbstractThrownPotion potion = potionOf(helper, witch);
+		helper.assertTrue(potion.getItem().getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
+				.is(Potions.HEALING), "the potion is Healing");
+		helper.assertFalse(potion.hasAttached(ModAttachments.GENE_POTION), "a heal has no mark of an attack");
+		potion.discard();
+		helper.assertTrue(GeneBehaviors.healThrow(witch, helper.getLevel(), mending) == null,
+				"the throw waits for its cooldown");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 100)
+	public void aWitchWithMendingHandHealsAZombieWithHarming(GameTestHelper helper) {
+		Witch witch = witchWith(helper, new BlockPos(3, 1, 3), "test_mending_hand");
+		Zombie zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new BlockPos(5, 1, 3));
+		zombie.setHealth(5.0F);
+		// A zombie burns in the sun, and the fire would hide the heal.
+		zombie.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 200));
+		// The behavior tick of the witch throws the potion, and the potion flies 2 blocks to the zombie.
+		helper.succeedWhen(() -> helper.assertTrue(zombie.getHealth() > 5.0F, "health was " + zombie.getHealth()));
 	}
 
 	static RangedAttackGoal rangedGoal(Witch witch, Pig target) {

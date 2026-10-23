@@ -57,6 +57,7 @@ SPIDER_EYES_PATH = "assets/minecraft/textures/entity/spider/spider_eyes.png"
 CAVE_SPIDER_PATH = "assets/minecraft/textures/entity/spider/cave_spider.png"
 PILLAGER_PATH = "assets/minecraft/textures/entity/illager/pillager.png"
 VINDICATOR_PATH = "assets/minecraft/textures/entity/illager/vindicator.png"
+EVOKER_PATH = "assets/minecraft/textures/entity/illager/evoker.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -338,6 +339,17 @@ VINDICATOR_EXTRA = {
                   ("All 6 + Butchers", ["gash", "decapitator"], True, {})],
 }
 
+# The families of the evoker, from design/species/evoker.md.
+EVOKER_FAMILIES = {
+    "fangcallers": ["fang_line", "fang_ring", "barbed_fangs", "swift_cast", "golem_jaws", "upheaval"],
+    "conjurers": ["vex_swarm", "iron_vexes", "long_bond", "sharp_vexes", "vengeful_vexes", "venom_vexes"],
+    "cursers": ["wither_hex", "blind_hex", "weak_hex", "hunger_hex", "drain_hex", "float_hex"],
+    "lifebinders": ["totem_bearer", "soul_mend", "life_siphon", "arrow_ward", "fire_ward", "blast_ward"],
+    "tricksters": ["blink", "smoke_veil", "fleet", "shimmer", "decoy", "mind_trick"],
+}
+
+EVOKER_EXTRA = {}
+
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
     "rushers": [("All 6 + Skulkers", ["leafskin", "patient"], True, {})],
@@ -475,6 +487,10 @@ VINDICATOR_CUBES = PILLAGER_CUBES[:3] + [
 ] + PILLAGER_CUBES[5:]
 VINDICATOR_ATTACK_PIVOTS = dict(PILLAGER_PIVOTS, right_arm=(-5, 2, 0, -108, 9, 0), left_arm=(5, 2, 0, 0, -9, 0))
 VINDICATOR_ATTACK_CUBES = PILLAGER_CUBES
+# The evoker crosses its arms as the vindicator does. When it casts, it
+# raises its arms out to the sides, with the pose of IllagerModel for the
+# arm pose SPELLCASTING.
+EVOKER_CAST_PIVOTS = dict(PILLAGER_PIVOTS, right_arm=(-5, 2, 0, 0, 0, 135), left_arm=(5, 2, 0, 0, 0, -135))
 
 # The coat of the pillager: 0.5 pixel larger than the body, and 20 pixels
 # long, so that it hangs over the legs.
@@ -978,6 +994,7 @@ SPECIES = {
     "cave_spider": (CAVE_SPIDER_PATH, None, CAVE_SPIDER_FAMILIES, CAVE_SPIDER_EXTRA, []),
     "pillager": (PILLAGER_PATH, None, PILLAGER_FAMILIES, PILLAGER_EXTRA, []),
     "vindicator": (VINDICATOR_PATH, None, VINDICATOR_FAMILIES, VINDICATOR_EXTRA, []),
+    "evoker": (EVOKER_PATH, None, EVOKER_FAMILIES, EVOKER_EXTRA, []),
 }
 
 
@@ -992,27 +1009,29 @@ def set_mob(species):
     spider = species in ("spider", "cave_spider")
     MOB["cubes"] = (DROWNED_CUBES if species == "drowned" else PARCHED_CUBES if species == "parched"
                     else CREEPER_CUBES if species == "creeper" else SPIDER_CUBES if spider
-                    else PILLAGER_CUBES if species == "pillager" else VINDICATOR_CUBES if species == "vindicator"
+                    else PILLAGER_CUBES if species in ("pillager", "evoker_casting")
+                    else VINDICATOR_CUBES if species in ("vindicator", "evoker")
                     else VINDICATOR_ATTACK_CUBES if species == "vindicator_attacking"
                     else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
     MOB["pivots"] = (PARCHED_PIVOTS if species == "parched" else CREEPER_PIVOTS if species == "creeper"
                      else SPIDER_PIVOTS if spider else PILLAGER_PIVOTS if species == "pillager"
-                     else VINDICATOR_PIVOTS if species == "vindicator"
+                     else VINDICATOR_PIVOTS if species in ("vindicator", "evoker")
                      else VINDICATOR_ATTACK_PIVOTS if species == "vindicator_attacking"
+                     else EVOKER_CAST_PIVOTS if species == "evoker_casting"
                      else SKELETON_PIVOTS if skeleton else PIVOTS)
-    # With its arms crossed, the vindicator hides the arms right_arm and
-    # left_arm, and their gene models.
-    MOB["hidden"] = ("right_arm", "left_arm") if species == "vindicator" else ()
+    # With its arms crossed, the vindicator or the evoker hides the arms
+    # right_arm and left_arm, and their gene models.
+    MOB["hidden"] = ("right_arm", "left_arm") if species in ("vindicator", "evoker") else ()
     # The spider is wide and low. The sheets look down on it, so that its
     # back shows.
-    # The banner of the pillager and the hood of the vindicator rise 2 pixels
-    # above the head.
+    # The banner of the pillager, the hood of the vindicator, and the skull of
+    # the evoker rise 2 pixels above the head.
     VIEW_X, VIEW_Y, VIEW_W, VIEW_H = ((20, -2, 40, 26) if spider else (11, 13, 22, 39)
-                                      if species in ("pillager", "vindicator") else (11, 11, 22, 37))
+                                      if species in ("pillager", "vindicator", "evoker") else (11, 11, 22, 37))
     MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if spider else [(0, 0), (180, 0), (-35, 15)]
     MOB["closeup_view"] = ((40, 34), (0, 13)) if spider else ((26, 40), (0, 5))
     MOB["eyes"] = find_zombie_texture(SPIDER_EYES_PATH) if spider else None
-    illager = species in ("pillager", "vindicator", "vindicator_attacking")
+    illager = species in ("pillager", "vindicator", "vindicator_attacking", "evoker", "evoker_casting")
     MOB["wraps"] = PARCHED_WRAPS if species == "parched" else PILLAGER_COAT if illager else []
     MOB["outer"] = ((find_zombie_texture(DROWNED_OUTER_PATH), find_zombie_texture(DROWNED_OUTER_BABY_PATH))
                     if species == "drowned" else (find_zombie_texture(STRAY_OUTER_PATH), None)

@@ -489,6 +489,13 @@ VINDICATOR_ATTACK_CLOSEUPS = {
                                ("Climber + Golem Smasher", ["climber", "golem_smasher"], False)], ALL_SIDES),
 }
 
+# The close-ups of the evoker. It has no babies. The close-ups of
+# "evoker_casting" show it with its arms raised, as when it casts, so that
+# the gene models on the arms show.
+EVOKER = pg.EVOKER_FAMILIES
+EVOKER_CLOSEUPS = {}
+EVOKER_CAST_CLOSEUPS = {}
+
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
     "husk": (pg.HUSK_PATH, pg.HUSK_BABY_PATH, HUSK_CLOSEUPS),
@@ -504,6 +511,8 @@ SPECIES = {
     "pillager": (pg.PILLAGER_PATH, None, PILLAGER_CLOSEUPS),
     "vindicator": (pg.VINDICATOR_PATH, None, VINDICATOR_CLOSEUPS),
     "vindicator_attacking": (pg.VINDICATOR_PATH, None, VINDICATOR_ATTACK_CLOSEUPS),
+    "evoker": (pg.EVOKER_PATH, None, EVOKER_CLOSEUPS),
+    "evoker_casting": (pg.EVOKER_PATH, None, EVOKER_CAST_CLOSEUPS),
 }
 
 

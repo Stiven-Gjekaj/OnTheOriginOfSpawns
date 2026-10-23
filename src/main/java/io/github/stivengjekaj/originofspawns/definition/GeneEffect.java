@@ -477,7 +477,12 @@ public sealed interface GeneEffect {
 		/**
 		 * The target of the mob is a player, and the mob sees the player.
 		 */
-		SEES_PLAYER;
+		SEES_PLAYER,
+		/**
+		 * Rain falls on the mob: the world has rain, the biome has rain and not snow, and the mob has open sky above
+		 * it.
+		 */
+		IN_RAIN;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 

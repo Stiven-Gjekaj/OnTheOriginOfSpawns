@@ -172,6 +172,9 @@ public final class GeneCombat {
 			case FALLING -> !entity.onGround() && !entity.isInWater() && entity.fallDistance > FALLING_BLOCKS;
 			case SEES_PLAYER -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
 					&& mob.hasLineOfSight(player);
+			// The same test as the vanilla rain that puts out a fire: at the feet or at the top of the mob.
+			case IN_RAIN -> entity.level().isRainingAt(entity.blockPosition()) || entity.level().isRainingAt(
+					BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ()));
 		};
 	}
 

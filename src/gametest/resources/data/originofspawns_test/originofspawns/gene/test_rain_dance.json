@@ -2,6 +2,6 @@
 	"species": "minecraft:witch",
 	"counters": "originofspawns_test:test_heat",
 	"family": "originofspawns_test:test",
-	"gains": [{ "type": "regenerate", "amount": 1, "interval_seconds": 1, "idle_seconds": 0, "when": "storm" }],
+	"gains": [{ "type": "regenerate", "amount": 1, "interval_seconds": 1, "idle_seconds": 0, "when": "in_rain" }],
 	"mutation_rate": 0
 }

@@ -19,8 +19,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.commands.FillBiomeCommand;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
@@ -48,7 +50,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -401,22 +406,54 @@ public class WitchEffectsTest {
 		helper.succeed();
 	}
 
-	@GameTest(maxTicks = 60)
-	public void rainDanceHealsOnlyInAStorm(GameTestHelper helper) {
-		// The test does not start a storm, because the weather of the level reaches each test that runs now.
-		Witch dancer = witchWith(helper, new BlockPos(1, 1, 1), "test_rain_dance");
-		Witch healer = witchWith(helper, new BlockPos(1, 1, 4), "test_witch_regen");
-		dancer.setHealth(10.0F);
-		healer.setHealth(10.0F);
-		holdVanillaDrinks(dancer);
-		holdVanillaDrinks(healer);
-		helper.runAfterDelay(50, () -> {
-			if (!helper.getLevel().isThundering()) {
-				helper.assertValueEqual(dancer.getHealth(), 10.0F, "no heal out of a storm");
+	@GameTest
+	public void rainDanceHealsOnlyInTheRainUnderOpenSky(GameTestHelper helper) {
+		// The test area has a roof of barriers, so the open witch floats above it, in the same chunk column.
+		Witch open = witchWith(helper, new BlockPos(1, 12, 1), "test_rain_dance");
+		open.setNoGravity(true);
+		Witch roofed = witchWith(helper, new BlockPos(1, 1, 4), "test_rain_dance");
+		helper.assertTrue(helper.getLevel().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, open.blockPosition()).getY()
+				<= open.getY(), "nothing is above the open witch");
+		var level = helper.getLevel();
+		float rain = level.getRainLevel(1.0F);
+		// The new biome covers both witches, so that only the roof keeps the rain off the roofed witch. The game
+		// reads the biome of a place with a small random offset, so the new biome reaches 4 blocks past each witch.
+		BlockPos from = roofed.blockPosition().offset(-4, -4, -4);
+		BlockPos to = open.blockPosition().offset(4, 4, 4);
+		Holder<Biome> biome = level.getBiome(open.blockPosition());
+		Holder<Biome> plains = level.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.PLAINS);
+		// The rain and the biome change and come back in this one tick, so they do not reach the other tests.
+		try {
+			level.setRainLevel(0.0F);
+			helper.assertFalse(GeneCombat.test(open, GeneEffect.When.IN_RAIN), "no rain in clear weather");
+			helper.assertValueEqual(regenerateNow(helper, open), 10.0F, "no heal in clear weather");
+			level.setRainLevel(1.0F);
+			if (biome.value().getPrecipitationAt(open.blockPosition(), level.getSeaLevel()) != Biome.Precipitation.RAIN) {
+				helper.assertFalse(GeneCombat.test(open, GeneEffect.When.IN_RAIN), "no rain in a dry or a snowy biome");
 			}
-			helper.assertTrue(healer.getHealth() > 10.0F, "the regeneration heals a witch");
-			helper.succeed();
-		});
+			helper.assertTrue(FillBiomeCommand.fill(level, from, to, plains).left().isPresent(), "the biome changes");
+			helper.assertTrue(GeneCombat.test(open, GeneEffect.When.IN_RAIN), "rain falls on the witch");
+			helper.assertFalse(GeneCombat.test(roofed, GeneEffect.When.IN_RAIN), "the roof of the test area keeps the rain off");
+			helper.assertValueEqual(regenerateNow(helper, open), 11.0F, "the witch heals in the rain");
+			helper.assertValueEqual(regenerateNow(helper, roofed), 10.0F, "no heal under a roof");
+		} finally {
+			FillBiomeCommand.fill(level, from, to, biome);
+			level.setRainLevel(rain);
+			// The open witch is above the test area, so the end of the test does not remove it.
+			open.discard();
+		}
+		helper.succeed();
+	}
+
+	/**
+	 * Hurts the witch to 10 health, runs one behavior tick of it, and returns its health after the tick.
+	 */
+	static float regenerateNow(GameTestHelper helper, Witch witch) {
+		witch.setHealth(10.0F);
+		// The behavior tick runs its slow effects only on each 20th tick of the mob.
+		witch.tickCount = 0;
+		GeneBehaviors.tick(witch, helper.getLevel());
+		return witch.getHealth();
 	}
 
 	@GameTest(maxTicks = 60)

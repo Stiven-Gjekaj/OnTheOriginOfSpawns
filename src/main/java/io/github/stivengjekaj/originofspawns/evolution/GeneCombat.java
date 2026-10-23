@@ -509,6 +509,19 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Returns the cast interval of a spell of the mob, in ticks, with the spell interval multipliers of its genes.
+	 */
+	public static int spellInterval(Mob mob, int ticks) {
+		float multiplier = 1.0F;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.SpellInterval interval) {
+				multiplier *= interval.multiplier();
+			}
+		}
+		return Math.max(1, Math.round(ticks * multiplier));
+	}
+
+	/**
 	 * Returns the upward speed that lifts an entity this many blocks, with the gravity and the drag of a living
 	 * entity: 0.08 blocks each tick, then 2% less speed each tick.
 	 */

@@ -165,7 +165,8 @@ public sealed interface GeneEffect {
 			Map.entry("fang_damage", FangDamage.CODEC),
 			Map.entry("fang_effect", FangEffect.CODEC),
 			Map.entry("fang_launch", FangLaunch.CODEC),
-			Map.entry("fang_heal", FangHeal.CODEC)
+			Map.entry("fang_heal", FangHeal.CODEC),
+			Map.entry("spell_interval", SpellInterval.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2613,6 +2614,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "fang_heal";
+		}
+	}
+
+	/**
+	 * Multiplies the time between the spells of an evoker: the cast interval of the fang spell and of the vex spell.
+	 * The fang spell waits 5 seconds and the vex spell 17 seconds in vanilla. {@code 0.7} makes the time 30% less.
+	 */
+	record SpellInterval(float multiplier) implements GeneEffect {
+		public static final MapCodec<SpellInterval> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 20.0F).fieldOf("multiplier").forGetter(SpellInterval::multiplier)
+		).apply(instance, SpellInterval::new));
+
+		@Override
+		public String type() {
+			return "spell_interval";
 		}
 	}
 }

@@ -2,6 +2,8 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
+import io.github.stivengjekaj.originofspawns.mixin.SpellcasterUseSpellGoalAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -13,6 +15,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.illager.Evoker;
 import net.minecraft.world.entity.projectile.EvokerFangs;
@@ -93,6 +96,25 @@ public class EvokerEffectsTest {
 		GeneCombat.onFangHit(evokerWith(helper, new BlockPos(1, 1, 4)), other);
 		helper.assertValueEqual(other.getDeltaMovement().y, 0.0, "plain fangs do not throw");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void swiftCastShortensTheTimeBetweenTheFangAndVexSpells(GameTestHelper helper) {
+		Evoker plain = evokerWith(helper, new BlockPos(1, 1, 1));
+		Evoker swift = evokerWith(helper, new BlockPos(1, 1, 4), "test_swift_cast");
+		helper.assertValueEqual(castingInterval(plain, "EvokerAttackSpellGoal"), 100, "the plain fang spell waits 100 ticks");
+		helper.assertValueEqual(castingInterval(plain, "EvokerSummonSpellGoal"), 340, "the plain vex spell waits 340 ticks");
+		helper.assertValueEqual(castingInterval(swift, "EvokerAttackSpellGoal"), 70, "the fang spell waits 30% less");
+		helper.assertValueEqual(castingInterval(swift, "EvokerSummonSpellGoal"), 238, "the vex spell waits 30% less");
+		helper.assertValueEqual(castingInterval(swift, "EvokerWololoSpellGoal"), 140, "the sheep spell does not change");
+		helper.succeed();
+	}
+
+	static int castingInterval(Evoker evoker, String goal) {
+		return ((MobAccessor) evoker).originofspawns$goalSelector().getAvailableGoals().stream()
+				.map(WrappedGoal::getGoal).filter(each -> each.getClass().getSimpleName().equals(goal))
+				.map(each -> ((SpellcasterUseSpellGoalAccessor) each).originofspawns$castingInterval())
+				.findFirst().orElseThrow();
 	}
 
 	static Evoker evokerWith(GameTestHelper helper, BlockPos pos, String... genes) {

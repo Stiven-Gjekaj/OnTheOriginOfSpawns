@@ -6,6 +6,7 @@
 		"AbstractArrowAccessor",
 		"AbstractSkeletonAccessor",
 		"AbstractSkeletonMixin",
+		"AbstractThrownPotionMixin",
 		"BoggedMixin",
 		"CaveSpiderMixin",
 		"CreeperAccessor",

@@ -33,6 +33,7 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -167,6 +168,28 @@ public class WitchEffectsTest {
 		helper.assertValueEqual(VindicatorEffectsTest.damageTo(helper, EntityTypes.PIG, harm), 4.0F, "a pig is not a golem");
 		helper.assertValueEqual(VindicatorEffectsTest.damageTo(helper, EntityTypes.IRON_GOLEM, hit), 4.0F,
 				"a hit that is not a potion does not change");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aPotionThatBreaksOnATargetCutsItAndHealsTheWitch(GameTestHelper helper) {
+		Witch witch = witchWith(helper, new BlockPos(2, 1, 2), "test_glass_shards", "test_leech_jar");
+		witch.setHealth(10.0F);
+		Pig target = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 2));
+		AbstractThrownPotion potion = new net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion(
+				helper.getLevel(), witch, splash(Potions.WEAKNESS));
+		potion.setAttached(ModAttachments.GENE_POTION, true);
+		potion.setPos(target.position());
+		((ProjectileAccessor) potion).originofspawns$onHit(new EntityHitResult(target));
+		helper.assertValueEqual(target.getHealth(), 8.0F, "the glass does 2 damage");
+		helper.assertValueEqual(witch.getHealth(), 11.0F, "the hit heals the witch 1 health");
+		Pig ally = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 5));
+		AbstractThrownPotion heal = new net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion(
+				helper.getLevel(), witch, splash(Potions.WEAKNESS));
+		heal.setPos(ally.position());
+		((ProjectileAccessor) heal).originofspawns$onHit(new EntityHitResult(ally));
+		helper.assertValueEqual(ally.getHealth(), ally.getMaxHealth(), "a potion with no mark does no damage");
+		helper.assertValueEqual(witch.getHealth(), 11.0F, "and it does not heal the witch");
 		helper.succeed();
 	}
 

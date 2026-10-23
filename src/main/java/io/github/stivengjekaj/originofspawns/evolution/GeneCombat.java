@@ -517,6 +517,26 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Runs the effects of the owner of a potion when the potion breaks on a living entity. Only a potion that the
+	 * owner threw at a target counts, not a potion that heals an ally.
+	 */
+	public static void onPotionHit(AbstractThrownPotion potion, LivingEntity target) {
+		if (!potion.hasAttached(ModAttachments.GENE_POTION) || !(potion.getOwner() instanceof Mob owner)
+				|| !(potion.level() instanceof ServerLevel level)) {
+			return;
+		}
+		for (GeneEffect effect : GeneEffects.of(owner).toList()) {
+			switch (effect) {
+				case GeneEffect.PotionShards shards when target != owner ->
+						target.hurtServer(level, level.damageSources().thrown(potion, owner), shards.damage());
+				case GeneEffect.PotionHeal heal when owner.isAlive() -> owner.heal(heal.amount());
+				default -> {
+				}
+			}
+		}
+	}
+
+	/**
 	 * Runs the effects of the owner of a vex when the vex hits a target.
 	 */
 	public static void onVexHit(Mob owner, LivingEntity target) {

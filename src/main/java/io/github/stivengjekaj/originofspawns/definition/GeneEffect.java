@@ -184,7 +184,9 @@ public sealed interface GeneEffect {
 			Map.entry("potion_lingering", PotionLingering.CODEC),
 			Map.entry("potion_count", PotionCount.CODEC),
 			Map.entry("potion_splash", PotionSplash.CODEC),
-			Map.entry("potion_damage", PotionDamage.CODEC)
+			Map.entry("potion_damage", PotionDamage.CODEC),
+			Map.entry("potion_shards", PotionShards.CODEC),
+			Map.entry("potion_heal", PotionHeal.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2927,6 +2929,34 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "potion_damage";
+		}
+	}
+
+	/**
+	 * A potion that the mob throws at a target and that breaks on a living entity does this much damage to it.
+	 */
+	record PotionShards(float damage) implements GeneEffect {
+		public static final MapCodec<PotionShards> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).fieldOf("damage").forGetter(PotionShards::damage)
+		).apply(instance, PotionShards::new));
+
+		@Override
+		public String type() {
+			return "potion_shards";
+		}
+	}
+
+	/**
+	 * A potion that the mob throws at a target and that breaks on a living entity heals the mob this much health.
+	 */
+	record PotionHeal(float amount) implements GeneEffect {
+		public static final MapCodec<PotionHeal> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).fieldOf("amount").forGetter(PotionHeal::amount)
+		).apply(instance, PotionHeal::new));
+
+		@Override
+		public String type() {
+			return "potion_heal";
 		}
 	}
 }

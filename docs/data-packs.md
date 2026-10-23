@@ -300,6 +300,31 @@ the wait after the load.
 | `rocket_blast` | `multiplier` | Multiplies the blast radius of the rockets of the mob. The vanilla radius is 5 |
 | `patrol_size` | `extra` (`1`) | A patrol that this mob spawns in gets this many more pillagers. A raid does not change |
 
+#### Evokers
+
+The fang effects change the evoker fangs of the attack spell. The vex
+effects change the vexes that the mob summons with its vex spell or with
+`decoy`. The vexes of `death_spawn` have no owner, so the vex effects do not
+change them. A vex has no genes of its own.
+
+| Type | Fields | Result |
+|---|---|---|
+| `fang_damage` | `multiplier`, `targets` (none) | Multiplies the damage of the fangs of the mob. The fangs do 6 damage in vanilla. With `targets`, only the damage to the entities of this tag changes |
+| `fang_effect` | `effect`, `seconds`, `amplifier` (`0`), `chance` (`1`) | Gives the status effect to each target that the fangs hurt |
+| `fang_launch` | `blocks` (`1`) | Each fang hit throws the target this many blocks up |
+| `fang_heal` | `amount` | Each fang hit heals the mob this much health |
+| `spell_interval` | `multiplier` | Multiplies the time between the fang spell (vanilla 5 seconds) and the vex spell (vanilla 17 seconds). `0.7` is 30% less time. The sheep spell does not change. More than one effect multiplies together |
+| `fang_line` | `fangs` | The number of fangs in the line. Vanilla has 16 fangs, one each 1.25 blocks. With more than one effect, the largest number counts |
+| `fang_ring` | `range` | The mob casts the ring of fangs in place of the line when its target is in this range. Vanilla is 3 blocks. With more than one effect, the largest range counts |
+| `vex_count` | `count` | The number of vexes of the vex spell. Vanilla is 3. With more than one effect, the largest number counts |
+| `vex_health` | `multiplier` | Multiplies the maximum health of the vexes of the mob. A vex has 14 health |
+| `vex_damage` | `multiplier` | Multiplies the attack damage of the vexes of the mob |
+| `vex_life` | `multiplier` | Multiplies the life of the vexes of the mob. A vex lives 30 to 119 seconds in vanilla |
+| `vex_effect` | `effect`, `seconds`, `amplifier` (`0`), `chance` (`1`) | Gives the status effect to each target that a vex of the mob hits |
+| `vex_heal` | `amount` | Each hit of a vex of the mob heals the mob this much health |
+| `hex` | `effect`, `seconds`, `amplifier` (`0`), `range` (`16`), `cooldown_seconds` (`15`) | One time in each cooldown, the mob gives its target the effect, if the target is in the range and the mob sees it. It throws no item. The mob and the target show the spell particles of the evoker, in the color of the effect. Each hex has its own cooldown |
+| `decoy` | `count` (`1`), `cooldown_seconds` (`20`) | When an attacker hurts the mob, the mob summons this many vexes that attack the attacker, one time in each cooldown |
+
 #### Spiders
 
 These effects suit a spider, but other mobs can also use them. A gene cobweb
@@ -392,9 +417,9 @@ Each cube moves with one bone: `head`, `body`, `right_arm`, `left_arm`,
 `left_hind_leg`, `right_middle_hind_leg`, `left_middle_hind_leg`,
 `right_middle_front_leg`, `left_middle_front_leg`, `right_front_leg`, and
 `left_front_leg`. A cave spider has the same bones as the spider.
-A pillager and a vindicator have the humanoid bones. The crossed arms of a
-vindicator are a different part, so a model on an arm shows only while the
-arms are apart, when it attacks.
+A pillager, a vindicator, and an evoker have the humanoid bones. The crossed
+arms of a vindicator or an evoker are a different part, so a model on an arm
+shows only while the arms are apart, when it attacks or casts a spell.
 The coordinates are in pixels, in the coordinates of the bone, as in the
 vanilla models.
 

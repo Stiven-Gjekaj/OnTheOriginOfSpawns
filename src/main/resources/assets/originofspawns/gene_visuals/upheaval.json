@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/illager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/upheaval_0.png",
+				"tint": "#6A4A2A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/upheaval_1.png",
+				"tint": "#2A1A10"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/upheaval_2.png",
+				"tint": "#8A8A84"
+			}
+		}
+	]
+}

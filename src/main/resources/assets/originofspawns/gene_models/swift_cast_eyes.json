@@ -1,0 +1,45 @@
+{
+	"texture": "originofspawns:textures/entity/swift_cast_eyes.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				-4,
+				-4.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			],
+			"inflate": -0.45,
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				1,
+				-4,
+				-4.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			],
+			"inflate": -0.45,
+			"glow": true
+		}
+	]
+}

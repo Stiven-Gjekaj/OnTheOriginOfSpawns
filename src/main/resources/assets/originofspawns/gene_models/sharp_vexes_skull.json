@@ -1,0 +1,78 @@
+{
+	"texture": "originofspawns:textures/entity/sharp_vexes_skull.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				-12.8,
+				-2.5
+			],
+			"size": [
+				3,
+				3,
+				3
+			]
+		},
+		{
+			"bone": "head",
+			"uv": [
+				16,
+				0
+			],
+			"from": [
+				-2,
+				-14,
+				-1.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"pivot": [
+				-1.5,
+				-12.5,
+				-1
+			],
+			"rotation": [
+				0,
+				0,
+				-25
+			]
+		},
+		{
+			"bone": "head",
+			"uv": [
+				16,
+				0
+			],
+			"from": [
+				1,
+				-14,
+				-1.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"pivot": [
+				1.5,
+				-12.5,
+				-1
+			],
+			"rotation": [
+				0,
+				0,
+				25
+			]
+		}
+	]
+}

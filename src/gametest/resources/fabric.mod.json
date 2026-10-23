@@ -38,6 +38,7 @@
 			"io.github.stivengjekaj.originofspawns.test.PillagerEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.VindicatorEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.EvokerEffectsTest",
+			"io.github.stivengjekaj.originofspawns.test.WitchEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.DelayedTasksTest"
 		],
 		"fabric-client-gametest": [

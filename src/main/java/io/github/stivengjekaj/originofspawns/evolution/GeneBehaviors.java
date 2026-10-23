@@ -43,7 +43,14 @@ import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.skeleton.Bogged;
 import net.minecraft.world.entity.monster.zombie.Zombie;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.Holder;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.AbstractThrownPotion;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownLingeringPotion;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.core.component.DataComponents;
@@ -1107,6 +1114,80 @@ public final class GeneBehaviors {
 						GeneCombat.test(mob, when.when()), when.amount(), when.operation());
 			}
 		}
+	}
+
+	/**
+	 * Throws the potion of the mob at a target, with the changes of its genes. A witch calls this in place of its
+	 * vanilla throw, but not when it heals a raider.
+	 *
+	 * @return the thrown potion
+	 */
+	public static AbstractThrownPotion throwPotion(Mob mob, ServerLevel level, ItemStack stack, double x, double y,
+			double z, float power, float uncertainty) {
+		ItemStack brewed = brew(mob, stack);
+		AbstractThrownPotion potion = brewed.is(Items.LINGERING_POTION)
+				? new ThrownLingeringPotion(level, mob, brewed) : new ThrownSplashPotion(level, mob, brewed);
+		potion.setAttached(ModAttachments.GENE_POTION, true);
+		return Projectile.spawnProjectileUsingShoot(potion, level, brewed, x, y, z, power, uncertainty);
+	}
+
+	/**
+	 * Returns a copy of the potion with the changes of the genes of the mob: a lingering potion, the swapped and the
+	 * extra effects, the stronger levels, and the longer time.
+	 */
+	public static ItemStack brew(Mob mob, ItemStack stack) {
+		float duration = 1.0F;
+		int levels = 0;
+		boolean lingering = false;
+		List<GeneEffect.PotionSwap> swaps = new java.util.ArrayList<>();
+		List<GeneEffect.PotionExtra> extras = new java.util.ArrayList<>();
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			switch (effect) {
+				case GeneEffect.PotionDuration more -> duration *= more.multiplier();
+				case GeneEffect.PotionLevel more -> levels += more.levels();
+				case GeneEffect.PotionLingering ignored -> lingering = true;
+				case GeneEffect.PotionSwap swap -> swaps.add(swap);
+				case GeneEffect.PotionExtra extra -> extras.add(extra);
+				default -> {
+				}
+			}
+		}
+		ItemStack brewed = lingering ? stack.transmuteCopy(Items.LINGERING_POTION) : stack.copy();
+		PotionContents contents = stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+		List<MobEffectInstance> effects = new java.util.ArrayList<>();
+		boolean changed = false;
+		for (MobEffectInstance instance : contents.getAllEffects()) {
+			Holder<MobEffect> type = instance.getEffect();
+			int ticks = instance.getDuration();
+			for (GeneEffect.PotionSwap swap : swaps) {
+				if (type.value() == swap.from().value()) {
+					type = swap.to();
+					ticks = swap.seconds().map(seconds -> Math.round(seconds * 20.0F)).orElse(ticks);
+					changed = true;
+				}
+			}
+			int amplifier = instance.getAmplifier();
+			if (levels > 0 && !type.value().isInstantaneous()) {
+				amplifier += levels;
+				changed = true;
+			}
+			effects.add(new MobEffectInstance(type, ticks, amplifier, instance.isAmbient(), instance.isVisible()));
+			for (GeneEffect.PotionExtra extra : extras) {
+				if (instance.getEffect().value() == extra.with().value()) {
+					effects.add(new MobEffectInstance(extra.effect(), Math.round(extra.seconds() * 20.0F), extra.amplifier()));
+					changed = true;
+				}
+			}
+		}
+		if (changed) {
+			brewed.set(DataComponents.POTION_CONTENTS, new PotionContents(java.util.Optional.empty(),
+					java.util.Optional.of(contents.getColor()), effects, java.util.Optional.empty()));
+		}
+		if (duration != 1.0F) {
+			brewed.set(DataComponents.POTION_DURATION_SCALE,
+					brewed.getOrDefault(DataComponents.POTION_DURATION_SCALE, 1.0F) * duration);
+		}
+		return brewed;
 	}
 
 	/**

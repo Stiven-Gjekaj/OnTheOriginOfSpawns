@@ -176,7 +176,12 @@ public sealed interface GeneEffect {
 			Map.entry("vex_effect", VexEffect.CODEC),
 			Map.entry("vex_heal", VexHeal.CODEC),
 			Map.entry("hex", Hex.CODEC),
-			Map.entry("decoy", Decoy.CODEC)
+			Map.entry("decoy", Decoy.CODEC),
+			Map.entry("potion_duration", PotionDuration.CODEC),
+			Map.entry("potion_level", PotionLevel.CODEC),
+			Map.entry("potion_swap", PotionSwap.CODEC),
+			Map.entry("potion_extra", PotionExtra.CODEC),
+			Map.entry("potion_lingering", PotionLingering.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2793,6 +2798,85 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "decoy";
+		}
+	}
+
+	/**
+	 * Multiplies the time of the effects of the potions that the mob throws at a target. An effect with no time, such
+	 * as Harming or Healing, does not change. More than one effect multiplies together.
+	 */
+	record PotionDuration(float multiplier) implements GeneEffect {
+		public static final MapCodec<PotionDuration> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 20.0F).fieldOf("multiplier").forGetter(PotionDuration::multiplier)
+		).apply(instance, PotionDuration::new));
+
+		@Override
+		public String type() {
+			return "potion_duration";
+		}
+	}
+
+	/**
+	 * Makes the effects of the potions that the mob throws at a target this many levels stronger. An effect with no
+	 * time, such as Harming, does not change.
+	 */
+	record PotionLevel(int levels) implements GeneEffect {
+		public static final MapCodec<PotionLevel> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 10).optionalFieldOf("levels", 1).forGetter(PotionLevel::levels)
+		).apply(instance, PotionLevel::new));
+
+		@Override
+		public String type() {
+			return "potion_level";
+		}
+	}
+
+	/**
+	 * In the potions that the mob throws at a target, the effect {@code to} takes the place of the effect
+	 * {@code from}. The new effect keeps the time and the level of the old one, or it lasts {@code seconds}.
+	 */
+	record PotionSwap(Holder<MobEffect> from, Holder<MobEffect> to, Optional<Float> seconds) implements GeneEffect {
+		public static final MapCodec<PotionSwap> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("from").forGetter(PotionSwap::from),
+				MobEffect.CODEC.fieldOf("to").forGetter(PotionSwap::to),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds").forGetter(PotionSwap::seconds)
+		).apply(instance, PotionSwap::new));
+
+		@Override
+		public String type() {
+			return "potion_swap";
+		}
+	}
+
+	/**
+	 * A potion that the mob throws at a target and that has the effect {@code with} also gives the effect
+	 * {@code effect}, for example Wither with Harming.
+	 */
+	record PotionExtra(Holder<MobEffect> with, Holder<MobEffect> effect, float seconds, int amplifier)
+			implements GeneEffect {
+		public static final MapCodec<PotionExtra> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("with").forGetter(PotionExtra::with),
+				MobEffect.CODEC.fieldOf("effect").forGetter(PotionExtra::effect),
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(PotionExtra::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(PotionExtra::amplifier)
+		).apply(instance, PotionExtra::new));
+
+		@Override
+		public String type() {
+			return "potion_extra";
+		}
+	}
+
+	/**
+	 * The potions that the mob throws at a target are lingering potions. They leave a cloud, as the lingering potion
+	 * of a player does.
+	 */
+	record PotionLingering() implements GeneEffect {
+		public static final MapCodec<PotionLingering> CODEC = MapCodec.unit(new PotionLingering());
+
+		@Override
+		public String type() {
+			return "potion_lingering";
 		}
 	}
 }

@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:witch",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "potion_extra", "with": "minecraft:instant_damage", "effect": "minecraft:wither", "seconds": 3 }],
+	"mutation_rate": 0
+}

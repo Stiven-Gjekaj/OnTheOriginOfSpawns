@@ -169,6 +169,12 @@ public final class ModAttachments {
 			HEX_TIMES = AttachmentRegistry.create(OriginOfSpawns.id("hex_times"));
 
 	/**
+	 * On a thrown potion: true when a mob with genes threw it at a target. The effects of a potion hit act only on
+	 * such a potion, not on a potion that heals an ally.
+	 */
+	public static final AttachmentType<Boolean> GENE_POTION = AttachmentRegistry.create(OriginOfSpawns.id("gene_potion"));
+
+	/**
 	 * The game time of the last decoy summon of a mob.
 	 */
 	public static final AttachmentType<Long> DECOY_TIME = AttachmentRegistry.create(OriginOfSpawns.id("decoy_time"));

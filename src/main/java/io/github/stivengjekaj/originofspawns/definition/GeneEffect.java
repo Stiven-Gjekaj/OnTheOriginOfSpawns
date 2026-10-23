@@ -174,7 +174,8 @@ public sealed interface GeneEffect {
 			Map.entry("vex_damage", VexDamage.CODEC),
 			Map.entry("vex_life", VexLife.CODEC),
 			Map.entry("vex_effect", VexEffect.CODEC),
-			Map.entry("vex_heal", VexHeal.CODEC)
+			Map.entry("vex_heal", VexHeal.CODEC),
+			Map.entry("hex", Hex.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2757,4 +2758,25 @@ public sealed interface GeneEffect {
 			return "vex_heal";
 		}
 	}
+
+	/**
+	 * One time in each cooldown, the mob gives its target a status effect, if the target is in the range and the mob
+	 * sees it. It is a spell: it throws no item, and it shows the spell particles of the evoker.
+	 */
+	record Hex(Holder<MobEffect> effect, float seconds, int amplifier, float range, float cooldownSeconds)
+			implements GeneEffect {
+		public static final MapCodec<Hex> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(Hex::effect),
+				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(Hex::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(Hex::amplifier),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 16.0F).forGetter(Hex::range),
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 15.0F).forGetter(Hex::cooldownSeconds)
+		).apply(instance, Hex::new));
+
+		@Override
+		public String type() {
+			return "hex";
+		}
+	}
+
 }

@@ -1,5 +1,6 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.monster.illager.Evoker;
 import net.minecraft.world.entity.projectile.EvokerFangs;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -191,6 +193,30 @@ public class EvokerEffectsTest {
 		Pig other = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 4));
 		GeneCombat.onHit(wild, other);
 		helper.assertFalse(other.hasEffect(MobEffects.POISON), "a vex with no owner gives nothing");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aHexGivesTheEffectInRangeAndSightOneTimeInEachCooldown(GameTestHelper helper) {
+		GeneEffect.Hex wither = new GeneEffect.Hex(MobEffects.WITHER, 4.0F, 0, 16.0F, 15.0F);
+		Evoker evoker = evokerWith(helper, new BlockPos(1, 1, 1));
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 1));
+		evoker.setTarget(pig);
+		helper.assertTrue(GeneBehaviors.hex(evoker, helper.getLevel(), wither), "the evoker casts the hex");
+		helper.assertTrue(pig.hasEffect(MobEffects.WITHER), "the target gets Wither");
+		helper.assertValueEqual(pig.getEffect(MobEffects.WITHER).getDuration(), 80, "the Wither lasts 4 seconds");
+		pig.removeAllEffects();
+		helper.assertFalse(GeneBehaviors.hex(evoker, helper.getLevel(), wither), "the hex waits for its cooldown");
+		helper.assertFalse(pig.hasEffect(MobEffects.WITHER), "no effect in the cooldown");
+		GeneEffect.Hex blind = new GeneEffect.Hex(MobEffects.BLINDNESS, 3.0F, 0, 16.0F, 15.0F);
+		helper.assertTrue(GeneBehaviors.hex(evoker, helper.getLevel(), blind), "each hex has its own cooldown");
+		GeneEffect.Hex near = new GeneEffect.Hex(MobEffects.HUNGER, 10.0F, 0, 3.0F, 15.0F);
+		helper.assertFalse(GeneBehaviors.hex(evoker, helper.getLevel(), near), "the target is out of the range");
+		Evoker blocked = evokerWith(helper, new BlockPos(1, 1, 4));
+		blocked.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 4)));
+		helper.setBlock(new BlockPos(3, 1, 4), Blocks.STONE);
+		helper.setBlock(new BlockPos(3, 2, 4), Blocks.STONE);
+		helper.assertFalse(GeneBehaviors.hex(blocked, helper.getLevel(), wither), "a hex needs a line of sight");
 		helper.succeed();
 	}
 

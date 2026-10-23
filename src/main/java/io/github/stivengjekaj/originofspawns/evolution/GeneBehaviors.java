@@ -439,6 +439,7 @@ public final class GeneBehaviors {
 				case GeneEffect.WebTrail trail -> webTrail(mob, level, trail);
 				case GeneEffect.WebShot shot -> webShot(mob, level, shot);
 				case GeneEffect.RocketShot shot -> rocketShot(mob, level, shot);
+				case GeneEffect.Hex hex -> hex(mob, level, hex);
 				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
 				case GeneEffect.FrenziedTargeting frenzy
 						when now % Math.max(1, Math.round(frenzy.intervalSeconds() * 20.0F)) < TICK_INTERVAL
@@ -1106,6 +1107,35 @@ public final class GeneBehaviors {
 						GeneCombat.test(mob, when.when()), when.amount(), when.operation());
 			}
 		}
+	}
+
+	/**
+	 * Gives the target of the mob the effect of the hex, one time in each cooldown, if the mob sees the target in the
+	 * range. The mob and the target show the spell particles of the evoker, in the color of the effect.
+	 *
+	 * @return true if the mob cast the hex
+	 */
+	public static boolean hex(Mob mob, ServerLevel level, GeneEffect.Hex hex) {
+		long now = level.getGameTime();
+		java.util.Map<GeneEffect.Hex, Long> times = mob.getAttachedOrElse(ModAttachments.HEX_TIMES, java.util.Map.of());
+		Long last = times.get(hex);
+		LivingEntity target = mob.getTarget();
+		if (target == null || !target.isAlive() || mob.distanceTo(target) > hex.range() || !mob.hasLineOfSight(target)
+				|| last != null && now - last < Math.round(hex.cooldownSeconds() * 20.0F)) {
+			return false;
+		}
+		target.addEffect(new MobEffectInstance(hex.effect(), Math.round(hex.seconds() * 20.0F), hex.amplifier()), mob);
+		int color = hex.effect().value().getColor();
+		var particle = net.minecraft.core.particles.ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT,
+				(color >> 16 & 255) / 255.0F, (color >> 8 & 255) / 255.0F, (color & 255) / 255.0F);
+		level.sendParticles(particle, mob.getX(), mob.getY(0.9), mob.getZ(), 12, 0.4, 0.3, 0.4, 1.0);
+		level.sendParticles(particle, target.getX(), target.getY(0.5), target.getZ(), 20, 0.3, 0.5, 0.3, 1.0);
+		level.playSound(null, mob.getX(), mob.getY(), mob.getZ(), net.minecraft.sounds.SoundEvents.EVOKER_CAST_SPELL,
+				mob.getSoundSource(), 1.0F, 1.0F);
+		java.util.Map<GeneEffect.Hex, Long> updated = new java.util.HashMap<>(times);
+		updated.put(hex, now);
+		mob.setAttached(ModAttachments.HEX_TIMES, updated);
+		return true;
 	}
 
 	/**

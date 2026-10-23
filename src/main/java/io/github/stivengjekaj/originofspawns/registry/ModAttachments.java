@@ -163,6 +163,12 @@ public final class ModAttachments {
 			HURT_EFFECT_TIMES = AttachmentRegistry.create(OriginOfSpawns.id("hurt_effect_times"));
 
 	/**
+	 * The game time of the last cast of each hex of a mob. Each hex has its own cooldown.
+	 */
+	public static final AttachmentType<java.util.Map<io.github.stivengjekaj.originofspawns.definition.GeneEffect.Hex, Long>>
+			HEX_TIMES = AttachmentRegistry.create(OriginOfSpawns.id("hex_times"));
+
+	/**
 	 * True when a chain reaction lit the fuse of a creeper. Such a creeper does not light more creepers.
 	 */
 	public static final AttachmentType<Boolean> CHAIN_LIT =

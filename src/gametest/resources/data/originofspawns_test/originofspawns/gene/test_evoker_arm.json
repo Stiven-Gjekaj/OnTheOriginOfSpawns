@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "attribute", "attribute": "minecraft:max_health", "amount": 0, "operation": "add_value" }],
+	"mutation_rate": 0
+}

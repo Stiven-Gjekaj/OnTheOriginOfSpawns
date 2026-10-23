@@ -34,6 +34,7 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.illager.Evoker;
 import net.minecraft.world.entity.monster.illager.Vindicator;
 import net.minecraft.world.phys.Vec3;
 
@@ -91,7 +92,10 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 					Identifier.withDefaultNamespace("textures/entity/illager/pillager.png"), "illager");
 			checkMarkAndModel(context, singleplayer, EntityTypes.VINDICATOR, "test_vindicator_mark",
 					Identifier.withDefaultNamespace("textures/entity/illager/vindicator.png"), "illager");
+			checkMarkAndModel(context, singleplayer, EntityTypes.EVOKER, "test_evoker_mark",
+					Identifier.withDefaultNamespace("textures/entity/illager/evoker.png"), "illager");
 			checkArmModelOnlyWhileTheArmsAreApart(context, singleplayer);
+			checkEvokerArmModelOnlyWhileItCasts(context, singleplayer);
 		}
 	}
 
@@ -181,6 +185,69 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 		});
 		if (failure != null) {
 			throw new AssertionError(failure);
+		}
+	}
+
+	/**
+	 * Spawns two evokers with a gene model on the right arm. One casts a spell, so its arms are up and apart. The other
+	 * has its arms crossed. Only the evoker that casts shows the model.
+	 */
+	private static void checkEvokerArmModelOnlyWhileItCasts(ClientGameTestContext context,
+			TestSingleplayerContext singleplayer) {
+		Identifier gene = Identifier.fromNamespaceAndPath("originofspawns_test", "test_evoker_arm");
+		singleplayer.getServer().runOnServer(server -> {
+			ServerPlayer player = server.getPlayerList().getPlayers().getFirst();
+			spawn(player, EntityTypes.EVOKER, player.position().add(1.5, 0.0, 3.0), List.of(gene));
+			spawn(player, EntityTypes.EVOKER, player.position().add(-1.5, 0.0, 3.0), List.of(gene));
+			player.level().getEntitiesOfClass(Evoker.class, player.getBoundingBox().inflate(8.0),
+					evoker -> evoker.getX() > player.getX() && evoker.getAttached(ModAttachments.GENES) != null
+							&& evoker.getAttached(ModAttachments.GENES).genes().contains(gene))
+					.forEach(SkeletonGenesClientTest::castFangs);
+		});
+		context.waitTicks(20);
+		String failure = context.computeOnClient(client -> {
+			List<Evoker> evokers = client.level.getEntitiesOfClass(Evoker.class,
+					client.player.getBoundingBox().inflate(8.0), evoker -> {
+						CarriedGenes genes = evoker.getAttached(ModAttachments.GENES);
+						return genes != null && genes.genes().contains(gene);
+					});
+			if (evokers.size() != 2) {
+				return "The client has " + evokers.size() + " evokers with the arm gene, not 2";
+			}
+			EntityRenderDispatcher dispatcher = client.getEntityRenderDispatcher();
+			for (Evoker evoker : evokers) {
+				EntityRenderState state = dispatcher.extractEntity(evoker, 1.0F);
+				var renderer = (LivingEntityRenderer<?, ?, ?>) dispatcher.getRenderer(evoker);
+				poseModel(renderer, state);
+				int drawn = drawnModelParts(renderer, state);
+				if (evoker.isCastingSpell() && drawn == 0) {
+					return "The evoker that casts shows no arm model";
+				}
+				if (!evoker.isCastingSpell() && drawn > 0) {
+					return "The evoker with crossed arms shows the arm model";
+				}
+			}
+			return evokers.stream().anyMatch(Evoker::isCastingSpell) ? null : "No evoker casts a spell on the client";
+		});
+		if (failure != null) {
+			throw new AssertionError(failure);
+		}
+	}
+
+	/**
+	 * Shows the fang spell on the evoker. The spell enum is not public, so the check sets the synced value of the spell.
+	 * The evoker has no AI, so no goal ends the spell.
+	 */
+	private static void castFangs(Evoker evoker) {
+		try {
+			var field = net.minecraft.world.entity.monster.illager.SpellcasterIllager.class
+					.getDeclaredField("DATA_SPELL_CASTING_ID");
+			field.setAccessible(true);
+			@SuppressWarnings("unchecked")
+			var data = (net.minecraft.network.syncher.EntityDataAccessor<Byte>) field.get(null);
+			evoker.getEntityData().set(data, (byte) 2);
+		} catch (ReflectiveOperationException exception) {
+			throw new AssertionError("Cannot set the spell of the evoker", exception);
 		}
 	}
 

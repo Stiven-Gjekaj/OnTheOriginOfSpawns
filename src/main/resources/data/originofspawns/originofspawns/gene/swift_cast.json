@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:evoker/fangcaller",
+	"gains": [
+		{
+			"type": "spell_interval",
+			"multiplier": 0.7
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

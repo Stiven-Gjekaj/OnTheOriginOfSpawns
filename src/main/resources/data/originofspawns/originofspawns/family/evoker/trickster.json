@@ -1,0 +1,59 @@
+{
+	"species": "minecraft:evoker",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "sidestep",
+					"range": 24,
+					"distance": 3,
+					"cooldown_seconds": 12,
+					"aimed": true
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "always",
+					"multiplier": 1.2
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "sidestep",
+					"range": 24,
+					"distance": 3,
+					"cooldown_seconds": 9,
+					"aimed": true
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "always",
+					"multiplier": 1.15
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "sidestep",
+					"range": 24,
+					"distance": 3,
+					"cooldown_seconds": 6,
+					"aimed": true
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "always",
+					"multiplier": 1.1
+				}
+			]
+		}
+	]
+}

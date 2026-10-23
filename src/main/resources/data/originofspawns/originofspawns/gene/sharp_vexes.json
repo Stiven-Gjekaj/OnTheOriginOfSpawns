@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:evoker/conjurer",
+	"sub_family": "originofspawns:evoker/fangcaller",
+	"gains": [
+		{
+			"type": "vex_damage",
+			"multiplier": 1.3
+		}
+	],
+	"downsides": [
+		{
+			"type": "fang_damage",
+			"multiplier": 0.9
+		}
+	]
+}

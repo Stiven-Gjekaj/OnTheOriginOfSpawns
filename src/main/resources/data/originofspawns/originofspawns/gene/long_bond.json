@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:evoker/conjurer",
+	"gains": [
+		{
+			"type": "vex_life",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

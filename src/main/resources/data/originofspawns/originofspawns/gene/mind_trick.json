@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:evoker/trickster",
+	"gains": [
+		{
+			"type": "ignored_by",
+			"mobs": "minecraft:iron_golem"
+		}
+	],
+	"downsides": [
+		{
+			"type": "fang_damage",
+			"multiplier": 0.9
+		}
+	]
+}

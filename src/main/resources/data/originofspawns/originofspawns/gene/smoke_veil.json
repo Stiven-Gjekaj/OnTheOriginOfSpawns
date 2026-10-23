@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:evoker/trickster",
+	"gains": [
+		{
+			"type": "effect_on_hurt",
+			"effect": "minecraft:blindness",
+			"seconds": 2,
+			"cooldown_seconds": 20,
+			"player_radius": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "fang_damage",
+			"multiplier": 0.9
+		}
+	]
+}

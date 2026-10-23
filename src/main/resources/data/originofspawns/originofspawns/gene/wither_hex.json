@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:evoker/curser",
+	"gains": [
+		{
+			"type": "hex",
+			"effect": "minecraft:wither",
+			"seconds": 4,
+			"range": 16,
+			"cooldown_seconds": 15
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:evoker/curser",
+	"sub_family": "originofspawns:evoker/lifebinder",
+	"gains": [
+		{
+			"type": "fang_heal",
+			"amount": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

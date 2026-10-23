@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:evoker/lifebinder",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 3,
+			"idle_seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "fang_damage",
+			"multiplier": 0.9
+		}
+	]
+}

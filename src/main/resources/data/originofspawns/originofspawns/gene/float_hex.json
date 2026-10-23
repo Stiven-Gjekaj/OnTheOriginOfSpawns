@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:evoker/curser",
+	"gains": [
+		{
+			"type": "hex",
+			"effect": "minecraft:levitation",
+			"seconds": 2,
+			"range": 16,
+			"cooldown_seconds": 15
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

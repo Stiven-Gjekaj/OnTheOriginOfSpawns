@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:evoker/fangcaller",
+	"gains": [
+		{
+			"type": "fang_launch",
+			"blocks": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken_when",
+			"when": "always",
+			"multiplier": 1.1
+		}
+	]
+}

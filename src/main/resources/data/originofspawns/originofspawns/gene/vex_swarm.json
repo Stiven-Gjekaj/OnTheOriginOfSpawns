@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:evoker/conjurer",
+	"gains": [
+		{
+			"type": "vex_count",
+			"count": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

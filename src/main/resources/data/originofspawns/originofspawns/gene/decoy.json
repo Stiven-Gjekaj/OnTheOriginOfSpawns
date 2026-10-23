@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:evoker/trickster",
+	"sub_family": "originofspawns:evoker/conjurer",
+	"gains": [
+		{
+			"type": "decoy",
+			"count": 1,
+			"cooldown_seconds": 20
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

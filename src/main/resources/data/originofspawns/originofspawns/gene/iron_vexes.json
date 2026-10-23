@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:evoker/conjurer",
+	"gains": [
+		{
+			"type": "vex_health",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "spell_interval",
+			"multiplier": 1.1
+		}
+	]
+}

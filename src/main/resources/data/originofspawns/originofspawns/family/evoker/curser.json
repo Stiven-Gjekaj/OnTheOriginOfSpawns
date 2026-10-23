@@ -1,0 +1,50 @@
+{
+	"species": "minecraft:evoker",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "fang_effect",
+					"effect": "minecraft:weakness",
+					"seconds": 2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "fang_damage",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "fang_effect",
+					"effect": "minecraft:weakness",
+					"seconds": 4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "fang_damage",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "fang_effect",
+					"effect": "minecraft:weakness",
+					"seconds": 6
+				}
+			],
+			"debuffs": [
+				{
+					"type": "fang_damage",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

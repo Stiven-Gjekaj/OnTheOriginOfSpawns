@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:evoker/lifebinder",
+	"gains": [
+		{
+			"type": "heal_once",
+			"threshold": 0.25
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

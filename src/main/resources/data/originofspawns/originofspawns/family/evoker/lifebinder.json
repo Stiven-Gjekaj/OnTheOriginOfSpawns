@@ -1,0 +1,59 @@
+{
+	"species": "minecraft:evoker",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "regenerate",
+					"amount": 1,
+					"interval_seconds": 4,
+					"idle_seconds": 5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "regenerate",
+					"amount": 1,
+					"interval_seconds": 3,
+					"idle_seconds": 5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "regenerate",
+					"amount": 1,
+					"interval_seconds": 2,
+					"idle_seconds": 5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

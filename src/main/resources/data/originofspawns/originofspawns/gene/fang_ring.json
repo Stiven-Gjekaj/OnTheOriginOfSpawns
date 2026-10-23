@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:evoker/fangcaller",
+	"gains": [
+		{
+			"type": "fang_ring",
+			"range": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "spell_interval",
+			"multiplier": 1.1
+		}
+	]
+}

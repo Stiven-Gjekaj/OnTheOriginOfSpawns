@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:evoker/lifebinder",
+	"sub_family": "originofspawns:evoker/trickster",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_explosion",
+			"multiplier": 0.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

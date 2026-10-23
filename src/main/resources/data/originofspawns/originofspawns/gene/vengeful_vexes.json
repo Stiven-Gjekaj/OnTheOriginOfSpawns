@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:evoker/conjurer",
+	"gains": [
+		{
+			"type": "death_spawn",
+			"entity": "minecraft:vex",
+			"count": 3,
+			"life_seconds": 30
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

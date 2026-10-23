@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:evoker/fangcaller",
+	"gains": [
+		{
+			"type": "fang_line",
+			"fangs": 24
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

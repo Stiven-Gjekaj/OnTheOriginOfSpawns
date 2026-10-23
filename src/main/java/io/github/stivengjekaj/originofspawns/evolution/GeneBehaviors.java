@@ -1147,6 +1147,22 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the product of the splash multipliers of the owner of a potion. A potion of a player or of a mob with no
+	 * genes gives 1.
+	 */
+	public static float splashMultiplier(net.minecraft.world.entity.Entity owner) {
+		float multiplier = 1.0F;
+		if (owner instanceof Mob mob) {
+			for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+				if (effect instanceof GeneEffect.PotionSplash splash) {
+					multiplier *= splash.multiplier();
+				}
+			}
+		}
+		return multiplier;
+	}
+
+	/**
 	 * Returns a copy of the potion with the changes of the genes of the mob: a lingering potion, the swapped and the
 	 * extra effects, the stronger levels, and the longer time.
 	 */

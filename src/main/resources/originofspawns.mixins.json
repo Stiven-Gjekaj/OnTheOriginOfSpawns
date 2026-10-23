@@ -25,6 +25,7 @@
 		"PillagerMixin",
 		"PlayerMixin",
 		"PowderSnowBlockMixin",
+		"ProjectileAccessor",
 		"ProjectileMixin",
 		"RaiderMixin",
 		"RangedAttackGoalMixin",
@@ -36,6 +37,8 @@
 		"SpiderAttackGoalMixin",
 		"SpiderMixin",
 		"SpiderTargetGoalMixin",
+		"ThrownLingeringPotionMixin",
+		"ThrownSplashPotionMixin",
 		"VexAccessor",
 		"WitchMixin",
 		"ZombieMixin"

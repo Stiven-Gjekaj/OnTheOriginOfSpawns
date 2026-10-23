@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -16,6 +18,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.pig.Pig;
@@ -27,6 +30,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -120,6 +125,46 @@ public class WitchEffectsTest {
 		potions.forEach(AbstractThrownPotion::discard);
 		helper.assertTrue(Math.abs(apart - 10.0) < 0.5, "the potions fly 10 degrees apart, " + apart);
 		helper.succeed();
+	}
+
+	@GameTest
+	public void wideSplashReachesFartherAndMakesAWiderCloud(GameTestHelper helper) {
+		Witch plain = witchWith(helper, new BlockPos(1, 1, 1));
+		Witch witch = witchWith(helper, new BlockPos(1, 1, 4), "test_wide_splash");
+		// The two cases use one place, one after the other, so that the wide splash does not reach the first pig.
+		Pig plainTarget = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 1));
+		splashAt(helper, plain, new BlockPos(1, 1, 1), Items.SPLASH_POTION);
+		helper.assertFalse(plainTarget.hasEffect(MobEffects.POISON), "a plain splash does not reach 5 blocks");
+		plainTarget.discard();
+		Pig target = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 1));
+		splashAt(helper, witch, new BlockPos(1, 1, 1), Items.SPLASH_POTION);
+		helper.assertTrue(target.hasEffect(MobEffects.POISON), "a wide splash reaches 5 blocks");
+		target.discard();
+		splashAt(helper, plain, new BlockPos(2, 1, 2), Items.LINGERING_POTION);
+		splashAt(helper, witch, new BlockPos(2, 1, 5), Items.LINGERING_POTION);
+		List<AreaEffectCloud> clouds = helper.getLevel().getEntitiesOfClass(AreaEffectCloud.class,
+				new AABB(helper.absolutePos(BlockPos.ZERO)).inflate(8.0));
+		helper.assertValueEqual(clouds.stream().filter(cloud -> cloud.getOwner() == plain).findFirst().orElseThrow()
+				.getRadius(), 3.0F, "a plain cloud starts at 3 blocks");
+		helper.assertValueEqual(clouds.stream().filter(cloud -> cloud.getOwner() == witch).findFirst().orElseThrow()
+				.getRadius(), 4.5F, "a wide cloud starts at 4.5 blocks");
+		clouds.forEach(AreaEffectCloud::discard);
+		helper.succeed();
+	}
+
+	/**
+	 * Breaks a potion of Poison of the witch on the ground at the place.
+	 */
+	static void splashAt(GameTestHelper helper, Witch witch, BlockPos pos, net.minecraft.world.item.Item item) {
+		ItemStack stack = PotionContents.createItemStack(item, Potions.POISON);
+		AbstractThrownPotion potion = item == Items.LINGERING_POTION
+				? new ThrownLingeringPotion(helper.getLevel(), witch, stack)
+				: new net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion(helper.getLevel(),
+						witch, stack);
+		Vec3 place = helper.absoluteVec(Vec3.atBottomCenterOf(pos));
+		potion.setPos(place);
+		((ProjectileAccessor) potion).originofspawns$onHit(
+				new BlockHitResult(place, Direction.UP, helper.absolutePos(pos.below()), false));
 	}
 
 	static ItemStack splash(Holder<net.minecraft.world.item.alchemy.Potion> potion) {

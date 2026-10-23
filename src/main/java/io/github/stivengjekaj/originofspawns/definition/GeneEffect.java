@@ -182,7 +182,8 @@ public sealed interface GeneEffect {
 			Map.entry("potion_swap", PotionSwap.CODEC),
 			Map.entry("potion_extra", PotionExtra.CODEC),
 			Map.entry("potion_lingering", PotionLingering.CODEC),
-			Map.entry("potion_count", PotionCount.CODEC)
+			Map.entry("potion_count", PotionCount.CODEC),
+			Map.entry("potion_splash", PotionSplash.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2894,6 +2895,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "potion_count";
+		}
+	}
+
+	/**
+	 * Multiplies the radius of the splash of the potions that the mob throws, and the radius of the cloud of its
+	 * lingering potions. The splash reaches 4 blocks and the cloud starts at 3 blocks in vanilla.
+	 */
+	record PotionSplash(float multiplier) implements GeneEffect {
+		public static final MapCodec<PotionSplash> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 5.0F).fieldOf("multiplier").forGetter(PotionSplash::multiplier)
+		).apply(instance, PotionSplash::new));
+
+		@Override
+		public String type() {
+			return "potion_splash";
 		}
 	}
 }

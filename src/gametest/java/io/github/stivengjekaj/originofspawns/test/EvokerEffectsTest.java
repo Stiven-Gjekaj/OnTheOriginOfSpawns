@@ -140,13 +140,15 @@ public class EvokerEffectsTest {
 
 	@GameTest
 	public void fangRingCastsTheRingAtATargetInFiveBlocks(GameTestHelper helper) {
-		Evoker plain = evokerWith(helper, new BlockPos(1, 1, 1));
+		// The short line of test_fang_line keeps the fangs in the test area. It does not change the range of the ring.
+		Evoker plain = evokerWith(helper, new BlockPos(1, 1, 1), "test_fang_line");
 		plain.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 1)));
 		castFangs(plain);
 		helper.assertTrue(fangsOf(helper, plain).stream().anyMatch(fang -> across(fang, plain) > 3.0),
-				"a plain evoker casts the line at a target 4 blocks away");
-		Evoker ringer = evokerWith(helper, new BlockPos(1, 1, 4), "test_fang_ring");
-		ringer.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 4)));
+				"an evoker with no ring gene casts the line at a target 4 blocks away");
+		// The ring reaches 2.5 blocks from the evoker. This place keeps it inside the test area.
+		Evoker ringer = evokerWith(helper, new BlockPos(3, 1, 4), "test_fang_ring");
+		ringer.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(7, 1, 4)));
 		castFangs(ringer);
 		java.util.List<EvokerFangs> ring = fangsOf(helper, ringer);
 		helper.assertValueEqual(ring.size(), 13, "the ring has 13 fangs");
@@ -156,16 +158,18 @@ public class EvokerEffectsTest {
 
 	@GameTest
 	public void theVexSpellSummonsMoreAndStrongerVexes(GameTestHelper helper) {
-		Evoker plain = evokerWith(helper, new BlockPos(1, 1, 1));
-		plain.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 7)));
+		// A vex appears up to 2 blocks from its evoker. These places keep each vex inside the test area, where no other
+		// test can remove it.
+		Evoker plain = evokerWith(helper, new BlockPos(2, 1, 2));
+		plain.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(0, 1, 7)));
 		castVexes(plain);
 		java.util.List<Vex> plainVexes = vexesOf(helper, plain);
 		helper.assertValueEqual(plainVexes.size(), 3, "a plain evoker summons 3 vexes");
 		helper.assertValueEqual(plainVexes.getFirst().getMaxHealth(), 14.0F, "a plain vex has 14 health");
 		helper.assertValueEqual(plainVexes.getFirst().getAttributeValue(Attributes.ATTACK_DAMAGE), 4.0,
 				"a plain vex does 4 damage");
-		Evoker swarm = evokerWith(helper, new BlockPos(5, 1, 1), "test_vex_swarm");
-		swarm.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 7)));
+		Evoker swarm = evokerWith(helper, new BlockPos(5, 1, 5), "test_vex_swarm");
+		swarm.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(7, 1, 0)));
 		castVexes(swarm);
 		java.util.List<Vex> vexes = vexesOf(helper, swarm);
 		helper.assertValueEqual(vexes.size(), 4, "the evoker summons 4 vexes");

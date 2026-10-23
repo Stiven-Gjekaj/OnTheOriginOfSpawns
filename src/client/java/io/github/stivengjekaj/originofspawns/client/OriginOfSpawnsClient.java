@@ -22,6 +22,7 @@ import net.minecraft.client.model.monster.creeper.CreeperModel;
 import net.minecraft.client.model.monster.illager.IllagerModel;
 import net.minecraft.client.model.monster.skeleton.SkeletonModel;
 import net.minecraft.client.model.monster.spider.SpiderModel;
+import net.minecraft.client.model.monster.witch.WitchModel;
 import net.minecraft.client.renderer.entity.AbstractSkeletonRenderer;
 import net.minecraft.client.renderer.entity.AbstractZombieRenderer;
 import net.minecraft.client.renderer.entity.CreeperRenderer;
@@ -30,11 +31,13 @@ import net.minecraft.client.renderer.entity.PillagerRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.SpiderRenderer;
 import net.minecraft.client.renderer.entity.VindicatorRenderer;
+import net.minecraft.client.renderer.entity.WitchRenderer;
 import net.minecraft.client.renderer.entity.state.CreeperRenderState;
 import net.minecraft.client.renderer.entity.state.EvokerRenderState;
 import net.minecraft.client.renderer.entity.state.IllagerRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.entity.state.SkeletonRenderState;
+import net.minecraft.client.renderer.entity.state.WitchRenderState;
 import net.minecraft.client.renderer.entity.state.ZombieRenderState;
 import net.minecraft.server.packs.PackType;
 
@@ -66,6 +69,8 @@ public class OriginOfSpawnsClient implements ClientModInitializer {
 			} else if (renderer instanceof EvokerRenderer<?>) {
 				helper.register(new GeneModelLayer<>(
 						(RenderLayerParent<EvokerRenderState, IllagerModel<EvokerRenderState>>) renderer));
+			} else if (renderer instanceof WitchRenderer witch) {
+				helper.register(new GeneModelLayer<WitchRenderState, WitchModel>(witch));
 			} else if (renderer instanceof SpiderRenderer<?>) {
 				helper.register(new GeneModelLayer<>(
 						(RenderLayerParent<LivingEntityRenderState, SpiderModel>) renderer));

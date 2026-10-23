@@ -64,15 +64,17 @@ public class GeneModelLayer<S extends LivingEntityRenderState, M extends EntityM
 
 	private void submit(PoseStack poseStack, SubmitNodeCollector collector, GeneModel.Bone bone, ModelPart part,
 			Identifier texture, int light, int overlay, boolean baby) {
-		ModelPart bonePart = bone(bone);
+		List<ModelPart> path = bonePath(bone);
 		// A bone that the pose hides, such as the arm of an illager with crossed arms, hides its gene models too.
-		if (bonePart == null || !bonePart.visible) {
+		if (path.isEmpty() || path.stream().anyMatch(each -> !each.visible)) {
 			return;
 		}
 		poseStack.pushPose();
 		// The root of some models has its own pose. The wither skeleton has a root that is 1.2 times larger.
 		getParentModel().root().translateAndRotate(poseStack);
-		bonePart.translateAndRotate(poseStack);
+		for (ModelPart each : path) {
+			each.translateAndRotate(poseStack);
+		}
 		if (baby) {
 			// The parts are in adult bone coordinates. This moves and scales them onto the smaller baby bone.
 			float[] change = BabyLayout.boneChange(bone);
@@ -92,6 +94,25 @@ public class GeneModelLayer<S extends LivingEntityRenderState, M extends EntityM
 		return parent instanceof LivingEntityRenderer<?, ?, ?> renderer
 				? ((LivingEntityRenderer<?, S, ?>) renderer).getTextureLocation(state)
 				: null;
+	}
+
+	/**
+	 * Returns the parts from the root to the bone, or an empty list if the model has no such part. Most bones are a
+	 * child of the root. The hat and the nose of the witch are children of the head, so their path goes through the
+	 * head.
+	 */
+	private List<ModelPart> bonePath(GeneModel.Bone bone) {
+		ModelPart part = bone(bone);
+		if (part != null) {
+			return List.of(part);
+		}
+		ModelPart root = getParentModel().root();
+		String name = bone.getSerializedName();
+		if (root.hasChild("head") && root.getChild("head").hasChild(name)) {
+			ModelPart head = root.getChild("head");
+			return List.of(head, head.getChild(name));
+		}
+		return List.of();
 	}
 
 	/**

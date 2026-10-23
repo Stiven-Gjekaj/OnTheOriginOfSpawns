@@ -63,7 +63,19 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		/**
 		 * The large back part of the body of a spider. The spider model calls it {@code body1}.
 		 */
-		ABDOMEN;
+		ABDOMEN,
+		/**
+		 * The hat of a witch. It is a part of the head, so it moves with the head.
+		 */
+		HAT,
+		/**
+		 * The nose of a witch. It is a part of the head, so it moves with the head.
+		 */
+		NOSE,
+		/**
+		 * The crossed arms of a witch. They are one part.
+		 */
+		ARMS;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

@@ -161,7 +161,7 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
   /* The ribbons shrink to stay over the book when there are many species. */
   .ribbons { position: absolute; top: -26px; left: 40px; right: 40px; display: flex; gap: 6px; }
   .ribbon {
-    flex: 0 1 72px; min-width: 0; padding: 18px 2px 7px; border: 0; color: #fff; cursor: pointer;
+    flex: 0 1 72px; min-width: min-content; padding: 18px 2px 7px; border: 0; color: #fff; cursor: pointer;
     font: 500 var(--fs-xs) / 1 var(--font-display); background: var(--rib);
     /* The forked end of the ribbon points away from the book. */
     clip-path: polygon(0 0, 50% 18%, 100% 0, 100% 100%, 0 100%);

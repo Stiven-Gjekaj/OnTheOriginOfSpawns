@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "death_spawn", "entity": "minecraft:vex", "count": 3, "life_seconds": 30 }],
+	"mutation_rate": 0
+}

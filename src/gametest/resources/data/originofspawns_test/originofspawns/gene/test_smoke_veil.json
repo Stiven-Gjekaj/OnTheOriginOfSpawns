@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "effect_on_hurt", "effect": "minecraft:blindness", "seconds": 2, "player_radius": 4, "cooldown_seconds": 20 }],
+	"mutation_rate": 0
+}

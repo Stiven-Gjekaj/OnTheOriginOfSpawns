@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:evoker",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "ignored_by", "mobs": "minecraft:iron_golem" }],
+	"mutation_rate": 0
+}

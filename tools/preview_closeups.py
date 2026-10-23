@@ -493,8 +493,42 @@ VINDICATOR_ATTACK_CLOSEUPS = {
 # "evoker_casting" show it with its arms raised, as when it casts, so that
 # the gene models on the arms show.
 EVOKER = pg.EVOKER_FAMILIES
-EVOKER_CLOSEUPS = {}
-EVOKER_CAST_CLOSEUPS = {}
+EVOKER_NIGHT_VIEWS = [FRONT, BACK, SIDE, THREE_QUARTER, BEHIND, NIGHT_BEHIND]
+EVOKER_CLOSEUPS = {
+    "evoker_fangcallers": ("Fangcaller marks and models",
+                           [("Swift Cast + Fang Line", ["swift_cast", "fang_line"], False),
+                            ("Golem Jaws + Upheaval", ["golem_jaws", "upheaval"], False),
+                            ("Fang Ring + Barbed Fangs", ["fang_ring", "barbed_fangs"], False),
+                            ("All 6", EVOKER["fangcallers"], False)], EVOKER_NIGHT_VIEWS),
+    "evoker_conjurers": ("Conjurer marks and models",
+                         [("Vex Swarm + Vengeful Vexes", ["vex_swarm", "vengeful_vexes"], False),
+                          ("Sharp Vexes + Long Bond", ["sharp_vexes", "long_bond"], False),
+                          ("Iron Vexes + Venom Vexes", ["iron_vexes", "venom_vexes"], False),
+                          ("All 6", EVOKER["conjurers"], False)], ALL_SIDES),
+    "evoker_cursers": ("Curser marks and models",
+                       [("Blind Hex + Wither Hex", ["blind_hex", "wither_hex"], False),
+                        ("Hunger Hex + Drain Hex", ["hunger_hex", "drain_hex"], False),
+                        ("Weak Hex + Float Hex", ["weak_hex", "float_hex"], False),
+                        ("All 6", EVOKER["cursers"], False)], ALL_SIDES),
+    "evoker_lifebinders": ("Lifebinder marks and models",
+                           [("Totem Bearer + Soul Mend", ["totem_bearer", "soul_mend"], False),
+                            ("Fire Ward + Blast Ward", ["fire_ward", "blast_ward"], False),
+                            ("Life Siphon + Arrow Ward", ["life_siphon", "arrow_ward"], False),
+                            ("All 6", EVOKER["lifebinders"], False)], EVOKER_NIGHT_VIEWS),
+    "evoker_tricksters": ("Trickster marks and models",
+                          [("Mind Trick + Blink", ["mind_trick", "blink"], False),
+                           ("Smoke Veil + Fleet", ["smoke_veil", "fleet"], False),
+                           ("Shimmer + Decoy", ["shimmer", "decoy"], False),
+                           ("All 6", EVOKER["tricksters"], False)], ALL_SIDES),
+}
+EVOKER_CAST_CLOSEUPS = {
+    "evoker_arms_raised": ("Arm and hand marks with the arms raised, when it casts",
+                           [("Barbed Fangs + Fang Ring", ["barbed_fangs", "fang_ring"], False),
+                            ("Decoy + Long Bond", ["decoy", "long_bond"], False),
+                            ("Weak Hex + Float Hex", ["weak_hex", "float_hex"], False),
+                            ("Life Siphon + Arrow Ward", ["life_siphon", "arrow_ward"], False),
+                            ("Iron Vexes + Venom Vexes", ["iron_vexes", "venom_vexes"], False)], ALL_SIDES),
+}
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),

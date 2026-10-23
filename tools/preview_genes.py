@@ -348,7 +348,15 @@ EVOKER_FAMILIES = {
     "tricksters": ["blink", "smoke_veil", "fleet", "shimmer", "decoy", "mind_trick"],
 }
 
-EVOKER_EXTRA = {}
+EVOKER_EXTRA = {
+    "fangcallers": [("All 6 at night", [], True, {"light": 0.18}),
+                    ("All 6 + Conjurers", ["vex_swarm", "sharp_vexes"], True, {})],
+    "conjurers": [("All 6 + Cursers", ["blind_hex", "drain_hex"], True, {})],
+    "cursers": [("All 6 + Lifebinders", ["totem_bearer", "fire_ward"], True, {})],
+    "lifebinders": [("All 6 at night", [], True, {"light": 0.18}),
+                    ("All 6 + Tricksters", ["mind_trick", "shimmer"], True, {})],
+    "tricksters": [("All 6 + Fangcallers", ["fang_line", "swift_cast"], True, {})],
+}
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],

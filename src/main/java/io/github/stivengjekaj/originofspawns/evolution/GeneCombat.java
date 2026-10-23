@@ -29,6 +29,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.world.entity.projectile.EvokerFangs;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.util.RandomSource;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
@@ -401,6 +402,9 @@ public final class GeneCombat {
 							result *= 1.0F + Math.min(rally.max(), rally.perAlly() * sameSpeciesNear(attacker, rally.radius()));
 					case GeneEffect.SoulHunger hunger when source.getDirectEntity() == attacker ->
 							result *= 1.0F + Math.min(hunger.max(), hunger.perPlayer() * recentPlayers(attacker, hunger.seconds()));
+					case GeneEffect.FangDamage fang when source.getDirectEntity() instanceof EvokerFangs
+							&& fang.targets().map(tag -> victim.getType().builtInRegistryHolder().is(tag)).orElse(true) ->
+							result *= fang.multiplier();
 					case GeneEffect.DamageTo damageTo when victim.getType().builtInRegistryHolder().is(damageTo.targets()) -> {
 						result *= damageTo.multiplier();
 						if (damageTo.fireSeconds() > 0.0F) {
@@ -481,6 +485,47 @@ public final class GeneCombat {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Runs the effects that act when the evoker fangs of the mob hurt a target.
+	 */
+	public static void onFangHit(Mob mob, LivingEntity target) {
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			switch (effect) {
+				case GeneEffect.FangEffect fang when mob.getRandom().nextFloat() < fang.chance() ->
+						target.addEffect(new MobEffectInstance(fang.effect(), Math.round(fang.seconds() * 20.0F),
+								fang.amplifier()), mob);
+				case GeneEffect.FangLaunch launch -> {
+					target.setDeltaMovement(target.getDeltaMovement().x, launchSpeed(launch.blocks()),
+							target.getDeltaMovement().z);
+					target.needsSync = true;
+				}
+				case GeneEffect.FangHeal heal -> mob.heal(heal.amount());
+				default -> {
+				}
+			}
+		}
+	}
+
+	/**
+	 * Returns the upward speed that lifts an entity this many blocks, with the gravity and the drag of a living
+	 * entity: 0.08 blocks each tick, then 2% less speed each tick.
+	 */
+	public static double launchSpeed(float blocks) {
+		double speed = 0.0;
+		while (speed < 5.0 && peak(speed) < blocks) {
+			speed += 0.01;
+		}
+		return speed;
+	}
+
+	private static double peak(double speed) {
+		double height = 0.0;
+		for (double v = speed; v > 0.0; v = (v - 0.08) * 0.98) {
+			height += v;
+		}
+		return height;
 	}
 
 	/**

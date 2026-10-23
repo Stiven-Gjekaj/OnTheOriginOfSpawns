@@ -12,6 +12,7 @@
 		"CreeperMixin",
 		"CrossbowItemMixin",
 		"EntityMixin",
+		"EvokerFangsMixin",
 		"FireworkRocketEntityAccessor",
 		"FireworkRocketEntityMixin",
 		"LeapAtTargetGoalMixin",

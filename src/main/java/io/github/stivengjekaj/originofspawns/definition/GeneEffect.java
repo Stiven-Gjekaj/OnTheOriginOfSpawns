@@ -161,7 +161,11 @@ public sealed interface GeneEffect {
 			Map.entry("rocket_shot", RocketShot.CODEC),
 			Map.entry("rocket_blast", RocketBlast.CODEC),
 			Map.entry("patrol_size", PatrolSize.CODEC),
-			Map.entry("knockback", Knockback.CODEC)
+			Map.entry("knockback", Knockback.CODEC),
+			Map.entry("fang_damage", FangDamage.CODEC),
+			Map.entry("fang_effect", FangEffect.CODEC),
+			Map.entry("fang_launch", FangLaunch.CODEC),
+			Map.entry("fang_heal", FangHeal.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2548,6 +2552,67 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "knockback";
+		}
+	}
+
+	/**
+	 * Multiplies the damage of the evoker fangs of the mob. The fangs do 6 damage in vanilla. With {@code targets},
+	 * it multiplies only the damage to the mobs of the tag.
+	 */
+	record FangDamage(float multiplier, Optional<TagKey<EntityType<?>>> targets) implements GeneEffect {
+		public static final MapCodec<FangDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).fieldOf("multiplier").forGetter(FangDamage::multiplier),
+				TagKey.hashedCodec(Registries.ENTITY_TYPE).optionalFieldOf("targets").forGetter(FangDamage::targets)
+		).apply(instance, FangDamage::new));
+
+		@Override
+		public String type() {
+			return "fang_damage";
+		}
+	}
+
+	/**
+	 * Gives a status effect to the target of each hit of the evoker fangs of the mob.
+	 */
+	record FangEffect(Holder<MobEffect> effect, float seconds, int amplifier, float chance) implements GeneEffect {
+		public static final MapCodec<FangEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(FangEffect::effect),
+				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(FangEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(FangEffect::amplifier),
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("chance", 1.0F).forGetter(FangEffect::chance)
+		).apply(instance, FangEffect::new));
+
+		@Override
+		public String type() {
+			return "fang_effect";
+		}
+	}
+
+	/**
+	 * Each hit of the evoker fangs of the mob throws the target up this many blocks.
+	 */
+	record FangLaunch(float blocks) implements GeneEffect {
+		public static final MapCodec<FangLaunch> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 10.0F).optionalFieldOf("blocks", 1.0F).forGetter(FangLaunch::blocks)
+		).apply(instance, FangLaunch::new));
+
+		@Override
+		public String type() {
+			return "fang_launch";
+		}
+	}
+
+	/**
+	 * Each hit of the evoker fangs of the mob heals the mob this much health.
+	 */
+	record FangHeal(float amount) implements GeneEffect {
+		public static final MapCodec<FangHeal> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).fieldOf("amount").forGetter(FangHeal::amount)
+		).apply(instance, FangHeal::new));
+
+		@Override
+		public String type() {
+			return "fang_heal";
 		}
 	}
 }

@@ -41,6 +41,31 @@ Pixel plan for the Conjurers.
   of the robe, with a breastbone down the middle.
 - Venom Vexes has green runes on the sleeves: small green signs on each face
   of the sleeves.
+
+Pixel plan for the Cursers.
+- Wither Hex has black runes on the face: small black signs on the brow and
+  on the cheeks, with gray edges.
+- Blind Hex: a dark cloth over the right eye, tied round the head, the gene
+  model blind_hex_cloth.
+- Weak Hex has gray, withered hands: pale, dry hands with dark wrinkles.
+- Hunger Hex has a belt of dry bones: a dark belt round the robe, with pale
+  bones that hang from it.
+- Drain Hex has red runes on the robe: small red signs on the lower robe.
+- Float Hex has feathers on the sleeves: white feathers with gray quills
+  along the sleeves.
+
+Pixel plan for the Lifebinders.
+- Totem Bearer: a gold totem of undying on a cord on the front of the robe,
+  the gene model totem_bearer_totem, under the crossed arms.
+- Soul Mend has green, glowing eyes: the gene model soul_mend_eyes, two green
+  plates with full light on the eyes.
+- Life Siphon has a green glow on the hands: pale green hands with bright
+  points, and a green cuff on the wrist.
+- Arrow Ward has gold bracers: gold on the forearms, with dark edges.
+- Fire Ward has a gold sash: a gold sash from the left shoulder to the right
+  hip on the front of the robe, and back up on the back.
+- Blast Ward has gold greaves: gold plates on the boots, with a pale upper
+  edge.
 This script needs Pillow.
 """
 import json
@@ -300,6 +325,194 @@ def venom_vexes():
             rune.put((x, y))
     return [rune]
 
+def wither_hex():
+    # Black runes on the face: a small black sign on the brow, and a short
+    # black sign on each cheek, with gray edges. They keep off the eyes, and
+    # no sign is a long line, so that none looks like a tear.
+    rune = Mark("#101010")
+    edge = Mark("#4A4A4A")
+    rune.put([(10, 9), (11, 10), (12, 10), (13, 9), (8, 15), (9, 16), (15, 15), (14, 16)])
+    edge.put([(11, 9), (12, 9), (8, 16), (15, 16)])
+    return [rune, edge]
+
+
+def blind_hex():
+    # The cloth is the gene model blind_hex_cloth.
+    return []
+
+
+def blind_hex_model():
+    # A cloth over one eye: a pad of dark cloth over the right eye, and a band
+    # of the same cloth that goes round the head at a slant. The band has no
+    # top and no bottom. On the head bone, the face is at z -4, and the right
+    # eye is from x -3 to -1 on row -4.
+    im = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
+
+    def cloth(face, x, y):
+        return "#4A4448" if (x + y) % 3 else "#3A3438"
+
+    def band(face, x, y):
+        return None if face in ("top", "bottom") else cloth(face, x, y)
+
+    # The pad: 3x2x1 at uv (0, 0). The band: 8x1x8 at uv (0, 8).
+    paint_box(im, 0, 0, 3, 2, 1, cloth)
+    paint_box(im, 0, 8, 8, 1, 8, band)
+    parts = [
+        {"bone": "head", "uv": [0, 0], "from": [-3.5, -4.5, -4.7], "size": [3, 2, 1]},
+        {"bone": "head", "uv": [0, 8], "from": [-4, -5.5, -4], "size": [8, 1, 8], "inflate": 0.3,
+         "pivot": [0, -5, 0], "rotation": [0, 0, -20]},
+    ]
+    save_model("blind_hex_cloth", im, parts)
+
+
+def weak_hex():
+    # Gray, withered hands: the hands are pale and dry, with dark wrinkles
+    # on a slant.
+    dry = Mark("#B8B4A0")
+    wrinkle = Mark("#6A6A60")
+    for x, y, face, col, row in hand_pixels():
+        (wrinkle if (row + col) % 3 == 0 else dry).put((x, y))
+    return [dry, wrinkle]
+
+
+def hunger_hex():
+    # A belt of dry bones: a dark belt on row 9 round the robe, and pale bones
+    # that hang from it on rows 10 and 11.
+    belt = Mark("#3A2A1A")
+    bone = Mark(BONE[0])
+    for x, y, face, col, row in robe_pixels():
+        if row == 9:
+            belt.put((x, y))
+        elif row == 10 and col % 2 == 0 or row == 11 and col % 4 == 0:
+            bone.put((x, y))
+    return [belt, bone]
+
+
+def drain_hex():
+    # Red runes on the robe: small red signs of 3 pixels on the lower robe,
+    # on each face.
+    rune = Mark("#C02020")
+    spots = {"front": ((1, 12), (5, 15), (1, 17)), "back": ((1, 11), (5, 13), (2, 16)), "right": ((2, 12), (1, 16)),
+             "left": ((2, 13), (3, 17))}
+    for face, places in spots.items():
+        x0, y0 = COAT[face][:2]
+        for c, r in places:
+            rune.put([(x0 + c, y0 + r), (x0 + c, y0 + r + 1), (x0 + c + 1, y0 + r + 1)])
+    return [rune]
+
+
+def float_hex():
+    # Feathers on the sleeves: on each face of the sleeves, a feather with a
+    # gray quill down column 1 from row 1 to row 8, and white vanes on each
+    # side of it on every other row.
+    quill = Mark("#9A9A9A")
+    vane = Mark("#F0F0F0")
+    for x, y, face, col, row in sleeve_pixels(1, 8):
+        if col == 1:
+            quill.put((x, y))
+        elif col in (0, 2) and row % 2 == 0:
+            vane.put((x, y))
+    return [quill, vane]
+
+
+def totem_bearer():
+    # The cord of the totem of the gene model totem_bearer_totem: a gold cord
+    # down the front of the robe from the neck to the totem, on columns 2 and
+    # 5, from row 1 to row 9.
+    cord = Mark(GOLD[0])
+    x0, y0 = COAT["front"][:2]
+    cord.put([(x0 + c, y0 + r) for c in (2, 5) for r in range(1, 10)])
+    return [cord]
+
+
+def totem_bearer_model():
+    # A gold totem on the chest: a small totem of undying of gold, with green
+    # eyes and a dark mouth, that hangs on its cord on the front of the robe.
+    # It hangs under the crossed arms, so that the arms and the nose do not
+    # hide it. On the body bone, the front of the robe is at z -3.5.
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+
+    def totem(face, x, y):
+        if face == "front":
+            if y == 1 and x in (0, 2):
+                return "#40C060"
+            if y == 2 and x == 1:
+                return GOLD[2]
+            return GOLD[1] if y == 0 else GOLD[0]
+        return GOLD[2] if face in ("bottom", "back") else GOLD[0]
+
+    # The totem: 3x4x1 at uv (0, 0).
+    paint_box(im, 0, 0, 3, 4, 1, totem)
+    parts = [{"bone": "body", "uv": [0, 0], "from": [-1.5, 9.5, -4.6], "size": [3, 4, 1]}]
+    save_model("totem_bearer_totem", im, parts)
+
+
+def soul_mend():
+    # Green, glowing eyes: the eye pixels are bright green, and the gene model
+    # soul_mend_eyes puts green plates with full light on them.
+    green = Mark("#70FF98")
+    green.put([(9, 14), (10, 14), (13, 14), (14, 14)])
+    return [green]
+
+
+def soul_mend_model():
+    eye_plates("soul_mend_eyes", "#60FF90")
+
+
+def life_siphon():
+    # A green glow on the hands: the hands are pale green, with bright points,
+    # and a green cuff on the wrist (row 9 of the arms).
+    glow = Mark("#70E890")
+    bright = Mark("#D0FFE0")
+    for x, y, face, col, row in hand_pixels():
+        (bright if (row + col) % 3 == 0 else glow).put((x, y))
+    for x, y, face, col, row in pixels(ARM, SIDES):
+        if row == 9:
+            glow.put((x, y))
+    return [glow, bright]
+
+
+def arrow_ward():
+    # Gold bracers: the forearms (rows 5 to 8, and the crossed forearms) are
+    # gold, with dark edges on rows 5 and 8.
+    gold = Mark(GOLD[0])
+    edge = Mark(GOLD[2])
+    for x, y, face, col, row in sleeve_pixels(5, 9):
+        if row <= 8:
+            (edge if row in (5, 8) else gold).put((x, y))
+    return [gold, edge]
+
+
+def fire_ward():
+    # A gold sash: a gold sash, 2 pixels wide, from the left shoulder to the
+    # right hip on the front of the robe, and from the right shoulder to the
+    # left hip on the back, with a pale upper edge.
+    gold = Mark(GOLD[0])
+    pale = Mark(GOLD[1])
+    for face, flip in (("front", False), ("back", True)):
+        x0, y0, w, h = COAT[face]
+        for row in range(3, 12):
+            c = 7 - ((row - 3) * 7) // 8
+            if flip:
+                c = 7 - c
+            pale.put((x0 + c, y0 + row))
+            other = c - 1 if not flip else c + 1
+            if 0 <= other < w:
+                gold.put((x0 + other, y0 + row))
+    return [gold, pale]
+
+
+def blast_ward():
+    # Gold greaves: gold plates on the front and the sides of the boots (rows
+    # 8 to 10 of the legs), with a pale upper edge.
+    gold = Mark(GOLD[0])
+    pale = Mark(GOLD[1])
+    for x, y, face, col, row in boot_pixels(("right", "front", "left")):
+        if row <= 10:
+            (pale if row == 8 else gold).put((x, y))
+    return [gold, pale]
+
+
 
 GENES = {
     "fang_line": fang_line,
@@ -314,6 +527,18 @@ GENES = {
     "sharp_vexes": sharp_vexes,
     "vengeful_vexes": vengeful_vexes,
     "venom_vexes": venom_vexes,
+    "wither_hex": wither_hex,
+    "blind_hex": blind_hex,
+    "weak_hex": weak_hex,
+    "hunger_hex": hunger_hex,
+    "drain_hex": drain_hex,
+    "float_hex": float_hex,
+    "totem_bearer": totem_bearer,
+    "soul_mend": soul_mend,
+    "life_siphon": life_siphon,
+    "arrow_ward": arrow_ward,
+    "fire_ward": fire_ward,
+    "blast_ward": blast_ward,
 }
 
 MODELS = {
@@ -322,9 +547,13 @@ MODELS = {
     "golem_jaws": "originofspawns:golem_jaws_jaw",
     "vex_swarm": "originofspawns:vex_swarm_wings",
     "sharp_vexes": "originofspawns:sharp_vexes_skull",
+    "blind_hex": "originofspawns:blind_hex_cloth",
+    "totem_bearer": "originofspawns:totem_bearer_totem",
+    "soul_mend": "originofspawns:soul_mend_eyes",
 }
 
-MODEL_MAKERS = [barbed_fangs_model, swift_cast_model, golem_jaws_model, vex_swarm_model, sharp_vexes_model]
+MODEL_MAKERS = [barbed_fangs_model, swift_cast_model, golem_jaws_model, vex_swarm_model, sharp_vexes_model,
+                blind_hex_model, totem_bearer_model, soul_mend_model]
 
 
 def main():

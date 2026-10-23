@@ -1,0 +1,13 @@
+{
+	"region_map": "originofspawns:textures/region/illager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/totem_bearer_0.png",
+				"tint": "#E0B030"
+			}
+		}
+	],
+	"model": "originofspawns:totem_bearer_totem"
+}

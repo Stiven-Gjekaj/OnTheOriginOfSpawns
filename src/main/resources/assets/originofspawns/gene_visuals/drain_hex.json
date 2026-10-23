@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/illager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/drain_hex_0.png",
+				"tint": "#C02020"
+			}
+		}
+	]
+}

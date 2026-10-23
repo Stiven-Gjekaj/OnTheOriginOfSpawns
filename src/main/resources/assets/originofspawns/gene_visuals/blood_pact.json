@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/witch.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blood_pact_0.png",
+				"tint": "#B01818"
+			}
+		}
+	]
+}

@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/witch.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/coven_ward_0.png",
+				"tint": "#C8CCD0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/coven_ward_1.png",
+				"tint": "#F4F8FC"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/coven_ward_2.png",
+				"tint": "#8A8E92"
+			}
+		}
+	]
+}

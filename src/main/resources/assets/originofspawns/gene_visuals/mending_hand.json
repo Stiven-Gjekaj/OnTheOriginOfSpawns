@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/witch.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mending_hand_0.png",
+				"tint": "#80E8A0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mending_hand_1.png",
+				"tint": "#D8FFE4"
+			}
+		}
+	]
+}

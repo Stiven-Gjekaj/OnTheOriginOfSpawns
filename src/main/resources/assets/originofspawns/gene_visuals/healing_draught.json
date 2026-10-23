@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/witch.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/healing_draught_0.png",
+				"tint": "#D02020"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/healing_draught_1.png",
+				"tint": "#C8E8F0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/healing_draught_2.png",
+				"tint": "#9A6A3A"
+			}
+		}
+	]
+}

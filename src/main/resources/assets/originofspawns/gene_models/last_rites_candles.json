@@ -1,0 +1,266 @@
+{
+	"texture": "originofspawns:textures/entity/last_rites_candles.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "hat",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.3,
+				-2,
+				0.3
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "hat",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				0.3,
+				-3,
+				0.3
+			],
+			"size": [
+				1,
+				1,
+				1
+			],
+			"inflate": -0.3,
+			"glow": true
+		},
+		{
+			"bone": "hat",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				4.5,
+				-2,
+				0.4
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "hat",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				4.5,
+				-3,
+				0.4
+			],
+			"size": [
+				1,
+				1,
+				1
+			],
+			"inflate": -0.3,
+			"glow": true
+		},
+		{
+			"bone": "hat",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				8.9,
+				-2,
+				0.3
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "hat",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				8.9,
+				-3,
+				0.3
+			],
+			"size": [
+				1,
+				1,
+				1
+			],
+			"inflate": -0.3,
+			"glow": true
+		},
+		{
+			"bone": "hat",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.3,
+				-2,
+				4.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "hat",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				0.3,
+				-3,
+				4.5
+			],
+			"size": [
+				1,
+				1,
+				1
+			],
+			"inflate": -0.3,
+			"glow": true
+		},
+		{
+			"bone": "hat",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				9.0,
+				-2,
+				4.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "hat",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				9.0,
+				-3,
+				4.5
+			],
+			"size": [
+				1,
+				1,
+				1
+			],
+			"inflate": -0.3,
+			"glow": true
+		},
+		{
+			"bone": "hat",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.3,
+				-2,
+				8.9
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "hat",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				0.3,
+				-3,
+				8.9
+			],
+			"size": [
+				1,
+				1,
+				1
+			],
+			"inflate": -0.3,
+			"glow": true
+		},
+		{
+			"bone": "hat",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				9.0,
+				-2,
+				8.9
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "hat",
+			"uv": [
+				8,
+				0
+			],
+			"from": [
+				9.0,
+				-3,
+				8.9
+			],
+			"size": [
+				1,
+				1,
+				1
+			],
+			"inflate": -0.3,
+			"glow": true
+		}
+	]
+}

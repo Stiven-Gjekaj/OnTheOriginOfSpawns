@@ -41,6 +41,34 @@ Pixel plan for the Slingers.
 - Wide Splash has splash stains on the robe: splashes of purple, green, and
   blue, each a small star.
 - Glass Shards has glass shards in the sleeves: pale blue shards.
+
+Pixel plan for the Alchemists.
+- Healing Draught has a red vial on the belt: a small red vial with a glass
+  rim and a cork at the right hip of the robe.
+- Fire Draught has an orange band on the hat: an orange band, with a bright
+  upper edge, round the middle part of the hat.
+- Swift Draught has light blue stockings: light blue legs with a white
+  stripe, above the shoes.
+- Shade Draught has a gray, pale face: the skin of the head and the nose is
+  pale gray.
+- Shared Draught: a wooden bowl of green brew at the left hip, the gene model
+  shared_draught_bowl.
+- Feather Draught: a white feather on the hat, the gene model
+  feather_draught_feather.
+
+Pixel plan for the Coven.
+- Mending Hand has a soft green glow on the hands: pale green hands with
+  bright points.
+- Coven Call has a long, crooked nose: a dark line that bends down the nose,
+  and a green wart.
+- Coven Ward has a silver charm on the chest: a silver charm on a chain on
+  the front of the robe, under the crossed arms.
+- Blood Pact has a red cord on the wrist: red cords where the wrists cross on
+  the bar of the arms.
+- Bog Circle has wet, green hems: a dark green hem on the robe, with drips
+  and a wet shine.
+- Last Rites: a ring of lit candles on the brim of the hat, the gene model
+  last_rites_candles.
 This script needs Pillow.
 """
 import json
@@ -337,6 +365,200 @@ def glass_shards():
             shard.put((x, y))
     return [shard, bright]
 
+def healing_draught():
+    # A red vial on the belt: a small red vial at the right hip of the front
+    # of the robe (columns 1 and 2, rows 9 to 12), with a pale glass rim, a
+    # cork, and a bright point.
+    red = Mark("#D02020")
+    glass = Mark(GLASS[0])
+    cork = Mark(CORK)
+    x0, y0 = COAT["front"][:2]
+    cork.put([(x0 + 1, y0 + 9), (x0 + 2, y0 + 9)])
+    glass.put([(x0 + 1, y0 + 10), (x0 + 2, y0 + 11)])
+    red.put([(x0 + 2, y0 + 10), (x0 + 1, y0 + 11), (x0 + 1, y0 + 12), (x0 + 2, y0 + 12)])
+    return [red, glass, cork]
+
+
+def fire_draught():
+    # An orange band on the hat: an orange band on rows 2 and 3 of the middle
+    # part of the hat, with a bright upper row.
+    orange = Mark("#F08020")
+    bright = Mark("#FFC040")
+    for x, y, face, col, row in pixels(HAT_MIDDLE, SIDES):
+        if row == 2:
+            bright.put((x, y))
+        elif row == 3:
+            orange.put((x, y))
+    return [orange, bright]
+
+
+def swift_draught():
+    # Light blue stockings: rows 4 to 9 of the legs are light blue, with a
+    # white stripe on row 8. Rows 8 and 9 show under the robe.
+    blue = Mark("#80C0F0")
+    white = Mark("#F0F8FF")
+    for x, y, face, col, row in pixels(LEG, SIDES):
+        if 4 <= row <= 9:
+            (white if row == 8 else blue).put((x, y))
+    return [blue, white]
+
+
+def shade_draught():
+    # A gray, pale face: the skin of the head and of the nose is pale gray,
+    # with darker gray at the edges of the face. The eyes, the brows (row 13),
+    # and the mouth stay.
+    pale = Mark("#B0B0AC")
+    shade = Mark("#8A8A86")
+    for x, y, face, col, row in pixels(HEAD, SIDES + ("top",)):
+        if (x, y) in EYES:
+            continue
+        if face == "front" and (row == 5 or row == 8 and col in (3, 4)):
+            continue
+        (shade if face == "front" and col in (0, 7) else pale).put((x, y))
+    for x, y, face, col, row in pixels(NOSE, ALL):
+        shade.put((x, y))
+    return [pale, shade]
+
+
+def shared_draught():
+    # The bowl is the gene model shared_draught_bowl.
+    return []
+
+
+def shared_draught_model():
+    # A bowl at the belt: a wooden bowl of green brew at the left hip, with a
+    # wooden rim round the green brew on its top. On the body bone, the left
+    # side of the robe is at x 4.5.
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+
+    def bowl(face, x, y):
+        if face == "top":
+            return "#5AC050" if (x, y) == (1, 1) else "#7A5030"
+        return "#8A5A30" if face in ("front", "left") else "#6A4220"
+
+    # The bowl: 3x2x3 at uv (0, 0).
+    paint_box(im, 0, 0, 3, 2, 3, bowl)
+    parts = [{"bone": "body", "uv": [0, 0], "from": [4.6, 9.5, -1.5], "size": [3, 2, 3]}]
+    save_model("shared_draught_bowl", im, parts)
+
+
+def feather_draught():
+    # The feather is the gene model feather_draught_feather.
+    return []
+
+
+def feather_draught_model():
+    # A feather on the hat: a long white feather with a gray quill, stuck in
+    # the hat at the right of its middle part, that leans back. On the hat
+    # bone, the top of the brim is at y 0, and the middle part of the hat is
+    # from x 1.75 to 8.75 and from z 2 to 9.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def feather(face, x, y):
+        if face in ("front", "back") and x == 0:
+            return "#9A9A9A"
+        return "#F4F4F0" if y % 2 else "#DCDCD8"
+
+    # The feather: 1x7x2 at uv (0, 0).
+    paint_box(im, 0, 0, 1, 7, 2, feather)
+    parts = [{"bone": "hat", "uv": [0, 0], "from": [8.4, -7, 4.5], "size": [1, 7, 2], "pivot": [8.9, 0, 5.5],
+              "rotation": [-20, 0, -10]}]
+    save_model("feather_draught_feather", im, parts)
+
+
+def mending_hand():
+    # A soft green glow on the hands: the hands are pale green, with bright
+    # points.
+    glow = Mark("#80E8A0")
+    bright = Mark("#D8FFE4")
+    for x, y, face, col, row in hand_pixels():
+        (bright if (col + row) % 3 == 0 else glow).put((x, y))
+    return [glow, bright]
+
+
+def coven_call():
+    # A long, crooked nose: a dark line that bends down the front and the
+    # sides of the nose, so that the nose looks bent, and a green wart near
+    # its tip.
+    line = Mark("#5A3A2A")
+    wart = Mark("#5A7A3A")
+    x0, y0 = NOSE["front"][:2]
+    line.put([(x0, y0), (x0, y0 + 1), (x0 + 1, y0 + 2), (x0 + 1, y0 + 3)])
+    wart.put((x0, y0 + 3))
+    x0, y0 = NOSE["right"][:2]
+    line.put([(x0 + 1, y0 + 1), (x0, y0 + 2)])
+    return [line, wart]
+
+
+def coven_ward():
+    # A silver charm on the chest: a silver charm in the shape of a diamond,
+    # with a bright middle, that hangs on a thin chain on the front of the
+    # robe. The nose and the crossed arms hide the top of the chest, so the
+    # charm hangs under the arms, on rows 10 to 12, and the chain shows on
+    # rows 8 and 9.
+    silver = Mark("#C8CCD0")
+    bright = Mark("#F4F8FC")
+    chain = Mark("#8A8E92")
+    x0, y0 = COAT["front"][:2]
+    chain.put([(x0 + c, y0 + r) for c in (2, 5) for r in (8, 9)])
+    silver.put([(x0 + c, y0 + r) for c, r in ((3, 10), (4, 10), (2, 11), (5, 11), (3, 12), (4, 12))])
+    bright.put([(x0 + 3, y0 + 11), (x0 + 4, y0 + 11)])
+    return [silver, bright, chain]
+
+
+def blood_pact():
+    # A red cord on the wrist: on the bar of the crossed arms, red cords on
+    # columns 2 and 5 of the front and the top, where the wrists are.
+    cord = Mark("#B01818")
+    for face in ("front", "top"):
+        x0, y0, w, h = CROSSED_BAR[face]
+        cord.put([(x0 + c, y0 + r) for c in (2, 5) for r in range(h)])
+    return [cord]
+
+
+def bog_circle():
+    # Wet, green hems: rows 17 to 19 of the robe are dark green with a wet
+    # shine, and green drips hang from the hem up to row 15.
+    green = Mark("#3A5A2A")
+    shine = Mark("#6A9A5A")
+    for x, y, face, col, row in robe_pixels():
+        if row >= 17:
+            (shine if row == 17 and col % 3 == 0 else green).put((x, y))
+        elif row == 16 and col % 2 == 0 or row == 15 and col % 4 == 0:
+            green.put((x, y))
+    return [green, shine]
+
+
+def last_rites():
+    # The candles are the gene model last_rites_candles.
+    return []
+
+
+def last_rites_model():
+    # A ring of candles on the hat: seven white candles that stand on the brim
+    # round the middle part of the hat, each with a lit flame with full light.
+    # On the hat bone, the top of the brim is at y 0, the brim is from x 0 to
+    # 10 and from z 0 to 10, and the middle part of the hat is from x 1.75 to
+    # 8.75 and from z 2 to 9.
+    im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+
+    def candle(face, x, y):
+        return "#F0ECD8" if face in ("front", "left", "top") else "#C8C4B0"
+
+    def flame(face, x, y):
+        return "#FFE070" if face == "top" else "#FFA030"
+
+    # A candle: 1x2x1 at uv (0, 0). A flame: 1x1x1 at uv (8, 0).
+    paint_box(im, 0, 0, 1, 2, 1, candle)
+    paint_box(im, 8, 0, 1, 1, 1, flame)
+    parts = []
+    for x, z in ((0.3, 0.3), (4.5, 0.4), (8.9, 0.3), (0.3, 4.5), (9.0, 4.5), (0.3, 8.9), (9.0, 8.9)):
+        parts.append({"bone": "hat", "uv": [0, 0], "from": [x, -2, z], "size": [1, 2, 1], "inflate": -0.1})
+        parts.append({"bone": "hat", "uv": [8, 0], "from": [x, -3, z], "size": [1, 1, 1], "inflate": -0.3,
+                      "glow": True})
+    save_model("last_rites_candles", im, parts)
+
+
 
 GENES = {
     "strong_brew": strong_brew,
@@ -351,6 +573,18 @@ GENES = {
     "sure_aim": sure_aim,
     "wide_splash": wide_splash,
     "glass_shards": glass_shards,
+    "healing_draught": healing_draught,
+    "fire_draught": fire_draught,
+    "swift_draught": swift_draught,
+    "shade_draught": shade_draught,
+    "shared_draught": shared_draught,
+    "feather_draught": feather_draught,
+    "mending_hand": mending_hand,
+    "coven_call": coven_call,
+    "coven_ward": coven_ward,
+    "blood_pact": blood_pact,
+    "bog_circle": bog_circle,
+    "last_rites": last_rites,
 }
 
 MODELS = {
@@ -359,9 +593,13 @@ MODELS = {
     "long_arm": "originofspawns:long_arm_sling",
     "double_throw": "originofspawns:double_throw_bottles",
     "sure_aim": "originofspawns:sure_aim_monocle",
+    "shared_draught": "originofspawns:shared_draught_bowl",
+    "feather_draught": "originofspawns:feather_draught_feather",
+    "last_rites": "originofspawns:last_rites_candles",
 }
 
-MODEL_MAKERS = [long_brew_model, blinding_brew_model, long_arm_model, double_throw_model, sure_aim_model]
+MODEL_MAKERS = [long_brew_model, blinding_brew_model, long_arm_model, double_throw_model, sure_aim_model,
+                shared_draught_model, feather_draught_model, last_rites_model]
 
 
 def main():

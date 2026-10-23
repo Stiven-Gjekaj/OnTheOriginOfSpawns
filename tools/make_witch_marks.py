@@ -69,6 +69,20 @@ Pixel plan for the Coven.
   and a wet shine.
 - Last Rites: a ring of lit candles on the brim of the hat, the gene model
   last_rites_candles.
+
+Pixel plan for the Bog Hags.
+- Swamp Stride has muddy boots: brown mud on the shoes, with splashes up the
+  legs.
+- Rain Dance has drops of rain on the brim: pale blue drops with bright
+  points on the top and the edge of the brim.
+- Mudskin has dried mud on the face: patches of pale brown mud with dark
+  cracks on the cheeks, the brow, and the sides of the head.
+- Toad Leap has green, toad-like skin on the legs: green legs and bare feet,
+  with dark spots and pale warts.
+- Bog Breath has a green mist at the mouth: pale green mist at the sides of
+  the mouth and the chin.
+- Leech Jar: a glass jar of dark leeches with a cork lid at the right hip, the
+  gene model leech_jar_jar.
 This script needs Pillow.
 """
 import json
@@ -559,6 +573,100 @@ def last_rites_model():
     save_model("last_rites_candles", im, parts)
 
 
+def swamp_stride():
+    # Muddy boots: the shoes (rows 10 and 11 of the legs) and their soles are
+    # brown mud, and splashes of mud reach up the legs to row 8.
+    mud = Mark("#4A3220")
+    splash = Mark("#6A4A2A")
+    for x, y, face, col, row in leg_pixels():
+        n = noise100(x, y, 1601)
+        if row >= 10:
+            mud.put((x, y))
+        elif row == 9 and n < 55 or row == 8 and n < 25:
+            splash.put((x, y))
+    return [mud, splash]
+
+
+def rain_dance():
+    # Drops of rain on the brim: pale blue drops, each with a bright point,
+    # on the top of the brim and on its edge.
+    drop = Mark("#A8D8F0")
+    bright = Mark("#F0FAFF")
+    for x, y, face, col, row in pixels(HAT_BRIM, ("top",) + SIDES):
+        n = noise100(x, y, 1603)
+        if n < 6:
+            bright.put((x, y))
+        elif n < 18:
+            drop.put((x, y))
+    return [drop, bright]
+
+
+def mudskin():
+    # Dried mud on the face: patches of pale brown mud with dark cracks on the
+    # cheeks, on the brow, and on the sides of the head. They keep off the
+    # eyes and the brows.
+    mud = Mark("#8A6A48")
+    crack = Mark("#4A3420")
+    for x, y, face, col, row in pixels(HEAD, ("front", "right", "left")):
+        if (x, y) in EYES or face == "front" and row in (4, 5, 6) and 1 <= col <= 6:
+            continue
+        n = noise100(x // 2, y // 2, 1605)
+        if n < 30:
+            (crack if (x + y) % 4 == 0 else mud).put((x, y))
+    return [mud, crack]
+
+
+def toad_leap():
+    # Green, toad-like skin on the legs: rows 6 to 11 of the legs (the shoes
+    # are bare feet) and the soles are green, with dark spots and pale warts.
+    green = Mark("#5A8A3A")
+    spot = Mark("#2A4A1A")
+    wart = Mark("#9AC878")
+    for x, y, face, col, row in leg_pixels(6):
+        n = noise100(x, y, 1607)
+        (spot if n < 18 else wart if n < 28 else green).put((x, y))
+    return [green, spot, wart]
+
+
+def bog_breath():
+    # A green mist at the mouth: pale green mist at the sides of the mouth,
+    # on the chin, and on the cheeks next to the mouth. The nose hides the
+    # middle of the mouth.
+    mist = Mark("#9ACD8A")
+    pale = Mark("#C8F0B8")
+    mist.put([(9, 16), (14, 16), (9, 17), (14, 17), (10, 17), (13, 17)])
+    pale.put([(8, 16), (15, 16), (8, 17), (15, 17)])
+    return [mist, pale]
+
+
+def leech_jar():
+    # The jar is the gene model leech_jar_jar.
+    return []
+
+
+def leech_jar_model():
+    # A jar of leeches on the belt: a jar of pale green glass at the right
+    # hip, with dark leeches in its murky water and a cork lid on its top. On
+    # the body bone, the right side of the robe is at x -4.5.
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+
+    def jar(face, x, y):
+        if face in ("top", "bottom"):
+            return "#6A8A6A"
+        if (x * 2 + y) % 3 == 0 and y > 0:
+            return "#201810"
+        return "#A8C8A0" if y == 0 else "#6A8A60"
+
+    # The jar: 3x4x3 at uv (0, 0). The lid: 3x1x3 at uv (16, 0).
+    paint_box(im, 0, 0, 3, 4, 3, jar)
+    paint_box(im, 16, 0, 3, 1, 3, lambda face, x, y: CORK)
+    parts = [
+        {"bone": "body", "uv": [0, 0], "from": [-7.6, 8.5, -1.5], "size": [3, 4, 3]},
+        {"bone": "body", "uv": [16, 0], "from": [-7.6, 7.5, -1.5], "size": [3, 1, 3], "inflate": 0.1},
+    ]
+    save_model("leech_jar_jar", im, parts)
+
+
 
 GENES = {
     "strong_brew": strong_brew,
@@ -585,6 +693,12 @@ GENES = {
     "blood_pact": blood_pact,
     "bog_circle": bog_circle,
     "last_rites": last_rites,
+    "swamp_stride": swamp_stride,
+    "rain_dance": rain_dance,
+    "mudskin": mudskin,
+    "toad_leap": toad_leap,
+    "bog_breath": bog_breath,
+    "leech_jar": leech_jar,
 }
 
 MODELS = {
@@ -596,10 +710,11 @@ MODELS = {
     "shared_draught": "originofspawns:shared_draught_bowl",
     "feather_draught": "originofspawns:feather_draught_feather",
     "last_rites": "originofspawns:last_rites_candles",
+    "leech_jar": "originofspawns:leech_jar_jar",
 }
 
 MODEL_MAKERS = [long_brew_model, blinding_brew_model, long_arm_model, double_throw_model, sure_aim_model,
-                shared_draught_model, feather_draught_model, last_rites_model]
+                shared_draught_model, feather_draught_model, last_rites_model, leech_jar_model]
 
 
 def main():

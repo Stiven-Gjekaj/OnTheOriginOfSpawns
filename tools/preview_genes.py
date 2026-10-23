@@ -369,7 +369,14 @@ WITCH_FAMILIES = {
     "bog_hags": ["swamp_stride", "rain_dance", "mudskin", "toad_leap", "bog_breath", "leech_jar"],
 }
 
-WITCH_EXTRA = {}
+WITCH_EXTRA = {
+    "brewers": [("All 6 + Slingers", ["double_throw", "sure_aim"], True, {})],
+    "slingers": [("All 6 + Alchemists", ["feather_draught", "fire_draught"], True, {})],
+    "alchemists": [("All 6 + Covens", ["last_rites", "coven_ward"], True, {})],
+    "covens": [("All 6 at night", [], True, {"light": 0.18}),
+               ("All 6 + Bog Hags", ["leech_jar", "mudskin"], True, {})],
+    "bog_hags": [("All 6 + Brewers", ["long_brew", "wither_brew"], True, {})],
+}
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],

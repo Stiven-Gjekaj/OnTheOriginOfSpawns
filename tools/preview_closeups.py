@@ -533,7 +533,34 @@ EVOKER_CAST_CLOSEUPS = {
 # The close-ups of the witch. It has no babies, and its arms are always
 # crossed.
 WITCH = pg.WITCH_FAMILIES
-WITCH_CLOSEUPS = {}
+WITCH_NIGHT_VIEWS = [FRONT, BACK, SIDE, THREE_QUARTER, BEHIND, NIGHT_BEHIND]
+WITCH_CLOSEUPS = {
+    "witch_brewers": ("Brewer marks and models",
+                      [("Long Brew + Strong Brew", ["long_brew", "strong_brew"], False),
+                       ("Blinding Brew + Wither Brew", ["blinding_brew", "wither_brew"], False),
+                       ("Lingering Brew + Rust Brew", ["lingering_brew", "rust_brew"], False),
+                       ("All 6", WITCH["brewers"], False)], ALL_SIDES),
+    "witch_slingers": ("Slinger marks and models",
+                       [("Long Arm + Glass Shards", ["long_arm", "glass_shards"], False),
+                        ("Double Throw + Quick Hand", ["double_throw", "quick_hand"], False),
+                        ("Sure Aim + Wide Splash", ["sure_aim", "wide_splash"], False),
+                        ("All 6", WITCH["slingers"], False)], ALL_SIDES),
+    "witch_alchemists": ("Alchemist marks and models",
+                         [("Feather Draught + Fire Draught", ["feather_draught", "fire_draught"], False),
+                          ("Shared Draught + Healing Draught", ["shared_draught", "healing_draught"], False),
+                          ("Shade Draught + Swift Draught", ["shade_draught", "swift_draught"], False),
+                          ("All 6", WITCH["alchemists"], False)], ALL_SIDES),
+    "witch_covens": ("Coven marks and models",
+                     [("Last Rites + Coven Call", ["last_rites", "coven_call"], False),
+                      ("Coven Ward + Blood Pact", ["coven_ward", "blood_pact"], False),
+                      ("Mending Hand + Bog Circle", ["mending_hand", "bog_circle"], False),
+                      ("All 6", WITCH["covens"], False)], WITCH_NIGHT_VIEWS),
+    "witch_bog_hags": ("Bog Hag marks and models",
+                       [("Leech Jar + Bog Breath", ["leech_jar", "bog_breath"], False),
+                        ("Rain Dance + Mudskin", ["rain_dance", "mudskin"], False),
+                        ("Swamp Stride + Toad Leap", ["swamp_stride", "toad_leap"], False),
+                        ("All 6", WITCH["bog_hags"], False)], ALL_SIDES),
+}
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),

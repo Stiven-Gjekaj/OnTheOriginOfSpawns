@@ -169,6 +169,11 @@ public final class ModAttachments {
 			HEX_TIMES = AttachmentRegistry.create(OriginOfSpawns.id("hex_times"));
 
 	/**
+	 * The game time of the last decoy summon of a mob.
+	 */
+	public static final AttachmentType<Long> DECOY_TIME = AttachmentRegistry.create(OriginOfSpawns.id("decoy_time"));
+
+	/**
 	 * True when a chain reaction lit the fuse of a creeper. Such a creeper does not light more creepers.
 	 */
 	public static final AttachmentType<Boolean> CHAIN_LIT =

@@ -752,6 +752,7 @@ public final class GeneCombat {
 						effectOnHurt(mob, level, onHurt, attacker);
 				case GeneEffect.FreezeAttacker freeze when source.getDirectEntity() == attacker ->
 						freeze(attacker, freeze.seconds());
+				case GeneEffect.Decoy decoy -> GeneBehaviors.decoy(mob, level, decoy, attacker);
 				default -> {
 				}
 			}

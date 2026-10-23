@@ -220,6 +220,24 @@ public class EvokerEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void decoySummonsAVexAtTheAttackerOneTimeInEachCooldown(GameTestHelper helper) {
+		Evoker evoker = evokerWith(helper, new BlockPos(2, 1, 2), "test_decoy");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 2));
+		DamageSource hit = helper.getLevel().damageSources().mobAttack(pig);
+		GeneCombat.onHurt(evoker, hit);
+		java.util.List<Vex> vexes = vexesOf(helper, evoker);
+		helper.assertValueEqual(vexes.size(), 1, "the evoker summons 1 vex");
+		helper.assertTrue(vexes.getFirst().getTarget() == pig, "the vex attacks the attacker");
+		helper.assertTrue(((VexAccessor) vexes.getFirst()).originofspawns$hasLimitedLife(), "the vex has a limited life");
+		GeneCombat.onHurt(evoker, hit);
+		helper.assertValueEqual(vexesOf(helper, evoker).size(), 1, "the decoy waits for its cooldown");
+		Evoker plain = evokerWith(helper, new BlockPos(2, 1, 6));
+		GeneCombat.onHurt(plain, hit);
+		helper.assertValueEqual(vexesOf(helper, plain).size(), 0, "a plain evoker summons no vex");
+		helper.succeed();
+	}
+
 	static void castVexes(Evoker evoker) {
 		((MobAccessor) evoker).originofspawns$goalSelector().getAvailableGoals().stream().map(WrappedGoal::getGoal)
 				.filter(each -> each.getClass().getSimpleName().equals("EvokerSummonSpellGoal"))

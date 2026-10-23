@@ -1139,6 +1139,43 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Summons the vexes of a decoy near the mob, one time in each cooldown. The vexes attack the attacker.
+	 *
+	 * @return the number of vexes that the mob summoned
+	 */
+	public static int decoy(Mob mob, ServerLevel level, GeneEffect.Decoy decoy, LivingEntity attacker) {
+		long now = level.getGameTime();
+		long last = mob.getAttachedOrElse(ModAttachments.DECOY_TIME, Long.MIN_VALUE);
+		if (last != Long.MIN_VALUE && now - last < Math.round(decoy.cooldownSeconds() * 20.0F)) {
+			return 0;
+		}
+		mob.setAttached(ModAttachments.DECOY_TIME, now);
+		int summoned = 0;
+		for (int i = 0; i < decoy.count(); i++) {
+			BlockPos pos = mob.blockPosition().offset(-2 + mob.getRandom().nextInt(5), 1, -2 + mob.getRandom().nextInt(5));
+			Vex vex = EntityTypes.VEX.create(level, EntitySpawnReason.MOB_SUMMONED);
+			if (vex == null) {
+				continue;
+			}
+			// The same steps as the vex spell of the evoker.
+			vex.snapTo(pos, 0.0F, 0.0F);
+			vex.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), EntitySpawnReason.MOB_SUMMONED, null);
+			vex.setOwner(mob);
+			vex.setBoundOrigin(pos);
+			vex.setLimitedLife(20 * (30 + mob.getRandom().nextInt(90)));
+			if (mob.getTeam() != null) {
+				level.getScoreboard().addPlayerToTeam(vex.getScoreboardName(), mob.getTeam());
+			}
+			shapeVex(mob, vex);
+			vex.setTarget(attacker);
+			level.addFreshEntityWithPassengers(vex);
+			summoned++;
+		}
+		level.sendParticles(ParticleTypes.POOF, mob.getX(), mob.getY(0.6), mob.getZ(), 10, 0.4, 0.4, 0.4, 0.02);
+		return summoned;
+	}
+
+	/**
 	 * Returns the number of vexes that the vex spell of the mob summons. The genes can change the vanilla number.
 	 */
 	public static int vexCount(Mob mob, int count) {

@@ -175,7 +175,8 @@ public sealed interface GeneEffect {
 			Map.entry("vex_life", VexLife.CODEC),
 			Map.entry("vex_effect", VexEffect.CODEC),
 			Map.entry("vex_heal", VexHeal.CODEC),
-			Map.entry("hex", Hex.CODEC)
+			Map.entry("hex", Hex.CODEC),
+			Map.entry("decoy", Decoy.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -2779,4 +2780,19 @@ public sealed interface GeneEffect {
 		}
 	}
 
+	/**
+	 * When an attacker hurts the mob, the mob summons vexes that attack the attacker, one time in each cooldown. The
+	 * vexes live as long as the vexes of the vex spell, and the vex effects of the mob change them.
+	 */
+	record Decoy(int count, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<Decoy> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 8).optionalFieldOf("count", 1).forGetter(Decoy::count),
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 20.0F).forGetter(Decoy::cooldownSeconds)
+		).apply(instance, Decoy::new));
+
+		@Override
+		public String type() {
+			return "decoy";
+		}
+	}
 }

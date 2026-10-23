@@ -52,7 +52,7 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 	private static final List<EntityType<? extends Mob>> SPECIES = List.of(EntityTypes.ZOMBIE, EntityTypes.HUSK,
 			EntityTypes.DROWNED, EntityTypes.SKELETON, EntityTypes.STRAY, EntityTypes.BOGGED, EntityTypes.WITHER_SKELETON,
 			EntityTypes.PARCHED, EntityTypes.CREEPER, EntityTypes.SPIDER, EntityTypes.CAVE_SPIDER, EntityTypes.PILLAGER,
-			EntityTypes.VINDICATOR);
+			EntityTypes.VINDICATOR, EntityTypes.EVOKER);
 	private static final int SHOT_ID = -424242;
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 960;
@@ -195,6 +195,10 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 		if (mob.getType() == EntityTypes.VINDICATOR) {
 			mob.setAggressive(true);
 		}
+		// An evoker crosses its arms until it casts. The spell pose shows the marks and the models on the arms.
+		if (mob.getType() == EntityTypes.EVOKER) {
+			castSpell(mob);
+		}
 		mob.snapTo(base.getX() + 0.5, base.getY(), base.getZ() + 3.5, yaw, 0.0F);
 		mob.setYHeadRot(yaw);
 		mob.yHeadRotO = yaw;
@@ -224,6 +228,8 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 	}
 
 	private static void shoot(ClientGameTestContext context, String name) {
+		// The spell of an evoker makes particles that cover its hands and its head.
+		context.runOnClient(client -> client.particleEngine.clearParticles());
 		context.takeScreenshot(TestScreenshotOptions.of(name).withSize(WIDTH, HEIGHT).disableCounterPrefix()
 				.withDestinationDir(OUTPUT));
 	}
@@ -238,6 +244,23 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 			field.setBoolean(client.gui.hud, hidden);
 		} catch (ReflectiveOperationException exception) {
 			throw new IllegalStateException("Cannot hide the HUD", exception);
+		}
+	}
+
+	/**
+	 * Raises the arms of an evoker for its spell. The spell enum is not public, so the shot sets the synced value of the
+	 * fang spell. The mob of the shot does not tick, so no goal ends the spell.
+	 */
+	private static void castSpell(Mob mob) {
+		try {
+			var field = net.minecraft.world.entity.monster.illager.SpellcasterIllager.class
+					.getDeclaredField("DATA_SPELL_CASTING_ID");
+			field.setAccessible(true);
+			@SuppressWarnings("unchecked")
+			var data = (net.minecraft.network.syncher.EntityDataAccessor<Byte>) field.get(null);
+			mob.getEntityData().set(data, (byte) 2);
+		} catch (ReflectiveOperationException exception) {
+			throw new AssertionError("Cannot set the spell of the evoker", exception);
 		}
 	}
 }

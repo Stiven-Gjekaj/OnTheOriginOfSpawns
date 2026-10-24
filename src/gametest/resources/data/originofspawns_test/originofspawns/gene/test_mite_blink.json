@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "projectile_teleport", "cooldown_seconds": 8, "range": 3 }],
+	"mutation_rate": 0
+}

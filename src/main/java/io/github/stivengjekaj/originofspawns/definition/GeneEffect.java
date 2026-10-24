@@ -209,7 +209,8 @@ public sealed interface GeneEffect {
 			Map.entry("pearl_chance", PearlChance.CODEC),
 			Map.entry("lifespan", Lifespan.CODEC),
 			Map.entry("life_on_hit", LifeOnHit.CODEC),
-			Map.entry("age_spawn", AgeSpawn.CODEC)
+			Map.entry("age_spawn", AgeSpawn.CODEC),
+			Map.entry("projectile_teleport", ProjectileTeleport.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3389,6 +3390,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "age_spawn";
+		}
+	}
+
+	/**
+	 * When a projectile hurts the mob, the mob teleports to a random place in the range, one time in each cooldown.
+	 * If it finds no free place, it does not teleport, and the cooldown does not start.
+	 */
+	record ProjectileTeleport(float cooldownSeconds, float range) implements GeneEffect {
+		public static final MapCodec<ProjectileTeleport> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 8.0F)
+						.forGetter(ProjectileTeleport::cooldownSeconds),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 16.0F).forGetter(ProjectileTeleport::range)
+		).apply(instance, ProjectileTeleport::new));
+
+		@Override
+		public String type() {
+			return "projectile_teleport";
 		}
 	}
 }

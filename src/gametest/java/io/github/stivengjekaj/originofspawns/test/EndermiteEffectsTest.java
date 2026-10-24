@@ -13,10 +13,13 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Endermite;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -93,6 +96,24 @@ public class EndermiteEffectsTest {
 			young.forEach(Endermite::discard);
 			helper.succeed();
 		});
+	}
+
+	@GameTest
+	public void miteBlinkTeleportsAwayFromAProjectileOneTimeInEachCooldown(GameTestHelper helper) {
+		// The range of the test gene is 3 blocks, so each place of the teleport is in the test area.
+		Endermite mite = endermiteWith(helper, new BlockPos(4, 1, 4), "test_mite_blink");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 1));
+		var arrow = new net.minecraft.world.entity.projectile.arrow.Arrow(helper.getLevel(), pig, new ItemStack(Items.ARROW), null);
+		DamageSource shot = helper.getLevel().damageSources().arrow(arrow, pig);
+		Vec3 before = mite.position();
+		GeneCombat.onHurt(mite, helper.getLevel().damageSources().mobAttack(pig));
+		helper.assertValueEqual(mite.position(), before, "a melee hit does not teleport");
+		GeneCombat.onHurt(mite, shot);
+		helper.assertTrue(mite.position().distanceTo(before) > 0.01, "the arrow makes the endermite teleport");
+		Vec3 after = mite.position();
+		GeneCombat.onHurt(mite, shot);
+		helper.assertValueEqual(mite.position(), after, "the next arrow in the cooldown does not");
+		helper.succeed();
 	}
 
 	/**

@@ -889,6 +889,9 @@ public final class GeneCombat {
 				case GeneEffect.FreezeAttacker freeze when source.getDirectEntity() == attacker ->
 						freeze(attacker, freeze.seconds());
 				case GeneEffect.Decoy decoy -> GeneBehaviors.decoy(mob, level, decoy, attacker);
+				case GeneEffect.ProjectileTeleport teleport when source.is(DamageTypeTags.IS_PROJECTILE)
+						&& ready(mob, teleport, teleport.cooldownSeconds()) && GeneTeleports.away(mob, level, teleport.range()) ->
+						startCooldown(mob, teleport);
 				default -> {
 				}
 			}

@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "pickup_blocks", "blocks": "#originofspawns_test:test_stone_grip" }],
+	"mutation_rate": 0
+}

@@ -29,6 +29,7 @@ import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -308,6 +309,47 @@ public class EndermanEffectsTest {
 		helper.assertTrue(player.getCooldowns().isOnCooldown(new ItemStack(Items.SHIELD)), "the shield stops for a time");
 		helper.assertFalse(player.isBlocking(), "the player cannot block now");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void stoneGripPicksUpStone(GameTestHelper helper) {
+		Enderman plain = endermanWith(helper, new BlockPos(2, 1, 2));
+		Enderman gripper = endermanWith(helper, new BlockPos(5, 1, 5), "test_stone_grip");
+		stoneAround(helper, new BlockPos(2, 1, 2));
+		stoneAround(helper, new BlockPos(5, 1, 5));
+		helper.assertTrue(helper.getLevel().getGameRules().get(GameRules.MOB_GRIEFING), "the test world allows mob griefing");
+		// The goal picks a random place near the enderman each tick, so the test counts many ticks.
+		var plainGoal = takeGoal(plain);
+		var gripGoal = takeGoal(gripper);
+		for (int i = 0; i < 200 && gripper.getCarriedBlock() == null; i++) {
+			plainGoal.tick();
+			gripGoal.tick();
+		}
+		helper.assertTrue(plain.getCarriedBlock() == null, "a plain enderman does not pick up stone");
+		helper.assertTrue(gripper.getCarriedBlock() != null && gripper.getCarriedBlock().is(Blocks.STONE),
+				"the enderman picks up stone");
+		helper.succeed();
+	}
+
+	/**
+	 * Fills the blocks right next to the place with stone, 3 blocks high, and leaves the place for the enderman.
+	 */
+	static void stoneAround(GameTestHelper helper, BlockPos pos) {
+		for (int x = -1; x <= 1; x++) {
+			for (int z = -1; z <= 1; z++) {
+				for (int y = 0; y <= 2; y++) {
+					if (x != 0 || z != 0) {
+						helper.setBlock(pos.offset(x, y, z), Blocks.STONE);
+					}
+				}
+			}
+		}
+	}
+
+	static net.minecraft.world.entity.ai.goal.Goal takeGoal(Enderman enderman) {
+		return ((MobAccessor) enderman).originofspawns$goalSelector().getAvailableGoals().stream()
+				.map(net.minecraft.world.entity.ai.goal.WrappedGoal::getGoal)
+				.filter(goal -> goal.getClass().getSimpleName().equals("EndermanTakeBlockGoal")).findFirst().orElseThrow();
 	}
 
 	static net.minecraft.world.entity.ai.goal.Goal lookGoal(Enderman enderman) {

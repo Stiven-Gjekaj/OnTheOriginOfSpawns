@@ -1175,6 +1175,14 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns true if a gene of the mob lets it pick up the block.
+	 */
+	public static boolean canPickUp(Mob mob, net.minecraft.world.level.block.state.BlockState state) {
+		return GeneEffects.of(mob).anyMatch(effect -> effect instanceof GeneEffect.PickupBlocks pickup
+				&& state.is(pickup.blocks()));
+	}
+
+	/**
 	 * Gives the effect of the stare to each player that stares at the face of the mob now.
 	 *
 	 * @return the number of players that got the effect

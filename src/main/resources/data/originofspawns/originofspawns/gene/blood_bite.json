@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:endermite/leech",
+	"gains": [
+		{
+			"type": "heal_on_hit",
+			"amount": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:endermite",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "lifespan",
+					"seconds": 180
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "lifespan",
+					"seconds": 240
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "lifespan",
+					"seconds": 360
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns:wolf",
+	"family": "originofspawns:endermite/warper",
+	"gains": [
+		{
+			"type": "ignored_by",
+			"mobs": "minecraft:enderman"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

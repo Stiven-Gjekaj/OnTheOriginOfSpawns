@@ -1,0 +1,59 @@
+{
+	"species": "minecraft:endermite",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "burrow",
+					"player_radius": 24,
+					"rise_seconds": 3,
+					"night_only": false
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "burrow",
+					"player_radius": 24,
+					"rise_seconds": 2,
+					"night_only": false
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "burrow",
+					"player_radius": 24,
+					"rise_seconds": 1,
+					"night_only": false
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

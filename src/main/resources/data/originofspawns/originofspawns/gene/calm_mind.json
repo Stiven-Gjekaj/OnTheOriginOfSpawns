@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:endermite/elder",
+	"gains": [
+		{
+			"type": "ignored_by",
+			"mobs": "minecraft:iron_golem"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9
+		}
+	]
+}

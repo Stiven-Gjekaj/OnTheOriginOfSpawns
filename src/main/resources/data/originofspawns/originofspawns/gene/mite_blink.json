@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:endermite/warper",
+	"gains": [
+		{
+			"type": "projectile_teleport",
+			"cooldown_seconds": 8
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

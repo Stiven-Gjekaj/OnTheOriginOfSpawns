@@ -1,0 +1,56 @@
+{
+	"species": "minecraft:endermite",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "brood",
+					"extra": 1,
+					"pool_genes": true
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -4,
+					"operation": "add_value"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "brood",
+					"extra": 1,
+					"pool_genes": true
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -3,
+					"operation": "add_value"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "brood",
+					"extra": 2,
+					"pool_genes": true
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -2,
+					"operation": "add_value"
+				}
+			]
+		}
+	]
+}

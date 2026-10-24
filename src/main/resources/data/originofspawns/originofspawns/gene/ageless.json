@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:endermite/elder",
+	"gains": [
+		{
+			"type": "lifespan",
+			"endless": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

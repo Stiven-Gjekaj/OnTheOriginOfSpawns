@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:endermite/tunneler",
+	"sub_family": "originofspawns:endermite/warper",
+	"gains": [
+		{
+			"type": "burrow",
+			"player_radius": 24,
+			"rise_seconds": 2,
+			"night_only": false,
+			"near_player": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

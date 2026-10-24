@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:endermite/tunneler",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_projectile",
+			"multiplier": 0.7
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

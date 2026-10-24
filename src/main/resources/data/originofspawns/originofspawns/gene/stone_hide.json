@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:endermite/tunneler",
+	"gains": [
+		{
+			"type": "burrow",
+			"player_radius": 24,
+			"rise_seconds": 2,
+			"night_only": false,
+			"blocks": "#originofspawns:stone_burrowable"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

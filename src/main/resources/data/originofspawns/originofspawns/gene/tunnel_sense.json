@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:endermite/tunneler",
+	"gains": [
+		{
+			"type": "see_invisible",
+			"radius": 8
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

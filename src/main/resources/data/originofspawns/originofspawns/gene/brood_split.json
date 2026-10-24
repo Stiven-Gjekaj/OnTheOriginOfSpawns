@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:endermite/swarmer",
+	"gains": [
+		{
+			"type": "death_spawn",
+			"entity": "minecraft:endermite",
+			"count": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

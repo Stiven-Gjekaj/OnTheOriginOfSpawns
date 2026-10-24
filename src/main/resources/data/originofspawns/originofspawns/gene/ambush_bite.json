@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:endermite/tunneler",
+	"gains": [
+		{
+			"type": "first_strike",
+			"multiplier": 1.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

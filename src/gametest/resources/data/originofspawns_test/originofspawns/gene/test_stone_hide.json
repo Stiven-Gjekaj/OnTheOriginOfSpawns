@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "burrow", "player_radius": 6, "rise_seconds": 1, "blocks": "#minecraft:dirt", "night_only": false }],
+	"mutation_rate": 0
+}

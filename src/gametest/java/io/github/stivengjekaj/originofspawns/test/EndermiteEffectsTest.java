@@ -15,6 +15,7 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
@@ -24,6 +25,7 @@ import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -145,6 +147,24 @@ public class EndermiteEffectsTest {
 		pig.setYRot(0.0F);
 		helper.assertTrue(GeneTeleports.behind(mite, helper.getLevel(), pig), "the endermite teleports behind the pig");
 		helper.assertTrue(mite.getZ() < pig.getZ(), "the endermite is behind the pig");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void anEndermiteFromAnEventBurrowsNearAPlayer(GameTestHelper helper) {
+		for (int x = 0; x < 5; x++) {
+			for (int z = 0; z < 5; z++) {
+				helper.setBlock(new BlockPos(x, 1, z), Blocks.DIRT);
+				helper.setBlock(new BlockPos(x, 2, z), Blocks.DIRT);
+			}
+		}
+		Endermite mite = endermiteWith(helper, new BlockPos(1, 3, 1), "test_stone_hide");
+		ServerPlayer player = helper.makeMockServerPlayerInLevel();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(3, 3, 3))));
+		double surface = mite.getY();
+		// An ender pearl makes an endermite with the reason of an event.
+		GeneBehaviors.onSpawn(mite, helper.getLevel(), EntitySpawnReason.TRIGGERED);
+		helper.assertTrue(mite.getY() < surface, "the endermite goes under the ground");
 		helper.succeed();
 	}
 

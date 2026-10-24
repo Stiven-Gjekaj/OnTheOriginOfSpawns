@@ -923,7 +923,8 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * When the mob spawns in a natural way at night near a player, it rises out of the ground.
+	 * When the mob spawns in a natural way or from an event, such as an endermite from an ender pearl, at night near a
+	 * player, it rises out of the ground.
 	 * It rises only through the blocks in the tag {@code originofspawns:burrowable}, and breaks none.
 	 */
 	record Burrow(float playerRadius, float riseSeconds, TagKey<Block> blocks, boolean nightOnly, float stunSeconds,

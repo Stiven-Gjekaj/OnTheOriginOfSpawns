@@ -150,7 +150,9 @@ public final class GeneBehaviors {
 						spawnBrood(mob, level, patrol.extra(), EntitySpawnReason.PATROL, false);
 				case GeneEffect.Jockey jockey when reason == EntitySpawnReason.NATURAL
 						&& mob.getRandom().nextFloat() < jockey.chance() -> mount(mob, level, jockey);
-				case GeneEffect.Burrow burrow when reason == EntitySpawnReason.NATURAL -> burrow(mob, level, burrow);
+				// An endermite comes from an ender pearl, an event, so the burrow also runs at an event.
+				case GeneEffect.Burrow burrow when reason == EntitySpawnReason.NATURAL
+						|| reason == EntitySpawnReason.TRIGGERED -> burrow(mob, level, burrow);
 				case GeneEffect.ChargedSpawn charged when mob instanceof Creeper creeper
 						&& mob.getRandom().nextFloat() < charged.chance() -> GeneBlasts.charge(creeper);
 				default -> {

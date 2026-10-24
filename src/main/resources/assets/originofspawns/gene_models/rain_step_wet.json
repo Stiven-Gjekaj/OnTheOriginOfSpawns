@@ -1,0 +1,44 @@
+{
+	"texture": "originofspawns:textures/entity/rain_step_wet.png",
+	"texture_width": 16,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				0,
+				-1
+			],
+			"size": [
+				2,
+				30,
+				2
+			],
+			"inflate": 0.08
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				0,
+				-1
+			],
+			"size": [
+				2,
+				30,
+				2
+			],
+			"inflate": 0.08,
+			"mirror": true
+		}
+	]
+}

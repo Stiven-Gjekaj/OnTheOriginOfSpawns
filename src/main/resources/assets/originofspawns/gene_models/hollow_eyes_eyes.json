@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/hollow_eyes_eyes.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4,
+				-4,
+				-4.03
+			],
+			"size": [
+				3,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				1,
+				-4,
+				-4.03
+			],
+			"size": [
+				3,
+				1,
+				0
+			],
+			"glow": true
+		}
+	]
+}

@@ -1,0 +1,44 @@
+{
+	"texture": "originofspawns:textures/entity/mud_hands_mud.png",
+	"texture_width": 16,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-2,
+				-1
+			],
+			"size": [
+				2,
+				30,
+				2
+			],
+			"inflate": 0.08
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-2,
+				-1
+			],
+			"size": [
+				2,
+				30,
+				2
+			],
+			"inflate": 0.08,
+			"mirror": true
+		}
+	]
+}

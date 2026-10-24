@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/enderman.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/far_gaze_0.png",
+				"tint": "#C050F0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/far_gaze_1.png",
+				"tint": "#F8D0FF"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/far_gaze_2.png",
+				"tint": "#0A060E"
+			}
+		}
+	]
+}

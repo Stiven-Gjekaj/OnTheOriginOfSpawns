@@ -1,0 +1,46 @@
+{
+	"texture": "originofspawns:textures/entity/far_step_sparks.png",
+	"texture_width": 16,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "right_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				0,
+				-1
+			],
+			"size": [
+				2,
+				30,
+				2
+			],
+			"inflate": 0.08,
+			"glow": true
+		},
+		{
+			"bone": "left_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				0,
+				-1
+			],
+			"size": [
+				2,
+				30,
+				2
+			],
+			"inflate": 0.08,
+			"mirror": true,
+			"glow": true
+		}
+	]
+}

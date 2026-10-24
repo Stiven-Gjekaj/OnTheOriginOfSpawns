@@ -352,6 +352,22 @@ public class EndermanEffectsTest {
 				.filter(goal -> goal.getClass().getSimpleName().equals("EndermanTakeBlockGoal")).findFirst().orElseThrow();
 	}
 
+	@GameTest
+	public void burdenGivesArmorOnlyWhileTheEndermanCarriesABlock(GameTestHelper helper) {
+		Enderman enderman = endermanWith(helper, new BlockPos(2, 1, 2), "test_burden");
+		double base = enderman.getAttributeValue(Attributes.ARMOR);
+		GeneBehaviors.tick(enderman, helper.getLevel());
+		helper.assertValueEqual(enderman.getAttributeValue(Attributes.ARMOR), base, "no armor with empty hands");
+		enderman.setCarriedBlock(Blocks.DIRT.defaultBlockState());
+		helper.assertTrue(GeneCombat.test(enderman, GeneEffect.When.CARRYING_BLOCK), "the enderman carries a block");
+		GeneBehaviors.tick(enderman, helper.getLevel());
+		helper.assertValueEqual(enderman.getAttributeValue(Attributes.ARMOR), base + 4.0, "4 more armor with a block");
+		enderman.setCarriedBlock(null);
+		GeneBehaviors.tick(enderman, helper.getLevel());
+		helper.assertValueEqual(enderman.getAttributeValue(Attributes.ARMOR), base, "the armor goes with the block");
+		helper.succeed();
+	}
+
 	static net.minecraft.world.entity.ai.goal.Goal lookGoal(Enderman enderman) {
 		return ((MobAccessor) enderman).originofspawns$targetSelector().getAvailableGoals().stream()
 				.map(net.minecraft.world.entity.ai.goal.WrappedGoal::getGoal)

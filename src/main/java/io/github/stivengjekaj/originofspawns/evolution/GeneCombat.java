@@ -177,6 +177,8 @@ public final class GeneCombat {
 					BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ()));
 			case TARGET_UNREACHABLE -> entity instanceof Mob mob && mob.getTarget() != null && unreachable(mob, mob.getTarget());
 			case WET -> entity.isInWaterOrRain();
+			case CARRYING_BLOCK -> entity instanceof net.minecraft.world.entity.monster.Enderman enderman
+					&& enderman.getCarriedBlock() != null;
 		};
 	}
 

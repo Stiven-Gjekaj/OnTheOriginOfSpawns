@@ -504,7 +504,11 @@ public sealed interface GeneEffect {
 		/**
 		 * The mob is in water, or rain falls on it.
 		 */
-		WET;
+		WET,
+		/**
+		 * The mob is an enderman that carries a block.
+		 */
+		CARRYING_BLOCK;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 

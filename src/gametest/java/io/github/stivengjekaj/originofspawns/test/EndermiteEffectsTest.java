@@ -82,6 +82,19 @@ public class EndermiteEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(maxTicks = 20)
+	public void oldKinLetsTwoEndermitesOutWhenItDiesOfAge(GameTestHelper helper) {
+		Endermite kin = aging(helper, new BlockPos(4, 1, 4), 2399, "test_old_kin");
+		helper.runAfterDelay(3, () -> {
+			helper.assertTrue(kin.isRemoved(), "the endermite dies of age");
+			List<Endermite> young = helper.getLevel().getEntitiesOfClass(Endermite.class,
+					new net.minecraft.world.phys.AABB(helper.absolutePos(new BlockPos(4, 1, 4))).inflate(3.0));
+			helper.assertValueEqual(young.size(), 2, "2 endermites come out");
+			young.forEach(Endermite::discard);
+			helper.succeed();
+		});
+	}
+
 	/**
 	 * Adds an endermite that ages, as an endermite with no name that is not persistent.
 	 */

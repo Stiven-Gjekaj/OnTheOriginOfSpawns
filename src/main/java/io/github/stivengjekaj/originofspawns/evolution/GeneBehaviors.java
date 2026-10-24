@@ -1204,6 +1204,18 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Lets the endermites of the age spawn effects of the mob come out, when the mob dies of age. They get genes from
+	 * the pool.
+	 */
+	public static void ageSpawn(Mob mob, ServerLevel level) {
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.AgeSpawn spawn) {
+				spawnBrood(mob, level, spawn.count(), EntitySpawnReason.REINFORCEMENT, true);
+			}
+		}
+	}
+
+	/**
 	 * The vanilla chance that a thrown ender pearl makes an endermite.
 	 */
 	private static final float PEARL_CHANCE = 0.05F;

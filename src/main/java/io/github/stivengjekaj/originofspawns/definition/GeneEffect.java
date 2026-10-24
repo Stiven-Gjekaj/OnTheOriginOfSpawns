@@ -208,7 +208,8 @@ public sealed interface GeneEffect {
 			Map.entry("water_damage_taken", WaterDamageTaken.CODEC),
 			Map.entry("pearl_chance", PearlChance.CODEC),
 			Map.entry("lifespan", Lifespan.CODEC),
-			Map.entry("life_on_hit", LifeOnHit.CODEC)
+			Map.entry("life_on_hit", LifeOnHit.CODEC),
+			Map.entry("age_spawn", AgeSpawn.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3374,6 +3375,20 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "life_on_hit";
+		}
+	}
+
+	/**
+	 * When an endermite dies of age, this many endermites come out. They get genes from the pool, as new mobs.
+	 */
+	record AgeSpawn(int count) implements GeneEffect {
+		public static final MapCodec<AgeSpawn> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 8).optionalFieldOf("count", 2).forGetter(AgeSpawn::count)
+		).apply(instance, AgeSpawn::new));
+
+		@Override
+		public String type() {
+			return "age_spawn";
 		}
 	}
 }

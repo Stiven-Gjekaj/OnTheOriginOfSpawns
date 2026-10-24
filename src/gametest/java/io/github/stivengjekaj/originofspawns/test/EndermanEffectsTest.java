@@ -224,6 +224,25 @@ public class EndermanEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void hollowEyesSeesTheStareThroughACarvedPumpkin(GameTestHelper helper) {
+		Enderman plain = endermanWith(helper, new BlockPos(2, 1, 5));
+		Enderman hollow = endermanWith(helper, new BlockPos(5, 1, 5), "test_hollow_eyes");
+		plain.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(6.0);
+		hollow.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(6.0);
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.CARVED_PUMPKIN));
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(2, 1, 2))));
+		player.lookAt(EntityAnchorArgument.Anchor.EYES, plain.getEyePosition());
+		helper.assertFalse(GeneCombat.staredBy(plain, player), "the pumpkin stops the stare at a plain enderman");
+		helper.assertFalse(lookGoal(plain).canUse(), "a plain enderman does not get angry");
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(5, 1, 2))));
+		player.lookAt(EntityAnchorArgument.Anchor.EYES, hollow.getEyePosition());
+		helper.assertTrue(GeneCombat.staredBy(hollow, player), "the hollow eyes see the stare");
+		helper.assertTrue(lookGoal(hollow).canUse(), "the enderman gets angry");
+		helper.succeed();
+	}
+
 	static net.minecraft.world.entity.ai.goal.Goal lookGoal(Enderman enderman) {
 		return ((MobAccessor) enderman).originofspawns$targetSelector().getAvailableGoals().stream()
 				.map(net.minecraft.world.entity.ai.goal.WrappedGoal::getGoal)

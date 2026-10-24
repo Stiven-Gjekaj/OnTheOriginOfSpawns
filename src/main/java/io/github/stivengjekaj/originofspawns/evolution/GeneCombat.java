@@ -190,10 +190,12 @@ public final class GeneCombat {
 
 	/**
 	 * Returns true if the player stares at the face of the mob now: the vanilla stare test of the enderman, in the
-	 * stare range of the mob. A carved pumpkin on the head of the player stops the stare.
+	 * stare range of the mob. A carved pumpkin on the head of the player stops the stare, unless a gene of the mob
+	 * sees through it.
 	 */
 	public static boolean staredBy(Mob mob, Player player) {
-		return mob.distanceTo(player) <= stareRange(mob) && LivingEntity.PLAYER_NOT_WEARING_DISGUISE_ITEM.test(player)
+		return mob.distanceTo(player) <= stareRange(mob)
+				&& (LivingEntity.PLAYER_NOT_WEARING_DISGUISE_ITEM.test(player) || has(mob, GeneEffect.StareThroughPumpkin.class))
 				&& mob.isLookingAtMe(player, 0.025, true, false, mob.getEyeY());
 	}
 

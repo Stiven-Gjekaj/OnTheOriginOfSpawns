@@ -197,7 +197,8 @@ public sealed interface GeneEffect {
 			Map.entry("aimed_teleport", AimedTeleport.CODEC),
 			Map.entry("teleport_strike", TeleportStrike.CODEC),
 			Map.entry("stare_effect", StareEffect.CODEC),
-			Map.entry("stare_range", StareRange.CODEC)
+			Map.entry("stare_range", StareRange.CODEC),
+			Map.entry("stare_through_pumpkin", StareThroughPumpkin.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3182,6 +3183,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "stare_range";
+		}
+	}
+
+	/**
+	 * A carved pumpkin on the head of a player does not stop the stare at the mob. The anger of an enderman and the
+	 * effects of {@code stare_effect} work as with no pumpkin.
+	 */
+	record StareThroughPumpkin() implements GeneEffect {
+		public static final MapCodec<StareThroughPumpkin> CODEC = MapCodec.unit(new StareThroughPumpkin());
+
+		@Override
+		public String type() {
+			return "stare_through_pumpkin";
 		}
 	}
 }

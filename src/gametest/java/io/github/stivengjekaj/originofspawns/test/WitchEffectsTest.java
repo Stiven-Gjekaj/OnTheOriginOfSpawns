@@ -417,9 +417,10 @@ public class WitchEffectsTest {
 		var level = helper.getLevel();
 		float rain = level.getRainLevel(1.0F);
 		// The new biome covers both witches, so that only the roof keeps the rain off the roofed witch. The game
-		// reads the biome of a place with a small random offset, so the new biome reaches 4 blocks past each witch.
-		BlockPos from = roofed.blockPosition().offset(-4, -4, -4);
-		BlockPos to = open.blockPosition().offset(4, 4, 4);
+		// reads the biome of a place with a random offset of up to two biome cells, so the new biome reaches 8 blocks
+		// past each witch.
+		BlockPos from = roofed.blockPosition().offset(-8, -8, -8);
+		BlockPos to = open.blockPosition().offset(8, 8, 8);
 		Holder<Biome> biome = level.getBiome(open.blockPosition());
 		Holder<Biome> plains = level.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.PLAINS);
 		// The rain and the biome change and come back in this one tick, so they do not reach the other tests.

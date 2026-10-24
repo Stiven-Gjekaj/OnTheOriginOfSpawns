@@ -153,6 +153,9 @@ The states for `when` are:
 | `falling` | The mob is in the air, out of water, and it fell more than 2 blocks |
 | `sees_player` | The target of the mob is a player, and the mob sees the player |
 | `in_rain` | Rain falls on the mob: the world has rain, the biome has rain and not snow, and nothing is above the mob. `storm` is different: it is true in a thunderstorm, also under a roof |
+| `target_unreachable` | The mob has a target, and it finds no path that reaches it |
+| `wet` | The mob is in water, or rain falls on it |
+| `carrying_block` | The mob is an enderman that carries a block |
 | `sunlit` | The mob is out of water and rain, in the daylight, under the open sky |
 | `target_below` | The target of the mob is 2 or more blocks lower than the mob |
 | `target_above` | The target of the mob is 2 or more blocks higher than the mob |
@@ -354,6 +357,41 @@ spread of the thrown potions.
 | `shared_drink` | `radius` (`4`) | When the mob ends a drink, the monsters in the radius get the same effects. Each drink counts, also a vanilla drink. A monster is a hostile mob |
 | `heal_throw` | `radius` (`8`), `cooldown_seconds` (`15`) | One time in each cooldown, the mob throws a splash potion of Healing at the nearest hurt monster in the radius that it sees. It does not throw at its own target. An undead monster gets Harming, which heals it. The vanilla raid heal stays |
 
+#### Endermen
+
+A teleport goes to a free place: the mob fits there, on a block that it can
+stand on, out of liquid. If a teleport finds no free place, it does not
+teleport, and its cooldown does not start. The teleports work on each mob.
+
+| Type | Fields | Result |
+|---|---|---|
+| `teleport_to_target` | `cooldown_seconds` (`6`), `when` (`always`), `min_distance` (`4`) | One time in each cooldown, while the state is true, the mob teleports next to its target, 1.5 or 2.5 blocks from it. Only when the target is farther than `min_distance` |
+| `teleport_behind` | `cooldown_seconds` (`10`) | After a melee hit, the mob teleports behind its target, one time in each cooldown |
+| `escape_teleport` | `threshold` (`0.25`), `heal` (`10`), `range` (`16`) | One time in the life of the mob, under this part of its maximum health, it teleports to a random place in the range and heals |
+| `blast_teleport` | `cooldown_seconds` (`20`), `range` (`16`) | When an explosion hurts the mob, it teleports to a random place in the range and takes no damage, one time in each cooldown |
+| `aimed_teleport` | `when` (`always`) | While the state is true, each random teleport of an enderman goes next to its target |
+| `projectile_teleport` | `cooldown_seconds` (`8`), `range` (`16`) | When a projectile hurts the mob, it teleports to a random place in the range, one time in each cooldown |
+| `teleport_strike` | `multiplier`, `seconds` (`5`) | The first melee hit in `seconds` after a teleport does more damage. The vanilla teleports of an enderman also count |
+| `teleport_target_on_hit` | `chance`, `range` (`8`) | Each melee hit has this chance to teleport the target to a random place in the range, as a chorus fruit does |
+| `stare_effect` | `effect`, `seconds`, `amplifier` (`0`) | A player that stares at the face of the mob gets the effect. The stare is the vanilla stare test of the enderman. A carved pumpkin stops it |
+| `stare_range` | `multiplier` | Multiplies the stare range, which is the follow range of the mob, 64 blocks for an enderman. It changes the anger and `stare_effect` |
+| `stare_through_pumpkin` | | A carved pumpkin does not stop the stare |
+| `block_throw` | `damage` (`4`), `min_range` (`4`), `range` (`12`), `cooldown_seconds` (`8`) | One time in each cooldown, an enderman throws its carried block at its target in the range, if it sees it. The block hurts the first entity that it hits. Where it lands, it puts the block down if `mobGriefing` is on, else it drops nothing. `throw_rate` changes the cooldown |
+| `thrown_block_damage` | `multiplier` | Multiplies the damage of the thrown block |
+| `thrown_block_effect` | `effect`, `seconds`, `amplifier` (`0`), `when` (`always`) | The thrown block gives the effect to the entity that it hits, if the state of the thrower is true at the hit |
+| `thrown_block_shield` | `seconds` | A shield that stops the thrown block is useless for this many seconds |
+| `pickup_blocks` | `blocks` | An enderman can also pick up the blocks of this tag. It obeys `mobGriefing` |
+| `water_damage_taken` | `multiplier`, `splash_only` (`false`) | Multiplies the damage that water does to a mob that water hurts: water, rain, and a splash potion of water. With `splash_only`, only the splash potion. `water_damage` is different: it makes water hurt a mob |
+| `pearl_chance` | `chance` | A thrown ender pearl makes an endermite with this gene with this chance, not 5% |
+| `lifespan` | `seconds` (none), `multiplier` (`1`), `endless` (`false`) | Sets the life of an endermite. Vanilla is 2 minutes. With `seconds`, it lives this long, else the multiplier changes the vanilla life. With `endless`, it does not die of age. The longest life counts |
+| `life_on_hit` | `seconds` | Each melee hit of an endermite adds this many seconds to its life |
+| `age_spawn` | `count` (`2`) | When an endermite dies of age, this many endermites come out, with genes from the pool |
+| `call_others` | `mobs`, `radius` (`16`) | When the mob hits a player, the mobs of this list or tag in the radius that have no target attack the player |
+
+`brood` has the option `pool_genes` (`false`). With it, the extra mobs get
+genes from the pool, as new mobs. A brood and a burrow also start at an
+event, such as an endermite from an ender pearl.
+
 #### Spiders
 
 These effects suit a spider, but other mobs can also use them. A gene cobweb
@@ -457,6 +495,10 @@ corner of the brim, 5 pixels left, 10 pixels up, and 5 pixels to the front
 of the head pivot. The higher parts of the hat do not have a bone. The
 `nose` is also a part of the head. The gene marks of a witch are 64 x 128,
 the size of the witch texture.
+An enderman has the humanoid bones. The vanilla eyes layer draws over its
+eyes, so a gene that changes the eyes uses a gene model with `glow`. An
+endermite has `segment0` (the head), `segment1` (the body), `segment2` (the
+tail), and `segment3` (the tip of the tail).
 The coordinates are in pixels, in the coordinates of the bone, as in the
 vanilla models.
 

@@ -5,6 +5,7 @@ import io.github.stivengjekaj.originofspawns.evolution.Evolution;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.GeneTeleports;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -40,7 +41,7 @@ public abstract class LivingEntityMixin {
 		LivingEntity self = (LivingEntity) (Object) this;
 		if (self.hasAttached(ModAttachments.GENES)
 				&& (GeneCombat.dodges(self, source) || GeneCombat.protectedWhileDown(self, source)
-						|| GeneCombat.parries(self, source))) {
+						|| GeneCombat.parries(self, source) || GeneTeleports.fromBlast(self, source))) {
 			info.setReturnValue(false);
 		}
 	}

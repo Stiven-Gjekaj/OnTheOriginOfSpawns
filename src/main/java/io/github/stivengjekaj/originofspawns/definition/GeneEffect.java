@@ -192,7 +192,8 @@ public sealed interface GeneEffect {
 			Map.entry("heal_throw", HealThrow.CODEC),
 			Map.entry("teleport_to_target", TeleportToTarget.CODEC),
 			Map.entry("teleport_behind", TeleportBehind.CODEC),
-			Map.entry("escape_teleport", EscapeTeleport.CODEC)
+			Map.entry("escape_teleport", EscapeTeleport.CODEC),
+			Map.entry("blast_teleport", BlastTeleport.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3093,6 +3094,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "escape_teleport";
+		}
+	}
+
+	/**
+	 * When an explosion hurts the mob, the mob teleports to a random place in the range and takes no damage, one time
+	 * in each cooldown. If it finds no free place, it takes the damage, and the cooldown does not start.
+	 */
+	record BlastTeleport(float cooldownSeconds, float range) implements GeneEffect {
+		public static final MapCodec<BlastTeleport> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 20.0F).forGetter(BlastTeleport::cooldownSeconds),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 16.0F).forGetter(BlastTeleport::range)
+		).apply(instance, BlastTeleport::new));
+
+		@Override
+		public String type() {
+			return "blast_teleport";
 		}
 	}
 }

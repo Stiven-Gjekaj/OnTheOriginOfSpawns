@@ -125,6 +125,24 @@ public class EndermanEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void blastStepTeleportsAwayFromAnExplosionOneTimeInEachCooldown(GameTestHelper helper) {
+		Enderman enderman = endermanWith(helper, new BlockPos(4, 1, 4), "test_blast_step");
+		// A vanilla enderman teleports up to 32 blocks after a hit with no living attacker. The pig is the attacker
+		// here, so only the gene teleports, and it stays in the test area.
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 1));
+		DamageSource blast = helper.getLevel().damageSources().explosion(pig, pig);
+		float full = enderman.getHealth();
+		Vec3 before = enderman.position();
+		helper.assertFalse(enderman.hurtServer(helper.getLevel(), blast, 10.0F), "the explosion does no damage");
+		helper.assertValueEqual(enderman.getHealth(), full, "the enderman keeps its health");
+		helper.assertTrue(enderman.position().distanceTo(before) > 0.01, "the enderman teleports away");
+		helper.assertFalse(GeneTeleports.fromBlast(enderman, blast), "the next explosion in the cooldown hurts");
+		helper.assertFalse(GeneTeleports.fromBlast(enderman, helper.getLevel().damageSources().mobAttack(pig)),
+				"a hit that is not an explosion does not teleport");
+		helper.succeed();
+	}
+
 	static Enderman endermanWith(GameTestHelper helper, BlockPos pos, String... genes) {
 		Enderman enderman = EntityTypes.ENDERMAN.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
 		enderman.setAttached(ModAttachments.GENES, new CarriedGenes(java.util.Arrays.stream(genes)

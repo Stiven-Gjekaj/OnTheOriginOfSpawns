@@ -121,6 +121,26 @@ public final class GeneTeleports {
 	}
 
 	/**
+	 * Teleports the mob away from an explosion, if the cooldown is over.
+	 *
+	 * @return true if the mob teleported, so the explosion does no damage to it
+	 */
+	public static boolean fromBlast(LivingEntity entity, net.minecraft.world.damagesource.DamageSource source) {
+		if (!(entity instanceof Mob mob) || !(mob.level() instanceof ServerLevel level)
+				|| !source.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)) {
+			return false;
+		}
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.BlastTeleport blast && GeneCombat.ready(mob, blast, blast.cooldownSeconds())
+					&& away(mob, level, blast.range())) {
+				GeneCombat.startCooldown(mob, blast);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Teleports the mob to a random free place in the range, as the vanilla enderman does. It tries 16 places.
 	 *
 	 * @return true if the mob teleported

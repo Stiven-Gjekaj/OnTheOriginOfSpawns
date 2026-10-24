@@ -1052,11 +1052,13 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * When the mob spawns in a natural way, more mobs with the same genes spawn near it.
+	 * When the mob spawns in a natural way, from a spawner, or from an event such as an ender pearl, more mobs spawn
+	 * near it. They have the same genes, or with {@code pool_genes} they get new genes from the pool, as new mobs.
 	 */
-	record Brood(int extra) implements GeneEffect {
+	record Brood(int extra, boolean poolGenes) implements GeneEffect {
 		public static final MapCodec<Brood> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				Codec.intRange(1, 8).fieldOf("extra").forGetter(Brood::extra)
+				Codec.intRange(1, 8).fieldOf("extra").forGetter(Brood::extra),
+				Codec.BOOL.optionalFieldOf("pool_genes", false).forGetter(Brood::poolGenes)
 		).apply(instance, Brood::new));
 
 		@Override

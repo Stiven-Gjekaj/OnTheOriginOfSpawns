@@ -145,9 +145,9 @@ public final class GeneBehaviors {
 				case GeneEffect.Runt runt when mob instanceof Zombie zombie && mob.getRandom().nextFloat() < runt.chance() ->
 						makeRunt(zombie, level, runt);
 				case GeneEffect.Brood brood when broodReason(reason) ->
-						spawnBrood(mob, level, brood.extra(), EntitySpawnReason.REINFORCEMENT);
+						spawnBrood(mob, level, brood.extra(), EntitySpawnReason.REINFORCEMENT, brood.poolGenes());
 				case GeneEffect.PatrolSize patrol when reason == EntitySpawnReason.PATROL ->
-						spawnBrood(mob, level, patrol.extra(), EntitySpawnReason.PATROL);
+						spawnBrood(mob, level, patrol.extra(), EntitySpawnReason.PATROL, false);
 				case GeneEffect.Jockey jockey when reason == EntitySpawnReason.NATURAL
 						&& mob.getRandom().nextFloat() < jockey.chance() -> mount(mob, level, jockey);
 				case GeneEffect.Burrow burrow when reason == EntitySpawnReason.NATURAL -> burrow(mob, level, burrow);
@@ -160,13 +160,13 @@ public final class GeneBehaviors {
 	}
 
 	/**
-	 * Returns true if a spawn for the reason gives a brood: a natural spawn, or a spawn from a spawner or a trial
-	 * spawner. Some mobs, such as the cave spider, come mostly from spawners. The extra mobs of a brood are
-	 * reinforcements, so they give no brood of their own.
+	 * Returns true if a spawn for the reason gives a brood: a natural spawn, a spawn from a spawner or a trial spawner,
+	 * or a spawn from an event. Some mobs, such as the cave spider, come mostly from spawners, and the endermite comes
+	 * from an ender pearl. The extra mobs of a brood are reinforcements, so they give no brood of their own.
 	 */
 	private static boolean broodReason(EntitySpawnReason reason) {
 		return reason == EntitySpawnReason.NATURAL || reason == EntitySpawnReason.SPAWNER
-				|| reason == EntitySpawnReason.TRIAL_SPAWNER;
+				|| reason == EntitySpawnReason.TRIAL_SPAWNER || reason == EntitySpawnReason.TRIGGERED;
 	}
 
 	/**
@@ -240,7 +240,8 @@ public final class GeneBehaviors {
 	 * Spawns the count of extra mobs with the genes of the mob near it. The reason is the reason of their vanilla
 	 * spawn: a reinforcement for a brood, or a patrol for the extra member of a patrol.
 	 */
-	private static void spawnBrood(Mob mob, ServerLevel level, int count, EntitySpawnReason spawnReason) {
+	private static void spawnBrood(Mob mob, ServerLevel level, int count, EntitySpawnReason spawnReason,
+			boolean poolGenes) {
 		CarriedGenes genes = mob.getAttached(ModAttachments.GENES);
 		for (int i = 0; i < count; i++) {
 			if (!(mob.getType().create(level, EntitySpawnReason.REINFORCEMENT) instanceof Mob extra)) {
@@ -254,6 +255,11 @@ public final class GeneBehaviors {
 			if (mob instanceof PatrollingMonster leader && extra instanceof PatrollingMonster member
 					&& leader.getPatrolTarget() != null) {
 				member.setPatrolTarget(leader.getPatrolTarget());
+			}
+			if (poolGenes) {
+				// The extra mob joins with no genes, so the load rolls new genes from the pool, as for a new mob.
+				level.addFreshEntity(extra);
+				continue;
 			}
 			// The brood has the genes of the first mob. Its genes are set before it joins, so it does not roll new ones.
 			extra.setAttached(ModAttachments.GENES, genes);

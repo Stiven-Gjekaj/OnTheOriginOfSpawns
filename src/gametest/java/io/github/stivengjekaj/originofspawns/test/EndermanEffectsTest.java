@@ -4,6 +4,7 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.evolution.GeneTeleports;
 import io.github.stivengjekaj.originofspawns.evolution.GeneThrows;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
@@ -401,6 +402,66 @@ public class EndermanEffectsTest {
 				"a potion of Harming is not water");
 		helper.assertValueEqual(GeneCombat.modifyDamage(proof, splash, 10.0F), 0.0F, "a splash of water does no damage");
 		helper.assertValueEqual(GeneCombat.modifyDamage(proof, sources.drown(), 10.0F), 10.0F, "the rain still hurts");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theBruiserGenesWorkOnAnEnderman(GameTestHelper helper) {
+		Enderman bruiser = endermanWith(helper, new BlockPos(1, 1, 1), "test_enderman_bruiser");
+		Enderman plain = endermanWith(helper, new BlockPos(1, 1, 5));
+		helper.assertTrue(Math.abs(GeneBehaviors.attackIntervalMultiplier(bruiser) - 1.15F) < 0.001F, "it attacks 15% slower");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 1));
+		Pig plainTarget = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 5));
+		GeneCombat.onHit(bruiser, pig);
+		GeneCombat.onHit(plain, plainTarget);
+		helper.assertTrue(Math.abs(pig.getDeltaMovement().x - 0.4) < 0.001, "the hit pushes two times as far");
+		helper.assertValueEqual(plainTarget.getDeltaMovement().x, 0.0, "a plain hit adds no push");
+		DamageSource hit = helper.getLevel().damageSources().mobAttack(bruiser);
+		helper.assertValueEqual(GeneCombat.modifyDamage(plainTarget, hit, 10.0F), 10.0F, "no extra damage at full health");
+		bruiser.setHealth(5.0F);
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(plainTarget, hit, 10.0F) - 12.0F) < 0.001F,
+				"20% more damage while wounded");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void longReachLeapsAtTheTarget(GameTestHelper helper) {
+		Enderman enderman = endermanWith(helper, new BlockPos(1, 1, 1));
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(7, 1, 1));
+		enderman.setTarget(pig);
+		// An enderman with no AI does not update its ground state, so the test sets it.
+		enderman.setOnGround(true);
+		var leap = new io.github.stivengjekaj.originofspawns.evolution.goal.LeapGoal(enderman,
+				new GeneEffect.Leap(4.0F, 8.0F, 5.0F, 1.0F));
+		helper.assertTrue(leap.canUse(), "the enderman leaps at 6 blocks");
+		pig.setPos(enderman.position().add(2.0, 0.0, 0.0));
+		helper.assertFalse(leap.canUse(), "no leap at 2 blocks");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void enderRageIsFastOnlyWhenWounded(GameTestHelper helper) {
+		Enderman enderman = endermanWith(helper, new BlockPos(1, 1, 1), "test_ender_rage");
+		double base = enderman.getAttributeBaseValue(Attributes.MOVEMENT_SPEED);
+		GeneBehaviors.tick(enderman, helper.getLevel());
+		helper.assertValueEqual(enderman.getAttributeValue(Attributes.MOVEMENT_SPEED), base, "normal speed while healthy");
+		enderman.setHealth(enderman.getMaxHealth() / 4.0F);
+		GeneBehaviors.tick(enderman, helper.getLevel());
+		helper.assertTrue(enderman.getAttributeValue(Attributes.MOVEMENT_SPEED) > base, "faster while wounded");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theDamageAndAttributeGenesWorkOnAnEnderman(GameTestHelper helper) {
+		Enderman enderman = endermanWith(helper, new BlockPos(1, 1, 1), "test_enderman_skin");
+		GeneEffects.applyAttributes(enderman, GeneEffects.sources(helper.getLevel().registryAccess(),
+				enderman.getAttached(ModAttachments.GENES)));
+		helper.assertTrue(Math.abs(enderman.getMaxHealth() - 36.0F) < 0.001F, "10% less of 40 health");
+		var sources = helper.getLevel().damageSources();
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(enderman, sources.onFire(), 10.0F) - 5.5F) < 0.001F,
+				"half the fire damage, then 10% more");
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(enderman, sources.explosion(null, null), 10.0F) - 7.7F) < 0.001F,
+				"30% less explosion damage, then 10% more");
 		helper.succeed();
 	}
 

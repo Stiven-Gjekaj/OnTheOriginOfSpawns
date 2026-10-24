@@ -19,6 +19,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.item.ItemStack;
@@ -181,6 +182,8 @@ public class EndermanEffectsTest {
 	@GameTest(maxTicks = 60)
 	public void dreadGazeGivesDarknessToAPlayerThatStares(GameTestHelper helper) {
 		Enderman enderman = endermanWith(helper, new BlockPos(4, 1, 5), "test_dread_gaze");
+		// The vanilla follow range is 64 blocks, and it reaches the players of other tests.
+		enderman.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(6.0);
 		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
 		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(4, 1, 1))));
 		player.lookAt(EntityAnchorArgument.Anchor.EYES, enderman.getEyePosition());

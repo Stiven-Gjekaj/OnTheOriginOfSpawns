@@ -35,17 +35,17 @@ Swarmers come in groups. Each one is small.
 |---|---|---|
 | Tier 3 | When it spawns, 2 more endermites spawn with it | 2 less maximum health |
 | Tier 2 | When it spawns, 1 more endermite spawns with it | 3 less maximum health |
-| Tier 1 | When it spawns, 1 more endermite spawns with it, with a 50% chance | 4 less maximum health |
+| Tier 1 | When it spawns, 1 more endermite spawns with it | 4 less maximum health |
 
 ### Tunnelers
 
-Tunnelers hide in the ground and wait. They are slow on the surface.
+Tunnelers come up out of the ground near a player. They are slow on the surface.
 
 | Tier | Buff | Debuff |
 |---|---|---|
-| Tier 3 | It hides under the ground and comes out when a player is in 6 blocks | 10% less speed |
-| Tier 2 | It hides under the ground and comes out when a player is in 4 blocks | 15% less speed |
-| Tier 1 | It hides under the ground and comes out when a player is in 3 blocks | 20% less speed |
+| Tier 3 | When it spawns near a player, it starts under the ground and comes up in 1 second | 10% less speed |
+| Tier 2 | When it spawns near a player, it starts under the ground and comes up in 2 seconds | 15% less speed |
+| Tier 1 | When it spawns near a player, it starts under the ground and comes up in 3 seconds | 20% less speed |
 
 ### Leeches
 
@@ -55,7 +55,7 @@ Leeches feed on their prey. Their bite is small.
 |---|---|---|
 | Tier 3 | Each hit heals it 2 health | 10% less damage |
 | Tier 2 | Each hit heals it 1 health | 15% less damage |
-| Tier 1 | Each hit heals it 1 health, with a 50% chance | 20% less damage |
+| Tier 1 | Each hit heals it 1 health | 20% less damage |
 
 ### Elders
 
@@ -105,12 +105,12 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Stone Hide | Tunneler | `spotted` | It can hide in stone, deepslate, and end stone | 10% less speed | Body: gray, stone-colored plates |
+| Stone Hide | Tunneler | `spotted` | When it spawns near a player, it starts under the ground and comes up through stone, deepslate, and end stone | 10% less speed | Body: gray, stone-colored plates |
 | Pebble Skin | Tunneler | `projectile` | 30% less damage from projectiles | 10% less speed | Body: small pebbles on the back |
 | Ambush Bite | Tunneler | `melee` | Its first hit on a player does 50% more damage | 2 less armor | Head: wide jaws. This changes the model |
 | Tunnel Sense | Tunneler | `alone` | It sees invisible players in 8 blocks | 10% less speed | Head: pale feelers |
 | Rubble Burst | Tunneler | `explosion` | 50% less damage from explosions | 10% less maximum health | Body: dust on the shell |
-| Warp Burrow | Tunneler, sub Warper | `unreached` | When it comes out of the ground, it comes out next to the player | 10% less maximum health | Tail: a purple glow on the tail |
+| Warp Burrow | Tunneler, sub Warper | `unreached` | When it spawns near a player, it starts under the ground next to the player and comes up | 10% less maximum health | Tail: a purple glow on the tail |
 
 ### Leech genes
 
@@ -153,7 +153,7 @@ The visual column gives the region and the mark.
 | Brood Split | It works as the evoker Vengeful Vexes, with endermites. The new endermites live 2 minutes |
 | Mite Call | It works as the pillager War Horn |
 | Pack Bite, Swarm Shell | They work as the pillager Formation |
-| Tunnelers, Stone Hide, Warp Burrow | They work as the zombie Burrower. The endermite rises only through the blocks in its tag |
+| Tunnelers, Stone Hide, Warp Burrow | They work as the zombie Burrower, also by day and also for an endermite from an ender pearl. "Near a player" is in 24 blocks. The endermite rises only through the blocks in its tag |
 | Ambush Bite | It works as the spider Trapdoors |
 | Tunnel Sense | It works as the pillager Pathseeker |
 | Leeches, Blood Bite | They work as the bogged heal on hit |

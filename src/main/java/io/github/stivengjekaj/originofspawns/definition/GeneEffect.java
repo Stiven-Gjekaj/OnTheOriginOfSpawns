@@ -190,7 +190,8 @@ public sealed interface GeneEffect {
 			Map.entry("drink", Drink.CODEC),
 			Map.entry("shared_drink", SharedDrink.CODEC),
 			Map.entry("heal_throw", HealThrow.CODEC),
-			Map.entry("teleport_to_target", TeleportToTarget.CODEC)
+			Map.entry("teleport_to_target", TeleportToTarget.CODEC),
+			Map.entry("teleport_behind", TeleportBehind.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3056,6 +3057,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "teleport_to_target";
+		}
+	}
+
+	/**
+	 * After a melee hit, the mob teleports to a free place behind its target, one time in each cooldown. If it finds
+	 * no free place, it does not teleport, and the cooldown does not start.
+	 */
+	record TeleportBehind(float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<TeleportBehind> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 10.0F)
+						.forGetter(TeleportBehind::cooldownSeconds)
+		).apply(instance, TeleportBehind::new));
+
+		@Override
+		public String type() {
+			return "teleport_behind";
 		}
 	}
 }

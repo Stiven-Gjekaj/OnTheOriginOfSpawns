@@ -71,6 +71,36 @@ public final class GeneTeleports {
 	}
 
 	/**
+	 * Teleports the mob behind the target, after a hit, if the cooldown is over.
+	 *
+	 * @return true if the mob teleported
+	 */
+	public static boolean afterHit(Mob mob, ServerLevel level, GeneEffect.TeleportBehind teleport, LivingEntity target) {
+		if (!GeneCombat.ready(mob, teleport, teleport.cooldownSeconds()) || !behind(mob, level, target)) {
+			return false;
+		}
+		GeneCombat.startCooldown(mob, teleport);
+		return true;
+	}
+
+	/**
+	 * Teleports the mob to a free place behind the target: the side that the target does not face. The place right
+	 * behind it comes first, then the places a little to each side.
+	 *
+	 * @return true if the mob teleported
+	 */
+	public static boolean behind(Mob mob, ServerLevel level, LivingEntity target) {
+		List<Vec3> places = new ArrayList<>();
+		for (double distance : NEAR_DISTANCES) {
+			for (float turn : new float[] {0.0F, 45.0F, -45.0F}) {
+				Vec3 back = Vec3.directionFromRotation(0.0F, target.getYRot() + 180.0F + turn).scale(distance);
+				places.add(target.position().add(back.x, 0.0, back.z));
+			}
+		}
+		return tryPlaces(mob, level, places);
+	}
+
+	/**
 	 * Teleports the mob to the first of the places that is free. A place is free when the mob fits there, on a
 	 * block that it can stand on, out of liquid.
 	 */

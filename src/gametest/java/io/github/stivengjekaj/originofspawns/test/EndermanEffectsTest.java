@@ -86,6 +86,24 @@ public class EndermanEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void shadowStepTeleportsBehindTheTargetAfterAHit(GameTestHelper helper) {
+		Enderman enderman = endermanWith(helper, new BlockPos(4, 1, 6), "test_shadow_step");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 4));
+		// The pig faces south, to the enderman. Behind the pig is north.
+		pig.setYRot(0.0F);
+		GeneCombat.onHit(enderman, pig);
+		helper.assertTrue(enderman.getZ() < pig.getZ(), "the enderman is behind the pig");
+		helper.assertTrue(enderman.distanceTo(pig) < 2.0F, "the enderman is next to the pig");
+		enderman.snapTo(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(4, 1, 6))), 0.0F, 0.0F);
+		GeneCombat.onHit(enderman, pig);
+		helper.assertTrue(enderman.getZ() > pig.getZ(), "the next hit in the cooldown does not teleport");
+		Enderman plain = endermanWith(helper, new BlockPos(1, 1, 6));
+		GeneCombat.onHit(plain, pig);
+		helper.assertTrue(plain.getZ() > pig.getZ(), "a plain enderman does not teleport");
+		helper.succeed();
+	}
+
 	static Enderman endermanWith(GameTestHelper helper, BlockPos pos, String... genes) {
 		Enderman enderman = EntityTypes.ENDERMAN.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
 		enderman.setAttached(ModAttachments.GENES, new CarriedGenes(java.util.Arrays.stream(genes)

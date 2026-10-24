@@ -534,6 +534,8 @@ public final class GeneCombat {
 						&& mob.getRandom().nextFloat() < drain.chance() -> drainFood(mob, player, drain);
 				case GeneEffect.LeechXp leech when leech.hits().includes(false) && target instanceof Player player ->
 						leechXp(mob, player, leech);
+				case GeneEffect.TeleportBehind behind when target instanceof LivingEntity living
+						&& mob.level() instanceof ServerLevel level -> GeneTeleports.afterHit(mob, level, behind, living);
 				default -> {
 				}
 			}

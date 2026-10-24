@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/toxic_bite_fangs.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "segment0",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				2.5,
+				-1.6
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.15
+		},
+		{
+			"bone": "segment0",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				2.5,
+				-1.6
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.15
+		}
+	]
+}

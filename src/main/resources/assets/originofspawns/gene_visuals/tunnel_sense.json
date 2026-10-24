@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/endermite.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/tunnel_sense_0.png",
+				"tint": "#D8C8E8"
+			}
+		}
+	]
+}

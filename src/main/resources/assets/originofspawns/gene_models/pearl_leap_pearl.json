@@ -1,0 +1,24 @@
+{
+	"texture": "originofspawns:textures/entity/pearl_leap_pearl.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "segment3",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				0,
+				0.4
+			],
+			"size": [
+				2,
+				2,
+				2
+			]
+		}
+	]
+}

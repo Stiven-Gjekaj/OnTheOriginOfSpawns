@@ -1,0 +1,61 @@
+{
+	"texture": "originofspawns:textures/entity/ambush_bite_jaws.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "segment0",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2.5,
+				2,
+				-3.5
+			],
+			"size": [
+				1,
+				1,
+				3
+			],
+			"pivot": [
+				-2.0,
+				2.5,
+				-1
+			],
+			"rotation": [
+				0,
+				-25,
+				0
+			]
+		},
+		{
+			"bone": "segment0",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				1.5,
+				2,
+				-3.5
+			],
+			"size": [
+				1,
+				1,
+				3
+			],
+			"pivot": [
+				2.0,
+				2.5,
+				-1
+			],
+			"rotation": [
+				0,
+				25,
+				0
+			]
+		}
+	]
+}

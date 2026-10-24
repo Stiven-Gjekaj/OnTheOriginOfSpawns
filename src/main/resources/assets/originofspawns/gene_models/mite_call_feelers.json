@@ -1,0 +1,63 @@
+{
+	"texture": "originofspawns:textures/entity/mite_call_feelers.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "segment0",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				-5,
+				-0.5
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"inflate": -0.3,
+			"pivot": [
+				-1.0,
+				0,
+				0
+			],
+			"rotation": [
+				-35,
+				0,
+				-20
+			]
+		},
+		{
+			"bone": "segment0",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				-5,
+				-0.5
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"inflate": -0.3,
+			"pivot": [
+				1.0,
+				0,
+				0
+			],
+			"rotation": [
+				-35,
+				0,
+				20
+			]
+		}
+	]
+}

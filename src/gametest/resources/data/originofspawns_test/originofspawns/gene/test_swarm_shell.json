@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "damage_taken_when", "when": "grouped", "multiplier": 0.8, "radius": 3 }, { "type": "damage_taken_when", "when": "alone", "multiplier": 1.2, "radius": 3 }],
+	"mutation_rate": 0
+}

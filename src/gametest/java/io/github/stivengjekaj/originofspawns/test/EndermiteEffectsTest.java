@@ -17,6 +17,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.pig.Pig;
@@ -165,6 +166,106 @@ public class EndermiteEffectsTest {
 		// An ender pearl makes an endermite with the reason of an event.
 		GeneBehaviors.onSpawn(mite, helper.getLevel(), EntitySpawnReason.TRIGGERED);
 		helper.assertTrue(mite.getY() < surface, "the endermite goes under the ground");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void broodSplitLetsTwoEndermitesOutWhenItDies(GameTestHelper helper) {
+		Endermite mite = endermiteWith(helper, new BlockPos(4, 1, 4), "test_brood_split");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 4));
+		GeneCombat.onDeath(mite, helper.getLevel(), helper.getLevel().damageSources().mobAttack(pig));
+		List<Endermite> young = helper.getLevel().getEntitiesOfClass(Endermite.class, mite.getBoundingBox().inflate(3.0),
+				other -> other != mite);
+		helper.assertValueEqual(young.size(), 2, "2 endermites come out");
+		helper.assertTrue(young.stream().allMatch(other -> other.getTarget() == pig), "they attack the killer");
+		helper.succeed();
+	}
+
+	// The genes of these tests reach only 4 blocks, so they do not reach the endermites of other tests.
+	@GameTest(maxTicks = 60)
+	public void miteCallCallsTheEndermitesWhenItSeesAPlayer(GameTestHelper helper) {
+		Endermite caller = endermiteWith(helper, new BlockPos(1, 1, 1), "test_mite_call");
+		Endermite ally = endermiteWith(helper, new BlockPos(3, 1, 1));
+		Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+		caller.setTarget(player);
+		helper.succeedWhen(() -> helper.assertTrue(ally.getTarget() == player, "the endermite targets the player"));
+	}
+
+	@GameTest
+	public void theSwarmGenesChangeTheDamageWithEndermitesNear(GameTestHelper helper) {
+		Endermite shell = endermiteWith(helper, new BlockPos(1, 1, 1), "test_swarm_shell");
+		Endermite pack = endermiteWith(helper, new BlockPos(1, 1, 2), "test_pack_bite");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 5));
+		DamageSource hit = helper.getLevel().damageSources().mobAttack(pig);
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(shell, hit, 10.0F) - 8.0F) < 0.001F,
+				"20% less damage taken with an endermite near");
+		pack.discard();
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(shell, hit, 10.0F) - 12.0F) < 0.001F,
+				"20% more damage taken alone");
+		Endermite biter = endermiteWith(helper, new BlockPos(1, 1, 2), "test_pack_bite");
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(pig, helper.getLevel().damageSources().mobAttack(biter), 10.0F)
+				- 12.0F) < 0.001F, "20% more damage with an endermite near");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void ambushBiteDoesMoreDamageOnTheFirstHitOnAPlayer(GameTestHelper helper) {
+		Endermite mite = endermiteWith(helper, new BlockPos(1, 1, 1), "test_ambush_bite");
+		Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+		DamageSource bite = helper.getLevel().damageSources().mobAttack(mite);
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(player, bite, 10.0F) - 15.0F) < 0.001F, "the first hit");
+		helper.assertValueEqual(GeneCombat.modifyDamage(player, bite, 10.0F), 10.0F, "the next hit");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void tunnelSenseSeesAnInvisiblePlayer(GameTestHelper helper) {
+		Endermite sense = endermiteWith(helper, new BlockPos(1, 1, 1), "test_tunnel_sense");
+		Endermite plain = endermiteWith(helper, new BlockPos(1, 1, 5));
+		Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(3, 1, 3))));
+		player.setInvisible(true);
+		helper.assertValueEqual(GeneBehaviors.visibility(player, sense, 0.1), 1.0, "the endermite sees the player");
+		helper.assertValueEqual(GeneBehaviors.visibility(player, plain, 0.1), 0.1, "a plain endermite does not");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theLeechGenesHealGiveHungerAndTakeXp(GameTestHelper helper) {
+		Endermite mite = endermiteWith(helper, new BlockPos(1, 1, 1), "test_mite_leech");
+		mite.setHealth(4.0F);
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.giveExperiencePoints(20);
+		GeneCombat.onHit(mite, player);
+		helper.assertValueEqual(mite.getHealth(), 5.0F, "the hit heals 1 health");
+		helper.assertTrue(player.hasEffect(MobEffects.HUNGER), "the hit gives Hunger");
+		helper.assertValueEqual(player.totalExperience, 19, "the hit takes 1 XP point");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void kinMaskHidesTheEndermiteFromEndermen(GameTestHelper helper) {
+		Endermite masked = endermiteWith(helper, new BlockPos(1, 1, 1), "test_kin_mask");
+		Endermite plain = endermiteWith(helper, new BlockPos(1, 1, 5));
+		Enderman enderman = EndermanEffectsTest.endermanWith(helper, new BlockPos(4, 1, 3));
+		enderman.setTarget(masked);
+		helper.assertTrue(enderman.getTarget() == null, "the enderman ignores the masked endermite");
+		enderman.setTarget(plain);
+		helper.assertTrue(enderman.getTarget() == plain, "the enderman targets a plain endermite");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theDamageTakenGenesWorkOnAnEndermite(GameTestHelper helper) {
+		Endermite mite = endermiteWith(helper, new BlockPos(1, 1, 1), "test_mite_shell");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 5));
+		var sources = helper.getLevel().damageSources();
+		var arrow = new net.minecraft.world.entity.projectile.arrow.Arrow(helper.getLevel(), pig, new ItemStack(Items.ARROW), null);
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(mite, sources.arrow(arrow, pig), 10.0F) - 7.0F) < 0.001F,
+				"30% less damage from projectiles");
+		helper.assertValueEqual(GeneCombat.modifyDamage(mite, sources.explosion(null, null), 10.0F), 5.0F,
+				"half the damage from explosions");
+		helper.assertValueEqual(GeneCombat.modifyDamage(mite, sources.fall(), 10.0F), 5.0F, "half the fall damage");
 		helper.succeed();
 	}
 

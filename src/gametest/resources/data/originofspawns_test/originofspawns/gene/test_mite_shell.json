@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "damage_taken", "damage_types": "#minecraft:is_projectile", "multiplier": 0.7 }, { "type": "damage_taken", "damage_types": "#minecraft:is_explosion", "multiplier": 0.5 }, { "type": "damage_taken", "damage_types": "#minecraft:is_fall", "multiplier": 0.5 }],
+	"mutation_rate": 0
+}

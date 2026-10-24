@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:endermite",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "heal_on_hit", "amount": 1 }, { "type": "effect_on_hit", "effect": "minecraft:hunger", "seconds": 3 }, { "type": "leech_xp", "amount": 1 }],
+	"mutation_rate": 0
+}

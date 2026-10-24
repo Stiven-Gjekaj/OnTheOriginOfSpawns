@@ -565,8 +565,40 @@ WITCH_CLOSEUPS = {
 # The close-ups of the enderman. It has no babies. The close-ups of
 # "enderman_carrying" show it with a block in its hands.
 ENDERMAN = pg.ENDERMAN_FAMILIES
-ENDERMAN_CLOSEUPS = {}
-ENDERMAN_CARRY_CLOSEUPS = {}
+ENDERMAN_NIGHT_VIEWS = [FRONT, BACK, SIDE, THREE_QUARTER, BEHIND, NIGHT_BEHIND]
+ENDERMAN_CLOSEUPS = {
+    "enderman_phasers": ("Phaser marks and models",
+                         [("Pearl Heart + Sudden Step", ["pearl_heart", "sudden_step"], False),
+                          ("Far Step + Rain Step", ["far_step", "rain_step"], False),
+                          ("Shadow Step + Blast Step", ["shadow_step", "blast_step"], False),
+                          ("All 6", ENDERMAN["phasers"], False)], ENDERMAN_NIGHT_VIEWS),
+    "enderman_gazers": ("Gazer eyes, which glow",
+                        [("Dread Gaze", ["dread_gaze"], False), ("Chill Gaze + Far Gaze", ["chill_gaze", "far_gaze"],
+                                                                 False),
+                         ("Mind Gaze", ["mind_gaze"], False), ("Weak Gaze", ["weak_gaze"], False),
+                         ("Hollow Eyes", ["hollow_eyes"], False)], ENDERMAN_NIGHT_VIEWS),
+    "enderman_haulers": ("Hauler marks and models",
+                         [("Block Throw + Burden", ["block_throw", "burden"], False),
+                          ("Stone Grip + Shield Breaker", ["stone_grip", "shield_breaker"], False),
+                          ("Heavy Block + Dust Throw", ["heavy_block", "dust_throw"], False),
+                          ("All 6", ENDERMAN["haulers"], False)], ALL_SIDES),
+    "enderman_bruisers": ("Bruiser marks and models",
+                          [("Heavy Fist + Ender Rage", ["heavy_fist", "ender_rage"], False),
+                           ("Void Punch + Stone Skin", ["void_punch", "stone_skin"], False),
+                           ("Wide Swing + Long Reach", ["wide_swing", "long_reach"], False),
+                           ("All 6", ENDERMAN["bruisers"], False)], ALL_SIDES),
+    "enderman_rainwalkers": ("Rainwalker marks and models",
+                             [("Dry Skin + Splash Proof", ["dry_skin", "splash_proof"], False),
+                              ("Storm Stride + Ice Veins", ["storm_stride", "ice_veins"], False),
+                              ("Wet Fury + Mud Hands", ["wet_fury", "mud_hands"], False),
+                              ("All 6", ENDERMAN["rainwalkers"], False)], ALL_SIDES),
+}
+ENDERMAN_CARRY_CLOSEUPS = {
+    "enderman_carrying": ("With a carried block",
+                          [("Plain", [], False), ("Block Throw + Stone Grip", ["block_throw", "stone_grip"], False),
+                           ("Heavy Fist + Mud Hands", ["heavy_fist", "mud_hands"], False),
+                           ("All 6 Haulers", ENDERMAN["haulers"], False)], ALL_SIDES),
+}
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),

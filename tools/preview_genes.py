@@ -389,7 +389,15 @@ ENDERMAN_FAMILIES = {
     "rainwalkers": ["dry_skin", "storm_stride", "splash_proof", "wet_fury", "ice_veins", "mud_hands"],
 }
 
-ENDERMAN_EXTRA = {}
+ENDERMAN_EXTRA = {
+    "phasers": [("All 6 at night", [], True, {"light": 0.18}),
+                ("All 6 + Gazers", ["dread_gaze", "far_gaze"], True, {})],
+    "gazers": [("All 6 at night", [], True, {"light": 0.18}),
+               ("All 6 + Haulers", ["burden", "stone_grip"], True, {})],
+    "haulers": [("All 6 + Bruisers", ["heavy_fist", "ender_rage"], True, {})],
+    "bruisers": [("All 6 + Rainwalkers", ["storm_stride", "ice_veins"], True, {})],
+    "rainwalkers": [("All 6 + Phasers", ["pearl_heart", "far_step"], True, {})],
+}
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],

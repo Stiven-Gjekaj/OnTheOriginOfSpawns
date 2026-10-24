@@ -43,6 +43,7 @@
 		"SpiderAttackGoalMixin",
 		"SpiderMixin",
 		"SpiderTargetGoalMixin",
+		"ThrownEnderpearlMixin",
 		"ThrownLingeringPotionMixin",
 		"ThrownSplashPotionMixin",
 		"VexAccessor",

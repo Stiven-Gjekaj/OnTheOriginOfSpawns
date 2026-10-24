@@ -205,7 +205,8 @@ public sealed interface GeneEffect {
 			Map.entry("thrown_block_shield", ThrownBlockShield.CODEC),
 			Map.entry("pickup_blocks", PickupBlocks.CODEC),
 			Map.entry("teleport_target_on_hit", TeleportTargetOnHit.CODEC),
-			Map.entry("water_damage_taken", WaterDamageTaken.CODEC)
+			Map.entry("water_damage_taken", WaterDamageTaken.CODEC),
+			Map.entry("pearl_chance", PearlChance.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3324,6 +3325,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "water_damage_taken";
+		}
+	}
+
+	/**
+	 * A thrown ender pearl makes an endermite with this gene with this chance, not with the vanilla 5%. The game
+	 * first rolls the genes of the endermite, and then the chance of the endermite.
+	 */
+	record PearlChance(float chance) implements GeneEffect {
+		public static final MapCodec<PearlChance> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(PearlChance::chance)
+		).apply(instance, PearlChance::new));
+
+		@Override
+		public String type() {
+			return "pearl_chance";
 		}
 	}
 }

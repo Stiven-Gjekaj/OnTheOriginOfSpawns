@@ -37,6 +37,31 @@ public class EndermiteEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void pearlBroodRaisesTheChanceOfAnEndermiteFromAPearl(GameTestHelper helper) {
+		// Each endermite of the test is not in the level yet, as an endermite that a pearl may make.
+		Endermite brood = loose(helper, new BlockPos(2, 1, 2), "test_pearl_brood");
+		Endermite plain = loose(helper, new BlockPos(5, 1, 5));
+		helper.assertFalse(GeneBehaviors.pearlSpawn(helper.getLevel(), plain, 0.0F), "a plain endermite keeps the vanilla chance");
+		helper.assertTrue(GeneBehaviors.pearlSpawn(helper.getLevel(), brood, 0.99F), "a chance of 1 always makes the endermite");
+		helper.assertTrue(helper.getLevel().getEntity(brood.getId()) == brood, "the endermite joins the level");
+		helper.assertValueEqual(GeneBehaviors.pearlRoll(helper.getLevel(), plain, 0.01F), 0.01F,
+				"a roll under 5% makes the vanilla endermite");
+		helper.succeed();
+	}
+
+	/**
+	 * Makes an endermite with the genes at the place, but does not add it to the level.
+	 */
+	static Endermite loose(GameTestHelper helper, BlockPos pos, String... genes) {
+		Endermite mite = EntityTypes.ENDERMITE.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
+		mite.setAttached(ModAttachments.GENES, new CarriedGenes(java.util.Arrays.stream(genes)
+				.map(gene -> Identifier.fromNamespaceAndPath("originofspawns_test", gene)).toList()));
+		mite.setNoAi(true);
+		mite.snapTo(helper.absoluteVec(Vec3.atBottomCenterOf(pos)), 0.0F, 0.0F);
+		return mite;
+	}
+
 	static Endermite endermiteWith(GameTestHelper helper, BlockPos pos, String... genes) {
 		Endermite mite = EntityTypes.ENDERMITE.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
 		mite.setAttached(ModAttachments.GENES, new CarriedGenes(java.util.Arrays.stream(genes)

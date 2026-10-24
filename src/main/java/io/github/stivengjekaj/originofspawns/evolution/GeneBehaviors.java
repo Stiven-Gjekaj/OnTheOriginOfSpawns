@@ -1181,6 +1181,50 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * The vanilla chance that a thrown ender pearl makes an endermite.
+	 */
+	private static final float PEARL_CHANCE = 0.05F;
+
+	/**
+	 * Changes the roll of the vanilla endermite of an ender pearl. A roll under the vanilla chance makes the vanilla
+	 * endermite, which gets its genes as a new mob. Another roll makes an endermite with genes from the pool here, if
+	 * its genes give it a higher chance. The vanilla code then makes no endermite.
+	 *
+	 * @return the roll for the vanilla code
+	 */
+	public static float pearlRoll(ServerLevel level, net.minecraft.world.entity.Entity owner, float roll) {
+		if (roll < PEARL_CHANCE || !level.isSpawningMonsters()
+				|| level.getLevelData().getDifficulty() == net.minecraft.world.Difficulty.PEACEFUL) {
+			return roll;
+		}
+		net.minecraft.world.entity.monster.Endermite candidate = EntityTypes.ENDERMITE.create(level, EntitySpawnReason.TRIGGERED);
+		if (candidate != null) {
+			candidate.snapTo(owner.getX(), owner.getY(), owner.getZ(), owner.getYRot(), owner.getXRot());
+			Evolution.rollGenes(candidate, level);
+			pearlSpawn(level, candidate, level.getRandom().nextFloat());
+		}
+		return roll;
+	}
+
+	/**
+	 * Adds the endermite of a pearl to the level, if its genes give it a higher chance than the vanilla chance. The
+	 * roll comes after the failed vanilla roll, so the full chance of the endermite is the chance of its gene.
+	 *
+	 * @return true if the endermite joined the level
+	 */
+	public static boolean pearlSpawn(ServerLevel level, net.minecraft.world.entity.monster.Endermite candidate, float roll) {
+		float chance = (float) GeneEffects.of(candidate).filter(GeneEffect.PearlChance.class::isInstance)
+				.mapToDouble(effect -> ((GeneEffect.PearlChance) effect).chance()).max().orElse(0.0);
+		if (chance <= PEARL_CHANCE || roll >= (chance - PEARL_CHANCE) / (1.0F - PEARL_CHANCE)) {
+			return false;
+		}
+		level.addFreshEntity(candidate);
+		// The endermite joins with its genes, so the load does not run its spawn effects. They run here.
+		onSpawn(candidate, level, EntitySpawnReason.TRIGGERED);
+		return true;
+	}
+
+	/**
 	 * Returns true if a gene of the mob lets it pick up the block.
 	 */
 	public static boolean canPickUp(Mob mob, net.minecraft.world.level.block.state.BlockState state) {

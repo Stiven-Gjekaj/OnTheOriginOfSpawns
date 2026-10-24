@@ -1,0 +1,13 @@
+{
+	"region_map": "originofspawns:textures/region/enderman.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "desaturate",
+				"amount": 1,
+				"darken": 1
+			}
+		}
+	],
+	"model": "originofspawns_test:test_vindicator_body"
+}

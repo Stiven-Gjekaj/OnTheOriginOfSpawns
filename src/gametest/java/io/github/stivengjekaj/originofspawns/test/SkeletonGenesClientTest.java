@@ -97,6 +97,8 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			// The witch gene model sits on the hat, a part of the head.
 			checkMarkAndModel(context, singleplayer, EntityTypes.WITCH, "test_witch_mark",
 					Identifier.withDefaultNamespace("textures/entity/witch/witch.png"), "witch");
+			checkMarkAndModel(context, singleplayer, EntityTypes.ENDERMAN, "test_enderman_mark",
+					Identifier.withDefaultNamespace("textures/entity/enderman/enderman.png"), "enderman");
 			checkArmModelOnlyWhileTheArmsAreApart(context, singleplayer);
 			checkEvokerArmModelOnlyWhileItCasts(context, singleplayer);
 		}

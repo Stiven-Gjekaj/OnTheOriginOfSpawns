@@ -9,6 +9,7 @@
 		"CaveSpiderRendererMixin",
 		"CreeperRendererMixin",
 		"DrownedOuterLayerMixin",
+		"EndermanRendererMixin",
 		"EntityRenderDispatcherMixin",
 		"EvokerRendererMixin",
 		"IllagerRendererMixin",

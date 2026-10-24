@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "teleport_to_target", "cooldown_seconds": 8, "when": "target_unreachable", "min_distance": 3 }],
+	"mutation_rate": 0
+}

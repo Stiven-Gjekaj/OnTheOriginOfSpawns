@@ -186,6 +186,17 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> HEAL_THROW_TIME = AttachmentRegistry.create(OriginOfSpawns.id("heal_throw_time"));
 
 	/**
+	 * The game time of the last use of each effect with a cooldown, for the effects that keep no time of their own.
+	 */
+	public static final AttachmentType<java.util.Map<io.github.stivengjekaj.originofspawns.definition.GeneEffect, Long>>
+			EFFECT_TIMES = AttachmentRegistry.create(OriginOfSpawns.id("effect_times"));
+
+	/**
+	 * The game time of the last teleport of a mob.
+	 */
+	public static final AttachmentType<Long> TELEPORT_TIME = AttachmentRegistry.create(OriginOfSpawns.id("teleport_time"));
+
+	/**
 	 * The game time of the last decoy summon of a mob.
 	 */
 	public static final AttachmentType<Long> DECOY_TIME = AttachmentRegistry.create(OriginOfSpawns.id("decoy_time"));

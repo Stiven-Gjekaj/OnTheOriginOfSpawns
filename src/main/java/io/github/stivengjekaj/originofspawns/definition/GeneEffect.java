@@ -189,7 +189,8 @@ public sealed interface GeneEffect {
 			Map.entry("potion_heal", PotionHeal.CODEC),
 			Map.entry("drink", Drink.CODEC),
 			Map.entry("shared_drink", SharedDrink.CODEC),
-			Map.entry("heal_throw", HealThrow.CODEC)
+			Map.entry("heal_throw", HealThrow.CODEC),
+			Map.entry("teleport_to_target", TeleportToTarget.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -482,7 +483,11 @@ public sealed interface GeneEffect {
 		 * Rain falls on the mob: the world has rain, the biome has rain and not snow, and the mob has open sky above
 		 * it.
 		 */
-		IN_RAIN;
+		IN_RAIN,
+		/**
+		 * The mob has a target, and it finds no path that reaches the target.
+		 */
+		TARGET_UNREACHABLE;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 
@@ -3032,6 +3037,25 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "heal_throw";
+		}
+	}
+
+	/**
+	 * One time in each cooldown, while the state is true, the mob teleports to a free place next to its target. It
+	 * does this only when the target is farther than {@code min_distance}. If it finds no free place, it does not
+	 * teleport, and the cooldown does not start.
+	 */
+	record TeleportToTarget(float cooldownSeconds, When when, float minDistance) implements GeneEffect {
+		public static final MapCodec<TeleportToTarget> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 6.0F)
+						.forGetter(TeleportToTarget::cooldownSeconds),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(TeleportToTarget::when),
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("min_distance", 4.0F).forGetter(TeleportToTarget::minDistance)
+		).apply(instance, TeleportToTarget::new));
+
+		@Override
+		public String type() {
+			return "teleport_to_target";
 		}
 	}
 }

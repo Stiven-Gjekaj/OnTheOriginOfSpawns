@@ -175,7 +175,34 @@ public final class GeneCombat {
 			// The same test as the vanilla rain that puts out a fire: at the feet or at the top of the mob.
 			case IN_RAIN -> entity.level().isRainingAt(entity.blockPosition()) || entity.level().isRainingAt(
 					BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ()));
+			case TARGET_UNREACHABLE -> entity instanceof Mob mob && mob.getTarget() != null && unreachable(mob, mob.getTarget());
 		};
+	}
+
+	/**
+	 * Returns true if the mob finds no path that reaches the target.
+	 */
+	private static boolean unreachable(Mob mob, LivingEntity target) {
+		net.minecraft.world.level.pathfinder.Path path = mob.getNavigation().createPath(target, 0);
+		return path == null || !path.canReach();
+	}
+
+	/**
+	 * Returns true if the cooldown of the effect is over for the mob. Each effect has its own cooldown.
+	 */
+	public static boolean ready(LivingEntity mob, GeneEffect effect, float cooldownSeconds) {
+		Long last = mob.getAttachedOrElse(ModAttachments.EFFECT_TIMES, java.util.Map.of()).get(effect);
+		return last == null || mob.level().getGameTime() - last >= Math.round(cooldownSeconds * 20.0F);
+	}
+
+	/**
+	 * Starts the cooldown of the effect for the mob now.
+	 */
+	public static void startCooldown(LivingEntity mob, GeneEffect effect) {
+		java.util.Map<GeneEffect, Long> times = new java.util.HashMap<>(
+				mob.getAttachedOrElse(ModAttachments.EFFECT_TIMES, java.util.Map.of()));
+		times.put(effect, mob.level().getGameTime());
+		mob.setAttached(ModAttachments.EFFECT_TIMES, times);
 	}
 
 	/**

@@ -194,7 +194,8 @@ public sealed interface GeneEffect {
 			Map.entry("teleport_behind", TeleportBehind.CODEC),
 			Map.entry("escape_teleport", EscapeTeleport.CODEC),
 			Map.entry("blast_teleport", BlastTeleport.CODEC),
-			Map.entry("aimed_teleport", AimedTeleport.CODEC)
+			Map.entry("aimed_teleport", AimedTeleport.CODEC),
+			Map.entry("teleport_strike", TeleportStrike.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3131,6 +3132,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "aimed_teleport";
+		}
+	}
+
+	/**
+	 * The first melee hit of the mob in {@code seconds} after a teleport does more damage. Each teleport counts: the
+	 * vanilla teleports of an enderman and the teleports of the genes.
+	 */
+	record TeleportStrike(float multiplier, float seconds) implements GeneEffect {
+		public static final MapCodec<TeleportStrike> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).fieldOf("multiplier").forGetter(TeleportStrike::multiplier),
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("seconds", 5.0F).forGetter(TeleportStrike::seconds)
+		).apply(instance, TeleportStrike::new));
+
+		@Override
+		public String type() {
+			return "teleport_strike";
 		}
 	}
 }

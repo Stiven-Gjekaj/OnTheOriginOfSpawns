@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
 import io.github.stivengjekaj.originofspawns.evolution.GeneTeleports;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,6 +24,17 @@ public abstract class EndermanMixin {
 		LivingEntity target = GeneTeleports.aimedTarget(self);
 		if (target != null && self.level() instanceof ServerLevel level && GeneTeleports.near(self, level, target)) {
 			info.setReturnValue(true);
+		}
+	}
+
+	/**
+	 * Each vanilla teleport of the enderman marks its time, for the first hit after a teleport.
+	 */
+	@Inject(method = "teleport(DDD)Z", at = @At("RETURN"))
+	private void originofspawns$markTeleport(double x, double y, double z, CallbackInfoReturnable<Boolean> info) {
+		Enderman self = (Enderman) (Object) this;
+		if (info.getReturnValueZ() && self.level() instanceof ServerLevel level) {
+			self.setAttached(ModAttachments.TELEPORT_TIME, level.getGameTime());
 		}
 	}
 }

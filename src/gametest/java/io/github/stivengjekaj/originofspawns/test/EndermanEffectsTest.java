@@ -156,6 +156,21 @@ public class EndermanEffectsTest {
 				"the enderman teleports next to the pig, it is " + enderman.distanceTo(pig) + " away"));
 	}
 
+	@GameTest
+	public void suddenStepHitsHarderOnTheFirstHitAfterATeleport(GameTestHelper helper) {
+		Enderman enderman = endermanWith(helper, new BlockPos(2, 1, 2), "test_sudden_step");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 5));
+		DamageSource hit = helper.getLevel().damageSources().mobAttack(enderman);
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, hit, 10.0F), 10.0F, "no teleport, no extra damage");
+		// The vanilla teleport to a fixed place marks the time too.
+		helper.assertTrue(enderman.teleport(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(4, 1, 5))).x,
+				enderman.getY(), helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(4, 1, 5))).z),
+				"the enderman teleports");
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(pig, hit, 10.0F) - 13.0F) < 0.001F, "30% more damage");
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, hit, 10.0F), 10.0F, "only the first hit");
+		helper.succeed();
+	}
+
 	static Enderman endermanWith(GameTestHelper helper, BlockPos pos, String... genes) {
 		Enderman enderman = EntityTypes.ENDERMAN.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
 		enderman.setAttached(ModAttachments.GENES, new CarriedGenes(java.util.Arrays.stream(genes)

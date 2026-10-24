@@ -210,7 +210,8 @@ public sealed interface GeneEffect {
 			Map.entry("lifespan", Lifespan.CODEC),
 			Map.entry("life_on_hit", LifeOnHit.CODEC),
 			Map.entry("age_spawn", AgeSpawn.CODEC),
-			Map.entry("projectile_teleport", ProjectileTeleport.CODEC)
+			Map.entry("projectile_teleport", ProjectileTeleport.CODEC),
+			Map.entry("call_others", CallOthers.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3407,6 +3408,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "projectile_teleport";
+		}
+	}
+
+	/**
+	 * When the mob hits a player, the mobs of the list in the radius that have no target attack that player. A mob
+	 * that already attacks another target does not change its target.
+	 */
+	record CallOthers(HolderSet<EntityType<?>> mobs, float radius) implements GeneEffect {
+		public static final MapCodec<CallOthers> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				RegistryCodecs.holderSet(Registries.ENTITY_TYPE).fieldOf("mobs").forGetter(CallOthers::mobs),
+				Codec.floatRange(0.5F, 64.0F).optionalFieldOf("radius", 16.0F).forGetter(CallOthers::radius)
+		).apply(instance, CallOthers::new));
+
+		@Override
+		public String type() {
+			return "call_others";
 		}
 	}
 }

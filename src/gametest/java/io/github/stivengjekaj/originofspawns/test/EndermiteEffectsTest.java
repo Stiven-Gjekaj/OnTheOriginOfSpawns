@@ -1,8 +1,10 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.GeneTeleports;
 import io.github.stivengjekaj.originofspawns.mixin.EndermiteAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -17,7 +19,9 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.entity.monster.Endermite;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
@@ -113,6 +117,34 @@ public class EndermiteEffectsTest {
 		Vec3 after = mite.position();
 		GeneCombat.onHurt(mite, shot);
 		helper.assertValueEqual(mite.position(), after, "the next arrow in the cooldown does not");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void enderScentCallsOnlyTheEndermenWithNoTarget(GameTestHelper helper) {
+		Endermite mite = endermiteWith(helper, new BlockPos(4, 1, 4), "test_ender_scent");
+		Enderman free = EndermanEffectsTest.endermanWith(helper, new BlockPos(2, 1, 4));
+		Enderman busy = EndermanEffectsTest.endermanWith(helper, new BlockPos(6, 1, 4));
+		Pig other = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		busy.setTarget(other);
+		Player player = helper.makeMockPlayer(net.minecraft.world.level.GameType.SURVIVAL);
+		GeneCombat.onHit(mite, player);
+		helper.assertTrue(free.getTarget() == player, "a free enderman attacks the player");
+		helper.assertTrue(busy.getTarget() == other, "a busy enderman keeps its target");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theEndermanTeleportsWorkOnAnEndermite(GameTestHelper helper) {
+		Endermite mite = endermiteWith(helper, new BlockPos(1, 1, 1));
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 5));
+		mite.setTarget(pig);
+		helper.assertTrue(GeneTeleports.toTarget(mite, helper.getLevel(),
+				new GeneEffect.TeleportToTarget(8.0F, GeneEffect.When.ALWAYS, 3.0F)), "the endermite teleports to the pig");
+		helper.assertTrue(mite.distanceTo(pig) < 3.0F, "the endermite is next to the pig");
+		pig.setYRot(0.0F);
+		helper.assertTrue(GeneTeleports.behind(mite, helper.getLevel(), pig), "the endermite teleports behind the pig");
+		helper.assertTrue(mite.getZ() < pig.getZ(), "the endermite is behind the pig");
 		helper.succeed();
 	}
 

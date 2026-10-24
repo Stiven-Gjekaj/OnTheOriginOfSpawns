@@ -597,6 +597,13 @@ public final class GeneCombat {
 					var age = (io.github.stivengjekaj.originofspawns.mixin.EndermiteAccessor) mite;
 					age.originofspawns$setLife(age.originofspawns$life() - Math.round(life.seconds() * 20.0F));
 				}
+				case GeneEffect.CallOthers call when target instanceof Player player && mob.level() instanceof ServerLevel level -> {
+					AABB area = mob.getBoundingBox().inflate(call.radius());
+					for (Mob other : level.getEntitiesOfClass(Mob.class, area, other -> other != mob
+							&& call.mobs().contains(other.getType().builtInRegistryHolder()) && other.getTarget() == null)) {
+						other.setTarget(player);
+					}
+				}
 				case GeneEffect.TeleportTargetOnHit punch when target instanceof LivingEntity living
 						&& mob.level() instanceof ServerLevel level && mob.getRandom().nextFloat() < punch.chance() ->
 						GeneTeleports.chorus(living, level, punch.range());

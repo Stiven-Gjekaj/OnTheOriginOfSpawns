@@ -283,6 +283,33 @@ public class EndermanEffectsTest {
 		});
 	}
 
+	@GameTest(maxTicks = 60)
+	public void heavyBlockAndDustThrowChangeTheThrownBlock(GameTestHelper helper) {
+		Enderman enderman = endermanWith(helper, new BlockPos(1, 1, 4), "test_heavy_block", "test_dust_throw");
+		enderman.setCarriedBlock(Blocks.DIRT.defaultBlockState());
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 4));
+		enderman.setTarget(pig);
+		helper.assertTrue(GeneThrows.throwBlock(enderman, helper.getLevel(),
+				new GeneEffect.BlockThrow(4.0F, 4.0F, 7.0F, 8.0F)) != null, "the enderman throws");
+		helper.succeedWhen(() -> {
+			helper.assertValueEqual(pig.getHealth(), 2.0F, "the heavy block does 8 damage");
+			helper.assertTrue(pig.hasEffect(MobEffects.BLINDNESS), "the dust gives Blindness");
+		});
+	}
+
+	@GameTest
+	public void shieldBreakerStopsTheShieldThatBlocksTheBlock(GameTestHelper helper) {
+		Enderman enderman = endermanWith(helper, new BlockPos(1, 1, 1), "test_shield_breaker");
+		ServerPlayer player = CreeperEffectsTest.shieldedPlayer(helper);
+		// The block starts next to the player, on the side of the shield, so it hits at its first tick.
+		FallingBlockEntity block = GeneThrows.spawn(helper.getLevel(), player.position().add(-0.6, 1.0, 0.0),
+				Blocks.DIRT.defaultBlockState(), Vec3.ZERO, enderman, 4.0F, false);
+		helper.assertTrue(GeneThrows.hit(block, helper.getLevel()), "the block hits the player");
+		helper.assertTrue(player.getCooldowns().isOnCooldown(new ItemStack(Items.SHIELD)), "the shield stops for a time");
+		helper.assertFalse(player.isBlocking(), "the player cannot block now");
+		helper.succeed();
+	}
+
 	static net.minecraft.world.entity.ai.goal.Goal lookGoal(Enderman enderman) {
 		return ((MobAccessor) enderman).originofspawns$targetSelector().getAvailableGoals().stream()
 				.map(net.minecraft.world.entity.ai.goal.WrappedGoal::getGoal)

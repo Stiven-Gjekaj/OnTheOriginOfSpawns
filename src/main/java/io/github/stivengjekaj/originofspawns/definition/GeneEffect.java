@@ -199,7 +199,10 @@ public sealed interface GeneEffect {
 			Map.entry("stare_effect", StareEffect.CODEC),
 			Map.entry("stare_range", StareRange.CODEC),
 			Map.entry("stare_through_pumpkin", StareThroughPumpkin.CODEC),
-			Map.entry("block_throw", BlockThrow.CODEC)
+			Map.entry("block_throw", BlockThrow.CODEC),
+			Map.entry("thrown_block_damage", ThrownBlockDamage.CODEC),
+			Map.entry("thrown_block_effect", ThrownBlockEffect.CODEC),
+			Map.entry("thrown_block_shield", ThrownBlockShield.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3217,6 +3220,53 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "block_throw";
+		}
+	}
+
+	/**
+	 * Multiplies the damage of the blocks that the mob throws with {@code block_throw}. Alone it does nothing.
+	 */
+	record ThrownBlockDamage(float multiplier) implements GeneEffect {
+		public static final MapCodec<ThrownBlockDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).fieldOf("multiplier").forGetter(ThrownBlockDamage::multiplier)
+		).apply(instance, ThrownBlockDamage::new));
+
+		@Override
+		public String type() {
+			return "thrown_block_damage";
+		}
+	}
+
+	/**
+	 * A block that the mob throws with {@code block_throw} gives a status effect to the entity that it hits, if the
+	 * state of the mob is true at the hit. Alone it does nothing.
+	 */
+	record ThrownBlockEffect(Holder<MobEffect> effect, float seconds, int amplifier, When when) implements GeneEffect {
+		public static final MapCodec<ThrownBlockEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(ThrownBlockEffect::effect),
+				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(ThrownBlockEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(ThrownBlockEffect::amplifier),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(ThrownBlockEffect::when)
+		).apply(instance, ThrownBlockEffect::new));
+
+		@Override
+		public String type() {
+			return "thrown_block_effect";
+		}
+	}
+
+	/**
+	 * A block that the mob throws with {@code block_throw} and that a shield stops makes the shield useless for this
+	 * many seconds. Alone it does nothing.
+	 */
+	record ThrownBlockShield(float seconds) implements GeneEffect {
+		public static final MapCodec<ThrownBlockShield> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).fieldOf("seconds").forGetter(ThrownBlockShield::seconds)
+		).apply(instance, ThrownBlockShield::new));
+
+		@Override
+		public String type() {
+			return "thrown_block_shield";
 		}
 	}
 }

@@ -61,12 +61,25 @@ public final class GeneThrows {
 		double ticks = aim.horizontalDistance() / SPEED;
 		Vec3 velocity = new Vec3(aim.x / ticks, (aim.y + 0.5 * GRAVITY * ticks * ticks) / ticks, aim.z / ticks);
 		FallingBlockEntity block = spawn(level, from, carried, velocity, enderman,
-				thrown.damage(), level.getGameRules().get(GameRules.MOB_GRIEFING));
+				thrown.damage() * damageMultiplier(enderman), level.getGameRules().get(GameRules.MOB_GRIEFING));
 		enderman.setCarriedBlock(null);
 		GeneCombat.startCooldown(enderman, thrown);
 		level.playSound(null, enderman.getX(), enderman.getY(), enderman.getZ(), SoundEvents.ENDERMAN_SCREAM,
 				enderman.getSoundSource(), 0.6F, 1.4F);
 		return block;
+	}
+
+	/**
+	 * Returns the product of the thrown block damage multipliers of the mob.
+	 */
+	public static float damageMultiplier(LivingEntity mob) {
+		float multiplier = 1.0F;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.ThrownBlockDamage damage) {
+				multiplier *= damage.multiplier();
+			}
+		}
+		return multiplier;
 	}
 
 	/**
@@ -87,6 +100,29 @@ public final class GeneThrows {
 	}
 
 	/**
+	 * Runs the effects of the thrower on the entity that its block hit: the status effects, and the stop of a
+	 * shield that blocked the block.
+	 *
+	 * @param shield the shield that the target held up at the hit, or null
+	 */
+	private static void afterHit(LivingEntity thrower, ServerLevel level, LivingEntity target,
+			net.minecraft.world.item.ItemStack shield) {
+		for (GeneEffect effect : GeneEffects.of(thrower).toList()) {
+			switch (effect) {
+				case GeneEffect.ThrownBlockEffect hit when GeneCombat.test(thrower, hit.when()) ->
+						target.addEffect(new net.minecraft.world.effect.MobEffectInstance(hit.effect(),
+								Math.round(hit.seconds() * 20.0F), hit.amplifier()), thrower);
+				case GeneEffect.ThrownBlockShield stop when shield != null
+						&& shield.has(net.minecraft.core.component.DataComponents.BLOCKS_ATTACKS) ->
+						shield.get(net.minecraft.core.component.DataComponents.BLOCKS_ATTACKS)
+								.disable(level, target, stop.seconds(), shield);
+				default -> {
+				}
+			}
+		}
+	}
+
+	/**
 	 * Hurts the first living entity that the thrown block touches, and ends the block. The thrower is safe from its
 	 * own block.
 	 *
@@ -100,7 +136,12 @@ public final class GeneThrows {
 		Entity thrower = level.getEntity(thrown.thrower());
 		for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, block.getBoundingBox().inflate(0.2),
 				other -> other != thrower && other.isAlive())) {
+			boolean blocking = target.isBlocking();
+			net.minecraft.world.item.ItemStack shield = target.getItemBlockingWith();
 			target.hurtServer(level, level.damageSources().thrown(block, thrower), thrown.damage());
+			if (thrower instanceof LivingEntity mob) {
+				afterHit(mob, level, target, blocking ? shield : null);
+			}
 			block.discard();
 			return true;
 		}

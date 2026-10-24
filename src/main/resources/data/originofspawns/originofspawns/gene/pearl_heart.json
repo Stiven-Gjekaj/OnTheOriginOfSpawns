@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:enderman/phaser",
+	"gains": [
+		{
+			"type": "escape_teleport",
+			"threshold": 0.25,
+			"heal": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:enderman/phaser",
+	"gains": [
+		{
+			"type": "teleport_behind",
+			"cooldown_seconds": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9
+		}
+	]
+}

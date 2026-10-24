@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:in_water",
+	"family": "originofspawns:enderman/rainwalker",
+	"gains": [
+		{
+			"type": "water_damage_taken",
+			"multiplier": 0.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

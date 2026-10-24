@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:enderman/rainwalker",
+	"gains": [
+		{
+			"type": "damage_dealt_when",
+			"when": "wet",
+			"multiplier": 1.2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

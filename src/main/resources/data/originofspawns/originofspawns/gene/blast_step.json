@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:enderman/phaser",
+	"gains": [
+		{
+			"type": "blast_teleport",
+			"cooldown_seconds": 20
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

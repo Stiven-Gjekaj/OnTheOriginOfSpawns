@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:enderman/hauler",
+	"gains": [
+		{
+			"type": "block_throw",
+			"damage": 4,
+			"min_range": 4,
+			"range": 12,
+			"cooldown_seconds": 8
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:enderman/gazer",
+	"sub_family": "originofspawns:enderman/bruiser",
+	"gains": [
+		{
+			"type": "stare_effect",
+			"effect": "minecraft:weakness",
+			"seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

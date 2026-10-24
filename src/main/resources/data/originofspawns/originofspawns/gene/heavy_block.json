@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:enderman/hauler",
+	"gains": [
+		{
+			"type": "thrown_block_damage",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.9
+		}
+	]
+}

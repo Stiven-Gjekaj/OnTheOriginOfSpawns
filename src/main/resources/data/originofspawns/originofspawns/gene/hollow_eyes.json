@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:enderman/gazer",
+	"gains": [
+		{
+			"type": "stare_through_pumpkin"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9
+		}
+	]
+}

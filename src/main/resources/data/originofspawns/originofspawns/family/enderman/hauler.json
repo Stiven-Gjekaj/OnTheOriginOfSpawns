@@ -1,0 +1,62 @@
+{
+	"species": "minecraft:enderman",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "block_throw",
+					"damage": 4,
+					"min_range": 4,
+					"range": 12,
+					"cooldown_seconds": 12
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "block_throw",
+					"damage": 4,
+					"min_range": 4,
+					"range": 12,
+					"cooldown_seconds": 10
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "block_throw",
+					"damage": 4,
+					"min_range": 4,
+					"range": 12,
+					"cooldown_seconds": 8
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

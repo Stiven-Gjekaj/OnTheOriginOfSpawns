@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:enderman/bruiser",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_explosion",
+			"multiplier": 0.7
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

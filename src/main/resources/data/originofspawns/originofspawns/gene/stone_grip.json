@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:enderman/hauler",
+	"gains": [
+		{
+			"type": "pickup_blocks",
+			"blocks": "#originofspawns:enderman_stone"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

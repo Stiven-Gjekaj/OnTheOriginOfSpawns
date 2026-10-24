@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:enderman/hauler",
+	"gains": [
+		{
+			"type": "thrown_block_shield",
+			"seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

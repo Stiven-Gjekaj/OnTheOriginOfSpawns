@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:enderman/bruiser",
+	"sub_family": "originofspawns:enderman/phaser",
+	"gains": [
+		{
+			"type": "leap",
+			"min_distance": 4,
+			"max_distance": 8,
+			"cooldown_seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

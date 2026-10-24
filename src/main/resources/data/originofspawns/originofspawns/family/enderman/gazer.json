@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:enderman",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "stare_effect",
+					"effect": "minecraft:darkness",
+					"seconds": 2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "stare_effect",
+					"effect": "minecraft:darkness",
+					"seconds": 3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "stare_effect",
+					"effect": "minecraft:darkness",
+					"seconds": 4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

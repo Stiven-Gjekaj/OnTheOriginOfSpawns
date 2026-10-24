@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:enderman/bruiser",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": 0.2,
+			"operation": "add_multiplied_total"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attack_interval",
+			"multiplier": 1.15
+		}
+	]
+}

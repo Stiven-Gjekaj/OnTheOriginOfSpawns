@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:enderman/phaser",
+	"gains": [
+		{
+			"type": "teleport_strike",
+			"multiplier": 1.3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

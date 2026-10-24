@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:enderman/hauler",
+	"gains": [
+		{
+			"type": "attribute_when",
+			"when": "carrying_block",
+			"attribute": "minecraft:armor",
+			"amount": 4,
+			"operation": "add_value"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

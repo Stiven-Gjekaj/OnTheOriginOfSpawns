@@ -198,7 +198,8 @@ public sealed interface GeneEffect {
 			Map.entry("teleport_strike", TeleportStrike.CODEC),
 			Map.entry("stare_effect", StareEffect.CODEC),
 			Map.entry("stare_range", StareRange.CODEC),
-			Map.entry("stare_through_pumpkin", StareThroughPumpkin.CODEC)
+			Map.entry("stare_through_pumpkin", StareThroughPumpkin.CODEC),
+			Map.entry("block_throw", BlockThrow.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3196,6 +3197,26 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "stare_through_pumpkin";
+		}
+	}
+
+	/**
+	 * One time in each cooldown, an enderman throws the block that it carries at its target, if the target is in the
+	 * range and the enderman sees it. The thrown block is a falling block. It does this damage to the entity that it
+	 * hits. Where it lands, it puts the block down, if the {@code mobGriefing} gamerule is on. Else it drops nothing.
+	 * The throw rate of the genes changes the cooldown.
+	 */
+	record BlockThrow(float damage, float minRange, float range, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<BlockThrow> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("damage", 4.0F).forGetter(BlockThrow::damage),
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("min_range", 4.0F).forGetter(BlockThrow::minRange),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 12.0F).forGetter(BlockThrow::range),
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 8.0F).forGetter(BlockThrow::cooldownSeconds)
+		).apply(instance, BlockThrow::new));
+
+		@Override
+		public String type() {
+			return "block_throw";
 		}
 	}
 }

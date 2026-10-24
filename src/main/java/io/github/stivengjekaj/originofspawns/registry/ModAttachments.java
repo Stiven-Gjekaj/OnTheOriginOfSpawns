@@ -198,6 +198,12 @@ public final class ModAttachments {
 			AttachmentRegistry.createPersistent(OriginOfSpawns.id("escape_used"), com.mojang.serialization.Codec.BOOL);
 
 	/**
+	 * On a falling block that a mob threw: the thrower and the damage of the hit.
+	 */
+	public static final AttachmentType<io.github.stivengjekaj.originofspawns.evolution.GeneThrows.Thrown> THROWN_BLOCK =
+			AttachmentRegistry.create(OriginOfSpawns.id("thrown_block"));
+
+	/**
 	 * The game time of the last teleport of a mob.
 	 */
 	public static final AttachmentType<Long> TELEPORT_TIME = AttachmentRegistry.create(OriginOfSpawns.id("teleport_time"));

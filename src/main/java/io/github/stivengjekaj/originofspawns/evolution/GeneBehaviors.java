@@ -36,6 +36,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.entity.monster.Vex;
 import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.ai.goal.BreakDoorGoal;
@@ -453,6 +454,8 @@ public final class GeneBehaviors {
 				case GeneEffect.HealThrow heal -> healThrow(mob, level, heal);
 				case GeneEffect.TeleportToTarget teleport -> GeneTeleports.toTarget(mob, level, teleport);
 				case GeneEffect.StareEffect stare -> stareEffect(mob, level, stare);
+				case GeneEffect.BlockThrow thrown when mob instanceof Enderman enderman ->
+						GeneThrows.throwBlock(enderman, level, thrown);
 				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
 				case GeneEffect.FrenziedTargeting frenzy
 						when now % Math.max(1, Math.round(frenzy.intervalSeconds() * 20.0F)) < TICK_INTERVAL

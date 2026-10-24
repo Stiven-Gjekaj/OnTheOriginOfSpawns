@@ -18,6 +18,8 @@
 		"EvokerAttackSpellGoalMixin",
 		"EvokerFangsMixin",
 		"EvokerSummonSpellGoalMixin",
+		"FallingBlockEntityAccessor",
+		"FallingBlockEntityMixin",
 		"FireworkRocketEntityAccessor",
 		"FireworkRocketEntityMixin",
 		"LeapAtTargetGoalMixin",

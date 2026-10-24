@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "block_throw", "damage": 4, "min_range": 4, "range": 7, "cooldown_seconds": 8 }],
+	"mutation_rate": 0
+}

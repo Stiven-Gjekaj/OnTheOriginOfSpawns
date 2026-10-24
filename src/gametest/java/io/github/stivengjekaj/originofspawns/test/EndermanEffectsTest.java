@@ -5,6 +5,7 @@ import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneTeleports;
+import io.github.stivengjekaj.originofspawns.evolution.GeneThrows;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -22,10 +23,13 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -241,6 +245,42 @@ public class EndermanEffectsTest {
 		helper.assertTrue(GeneCombat.staredBy(hollow, player), "the hollow eyes see the stare");
 		helper.assertTrue(lookGoal(hollow).canUse(), "the enderman gets angry");
 		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 60)
+	public void blockThrowThrowsTheCarriedBlockAtTheTargetInItsRange(GameTestHelper helper) {
+		Enderman enderman = endermanWith(helper, new BlockPos(1, 1, 4));
+		enderman.setCarriedBlock(Blocks.DIRT.defaultBlockState());
+		var throwing = new GeneEffect.BlockThrow(4.0F, 4.0F, 7.0F, 8.0F);
+		Pig near = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 4));
+		enderman.setTarget(near);
+		helper.assertTrue(GeneThrows.throwBlock(enderman, helper.getLevel(), throwing) == null, "the pig is too near");
+		near.discard();
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 4));
+		enderman.setTarget(pig);
+		helper.assertTrue(GeneThrows.throwBlock(enderman, helper.getLevel(), throwing) != null, "the enderman throws");
+		helper.assertTrue(enderman.getCarriedBlock() == null, "the enderman lets go of the block");
+		enderman.setCarriedBlock(Blocks.DIRT.defaultBlockState());
+		helper.assertTrue(GeneThrows.throwBlock(enderman, helper.getLevel(), throwing) == null, "the throw waits for its cooldown");
+		helper.succeedWhen(() -> helper.assertValueEqual(pig.getHealth(), 6.0F, "the block does 4 damage to the pig"));
+	}
+
+	@GameTest(maxTicks = 60)
+	public void aThrownBlockPutsTheBlockDownOnlyWhenItMay(GameTestHelper helper) {
+		Enderman enderman = endermanWith(helper, new BlockPos(1, 1, 1));
+		GeneThrows.spawn(helper.getLevel(), helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(5, 3, 2))),
+				Blocks.DIRT.defaultBlockState(), Vec3.ZERO, enderman, 4.0F, true);
+		GeneThrows.spawn(helper.getLevel(), helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(5, 3, 6))),
+				Blocks.DIRT.defaultBlockState(), Vec3.ZERO, enderman, 4.0F, false);
+		helper.succeedWhen(() -> {
+			// The blocks fall to the floor of the test area, at the height 0.
+			helper.assertBlockPresent(Blocks.DIRT, new BlockPos(5, 0, 2));
+			helper.assertTrue(helper.getLevel().getEntitiesOfClass(FallingBlockEntity.class,
+					new AABB(helper.absolutePos(BlockPos.ZERO)).inflate(8.0)).isEmpty(), "both blocks landed");
+			helper.assertBlockPresent(Blocks.AIR, new BlockPos(5, 0, 6));
+			helper.assertTrue(helper.getLevel().getEntitiesOfClass(ItemEntity.class,
+					new AABB(helper.absolutePos(BlockPos.ZERO)).inflate(8.0)).isEmpty(), "a thrown block drops no item");
+		});
 	}
 
 	static net.minecraft.world.entity.ai.goal.Goal lookGoal(Enderman enderman) {

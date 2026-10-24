@@ -600,6 +600,11 @@ ENDERMAN_CARRY_CLOSEUPS = {
                            ("All 6 Haulers", ENDERMAN["haulers"], False)], ALL_SIDES),
 }
 
+# The close-ups of the endermite. It has no babies. It uses the views of the
+# spider, which look down on a low mob.
+ENDERMITE = pg.ENDERMITE_FAMILIES
+ENDERMITE_CLOSEUPS = {}
+
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
     "husk": (pg.HUSK_PATH, pg.HUSK_BABY_PATH, HUSK_CLOSEUPS),
@@ -620,6 +625,7 @@ SPECIES = {
     "witch": (pg.WITCH_PATH, None, WITCH_CLOSEUPS),
     "enderman": (pg.ENDERMAN_PATH, None, ENDERMAN_CLOSEUPS),
     "enderman_carrying": (pg.ENDERMAN_PATH, None, ENDERMAN_CARRY_CLOSEUPS),
+    "endermite": (pg.ENDERMITE_PATH, None, ENDERMITE_CLOSEUPS),
 }
 
 

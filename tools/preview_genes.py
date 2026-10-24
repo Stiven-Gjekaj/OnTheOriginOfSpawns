@@ -61,6 +61,7 @@ EVOKER_PATH = "assets/minecraft/textures/entity/illager/evoker.png"
 WITCH_PATH = "assets/minecraft/textures/entity/witch/witch.png"
 ENDERMAN_PATH = "assets/minecraft/textures/entity/enderman/enderman.png"
 ENDERMAN_EYES_PATH = "assets/minecraft/textures/entity/enderman/enderman_eyes.png"
+ENDERMITE_PATH = "assets/minecraft/textures/entity/endermite/endermite.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -399,6 +400,17 @@ ENDERMAN_EXTRA = {
     "rainwalkers": [("All 6 + Phasers", ["pearl_heart", "far_step"], True, {})],
 }
 
+# The families of the endermite, from design/species/endermite.md.
+ENDERMITE_FAMILIES = {
+    "swarmers": ["brood_split", "mite_call", "pack_bite", "swarm_shell", "pearl_brood", "hive_bite"],
+    "tunnelers": ["stone_hide", "pebble_skin", "ambush_bite", "tunnel_sense", "rubble_burst", "warp_burrow"],
+    "leeches": ["blood_bite", "hunger_bite", "xp_leech", "weak_bite", "life_drain", "toxic_bite"],
+    "elders": ["long_life", "ageless", "hard_shell", "old_kin", "calm_mind", "thick_shell"],
+    "warpers": ["mite_blink", "warp_bite", "kin_mask", "pearl_leap", "void_skin", "ender_scent"],
+}
+
+ENDERMITE_EXTRA = {}
+
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
     "rushers": [("All 6 + Skulkers", ["leafskin", "patient"], True, {})],
@@ -579,6 +591,32 @@ ENDERMAN_CUBES = [
     ("left_leg", (56, 0), (-1, 0, -1), (2, 30, 2), True),
 ]
 ENDERMAN_JAW = [("head", (0, 16), (-4, -8, -4), (8, 8, 8), False, -0.5)]
+
+
+# The endermite, from EndermiteModel: four segments in a row, from the head
+# (segment0) at the front to the tip of the tail (segment3). Each stands on
+# the ground at y 24.
+ENDERMITE_PIVOTS = {"segment0": (0, 21, -3.5), "segment1": (0, 20, 0), "segment2": (0, 21, 3),
+                    "segment3": (0, 22, 4)}
+ENDERMITE_CUBES = [
+    ("segment0", (0, 0), (-2, 0, -1), (4, 3, 2), False),
+    ("segment1", (0, 5), (-3, 0, -2.5), (6, 4, 5), False),
+    ("segment2", (0, 14), (-1.5, 0, -0.5), (3, 3, 1), False),
+    ("segment3", (0, 18), (-0.5, 0, -0.5), (1, 2, 1), False),
+]
+
+
+def grow(cube, k):
+    """Return the cube k times larger, with the same texels. The previews draw the small endermite this way."""
+    cube = dict(cube)
+    cube["from"] = tuple(v * k for v in cube["from"])
+    cube["size"] = tuple(v * k for v in cube["size"])
+    cube["inflate"] = cube.get("inflate", 0.0) * k
+    cube["uv"] = tuple(v * k for v in cube["uv"])
+    cube["scale"] = cube.get("scale", 1.0) / k
+    if "pivot" in cube:
+        cube["pivot"] = tuple(v * k for v in cube["pivot"])
+    return cube
 
 
 def carried_block():
@@ -803,7 +841,7 @@ def split_image(identifier):
 MOB = {"split": False, "outer": None, "cubes": ZOMBIE_CUBES, "pivots": PIVOTS, "outer_target": False,
        "outer_inflate": 0.25, "extra": [], "held": [], "wraps": [], "eyes": None,
        "sheet_views": [(0, 0), (180, 0), (-35, 15)], "closeup_view": ((26, 40), (0, 5)),
-       "hidden": ()}
+       "hidden": (), "grow": 1}
 
 # The mushrooms on the head of the bogged, from BoggedModel: crossed planes
 # of 6x4 pixels, with the texture of the mob. Each is (uv, from, size,
@@ -999,12 +1037,17 @@ def cubes_of(tex, genes, baby=False):
                "scale": 1.0} for b, uv, f, s, m, inflate in MOB["wraps"]]
     for gene in genes:
         cubes += [c for c in gene_cubes(gene, tex, baby) if c["bone"] not in MOB["hidden"]]
+    if MOB["grow"] != 1:
+        cubes = [grow(c, MOB["grow"]) for c in cubes]
     return cubes
 
 
 def pivots(baby=False):
     """Return the pivots of the bones of the current species."""
-    return BABY_PIVOTS if baby else MOB["pivots"]
+    if baby:
+        return BABY_PIVOTS
+    k = MOB["grow"]
+    return {bone: tuple(v * k for v in p[:3]) + tuple(p[3:]) for bone, p in MOB["pivots"].items()}
 
 
 def view(tex, genes, back, turn=None, tilt=0, light=1.0, opacity=1.0, baby=False):
@@ -1115,6 +1158,7 @@ SPECIES = {
     "evoker": (EVOKER_PATH, None, EVOKER_FAMILIES, EVOKER_EXTRA, []),
     "witch": (WITCH_PATH, None, WITCH_FAMILIES, WITCH_EXTRA, []),
     "enderman": (ENDERMAN_PATH, None, ENDERMAN_FAMILIES, ENDERMAN_EXTRA, []),
+    "endermite": (ENDERMITE_PATH, None, ENDERMITE_FAMILIES, ENDERMITE_EXTRA, []),
 }
 
 
@@ -1134,6 +1178,7 @@ def set_mob(species):
                     else VINDICATOR_CUBES if species in ("vindicator", "evoker")
                     else WITCH_CUBES if species == "witch"
                     else ENDERMAN_CUBES if species in ("enderman", "enderman_carrying")
+                    else ENDERMITE_CUBES if species == "endermite"
                     else VINDICATOR_ATTACK_CUBES if species == "vindicator_attacking"
                     else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
     MOB["pivots"] = (PARCHED_PIVOTS if species == "parched" else CREEPER_PIVOTS if species == "creeper"
@@ -1144,6 +1189,7 @@ def set_mob(species):
                      else WITCH_PIVOTS if species == "witch"
                      else ENDERMAN_PIVOTS if species == "enderman"
                      else ENDERMAN_CARRY_PIVOTS if species == "enderman_carrying"
+                     else ENDERMITE_PIVOTS if species == "endermite"
                      else SKELETON_PIVOTS if skeleton else PIVOTS)
     # With its arms crossed, the vindicator or the evoker hides the arms
     # right_arm and left_arm, and their gene models.
@@ -1156,10 +1202,15 @@ def set_mob(species):
     VIEW_X, VIEW_Y, VIEW_W, VIEW_H = ((20, -2, 40, 26) if spider else (11, 13, 22, 39)
                                       if species in ("pillager", "vindicator", "evoker")
                                       else (12, 24, 24, 49) if species == "witch"
-                                      else (12, 23, 24, 50) if enderman else (11, 11, 22, 37))
-    MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if spider else [(0, 0), (180, 0), (-35, 15)]
+                                      else (12, 23, 24, 50) if enderman
+                                      else (17, -40, 34, 36) if species == "endermite" else (11, 11, 22, 37))
+    # The endermite is small, so the previews draw it 3 times larger.
+    MOB["grow"] = 3 if species == "endermite" else 1
+    low = spider or species == "endermite"
+    MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if low else [(0, 0), (180, 0), (-35, 15)]
     MOB["closeup_view"] = (((40, 34), (0, 13)) if spider else ((26, 50), (0, 0)) if species == "witch"
-                           else ((28, 52), (0, 2)) if enderman else ((26, 40), (0, 5)))
+                           else ((28, 52), (0, 2)) if enderman else ((34, 60), (0, 47)) if species == "endermite"
+                           else ((26, 40), (0, 5)))
     MOB["eyes"] = (find_zombie_texture(SPIDER_EYES_PATH) if spider
                    else find_zombie_texture(ENDERMAN_EYES_PATH) if enderman else None)
     illager = species in ("pillager", "vindicator", "vindicator_attacking", "evoker", "evoker_casting")

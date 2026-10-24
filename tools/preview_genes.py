@@ -59,6 +59,8 @@ PILLAGER_PATH = "assets/minecraft/textures/entity/illager/pillager.png"
 VINDICATOR_PATH = "assets/minecraft/textures/entity/illager/vindicator.png"
 EVOKER_PATH = "assets/minecraft/textures/entity/illager/evoker.png"
 WITCH_PATH = "assets/minecraft/textures/entity/witch/witch.png"
+ENDERMAN_PATH = "assets/minecraft/textures/entity/enderman/enderman.png"
+ENDERMAN_EYES_PATH = "assets/minecraft/textures/entity/enderman/enderman_eyes.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -378,6 +380,17 @@ WITCH_EXTRA = {
     "bog_hags": [("All 6 + Brewers", ["long_brew", "wither_brew"], True, {})],
 }
 
+# The families of the enderman, from design/species/enderman.md.
+ENDERMAN_FAMILIES = {
+    "phasers": ["far_step", "shadow_step", "pearl_heart", "blast_step", "sudden_step", "rain_step"],
+    "gazers": ["dread_gaze", "chill_gaze", "mind_gaze", "far_gaze", "weak_gaze", "hollow_eyes"],
+    "haulers": ["block_throw", "heavy_block", "stone_grip", "shield_breaker", "burden", "dust_throw"],
+    "bruisers": ["heavy_fist", "void_punch", "ender_rage", "stone_skin", "wide_swing", "long_reach"],
+    "rainwalkers": ["dry_skin", "storm_stride", "splash_proof", "wet_fury", "ice_veins", "mud_hands"],
+}
+
+ENDERMAN_EXTRA = {}
+
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
     "rushers": [("All 6 + Skulkers", ["leafskin", "patient"], True, {})],
@@ -538,6 +551,55 @@ WITCH_CUBES = [
 # larger than their boxes.
 WITCH_WRAPS = [("head", (0, 0), (0, 1, -6.75), (1, 1, 1), False, -0.25),
                ("hat4", (0, 95), (0, 0, 0), (1, 2, 1), False, 0.25)]
+
+# The enderman, from EndermanModel: a HumanoidModel with a head and a jaw
+# (the part "hat" of the head, 0.5 pixel smaller), a thin body, and four
+# limbs of 2x30x2 that all use uv (56, 0). When it carries a block, its arms
+# point forward by 0.5 radians, and the block is in its hands.
+ENDERMAN_PIVOTS = {
+    "head": (0, -13, 0), "body": (0, -14, 0), "right_arm": (-5, -12, 0), "left_arm": (5, -12, 0),
+    "right_leg": (-2, -5, 0), "left_leg": (2, -5, 0),
+}
+ENDERMAN_CARRY_PIVOTS = dict(ENDERMAN_PIVOTS, right_arm=(-5, -12, 0, -28.6, 0, 2.9),
+                             left_arm=(5, -12, 0, -28.6, 0, -2.9))
+ENDERMAN_CUBES = [
+    ("head", (0, 0), (-4, -8, -4), (8, 8, 8), False),
+    ("body", (32, 16), (-4, 0, -2), (8, 12, 4), False),
+    ("right_arm", (56, 0), (-1, -2, -1), (2, 30, 2), False),
+    ("left_arm", (56, 0), (-1, -2, -1), (2, 30, 2), True),
+    ("right_leg", (56, 0), (-1, 0, -1), (2, 30, 2), False),
+    ("left_leg", (56, 0), (-1, 0, -1), (2, 30, 2), True),
+]
+ENDERMAN_JAW = [("head", (0, 16), (-4, -8, -4), (8, 8, 8), False, -0.5)]
+
+
+def carried_block():
+    """Return the cube of a grass block in the hands of the enderman.
+
+    The previews draw it as a cube of 8 pixels, as the block layer does, in
+    front of the body, where the ends of the arms hold it, turned by 45
+    degrees.
+    """
+    top = find_zombie_texture("assets/minecraft/textures/block/grass_block_top.png").resize((8, 8))
+    side = find_zombie_texture("assets/minecraft/textures/block/grass_block_side.png").resize((8, 8))
+    dirt = find_zombie_texture("assets/minecraft/textures/block/dirt.png").resize((8, 8))
+    im = Image.new("RGBA", (32, 16), (0, 0, 0, 0))
+    grass = (110, 160, 70, 255)
+    for (u, v), face in (((8, 0), "top"), ((16, 0), "bottom"), ((0, 8), "side"), ((8, 8), "side"),
+                         ((16, 8), "side"), ((24, 8), "side")):
+        for y in range(8):
+            for x in range(8):
+                if face == "top":
+                    g = top.getpixel((x, y))
+                    c = tuple(int(g[i] * grass[i] / 255) for i in range(3)) + (255,)
+                else:
+                    c = (dirt if face == "bottom" else side).getpixel((x, y))
+                    if face == "side" and y < 2:
+                        c = grass
+                im.putpixel((u + x, v + y), c)
+    return [{"bone": "body", "uv": (0, 0), "from": (-4, 16, -18), "size": (8, 8, 8), "inflate": 0.0,
+             "mirror": False, "texture": im, "scale": 1.0, "pivot": (0, 20, -14), "rotation": (20, 45, 0)}]
+
 
 # The coat of the pillager: 0.5 pixel larger than the body, and 20 pixels
 # long, so that it hangs over the legs.
@@ -922,7 +984,8 @@ def cubes_of(tex, genes, baby=False):
     cubes += MOB["held"]
     # The glowing eyes of the spider draw over the marks, with full light.
     if MOB["eyes"]:
-        cubes += [{"bone": "head", "uv": (32, 4), "from": (-4, -4, -8), "size": (8, 8, 8), "inflate": 0.01,
+        head = next(c for c in MOB["cubes"] if c[0] == "head")
+        cubes += [{"bone": "head", "uv": head[1], "from": head[2], "size": head[3], "inflate": 0.01,
                    "mirror": False, "texture": MOB["eyes"], "scale": 1.0, "glow": True}]
     cubes += [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": inflate, "mirror": m, "texture": tex,
                "scale": 1.0} for b, uv, f, s, m, inflate in MOB["wraps"]]
@@ -1043,6 +1106,7 @@ SPECIES = {
     "vindicator": (VINDICATOR_PATH, None, VINDICATOR_FAMILIES, VINDICATOR_EXTRA, []),
     "evoker": (EVOKER_PATH, None, EVOKER_FAMILIES, EVOKER_EXTRA, []),
     "witch": (WITCH_PATH, None, WITCH_FAMILIES, WITCH_EXTRA, []),
+    "enderman": (ENDERMAN_PATH, None, ENDERMAN_FAMILIES, ENDERMAN_EXTRA, []),
 }
 
 
@@ -1051,6 +1115,7 @@ def set_mob(species):
     skeleton = species in ("skeleton", "stray", "bogged", "wither_skeleton", "parched")
     MOB["split"] = species == "drowned"
     global VIEW_X, VIEW_Y, VIEW_W, VIEW_H
+    enderman = species in ("enderman", "enderman_carrying")
     # The cave spider has the model of the spider. The game draws it at 0.7
     # times the size. The previews draw it at full size, so that the marks
     # show.
@@ -1060,6 +1125,7 @@ def set_mob(species):
                     else PILLAGER_CUBES if species in ("pillager", "evoker_casting")
                     else VINDICATOR_CUBES if species in ("vindicator", "evoker")
                     else WITCH_CUBES if species == "witch"
+                    else ENDERMAN_CUBES if species in ("enderman", "enderman_carrying")
                     else VINDICATOR_ATTACK_CUBES if species == "vindicator_attacking"
                     else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
     MOB["pivots"] = (PARCHED_PIVOTS if species == "parched" else CREEPER_PIVOTS if species == "creeper"
@@ -1068,6 +1134,8 @@ def set_mob(species):
                      else VINDICATOR_ATTACK_PIVOTS if species == "vindicator_attacking"
                      else EVOKER_CAST_PIVOTS if species == "evoker_casting"
                      else WITCH_PIVOTS if species == "witch"
+                     else ENDERMAN_PIVOTS if species == "enderman"
+                     else ENDERMAN_CARRY_PIVOTS if species == "enderman_carrying"
                      else SKELETON_PIVOTS if skeleton else PIVOTS)
     # With its arms crossed, the vindicator or the evoker hides the arms
     # right_arm and left_arm, and their gene models.
@@ -1079,14 +1147,17 @@ def set_mob(species):
     # The hat of the witch rises 12 pixels above the head.
     VIEW_X, VIEW_Y, VIEW_W, VIEW_H = ((20, -2, 40, 26) if spider else (11, 13, 22, 39)
                                       if species in ("pillager", "vindicator", "evoker")
-                                      else (12, 24, 24, 49) if species == "witch" else (11, 11, 22, 37))
+                                      else (12, 24, 24, 49) if species == "witch"
+                                      else (12, 23, 24, 50) if enderman else (11, 11, 22, 37))
     MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if spider else [(0, 0), (180, 0), (-35, 15)]
     MOB["closeup_view"] = (((40, 34), (0, 13)) if spider else ((26, 50), (0, 0)) if species == "witch"
-                           else ((26, 40), (0, 5)))
-    MOB["eyes"] = find_zombie_texture(SPIDER_EYES_PATH) if spider else None
+                           else ((28, 52), (0, 2)) if enderman else ((26, 40), (0, 5)))
+    MOB["eyes"] = (find_zombie_texture(SPIDER_EYES_PATH) if spider
+                   else find_zombie_texture(ENDERMAN_EYES_PATH) if enderman else None)
     illager = species in ("pillager", "vindicator", "vindicator_attacking", "evoker", "evoker_casting")
     MOB["wraps"] = (PARCHED_WRAPS if species == "parched" else PILLAGER_COAT if illager
-                    else PILLAGER_COAT + WITCH_WRAPS if species == "witch" else [])
+                    else PILLAGER_COAT + WITCH_WRAPS if species == "witch"
+                    else ENDERMAN_JAW if species in ("enderman", "enderman_carrying") else [])
     MOB["outer"] = ((find_zombie_texture(DROWNED_OUTER_PATH), find_zombie_texture(DROWNED_OUTER_BABY_PATH))
                     if species == "drowned" else (find_zombie_texture(STRAY_OUTER_PATH), None)
                     if species == "stray" else (find_zombie_texture(BOGGED_OUTER_PATH), None)
@@ -1097,7 +1168,8 @@ def set_mob(species):
     MOB["extra"] = BOGGED_MUSHROOMS if species == "bogged" else []
     # The wither skeleton holds a stone sword. The previews draw the body
     # at 1 times its size, so the sword is at that size too.
-    MOB["held"] = stone_sword() if species == "wither_skeleton" else []
+    MOB["held"] = (stone_sword() if species == "wither_skeleton"
+                   else carried_block() if species == "enderman_carrying" else [])
 
 
 def main(species="zombie"):

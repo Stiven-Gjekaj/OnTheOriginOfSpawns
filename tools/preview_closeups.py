@@ -562,6 +562,12 @@ WITCH_CLOSEUPS = {
                         ("All 6", WITCH["bog_hags"], False)], ALL_SIDES),
 }
 
+# The close-ups of the enderman. It has no babies. The close-ups of
+# "enderman_carrying" show it with a block in its hands.
+ENDERMAN = pg.ENDERMAN_FAMILIES
+ENDERMAN_CLOSEUPS = {}
+ENDERMAN_CARRY_CLOSEUPS = {}
+
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
     "husk": (pg.HUSK_PATH, pg.HUSK_BABY_PATH, HUSK_CLOSEUPS),
@@ -580,6 +586,8 @@ SPECIES = {
     "evoker": (pg.EVOKER_PATH, None, EVOKER_CLOSEUPS),
     "evoker_casting": (pg.EVOKER_PATH, None, EVOKER_CAST_CLOSEUPS),
     "witch": (pg.WITCH_PATH, None, WITCH_CLOSEUPS),
+    "enderman": (pg.ENDERMAN_PATH, None, ENDERMAN_CLOSEUPS),
+    "enderman_carrying": (pg.ENDERMAN_PATH, None, ENDERMAN_CARRY_CLOSEUPS),
 }
 
 

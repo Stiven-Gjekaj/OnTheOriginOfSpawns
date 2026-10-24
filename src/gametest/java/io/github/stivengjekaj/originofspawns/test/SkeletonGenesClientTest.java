@@ -34,8 +34,10 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.entity.monster.illager.Evoker;
 import net.minecraft.world.entity.monster.illager.Vindicator;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -103,6 +105,7 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			checkMarkAndModel(context, singleplayer, EntityTypes.ENDERMITE, "test_endermite_mark",
 					Identifier.withDefaultNamespace("textures/entity/endermite/endermite.png"), "endermite");
 			checkArmModelOnlyWhileTheArmsAreApart(context, singleplayer);
+			checkEndermanArmModelFollowsTheCarryPose(context, singleplayer);
 			checkEvokerArmModelOnlyWhileItCasts(context, singleplayer);
 		}
 	}
@@ -239,6 +242,117 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 		});
 		if (failure != null) {
 			throw new AssertionError(failure);
+		}
+	}
+
+	/**
+	 * Spawns two endermen with a gene model on the right arm. One carries a block, so its arms are raised. The gene
+	 * model moves with the arm, so its pose is not the pose of the other one. The check also asks that the gene model
+	 * layer comes after the vanilla eye layer, so a glowing plate in front of the eyes draws after the eyes.
+	 */
+	private static void checkEndermanArmModelFollowsTheCarryPose(ClientGameTestContext context,
+			TestSingleplayerContext singleplayer) {
+		Identifier gene = Identifier.fromNamespaceAndPath("originofspawns_test", "test_enderman_arm");
+		singleplayer.getServer().runOnServer(server -> {
+			ServerPlayer player = server.getPlayerList().getPlayers().getFirst();
+			spawn(player, EntityTypes.ENDERMAN, player.position().add(1.5, 0.0, 4.0), List.of(gene));
+			spawn(player, EntityTypes.ENDERMAN, player.position().add(-1.5, 0.0, 4.0), List.of(gene));
+			player.level().getEntitiesOfClass(Enderman.class, player.getBoundingBox().inflate(8.0),
+					enderman -> enderman.getX() > player.getX() && enderman.getAttached(ModAttachments.GENES) != null
+							&& enderman.getAttached(ModAttachments.GENES).genes().contains(gene))
+					.forEach(enderman -> enderman.setCarriedBlock(Blocks.DIRT.defaultBlockState()));
+		});
+		context.waitTicks(20);
+		String failure = context.computeOnClient(client -> {
+			List<Enderman> endermen = client.level.getEntitiesOfClass(Enderman.class,
+					client.player.getBoundingBox().inflate(8.0), enderman -> {
+						CarriedGenes genes = enderman.getAttached(ModAttachments.GENES);
+						return genes != null && genes.genes().contains(gene);
+					});
+			if (endermen.size() != 2) {
+				return "The client has " + endermen.size() + " endermen with the arm gene, not 2";
+			}
+			EntityRenderDispatcher dispatcher = client.getEntityRenderDispatcher();
+			List<org.joml.Matrix4f> carry = null;
+			List<org.joml.Matrix4f> free = null;
+			for (Enderman enderman : endermen) {
+				EntityRenderState state = dispatcher.extractEntity(enderman, 1.0F);
+				var renderer = (LivingEntityRenderer<?, ?, ?>) dispatcher.getRenderer(enderman);
+				String order = layerOrder(renderer);
+				if (order != null) {
+					return order;
+				}
+				poseModel(renderer, state);
+				List<org.joml.Matrix4f> poses = drawnPoses(renderer, state);
+				if (poses.isEmpty()) {
+					return "The gene model layer draws no arm model on the enderman";
+				}
+				if (enderman.getCarriedBlock() != null) {
+					carry = poses;
+				} else {
+					free = poses;
+				}
+			}
+			if (carry == null || free == null) {
+				return "The client does not see the carried block of the enderman";
+			}
+			return carry.getFirst().equals(free.getFirst(), 1.0E-4F)
+					? "The arm model does not move with the raised arm of the enderman that carries a block" : null;
+		});
+		if (failure != null) {
+			throw new AssertionError(failure);
+		}
+	}
+
+	/**
+	 * Returns a failure if the gene model layer of the renderer comes before the vanilla eye layer, or null.
+	 */
+	@SuppressWarnings("rawtypes")
+	private static String layerOrder(LivingEntityRenderer<?, ?, ?> renderer) {
+		List<RenderLayer> layers = layersOf(renderer);
+		int eyes = -1;
+		int genes = -1;
+		for (int i = 0; i < layers.size(); i++) {
+			if (layers.get(i) instanceof net.minecraft.client.renderer.entity.layers.EyesLayer<?, ?>) {
+				eyes = i;
+			} else if (layers.get(i) instanceof GeneModelLayer<?, ?>) {
+				genes = i;
+			}
+		}
+		return eyes >= 0 && genes > eyes ? null : "The gene model layer is at " + genes + ", the eye layer at " + eyes;
+	}
+
+	/**
+	 * Returns the poses of the parts that the gene model layer draws, from the start of the layer.
+	 */
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	private static List<org.joml.Matrix4f> drawnPoses(LivingEntityRenderer<?, ?, ?> renderer, EntityRenderState state) {
+		List<org.joml.Matrix4f> poses = new java.util.ArrayList<>();
+		Object[] collector = new Object[1];
+		collector[0] = Proxy.newProxyInstance(SubmitNodeCollector.class.getClassLoader(),
+				new Class<?>[] {SubmitNodeCollector.class}, (proxy, method, args) -> {
+					if (method.getName().equals("submitModelPart") && args[1] instanceof PoseStack stack) {
+						poses.add(new org.joml.Matrix4f(stack.last().pose()));
+					}
+					return method.getReturnType().isInstance(proxy) ? proxy : null;
+				});
+		for (RenderLayer layer : layersOf(renderer)) {
+			if (layer instanceof GeneModelLayer<?, ?> geneLayer) {
+				((GeneModelLayer) geneLayer).submit(new PoseStack(), (SubmitNodeCollector) collector[0],
+						LightCoordsUtil.FULL_BRIGHT, (LivingEntityRenderState) state, 0.0F, 0.0F);
+			}
+		}
+		return poses;
+	}
+
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	private static List<RenderLayer> layersOf(LivingEntityRenderer<?, ?, ?> renderer) {
+		try {
+			Field field = LivingEntityRenderer.class.getDeclaredField("layers");
+			field.setAccessible(true);
+			return (List<RenderLayer>) field.get(renderer);
+		} catch (ReflectiveOperationException exception) {
+			throw new AssertionError("Cannot read the layers of the renderer", exception);
 		}
 	}
 

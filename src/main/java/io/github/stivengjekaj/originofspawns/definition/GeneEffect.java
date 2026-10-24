@@ -196,7 +196,8 @@ public sealed interface GeneEffect {
 			Map.entry("blast_teleport", BlastTeleport.CODEC),
 			Map.entry("aimed_teleport", AimedTeleport.CODEC),
 			Map.entry("teleport_strike", TeleportStrike.CODEC),
-			Map.entry("stare_effect", StareEffect.CODEC)
+			Map.entry("stare_effect", StareEffect.CODEC),
+			Map.entry("stare_range", StareRange.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3166,6 +3167,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "stare_effect";
+		}
+	}
+
+	/**
+	 * Multiplies the distance in which the mob sees a stare. The distance is the follow range of the mob, 64 blocks
+	 * for an enderman. It changes the anger of an enderman and the effects of {@code stare_effect}.
+	 */
+	record StareRange(float multiplier) implements GeneEffect {
+		public static final MapCodec<StareRange> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 10.0F).fieldOf("multiplier").forGetter(StareRange::multiplier)
+		).apply(instance, StareRange::new));
+
+		@Override
+		public String type() {
+			return "stare_range";
 		}
 	}
 }

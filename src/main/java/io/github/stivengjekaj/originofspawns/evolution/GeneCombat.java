@@ -198,10 +198,25 @@ public final class GeneCombat {
 	}
 
 	/**
-	 * Returns the distance in which the mob sees a stare: its follow range.
+	 * Returns the distance in which the mob sees a stare: its follow range, with the stare range multipliers of its
+	 * genes.
 	 */
 	public static double stareRange(Mob mob) {
-		return mob.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.FOLLOW_RANGE);
+		return mob.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.FOLLOW_RANGE)
+				* stareRangeMultiplier(mob);
+	}
+
+	/**
+	 * Returns the product of the stare range multipliers of the mob.
+	 */
+	public static float stareRangeMultiplier(Mob mob) {
+		float multiplier = 1.0F;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.StareRange range) {
+				multiplier *= range.multiplier();
+			}
+		}
+		return multiplier;
 	}
 
 	/**

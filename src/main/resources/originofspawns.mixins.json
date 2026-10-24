@@ -12,6 +12,7 @@
 		"CreeperAccessor",
 		"CreeperMixin",
 		"CrossbowItemMixin",
+		"EndermanLookForPlayerGoalMixin",
 		"EndermanMixin",
 		"EntityMixin",
 		"EvokerAttackSpellGoalMixin",

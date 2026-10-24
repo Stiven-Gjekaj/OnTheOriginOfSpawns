@@ -5,6 +5,7 @@ import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneTeleports;
+import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -202,6 +203,31 @@ public class EndermanEffectsTest {
 		player.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
 		// The behavior tick of the enderman gives the effect of its gene.
 		helper.succeedWhen(() -> helper.assertTrue(player.hasEffect(MobEffects.DARKNESS), "the gene gives Darkness"));
+	}
+
+	@GameTest
+	public void farGazeSeesAStareFromTwoTimesAsFar(GameTestHelper helper) {
+		// A follow range of 2 blocks tests the same code as the vanilla 64 blocks, and it stays in the test area.
+		Enderman plain = endermanWith(helper, new BlockPos(2, 1, 5));
+		Enderman far = endermanWith(helper, new BlockPos(5, 1, 5), "test_far_gaze");
+		plain.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(2.0);
+		far.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(2.0);
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(2, 1, 2))));
+		player.lookAt(EntityAnchorArgument.Anchor.EYES, plain.getEyePosition());
+		helper.assertFalse(GeneCombat.staredBy(plain, player), "a plain enderman does not see a stare from 3 blocks");
+		helper.assertFalse(lookGoal(plain).canUse(), "a plain enderman does not get angry");
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(5, 1, 2))));
+		player.lookAt(EntityAnchorArgument.Anchor.EYES, far.getEyePosition());
+		helper.assertTrue(GeneCombat.staredBy(far, player), "the far gaze sees a stare from 3 blocks");
+		helper.assertTrue(lookGoal(far).canUse(), "the enderman gets angry");
+		helper.succeed();
+	}
+
+	static net.minecraft.world.entity.ai.goal.Goal lookGoal(Enderman enderman) {
+		return ((MobAccessor) enderman).originofspawns$targetSelector().getAvailableGoals().stream()
+				.map(net.minecraft.world.entity.ai.goal.WrappedGoal::getGoal)
+				.filter(goal -> goal.getClass().getSimpleName().equals("EndermanLookForPlayerGoal")).findFirst().orElseThrow();
 	}
 
 	static Enderman endermanWith(GameTestHelper helper, BlockPos pos, String... genes) {

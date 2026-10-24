@@ -452,6 +452,7 @@ public final class GeneBehaviors {
 				case GeneEffect.Hex hex -> hex(mob, level, hex);
 				case GeneEffect.HealThrow heal -> healThrow(mob, level, heal);
 				case GeneEffect.TeleportToTarget teleport -> GeneTeleports.toTarget(mob, level, teleport);
+				case GeneEffect.StareEffect stare -> stareEffect(mob, level, stare);
 				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
 				case GeneEffect.FrenziedTargeting frenzy
 						when now % Math.max(1, Math.round(frenzy.intervalSeconds() * 20.0F)) < TICK_INTERVAL
@@ -1168,6 +1169,23 @@ public final class GeneBehaviors {
 		updated.put(drink, now);
 		witch.setAttached(ModAttachments.DRINK_TIMES, updated);
 		return true;
+	}
+
+	/**
+	 * Gives the effect of the stare to each player that stares at the face of the mob now.
+	 *
+	 * @return the number of players that got the effect
+	 */
+	public static int stareEffect(Mob mob, ServerLevel level, GeneEffect.StareEffect stare) {
+		int stared = 0;
+		for (Player player : level.players()) {
+			if (player.isAlive() && !player.isSpectator() && GeneCombat.staredBy(mob, player)) {
+				player.addEffect(new MobEffectInstance(stare.effect(), Math.round(stare.seconds() * 20.0F),
+						stare.amplifier()), mob);
+				stared++;
+			}
+		}
+		return stared;
 	}
 
 	/**

@@ -2,20 +2,27 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneTeleports;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Enderman;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
@@ -169,6 +176,29 @@ public class EndermanEffectsTest {
 		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(pig, hit, 10.0F) - 13.0F) < 0.001F, "30% more damage");
 		helper.assertValueEqual(GeneCombat.modifyDamage(pig, hit, 10.0F), 10.0F, "only the first hit");
 		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 60)
+	public void dreadGazeGivesDarknessToAPlayerThatStares(GameTestHelper helper) {
+		Enderman enderman = endermanWith(helper, new BlockPos(4, 1, 5), "test_dread_gaze");
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(4, 1, 1))));
+		player.lookAt(EntityAnchorArgument.Anchor.EYES, enderman.getEyePosition());
+		var dread = new GeneEffect.StareEffect(MobEffects.DARKNESS, 4.0F, 0);
+		helper.assertTrue(GeneCombat.staredBy(enderman, player), "the player stares at the enderman");
+		helper.assertValueEqual(GeneBehaviors.stareEffect(enderman, helper.getLevel(), dread), 1, "one player stares");
+		helper.assertTrue(player.hasEffect(MobEffects.DARKNESS), "the player gets Darkness");
+		player.removeAllEffects();
+		player.lookAt(EntityAnchorArgument.Anchor.EYES, player.getEyePosition().add(0.0, 0.0, -4.0));
+		helper.assertValueEqual(GeneBehaviors.stareEffect(enderman, helper.getLevel(), dread), 0,
+				"a player that looks away does not stare");
+		player.lookAt(EntityAnchorArgument.Anchor.EYES, enderman.getEyePosition());
+		player.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.CARVED_PUMPKIN));
+		helper.assertValueEqual(GeneBehaviors.stareEffect(enderman, helper.getLevel(), dread), 0,
+				"a carved pumpkin stops the stare");
+		player.setItemSlot(EquipmentSlot.HEAD, ItemStack.EMPTY);
+		// The behavior tick of the enderman gives the effect of its gene.
+		helper.succeedWhen(() -> helper.assertTrue(player.hasEffect(MobEffects.DARKNESS), "the gene gives Darkness"));
 	}
 
 	static Enderman endermanWith(GameTestHelper helper, BlockPos pos, String... genes) {

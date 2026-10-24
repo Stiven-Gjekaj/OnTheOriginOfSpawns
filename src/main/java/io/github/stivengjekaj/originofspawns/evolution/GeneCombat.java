@@ -189,6 +189,22 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Returns true if the player stares at the face of the mob now: the vanilla stare test of the enderman, in the
+	 * stare range of the mob. A carved pumpkin on the head of the player stops the stare.
+	 */
+	public static boolean staredBy(Mob mob, Player player) {
+		return mob.distanceTo(player) <= stareRange(mob) && LivingEntity.PLAYER_NOT_WEARING_DISGUISE_ITEM.test(player)
+				&& mob.isLookingAtMe(player, 0.025, true, false, mob.getEyeY());
+	}
+
+	/**
+	 * Returns the distance in which the mob sees a stare: its follow range.
+	 */
+	public static double stareRange(Mob mob) {
+		return mob.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.FOLLOW_RANGE);
+	}
+
+	/**
 	 * Returns true if the cooldown of the effect is over for the mob. Each effect has its own cooldown.
 	 */
 	public static boolean ready(LivingEntity mob, GeneEffect effect, float cooldownSeconds) {

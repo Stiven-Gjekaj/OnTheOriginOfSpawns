@@ -195,7 +195,8 @@ public sealed interface GeneEffect {
 			Map.entry("escape_teleport", EscapeTeleport.CODEC),
 			Map.entry("blast_teleport", BlastTeleport.CODEC),
 			Map.entry("aimed_teleport", AimedTeleport.CODEC),
-			Map.entry("teleport_strike", TeleportStrike.CODEC)
+			Map.entry("teleport_strike", TeleportStrike.CODEC),
+			Map.entry("stare_effect", StareEffect.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3148,6 +3149,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "teleport_strike";
+		}
+	}
+
+	/**
+	 * A player that stares at the face of the mob gets the status effect. The stare is the vanilla stare test of the
+	 * enderman, in the follow range of the mob. A carved pumpkin on the head of the player stops it.
+	 */
+	record StareEffect(Holder<MobEffect> effect, float seconds, int amplifier) implements GeneEffect {
+		public static final MapCodec<StareEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(StareEffect::effect),
+				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(StareEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(StareEffect::amplifier)
+		).apply(instance, StareEffect::new));
+
+		@Override
+		public String type() {
+			return "stare_effect";
 		}
 	}
 }

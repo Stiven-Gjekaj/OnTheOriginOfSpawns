@@ -224,6 +224,16 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Returns true if the damage comes from a splash potion of water, which hurts the mobs that water hurts.
+	 */
+	private static boolean waterSplash(DamageSource source) {
+		return source.getDirectEntity() instanceof AbstractThrownPotion potion
+				&& potion.getItem().getOrDefault(net.minecraft.core.component.DataComponents.POTION_CONTENTS,
+						net.minecraft.world.item.alchemy.PotionContents.EMPTY)
+				.is(net.minecraft.tags.PotionTags.HURTS_WATER_SENSITIVE_ENTITIES);
+	}
+
+	/**
 	 * Returns true if the cooldown of the effect is over for the mob. Each effect has its own cooldown.
 	 */
 	public static boolean ready(LivingEntity mob, GeneEffect effect, float cooldownSeconds) {
@@ -425,6 +435,8 @@ public final class GeneCombat {
 				case GeneEffect.ShareDamage share when !SHARING.get() && victim.level() instanceof ServerLevel level ->
 						result -= shareDamage(victim, level, share, result);
 				case GeneEffect.DamageTaken taken when source.is(taken.damageTypes()) -> result *= taken.multiplier();
+				case GeneEffect.WaterDamageTaken water when victim.isSensitiveToWater() && (waterSplash(source)
+						|| !water.splashOnly() && source.is(DamageTypes.DROWN)) -> result *= water.multiplier();
 				case GeneEffect.Sunburn sunburn when source.is(DamageTypeTags.IS_FIRE)
 						&& Evolution.isSunBurning(victim, victim.level().getGameTime()) -> result *= sunburn.multiplier();
 				case GeneEffect.DamageTakenWhen taken when test(victim, taken.when(), taken.radius())

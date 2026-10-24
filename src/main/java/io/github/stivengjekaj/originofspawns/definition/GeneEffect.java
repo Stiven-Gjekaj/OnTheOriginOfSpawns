@@ -204,7 +204,8 @@ public sealed interface GeneEffect {
 			Map.entry("thrown_block_effect", ThrownBlockEffect.CODEC),
 			Map.entry("thrown_block_shield", ThrownBlockShield.CODEC),
 			Map.entry("pickup_blocks", PickupBlocks.CODEC),
-			Map.entry("teleport_target_on_hit", TeleportTargetOnHit.CODEC)
+			Map.entry("teleport_target_on_hit", TeleportTargetOnHit.CODEC),
+			Map.entry("water_damage_taken", WaterDamageTaken.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3304,6 +3305,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "teleport_target_on_hit";
+		}
+	}
+
+	/**
+	 * Multiplies the damage that water does to a mob that water hurts, such as the enderman: the damage of water and
+	 * rain, and the damage of a splash potion of water. With {@code splash_only}, it changes only the damage of the
+	 * splash potion.
+	 */
+	record WaterDamageTaken(float multiplier, boolean splashOnly) implements GeneEffect {
+		public static final MapCodec<WaterDamageTaken> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).fieldOf("multiplier").forGetter(WaterDamageTaken::multiplier),
+				Codec.BOOL.optionalFieldOf("splash_only", false).forGetter(WaterDamageTaken::splashOnly)
+		).apply(instance, WaterDamageTaken::new));
+
+		@Override
+		public String type() {
+			return "water_damage_taken";
 		}
 	}
 }

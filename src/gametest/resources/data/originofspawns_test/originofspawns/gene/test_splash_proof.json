@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "water_damage_taken", "multiplier": 0, "splash_only": true }],
+	"mutation_rate": 0
+}

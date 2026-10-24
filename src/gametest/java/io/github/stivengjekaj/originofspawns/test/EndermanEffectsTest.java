@@ -383,6 +383,27 @@ public class EndermanEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void waterDamageChangesTheDamageOfWaterRainAndASplashOfWater(GameTestHelper helper) {
+		Enderman dry = endermanWith(helper, new BlockPos(1, 1, 1), "test_dry_skin");
+		Enderman proof = endermanWith(helper, new BlockPos(1, 1, 5), "test_splash_proof");
+		var sources = helper.getLevel().damageSources();
+		var water = new net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion(helper.getLevel(),
+				dry, net.minecraft.world.item.alchemy.PotionContents.createItemStack(Items.SPLASH_POTION,
+						net.minecraft.world.item.alchemy.Potions.WATER));
+		var harming = new net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion(helper.getLevel(),
+				dry, net.minecraft.world.item.alchemy.PotionContents.createItemStack(Items.SPLASH_POTION,
+						net.minecraft.world.item.alchemy.Potions.HARMING));
+		DamageSource splash = sources.indirectMagic(water, null);
+		helper.assertValueEqual(GeneCombat.modifyDamage(dry, sources.drown(), 10.0F), 5.0F, "half the damage of water and rain");
+		helper.assertValueEqual(GeneCombat.modifyDamage(dry, splash, 10.0F), 5.0F, "half the damage of a splash of water");
+		helper.assertValueEqual(GeneCombat.modifyDamage(dry, sources.indirectMagic(harming, null), 10.0F), 10.0F,
+				"a potion of Harming is not water");
+		helper.assertValueEqual(GeneCombat.modifyDamage(proof, splash, 10.0F), 0.0F, "a splash of water does no damage");
+		helper.assertValueEqual(GeneCombat.modifyDamage(proof, sources.drown(), 10.0F), 10.0F, "the rain still hurts");
+		helper.succeed();
+	}
+
 	static net.minecraft.world.entity.ai.goal.Goal lookGoal(Enderman enderman) {
 		return ((MobAccessor) enderman).originofspawns$targetSelector().getAvailableGoals().stream()
 				.map(net.minecraft.world.entity.ai.goal.WrappedGoal::getGoal)

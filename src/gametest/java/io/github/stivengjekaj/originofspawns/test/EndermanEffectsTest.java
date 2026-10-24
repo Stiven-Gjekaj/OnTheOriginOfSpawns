@@ -143,6 +143,19 @@ public class EndermanEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(maxTicks = 60)
+	public void rainStepAimsTheRandomTeleportAtTheTargetInWater(GameTestHelper helper) {
+		Enderman enderman = endermanWith(helper, new BlockPos(1, 1, 1), "test_rain_step");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 5));
+		enderman.setTarget(pig);
+		helper.assertTrue(GeneTeleports.aimedTarget(enderman) == null, "on dry land the teleport stays random");
+		// The water hurts the enderman, and the hurt starts its teleport. The teleport aims at the pig, so it stays in
+		// the test area.
+		helper.setBlock(new BlockPos(1, 1, 1), Blocks.WATER);
+		helper.succeedWhen(() -> helper.assertTrue(enderman.distanceTo(pig) < 3.0F,
+				"the enderman teleports next to the pig, it is " + enderman.distanceTo(pig) + " away"));
+	}
+
 	static Enderman endermanWith(GameTestHelper helper, BlockPos pos, String... genes) {
 		Enderman enderman = EntityTypes.ENDERMAN.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
 		enderman.setAttached(ModAttachments.GENES, new CarriedGenes(java.util.Arrays.stream(genes)

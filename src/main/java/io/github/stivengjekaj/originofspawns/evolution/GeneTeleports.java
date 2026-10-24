@@ -121,6 +121,18 @@ public final class GeneTeleports {
 	}
 
 	/**
+	 * Returns the target that a random teleport of the mob goes to now, or null for a vanilla random teleport.
+	 */
+	public static LivingEntity aimedTarget(Mob mob) {
+		LivingEntity target = mob.getTarget();
+		if (target == null || !target.isAlive()) {
+			return null;
+		}
+		return GeneEffects.of(mob).anyMatch(effect -> effect instanceof GeneEffect.AimedTeleport aimed
+				&& GeneCombat.test(mob, aimed.when())) ? target : null;
+	}
+
+	/**
 	 * Teleports the mob away from an explosion, if the cooldown is over.
 	 *
 	 * @return true if the mob teleported, so the explosion does no damage to it

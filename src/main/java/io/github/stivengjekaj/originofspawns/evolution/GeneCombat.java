@@ -176,6 +176,7 @@ public final class GeneCombat {
 			case IN_RAIN -> entity.level().isRainingAt(entity.blockPosition()) || entity.level().isRainingAt(
 					BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ()));
 			case TARGET_UNREACHABLE -> entity instanceof Mob mob && mob.getTarget() != null && unreachable(mob, mob.getTarget());
+			case WET -> entity.isInWaterOrRain();
 		};
 	}
 

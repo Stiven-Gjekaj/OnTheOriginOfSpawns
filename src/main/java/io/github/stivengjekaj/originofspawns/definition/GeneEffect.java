@@ -193,7 +193,8 @@ public sealed interface GeneEffect {
 			Map.entry("teleport_to_target", TeleportToTarget.CODEC),
 			Map.entry("teleport_behind", TeleportBehind.CODEC),
 			Map.entry("escape_teleport", EscapeTeleport.CODEC),
-			Map.entry("blast_teleport", BlastTeleport.CODEC)
+			Map.entry("blast_teleport", BlastTeleport.CODEC),
+			Map.entry("aimed_teleport", AimedTeleport.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -490,7 +491,11 @@ public sealed interface GeneEffect {
 		/**
 		 * The mob has a target, and it finds no path that reaches the target.
 		 */
-		TARGET_UNREACHABLE;
+		TARGET_UNREACHABLE,
+		/**
+		 * The mob is in water, or rain falls on it.
+		 */
+		WET;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 
@@ -3110,6 +3115,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "blast_teleport";
+		}
+	}
+
+	/**
+	 * While the state is true, each random teleport of an enderman goes to a free place next to its target. The
+	 * random teleports are the teleports away from water, from a projectile, and from the daylight. With no target or
+	 * no free place, the enderman teleports to a random place, as in vanilla.
+	 */
+	record AimedTeleport(When when) implements GeneEffect {
+		public static final MapCodec<AimedTeleport> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(AimedTeleport::when)
+		).apply(instance, AimedTeleport::new));
+
+		@Override
+		public String type() {
+			return "aimed_teleport";
 		}
 	}
 }

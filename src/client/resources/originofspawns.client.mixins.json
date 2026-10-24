@@ -10,6 +10,7 @@
 		"CreeperRendererMixin",
 		"DrownedOuterLayerMixin",
 		"EndermanRendererMixin",
+		"EndermiteRendererMixin",
 		"EntityRenderDispatcherMixin",
 		"EvokerRendererMixin",
 		"IllagerRendererMixin",

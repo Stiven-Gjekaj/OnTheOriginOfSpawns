@@ -29,6 +29,7 @@ import net.minecraft.client.renderer.entity.AbstractSkeletonRenderer;
 import net.minecraft.client.renderer.entity.AbstractZombieRenderer;
 import net.minecraft.client.renderer.entity.CreeperRenderer;
 import net.minecraft.client.renderer.entity.EndermanRenderer;
+import net.minecraft.client.renderer.entity.EndermiteRenderer;
 import net.minecraft.client.renderer.entity.EvokerRenderer;
 import net.minecraft.client.renderer.entity.PillagerRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
@@ -75,6 +76,10 @@ public class OriginOfSpawnsClient implements ClientModInitializer {
 						(RenderLayerParent<EvokerRenderState, IllagerModel<EvokerRenderState>>) renderer));
 			} else if (renderer instanceof EndermanRenderer enderman) {
 				helper.register(new GeneModelLayer<EndermanRenderState, EndermanModel<EndermanRenderState>>(enderman));
+			} else if (renderer instanceof EndermiteRenderer) {
+				// The endermite model takes any entity render state, so the layer sees it as a model of the living one.
+				helper.register(new GeneModelLayer<>(
+						(RenderLayerParent<LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) (Object) renderer));
 			} else if (renderer instanceof WitchRenderer witch) {
 				helper.register(new GeneModelLayer<WitchRenderState, WitchModel>(witch));
 			} else if (renderer instanceof SpiderRenderer<?>) {

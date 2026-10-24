@@ -75,7 +75,14 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		/**
 		 * The crossed arms of a witch. They are one part.
 		 */
-		ARMS;
+		ARMS,
+		/**
+		 * The four parts of an endermite, from the front: the head, the body, the tail, and the tip of the tail.
+		 */
+		SEGMENT0,
+		SEGMENT1,
+		SEGMENT2,
+		SEGMENT3;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

@@ -99,6 +99,9 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 					Identifier.withDefaultNamespace("textures/entity/witch/witch.png"), "witch");
 			checkMarkAndModel(context, singleplayer, EntityTypes.ENDERMAN, "test_enderman_mark",
 					Identifier.withDefaultNamespace("textures/entity/enderman/enderman.png"), "enderman");
+			// The endermite gene model sits on segment1, the body.
+			checkMarkAndModel(context, singleplayer, EntityTypes.ENDERMITE, "test_endermite_mark",
+					Identifier.withDefaultNamespace("textures/entity/endermite/endermite.png"), "endermite");
 			checkArmModelOnlyWhileTheArmsAreApart(context, singleplayer);
 			checkEvokerArmModelOnlyWhileItCasts(context, singleplayer);
 		}

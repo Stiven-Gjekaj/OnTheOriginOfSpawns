@@ -603,7 +603,33 @@ ENDERMAN_CARRY_CLOSEUPS = {
 # The close-ups of the endermite. It has no babies. It uses the views of the
 # spider, which look down on a low mob.
 ENDERMITE = pg.ENDERMITE_FAMILIES
-ENDERMITE_CLOSEUPS = {}
+ENDERMITE_CLOSEUPS = {
+    "endermite_swarmers": ("Swarmer marks and models",
+                           [("Mite Call + Hive Bite", ["mite_call", "hive_bite"], False),
+                            ("Pearl Brood + Pack Bite", ["pearl_brood", "pack_bite"], False),
+                            ("Brood Split + Swarm Shell", ["brood_split", "swarm_shell"], False),
+                            ("All 6", ENDERMITE["swarmers"], False)], SPIDER_VIEWS),
+    "endermite_tunnelers": ("Tunneler marks and models",
+                            [("Ambush Bite + Tunnel Sense", ["ambush_bite", "tunnel_sense"], False),
+                             ("Stone Hide + Warp Burrow", ["stone_hide", "warp_burrow"], False),
+                             ("Pebble Skin + Rubble Burst", ["pebble_skin", "rubble_burst"], False),
+                             ("All 6", ENDERMITE["tunnelers"], False)], SPIDER_VIEWS),
+    "endermite_leeches": ("Leech marks and models",
+                          [("Toxic Bite + Hunger Bite", ["toxic_bite", "hunger_bite"], False),
+                           ("Blood Bite + Life Drain", ["blood_bite", "life_drain"], False),
+                           ("Weak Bite + Xp Leech", ["weak_bite", "xp_leech"], False),
+                           ("All 6", ENDERMITE["leeches"], False)], SPIDER_VIEWS),
+    "endermite_elders": ("Elder marks and models",
+                         [("Hard Shell + Calm Mind", ["hard_shell", "calm_mind"], False),
+                          ("Ageless + Old Kin", ["ageless", "old_kin"], False),
+                          ("Long Life", ["long_life"], False), ("Thick Shell", ["thick_shell"], False),
+                          ("All 6", ENDERMITE["elders"], False)], SPIDER_VIEWS),
+    "endermite_warpers": ("Warper marks and models",
+                          [("Pearl Leap + Warp Bite", ["pearl_leap", "warp_bite"], False),
+                           ("Kin Mask + Mite Blink", ["kin_mask", "mite_blink"], False),
+                           ("Void Skin + Ender Scent", ["void_skin", "ender_scent"], False),
+                           ("All 6", ENDERMITE["warpers"], False)], SPIDER_NIGHT_VIEWS),
+}
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),

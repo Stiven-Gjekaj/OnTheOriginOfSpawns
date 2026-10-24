@@ -409,7 +409,14 @@ ENDERMITE_FAMILIES = {
     "warpers": ["mite_blink", "warp_bite", "kin_mask", "pearl_leap", "void_skin", "ender_scent"],
 }
 
-ENDERMITE_EXTRA = {}
+ENDERMITE_EXTRA = {
+    "swarmers": [("All 6 + Tunnelers", ["ambush_bite", "stone_hide"], True, {})],
+    "tunnelers": [("All 6 + Leeches", ["toxic_bite", "hunger_bite"], True, {})],
+    "leeches": [("All 6 + Elders", ["hard_shell", "old_kin"], True, {})],
+    "elders": [("All 6 + Warpers", ["pearl_leap", "mite_blink"], True, {})],
+    "warpers": [("All 6 at night", [], True, {"light": 0.18}),
+                ("All 6 + Swarmers", ["mite_call", "pearl_brood"], True, {})],
+}
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],

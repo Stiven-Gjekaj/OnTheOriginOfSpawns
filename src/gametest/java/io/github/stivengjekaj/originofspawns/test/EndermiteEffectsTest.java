@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.mixin.EndermiteAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -14,6 +15,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.phys.Vec3;
 
@@ -64,6 +66,20 @@ public class EndermiteEffectsTest {
 			helper.assertFalse(ageless.isRemoved(), "an ageless endermite does not die of age");
 			helper.succeed();
 		});
+	}
+
+	@GameTest
+	public void lifeDrainAddsTenSecondsOfLifeOnEachHit(GameTestHelper helper) {
+		Endermite plain = endermiteWith(helper, new BlockPos(1, 1, 1));
+		Endermite drain = endermiteWith(helper, new BlockPos(1, 1, 5), "test_life_drain");
+		((EndermiteAccessor) plain).originofspawns$setLife(1000);
+		((EndermiteAccessor) drain).originofspawns$setLife(1000);
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 3));
+		GeneCombat.onHit(plain, pig);
+		GeneCombat.onHit(drain, pig);
+		helper.assertValueEqual(((EndermiteAccessor) plain).originofspawns$life(), 1000, "a plain hit does not change the life");
+		helper.assertValueEqual(((EndermiteAccessor) drain).originofspawns$life(), 800, "the hit gives 10 more seconds");
+		helper.succeed();
 	}
 
 	/**

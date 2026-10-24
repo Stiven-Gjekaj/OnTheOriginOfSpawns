@@ -593,6 +593,10 @@ public final class GeneCombat {
 						leechXp(mob, player, leech);
 				case GeneEffect.TeleportBehind behind when target instanceof LivingEntity living
 						&& mob.level() instanceof ServerLevel level -> GeneTeleports.afterHit(mob, level, behind, living);
+				case GeneEffect.LifeOnHit life when mob instanceof net.minecraft.world.entity.monster.Endermite mite -> {
+					var age = (io.github.stivengjekaj.originofspawns.mixin.EndermiteAccessor) mite;
+					age.originofspawns$setLife(age.originofspawns$life() - Math.round(life.seconds() * 20.0F));
+				}
 				case GeneEffect.TeleportTargetOnHit punch when target instanceof LivingEntity living
 						&& mob.level() instanceof ServerLevel level && mob.getRandom().nextFloat() < punch.chance() ->
 						GeneTeleports.chorus(living, level, punch.range());

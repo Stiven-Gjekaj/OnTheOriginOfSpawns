@@ -207,7 +207,8 @@ public sealed interface GeneEffect {
 			Map.entry("teleport_target_on_hit", TeleportTargetOnHit.CODEC),
 			Map.entry("water_damage_taken", WaterDamageTaken.CODEC),
 			Map.entry("pearl_chance", PearlChance.CODEC),
-			Map.entry("lifespan", Lifespan.CODEC)
+			Map.entry("lifespan", Lifespan.CODEC),
+			Map.entry("life_on_hit", LifeOnHit.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3359,6 +3360,20 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "lifespan";
+		}
+	}
+
+	/**
+	 * Each melee hit of an endermite adds this many seconds to its life.
+	 */
+	record LifeOnHit(float seconds) implements GeneEffect {
+		public static final MapCodec<LifeOnHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(LifeOnHit::seconds)
+		).apply(instance, LifeOnHit::new));
+
+		@Override
+		public String type() {
+			return "life_on_hit";
 		}
 	}
 }

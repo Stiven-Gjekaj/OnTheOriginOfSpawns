@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.pig.Pig;
@@ -101,6 +102,26 @@ public class EndermanEffectsTest {
 		Enderman plain = endermanWith(helper, new BlockPos(1, 1, 6));
 		GeneCombat.onHit(plain, pig);
 		helper.assertTrue(plain.getZ() > pig.getZ(), "a plain enderman does not teleport");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void pearlHeartTeleportsAwayAndHealsOneTime(GameTestHelper helper) {
+		// The range of the test gene is 3 blocks, so each place of the escape is in the test area.
+		Enderman enderman = endermanWith(helper, new BlockPos(4, 1, 4), "test_pearl_heart");
+		DamageSource hit = helper.getLevel().damageSources().generic();
+		enderman.setHealth(20.0F);
+		GeneCombat.onHurt(enderman, hit);
+		helper.assertValueEqual(enderman.getHealth(), 20.0F, "no escape at half health");
+		Vec3 before = enderman.position();
+		enderman.setHealth(8.0F);
+		GeneCombat.onHurt(enderman, hit);
+		helper.assertValueEqual(enderman.getHealth(), 18.0F, "the escape heals 10 health");
+		helper.assertTrue(enderman.position().distanceTo(before) > 0.01, "the enderman teleports away");
+		helper.assertTrue(enderman.position().distanceTo(before) < 6.0, "the escape stays in its range");
+		enderman.setHealth(8.0F);
+		GeneCombat.onHurt(enderman, hit);
+		helper.assertValueEqual(enderman.getHealth(), 8.0F, "only one escape in its life");
 		helper.succeed();
 	}
 

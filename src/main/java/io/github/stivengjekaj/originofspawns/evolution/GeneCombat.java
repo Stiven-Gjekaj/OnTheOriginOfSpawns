@@ -792,6 +792,7 @@ public final class GeneCombat {
 	public static void onHurt(LivingEntity entity, DamageSource source) {
 		if (entity instanceof Mob wounded && wounded.level() instanceof ServerLevel woundedLevel) {
 			healOnce(wounded, woundedLevel);
+			GeneTeleports.escape(wounded, woundedLevel);
 		}
 		if (!(entity instanceof Mob mob) || !(mob.level() instanceof ServerLevel level)
 				|| !(source.getEntity() instanceof LivingEntity attacker) || attacker.getType() == mob.getType()) {

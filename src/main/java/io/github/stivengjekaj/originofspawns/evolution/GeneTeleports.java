@@ -101,6 +101,41 @@ public final class GeneTeleports {
 	}
 
 	/**
+	 * Teleports the mob away and heals it, one time in its life, when its health is under the threshold.
+	 *
+	 * @return true if the mob used its escape now
+	 */
+	public static boolean escape(Mob mob, ServerLevel level) {
+		if (!mob.isAlive() || mob.getAttachedOrElse(ModAttachments.ESCAPE_USED, false)) {
+			return false;
+		}
+		var escape = GeneEffects.of(mob).filter(GeneEffect.EscapeTeleport.class::isInstance)
+				.map(GeneEffect.EscapeTeleport.class::cast).findFirst();
+		if (escape.isEmpty() || mob.getHealth() >= mob.getMaxHealth() * escape.get().threshold()) {
+			return false;
+		}
+		mob.setAttached(ModAttachments.ESCAPE_USED, true);
+		away(mob, level, escape.get().range());
+		mob.heal(escape.get().heal());
+		return true;
+	}
+
+	/**
+	 * Teleports the mob to a random free place in the range, as the vanilla enderman does. It tries 16 places.
+	 *
+	 * @return true if the mob teleported
+	 */
+	public static boolean away(Mob mob, ServerLevel level, double range) {
+		List<Vec3> places = new ArrayList<>();
+		for (int i = 0; i < 16; i++) {
+			places.add(new Vec3(mob.getX() + (mob.getRandom().nextDouble() - 0.5) * 2.0 * range,
+					mob.getY() + (mob.getRandom().nextDouble() - 0.5) * range,
+					mob.getZ() + (mob.getRandom().nextDouble() - 0.5) * 2.0 * range));
+		}
+		return tryPlaces(mob, level, places);
+	}
+
+	/**
 	 * Teleports the mob to the first of the places that is free. A place is free when the mob fits there, on a
 	 * block that it can stand on, out of liquid.
 	 */

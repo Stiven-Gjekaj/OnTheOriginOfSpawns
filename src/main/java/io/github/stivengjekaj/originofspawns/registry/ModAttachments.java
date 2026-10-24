@@ -192,6 +192,12 @@ public final class ModAttachments {
 			EFFECT_TIMES = AttachmentRegistry.create(OriginOfSpawns.id("effect_times"));
 
 	/**
+	 * True after a mob used its one escape teleport. It is saved with the mob.
+	 */
+	public static final AttachmentType<Boolean> ESCAPE_USED =
+			AttachmentRegistry.createPersistent(OriginOfSpawns.id("escape_used"), com.mojang.serialization.Codec.BOOL);
+
+	/**
 	 * The game time of the last teleport of a mob.
 	 */
 	public static final AttachmentType<Long> TELEPORT_TIME = AttachmentRegistry.create(OriginOfSpawns.id("teleport_time"));

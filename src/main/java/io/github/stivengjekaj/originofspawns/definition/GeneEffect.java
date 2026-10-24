@@ -191,7 +191,8 @@ public sealed interface GeneEffect {
 			Map.entry("shared_drink", SharedDrink.CODEC),
 			Map.entry("heal_throw", HealThrow.CODEC),
 			Map.entry("teleport_to_target", TeleportToTarget.CODEC),
-			Map.entry("teleport_behind", TeleportBehind.CODEC)
+			Map.entry("teleport_behind", TeleportBehind.CODEC),
+			Map.entry("escape_teleport", EscapeTeleport.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3073,6 +3074,25 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "teleport_behind";
+		}
+	}
+
+	/**
+	 * One time in the life of the mob, when its health falls under the threshold, it teleports to a random place in
+	 * the range and heals this much health.
+	 *
+	 * @param threshold a part of the maximum health, for example {@code 0.25}
+	 */
+	record EscapeTeleport(float threshold, float heal, float range) implements GeneEffect {
+		public static final MapCodec<EscapeTeleport> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("threshold", 0.25F).forGetter(EscapeTeleport::threshold),
+				Codec.floatRange(0.0F, 1024.0F).optionalFieldOf("heal", 10.0F).forGetter(EscapeTeleport::heal),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 16.0F).forGetter(EscapeTeleport::range)
+		).apply(instance, EscapeTeleport::new));
+
+		@Override
+		public String type() {
+			return "escape_teleport";
 		}
 	}
 }

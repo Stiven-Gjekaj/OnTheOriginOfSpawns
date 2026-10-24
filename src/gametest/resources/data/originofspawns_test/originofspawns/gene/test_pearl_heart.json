@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "escape_teleport", "threshold": 0.25, "heal": 10, "range": 3 }],
+	"mutation_rate": 0
+}

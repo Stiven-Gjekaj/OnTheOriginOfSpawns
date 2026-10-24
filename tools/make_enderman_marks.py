@@ -135,13 +135,20 @@ def limb_overlay(name, bones, color, glow=False):
     save_model(name, im, parts)
 
 
-def eye_plates(name, color, rows=1):
+# The eye genes in a fixed order. Each has its own depth in front of the eyes,
+# 0.01 pixel apart, so that no two plates are in the same place, and two or
+# more eye genes do not flicker. The first is nearest to the face.
+EYE_ORDER = ("sudden_step", "dread_gaze", "chill_gaze", "mind_gaze", "weak_gaze", "hollow_eyes")
+
+
+def eye_plates(name, gene, color, rows=1):
     """Save a gene model of two flat plates with full light over the eyes. On the head bone, the face is at z -4,
     and the eyes are on row -4 of the head, from x -4 to -1 and from x 1 to 4. With rows 2, the plates are two
-    rows high, from y -5 to -3."""
+    rows high, from y -5 to -3. The depth of the plates comes from the place of the gene in EYE_ORDER."""
     im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
     paint_box(im, 0, 0, 3, rows, 0, lambda face, x, y: color)
-    parts = [{"bone": "head", "uv": [0, 0], "from": [x, -3 - rows, -4.03], "size": [3, rows, 0], "glow": True}
+    z = round(-4.03 - 0.01 * EYE_ORDER.index(gene), 2)
+    parts = [{"bone": "head", "uv": [0, 0], "from": [x, -3 - rows, z], "size": [3, rows, 0], "glow": True}
              for x in (-4, 1)]
     save_model(name, im, parts)
 
@@ -218,7 +225,7 @@ def sudden_step():
 
 
 def sudden_step_model():
-    eye_plates("sudden_step_eyes", "#F060FF")
+    eye_plates("sudden_step_eyes", "sudden_step", "#F060FF")
 
 
 def rain_step():
@@ -243,7 +250,7 @@ def dread_gaze():
 
 
 def dread_gaze_model():
-    eye_plates("dread_gaze_eyes", "#FFFFFF", rows=2)
+    eye_plates("dread_gaze_eyes", "dread_gaze", "#FFFFFF", rows=2)
 
 
 def chill_gaze():
@@ -252,7 +259,7 @@ def chill_gaze():
 
 
 def chill_gaze_model():
-    eye_plates("chill_gaze_eyes", "#A8E0FF")
+    eye_plates("chill_gaze_eyes", "chill_gaze", "#A8E0FF")
 
 
 def mind_gaze():
@@ -265,7 +272,7 @@ def mind_gaze():
 
 
 def mind_gaze_model():
-    eye_plates("mind_gaze_eyes", "#D080FF")
+    eye_plates("mind_gaze_eyes", "mind_gaze", "#D080FF")
 
 
 def far_gaze():
@@ -289,7 +296,7 @@ def weak_gaze():
 
 
 def weak_gaze_model():
-    eye_plates("weak_gaze_eyes", "#8A8A96")
+    eye_plates("weak_gaze_eyes", "weak_gaze", "#8A8A96")
 
 
 def hollow_eyes():
@@ -298,7 +305,7 @@ def hollow_eyes():
 
 
 def hollow_eyes_model():
-    eye_plates("hollow_eyes_eyes", "#000000")
+    eye_plates("hollow_eyes_eyes", "hollow_eyes", "#000000")
 
 
 def block_throw():

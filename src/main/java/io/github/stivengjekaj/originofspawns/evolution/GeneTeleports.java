@@ -168,6 +168,32 @@ public final class GeneTeleports {
 	}
 
 	/**
+	 * Teleports the entity to a random place in the range, as a chorus fruit does. It tries 16 places.
+	 *
+	 * @return true if the entity teleported
+	 */
+	public static boolean chorus(LivingEntity entity, ServerLevel level, double range) {
+		for (int i = 0; i < 16; i++) {
+			double x = entity.getX() + (entity.getRandom().nextDouble() - 0.5) * 2.0 * range;
+			double y = net.minecraft.util.Mth.clamp(entity.getY() + (entity.getRandom().nextDouble() - 0.5) * 2.0 * range,
+					level.getMinY(), level.getMinY() + level.getLogicalHeight() - 1);
+			double z = entity.getZ() + (entity.getRandom().nextDouble() - 0.5) * 2.0 * range;
+			if (entity.isPassenger()) {
+				entity.stopRiding();
+			}
+			Vec3 from = entity.position();
+			if (entity.randomTeleport(x, y, z, true, BlockTags.CONSUMABLE_DOES_NOT_TELEPORT_TO)) {
+				level.gameEvent(GameEvent.TELEPORT, from, GameEvent.Context.of(entity));
+				level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.CHORUS_FRUIT_TELEPORT,
+						net.minecraft.sounds.SoundSource.PLAYERS);
+				entity.resetFallDistance();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Teleports the mob to the first of the places that is free. A place is free when the mob fits there, on a
 	 * block that it can stand on, out of liquid.
 	 */

@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:enderman",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "teleport_target_on_hit", "chance": 1, "range": 3 }],
+	"mutation_rate": 0
+}

@@ -581,6 +581,9 @@ public final class GeneCombat {
 						leechXp(mob, player, leech);
 				case GeneEffect.TeleportBehind behind when target instanceof LivingEntity living
 						&& mob.level() instanceof ServerLevel level -> GeneTeleports.afterHit(mob, level, behind, living);
+				case GeneEffect.TeleportTargetOnHit punch when target instanceof LivingEntity living
+						&& mob.level() instanceof ServerLevel level && mob.getRandom().nextFloat() < punch.chance() ->
+						GeneTeleports.chorus(living, level, punch.range());
 				default -> {
 				}
 			}

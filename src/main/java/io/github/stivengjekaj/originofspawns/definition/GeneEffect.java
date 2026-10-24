@@ -203,7 +203,8 @@ public sealed interface GeneEffect {
 			Map.entry("thrown_block_damage", ThrownBlockDamage.CODEC),
 			Map.entry("thrown_block_effect", ThrownBlockEffect.CODEC),
 			Map.entry("thrown_block_shield", ThrownBlockShield.CODEC),
-			Map.entry("pickup_blocks", PickupBlocks.CODEC)
+			Map.entry("pickup_blocks", PickupBlocks.CODEC),
+			Map.entry("teleport_target_on_hit", TeleportTargetOnHit.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3287,6 +3288,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "pickup_blocks";
+		}
+	}
+
+	/**
+	 * Each melee hit of the mob has this chance to teleport the target to a random place in the range, as a chorus
+	 * fruit does.
+	 */
+	record TeleportTargetOnHit(float chance, float range) implements GeneEffect {
+		public static final MapCodec<TeleportTargetOnHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(TeleportTargetOnHit::chance),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 8.0F).forGetter(TeleportTargetOnHit::range)
+		).apply(instance, TeleportTargetOnHit::new));
+
+		@Override
+		public String type() {
+			return "teleport_target_on_hit";
 		}
 	}
 }

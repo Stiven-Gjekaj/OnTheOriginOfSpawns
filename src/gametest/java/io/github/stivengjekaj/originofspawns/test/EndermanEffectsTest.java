@@ -368,6 +368,21 @@ public class EndermanEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void voidPunchTeleportsTheTarget(GameTestHelper helper) {
+		// The test gene teleports at each hit, in 3 blocks, so each place is in the test area.
+		Enderman enderman = endermanWith(helper, new BlockPos(1, 1, 1), "test_void_punch");
+		Enderman plain = endermanWith(helper, new BlockPos(1, 1, 6));
+		Pig pig = helper.spawnWithNoFreeWill(EntityTypes.PIG, new BlockPos(4, 1, 4));
+		Vec3 before = pig.position();
+		GeneCombat.onHit(plain, pig);
+		helper.assertValueEqual(pig.position(), before, "a plain hit does not teleport the pig");
+		GeneCombat.onHit(enderman, pig);
+		helper.assertTrue(pig.position().distanceTo(before) > 0.01, "the hit teleports the pig");
+		helper.assertTrue(pig.position().distanceTo(before) < 6.0, "the pig stays in the range");
+		helper.succeed();
+	}
+
 	static net.minecraft.world.entity.ai.goal.Goal lookGoal(Enderman enderman) {
 		return ((MobAccessor) enderman).originofspawns$targetSelector().getAvailableGoals().stream()
 				.map(net.minecraft.world.entity.ai.goal.WrappedGoal::getGoal)

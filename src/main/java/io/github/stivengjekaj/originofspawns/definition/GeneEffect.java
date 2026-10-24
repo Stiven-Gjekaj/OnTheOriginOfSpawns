@@ -206,7 +206,8 @@ public sealed interface GeneEffect {
 			Map.entry("pickup_blocks", PickupBlocks.CODEC),
 			Map.entry("teleport_target_on_hit", TeleportTargetOnHit.CODEC),
 			Map.entry("water_damage_taken", WaterDamageTaken.CODEC),
-			Map.entry("pearl_chance", PearlChance.CODEC)
+			Map.entry("pearl_chance", PearlChance.CODEC),
+			Map.entry("lifespan", Lifespan.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3340,6 +3341,24 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "pearl_chance";
+		}
+	}
+
+	/**
+	 * Sets the life of an endermite. Vanilla gives it 2 minutes, and an endermite with a name or a persistent one does
+	 * not die of age. With {@code seconds}, it lives this long. Else the multiplier changes the vanilla life. With
+	 * {@code endless}, it does not die of age. With more than one effect, the longest life counts.
+	 */
+	record Lifespan(Optional<Float> seconds, float multiplier, boolean endless) implements GeneEffect {
+		public static final MapCodec<Lifespan> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 86400.0F).optionalFieldOf("seconds").forGetter(Lifespan::seconds),
+				Codec.floatRange(0.05F, 100.0F).optionalFieldOf("multiplier", 1.0F).forGetter(Lifespan::multiplier),
+				Codec.BOOL.optionalFieldOf("endless", false).forGetter(Lifespan::endless)
+		).apply(instance, Lifespan::new));
+
+		@Override
+		public String type() {
+			return "lifespan";
 		}
 	}
 }

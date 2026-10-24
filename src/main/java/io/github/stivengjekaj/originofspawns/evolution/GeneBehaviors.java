@@ -1181,6 +1181,29 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the life of the mob in ticks, with the lifespan effects of its genes. A life with no end gives the
+	 * largest number.
+	 *
+	 * @param ticks the vanilla life
+	 */
+	public static int lifespan(Mob mob, int ticks) {
+		int life = ticks;
+		boolean changed = false;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.Lifespan span) {
+				if (span.endless()) {
+					return Integer.MAX_VALUE;
+				}
+				int next = span.seconds().map(seconds -> Math.round(seconds * 20.0F))
+						.orElse(Math.round(ticks * span.multiplier()));
+				life = changed ? Math.max(life, next) : next;
+				changed = true;
+			}
+		}
+		return life;
+	}
+
+	/**
 	 * The vanilla chance that a thrown ender pearl makes an endermite.
 	 */
 	private static final float PEARL_CHANCE = 0.05F;

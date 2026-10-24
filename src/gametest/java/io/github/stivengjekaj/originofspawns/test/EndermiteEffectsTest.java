@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.mixin.EndermiteAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import java.util.List;
@@ -48,6 +49,31 @@ public class EndermiteEffectsTest {
 		helper.assertValueEqual(GeneBehaviors.pearlRoll(helper.getLevel(), plain, 0.01F), 0.01F,
 				"a roll under 5% makes the vanilla endermite");
 		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 20)
+	public void theLifeGenesKeepTheEndermiteAlivePastTwoMinutes(GameTestHelper helper) {
+		Endermite plain = aging(helper, new BlockPos(1, 1, 1), 2399);
+		Endermite longLife = aging(helper, new BlockPos(4, 1, 1), 2399, "test_long_life");
+		Endermite oldLongLife = aging(helper, new BlockPos(1, 1, 5), 4799, "test_long_life");
+		Endermite ageless = aging(helper, new BlockPos(4, 1, 5), 1_000_000, "test_ageless");
+		helper.runAfterDelay(3, () -> {
+			helper.assertTrue(plain.isRemoved(), "a plain endermite dies of age after 2 minutes");
+			helper.assertFalse(longLife.isRemoved(), "a long life lasts past 2 minutes");
+			helper.assertTrue(oldLongLife.isRemoved(), "a long life ends after 4 minutes");
+			helper.assertFalse(ageless.isRemoved(), "an ageless endermite does not die of age");
+			helper.succeed();
+		});
+	}
+
+	/**
+	 * Adds an endermite that ages, as an endermite with no name that is not persistent.
+	 */
+	static Endermite aging(GameTestHelper helper, BlockPos pos, int age, String... genes) {
+		Endermite mite = loose(helper, pos, genes);
+		((EndermiteAccessor) mite).originofspawns$setLife(age);
+		helper.getLevel().addFreshEntity(mite);
+		return mite;
 	}
 
 	/**

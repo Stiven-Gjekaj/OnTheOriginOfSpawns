@@ -265,6 +265,30 @@ public class GhastEffectsTest {
 		return events;
 	}
 
+	@GameTest
+	public void swiftDriftMakesTheFlightFaster(GameTestHelper helper) {
+		// The test gene gives 30% more flying speed.
+		double plain = flightStep(helper, ghastWith(helper, new BlockPos(2, 2, 2)));
+		double swift = flightStep(helper, ghastWith(helper, new BlockPos(2, 2, 2), "test_swift_wing"));
+		helper.assertTrue(plain > 0.0, "the ghast flies");
+		helper.assertTrue(Math.abs(swift / plain - 1.3) < 0.001, "30% more flying speed, not " + swift / plain);
+		helper.succeed();
+	}
+
+	/**
+	 * Returns the speed that one step of the move control gives the ghast toward a place 2 blocks away, and removes
+	 * the ghast.
+	 */
+	static double flightStep(GameTestHelper helper, Ghast ghast) {
+		ghast.setDeltaMovement(Vec3.ZERO);
+		Vec3 wanted = ghast.position().add(2.0, 0.0, 0.0);
+		ghast.getMoveControl().setWantedPosition(wanted.x, wanted.y, wanted.z, 1.0);
+		ghast.getMoveControl().tick();
+		double speed = ghast.getDeltaMovement().length();
+		ghast.discard();
+		return speed;
+	}
+
 	/**
 	 * The shots of a test ghast: the game time of each shot, and the projectiles of each shot.
 	 */

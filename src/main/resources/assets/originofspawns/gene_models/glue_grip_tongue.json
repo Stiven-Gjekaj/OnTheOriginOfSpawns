@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/glue_grip_tongue.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				21.5,
+				-7.5
+			],
+			"size": [
+				1,
+				1,
+				4
+			],
+			"inflate": -0.15
+		},
+		{
+			"bone": "mouth",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				0,
+				22.3,
+				-7.8
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.15
+		}
+	]
+}

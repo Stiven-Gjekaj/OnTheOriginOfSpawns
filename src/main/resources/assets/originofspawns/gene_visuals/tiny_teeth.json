@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/slime.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/tiny_teeth_0.png",
+				"tint": "#F4F4E8"
+			}
+		}
+	]
+}

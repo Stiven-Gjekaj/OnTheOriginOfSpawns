@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/slime.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/gum_skin_0.png",
+				"tint": "#A8C840"
+			}
+		}
+	]
+}

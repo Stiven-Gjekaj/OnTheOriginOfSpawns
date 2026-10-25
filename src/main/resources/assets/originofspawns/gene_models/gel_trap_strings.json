@@ -1,0 +1,133 @@
+{
+	"texture": "originofspawns:textures/entity/gel_trap_strings.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4.6,
+				20,
+				-2
+			],
+			"size": [
+				1,
+				4,
+				1
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4.6,
+				20,
+				1.5
+			],
+			"size": [
+				1,
+				4,
+				1
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				3.6,
+				20,
+				-1
+			],
+			"size": [
+				1,
+				4,
+				1
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				3.6,
+				20,
+				2
+			],
+			"size": [
+				1,
+				4,
+				1
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				20,
+				-4.6
+			],
+			"size": [
+				1,
+				4,
+				1
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				1.8,
+				20,
+				-4.6
+			],
+			"size": [
+				1,
+				4,
+				1
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				20,
+				3.6
+			],
+			"size": [
+				1,
+				4,
+				1
+			],
+			"inflate": -0.2
+		}
+	]
+}

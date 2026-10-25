@@ -1,0 +1,58 @@
+{
+	"texture": "originofspawns:textures/entity/bud_buds.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-5.5,
+				19,
+				-1
+			],
+			"size": [
+				2,
+				2,
+				2
+			]
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				3.5,
+				17.5,
+				0.5
+			],
+			"size": [
+				2,
+				2,
+				2
+			]
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				20,
+				3.5
+			],
+			"size": [
+				2,
+				2,
+				2
+			]
+		}
+	]
+}

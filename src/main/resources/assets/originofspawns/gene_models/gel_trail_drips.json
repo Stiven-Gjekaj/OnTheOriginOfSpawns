@@ -1,0 +1,97 @@
+{
+	"texture": "originofspawns:textures/entity/gel_trail_drips.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				23.5,
+				-3
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				1,
+				23.5,
+				-2.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				2.5,
+				23.5,
+				1.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2,
+				23.5,
+				2.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				23.5,
+				0
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.1
+		}
+	]
+}

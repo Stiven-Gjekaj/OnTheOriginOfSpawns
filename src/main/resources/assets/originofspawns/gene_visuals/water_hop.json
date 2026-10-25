@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/slime.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/water_hop_0.png",
+				"tint": "#70C8E0"
+			}
+		}
+	]
+}

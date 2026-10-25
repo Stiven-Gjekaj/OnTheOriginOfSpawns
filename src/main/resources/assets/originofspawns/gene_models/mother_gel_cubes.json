@@ -1,0 +1,79 @@
+{
+	"texture": "originofspawns:textures/entity/mother_gel_cubes.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.9,
+				16.2,
+				-3.9
+			],
+			"size": [
+				2,
+				2,
+				2
+			],
+			"inflate": -0.25
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				1.9,
+				17.2,
+				-3.9
+			],
+			"size": [
+				2,
+				2,
+				2
+			],
+			"inflate": -0.25
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.9,
+				21.9,
+				1.9
+			],
+			"size": [
+				2,
+				2,
+				2
+			],
+			"inflate": -0.25
+		},
+		{
+			"bone": "cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				1.9,
+				21.9,
+				1.9
+			],
+			"size": [
+				2,
+				2,
+				2
+			],
+			"inflate": -0.25
+		}
+	]
+}

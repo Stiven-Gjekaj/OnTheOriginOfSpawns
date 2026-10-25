@@ -157,6 +157,13 @@ The states for `when` are:
 | `wet` | The mob is in water, or rain falls on it |
 | `carrying_block` | The mob is an enderman that carries a block |
 | `in_air` | The mob does not stand on the ground, and it is not in water or in lava |
+| `target_player` | The target of the mob is a player |
+| `target_gold_armor` | The target is a player with at least one piece of gold armor |
+| `target_no_shield` | The target is a player that does not hold a shield up |
+| `chasing_player` | The target is a player farther than 4 blocks |
+| `target_holds_warped_fungus` | The target is a player that holds warped fungus in a hand |
+| `near_home` | The mob is in 16 blocks of the place where it spawned |
+| `far_from_home` | The mob is farther than 32 blocks from the place where it spawned |
 | `sunlit` | The mob is out of water and rain, in the daylight, under the open sky |
 | `target_below` | The target of the mob is 2 or more blocks lower than the mob |
 | `target_above` | The target of the mob is 2 or more blocks higher than the mob |
@@ -430,6 +437,46 @@ effects of the mob, such as `effect_on_hit`, work on a touch hit.
 also burn. `water_damage` stops while a fire immune mob has Fire Resistance.
 `water_damage_taken` also works on a mob that `water_damage` hurts.
 
+#### Nether mobs
+
+A piglin, a piglin brute, a hoglin, and a zoglin keep their target in their
+brain, and the target that a gene gives them goes there too, so the calls of
+the genes work on them. The tusk hit of a hoglin and of a zoglin runs the hit
+effects of the mob. `attack_interval` also changes the attack cooldown of a
+mob with a brain. `shield_break` works on each melee hit. The zombified piglin
+is its own species for the genes: no zombie gene and no zombie family goes to
+it. `runt` works on each species that has babies.
+
+| Type | Fields | Result |
+|---|---|---|
+| `anger_range` | `multiplier` | When something hurts the mob, its call for help reaches this many times as far |
+| `anger_time` | `multiplier` | Multiplies the time that a zombified piglin stays angry. Vanilla is 20 to 39 seconds |
+| `anger_after_death` | `seconds` (`300`) | When a player dies, a zombified piglin that is angry at the player stays angry at the player for this many seconds |
+| `self_effect_on_hurt` | `effect`, `seconds`, `amplifier` (`0`), `damage_types` (none) | When something hurts the mob, the mob itself gets the effect. With `damage_types`, only that damage counts |
+| `self_effect_on_hit` | `effect`, `seconds`, `amplifier` (`0`) | After each melee hit, the mob itself gets the effect |
+| `effect_on_ally_death` | `effect`, `seconds`, `amplifier` (`0`), `radius` (`16`) | When another mob of its species dies in the radius, the mob gets the effect |
+| `spawn_enchantment` | `enchantment`, `level` (`1`) | When the mob spawns, the item in its main hand gets the enchantment |
+| `conversion_time` | `seconds` | The time in the Overworld after which a piglin or a piglin brute turns into a zombified piglin, and a hoglin into a zoglin. Vanilla is 15 seconds. The longest time counts |
+| `gold_armor_attack` | `chance` | The piglin attacks a player in gold armor with this chance. It rolls one time for each player that it sees |
+| `no_fear` | `fears` | Stops vanilla fears: `soul_fire`, `zombified_piglin`, `warped_fungus`, `nether_portal`, `respawn_anchor`, and `piglin` |
+| `fear_guard` | `fear`, `radius` (`8`) | The mobs of its species in the radius act as if they had no fear of this kind, while they are near the mob |
+| `guard_gold` | `radius` (`16`) | When a player breaks a gold block or opens a chest in the radius, the mob attacks the player |
+| `shatter_armor` | `threshold` (`0.25`) | Each melee hit breaks each worn armor piece of the target with less than this part of its durability left |
+| `hit_throw` | `height_multiplier` (`1`), `distance_multiplier` (`1`) | Changes the throw of the hit of a hoglin or a zoglin. More than one effect multiplies together |
+| `run_strike` | `blocks` (`6`), `multiplier` | The first melee hit after a run of this many blocks does more damage |
+| `eat_items` | `items`, `heal` (`2`) | The mob eats the items of the list on the ground next to it, and heals for each |
+| `hunt_mobs` | `mobs` | While the mob has no target, it attacks the nearest mob of the list that it sees. A creeper runs from a mob that hunts creepers |
+| `player_first` | `radius` (`16`) | In its target choice, the mob takes a player in the radius first |
+| `smite_resist` | `multiplier` | Multiplies the extra damage that Smite does to the mob |
+
+New options: `rally` has `angry_only` (`false`), so that only the angry mobs
+of the species count. `brood` has `baby_chance` (`0`). `effect_on_hit` has
+`targets` (none), a list or tag of the mobs that get the effect.
+`call_on_sight` has `mobs` (none), the mobs that answer the call in place of
+the species. The bow genes work on the crossbow of a piglin: `draw_time`,
+`throw_rate`, `throw_range` (8 blocks in vanilla), `fan_shot`, and the arrow
+effects. The game saves the place where a mob spawned with the mob.
+
 #### Spiders
 
 These effects suit a spider, but other mobs can also use them. A gene cobweb
@@ -542,6 +589,12 @@ The outer gel has the same place as the inner cube, and it also draws with
 the gene marks. A magma cube has `cube0` to `cube7`, the eight layers from
 the top, and `inside_cube`. The marks and the models grow with the size of
 the cube.
+A piglin, a piglin brute, and a zombified piglin have the humanoid bones and
+`right_ear` and `left_ear`, parts of the head. A hoglin and a zoglin have
+`head`, `body`, the four leg bones of the creeper, `right_ear`, `left_ear`,
+`right_horn` and `left_horn` (the tusks), parts of the head, and `mane`, a
+part of the body. A baby of these mobs has its own vanilla texture, so it gets
+no marks.
 The coordinates are in pixels, in the coordinates of the bone, as in the
 vanilla models.
 

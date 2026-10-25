@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:piglin",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:piglin/huntsman",
+	"gains": [
+		{
+			"type": "damage_dealt_when",
+			"when": "hunting_wounded",
+			"multiplier": 1.3,
+			"players_only": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "hunting_healthy",
+			"multiplier": 0.9,
+			"players_only": true
+		}
+	]
+}

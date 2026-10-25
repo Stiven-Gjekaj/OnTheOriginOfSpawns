@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:piglin",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:piglin/hoarder",
+	"gains": [
+		{
+			"type": "damage_dealt_when",
+			"when": "target_gold_armor",
+			"multiplier": 1.3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

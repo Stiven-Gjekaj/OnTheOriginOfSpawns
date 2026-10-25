@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:piglin",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:piglin/hoarder",
+	"gains": [
+		{
+			"type": "disarm",
+			"chance": 0.1,
+			"cooldown_seconds": 10,
+			"hits": "melee"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9
+		}
+	]
+}

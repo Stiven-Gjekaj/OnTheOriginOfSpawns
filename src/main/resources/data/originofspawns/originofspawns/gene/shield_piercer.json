@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:piglin",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:piglin/sharpshot",
+	"gains": [
+		{
+			"type": "pierce_shields"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

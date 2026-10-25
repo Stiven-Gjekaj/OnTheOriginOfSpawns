@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:piglin",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:piglin/packmate",
+	"gains": [
+		{
+			"type": "death_effect",
+			"effect": "minecraft:strength",
+			"seconds": 10,
+			"radius": 16,
+			"allies": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

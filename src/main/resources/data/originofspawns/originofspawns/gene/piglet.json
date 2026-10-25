@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:piglin",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:piglin/packmate",
+	"gains": [
+		{
+			"type": "runt",
+			"chance": 0.25
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

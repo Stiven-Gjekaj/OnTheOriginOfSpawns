@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:piglin",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:piglin/huntsman",
+	"sub_family": "originofspawns:piglin/packmate",
+	"gains": [
+		{
+			"type": "damage_dealt_when",
+			"when": "grouped",
+			"multiplier": 1.2
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "alone",
+			"multiplier": 0.8
+		}
+	]
+}

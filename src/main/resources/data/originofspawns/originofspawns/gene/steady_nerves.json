@@ -1,0 +1,25 @@
+{
+	"species": "minecraft:hoglin",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:hoglin/fearless",
+	"gains": [
+		{
+			"type": "no_fear",
+			"fears": [
+				"piglin"
+			]
+		},
+		{
+			"type": "hunt_mobs",
+			"mobs": "minecraft:piglin"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

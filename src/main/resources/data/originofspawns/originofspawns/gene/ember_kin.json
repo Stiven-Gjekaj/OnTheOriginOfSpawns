@@ -1,0 +1,24 @@
+{
+	"species": "minecraft:piglin",
+	"counters": "originofspawns:fire",
+	"family": "originofspawns:piglin/packmate",
+	"sub_family": "originofspawns:piglin/firewalker",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:fire_resistance",
+			"radius": 8,
+			"interval_seconds": 2,
+			"seconds": 3,
+			"allies": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

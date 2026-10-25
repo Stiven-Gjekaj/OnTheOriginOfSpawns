@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:piglin",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:piglin/sharpshot",
+	"sub_family": "originofspawns:piglin/hoarder",
+	"gains": [
+		{
+			"type": "leech_xp",
+			"amount": 2,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:piglin_brute",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:piglin_brute/gatekeeper",
+	"gains": [
+		{
+			"type": "call_on_sight",
+			"radius": 24,
+			"mobs": [
+				"minecraft:piglin",
+				"minecraft:piglin_brute"
+			]
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

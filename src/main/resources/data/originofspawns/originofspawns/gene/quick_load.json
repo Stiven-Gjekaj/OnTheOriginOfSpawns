@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:piglin",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:piglin/sharpshot",
+	"gains": [
+		{
+			"type": "draw_time",
+			"multiplier": 0.7
+		}
+	],
+	"downsides": [
+		{
+			"type": "arrow_spread",
+			"multiplier": 2
+		}
+	]
+}

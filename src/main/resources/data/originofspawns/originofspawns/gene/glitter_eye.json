@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:piglin",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:piglin/hoarder",
+	"gains": [
+		{
+			"type": "see_invisible",
+			"radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

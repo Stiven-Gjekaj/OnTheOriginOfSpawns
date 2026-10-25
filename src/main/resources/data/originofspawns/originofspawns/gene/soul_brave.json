@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:piglin",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:piglin/firewalker",
+	"gains": [
+		{
+			"type": "no_fear",
+			"fears": [
+				"soul_fire",
+				"zombified_piglin"
+			]
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:piglin",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:piglin/packmate",
+	"gains": [
+		{
+			"type": "rally",
+			"per_ally": 0.05,
+			"max": 0.2,
+			"radius": 8
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

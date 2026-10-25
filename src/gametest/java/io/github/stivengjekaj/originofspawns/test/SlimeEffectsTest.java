@@ -208,6 +208,22 @@ public class SlimeEffectsTest {
 		});
 	}
 
+	@GameTest
+	public void tinyTeethLetsASlimeOfSizeOneDoDamage(GameTestHelper helper) {
+		AbstractCubeMob plain = cubeWith(helper, EntityTypes.SLIME, new BlockPos(2, 1, 2), 1);
+		AbstractCubeMob teeth = cubeWith(helper, EntityTypes.SLIME, new BlockPos(5, 1, 5), 1, "test_tiny_teeth");
+		// Only a cube with AI does damage. The test turns the AI on for the question, so the cubes do not move.
+		plain.setNoAi(false);
+		teeth.setNoAi(false);
+		boolean plainDeals = ((AbstractCubeMobAccessor) plain).originofspawns$canDealDamage();
+		boolean teethDeals = ((AbstractCubeMobAccessor) teeth).originofspawns$canDealDamage();
+		plain.setNoAi(true);
+		teeth.setNoAi(true);
+		helper.assertFalse(plainDeals, "a plain slime of size 1 does no damage");
+		helper.assertTrue(teethDeals, "a slime of size 1 with Tiny Teeth does damage");
+		helper.succeed();
+	}
+
 	static List<AbstractCubeMob> piecesNear(GameTestHelper helper, AbstractCubeMob cube) {
 		return helper.getLevel().getEntitiesOfClass(AbstractCubeMob.class,
 				new AABB(cube.blockPosition()).inflate(4.0), other -> other != cube && other.isAlive());

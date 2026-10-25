@@ -1,5 +1,6 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCubes;
 
@@ -103,5 +104,14 @@ public abstract class AbstractCubeMobMixin {
 		if (self.level() instanceof ServerLevel level && self.getSize() > 1 && self.isDeadOrDying()) {
 			GeneCubes.onSplit(self, level);
 		}
+	}
+
+	/**
+	 * A gene lets a cube of size 1 do damage.
+	 */
+	@ModifyReturnValue(method = "canDealDamage", at = @At("RETURN"))
+	private boolean originofspawns$tinyDamage(boolean deals) {
+		AbstractCubeMob self = (AbstractCubeMob) (Object) this;
+		return deals || self.isTiny() && self.isEffectiveAi() && GeneCombat.has(self, GeneEffect.TinyDamage.class);
 	}
 }

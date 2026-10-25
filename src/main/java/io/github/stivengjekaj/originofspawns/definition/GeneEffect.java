@@ -221,7 +221,8 @@ public sealed interface GeneEffect {
 			Map.entry("split_count", SplitCount.CODEC),
 			Map.entry("split_effect", SplitEffect.CODEC),
 			Map.entry("split_jump", SplitJump.CODEC),
-			Map.entry("split_area_effect", SplitAreaEffect.CODEC)
+			Map.entry("split_area_effect", SplitAreaEffect.CODEC),
+			Map.entry("tiny_damage", TinyDamage.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3599,6 +3600,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "split_area_effect";
+		}
+	}
+
+	/**
+	 * A cube of size 1 does damage with its touch attack. A slime of size 1 does no damage in vanilla. The damage is
+	 * the attack damage of the cube, 1 at size 1.
+	 */
+	record TinyDamage() implements GeneEffect {
+		public static final MapCodec<TinyDamage> CODEC = MapCodec.unit(new TinyDamage());
+
+		@Override
+		public String type() {
+			return "tiny_damage";
 		}
 	}
 }

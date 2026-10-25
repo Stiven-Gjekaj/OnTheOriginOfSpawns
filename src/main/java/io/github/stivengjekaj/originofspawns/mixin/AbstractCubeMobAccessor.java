@@ -25,4 +25,10 @@ public interface AbstractCubeMobAccessor {
 	 */
 	@Invoker("getSplitCount")
 	int originofspawns$splitCount();
+
+	/**
+	 * Returns true if the touch of the cube does damage.
+	 */
+	@Invoker("canDealDamage")
+	boolean originofspawns$canDealDamage();
 }

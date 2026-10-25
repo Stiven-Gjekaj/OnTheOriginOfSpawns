@@ -190,12 +190,15 @@ The visual column gives the region and the mark.
 ## Body
 
 - The ghast has the ghast model: a large body cube, and nine tentacles. Its
-  face shows a closed or an open, shooting mouth. Its texture is 64 x 32.
-- It needs a new region map, `textures/region/ghast.png`. The design uses
-  the regions body, face, and tentacles. The shooting face is a second
-  texture, so a face mark goes on both.
-- The gene models use the ghast bones. Check them against the vanilla
-  model, as for the witch.
+  face shows a closed or an open, shooting mouth. Its texture is 128 x 64.
+  The model uses 64 x 32 uv units, so each uv unit is 2 x 2 texels.
+- It needs a new region map, `textures/region/ghast.png`, at 128 x 64. The
+  design uses the regions body, face, and tentacles. The shooting face is a
+  second texture. It differs only at the eyes and the mouth, so one region
+  map serves both, and a face mark goes on both.
+- The bones are body and tentacle0 to tentacle8. All of them are root bones.
+  The game sets the tentacle lengths from a fixed seed, so a part at the tip
+  of a tentacle uses the same length as the game.
 
 ## Minor families
 

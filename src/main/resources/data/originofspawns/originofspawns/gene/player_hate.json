@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:zoglin/maddened",
+	"gains": [
+		{
+			"type": "player_first",
+			"radius": 24
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken_when",
+			"when": "always",
+			"multiplier": 1.1
+		}
+	]
+}

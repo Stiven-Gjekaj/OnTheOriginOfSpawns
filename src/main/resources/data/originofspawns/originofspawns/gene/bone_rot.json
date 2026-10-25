@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:zoglin/rotter",
+	"sub_family": "originofspawns:zoglin/boneback",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_explosion",
+			"multiplier": 0.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

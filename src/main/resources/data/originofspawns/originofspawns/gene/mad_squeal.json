@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:zoglin/maddened",
+	"gains": [
+		{
+			"type": "call_on_hurt",
+			"radius": 24
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

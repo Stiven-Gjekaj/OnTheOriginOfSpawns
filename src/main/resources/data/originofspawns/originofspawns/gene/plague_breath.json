@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:zoglin/rotter",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:hunger",
+			"radius": 3,
+			"interval_seconds": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

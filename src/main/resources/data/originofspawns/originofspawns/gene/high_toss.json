@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:zoglin/gorer",
+	"gains": [
+		{
+			"type": "hit_throw",
+			"height_multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

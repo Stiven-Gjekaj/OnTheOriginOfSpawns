@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:zoglin/stampeder",
+	"gains": [
+		{
+			"type": "leap",
+			"min_distance": 3,
+			"max_distance": 6,
+			"cooldown_seconds": 5,
+			"miss_stun_seconds": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

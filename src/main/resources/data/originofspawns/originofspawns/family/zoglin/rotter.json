@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:zoglin",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:wither",
+					"seconds": 1
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:wither",
+					"seconds": 2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:wither",
+					"seconds": 3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

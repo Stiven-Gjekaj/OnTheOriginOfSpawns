@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:zoglin/gorer",
+	"gains": [
+		{
+			"type": "shield_break",
+			"seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

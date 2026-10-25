@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:zoglin/stampeder",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:follow_range",
+			"amount": 1,
+			"operation": "add_multiplied_base"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

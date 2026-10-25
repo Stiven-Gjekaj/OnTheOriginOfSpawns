@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:zoglin/stampeder",
+	"gains": [
+		{
+			"type": "speed_when",
+			"when": "grouped",
+			"multiplier": 1.2
+		}
+	],
+	"downsides": [
+		{
+			"type": "speed_when",
+			"when": "alone",
+			"multiplier": 0.9
+		}
+	]
+}

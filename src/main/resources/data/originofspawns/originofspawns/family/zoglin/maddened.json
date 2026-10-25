@@ -1,0 +1,50 @@
+{
+	"species": "minecraft:zoglin",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "player_first",
+					"radius": 16
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "always",
+					"multiplier": 1.2
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "player_first",
+					"radius": 20
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "always",
+					"multiplier": 1.15
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "player_first",
+					"radius": 24
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "always",
+					"multiplier": 1.1
+				}
+			]
+		}
+	]
+}

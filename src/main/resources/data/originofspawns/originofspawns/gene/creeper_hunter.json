@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:zoglin/maddened",
+	"gains": [
+		{
+			"type": "hunt_mobs",
+			"mobs": "minecraft:creeper"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

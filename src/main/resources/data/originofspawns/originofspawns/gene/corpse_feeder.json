@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:zoglin/rotter",
+	"gains": [
+		{
+			"type": "heal_on_hit",
+			"amount": 1,
+			"hits": "melee"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

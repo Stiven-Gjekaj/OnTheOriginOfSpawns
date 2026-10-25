@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:zoglin/boneback",
+	"gains": [
+		{
+			"type": "attribute_when",
+			"when": "wounded",
+			"attribute": "minecraft:armor",
+			"amount": 6,
+			"operation": "add_value"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

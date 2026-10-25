@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:zoglin/maddened",
+	"gains": [
+		{
+			"type": "attack_interval",
+			"multiplier": 0.8
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

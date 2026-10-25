@@ -799,6 +799,19 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the ticks that a ghast waits after a shot, after its throw rates. The full time from one shot to the
+	 * next is the wait and the charge of 20 ticks. The throw rate changes the full time.
+	 */
+	public static int ghastShotWait(Mob ghast, int wait) {
+		return Math.max(0, scaleThrowInterval(ghast, wait + GHAST_CHARGE_TICKS) - GHAST_CHARGE_TICKS);
+	}
+
+	/**
+	 * The ticks that a ghast charges before each shot.
+	 */
+	private static final int GHAST_CHARGE_TICKS = 20;
+
+	/**
 	 * Returns the attack interval of a ranged goal after the throw rates of the mob.
 	 */
 	public static int scaleThrowInterval(Mob mob, int ticks) {

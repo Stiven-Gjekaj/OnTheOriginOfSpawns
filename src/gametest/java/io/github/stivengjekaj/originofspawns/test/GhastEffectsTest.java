@@ -3,6 +3,7 @@ package io.github.stivengjekaj.originofspawns.test;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 import io.github.stivengjekaj.originofspawns.mixin.LargeFireballAccessor;
+import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Ghast;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
@@ -142,6 +144,59 @@ public class GhastEffectsTest {
 		ServerPlayer player = CreeperEffectsTest.shieldedPlayer(helper);
 		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(pos)));
 		return player;
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8, maxTicks = 200)
+	public void aPlainGhastShootsEachThreeSeconds(GameTestHelper helper) {
+		Shots shots = shooter(helper);
+		helper.succeedWhen(() -> {
+			helper.assertTrue(shots.times.size() >= 2, "the ghast shoots two times");
+			helper.assertValueEqual(shots.times.get(1) - shots.times.get(0), 60L, "ticks from one shot to the next");
+		});
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8, maxTicks = 200)
+	public void quickFireMakesTheGhastShootMoreOften(GameTestHelper helper) {
+		Shots shots = shooter(helper, "test_quick_fire");
+		helper.succeedWhen(() -> {
+			helper.assertTrue(shots.times.size() >= 2, "the ghast shoots two times");
+			helper.assertValueEqual(shots.times.get(1) - shots.times.get(0), 40L, "ticks from one shot to the next");
+		});
+	}
+
+	/**
+	 * The shots of a test ghast: the game time of each shot, and the projectiles of each shot.
+	 */
+	static final class Shots {
+		final java.util.List<Long> times = new java.util.ArrayList<>();
+		final java.util.List<java.util.List<Projectile>> projectiles = new java.util.ArrayList<>();
+	}
+
+	/**
+	 * Makes a ghast with its AI that shoots at a pig. The ghast stays in its place, and has no target goals, so it
+	 * shoots only at the pig. Each tick, the test records the new projectiles of the ghast and removes them, so that
+	 * no fireball leaves the test area.
+	 */
+	static Shots shooter(GameTestHelper helper, String... genes) {
+		Ghast ghast = ghastWith(helper, new BlockPos(2, 2, 4), genes);
+		ghast.setNoAi(false);
+		((MobAccessor) ghast).originofspawns$targetSelector().removeAllGoals(goal -> true);
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(7, 3, 4));
+		ghast.setTarget(pig);
+		Vec3 home = ghast.position();
+		Shots shots = new Shots();
+		helper.onEachTick(() -> {
+			ghast.setPos(home);
+			ghast.setDeltaMovement(Vec3.ZERO);
+			var shot = helper.getLevel().getEntitiesOfClass(Projectile.class, helper.getBounds().inflate(8.0),
+					projectile -> projectile.getOwner() == ghast && projectile.isAlive());
+			if (!shot.isEmpty()) {
+				shots.times.add(helper.getLevel().getGameTime());
+				shots.projectiles.add(java.util.List.copyOf(shot));
+				shot.forEach(Projectile::discard);
+			}
+		});
+		return shots;
 	}
 
 	/**

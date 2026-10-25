@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "throw_rate", "multiplier": 1.5 }],
+	"mutation_rate": 0
+}

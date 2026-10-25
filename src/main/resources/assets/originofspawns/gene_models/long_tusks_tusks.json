@@ -1,0 +1,79 @@
+{
+	"texture": "originofspawns:textures/entity/long_tusks_tusks.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "right_horn",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-16,
+				-1
+			],
+			"size": [
+				2,
+				5,
+				2
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "right_horn",
+			"uv": [
+				0,
+				10
+			],
+			"from": [
+				-1,
+				-17,
+				0.5
+			],
+			"size": [
+				2,
+				2,
+				2
+			],
+			"inflate": -0.25
+		},
+		{
+			"bone": "left_horn",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-16,
+				-1
+			],
+			"size": [
+				2,
+				5,
+				2
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "left_horn",
+			"uv": [
+				0,
+				10
+			],
+			"from": [
+				-1,
+				-17,
+				0.5
+			],
+			"size": [
+				2,
+				2,
+				2
+			],
+			"inflate": -0.25
+		}
+	]
+}

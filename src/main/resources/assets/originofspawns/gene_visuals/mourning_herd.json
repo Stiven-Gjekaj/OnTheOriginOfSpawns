@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/hoglin.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mourning_herd_0.png",
+				"tint": "#140A08"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mourning_herd_1.png",
+				"tint": "#E8F4FF"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mourning_herd_2.png",
+				"tint": "#5A3A30"
+			}
+		}
+	]
+}

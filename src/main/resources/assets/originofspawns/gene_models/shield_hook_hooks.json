@@ -1,0 +1,79 @@
+{
+	"texture": "originofspawns:textures/entity/shield_hook_hooks.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "right_horn",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-13,
+				-3
+			],
+			"size": [
+				2,
+				2,
+				3
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "right_horn",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-1,
+				-12,
+				-4
+			],
+			"size": [
+				2,
+				3,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "left_horn",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-13,
+				-3
+			],
+			"size": [
+				2,
+				2,
+				3
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "left_horn",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-1,
+				-12,
+				-4
+			],
+			"size": [
+				2,
+				3,
+				1
+			],
+			"inflate": -0.1
+		}
+	]
+}

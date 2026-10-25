@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/hoglin.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ram_0.png",
+				"tint": "#6A4A38"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ram_1.png",
+				"tint": "#D8B898"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ram_2.png",
+				"tint": "#3A2418"
+			}
+		}
+	]
+}

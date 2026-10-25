@@ -20,6 +20,7 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
@@ -47,20 +48,23 @@ public class PhantomEffectsTest {
 		helper.succeed();
 	}
 
-	@GameTest(maxTicks = 40)
+	@GameTest(maxTicks = 200)
 	public void aMobUnderARoofDoesNotCountAsBurningInTheSun(GameTestHelper helper) {
 		// A stone block over the phantom stops the sun, at each time of day. The barrier roof lets the sky light in.
-		helper.setBlock(new BlockPos(4, 4, 4), Blocks.STONE);
-		// The light under the stone changes some ticks later.
-		helper.runAfterDelay(10, () -> {
-			Phantom phantom = phantomWith(helper, new BlockPos(4, 2, 4));
+		BlockPos place = new BlockPos(4, 2, 4);
+		helper.setBlock(place.above(2), Blocks.STONE);
+		// The light under the stone changes some ticks later, and later when the server is busy. The sun burns only
+		// a mob that has the full sky light.
+		helper.succeedWhen(() -> {
+			helper.assertTrue(helper.getLevel().getBrightness(LightLayer.SKY, helper.absolutePos(place)) < 15,
+					"the stone stops the sky light");
+			Phantom phantom = phantomWith(helper, place);
 			for (int i = 0; i < 40; i++) {
 				phantom.aiStep();
 			}
 			helper.assertValueEqual(phantom.getRemainingFireTicks(), 0, "the sun does not burn the phantom");
 			helper.assertFalse(Evolution.isSunBurning(phantom, helper.getLevel().getGameTime()),
 					"a phantom that the sun does not burn is not burning in the sun");
-			helper.succeed();
 		});
 	}
 

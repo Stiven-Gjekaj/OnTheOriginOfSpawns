@@ -264,7 +264,8 @@ public sealed interface GeneEffect {
 			Map.entry("small_fireball_fan", SmallFireballFan.CODEC),
 			Map.entry("hard_fireball", HardFireball.CODEC),
 			Map.entry("float_height", FloatHeight.CODEC),
-			Map.entry("return_ward", ReturnWard.CODEC)
+			Map.entry("return_ward", ReturnWard.CODEC),
+			Map.entry("burst_count", BurstCount.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4357,6 +4358,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "return_ward";
+		}
+	}
+
+	/**
+	 * A blaze shoots this many more small fireballs in each burst. The vanilla blaze shoots 3. More than one effect
+	 * adds up.
+	 */
+	record BurstCount(int extra) implements GeneEffect {
+		public static final MapCodec<BurstCount> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(-2, 16).fieldOf("extra").forGetter(BurstCount::extra)
+		).apply(instance, BurstCount::new));
+
+		@Override
+		public String type() {
+			return "burst_count";
 		}
 	}
 }

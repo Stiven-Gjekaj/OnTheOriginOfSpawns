@@ -11,6 +11,7 @@
 		"AbstractSkeletonMixin",
 		"AbstractThrownPotionMixin",
 		"BehaviorUtilsMixin",
+		"BlazeAttackGoalMixin",
 		"BoggedMixin",
 		"CaveSpiderMixin",
 		"CreeperAccessor",

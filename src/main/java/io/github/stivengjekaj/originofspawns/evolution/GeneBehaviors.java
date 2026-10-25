@@ -881,6 +881,19 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the number of extra fireballs in each burst of a blaze. A burst has at least one fireball.
+	 */
+	public static int burstExtra(Mob blaze) {
+		int extra = 0;
+		for (GeneEffect effect : GeneEffects.of(blaze).toList()) {
+			if (effect instanceof GeneEffect.BurstCount count) {
+				extra += count.extra();
+			}
+		}
+		return Math.max(-2, extra);
+	}
+
+	/**
 	 * Returns the ticks that a ghast waits after a shot, after its throw rates. The full time from one shot to the
 	 * next is the wait and the charge of 20 ticks. The throw rate changes the full time.
 	 */

@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:hoglin",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "no_fear", "fears": ["warped_fungus"] }, { "type": "eat_items", "items": "minecraft:warped_fungus", "heal": 2 }],
+	"mutation_rate": 0
+}

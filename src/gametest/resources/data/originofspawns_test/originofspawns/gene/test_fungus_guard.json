@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:hoglin",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "fear_guard", "fear": "warped_fungus", "radius": 8 }],
+	"mutation_rate": 0
+}

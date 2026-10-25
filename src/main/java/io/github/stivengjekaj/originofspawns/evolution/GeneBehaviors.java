@@ -486,6 +486,8 @@ public final class GeneBehaviors {
 				case GeneEffect.FireballShot shot -> fireballShot(mob, level, shot);
 				case GeneEffect.Hex hex -> hex(mob, level, hex);
 				case GeneEffect.HealThrow heal -> healThrow(mob, level, heal);
+				case GeneEffect.EatItems eat -> eatItems(mob, level, eat);
+				case GeneEffect.HuntMobs hunt when mob.getTarget() == null -> huntMobs(mob, level, hunt);
 				case GeneEffect.FireAura aura when now % Math.max(1, Math.round(aura.intervalSeconds() * 20.0F)) < TICK_INTERVAL ->
 						fireAura(mob, level, aura);
 				case GeneEffect.Grow grow when mob instanceof net.minecraft.world.entity.monster.cubemob.AbstractCubeMob cube ->
@@ -956,6 +958,41 @@ public final class GeneBehaviors {
 						}
 					});
 		}
+	}
+
+	/**
+	 * Lets the mob eat one item of the list that lies on the ground next to it.
+	 *
+	 * @return true if the mob ate an item
+	 */
+	public static boolean eatItems(Mob mob, ServerLevel level, GeneEffect.EatItems eat) {
+		var item = level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+				mob.getBoundingBox().inflate(1.0), entity -> entity.getItem().is(eat.items())).stream().findFirst();
+		if (item.isEmpty()) {
+			return false;
+		}
+		item.get().getItem().shrink(1);
+		if (item.get().getItem().isEmpty()) {
+			item.get().discard();
+		}
+		mob.heal(eat.heal());
+		mob.playSound(net.minecraft.sounds.SoundEvents.GENERIC_EAT.value(), 1.0F, 1.0F);
+		return true;
+	}
+
+	/**
+	 * Lets a mob with no target attack the nearest mob of the list that it sees in its follow range.
+	 *
+	 * @return true if the mob found a target
+	 */
+	public static boolean huntMobs(Mob mob, ServerLevel level, GeneEffect.HuntMobs hunt) {
+		double range = mob.getAttributeValue(Attributes.FOLLOW_RANGE);
+		var prey = level.getEntitiesOfClass(Mob.class, mob.getBoundingBox().inflate(range), other -> other != mob
+				&& other.isAlive() && hunt.mobs().contains(other.getType().builtInRegistryHolder())
+				&& mob.hasLineOfSight(other) && mob.canAttack(other))
+				.stream().min((a, b) -> Double.compare(a.distanceToSqr(mob), b.distanceToSqr(mob)));
+		prey.ifPresent(mob::setTarget);
+		return prey.isPresent();
 	}
 
 	/**

@@ -17,6 +17,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
@@ -247,7 +248,10 @@ public sealed interface GeneEffect {
 			Map.entry("no_fear", NoFear.CODEC),
 			Map.entry("guard_gold", GuardGold.CODEC),
 			Map.entry("shatter_armor", ShatterArmor.CODEC),
-			Map.entry("hit_throw", HitThrow.CODEC)
+			Map.entry("hit_throw", HitThrow.CODEC),
+			Map.entry("fear_guard", FearGuard.CODEC),
+			Map.entry("eat_items", EatItems.CODEC),
+			Map.entry("hunt_mobs", HuntMobs.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4073,6 +4077,53 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "hit_throw";
+		}
+	}
+
+	/**
+	 * The mobs of its species in the radius act as if they had no fear of this kind, while they are near the mob.
+	 * Fungus Guard: {@code warped_fungus}, {@code 8}.
+	 */
+	record FearGuard(NoFear.Fear fear, float radius) implements GeneEffect {
+		public static final MapCodec<FearGuard> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				NoFear.Fear.CODEC.fieldOf("fear").forGetter(FearGuard::fear),
+				Codec.floatRange(0.5F, 32.0F).optionalFieldOf("radius", 8.0F).forGetter(FearGuard::radius)
+		).apply(instance, FearGuard::new));
+
+		@Override
+		public String type() {
+			return "fear_guard";
+		}
+	}
+
+	/**
+	 * The mob eats the items of the list that lie on the ground next to it, one at a time, and heals this much
+	 * health for each. Warp Eater: {@code minecraft:warped_fungus}.
+	 */
+	record EatItems(HolderSet<Item> items, float heal) implements GeneEffect {
+		public static final MapCodec<EatItems> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				RegistryCodecs.holderSet(Registries.ITEM).fieldOf("items").forGetter(EatItems::items),
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("heal", 2.0F).forGetter(EatItems::heal)
+		).apply(instance, EatItems::new));
+
+		@Override
+		public String type() {
+			return "eat_items";
+		}
+	}
+
+	/**
+	 * While the mob has no target, it attacks the nearest mob of the list that it sees in its follow range. Steady
+	 * Nerves: {@code minecraft:piglin}. Creeper Hunter: {@code minecraft:creeper}.
+	 */
+	record HuntMobs(HolderSet<EntityType<?>> mobs) implements GeneEffect {
+		public static final MapCodec<HuntMobs> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				RegistryCodecs.holderSet(Registries.ENTITY_TYPE).fieldOf("mobs").forGetter(HuntMobs::mobs)
+		).apply(instance, HuntMobs::new));
+
+		@Override
+		public String type() {
+			return "hunt_mobs";
 		}
 	}
 }

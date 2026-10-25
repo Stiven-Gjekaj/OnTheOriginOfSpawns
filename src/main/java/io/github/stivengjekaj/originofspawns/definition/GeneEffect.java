@@ -259,7 +259,8 @@ public sealed interface GeneEffect {
 			Map.entry("flying_speed", FlyingSpeed.CODEC),
 			Map.entry("sun_shade", SunShade.CODEC),
 			Map.entry("swoop_call", SwoopCall.CODEC),
-			Map.entry("blast_shield_stop", BlastShieldStop.CODEC)
+			Map.entry("blast_shield_stop", BlastShieldStop.CODEC),
+			Map.entry("blast_fire", BlastFire.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4269,6 +4270,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "blast_shield_stop";
+		}
+	}
+
+	/**
+	 * After each blast of the mob, the blast sets up to this many more blocks on fire, at random places in and next to
+	 * its radius. The fire goes only in air, on a block with a full top. It is a normal fire, so it can spread. It
+	 * obeys the {@code mobGriefing} gamerule.
+	 */
+	record BlastFire(int blocks) implements GeneEffect {
+		public static final MapCodec<BlastFire> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 64).optionalFieldOf("blocks", 8).forGetter(BlastFire::blocks)
+		).apply(instance, BlastFire::new));
+
+		@Override
+		public String type() {
+			return "blast_fire";
 		}
 	}
 }

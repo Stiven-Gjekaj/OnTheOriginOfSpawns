@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 import io.github.stivengjekaj.originofspawns.mixin.LargeFireballAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -76,6 +78,51 @@ public class GhastEffectsTest {
 		explodeFireball(helper, ghastWith(helper, new BlockPos(5, 1, 5), "test_shield_burst"), BLAST);
 		helper.assertTrue(target.getCooldowns().isOnCooldown(target.getOffhandItem()), "the blast stops the shield");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void fireRainSetsBlocksOnFireAfterTheBlast(GameTestHelper helper) {
+		BlockPos center = new BlockPos(3, 1, 3);
+		stoneFloor(helper, center);
+		GeneBlasts.afterBlast(ghastWith(helper, new BlockPos(5, 3, 5)), helper.getLevel(),
+				helper.absoluteVec(Vec3.atBottomCenterOf(center)), 1.0F);
+		helper.assertValueEqual(fires(helper, center), 0, "a plain blast leaves no more fire");
+		GeneBlasts.afterBlast(ghastWith(helper, new BlockPos(5, 3, 5), "test_fire_rain"), helper.getLevel(),
+				helper.absoluteVec(Vec3.atBottomCenterOf(center)), 1.0F);
+		int fires = fires(helper, center);
+		helper.assertTrue(fires >= 4 && fires <= 8, "the blast leaves up to 8 fires, not " + fires);
+		helper.succeed();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void fireRainObeysMobGriefing(GameTestHelper helper) {
+		BlockPos center = new BlockPos(3, 1, 3);
+		stoneFloor(helper, center);
+		GeneBlasts.afterBlast(ghastWith(helper, new BlockPos(5, 3, 5), "test_fire_rain"), helper.getLevel(),
+				helper.absoluteVec(Vec3.atBottomCenterOf(center)), 1.0F);
+		helper.assertValueEqual(fires(helper, center), 0, "no fire with mobGriefing off");
+		helper.succeed();
+	}
+
+	/**
+	 * Puts stone under the blast, as far as the fire reaches: the radius and one more block.
+	 */
+	static void stoneFloor(GameTestHelper helper, BlockPos center) {
+		for (int x = -2; x <= 2; x++) {
+			for (int z = -2; z <= 2; z++) {
+				helper.setBlock(center.offset(x, -1, z), Blocks.STONE);
+			}
+		}
+	}
+
+	static int fires(GameTestHelper helper, BlockPos center) {
+		int fires = 0;
+		for (BlockPos pos : BlockPos.betweenClosed(center.offset(-3, -1, -3), center.offset(3, 3, 3))) {
+			if (helper.getBlockState(pos).is(Blocks.FIRE)) {
+				fires++;
+			}
+		}
+		return fires;
 	}
 
 	static ServerPlayer shieldedPlayerAt(GameTestHelper helper, BlockPos pos) {

@@ -5,9 +5,12 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.mixin.CreeperAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.AreaEffectCloud;
@@ -22,6 +25,8 @@ import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -90,6 +95,8 @@ public final class GeneBlasts {
 					// This plain blast does not run the effects after a blast, so it causes no more aftershocks.
 					DelayedTasks.schedule(level, Math.round(aftershock.seconds() * 20.0F), () -> level.explode(mob,
 							pos.x, pos.y, pos.z, radius * aftershock.fraction(), Level.ExplosionInteraction.MOB));
+				case GeneEffect.BlastFire fire when level.getGameRules().get(GameRules.MOB_GRIEFING) ->
+						blastFire(mob, level, pos, radius, fire.blocks());
 				case GeneEffect.BlastShieldStop stop -> {
 					for (Player player : level.getEntitiesOfClass(Player.class, AABB.ofSize(pos, radius * 4.0, radius * 4.0,
 							radius * 4.0), player -> player.position().distanceTo(pos) <= radius * 2.0F)) {
@@ -100,6 +107,29 @@ public final class GeneBlasts {
 					}
 				}
 				default -> {
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sets up to this many blocks on fire at random places near the blast. Each try takes a random column in and next
+	 * to the radius, and puts the fire on the highest free block in it that has a block with a full top under it.
+	 */
+	private static void blastFire(Mob mob, ServerLevel level, Vec3 pos, float radius, int blocks) {
+		int reach = Math.max(1, Mth.ceil(radius)) + 1;
+		BlockPos center = BlockPos.containing(pos);
+		int lit = 0;
+		for (int tries = 0; tries < blocks * 4 && lit < blocks; tries++) {
+			int x = center.getX() + mob.getRandom().nextIntBetweenInclusive(-reach, reach);
+			int z = center.getZ() + mob.getRandom().nextIntBetweenInclusive(-reach, reach);
+			for (int y = center.getY() + reach; y >= center.getY() - reach; y--) {
+				BlockPos place = new BlockPos(x, y, z);
+				if (level.getBlockState(place).isAir() && level.getBlockState(place.below()).isFaceSturdy(level,
+						place.below(), Direction.UP)) {
+					level.setBlockAndUpdate(place, BaseFireBlock.getState(level, place));
+					lit++;
+					break;
 				}
 			}
 		}

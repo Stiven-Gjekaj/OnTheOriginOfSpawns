@@ -269,8 +269,18 @@ def sticky_hit():
 
 
 def gel_trail():
-    # The drips are the gene model gel_trail_drips.
-    return []
+    # Drips that run down the lower half of the sides of the gel, each with a
+    # pale drop at its end. The drips under the bottom are the gene model
+    # gel_trail_drips.
+    drip = Mark("#4A9A34")
+    drop = Mark("#D8F8C0")
+    for x, y, face, col, row in pixels(GEL, SIDES):
+        if face == "front" and (x, y) in GEL_EYES + [GEL_MOUTH]:
+            continue
+        length = (2, 3, 4)[noise100(col, ord(face[0]), 2711) % 3]
+        if col in (0, 3, 6) and row >= 8 - length:
+            (drop if row == 7 else drip).put((x, y))
+    return [drip, drop]
 
 
 def gel_trail_model():
@@ -426,9 +436,15 @@ def acid_pool_model():
     # from y 16 to 24 and from x and z -4 to 4, and the core is from -3 to 3.
     im = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
     paint_box(im, 0, 0, 1, 1, 1, lambda face, x, y: ACID[1] if face == "top" else ACID[0])
+    paint_box(im, 4, 0, 2, 2, 2, lambda face, x, y: ACID[1] if face == "top" or (x, y) == (0, 0) else ACID[0])
     spots = ((-3.6, 17, -3.6), (2.9, 18.5, -3.7), (-1, 16.4, -3.7), (3, 22, 1), (-3.7, 21, 2.2), (1.2, 23, -3.7),
              (-2.5, 19.5, 3.0))
+    # The large bubbles sit just inside the faces of the gel: two near the
+    # front, one near the back, and one near each side.
+    large = ((-3, 21.6, -3.95), (1.6, 19.4, -3.95), (-1, 18, 1.95), (-3.95, 18.2, -1.5), (1.95, 20.6, 0.5))
     parts = [{"bone": "cube", "uv": [0, 0], "from": [x, y, z], "size": [1, 1, 1], "inflate": -0.2} for x, y, z in spots]
+    parts += [{"bone": "cube", "uv": [4, 0], "from": [x, y, z], "size": [2, 2, 2], "inflate": -0.15}
+              for x, y, z in large]
     save_model("acid_pool_bubbles", im, parts)
 
 

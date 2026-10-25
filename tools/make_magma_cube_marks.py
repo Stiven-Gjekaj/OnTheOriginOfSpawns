@@ -594,12 +594,15 @@ def far_jump():
 
 
 def ground_pound():
-    # A heavy, black bottom: the bottom layer and the bottom are black, and
-    # cracks rise from it into layer 6.
+    # A heavy, black bottom: a black band round layers 5 to 7, and the
+    # bottom is black. Cracks rise from it into layer 4. The face stays
+    # clear.
     black = Mark("#080404")
     crack = Mark("#C83A10")
-    for x, y, face, col, i in sides(layers=(6, 7)):
-        if i == 7:
+    for x, y, face, col, i in sides(layers=(4, 5, 6, 7)):
+        if is_face(face, i):
+            continue
+        if i >= 5:
             black.put((x, y))
         elif (col + RING[face]) % 4 == 1:
             crack.put((x, y))

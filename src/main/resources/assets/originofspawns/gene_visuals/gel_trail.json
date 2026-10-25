@@ -1,5 +1,20 @@
 {
 	"region_map": "originofspawns:textures/region/slime.png",
-	"layers": [],
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/gel_trail_0.png",
+				"tint": "#4A9A34"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/gel_trail_1.png",
+				"tint": "#D8F8C0"
+			}
+		}
+	],
 	"model": "originofspawns:gel_trail_drips"
 }

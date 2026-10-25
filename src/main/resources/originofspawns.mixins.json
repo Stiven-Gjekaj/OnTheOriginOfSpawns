@@ -52,6 +52,7 @@
 		"MagmaCubeMixin",
 		"MeleeAttackGoalMixin",
 		"MobAccessor",
+		"MobFleeMixin",
 		"MobMixin",
 		"MoveControlAccessor",
 		"PhantomAccessor",

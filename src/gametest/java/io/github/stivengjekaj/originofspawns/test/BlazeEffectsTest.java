@@ -305,6 +305,24 @@ public class BlazeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void smokeDashFleesFastUnderThirtyPercentHealth(GameTestHelper helper) {
+		Blaze blaze = blazeWith(helper, new BlockPos(4, 1, 4), "test_smoke_dash");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 4));
+		blaze.setTarget(pig);
+		var hit = helper.getLevel().damageSources().mobAttack(pig);
+		blaze.setHealth(10.0F);
+		GeneCombat.onHurt(blaze, hit);
+		helper.assertTrue(GeneBehaviors.fleeing(blaze).isEmpty(), "no flee at half health");
+		blaze.setHealth(5.0F);
+		GeneCombat.onHurt(blaze, hit);
+		helper.assertTrue(GeneBehaviors.fleeing(blaze).isPresent(), "the blaze flees under 30% health");
+		helper.assertValueEqual(GeneBehaviors.flyingSpeedMultiplier(blaze), 1.5, "50% more flying speed");
+		GeneBehaviors.fleeMove(blaze);
+		helper.assertTrue(blaze.getMoveControl().getWantedX() > blaze.getX() + 8.0, "the blaze moves away from the pig");
+		helper.succeed();
+	}
+
 	/**
 	 * Returns the speed up that one server step gives the blaze, with the smallest random offset of the game.
 	 */

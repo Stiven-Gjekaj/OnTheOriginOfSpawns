@@ -276,7 +276,8 @@ public sealed interface GeneEffect {
 			Map.entry("burn_pain", BurnPain.CODEC),
 			Map.entry("fire_feed", FireFeed.CODEC),
 			Map.entry("keep_above", KeepAbove.CODEC),
-			Map.entry("dive", Dive.CODEC)
+			Map.entry("dive", Dive.CODEC),
+			Map.entry("flee", Flee.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4566,6 +4567,25 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "dive";
+		}
+	}
+
+	/**
+	 * When something hurts the mob under the threshold of its maximum health, the mob flees from its target for this
+	 * many seconds, one time in each cooldown. While it flees, it moves away from its target, and its speed and its
+	 * flying speed are this many times as high.
+	 */
+	record Flee(float threshold, float seconds, float speed, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<Flee> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("threshold", 0.3F).forGetter(Flee::threshold),
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("seconds", 4.0F).forGetter(Flee::seconds),
+				Codec.floatRange(0.1F, 10.0F).optionalFieldOf("speed", 1.5F).forGetter(Flee::speed),
+				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("cooldown_seconds", 30.0F).forGetter(Flee::cooldownSeconds)
+		).apply(instance, Flee::new));
+
+		@Override
+		public String type() {
+			return "flee";
 		}
 	}
 }

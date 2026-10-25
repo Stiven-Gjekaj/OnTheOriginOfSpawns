@@ -1063,6 +1063,7 @@ public final class GeneCombat {
 		if (entity instanceof Mob wounded && wounded.level() instanceof ServerLevel woundedLevel) {
 			healOnce(wounded, woundedLevel);
 			GeneTeleports.escape(wounded, woundedLevel);
+			GeneBehaviors.startFlee(wounded);
 		}
 		if (entity instanceof Mob wounded) {
 			for (GeneEffect effect : GeneEffects.of(wounded).toList()) {

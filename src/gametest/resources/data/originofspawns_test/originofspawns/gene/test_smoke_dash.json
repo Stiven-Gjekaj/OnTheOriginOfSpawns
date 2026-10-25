@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "flee", "threshold": 0.3, "seconds": 4, "speed": 1.5 }],
+	"mutation_rate": 0
+}

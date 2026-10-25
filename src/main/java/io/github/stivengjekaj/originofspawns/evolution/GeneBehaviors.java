@@ -2130,8 +2130,50 @@ public final class GeneBehaviors {
 	 * Returns the product of the flying speed multipliers of the mob. A mob with no such gene gives 1.
 	 */
 	public static double flyingSpeedMultiplier(LivingEntity mob) {
-		return GeneEffects.of(mob).filter(GeneEffect.FlyingSpeed.class::isInstance)
+		double multiplier = GeneEffects.of(mob).filter(GeneEffect.FlyingSpeed.class::isInstance)
 				.mapToDouble(effect -> ((GeneEffect.FlyingSpeed) effect).multiplier()).reduce(1.0, (a, b) -> a * b);
+		return fleeing(mob).map(flee -> multiplier * flee.speed()).orElse(multiplier);
+	}
+
+	/**
+	 * Starts the flee of the mob, if a flee gene of the mob is under its threshold and its cooldown is over.
+	 */
+	public static void startFlee(Mob mob) {
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.Flee flee && mob.getHealth() < mob.getMaxHealth() * flee.threshold()
+					&& GeneCombat.ready(mob, flee, Math.max(flee.seconds(), flee.cooldownSeconds()))) {
+				GeneCombat.startCooldown(mob, flee);
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Returns the flee gene of the mob whose flee runs now.
+	 */
+	public static java.util.Optional<GeneEffect.Flee> fleeing(LivingEntity mob) {
+		return GeneEffects.of(mob).filter(GeneEffect.Flee.class::isInstance).map(GeneEffect.Flee.class::cast)
+				.filter(flee -> !GeneCombat.ready(mob, flee, flee.seconds())
+						&& mob.getAttachedOrElse(ModAttachments.EFFECT_TIMES, java.util.Map.of()).containsKey(flee))
+				.findFirst();
+	}
+
+	/**
+	 * While the mob flees, sets the place that it moves to: 16 blocks away from its target, at the speed of the flee.
+	 * The game runs this after the goals of the mob, so that no goal changes the place.
+	 */
+	public static void fleeMove(Mob mob) {
+		LivingEntity target = mob.getTarget();
+		var flee = fleeing(mob);
+		if (target == null || flee.isEmpty()) {
+			return;
+		}
+		Vec3 away = mob.position().subtract(target.position()).multiply(1.0, 0.0, 1.0);
+		if (away.lengthSqr() < 1.0E-6) {
+			away = new Vec3(1.0, 0.0, 0.0);
+		}
+		Vec3 place = mob.position().add(away.normalize().scale(16.0));
+		mob.getMoveControl().setWantedPosition(place.x, mob.getY(), place.z, flee.get().speed());
 	}
 
 	public static float attackIntervalMultiplier(LivingEntity mob) {

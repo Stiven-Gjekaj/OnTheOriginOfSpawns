@@ -417,15 +417,18 @@ public class BreezeEffectsTest {
 	@GameTest
 	public void windMirrorSendsTheArrowStraightBackHarder(GameTestHelper helper) {
 		var shooter = helper.spawnWithNoFreeWill(EntityTypes.SKELETON, new BlockPos(1, 1, 3));
+		// A new skeleton gets genes from the pool, and they can change its damage. The test shooter has none.
+		shooter.setAttached(ModAttachments.GENES, new CarriedGenes(java.util.List.of()));
 		var plain = mirror(helper, breezeWith(helper, new BlockPos(5, 1, 1)), shooter);
 		helper.assertTrue(plain.getDeltaMovement().length() < 1.0, "a plain breeze sends the arrow back slower");
-		float plainDamage = GeneCombat.modifyDamage(shooter, helper.getLevel().damageSources().arrow(plain, shooter), 4.0F);
+		helper.assertValueEqual(GeneCombat.modifyDamage(shooter, helper.getLevel().damageSources().arrow(plain, shooter), 4.0F),
+				4.0F, "a plain arrow back does its damage");
 		var arrow = mirror(helper, breezeWith(helper, new BlockPos(5, 1, 5), "test_wind_mirror"), shooter);
 		helper.assertTrue(Math.abs(arrow.getDeltaMovement().length() - 1.5) < 1.0E-6, "the arrow keeps its speed");
 		Vec3 toShooter = shooter.getBoundingBox().getCenter().subtract(arrow.position()).normalize();
 		helper.assertTrue(arrow.getDeltaMovement().normalize().dot(toShooter) > 0.9999, "the arrow flies at the shooter");
 		helper.assertValueEqual(GeneCombat.modifyDamage(shooter, helper.getLevel().damageSources().arrow(arrow, shooter), 4.0F),
-				plainDamage * 2.0F, "two times the damage of a plain arrow back");
+				8.0F, "two times the damage");
 		helper.succeed();
 	}
 

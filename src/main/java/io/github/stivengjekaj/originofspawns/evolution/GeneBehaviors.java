@@ -381,6 +381,8 @@ public final class GeneBehaviors {
 						&& mob.getTarget() instanceof Player player && mob.distanceTo(player) <= lurk.radius()
 						&& mob.hasLineOfSight(player) -> creeper.ignite();
 				case GeneEffect.Drink drink when mob instanceof Witch witch -> drink(witch, level, drink);
+				case GeneEffect.TouchReach reach when mob instanceof net.minecraft.world.entity.monster.cubemob.AbstractCubeMob cube ->
+						GeneCubes.reachHit(cube);
 				default -> {
 				}
 			}

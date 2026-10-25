@@ -224,7 +224,10 @@ public sealed interface GeneEffect {
 			Map.entry("split_area_effect", SplitAreaEffect.CODEC),
 			Map.entry("tiny_damage", TinyDamage.CODEC),
 			Map.entry("grow", Grow.CODEC),
-			Map.entry("bud", Bud.CODEC)
+			Map.entry("bud", Bud.CODEC),
+			Map.entry("touch_reach", TouchReach.CODEC),
+			Map.entry("shield_break", ShieldBreak.CODEC),
+			Map.entry("hop_back", HopBack.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3646,6 +3649,50 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "bud";
+		}
+	}
+
+	/**
+	 * The touch attack of a cube reaches this many blocks farther. A cube hits its target in the reach, also when the
+	 * target does not touch it. More than one effect adds up.
+	 */
+	record TouchReach(float blocks) implements GeneEffect {
+		public static final MapCodec<TouchReach> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 8.0F).optionalFieldOf("blocks", 1.0F).forGetter(TouchReach::blocks)
+		).apply(instance, TouchReach::new));
+
+		@Override
+		public String type() {
+			return "touch_reach";
+		}
+	}
+
+	/**
+	 * A touch hit of a cube on a player that holds up a shield makes the shield useless for this many seconds. The
+	 * shield stops the hit, as in vanilla.
+	 */
+	record ShieldBreak(float seconds) implements GeneEffect {
+		public static final MapCodec<ShieldBreak> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("seconds", 5.0F).forGetter(ShieldBreak::seconds)
+		).apply(instance, ShieldBreak::new));
+
+		@Override
+		public String type() {
+			return "shield_break";
+		}
+	}
+
+	/**
+	 * After a melee hit, the mob hops about this many blocks back, away from its target. The largest number counts.
+	 */
+	record HopBack(float blocks) implements GeneEffect {
+		public static final MapCodec<HopBack> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 8.0F).optionalFieldOf("blocks", 3.0F).forGetter(HopBack::blocks)
+		).apply(instance, HopBack::new));
+
+		@Override
+		public String type() {
+			return "hop_back";
 		}
 	}
 }

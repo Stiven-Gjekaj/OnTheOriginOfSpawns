@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.cubemob.AbstractCubeMob;
+import net.minecraft.world.item.ItemStack;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -37,11 +38,22 @@ public abstract class AbstractCubeMobMixin {
 			target = "Lnet/minecraft/world/entity/LivingEntity;hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
 	private boolean originofspawns$touchHit(LivingEntity target, ServerLevel level, DamageSource source, float damage,
 			Operation<Boolean> original) {
+		ItemStack shield = target.getItemBlockingWith();
 		boolean hurt = original.call(target, level, source, damage);
+		GeneCubes.shieldBreak((AbstractCubeMob) (Object) this, level, target, shield);
 		if (hurt) {
 			GeneCombat.onHit((AbstractCubeMob) (Object) this, target);
 		}
 		return hurt;
+	}
+
+	/**
+	 * The genes give the touch attack more reach.
+	 */
+	@WrapOperation(method = "dealDamage", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/monster/cubemob/AbstractCubeMob;isWithinMeleeAttackRange(Lnet/minecraft/world/entity/LivingEntity;)Z"))
+	private boolean originofspawns$touchReach(AbstractCubeMob cube, LivingEntity target, Operation<Boolean> original) {
+		return GeneCubes.inReach(cube, target, original.call(cube, target));
 	}
 
 	/**

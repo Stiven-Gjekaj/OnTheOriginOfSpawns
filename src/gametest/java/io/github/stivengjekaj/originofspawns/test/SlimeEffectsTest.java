@@ -4,6 +4,7 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.DeathTrace;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCubes;
 import io.github.stivengjekaj.originofspawns.mixin.AbstractCubeMobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -264,6 +265,68 @@ public class SlimeEffectsTest {
 		helper.assertTrue(GeneCubes.bud(child, helper.getLevel(), bud) == null, "a bud makes no buds");
 		child.discard();
 		helper.succeed();
+	}
+
+	@GameTest
+	public void wideReachHitsATargetOneBlockFarther(GameTestHelper helper) {
+		// A slime of size 2 is 1.04 blocks wide. The pig is about 1 block from its side: out of the vanilla reach of
+		// 0.83 blocks, and in the reach of Wide Reach.
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 4));
+		AbstractCubeMob plain = cubeWith(helper, EntityTypes.SLIME, new BlockPos(2, 1, 4), 2);
+		((AbstractCubeMobAccessor) plain).originofspawns$dealDamage(pig);
+		helper.assertValueEqual(pig.getHealth(), pig.getMaxHealth(), "a plain slime does not reach the pig");
+		plain.discard();
+		AbstractCubeMob wide = cubeWith(helper, EntityTypes.SLIME, new BlockPos(2, 1, 4), 2, "test_wide_reach");
+		wide.setTarget(pig);
+		// Only a cube with AI does damage. The test turns the AI on for the hit, so the cube does not move.
+		wide.setNoAi(false);
+		GeneCubes.reachHit(wide);
+		wide.setNoAi(true);
+		helper.assertTrue(pig.getHealth() < pig.getMaxHealth(), "Wide Reach hits its target in the reach");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void shieldMeltStopsTheShieldThatStopsTheTouch(GameTestHelper helper) {
+		ServerPlayer player = CreeperEffectsTest.shieldedPlayer(helper);
+		AbstractCubeMob plain = cubeWith(helper, EntityTypes.SLIME, new BlockPos(4, 1, 1), 2);
+		plain.snapTo(player.position().add(-0.9, 0.0, 0.0), 0.0F, 0.0F);
+		((AbstractCubeMobAccessor) plain).originofspawns$dealDamage(player);
+		helper.assertTrue(player.isBlocking(), "the shield stays up after the touch of a plain slime");
+		plain.discard();
+		AbstractCubeMob melt = cubeWith(helper, EntityTypes.SLIME, new BlockPos(4, 1, 1), 2, "test_shield_melt");
+		melt.snapTo(player.position().add(-0.9, 0.0, 0.0), 0.0F, 0.0F);
+		((AbstractCubeMobAccessor) melt).originofspawns$dealDamage(player);
+		helper.assertTrue(player.getCooldowns().isOnCooldown(new ItemStack(Items.SHIELD)), "the shield stops for a time");
+		helper.assertFalse(player.isBlocking(), "the player cannot block now");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 60)
+	public void reboundHopsTheMagmaCubeThreeBlocksBackAfterAHit(GameTestHelper helper) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(7, 1, 4));
+		AbstractCubeMob cube = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(5, 1, 4), 2, "test_rebound");
+		// The cube starts a little above the ground, so its AI does not hop before the hop back.
+		cube.snapTo(cube.position().add(0.0, 0.1, 0.0), 0.0F, 0.0F);
+		cube.setNoAi(false);
+		Vec3 start = cube.position();
+		GeneCombat.onHit(cube, pig);
+		boolean[] flew = {false};
+		Vec3[] landing = {null};
+		helper.onEachTick(() -> {
+			if (!cube.onGround()) {
+				flew[0] = true;
+			} else if (flew[0] && landing[0] == null) {
+				landing[0] = cube.position();
+			}
+		});
+		helper.succeedWhen(() -> {
+			helper.assertTrue(landing[0] != null, "the cube lands");
+			double back = start.x - landing[0].x;
+			helper.assertTrue(back >= 2.0 && back <= 4.0, "the cube hops about 3 blocks back, not " + back);
+			helper.assertTrue(Math.abs(landing[0].z - start.z) < 1.0, "the cube hops straight back");
+			cube.discard();
+		});
 	}
 
 	static List<AbstractCubeMob> piecesNear(GameTestHelper helper, AbstractCubeMob cube) {

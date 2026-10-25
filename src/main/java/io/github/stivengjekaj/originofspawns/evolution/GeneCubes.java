@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.evolution;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
+import io.github.stivengjekaj.originofspawns.mixin.AbstractCubeMobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import java.util.Optional;
@@ -10,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.monster.cubemob.AbstractCubeMob;
@@ -256,5 +258,55 @@ public final class GeneCubes {
 		// A combat time under 0 means no combat.
 		long start = combat < 0 ? since : Math.max(since, combat);
 		return now - start >= Math.round(seconds * 20.0F);
+	}
+
+	/**
+	 * The vanilla reach of a melee attack past the box of the mob, in blocks.
+	 */
+	private static final double MELEE_REACH = Math.sqrt(2.04F) - 0.6F;
+
+	/**
+	 * Returns the extra blocks of the touch attack of the cube, from its genes.
+	 */
+	public static float touchReach(AbstractCubeMob cube) {
+		return (float) GeneEffects.of(cube).filter(GeneEffect.TouchReach.class::isInstance)
+				.mapToDouble(effect -> ((GeneEffect.TouchReach) effect).blocks()).sum();
+	}
+
+	/**
+	 * Returns true if the target is in the reach of the touch attack of the cube, with the extra reach of the genes.
+	 */
+	public static boolean inReach(AbstractCubeMob cube, LivingEntity target, boolean vanilla) {
+		float extra = touchReach(cube);
+		if (vanilla || extra <= 0.0F) {
+			return vanilla;
+		}
+		double reach = MELEE_REACH + extra;
+		return cube.getBoundingBox().inflate(reach, 0.0, reach).intersects(target.getBoundingBox());
+	}
+
+	/**
+	 * Lets a cube with more reach hit its target in the reach. Vanilla hits only at a touch.
+	 */
+	public static void reachHit(AbstractCubeMob cube) {
+		LivingEntity target = cube.getTarget();
+		AbstractCubeMobAccessor accessor = (AbstractCubeMobAccessor) cube;
+		if (target != null && target.isAlive() && !cube.getBoundingBox().intersects(target.getBoundingBox())
+				&& accessor.originofspawns$canDealDamage()) {
+			accessor.originofspawns$dealDamage(target);
+		}
+	}
+
+	/**
+	 * Stops the shield of a target that held it up at a touch hit of the cube, for the seconds of the genes.
+	 */
+	public static void shieldBreak(AbstractCubeMob cube, ServerLevel level, LivingEntity target, ItemStack shield) {
+		if (shield == null || !shield.has(DataComponents.BLOCKS_ATTACKS)) {
+			return;
+		}
+		GeneEffects.of(cube).filter(GeneEffect.ShieldBreak.class::isInstance)
+				.mapToDouble(effect -> ((GeneEffect.ShieldBreak) effect).seconds()).max()
+				.ifPresent(seconds -> shield.get(DataComponents.BLOCKS_ATTACKS)
+						.disable(level, target, (float) seconds, shield));
 	}
 }

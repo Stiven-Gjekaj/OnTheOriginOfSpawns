@@ -572,6 +572,7 @@ public final class GeneCombat {
 				}
 				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(false) && target instanceof LivingEntity living
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(living, freeze.seconds());
+				case GeneEffect.HopBack back -> hopBack(mob, target);
 				case GeneEffect.Knockback knockback when knockback.hits().includes(false) ->
 						pushBack(mob, target, knockback.multiplier());
 				case GeneEffect.WebOnHit web when web.hits().includes(false) && mob.level() instanceof ServerLevel level
@@ -784,6 +785,21 @@ public final class GeneCombat {
 	/**
 	 * Pushes the target away from the mob, so that the full push of a hit is the multiplier times as far.
 	 */
+	/**
+	 * Makes the mob hop back, away from the target, with the largest hop back of its genes.
+	 */
+	private static void hopBack(Mob mob, Entity target) {
+		Vec3 away = new Vec3(mob.getX() - target.getX(), 0.0, mob.getZ() - target.getZ());
+		double blocks = GeneEffects.of(mob).filter(GeneEffect.HopBack.class::isInstance)
+				.mapToDouble(effect -> ((GeneEffect.HopBack) effect).blocks()).max().orElse(0.0);
+		if (away.lengthSqr() > 1.0E-4 && blocks > 0.0) {
+			// A jump of 0.42 is in the air for about 12 ticks, and the air keeps 91% of the speed each tick.
+			Vec3 push = away.normalize().scale(blocks * (1.0 - 0.91) / (1.0 - Math.pow(0.91, 12)));
+			mob.setDeltaMovement(push.x, 0.42, push.z);
+			mob.needsSync = true;
+		}
+	}
+
 	private static void pushBack(Mob mob, Entity target, float multiplier) {
 		Vec3 away = new Vec3(target.getX() - mob.getX(), 0.0, target.getZ() - mob.getZ());
 		if (away.lengthSqr() > 1.0E-4) {

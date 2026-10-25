@@ -74,6 +74,7 @@ PHANTOM_PATH = "assets/minecraft/textures/entity/phantom/phantom.png"
 PHANTOM_EYES_PATH = "assets/minecraft/textures/entity/phantom/phantom_eyes.png"
 GHAST_PATH = "assets/minecraft/textures/entity/ghast/ghast.png"
 GHAST_SHOOTING_PATH = "assets/minecraft/textures/entity/ghast/ghast_shooting.png"
+BLAZE_PATH = "assets/minecraft/textures/entity/blaze/blaze.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -539,6 +540,16 @@ GHAST_FAMILIES = {
 }
 
 
+# The families of the blaze, from design/species/blaze.md.
+BLAZE_FAMILIES = {
+    "searer": ["white_heat", "blast_ember", "shield_scorch", "golem_melt", "sear_touch", "swift_shot"],
+    "volleyer": ["long_burst", "quick_burst", "fan_shot", "seeker_spark", "spark_ring", "soot_cloud"],
+    "smolderer": ["deep_burn", "fire_trail", "burn_pain", "fire_feed", "rod_wall", "heat_haze"],
+    "hoverer": ["rising_heat", "air_dodge", "quick_wings", "smoke_dash", "sky_guard", "diving_flame"],
+    "steamhide": ["steam_shell", "snow_shrug", "boil_off", "hot_core", "cinder_heart", "steam_burst"],
+}
+
+
 ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
     "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
     "fester": ["nether_rot", "stench"], "bladesman": ["riposte", "keen_edge"], "chaser": ["scent_tracker", "vault"],
@@ -572,6 +583,11 @@ GHAST_EXTRA = next_family_extra(GHAST_FAMILIES, {
     "weeper": ["healing_tears", "tear_rain"], "driftwing": ["swift_drift", "return_ward"],
     "moaner": ["dread_moan", "blast_cry"],
 }, "moaner")
+BLAZE_EXTRA = next_family_extra(BLAZE_FAMILIES, {
+    "searer": ["white_heat", "blast_ember"], "volleyer": ["fan_shot", "spark_ring"],
+    "smolderer": ["rod_wall", "fire_trail"], "hoverer": ["quick_wings", "sky_guard"],
+    "steamhide": ["steam_shell", "hot_core"],
+}, "steamhide")
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -951,6 +967,23 @@ GHAST_PIVOTS.update({f"tentacle{i}": ((i % 3 - (i // 3 % 2) * 0.5 + 0.25 - 1) * 
 GHAST_CUBES = [("body", (0, 0), (-8, -8, -8), (16, 16, 16), False)] + [
     (f"tentacle{i}", (0, 0), (-1, 0, -1), (2, GHAST_LENGTHS[i], 2), False) for i in range(9)]
 
+
+# The blaze, from BlazeModel: a head, and twelve rods, part0 to part11, which
+# are root bones. The rods turn round the body. Four rods turn at a radius of
+# 9 at y -2, four at a radius of 7 at y 2, and four at a radius of 5 at y 11.
+# The previews draw them at one moment of that turn.
+def blaze_rod(i):
+    ring = i // 4
+    radius, y = ((9, -2), (7, 2), (5, 11))[ring]
+    angle = math.radians(i % 4 * 90 + (45, 0, 22.5)[ring])
+    return (math.cos(angle) * radius - 1, y, math.sin(angle) * radius - 1)
+
+
+BLAZE_PIVOTS = {"head": (0, 0, 0)}
+BLAZE_PIVOTS.update({f"part{i}": blaze_rod(i) for i in range(12)})
+BLAZE_CUBES = [("head", (0, 0), (-4, -4, -4), (8, 8, 8), False)] + [
+    (f"part{i}", (0, 16), (0, 0, 0), (2, 8, 2), False) for i in range(12)]
+
 # Each Nether mob: the cubes, the pivots, the weapon, the wraps, the frame of
 # the sheets (VIEW_X, VIEW_Y, VIEW_W, VIEW_H), the frame of the close-ups,
 # and whether the sheets look down on it.
@@ -967,6 +1000,7 @@ NETHER_LOOKS = {
     "phantom": (PHANTOM_CUBES, PHANTOM_PIVOTS, None, [], (24, 12, 48, 24), ((48, 26), (0, -1)), True),
     "ghast": (GHAST_CUBES, GHAST_PIVOTS, None, [], (14, -6, 28, 34), ((30, 36), (0, 23)), False),
     "ghast_shooting": (GHAST_CUBES, GHAST_PIVOTS, None, [], (14, -6, 28, 34), ((30, 36), (0, 23)), False),
+    "blaze": (BLAZE_CUBES, BLAZE_PIVOTS, None, [], (13, 8, 26, 32), ((28, 34), (0, 8)), False),
 }
 # The flyers are seen from below in the game, so their sheets look at them
 # from above, from below, and from the side.
@@ -1542,6 +1576,7 @@ SPECIES = {
     "phantom": (PHANTOM_PATH, None, PHANTOM_FAMILIES, PHANTOM_EXTRA, []),
     "ghast": (GHAST_PATH, None, GHAST_FAMILIES, GHAST_EXTRA, []),
     "ghast_shooting": (GHAST_SHOOTING_PATH, None, GHAST_FAMILIES, GHAST_EXTRA, []),
+    "blaze": (BLAZE_PATH, None, BLAZE_FAMILIES, BLAZE_EXTRA, []),
 }
 
 

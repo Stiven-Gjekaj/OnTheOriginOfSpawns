@@ -242,6 +242,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> SUN_SHADE_TIME = AttachmentRegistry.create(OriginOfSpawns.id("sun_shade_time"));
 
 	/**
+	 * True after a breeze shot its wind charge at the top of the long jump that it does now.
+	 */
+	public static final AttachmentType<Boolean> JUMP_SHOT_DONE = AttachmentRegistry.create(OriginOfSpawns.id("jump_shot_done"));
+
+	/**
 	 * The last game time that the mob shot a fireball.
 	 */
 	public static final AttachmentType<Long> SHOT_TIME = AttachmentRegistry.create(OriginOfSpawns.id("shot_time"));

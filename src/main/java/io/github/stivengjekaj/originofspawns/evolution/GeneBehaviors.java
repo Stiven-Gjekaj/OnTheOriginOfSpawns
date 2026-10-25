@@ -412,6 +412,7 @@ public final class GeneBehaviors {
 				case GeneEffect.Drink drink when mob instanceof Witch witch -> drink(witch, level, drink);
 				case GeneEffect.LavaExitFire fire when mob.isInLava() -> mob.setAttached(ModAttachments.LAVA_TIME, level.getGameTime());
 				case GeneEffect.RunStrike run -> countRun(mob);
+				case GeneEffect.JumpShot shot -> jumpShot(mob, level);
 				case GeneEffect.TouchReach reach when mob instanceof net.minecraft.world.entity.monster.cubemob.AbstractCubeMob cube ->
 						GeneCubes.reachHit(cube);
 				default -> {
@@ -1029,6 +1030,36 @@ public final class GeneBehaviors {
 			return false;
 		}
 		mob.heal(feed.amount());
+		return true;
+	}
+
+	/**
+	 * At the top of a long jump, makes a breeze shoot a wind charge at its target, one time in each jump. The top is
+	 * the first tick of the jump in which the breeze does not rise.
+	 *
+	 * @return true if the breeze shot
+	 */
+	public static boolean jumpShot(Mob mob, ServerLevel level) {
+		if (!(mob instanceof net.minecraft.world.entity.monster.breeze.Breeze breeze)
+				|| breeze.getPose() != net.minecraft.world.entity.Pose.LONG_JUMPING) {
+			mob.removeAttached(ModAttachments.JUMP_SHOT_DONE);
+			return false;
+		}
+		// A breeze keeps its target in its brain.
+		LivingEntity target = breeze.getBrain().getMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGET)
+				.orElse(null);
+		if (breeze.getAttachedOrElse(ModAttachments.JUMP_SHOT_DONE, false) || breeze.getDeltaMovement().y > 0.0
+				|| target == null || !target.isAlive()) {
+			return false;
+		}
+		breeze.setAttached(ModAttachments.JUMP_SHOT_DONE, true);
+		var charge = new net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.BreezeWindCharge(breeze, level);
+		double dx = target.getX() - breeze.getX();
+		double dy = target.getY(0.3) - breeze.getFiringYPosition();
+		double dz = target.getZ() - breeze.getZ();
+		net.minecraft.world.entity.projectile.Projectile.spawnProjectileUsingShoot(charge, level, ItemStack.EMPTY, dx, dy, dz,
+				0.7F, (5 - level.getDifficulty().getId() * 4) * arrowSpreadMultiplier(breeze));
+		fireballSpeed(breeze, charge);
 		return true;
 	}
 

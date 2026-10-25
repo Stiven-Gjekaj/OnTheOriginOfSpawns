@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.mixin.LongJumpAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -216,6 +217,27 @@ public class BreezeEffectsTest {
 		restAfterLanding(helper, breeze);
 		helper.assertValueEqual(pig.getHealth(), pig.getMaxHealth() - 3.0F, "the pig near takes 3 damage");
 		helper.assertValueEqual(other.getHealth(), other.getMaxHealth(), "another breeze takes no damage");
+		helper.succeed();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void windRideShootsAtTheTopOfTheJump(GameTestHelper helper) {
+		Breeze breeze = shooter(helper, new BlockPos(1, 1, 3));
+		breeze.setPose(net.minecraft.world.entity.Pose.LONG_JUMPING);
+		breeze.setDeltaMovement(0.0, 0.3, 0.0);
+		helper.assertFalse(GeneBehaviors.jumpShot(breeze, helper.getLevel()), "no shot while the breeze rises");
+		breeze.setDeltaMovement(0.0, -0.01, 0.0);
+		helper.assertTrue(GeneBehaviors.jumpShot(breeze, helper.getLevel()), "a shot at the top of the jump");
+		helper.assertFalse(GeneBehaviors.jumpShot(breeze, helper.getLevel()), "one shot in each jump");
+		var charges = helper.getLevel().getEntitiesOfClass(BreezeWindCharge.class, helper.getBounds().inflate(4.0),
+				charge -> charge.getOwner() == breeze);
+		helper.assertValueEqual(charges.size(), 1, "wind charges");
+		charges.forEach(BreezeWindCharge::discard);
+		breeze.setPose(net.minecraft.world.entity.Pose.STANDING);
+		GeneBehaviors.jumpShot(breeze, helper.getLevel());
+		breeze.setPose(net.minecraft.world.entity.Pose.LONG_JUMPING);
+		helper.assertTrue(GeneBehaviors.jumpShot(breeze, helper.getLevel()), "a new jump has a new shot");
+		helper.getLevel().getEntitiesOfClass(BreezeWindCharge.class, helper.getBounds().inflate(4.0)).forEach(BreezeWindCharge::discard);
 		helper.succeed();
 	}
 

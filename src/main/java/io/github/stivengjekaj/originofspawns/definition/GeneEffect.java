@@ -283,7 +283,8 @@ public sealed interface GeneEffect {
 			Map.entry("push_on_hurt", PushOnHurt.CODEC),
 			Map.entry("wind_push", WindPush.CODEC),
 			Map.entry("wind_lift", WindLift.CODEC),
-			Map.entry("wind_charge_damage", WindChargeDamage.CODEC)
+			Map.entry("wind_charge_damage", WindChargeDamage.CODEC),
+			Map.entry("jump_shot", JumpShot.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4694,6 +4695,18 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "wind_charge_damage";
+		}
+	}
+
+	/**
+	 * At the top of each long jump, a breeze shoots a wind charge at its target, as its normal shot.
+	 */
+	record JumpShot() implements GeneEffect {
+		public static final MapCodec<JumpShot> CODEC = MapCodec.unit(new JumpShot());
+
+		@Override
+		public String type() {
+			return "jump_shot";
 		}
 	}
 }

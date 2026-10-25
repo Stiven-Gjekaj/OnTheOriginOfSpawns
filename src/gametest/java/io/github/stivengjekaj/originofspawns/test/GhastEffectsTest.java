@@ -275,6 +275,20 @@ public class GhastEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void highFloatKeepsTheGhastAboveItsTarget(GameTestHelper helper) {
+		Ghast ghast = ghastWith(helper, new BlockPos(2, 1, 2), "test_high_float");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		var goal = new Ghast.RandomFloatAroundGoal(ghast);
+		ghast.setTarget(pig);
+		for (int i = 0; i < 10; i++) {
+			goal.start();
+			double above = ghast.getMoveControl().getWantedY() - pig.getY();
+			helper.assertTrue(above >= 4.0 - 1.0E-6, "the ghast floats 4 blocks above its target, not " + above);
+		}
+		helper.succeed();
+	}
+
 	/**
 	 * Returns the speed that one step of the move control gives the ghast toward a place 2 blocks away, and removes
 	 * the ghast.

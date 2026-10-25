@@ -863,6 +863,24 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the height of a place that the mob floats to, after its float height genes. While the mob has a target,
+	 * the place is at least the largest number of blocks above the target.
+	 */
+	public static double floatHeight(Mob mob, double y) {
+		LivingEntity target = mob.getTarget();
+		if (target == null) {
+			return y;
+		}
+		double result = y;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.FloatHeight height) {
+				result = Math.max(result, target.getY() + height.blocks());
+			}
+		}
+		return result;
+	}
+
+	/**
 	 * Returns the ticks that a ghast waits after a shot, after its throw rates. The full time from one shot to the
 	 * next is the wait and the charge of 20 ticks. The throw rate changes the full time.
 	 */

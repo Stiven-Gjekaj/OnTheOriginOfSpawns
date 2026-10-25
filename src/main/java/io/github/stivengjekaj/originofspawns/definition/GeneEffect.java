@@ -262,7 +262,8 @@ public sealed interface GeneEffect {
 			Map.entry("blast_shield_stop", BlastShieldStop.CODEC),
 			Map.entry("blast_fire", BlastFire.CODEC),
 			Map.entry("small_fireball_fan", SmallFireballFan.CODEC),
-			Map.entry("hard_fireball", HardFireball.CODEC)
+			Map.entry("hard_fireball", HardFireball.CODEC),
+			Map.entry("float_height", FloatHeight.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4325,6 +4326,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "hard_fireball";
+		}
+	}
+
+	/**
+	 * While the ghast has a target, each place that it floats to is at least this many blocks above the target. A
+	 * vanilla ghast floats to random places near it, and it picks only targets in 4 blocks of its own height.
+	 */
+	record FloatHeight(float blocks) implements GeneEffect {
+		public static final MapCodec<FloatHeight> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 32.0F).optionalFieldOf("blocks", 4.0F).forGetter(FloatHeight::blocks)
+		).apply(instance, FloatHeight::new));
+
+		@Override
+		public String type() {
+			return "float_height";
 		}
 	}
 }

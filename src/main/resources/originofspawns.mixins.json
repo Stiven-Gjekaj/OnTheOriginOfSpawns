@@ -33,6 +33,7 @@
 		"FireworkRocketEntityMixin",
 		"FlowingFluidMixin",
 		"GhastMoveControlMixin",
+		"GhastRandomFloatAroundGoalMixin",
 		"GhastShootFireballGoalMixin",
 		"HoglinAiAccessor",
 		"HoglinAiMixin",

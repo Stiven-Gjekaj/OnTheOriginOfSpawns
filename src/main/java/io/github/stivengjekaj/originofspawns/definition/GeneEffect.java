@@ -287,7 +287,8 @@ public sealed interface GeneEffect {
 			Map.entry("jump_shot", JumpShot.CODEC),
 			Map.entry("spin_up", SpinUp.CODEC),
 			Map.entry("charge_each_player", ChargeEachPlayer.CODEC),
-			Map.entry("lightning_call", LightningCall.CODEC)
+			Map.entry("lightning_call", LightningCall.CODEC),
+			Map.entry("escape_jump", EscapeJump.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4773,6 +4774,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "lightning_call";
+		}
+	}
+
+	/**
+	 * One time in the life of the mob, when something hurts it under the threshold of its maximum health, it jumps far
+	 * away from the attacker. The jump has this speed along the ground, and half of it up. It is saved with the mob.
+	 */
+	record EscapeJump(float threshold, float speed) implements GeneEffect {
+		public static final MapCodec<EscapeJump> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("threshold", 0.3F).forGetter(EscapeJump::threshold),
+				Codec.floatRange(0.1F, 5.0F).optionalFieldOf("speed", 1.2F).forGetter(EscapeJump::speed)
+		).apply(instance, EscapeJump::new));
+
+		@Override
+		public String type() {
+			return "escape_jump";
 		}
 	}
 }

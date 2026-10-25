@@ -1103,6 +1103,18 @@ public final class GeneCombat {
 						&& self.damageTypes().map(source::is).orElse(true)) {
 					wounded.addEffect(new MobEffectInstance(self.effect(), Math.round(self.seconds() * 20.0F),
 							self.amplifier()), wounded);
+				} else if (effect instanceof GeneEffect.EscapeJump jump && source.getEntity() != null
+						&& wounded.getHealth() < wounded.getMaxHealth() * jump.threshold()
+						&& !wounded.getAttachedOrElse(ModAttachments.ESCAPE_JUMP_USED, false)) {
+					wounded.setAttached(ModAttachments.ESCAPE_JUMP_USED, true);
+					net.minecraft.world.phys.Vec3 away = wounded.position().subtract(source.getEntity().position())
+							.multiply(1.0, 0.0, 1.0);
+					if (away.lengthSqr() < 1.0E-6) {
+						away = new net.minecraft.world.phys.Vec3(1.0, 0.0, 0.0);
+					}
+					net.minecraft.world.phys.Vec3 along = away.normalize().scale(jump.speed());
+					wounded.setDeltaMovement(along.x, jump.speed() * 0.5, along.z);
+					wounded.needsSync = true;
 				} else if (effect instanceof GeneEffect.PushOnHurt push && (!push.meleeOnly()
 						|| source.getEntity() instanceof LivingEntity && source.getDirectEntity() == source.getEntity())
 						&& wounded.getHealth() < wounded.getMaxHealth() * push.threshold() + 1.0E-4F

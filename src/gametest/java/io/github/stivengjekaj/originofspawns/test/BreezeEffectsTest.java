@@ -319,6 +319,23 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void lastDraftJumpsAwayOneTimeUnderThirtyPercentHealth(GameTestHelper helper) {
+		Breeze breeze = breezeWith(helper, new BlockPos(3, 1, 3), "test_last_draft");
+		Pig attacker = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 3));
+		var hit = helper.getLevel().damageSources().mobAttack(attacker);
+		breeze.setHealth(breeze.getMaxHealth() / 2.0F);
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(breeze, hit);
+		helper.assertValueEqual(breeze.getDeltaMovement().horizontalDistance(), 0.0, "no jump at half health");
+		breeze.setHealth(breeze.getMaxHealth() / 5.0F);
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(breeze, hit);
+		helper.assertTrue(breeze.getDeltaMovement().x > 1.0 && breeze.getDeltaMovement().y > 0.0, "the breeze jumps away");
+		breeze.setDeltaMovement(Vec3.ZERO);
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(breeze, hit);
+		helper.assertValueEqual(breeze.getDeltaMovement().horizontalDistance(), 0.0, "one jump in its life");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes the breeze jump to a place 4 blocks away at the end of its inhale, and returns the speed of the jump. The
 	 * random source has a fixed seed, so each breeze picks the same angle.

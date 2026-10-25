@@ -70,6 +70,12 @@ public final class ModAttachments {
 			AttachmentRegistry.createPersistent(OriginOfSpawns.id("heal_once_used"), com.mojang.serialization.Codec.BOOL);
 
 	/**
+	 * True when a mob used its one escape jump.
+	 */
+	public static final AttachmentType<Boolean> ESCAPE_JUMP_USED =
+			AttachmentRegistry.createPersistent(OriginOfSpawns.id("escape_jump_used"), com.mojang.serialization.Codec.BOOL);
+
+	/**
 	 * True when a mob used its one push on hurt with {@code once}.
 	 */
 	public static final AttachmentType<Boolean> PUSH_ONCE_USED =

@@ -2419,13 +2419,15 @@ public sealed interface GeneEffect {
 
 	/**
 	 * Gives a status effect to each living entity that the blast of the mob damages. A shield that stops the blast
-	 * stops the effect.
+	 * stops the effect. With a radius, each player in the radius of the center of the blast gets the effect in its
+	 * place, also a player that the blast does not damage.
 	 */
-	record BlastEffect(Holder<MobEffect> effect, float seconds, int amplifier) implements GeneEffect {
+	record BlastEffect(Holder<MobEffect> effect, float seconds, int amplifier, Optional<Float> radius) implements GeneEffect {
 		public static final MapCodec<BlastEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				MobEffect.CODEC.fieldOf("effect").forGetter(BlastEffect::effect),
 				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(BlastEffect::seconds),
-				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(BlastEffect::amplifier)
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(BlastEffect::amplifier),
+				Codec.floatRange(0.5F, 64.0F).optionalFieldOf("radius").forGetter(BlastEffect::radius)
 		).apply(instance, BlastEffect::new));
 
 		@Override

@@ -97,6 +97,14 @@ public final class GeneBlasts {
 							pos.x, pos.y, pos.z, radius * aftershock.fraction(), Level.ExplosionInteraction.MOB));
 				case GeneEffect.BlastFire fire when level.getGameRules().get(GameRules.MOB_GRIEFING) ->
 						blastFire(mob, level, pos, radius, fire.blocks());
+				case GeneEffect.BlastEffect blast when blast.radius().isPresent() -> {
+					float reach = blast.radius().get();
+					for (Player player : level.getEntitiesOfClass(Player.class, AABB.ofSize(pos, reach * 2.0, reach * 2.0,
+							reach * 2.0), player -> player.position().distanceTo(pos) <= reach && !player.isSpectator())) {
+						player.addEffect(new MobEffectInstance(blast.effect(), Math.round(blast.seconds() * 20.0F),
+								blast.amplifier()), mob);
+					}
+				}
 				case GeneEffect.BlastShieldStop stop -> {
 					for (Player player : level.getEntitiesOfClass(Player.class, AABB.ofSize(pos, radius * 4.0, radius * 4.0,
 							radius * 4.0), player -> player.position().distanceTo(pos) <= radius * 2.0F)) {
@@ -186,7 +194,7 @@ public final class GeneBlasts {
 			return;
 		}
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
-			if (effect instanceof GeneEffect.BlastEffect blast) {
+			if (effect instanceof GeneEffect.BlastEffect blast && blast.radius().isEmpty()) {
 				victim.addEffect(new MobEffectInstance(blast.effect(), Math.round(blast.seconds() * 20.0F),
 						blast.amplifier()), mob);
 			}

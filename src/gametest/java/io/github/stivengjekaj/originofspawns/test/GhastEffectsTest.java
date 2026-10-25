@@ -80,6 +80,19 @@ public class GhastEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8)
+	public void blastCryReachesThePlayersInItsRadius(GameTestHelper helper) {
+		// The blast of power 1 hurts to 2 blocks. The radius of the effect is 5 blocks, and the player is 4 blocks away.
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(BLAST.east(4))));
+		Pig pig = CreeperEffectsTest.pigAt(helper, BLAST.south(1));
+		explodeFireball(helper, ghastWith(helper, new BlockPos(5, 1, 5), "test_blast_cry"), BLAST);
+		helper.assertValueEqual(player.getHealth(), player.getMaxHealth(), "the blast does not hurt the player");
+		helper.assertValueEqual(player.getEffect(MobEffects.SLOWNESS).getDuration(), 60, "Slowness for 3 seconds");
+		helper.assertFalse(pig.hasEffect(MobEffects.SLOWNESS), "only the players get the effect");
+		helper.succeed();
+	}
+
 	@GameTest
 	public void fireRainSetsBlocksOnFireAfterTheBlast(GameTestHelper helper) {
 		BlockPos center = new BlockPos(3, 1, 3);

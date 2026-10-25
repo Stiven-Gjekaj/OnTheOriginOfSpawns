@@ -27,6 +27,7 @@
 		"FallingBlockEntityAccessor",
 		"FallingBlockEntityMixin",
 		"FireworkRocketEntityAccessor",
+		"FireBlockMixin",
 		"FireworkRocketEntityMixin",
 		"LeapAtTargetGoalMixin",
 		"LivingEntityMixin",

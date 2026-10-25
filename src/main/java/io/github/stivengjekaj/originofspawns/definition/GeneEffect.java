@@ -232,7 +232,8 @@ public sealed interface GeneEffect {
 			Map.entry("lava_exit_fire", LavaExitFire.CODEC),
 			Map.entry("fire_aura", FireAura.CODEC),
 			Map.entry("fireball_shot", FireballShot.CODEC),
-			Map.entry("blast_heal", BlastHeal.CODEC)
+			Map.entry("blast_heal", BlastHeal.CODEC),
+			Map.entry("fire_trail", FireTrail.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3780,6 +3781,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "blast_heal";
+		}
+	}
+
+	/**
+	 * While the mob stands on the ground, it leaves fire at its place one time in each interval. The fire goes only
+	 * in air, it does not spread, and it goes away after the seconds. It obeys the {@code mobGriefing} gamerule.
+	 */
+	record FireTrail(float intervalSeconds, float seconds) implements GeneEffect {
+		public static final MapCodec<FireTrail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 600.0F).optionalFieldOf("interval_seconds", 3.0F).forGetter(FireTrail::intervalSeconds),
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("seconds", 4.0F).forGetter(FireTrail::seconds)
+		).apply(instance, FireTrail::new));
+
+		@Override
+		public String type() {
+			return "fire_trail";
 		}
 	}
 }

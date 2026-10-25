@@ -28,6 +28,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -168,6 +170,59 @@ public class MagmaCubeEffectsTest {
 		helper.assertValueEqual(molten.getHealth(), molten.getMaxHealth() - 6.0F, "the explosion heals 2 health");
 		molten.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(pig), 4.0F);
 		helper.assertTrue(molten.getHealth() < molten.getMaxHealth() - 6.0F, "a melee hit still hurts it");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void emberTrailLeavesFireThatDoesNotSpread(GameTestHelper helper) {
+		var trail = new GeneEffect.FireTrail(3.0F, 4.0F);
+		// The fire needs a solid block under it.
+		helper.setBlock(new BlockPos(5, 0, 5), Blocks.STONE);
+		helper.setBlock(new BlockPos(1, 0, 1), Blocks.STONE);
+		AbstractCubeMob cube = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(5, 1, 5), 1, "test_ember_trail");
+		cube.setOnGround(true);
+		helper.assertTrue(GeneBehaviors.fireTrail(cube, helper.getLevel(), trail), "the cube leaves fire");
+		BlockPos geneFire = new BlockPos(5, 1, 5);
+		helper.assertBlockPresent(Blocks.FIRE, geneFire);
+		helper.assertFalse(GeneBehaviors.fireTrail(cube, helper.getLevel(), trail), "the next fire waits 3 seconds");
+		// A plain fire with hay next to it shows that the fire of the test world can spread.
+		BlockPos plainFire = new BlockPos(1, 1, 1);
+		helper.setBlock(plainFire, Blocks.FIRE);
+		cube.discard();
+		for (BlockPos fire : List.of(plainFire, geneFire)) {
+			for (Direction side : Direction.Plane.HORIZONTAL) {
+				helper.setBlock(fire.relative(side), Blocks.HAY_BLOCK);
+			}
+		}
+		var rules = helper.getLevel().getGameRules();
+		int radius = rules.get(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER);
+		rules.set(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER, -1, helper.getLevel().getServer());
+		for (int i = 0; i < 60; i++) {
+			for (BlockPos fire : List.of(plainFire, geneFire)) {
+				BlockPos pos = helper.absolutePos(fire);
+				BlockState state = helper.getLevel().getBlockState(pos);
+				if (state.is(Blocks.FIRE)) {
+					state.tick(helper.getLevel(), pos, helper.getLevel().getRandom());
+				}
+			}
+		}
+		rules.set(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER, radius, helper.getLevel().getServer());
+		helper.assertFalse(Direction.Plane.HORIZONTAL.stream().allMatch(side -> helper.getBlockState(plainFire.relative(side))
+				.is(Blocks.HAY_BLOCK)), "a plain fire burns the hay");
+		helper.assertTrue(Direction.Plane.HORIZONTAL.stream().allMatch(side -> helper.getBlockState(geneFire.relative(side))
+				.is(Blocks.HAY_BLOCK)), "the gene fire does not burn the hay");
+		helper.assertBlockPresent(Blocks.FIRE, geneFire);
+		helper.succeed();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void emberTrailObeysMobGriefing(GameTestHelper helper) {
+		helper.setBlock(new BlockPos(4, 0, 4), Blocks.STONE);
+		AbstractCubeMob cube = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(4, 1, 4), 1, "test_ember_trail");
+		cube.setOnGround(true);
+		helper.assertFalse(GeneBehaviors.fireTrail(cube, helper.getLevel(), new GeneEffect.FireTrail(3.0F, 4.0F)),
+				"no fire with mobGriefing off");
+		helper.assertBlockNotPresent(Blocks.FIRE, new BlockPos(4, 1, 4));
 		helper.succeed();
 	}
 

@@ -461,6 +461,7 @@ public final class GeneBehaviors {
 				case GeneEffect.Sidestep sidestep -> sidestep(mob, level, sidestep);
 				case GeneEffect.ThrowEffect thrown -> throwEffect(mob, level, thrown);
 				case GeneEffect.WebTrail trail -> webTrail(mob, level, trail);
+				case GeneEffect.FireTrail trail -> fireTrail(mob, level, trail);
 				case GeneEffect.WebShot shot -> webShot(mob, level, shot);
 				case GeneEffect.RocketShot shot -> rocketShot(mob, level, shot);
 				case GeneEffect.FireballShot shot -> fireballShot(mob, level, shot);
@@ -885,6 +886,23 @@ public final class GeneBehaviors {
 					point.x, point.y, point.z, 2, 0.05, 0.05, 0.05, 0.0);
 		}
 		mob.setAttached(ModAttachments.STATE, state.withThrowTime(now));
+		return true;
+	}
+
+	/**
+	 * Leaves fire at the place of the mob while it stands on the ground, one time in each interval.
+	 *
+	 * @return true if a fire went in the world
+	 */
+	public static boolean fireTrail(Mob mob, ServerLevel level, GeneEffect.FireTrail trail) {
+		BlockPos pos = mob.blockPosition();
+		net.minecraft.world.level.block.state.BlockState fire = net.minecraft.world.level.block.BaseFireBlock.getState(level, pos);
+		if (!mob.onGround() || !level.getGameRules().get(net.minecraft.world.level.gamerules.GameRules.MOB_GRIEFING)
+				|| !GeneCombat.ready(mob, trail, trail.intervalSeconds()) || !fire.canSurvive(level, pos)
+				|| !TemporaryBlocks.place(level, pos, fire, Math.round(trail.seconds() * 20.0F))) {
+			return false;
+		}
+		GeneCombat.startCooldown(mob, trail);
 		return true;
 	}
 

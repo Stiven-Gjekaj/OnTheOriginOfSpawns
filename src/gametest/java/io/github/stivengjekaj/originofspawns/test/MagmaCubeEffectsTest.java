@@ -142,6 +142,18 @@ public class MagmaCubeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void blastCoreHurtsAndBurnsThePlayersNearItsDeath(GameTestHelper helper) {
+		AbstractCubeMob cube = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(4, 1, 4), 2, "test_blast_core");
+		ServerPlayer near = CreeperEffectsTest.survivalPlayer(helper).player();
+		near.setPos(cube.position().add(2.0, 0.0, 0.0));
+		float health = near.getHealth();
+		GeneCombat.onDeath(cube, helper.getLevel());
+		helper.assertTrue(near.getHealth() < health, "the burst hurts the player");
+		helper.assertValueEqual(near.getRemainingFireTicks(), 100, "the burst sets the player on fire for 5 seconds");
+		helper.succeed();
+	}
+
 	static AbstractCubeMob cubeInWater(GameTestHelper helper, BlockPos pos, String... genes) {
 		return cubeInFluid(helper, pos, Blocks.WATER, genes);
 	}

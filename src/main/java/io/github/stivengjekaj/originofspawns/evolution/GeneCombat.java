@@ -1112,6 +1112,13 @@ public final class GeneCombat {
 					AABB area = mob.getBoundingBox().inflate(burst.radius());
 					for (Player player : level.getEntitiesOfClass(Player.class, area)) {
 						player.hurtServer(level, level.damageSources().mobAttack(mob), burst.damage());
+						if (burst.fireSeconds() > 0.0F) {
+							player.igniteForSeconds(burst.fireSeconds());
+						}
+					}
+					if (burst.fireSeconds() > 0.0F) {
+						level.sendParticles(ParticleTypes.FLAME, mob.getX(), mob.getY(0.5), mob.getZ(),
+								16, burst.radius() / 2.0, 0.3, burst.radius() / 2.0, 0.05);
 					}
 					level.sendParticles(ParticleTypes.DAMAGE_INDICATOR, mob.getX(), mob.getY(0.5), mob.getZ(),
 							12, burst.radius() / 2.0, 0.3, burst.radius() / 2.0, 0.1);

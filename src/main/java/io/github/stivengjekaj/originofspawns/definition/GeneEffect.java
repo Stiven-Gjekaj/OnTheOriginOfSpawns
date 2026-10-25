@@ -742,12 +742,14 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * When the mob dies, it damages the players in the radius.
+	 * When the mob dies, it damages the players in the radius. With {@code fire_seconds}, the players there also burn
+	 * for this many seconds. The burst breaks no blocks.
 	 */
-	record DeathBurst(float damage, float radius) implements GeneEffect {
+	record DeathBurst(float damage, float radius, float fireSeconds) implements GeneEffect {
 		public static final MapCodec<DeathBurst> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.0F, 1000.0F).fieldOf("damage").forGetter(DeathBurst::damage),
-				Codec.floatRange(0.0F, 32.0F).fieldOf("radius").forGetter(DeathBurst::radius)
+				Codec.floatRange(0.0F, 32.0F).fieldOf("radius").forGetter(DeathBurst::radius),
+				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("fire_seconds", 0.0F).forGetter(DeathBurst::fireSeconds)
 		).apply(instance, DeathBurst::new));
 
 		@Override

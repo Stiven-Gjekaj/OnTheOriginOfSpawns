@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:slime/gluer",
+	"sub_family": "originofspawns:slime/bouncer",
+	"gains": [
+		{
+			"type": "landing_effect",
+			"effect": "minecraft:slowness",
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "hop",
+			"wait_multiplier": 1.1
+		}
+	]
+}

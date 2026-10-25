@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:slime/acid",
+	"gains": [
+		{
+			"type": "effect_on_hurt",
+			"effect": "minecraft:poison",
+			"seconds": 2,
+			"hits": "melee"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_fire",
+			"multiplier": 1.25
+		}
+	]
+}

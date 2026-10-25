@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:slime/bouncer",
+	"gains": [
+		{
+			"type": "landing_damage",
+			"damage": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "hop",
+			"wait_multiplier": 1.1
+		}
+	]
+}

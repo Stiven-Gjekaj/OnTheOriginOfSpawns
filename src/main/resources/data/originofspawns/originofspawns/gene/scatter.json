@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:slime/splitter",
+	"gains": [
+		{
+			"type": "split_jump",
+			"blocks": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

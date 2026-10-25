@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:slime/gluer",
+	"gains": [
+		{
+			"type": "web_trail",
+			"interval_seconds": 10,
+			"seconds": 30
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

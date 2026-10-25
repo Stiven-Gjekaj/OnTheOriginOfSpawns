@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:slime/splitter",
+	"gains": [
+		{
+			"type": "split_effect",
+			"effect": "minecraft:speed",
+			"seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9
+		}
+	]
+}

@@ -1,0 +1,50 @@
+{
+	"species": "minecraft:slime",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "spawn_size",
+					"size": 4,
+					"chance": 0.4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "hop",
+					"wait_multiplier": 1.2
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "spawn_size",
+					"size": 4,
+					"chance": 0.45
+				}
+			],
+			"debuffs": [
+				{
+					"type": "hop",
+					"wait_multiplier": 1.15
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "spawn_size",
+					"size": 4,
+					"chance": 0.5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "hop",
+					"wait_multiplier": 1.1
+				}
+			]
+		}
+	]
+}

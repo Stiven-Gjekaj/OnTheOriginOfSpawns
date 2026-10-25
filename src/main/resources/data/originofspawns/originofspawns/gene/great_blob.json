@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:slime/giant",
+	"gains": [
+		{
+			"type": "spawn_size",
+			"size": 4,
+			"chance": 0.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "hop",
+			"wait_multiplier": 1.1
+		}
+	]
+}

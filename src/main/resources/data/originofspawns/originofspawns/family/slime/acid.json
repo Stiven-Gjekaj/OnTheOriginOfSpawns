@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:slime",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "armor_break",
+					"multiplier": 1.5,
+					"hits": "melee"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_fire",
+					"multiplier": 1.75
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "armor_break",
+					"multiplier": 1.75,
+					"hits": "melee"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_fire",
+					"multiplier": 1.5
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "armor_break",
+					"multiplier": 2,
+					"hits": "melee"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_fire",
+					"multiplier": 1.25
+				}
+			]
+		}
+	]
+}

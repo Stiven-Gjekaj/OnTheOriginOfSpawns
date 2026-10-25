@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:slime/giant",
+	"sub_family": "originofspawns:slime/splitter",
+	"gains": [
+		{
+			"type": "split_effect",
+			"effect": "minecraft:resistance",
+			"seconds": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "hop",
+			"wait_multiplier": 1.1
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:slime/bouncer",
+	"gains": [
+		{
+			"type": "hop",
+			"distance_multiplier": 1.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

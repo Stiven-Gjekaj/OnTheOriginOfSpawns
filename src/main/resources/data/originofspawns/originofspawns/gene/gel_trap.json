@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:slime/splitter",
+	"sub_family": "originofspawns:slime/gluer",
+	"gains": [
+		{
+			"type": "split_area_effect",
+			"effect": "minecraft:slowness",
+			"seconds": 3,
+			"radius": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

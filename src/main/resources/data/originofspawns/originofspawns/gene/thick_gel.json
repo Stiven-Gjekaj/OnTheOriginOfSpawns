@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:slime/giant",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": 2,
+			"operation": "add_value"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,56 @@
+{
+	"species": "minecraft:slime",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "hop",
+					"distance_multiplier": 1.15,
+					"height_multiplier": 1.15
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "hop",
+					"distance_multiplier": 1.2,
+					"height_multiplier": 1.2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "hop",
+					"distance_multiplier": 1.3,
+					"height_multiplier": 1.3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

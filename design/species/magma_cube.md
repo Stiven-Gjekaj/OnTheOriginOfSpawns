@@ -97,17 +97,17 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Flame Touch | Inferno | `melee` | Its hits set the target on fire for 5 seconds | Water and rain do 1 damage each 2 seconds | Body: bright orange cracks |
 | Ember Trail | Inferno | `unreached` | It leaves fire behind it now and then | 10% less maximum health | Body: glowing embers at the bottom. This changes the model |
-| Heat Wave | Inferno | `crowd` | Each 5 seconds, it sets the players in 2 blocks on fire for 2 seconds | 10% less maximum health | Core: a white-hot core |
+| Heat Wave | Inferno | `crowd` | Each 5 seconds, it sets the players in 2 blocks on fire for 2 seconds | 10% less maximum health | Core: a white-hot core. Body: white-hot lines between the layers |
 | Spit Fire | Inferno | `projectile` | Each 10 seconds, it shoots a small fireball at a target 6 to 16 blocks away | 10% less maximum health | Face: a glowing mouth |
 | Soul Burn | Inferno | `golem` | Two times the damage to golems, and it sets them on fire for 8 seconds | 10% less speed | Body: blue soul fire cracks |
-| Magma Blood | Inferno, sub Erupter | `critical` | When a player hurts it in melee, the player burns for 3 seconds | 10% less maximum health | Core: a core that drips lava |
+| Magma Blood | Inferno, sub Erupter | `critical` | When a player hurts it in melee, the player burns for 3 seconds | 10% less maximum health | Core: a core that drips lava. Body: lava drips down the sides |
 
 ### Ironclad genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Basalt Skin | Ironclad | `melee` | 4 more armor | 10% less speed | Body: gray basalt plates |
-| Obsidian Core | Ironclad | `explosion` | Half the damage from explosions | 10% less speed | Core: a black, purple core |
+| Obsidian Core | Ironclad | `explosion` | Half the damage from explosions | 10% less speed | Core: a black, purple core. Body: black obsidian flecks with purple glints |
 | Iron Crust | Ironclad | `projectile` | 30% less damage from projectiles | It hops 10% less often | Body: dark iron flecks |
 | Heavy Cube | Ironclad | `golem` | Full knockback resistance | 10% less speed | Body: a thick, dark bottom layer |
 | Crust | Ironclad | `critical` | 6 more armor while its health is under half | 10% less maximum health | Body: a cracked black crust |
@@ -117,23 +117,23 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Blast Core | Erupter | `crowd` | When it dies, it bursts with 4 damage in 3 blocks, and sets the players there on fire | 10% less maximum health | Core: a pulsing, bright core |
+| Blast Core | Erupter | `crowd` | When it dies, it bursts with 4 damage in 3 blocks, and sets the players there on fire | 10% less maximum health | Core: a pulsing, bright core. Body: bright yellow rings around the layers |
 | Lava Pool | Erupter | `alone` | When it dies, it leaves lava for 3 seconds | 10% less maximum health | Body: lava at the bottom |
 | Ash Cloud | Erupter | `spotted` | When it dies, it leaves a cloud of Blindness | 10% less maximum health | Body: gray ash on the top |
 | Split Burst | Erupter | `melee` | When it splits, the players in 2 blocks burn for 3 seconds | 10% less maximum health | Body: many small cracks |
 | Scatter Shot | Erupter | `unreached` | When it splits, its pieces jump 4 blocks toward its killer | 10% less speed | Face: wide eyes |
-| Molten Core | Erupter, sub Lavaborn | `explosion` | Explosions heal it, in place of damage, for half the damage | 10% less maximum health | Core: a molten, orange core. This changes the model |
+| Molten Core | Erupter, sub Lavaborn | `explosion` | Explosions heal it, in place of damage, for half the damage | 10% less maximum health | Core: a molten, orange core. Body: orange molten seams. This changes the model |
 
 ### Lavaborn genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Lava Swim | Lavaborn | `on_land` | 40% more speed in lava | 10% less speed on land | Body: smooth, wet layers |
-| Lava Heal | Lavaborn | `alone` | It heals 1 health each 2 seconds in lava | 10% less maximum health | Core: a deep red core |
+| Lava Heal | Lavaborn | `alone` | It heals 1 health each 2 seconds in lava | 10% less maximum health | Core: a deep red core. Body: deep red veins on the layers |
 | Steam Body | Lavaborn | `in_water` | Water does not hurt it, and 20% more speed in water | 10% less damage | Body: white steam marks. This changes the model |
 | Lava Leap | Lavaborn | `unreached` | Out of lava, it leaps at a target 4 to 10 blocks away | 10% less maximum health | Face: a long, open mouth |
-| Fire Drink | Lavaborn | `critical` | It heals 1 health each second in fire | 10% less maximum health | Core: a flame inside the core |
-| Blaze Heart | Lavaborn, sub Inferno | `spotted` | After it leaves lava, its hits set the target on fire for 8 seconds, for 10 seconds | 10% less speed | Core: a gold, burning heart |
+| Fire Drink | Lavaborn | `critical` | It heals 1 health each second in fire | 10% less maximum health | Core: a flame inside the core. Face: small flames above the eyes |
+| Blaze Heart | Lavaborn, sub Inferno | `spotted` | After it leaves lava, its hits set the target on fire for 8 seconds, for 10 seconds | 10% less speed | Core: a gold, burning heart. Body: gold flecks on the layers |
 
 ### Springer genes
 
@@ -143,7 +143,7 @@ The visual column gives the region and the mark.
 | Far Jump | Springer | `unreached` | It hops 50% farther | 10% less maximum health | Body: long, thin cracks |
 | Ground Pound | Springer | `melee` | When it lands, it does 3 damage to the players in 2 blocks | It hops 10% less often | Body: a heavy, black bottom |
 | Quick Jump | Springer | `spotted` | It hops 30% more often | 10% less damage | Face: narrow, bright eyes |
-| Rebound | Springer | `crowd` | After it hits, it hops 3 blocks back | 10% less damage | Body: a spring-like coil inside. This changes the model |
+| Rebound | Springer | `crowd` | After it hits, it hops 3 blocks back | 10% less damage | Body: a spring-like coil inside, and gray coil bands on the outer layers. This changes the model |
 | Iron Pounce | Springer, sub Ironclad | `projectile` | Half the damage from projectiles while it is in the air | 10% less speed | Body: iron bands |
 
 ## Gene details
@@ -165,6 +165,7 @@ The visual column gives the region and the mark.
 | Soul Burn | It works as the wither skeleton Ember Eyes, with all golems |
 | Magma Blood | It works as the bogged Rotting Touch, with fire |
 | Molten Core | It also stops the damage of a creeper and of its own Blast Core |
+| Heat Wave, Magma Blood, Obsidian Core, Blast Core, Molten Core, Lava Heal, Fire Drink, Blaze Heart, Rebound | The layers cover the core, except while the cube hops. So each of these genes also has a mark on the layers or on the face |
 | Ember Trail | It obeys the `mobGriefing` gamerule. The fire does not spread |
 
 ## Equipment

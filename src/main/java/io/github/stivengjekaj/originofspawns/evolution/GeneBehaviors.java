@@ -866,6 +866,27 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Makes the blaze rise while it is lower than the top of the nearest mob of a keep above list and the blocks of
+	 * the gene. The rise is the vanilla rise of a blaze to its target.
+	 */
+	public static void keepAbove(Mob mob, ServerLevel level) {
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.KeepAbove above) {
+				var near = level.getEntitiesOfClass(LivingEntity.class, mob.getBoundingBox().inflate(above.radius()),
+						other -> other != mob && other.isAlive() && above.mobs().contains(other.getType().builtInRegistryHolder())
+								&& other.distanceTo(mob) <= above.radius());
+				var nearest = near.stream().min(java.util.Comparator.comparingDouble(other -> other.distanceToSqr(mob)));
+				if (nearest.isPresent() && mob.getY() < nearest.get().getY() + nearest.get().getBbHeight() + above.blocks()) {
+					Vec3 movement = mob.getDeltaMovement();
+					mob.setDeltaMovement(movement.add(0.0, (0.3 - movement.y) * 0.3, 0.0));
+					mob.needsSync = true;
+					return;
+				}
+			}
+		}
+	}
+
+	/**
 	 * Returns the largest number of blocks of the float height genes of the mob, or 0.
 	 */
 	public static float floatBlocks(Mob mob) {

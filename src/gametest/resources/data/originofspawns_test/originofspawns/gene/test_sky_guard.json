@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "keep_above", "mobs": "#originofspawns:all_golems", "blocks": 4, "radius": 6 }],
+	"mutation_rate": 0
+}

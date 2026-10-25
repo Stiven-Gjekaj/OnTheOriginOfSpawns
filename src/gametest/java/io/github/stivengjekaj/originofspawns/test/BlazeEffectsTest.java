@@ -276,6 +276,17 @@ public class BlazeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void skyGuardMakesTheBlazeRiseOverAGolem(GameTestHelper helper) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 1));
+		helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(5, 1, 5));
+		helper.assertValueEqual(riseInOneStep(helper, blazeWith(helper, new BlockPos(2, 1, 2)), pig), 0.0,
+				"a plain blaze does not rise");
+		helper.assertTrue(riseInOneStep(helper, blazeWith(helper, new BlockPos(2, 1, 2), "test_sky_guard"), pig) > 0.0,
+				"the blaze rises over the golem");
+		helper.succeed();
+	}
+
 	/**
 	 * Returns the speed up that one server step gives the blaze, with the smallest random offset of the game.
 	 */

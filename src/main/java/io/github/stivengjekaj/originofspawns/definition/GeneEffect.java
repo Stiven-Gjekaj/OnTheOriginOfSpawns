@@ -274,7 +274,8 @@ public sealed interface GeneEffect {
 			Map.entry("seeker_fireballs", SeekerFireballs.CODEC),
 			Map.entry("fireball_ring", FireballRing.CODEC),
 			Map.entry("burn_pain", BurnPain.CODEC),
-			Map.entry("fire_feed", FireFeed.CODEC)
+			Map.entry("fire_feed", FireFeed.CODEC),
+			Map.entry("keep_above", KeepAbove.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4529,6 +4530,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "fire_feed";
+		}
+	}
+
+	/**
+	 * A blaze rises to this many blocks above the top of the nearest mob of the list in the radius, so that the mob
+	 * cannot reach it. Sky Guard uses the golems.
+	 */
+	record KeepAbove(HolderSet<EntityType<?>> mobs, float blocks, float radius) implements GeneEffect {
+		public static final MapCodec<KeepAbove> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				RegistryCodecs.holderSet(Registries.ENTITY_TYPE).fieldOf("mobs").forGetter(KeepAbove::mobs),
+				Codec.floatRange(0.0F, 32.0F).optionalFieldOf("blocks", 4.0F).forGetter(KeepAbove::blocks),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("radius", 16.0F).forGetter(KeepAbove::radius)
+		).apply(instance, KeepAbove::new));
+
+		@Override
+		public String type() {
+			return "keep_above";
 		}
 	}
 }

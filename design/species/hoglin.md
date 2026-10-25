@@ -143,7 +143,7 @@ The visual column gives the region and the mark.
 | Portal Walker | Fearless | `alone` | It does not run from nether portals | 10% less maximum health | Body: purple sparks on the hide |
 | Anchor Brave | Fearless | `player_death` | It does not run from respawn anchors | 10% less maximum health | Head: a glowing purple eye |
 | Steady Nerves | Fearless | `crowd` | It does not run from piglins, and it attacks them | 10% less speed | Head: a calm, steady look |
-| Overworld Hide | Fearless | `on_land` | In the Overworld, it turns into a zoglin after 60 seconds, not 15 | 10% less maximum health | Body: a pale, gray hide |
+| Overworld Hide | Fearless | `on_land` | In the Overworld, it turns into a zoglin after 60 seconds, not 15 | 10% less maximum health | Body: green moss and grass patches on the back and the flanks |
 | Bold Charge | Fearless, sub Charger | `unreached` | 20% more speed while it chases a player that holds warped fungus | 10% less maximum health | Legs: blue stripes |
 
 ## Gene details

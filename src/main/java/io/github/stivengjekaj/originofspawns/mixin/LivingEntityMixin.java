@@ -180,4 +180,19 @@ public abstract class LivingEntityMixin {
 			io.github.stivengjekaj.originofspawns.evolution.GeneCubes.shieldBreak(mob, level, self, self.getItemBlockingWith(), true);
 		}
 	}
+
+	/**
+	 * The flying speed genes multiply the speed of a mob in the air, for example a blaze. A mob that flies with its
+	 * own speed, such as a phantom or a ghast, does not use this speed.
+	 */
+	@Inject(method = "getFlyingSpeed", at = @At("RETURN"), cancellable = true)
+	private void originofspawns$flyingSpeed(CallbackInfoReturnable<Float> info) {
+		LivingEntity self = (LivingEntity) (Object) this;
+		if (self instanceof net.minecraft.world.entity.Mob && self.hasAttached(ModAttachments.GENES)) {
+			double multiplier = GeneBehaviors.flyingSpeedMultiplier(self);
+			if (multiplier != 1.0) {
+				info.setReturnValue((float) (info.getReturnValueF() * multiplier));
+			}
+		}
+	}
 }

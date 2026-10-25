@@ -254,6 +254,26 @@ public class BlazeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void quickWingsMakeTheFlightOfABlazeFaster(GameTestHelper helper) {
+		// The test gene gives 30% more flying speed.
+		double plain = airStep(blazeWith(helper, new BlockPos(2, 3, 2)));
+		double quick = airStep(blazeWith(helper, new BlockPos(5, 3, 5), "test_swift_wing"));
+		helper.assertTrue(plain > 0.0, "the blaze moves in the air");
+		helper.assertTrue(Math.abs(quick / plain - 1.3) < 0.001, "30% more flying speed, not " + quick / plain);
+		helper.succeed();
+	}
+
+	/**
+	 * Returns the speed on the ground plane that one step forward in the air gives the blaze.
+	 */
+	static double airStep(Blaze blaze) {
+		blaze.setOnGround(false);
+		blaze.setDeltaMovement(Vec3.ZERO);
+		blaze.travel(new Vec3(0.0, 0.0, 1.0));
+		return blaze.getDeltaMovement().horizontalDistance();
+	}
+
 	/**
 	 * Returns the degrees that a small fireball of the blaze turns in one tick, while the blaze has the target.
 	 */

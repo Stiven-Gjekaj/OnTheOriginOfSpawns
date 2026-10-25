@@ -131,8 +131,8 @@ public final class GeneCubes {
 	}
 
 	/**
-	 * Returns the number of pieces of the split of the cube, with the split count genes. The pieces can be more than
-	 * 4, so a fixed count over 4 puts the extra pieces at the same corners.
+	 * Returns the number of pieces of the split of the cube, with the split count genes. Vanilla puts the pieces in
+	 * rows of 2, so a count over 4 puts the extra pieces in a third row.
 	 */
 	public static int splitCount(AbstractCubeMob cube, int count) {
 		Optional<Integer> fixed = Optional.empty();

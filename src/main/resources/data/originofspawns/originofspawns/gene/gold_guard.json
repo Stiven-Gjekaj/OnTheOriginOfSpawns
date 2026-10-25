@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:piglin_brute",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:piglin_brute/gatekeeper",
+	"gains": [
+		{
+			"type": "guard_gold",
+			"radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

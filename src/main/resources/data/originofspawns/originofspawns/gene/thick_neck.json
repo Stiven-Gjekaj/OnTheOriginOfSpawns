@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:piglin_brute",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:piglin_brute/colossus",
+	"gains": [
+		{
+			"type": "attribute_when",
+			"when": "wounded",
+			"attribute": "minecraft:armor",
+			"amount": 6,
+			"operation": "add_value"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

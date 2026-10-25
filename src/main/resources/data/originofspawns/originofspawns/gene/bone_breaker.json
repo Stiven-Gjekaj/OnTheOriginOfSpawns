@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:piglin_brute",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:piglin_brute/axeman",
+	"gains": [
+		{
+			"type": "knockback",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attack_interval",
+			"multiplier": 1.1
+		}
+	]
+}

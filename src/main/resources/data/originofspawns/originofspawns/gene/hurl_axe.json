@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:piglin_brute",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:piglin_brute/axeman",
+	"gains": [
+		{
+			"type": "throw_effect",
+			"effect": "minecraft:slowness",
+			"seconds": 3,
+			"range": 10,
+			"min_range": 4,
+			"cooldown_seconds": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

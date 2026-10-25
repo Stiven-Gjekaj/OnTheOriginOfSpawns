@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:piglin_brute",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:piglin_brute/gatekeeper",
+	"gains": [
+		{
+			"type": "damage_dealt_when",
+			"when": "near_home",
+			"multiplier": 1.2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

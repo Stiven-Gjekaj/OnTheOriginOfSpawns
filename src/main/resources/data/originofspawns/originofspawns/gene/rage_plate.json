@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:piglin_brute",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:piglin_brute/colossus",
+	"sub_family": "originofspawns:piglin_brute/mauler",
+	"gains": [
+		{
+			"type": "damage_taken_when",
+			"when": "grouped",
+			"multiplier": 0.8
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken_when",
+			"when": "alone",
+			"multiplier": 1.2
+		}
+	]
+}

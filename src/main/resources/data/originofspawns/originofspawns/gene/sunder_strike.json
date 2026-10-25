@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:piglin_brute",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:piglin_brute/guardbreaker",
+	"gains": [
+		{
+			"type": "damage_dealt_when",
+			"when": "target_no_shield",
+			"multiplier": 1.2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:piglin_brute",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:piglin_brute/guardbreaker",
+	"gains": [
+		{
+			"type": "shield_break",
+			"seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9
+		}
+	]
+}

@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:piglin_brute",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:piglin_brute/guardbreaker",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:weakness",
+			"seconds": 5,
+			"targets": "minecraft:iron_golem"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9
+		}
+	]
+}

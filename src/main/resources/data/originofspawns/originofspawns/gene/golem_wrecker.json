@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:piglin_brute",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:piglin_brute/gatekeeper",
+	"sub_family": "originofspawns:piglin_brute/guardbreaker",
+	"gains": [
+		{
+			"type": "damage_to",
+			"targets": "#originofspawns:all_golems",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

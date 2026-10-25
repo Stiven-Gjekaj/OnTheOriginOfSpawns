@@ -1,0 +1,77 @@
+{
+	"species": "minecraft:piglin_brute",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:knockback_resistance",
+					"amount": 1,
+					"operation": "add_value"
+				},
+				{
+					"type": "attribute",
+					"attribute": "minecraft:armor",
+					"amount": 2,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:knockback_resistance",
+					"amount": 1,
+					"operation": "add_value"
+				},
+				{
+					"type": "attribute",
+					"attribute": "minecraft:armor",
+					"amount": 3,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:knockback_resistance",
+					"amount": 1,
+					"operation": "add_value"
+				},
+				{
+					"type": "attribute",
+					"attribute": "minecraft:armor",
+					"amount": 4,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

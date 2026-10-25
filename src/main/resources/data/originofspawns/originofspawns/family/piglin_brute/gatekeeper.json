@@ -1,0 +1,59 @@
+{
+	"species": "minecraft:piglin_brute",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "regenerate",
+					"amount": 1,
+					"interval_seconds": 4,
+					"idle_seconds": 0,
+					"when": "near_home"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "far_from_home",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "regenerate",
+					"amount": 1,
+					"interval_seconds": 3,
+					"idle_seconds": 0,
+					"when": "near_home"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "far_from_home",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "regenerate",
+					"amount": 1,
+					"interval_seconds": 2,
+					"idle_seconds": 0,
+					"when": "near_home"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "far_from_home",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

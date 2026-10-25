@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:ghast/barrager",
+	"gains": [
+		{
+			"type": "small_fireball_fan",
+			"count": 3,
+			"angle": 15
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.9
+		}
+	]
+}

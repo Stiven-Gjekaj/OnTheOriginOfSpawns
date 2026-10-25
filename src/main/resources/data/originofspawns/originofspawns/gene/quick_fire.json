@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:ghast/barrager",
+	"gains": [
+		{
+			"type": "throw_rate",
+			"multiplier": 1.3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:ghast/moaner",
+	"sub_family": "originofspawns:ghast/driftwing",
+	"gains": [
+		{
+			"type": "blast_effect",
+			"effect": "minecraft:slowness",
+			"seconds": 3,
+			"radius": 8
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

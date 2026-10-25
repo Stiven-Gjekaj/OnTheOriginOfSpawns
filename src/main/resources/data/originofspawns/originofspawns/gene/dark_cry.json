@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:ghast/moaner",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:darkness",
+			"radius": 16,
+			"interval_seconds": 20,
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

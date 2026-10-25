@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:ghast/weeper",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 3,
+			"idle_seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "flying_speed",
+			"multiplier": 0.9
+		}
+	]
+}

@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:ghast/moaner",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:mining_fatigue",
+			"radius": 16,
+			"interval_seconds": 20,
+			"seconds": 6
+		}
+	],
+	"downsides": [
+		{
+			"type": "flying_speed",
+			"multiplier": 0.9
+		}
+	]
+}

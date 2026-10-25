@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:ghast/weeper",
+	"sub_family": "originofspawns:ghast/moaner",
+	"gains": [
+		{
+			"type": "effect_on_hurt",
+			"effect": "minecraft:slowness",
+			"seconds": 3,
+			"player_radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

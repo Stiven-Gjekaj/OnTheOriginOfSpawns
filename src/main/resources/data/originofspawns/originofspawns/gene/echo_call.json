@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:ghast/moaner",
+	"gains": [
+		{
+			"type": "call_on_hurt",
+			"radius": 48
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

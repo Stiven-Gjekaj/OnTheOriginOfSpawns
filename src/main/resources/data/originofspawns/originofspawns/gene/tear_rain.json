@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:ghast/weeper",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:regeneration",
+			"radius": 16,
+			"interval_seconds": 2,
+			"seconds": 3,
+			"allies": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

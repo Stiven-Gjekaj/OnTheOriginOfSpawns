@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:ghast/driftwing",
+	"gains": [
+		{
+			"type": "return_ward",
+			"multiplier": 0.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "flying_speed",
+			"multiplier": 0.9
+		}
+	]
+}

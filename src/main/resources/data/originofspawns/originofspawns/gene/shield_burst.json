@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:ghast/bomber",
+	"gains": [
+		{
+			"type": "blast_shield_stop",
+			"seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

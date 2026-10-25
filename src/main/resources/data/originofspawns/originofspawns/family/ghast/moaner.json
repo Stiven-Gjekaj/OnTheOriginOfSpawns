@@ -1,0 +1,62 @@
+{
+	"species": "minecraft:ghast",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "aura",
+					"effect": "minecraft:nausea",
+					"radius": 16,
+					"interval_seconds": 25,
+					"seconds": 4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "aura",
+					"effect": "minecraft:nausea",
+					"radius": 16,
+					"interval_seconds": 20,
+					"seconds": 4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "aura",
+					"effect": "minecraft:nausea",
+					"radius": 16,
+					"interval_seconds": 15,
+					"seconds": 4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

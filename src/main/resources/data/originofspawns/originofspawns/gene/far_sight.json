@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:ghast/barrager",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:follow_range",
+			"amount": 1,
+			"operation": "add_multiplied_base"
+		}
+	],
+	"downsides": [
+		{
+			"type": "flying_speed",
+			"multiplier": 0.9
+		}
+	]
+}

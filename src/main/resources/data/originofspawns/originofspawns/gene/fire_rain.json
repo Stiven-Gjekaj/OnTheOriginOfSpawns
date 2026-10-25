@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:ghast/bomber",
+	"gains": [
+		{
+			"type": "blast_fire",
+			"blocks": 8
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

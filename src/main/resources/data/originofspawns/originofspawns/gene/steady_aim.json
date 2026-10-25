@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:ghast/barrager",
+	"gains": [
+		{
+			"type": "fireball_speed",
+			"multiplier": 1.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "flying_speed",
+			"multiplier": 0.9
+		}
+	]
+}

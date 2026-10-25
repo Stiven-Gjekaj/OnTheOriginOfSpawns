@@ -17,9 +17,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 /**
- * The effects of genes that act on the blast of a creeper: its size, its fuse, and what it leaves behind.
+ * The effects of genes that act on the blast of a mob: its size, the fuse of a creeper, and what the blast leaves
+ * behind.
  */
 public final class GeneBlasts {
 	/**
@@ -31,12 +33,12 @@ public final class GeneBlasts {
 	}
 
 	/**
-	 * Returns the product of the blast size multipliers of the creeper whose states are true now.
+	 * Returns the product of the blast size multipliers of the mob whose states are true now.
 	 */
-	public static float sizeMultiplier(Creeper creeper) {
+	public static float sizeMultiplier(Mob mob) {
 		float multiplier = 1.0F;
-		for (GeneEffect effect : GeneEffects.of(creeper).toList()) {
-			if (effect instanceof GeneEffect.BlastSize size && GeneCombat.test(creeper, size.when())) {
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.BlastSize size && GeneCombat.test(mob, size.when())) {
 				multiplier *= size.multiplier();
 			}
 		}
@@ -58,33 +60,30 @@ public final class GeneBlasts {
 	}
 
 	/**
-	 * Runs the effects that act after the blast of the creeper, at the place of the blast.
+	 * Runs the effects that act after the blast of the mob, at the place of the blast.
 	 *
+	 * @param pos the center of the blast
 	 * @param radius the radius of the blast, after the charge and the genes
 	 */
-	public static void afterBlast(Creeper creeper, ServerLevel level, float radius) {
-		for (GeneEffect effect : GeneEffects.of(creeper).toList()) {
+	public static void afterBlast(Mob mob, ServerLevel level, Vec3 pos, float radius) {
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
-				case GeneEffect.BlastCloud cloud -> blastCloud(creeper, level, cloud, radius);
-				case GeneEffect.ChainReaction chain when !creeper.getAttachedOrElse(ModAttachments.CHAIN_LIT, false) ->
-						chainReaction(creeper, level, chain);
+				case GeneEffect.BlastCloud cloud -> blastCloud(level, pos, cloud, radius);
+				case GeneEffect.ChainReaction chain when mob instanceof Creeper creeper
+						&& !creeper.getAttachedOrElse(ModAttachments.CHAIN_LIT, false) -> chainReaction(creeper, level, chain);
 				case GeneEffect.BlastLightning lightning -> {
 					LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
 					if (bolt != null) {
-						bolt.snapTo(creeper.getX(), creeper.getY(), creeper.getZ());
+						bolt.snapTo(pos.x, pos.y, pos.z);
 						bolt.setAttached(ModAttachments.NO_CHARGE, true);
 						level.addFreshEntity(bolt);
 					}
 				}
-				case GeneEffect.Aftershock aftershock -> {
-					double x = creeper.getX();
-					double y = creeper.getY();
-					double z = creeper.getZ();
-					// The creeper is gone then, but it stays the cause, so the damage effects of its genes still act.
+				case GeneEffect.Aftershock aftershock ->
+					// A creeper is gone then, but it stays the cause, so the damage effects of its genes still act.
 					// This plain blast does not run the effects after a blast, so it causes no more aftershocks.
-					DelayedTasks.schedule(level, Math.round(aftershock.seconds() * 20.0F), () -> level.explode(creeper,
-							x, y, z, radius * aftershock.fraction(), Level.ExplosionInteraction.MOB));
-				}
+					DelayedTasks.schedule(level, Math.round(aftershock.seconds() * 20.0F), () -> level.explode(mob,
+							pos.x, pos.y, pos.z, radius * aftershock.fraction(), Level.ExplosionInteraction.MOB));
 				default -> {
 				}
 			}
@@ -103,8 +102,8 @@ public final class GeneBlasts {
 		}
 	}
 
-	private static void blastCloud(Creeper creeper, ServerLevel level, GeneEffect.BlastCloud cloud, float radius) {
-		AreaEffectCloud area = new AreaEffectCloud(level, creeper.getX(), creeper.getY(), creeper.getZ());
+	private static void blastCloud(ServerLevel level, Vec3 pos, GeneEffect.BlastCloud cloud, float radius) {
+		AreaEffectCloud area = new AreaEffectCloud(level, pos.x, pos.y, pos.z);
 		int duration = Math.max(1, Math.round(cloud.seconds() * 20.0F));
 		area.setRadius(radius);
 		area.setDuration(duration);

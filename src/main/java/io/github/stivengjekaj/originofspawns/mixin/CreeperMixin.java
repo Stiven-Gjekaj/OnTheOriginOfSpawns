@@ -66,7 +66,7 @@ public abstract class CreeperMixin {
 	private void originofspawns$afterBlast(CallbackInfo info) {
 		Creeper self = (Creeper) (Object) this;
 		if (self.level() instanceof ServerLevel level) {
-			GeneBlasts.afterBlast(self, level, originofspawns$blastRadius);
+			GeneBlasts.afterBlast(self, level, self.position(), originofspawns$blastRadius);
 		}
 	}
 

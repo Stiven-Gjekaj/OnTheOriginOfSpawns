@@ -48,6 +48,7 @@
 			"io.github.stivengjekaj.originofspawns.test.PiglinBruteEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.HoglinEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.ZoglinEffectsTest",
+			"io.github.stivengjekaj.originofspawns.test.GhastEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.PhantomEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.DelayedTasksTest"
 		],

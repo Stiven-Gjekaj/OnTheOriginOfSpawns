@@ -16,6 +16,8 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -115,11 +117,21 @@ public final class GeneBlasts {
 
 	/**
 	 * Returns the mob with genes whose own blast is the source, or null. The blast of a creeper has the creeper as
-	 * the direct entity and as the cause.
+	 * the direct entity and as the cause. The blast of a large fireball has the fireball as the direct entity and the
+	 * mob that shot it as the cause.
 	 */
 	public static Mob blaster(DamageSource source) {
 		return source.is(DamageTypeTags.IS_EXPLOSION) && source.getEntity() instanceof Mob mob
-				&& source.getDirectEntity() == mob && mob.hasAttached(ModAttachments.GENES) ? mob : null;
+				&& (source.getDirectEntity() == mob || source.getDirectEntity() instanceof LargeFireball)
+				&& mob.hasAttached(ModAttachments.GENES) ? mob : null;
+	}
+
+	/**
+	 * Returns the mob with genes that shot the projectile, or null. A projectile that a player hits back has the
+	 * player as its owner, so it returns null.
+	 */
+	public static Mob shooter(Projectile projectile) {
+		return projectile.getOwner() instanceof Mob mob && mob.hasAttached(ModAttachments.GENES) ? mob : null;
 	}
 
 	/**

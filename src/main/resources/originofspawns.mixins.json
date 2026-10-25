@@ -37,6 +37,8 @@
 		"HoglinMixin",
 		"HoglinSpecificSensorMixin",
 		"HurtByTargetGoalMixin",
+		"LargeFireballAccessor",
+		"LargeFireballMixin",
 		"LavaFluidMixin",
 		"LeapAtTargetGoalMixin",
 		"LivingEntityMixin",

@@ -180,6 +180,7 @@ public final class GeneCombat {
 			case CARRYING_BLOCK -> entity instanceof net.minecraft.world.entity.monster.Enderman enderman
 					&& enderman.getCarriedBlock() != null;
 			case IN_AIR -> !entity.onGround() && !entity.isInLiquid();
+			case TARGET_PLAYER -> entity instanceof Mob mob && mob.getTarget() instanceof Player;
 		};
 	}
 
@@ -437,6 +438,17 @@ public final class GeneCombat {
 		return below.is(BlockTags.SNOW) || below.is(BlockTags.ICE) || feet.is(BlockTags.SNOW);
 	}
 
+	/**
+	 * Returns the number of angry mobs of the species of the entity in the radius. A neutral mob is angry while its
+	 * anger lasts. Another mob is angry while it has a target.
+	 */
+	public static int angrySpeciesNear(LivingEntity entity, double radius) {
+		AABB area = entity.getBoundingBox().inflate(radius);
+		return entity.level().getEntities(entity.getType(), area, other -> other != entity && other.isAlive()
+				&& (other instanceof net.minecraft.world.entity.NeutralMob neutral ? neutral.isAngry()
+						: other instanceof Mob mob && mob.getTarget() != null)).size();
+	}
+
 	public static int sameSpeciesNear(LivingEntity entity, double radius) {
 		AABB area = entity.getBoundingBox().inflate(radius);
 		return entity.level().getEntities(entity.getType(), area, other -> other != entity && other.isAlive()).size();
@@ -521,8 +533,8 @@ public final class GeneCombat {
 						}
 						attacker.setAttached(ModAttachments.STRIKE_TIMES, strikes);
 					}
-					case GeneEffect.Rally rally ->
-							result *= 1.0F + Math.min(rally.max(), rally.perAlly() * sameSpeciesNear(attacker, rally.radius()));
+					case GeneEffect.Rally rally -> result *= 1.0F + Math.min(rally.max(), rally.perAlly()
+							* (rally.angryOnly() ? angrySpeciesNear(attacker, rally.radius()) : sameSpeciesNear(attacker, rally.radius())));
 					case GeneEffect.SoulHunger hunger when source.getDirectEntity() == attacker ->
 							result *= 1.0F + Math.min(hunger.max(), hunger.perPlayer() * recentPlayers(attacker, hunger.seconds()));
 					case GeneEffect.PotionDamage potion when source.getDirectEntity() instanceof AbstractThrownPotion
@@ -593,6 +605,8 @@ public final class GeneCombat {
 				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(false) && target instanceof LivingEntity living
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(living, freeze.seconds());
 				case GeneEffect.HopBack back -> hopBack(mob, target);
+				case GeneEffect.SelfEffectOnHit self -> mob.addEffect(new MobEffectInstance(self.effect(),
+						Math.round(self.seconds() * 20.0F), self.amplifier()), mob);
 				case GeneEffect.LavaExitFire fire when !mob.isInLava() && mob.hasAttached(ModAttachments.LAVA_TIME)
 						&& mob.level().getGameTime() - mob.getAttached(ModAttachments.LAVA_TIME)
 								<= Math.round(fire.seconds() * 20.0F) -> target.igniteForSeconds(fire.fireSeconds());
@@ -903,6 +917,15 @@ public final class GeneCombat {
 		if (entity instanceof Mob wounded && wounded.level() instanceof ServerLevel woundedLevel) {
 			healOnce(wounded, woundedLevel);
 			GeneTeleports.escape(wounded, woundedLevel);
+		}
+		if (entity instanceof Mob wounded) {
+			for (GeneEffect effect : GeneEffects.of(wounded).toList()) {
+				if (effect instanceof GeneEffect.SelfEffectOnHurt self
+						&& self.damageTypes().map(source::is).orElse(true)) {
+					wounded.addEffect(new MobEffectInstance(self.effect(), Math.round(self.seconds() * 20.0F),
+							self.amplifier()), wounded);
+				}
+			}
 		}
 		if (!(entity instanceof Mob mob) || !(mob.level() instanceof ServerLevel level)
 				|| !(source.getEntity() instanceof LivingEntity attacker) || attacker.getType() == mob.getType()) {

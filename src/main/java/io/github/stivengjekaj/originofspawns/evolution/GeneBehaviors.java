@@ -141,6 +141,9 @@ public final class GeneBehaviors {
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
 				case GeneEffect.PickUpItems pickUp -> mob.setCanPickUpLoot(true);
+				case GeneEffect.SpawnEnchantment enchant when !mob.getMainHandItem().isEmpty() ->
+						level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+								.get(enchant.enchantment()).ifPresent(holder -> mob.getMainHandItem().enchant(holder, enchant.level()));
 				case GeneEffect.TridentChance trident -> rollTrident(mob, trident);
 				case GeneEffect.Runt runt when mob instanceof Zombie zombie && mob.getRandom().nextFloat() < runt.chance() ->
 						makeRunt(zombie, level, runt);

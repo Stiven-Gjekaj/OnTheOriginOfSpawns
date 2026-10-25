@@ -1,7 +1,10 @@
 package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.definition.Gene;
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.mixin.ZombifiedPiglinAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 import io.github.stivengjekaj.originofspawns.registry.ModRegistries;
@@ -11,11 +14,13 @@ import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
@@ -24,8 +29,10 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.zombie.ZombifiedPiglin;
+import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -134,6 +141,57 @@ public class ZombifiedPiglinEffectsTest {
 		helper.assertValueEqual(memory.getPersistentAngerEndTime() - helper.getLevel().getGameTime(), 6000L,
 				"it stays angry for 5 minutes");
 		helper.assertTrue(memory.getTarget() == null, "it does not chase the dead body");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void warSquealCountsOnlyTheAngryPiglinsNearIt(GameTestHelper helper) {
+		ZombifiedPiglin squealer = piglinWith(helper, new BlockPos(4, 1, 4), "test_war_squeal");
+		ZombifiedPiglin angry = piglinWith(helper, new BlockPos(2, 1, 4));
+		piglinWith(helper, new BlockPos(6, 1, 4));
+		angry.setTimeToRemainAngry(200L);
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 1));
+		float damage = GeneCombat.modifyDamage(pig, helper.getLevel().damageSources().mobAttack(squealer), 10.0F);
+		helper.assertTrue(Math.abs(damage - 10.5F) < 0.001F, "5% more damage for the one angry piglin, not " + damage);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void avengeAndRotSprintGiveTheEffectToThePiglinItself(GameTestHelper helper) {
+		ZombifiedPiglin piglin = piglinWith(helper, new BlockPos(4, 1, 4), "test_avenge", "test_rot_sprint");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 1));
+		GeneCombat.onHurt(piglin, helper.getLevel().damageSources().mobAttack(pig));
+		helper.assertFalse(piglin.hasEffect(MobEffects.STRENGTH), "a melee hit gives no Strength");
+		GeneCombat.onHurt(piglin, helper.getLevel().damageSources().arrow(
+				new Arrow(helper.getLevel(), pig, new ItemStack(Items.ARROW), null), pig));
+		helper.assertTrue(piglin.hasEffect(MobEffects.STRENGTH), "a projectile gives Strength to the piglin");
+		helper.assertFalse(pig.hasEffect(MobEffects.STRENGTH), "the attacker gets no Strength");
+		GeneCombat.onHit(piglin, pig);
+		helper.assertTrue(piglin.hasEffect(MobEffects.SPEED), "a hit gives Speed to the piglin");
+		helper.assertFalse(pig.hasEffect(MobEffects.SPEED), "the target gets no Speed");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void glintPutsSharpnessOnTheSwordAtTheSpawn(GameTestHelper helper) {
+		ZombifiedPiglin piglin = piglinWith(helper, new BlockPos(4, 1, 4), "test_glint");
+		piglin.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
+		GeneBehaviors.onSpawn(piglin, helper.getLevel(), EntitySpawnReason.NATURAL);
+		var sharpness = helper.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT)
+				.getOrThrow(Enchantments.SHARPNESS);
+		helper.assertValueEqual(piglin.getMainHandItem().getEnchantments().getLevel(sharpness), 1, "Sharpness I");
+		helper.assertTrue(piglin.getMainHandItem().is(Items.GOLDEN_SWORD), "the sword stays");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theStateTargetPlayerIsTrueOnlyWhileTheTargetIsAPlayer(GameTestHelper helper) {
+		ZombifiedPiglin piglin = piglinWith(helper, new BlockPos(4, 1, 4));
+		helper.assertFalse(GeneCombat.test(piglin, GeneEffect.When.TARGET_PLAYER), "no target");
+		piglin.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 1)));
+		helper.assertFalse(GeneCombat.test(piglin, GeneEffect.When.TARGET_PLAYER), "a pig is not a player");
+		piglin.setTarget(CreeperEffectsTest.survivalPlayer(helper).player());
+		helper.assertTrue(GeneCombat.test(piglin, GeneEffect.When.TARGET_PLAYER), "a player target");
 		helper.succeed();
 	}
 

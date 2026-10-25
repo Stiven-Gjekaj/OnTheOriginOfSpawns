@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombified_piglin",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "self_effect_on_hit", "effect": "minecraft:speed", "seconds": 3 }],
+	"mutation_rate": 0
+}

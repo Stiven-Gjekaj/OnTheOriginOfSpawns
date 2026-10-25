@@ -237,7 +237,10 @@ public sealed interface GeneEffect {
 			Map.entry("lava_pool", LavaPool.CODEC),
 			Map.entry("anger_range", AngerRange.CODEC),
 			Map.entry("anger_time", AngerTime.CODEC),
-			Map.entry("anger_after_death", AngerAfterDeath.CODEC)
+			Map.entry("anger_after_death", AngerAfterDeath.CODEC),
+			Map.entry("self_effect_on_hurt", SelfEffectOnHurt.CODEC),
+			Map.entry("self_effect_on_hit", SelfEffectOnHit.CODEC),
+			Map.entry("spawn_enchantment", SpawnEnchantment.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -544,6 +547,10 @@ public sealed interface GeneEffect {
 		 */
 		CARRYING_BLOCK,
 		/**
+		 * The target of the mob is a player.
+		 */
+		TARGET_PLAYER,
+		/**
 		 * The mob is in the air: it does not stand on the ground, and it is not in water or in lava.
 		 */
 		IN_AIR;
@@ -644,13 +651,15 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * Adds damage for each mob of the same species near the mob, up to a maximum.
+	 * Adds damage for each mob of the same species near the mob, up to a maximum. With {@code angry_only}, only the
+	 * angry mobs count, for example the zombified piglins that are angry at a player.
 	 */
-	record Rally(float perAlly, float max, float radius) implements GeneEffect {
+	record Rally(float perAlly, float max, float radius, boolean angryOnly) implements GeneEffect {
 		public static final MapCodec<Rally> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.0F, Float.MAX_VALUE).fieldOf("per_ally").forGetter(Rally::perAlly),
 				Codec.floatRange(0.0F, Float.MAX_VALUE).fieldOf("max").forGetter(Rally::max),
-				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("radius", 6.0F).forGetter(Rally::radius)
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("radius", 6.0F).forGetter(Rally::radius),
+				Codec.BOOL.optionalFieldOf("angry_only", false).forGetter(Rally::angryOnly)
 		).apply(instance, Rally::new));
 
 		@Override
@@ -3861,6 +3870,57 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "anger_after_death";
+		}
+	}
+
+	/**
+	 * When something hurts the mob, the mob itself gets the status effect. With {@code damage_types}, only that
+	 * damage counts. Avenge: a projectile gives Strength.
+	 */
+	record SelfEffectOnHurt(Holder<MobEffect> effect, float seconds, int amplifier, Optional<TagKey<DamageType>> damageTypes)
+			implements GeneEffect {
+		public static final MapCodec<SelfEffectOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(SelfEffectOnHurt::effect),
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(SelfEffectOnHurt::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(SelfEffectOnHurt::amplifier),
+				TagKey.hashedCodec(Registries.DAMAGE_TYPE).optionalFieldOf("damage_types").forGetter(SelfEffectOnHurt::damageTypes)
+		).apply(instance, SelfEffectOnHurt::new));
+
+		@Override
+		public String type() {
+			return "self_effect_on_hurt";
+		}
+	}
+
+	/**
+	 * After each melee hit, the mob itself gets the status effect. Rot Sprint: Speed.
+	 */
+	record SelfEffectOnHit(Holder<MobEffect> effect, float seconds, int amplifier) implements GeneEffect {
+		public static final MapCodec<SelfEffectOnHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(SelfEffectOnHit::effect),
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(SelfEffectOnHit::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(SelfEffectOnHit::amplifier)
+		).apply(instance, SelfEffectOnHit::new));
+
+		@Override
+		public String type() {
+			return "self_effect_on_hit";
+		}
+	}
+
+	/**
+	 * When the mob spawns, the item in its main hand gets the enchantment at the level. The item drops as in vanilla.
+	 * Glint: Sharpness I on the gold sword.
+	 */
+	record SpawnEnchantment(ResourceKey<Enchantment> enchantment, int level) implements GeneEffect {
+		public static final MapCodec<SpawnEnchantment> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				ResourceKey.codec(Registries.ENCHANTMENT).fieldOf("enchantment").forGetter(SpawnEnchantment::enchantment),
+				Codec.intRange(1, 255).optionalFieldOf("level", 1).forGetter(SpawnEnchantment::level)
+		).apply(instance, SpawnEnchantment::new));
+
+		@Override
+		public String type() {
+			return "spawn_enchantment";
 		}
 	}
 }

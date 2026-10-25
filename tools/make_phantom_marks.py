@@ -24,7 +24,7 @@ Pixel plan for the Swoopers.
 - Talon Dive: long, hooked fangs, the gene model talon_dive_fangs.
 - Rending Bite has a red mouth, with red drops on the front of the head.
 - Wing Slam has heavy, dark wing edges: the front edges and the tips.
-- Golem Diver has gray scars on the back.
+- Golem Diver has wide, gray scars on the back and the wings.
 - Steep Dive: a long, sharp tail, the gene model steep_dive_tail.
 - First Dive has narrow, bright eyes: the plates first_dive_eyes, and dark
   brows.
@@ -56,12 +56,12 @@ Pixel plan for the Shriekers.
 - Flock Cry: a tall crest, the gene model flock_cry_crest.
 
 Pixel plan for the Swarmwings.
-- Big Flock has small spots on the back.
+- Big Flock has small, cream spots on the back, the head, and the wings.
 - Pack Wing has blue bands across the wings.
 - Flock Shield has thick, dark scales on the body.
 - Last Flight has a red mark on the chest.
-- Flock Rally has clean, white wing tips, with a dark line on their inner
-  edge.
+- Flock Rally has wide, clean, white wing tips, with a dark band on their
+  inner edge.
 - Swarm Dive: a forked, red tail, the gene model swarm_dive_tail.
 This script needs Pillow.
 """
@@ -188,20 +188,21 @@ def wing_slam():
 
 
 def golem_diver():
-    # Gray scars on the back: pale gray scars that slant across the back and
-    # the wing bases.
-    scar = Mark("#A8A8B0")
-    dark = Mark("#4A4A58")
-    for s in (0, 3, 6):
-        for n in range(4):
-            col, row = n + (s % 2), s + n
-            if col < 5 and row < 9:
-                scar.put(at(BODY, "top", col, row))
-                if row + 1 < 9:
-                    dark.put(at(BODY, "top", col, row + 1))
-    for s in (1, 5):
-        for n in range(5):
-            scar.put(at(WING_BASE, "top", n + 1, s + (n % 2)))
+    # Gray scars on the back: wide, pale gray scars, two pixels wide, slant
+    # across the back, the wing bases, and the wing tips, each with a dark
+    # edge.
+    scar = Mark("#C8C8D0")
+    dark = Mark("#2A2A38")
+    for part, starts in ((BODY, (0, 4)), (WING_BASE, (0, 4)), (WING_TIP, (0, 5, 10))):
+        x0, y0, w, h = part["top"]
+        for s0 in starts:
+            for n in range(h):
+                col = s0 + n // 2
+                for c in (col, col + 1):
+                    if c < w:
+                        scar.put(at(part, "top", c, n))
+                if col + 2 < w:
+                    dark.put(at(part, "top", col + 2, n))
     return [scar, dark]
 
 
@@ -245,15 +246,16 @@ def swift_wing():
 
 
 def swift_wing_model():
-    # Long, thin wings: each wing tip grows a long, thin end, at its front
+    # Long, thin wings: each wing tip grows a long, thin end of 10 pixels,
+    # half as deep as the wing, at its front edge, blue with a pale front
     # edge. On the bones left_wing_tip and right_wing_tip, the wing tip is 13
     # long, from x 0 to 13 (left) or -13 to 0 (right), and from z 0 to 9,
     # with the front edge at z 0.
     im = model_image()
-    paint_box(im, 0, 0, 7, 1, 3, lambda f, x, y: "#C8B898" if f == "front" or y == 0 and f == "top"
-              else "#3A4A88")
-    parts = [{"bone": "left_wing_tip", "uv": [0, 0], "from": [13, 0, 0], "size": [7, 1, 3], "inflate": 0.0},
-             {"bone": "right_wing_tip", "uv": [0, 0], "from": [-20, 0, 0], "size": [7, 1, 3], "inflate": 0.0,
+    paint_box(im, 0, 0, 10, 1, 5, lambda f, x, y: "#D8C8A8" if f == "front" or y == 0 and f in ("top", "bottom")
+              else "#3A4A98" if f == "top" else "#2A3470")
+    parts = [{"bone": "left_wing_tip", "uv": [0, 0], "from": [13, 0, 0], "size": [10, 1, 5], "inflate": 0.0},
+             {"bone": "right_wing_tip", "uv": [0, 0], "from": [-23, 0, 0], "size": [10, 1, 5], "inflate": 0.0,
               "mirror": True}]
     save_model("swift_wing_wings", im, parts)
 
@@ -486,12 +488,23 @@ def flock_cry_model():
 # The Swarmwings.
 
 def big_flock():
-    spot = Mark("#E8E0C8")
-    for part, seed in ((BODY, 2501), (WING_BASE, 2502), (HEAD, 2503)):
-        for x, y, f, col, row in pixels(part, ("top",)):
-            if noise100(x, y, seed) < 22:
-                spot.put((x, y))
-    return [spot]
+    # Small spots on the back: round, cream spots of 2x2 in rows on the
+    # back, the head, and the tops and the bottoms of the wings, each with a
+    # dark edge on its low side.
+    spot = Mark("#F4ECD0")
+    edge = Mark("#14142A")
+    for part in (BODY, HEAD, WING_BASE, WING_TIP):
+        for f in FLAT:
+            if part is HEAD and f == "bottom":
+                continue
+            x0, y0, w, h = part[f]
+            for row in range(0, h - 1, 3):
+                for col in range((row // 3) % 2 * 2, w - 1, 4):
+                    spot.put([at(part, f, col, row), at(part, f, col + 1, row), at(part, f, col, row + 1),
+                              at(part, f, col + 1, row + 1)])
+                    if row + 2 < h:
+                        edge.put([at(part, f, col, row + 2), at(part, f, col + 1, row + 2)])
+    return [spot, edge]
 
 
 def pack_wing():
@@ -529,15 +542,16 @@ def last_flight():
 
 
 def flock_rally():
-    # White wing tips: the outer three columns of the wing tips are a clean,
-    # bright white, with a dark line on their inner edge, so the white reads
-    # on a light sky too. The tips are whole, not torn.
+    # White wing tips: the outer five columns of the wing tips are a clean,
+    # bright white, top and bottom, with a wide, dark band of two columns on
+    # their inner edge. The tips are whole, not torn, and the front edge of
+    # the wing stays as it is.
     white = Mark("#FAFAFF")
-    line = Mark("#14141E")
-    put(white, WING_TIP, FLAT + ("front", "back"), cols=(10, 11, 12))
+    band = Mark("#14141E")
+    put(white, WING_TIP, FLAT + ("front", "back"), cols=(8, 9, 10, 11, 12))
     put(white, WING_TIP, ("left",))
-    put(line, WING_TIP, FLAT + ("front", "back"), cols=(9,))
-    return [white, line]
+    put(band, WING_TIP, FLAT + ("front", "back"), cols=(6, 7))
+    return [white, band]
 
 
 def swarm_dive():

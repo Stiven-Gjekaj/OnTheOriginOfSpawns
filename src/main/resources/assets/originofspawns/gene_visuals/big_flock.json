@@ -5,7 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/big_flock_0.png",
-				"tint": "#E8E0C8"
+				"tint": "#F4ECD0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/big_flock_1.png",
+				"tint": "#14142A"
 			}
 		}
 	]

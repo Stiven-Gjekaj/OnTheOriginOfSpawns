@@ -5,14 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/golem_diver_0.png",
-				"tint": "#A8A8B0"
+				"tint": "#C8C8D0"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/golem_diver_1.png",
-				"tint": "#4A4A58"
+				"tint": "#2A2A38"
 			}
 		}
 	]

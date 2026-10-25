@@ -107,7 +107,7 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Wind Mirror | Deflector | `unreached` | It sends a projectile back at the shooter | 10% less maximum health | Rods: silver, bright rods |
+| Wind Mirror | Deflector | `unreached` | A projectile that it sends back does two times the damage, and it flies straight at the shooter | 10% less maximum health | Rods: silver, bright rods |
 | Gale Guard | Deflector | `melee` | When a melee hit hurts it, it pushes the attacker back | 10% less movement speed | Wind: a thick ring of wind |
 | Blast Calm | Deflector | `explosion` | Half the damage from explosions | 10% less movement speed | Head: a calm, closed mouth |
 | Fire Shear | Deflector | `fire` | Fire and lava do half the damage | 10% less maximum health | Rods: orange, burnt tips |
@@ -161,7 +161,7 @@ The visual column gives the region and the mark.
 | Golem Gust, Steel Core | "Golems" are the iron golem and the snow golem |
 | Disarm Gust | The item falls to the ground near the player |
 | Wide Gust | The blast is wider, but the push does not change |
-| Wind Mirror | The projectile goes back with its speed and its damage |
+| Wind Mirror | A vanilla breeze already sends each projectile back, at half speed and a little off the line |
 | Gale Guard | The push is as strong as a vanilla wind charge, on the attacker only |
 | Last Draft | It jumps one time in its life |
 | Fast Spring | "Time between two jumps" is the rest after each jump |
@@ -275,4 +275,5 @@ These genes and families need parts that the mod does not have yet.
 | The time between its wind charges, and two at once | Whirlers, Rapid Wind, Twin Charge |
 | No spread of its wind charges | True Aim |
 | A wind blast round it | Storm Gale |
+| More damage from a projectile that it sends back, and a straight path to the shooter | Wind Mirror |
 | A check that the reused effects work on a breeze: rebound, push on hurt, flee, stacks, fang line, lightning, sidestep, and the damage taken effects | Many genes |

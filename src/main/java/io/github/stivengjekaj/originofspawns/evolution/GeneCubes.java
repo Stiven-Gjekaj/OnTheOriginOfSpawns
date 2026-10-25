@@ -1,5 +1,6 @@
 package io.github.stivengjekaj.originofspawns.evolution;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.server.level.ServerLevel;
@@ -23,5 +24,29 @@ public final class GeneCubes {
 		}
 		piece.setAttached(ModAttachments.GENES, genes);
 		GeneEffects.applyAttributes(piece, GeneEffects.sources(level.registryAccess(), genes));
+	}
+
+	/**
+	 * The sizes of a natural cube.
+	 */
+	private static final int[] NATURAL_SIZES = {1, 2, 4};
+
+	/**
+	 * Gives a new cube the size of its spawn size gene, if it has one.
+	 */
+	public static void spawnSize(AbstractCubeMob cube, GeneEffect.SpawnSize spawn) {
+		cube.setSize(spawnSize(spawn, cube.getRandom().nextFloat(), cube.getRandom().nextFloat()), true);
+	}
+
+	/**
+	 * Returns the size for the two rolls: the first roll picks the size of the gene with its chance, and the second
+	 * roll picks one of the other natural sizes.
+	 */
+	public static int spawnSize(GeneEffect.SpawnSize spawn, float roll, float otherRoll) {
+		if (roll < spawn.chance()) {
+			return spawn.size();
+		}
+		int[] others = java.util.Arrays.stream(NATURAL_SIZES).filter(size -> size != spawn.size()).toArray();
+		return others[Math.min(others.length - 1, (int) (otherRoll * others.length))];
 	}
 }

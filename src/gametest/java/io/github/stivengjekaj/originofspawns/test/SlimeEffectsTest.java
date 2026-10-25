@@ -1,6 +1,9 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCubes;
 import io.github.stivengjekaj.originofspawns.mixin.AbstractCubeMobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -48,6 +51,26 @@ public class SlimeEffectsTest {
 		((AbstractCubeMobAccessor) slime).originofspawns$dealDamage(pig);
 		helper.assertTrue(pig.getHealth() < pig.getMaxHealth(), "the touch hurts the pig");
 		helper.assertTrue(pig.hasEffect(MobEffects.SLOWNESS), "the hit gives Slowness");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void greatBlobSpawnsAtSizeFourWithItsChance(GameTestHelper helper) {
+		AbstractCubeMob slime = cubeWith(helper, EntityTypes.SLIME, new BlockPos(4, 1, 4), 1, "test_great_blob");
+		GeneBehaviors.onSpawn(slime, helper.getLevel(), EntitySpawnReason.NATURAL);
+		helper.assertValueEqual(slime.getSize(), 4, "a chance of 1 gives size 4");
+		var half = new GeneEffect.SpawnSize(4, 0.5F);
+		helper.assertValueEqual(GeneCubes.spawnSize(half, 0.49F, 0.9F), 4, "a roll under the chance gives size 4");
+		helper.assertValueEqual(GeneCubes.spawnSize(half, 0.5F, 0.0F), 1, "the other sizes share the rest");
+		helper.assertValueEqual(GeneCubes.spawnSize(half, 0.5F, 0.99F), 2, "the other sizes share the rest");
+		// Many rolls give the sizes in about the chances of the gene.
+		var random = net.minecraft.util.RandomSource.create(1L);
+		int[] count = new int[5];
+		for (int i = 0; i < 1000; i++) {
+			count[GeneCubes.spawnSize(half, random.nextFloat(), random.nextFloat())]++;
+		}
+		helper.assertTrue(count[4] > 430 && count[4] < 570, "about half the cubes are size 4, " + count[4]);
+		helper.assertTrue(count[1] > 180 && count[2] > 180 && count[3] == 0, "sizes 1 and 2 share the rest");
 		helper.succeed();
 	}
 

@@ -211,7 +211,8 @@ public sealed interface GeneEffect {
 			Map.entry("life_on_hit", LifeOnHit.CODEC),
 			Map.entry("age_spawn", AgeSpawn.CODEC),
 			Map.entry("projectile_teleport", ProjectileTeleport.CODEC),
-			Map.entry("call_others", CallOthers.CODEC)
+			Map.entry("call_others", CallOthers.CODEC),
+			Map.entry("spawn_size", SpawnSize.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3425,6 +3426,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "call_others";
+		}
+	}
+
+	/**
+	 * When a cube spawns in a natural way or from a spawner, it has this size with this chance. Vanilla gives the
+	 * sizes 1, 2, and 4 the same chance. The other natural sizes share the rest of the chance.
+	 */
+	record SpawnSize(int size, float chance) implements GeneEffect {
+		public static final MapCodec<SpawnSize> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 4).optionalFieldOf("size", 4).forGetter(SpawnSize::size),
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(SpawnSize::chance)
+		).apply(instance, SpawnSize::new));
+
+		@Override
+		public String type() {
+			return "spawn_size";
 		}
 	}
 }

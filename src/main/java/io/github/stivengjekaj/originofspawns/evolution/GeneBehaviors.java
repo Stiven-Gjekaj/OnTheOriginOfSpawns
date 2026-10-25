@@ -153,6 +153,8 @@ public final class GeneBehaviors {
 				// An endermite comes from an ender pearl, an event, so the burrow also runs at an event.
 				case GeneEffect.Burrow burrow when reason == EntitySpawnReason.NATURAL
 						|| reason == EntitySpawnReason.TRIGGERED -> burrow(mob, level, burrow);
+				case GeneEffect.SpawnSize spawn when mob instanceof net.minecraft.world.entity.monster.cubemob.AbstractCubeMob cube
+						&& broodReason(reason) && reason != EntitySpawnReason.TRIGGERED -> GeneCubes.spawnSize(cube, spawn);
 				case GeneEffect.ChargedSpawn charged when mob instanceof Creeper creeper
 						&& mob.getRandom().nextFloat() < charged.chance() -> GeneBlasts.charge(creeper);
 				default -> {

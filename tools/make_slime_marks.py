@@ -145,12 +145,12 @@ def thick_gel():
 
 
 def swell():
-    # A swollen core: the core is pale and full, with stretched lines across
-    # its faces.
-    pale = Mark("#8AD070")
-    line = Mark("#B8F0A0")
+    # A swollen core: the core is a bright, pale lime, with stretched pale
+    # lines across its faces.
+    pale = Mark("#D8FF70")
+    line = Mark("#FFFFE8")
     for x, y, face, col, row in pixels(CORE, ALL):
-        (line if (col + row) % 4 == 0 else pale).put((x, y))
+        (line if (col + row) % 3 == 0 else pale).put((x, y), 255)
     return [pale, line]
 
 
@@ -173,10 +173,10 @@ def mother_gel_model():
 
 
 def wide_reach():
-    # A wide, open mouth: a wide, dark mouth on the front of the gel, three
-    # pixels wide on row 5 and one row under it, and the mouth itself dark.
+    # A wide, open mouth: a wide, dark mouth on the front of the gel, five
+    # pixels wide on rows 5 and 6, and the mouth itself dark.
     dark = Mark("#102010")
-    dark.put([(11, 13), (12, 13), (13, 13), (11, 14), (12, 14), (13, 14)])
+    dark.put([(x, y) for x in range(10, 15) for y in (13, 14)])
     dark.put([(x, y) for x, y, *_ in pixels(MOUTH, ALL)])
     return [dark]
 
@@ -192,11 +192,13 @@ def many_pieces():
 
 
 def tiny_teeth():
-    # Small teeth: pale teeth round the mouth on the front of the gel, on the
-    # row above the mouth and beside it.
+    # Small teeth: a row of pale teeth on the front of the gel, round the
+    # mouth, with dark gaps between them.
     tooth = Mark("#F4F4E8")
-    tooth.put([(11, 12), (13, 12), (11, 13), (13, 13)])
-    return [tooth]
+    gap = Mark("#1A3A14")
+    tooth.put([(10, 13), (11, 12), (13, 12), (14, 13), (11, 14), (13, 14)])
+    gap.put([(11, 13), (13, 13), (12, 14)])
+    return [tooth, gap]
 
 
 def quick_split():
@@ -386,11 +388,11 @@ def acid_touch():
 
 
 def shield_melt():
-    # A yellow mouth: the mouth is yellow, and the gel in front of it and
-    # beside it is yellow.
+    # A yellow mouth: the mouth is yellow, and a wide band of yellow on the
+    # gel goes round it, with a drip of acid under it.
     yellow = Mark("#F0D020")
     yellow.put([(x, y) for x, y, *_ in pixels(MOUTH, ALL)])
-    yellow.put([GEL_MOUTH, (11, 13), (13, 13)])
+    yellow.put([(x, 13) for x in range(10, 15)] + [(11, 14), (12, 14), (13, 14), (12, 15)])
     return [yellow]
 
 

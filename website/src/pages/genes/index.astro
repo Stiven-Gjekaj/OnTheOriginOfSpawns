@@ -27,6 +27,9 @@ import { familiesOf } from "../../lib/site.js";
       <input class="input search" id="search" type="search" placeholder="Search genes, effects, or pressures" aria-label="Search the genes" />
       <span class="count muted small" id="count" aria-live="polite"></span>
     </div>
+    {site.species.filter((sp) => sp.geneRules.length).map((sp) => (
+      <ul class="gene-rules callout small" data-species-panel={sp.id} hidden>{sp.geneRules.map((x) => <li>{x}</li>)}</ul>
+    ))}
     <div class="genes" id="genes">
       {site.genes.map((g) => <GeneCard gene={g} />)}
     </div>
@@ -76,6 +79,8 @@ import { familiesOf } from "../../lib/site.js";
 </script>
 
 <style>
+  .gene-rules { margin: 0 0 var(--s-4); padding-left: 2em; }
+  .gene-rules li + li { margin-top: 4px; }
   .toolbar {
     position: sticky; top: var(--header-h); z-index: 10;
     display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center;

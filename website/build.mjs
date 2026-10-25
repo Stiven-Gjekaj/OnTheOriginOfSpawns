@@ -389,6 +389,8 @@ for (const sp of speciesIds) {
     hasBabies: babies ? bullets(babies.lines).some((x) => /^Only the .* gene makes/.test(x.text)) : false,
     jockeys: jockeys ? bullets(jockeys.lines).map((x) => x.text) : [],
     equipment: equipment ? bullets(equipment.lines).map((x) => x.text) : [],
+    // The rows for "All" in the gene details are rules for each gene of the species.
+    geneRules: detailTable.filter((r) => r.Gene === "All").map((r) => r.Rules),
   });
 }
 for (const { id } of geneJson) {

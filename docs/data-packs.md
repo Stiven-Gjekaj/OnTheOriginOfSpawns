@@ -157,6 +157,7 @@ The states for `when` are:
 | `wet` | The mob is in water, or rain falls on it |
 | `carrying_block` | The mob is an enderman that carries a block |
 | `in_air` | The mob does not stand on the ground, and it is not in water or in lava |
+| `not_shooting` | The mob did not shoot a fireball in the last 2 seconds |
 | `target_player` | The target of the mob is a player |
 | `target_gold_armor` | The target is a player with at least one piece of gold armor |
 | `target_no_shield` | The target is a player that does not hold a shield up |
@@ -477,6 +478,72 @@ the species. The bow genes work on the crossbow of a piglin: `draw_time`,
 `throw_rate`, `throw_range` (8 blocks in vanilla), `fan_shot`, and the arrow
 effects. The game saves the place where a mob spawned with the mob.
 
+#### Flyers
+
+The phantom, the ghast, the blaze, and the breeze fly. The bite of a phantom
+and the touch of a blaze are melee hits, so the hit effects run on them.
+
+The blast effects of a mob also act on the blast of each large fireball of a
+ghast and on the blast of each wind charge of a breeze: `blast_size`,
+`blast_effect`, `blast_cloud`, `aftershock`, `blast_lightning`,
+`pierce_shields` with `blasts`, and `damage_to`. The genes come from the
+owner of the projectile when it hits. A fireball that a player hits back has
+the player as its owner, so its blast has no genes. The projectiles of one mob
+with genes do not hit each other.
+
+| Type | Fields | Result |
+|---|---|---|
+| `flying_speed` | `multiplier` | Multiplies the speed of the mob in the air. On a phantom, it is the speed of the circle and of the swoop. More than one effect multiplies together |
+| `sun_shade` | `interval_seconds` (`4`) | The sun burns the mob only one time in each interval. The mob still catches fire in the sun |
+| `swoop_call` | `radius` (`16`) | When a phantom starts a swoop at its target, the phantoms in the radius target the same mob. Each one swoops after its own wait |
+| `float_height` | `blocks` (`4`) | While the mob has a target, it stays at least this many more blocks above the target |
+| `keep_above` | `mobs`, `blocks` (`4`), `radius` (`16`) | A blaze rises to this many blocks above the top of the nearest mob of the list in the radius |
+| `dive` | `cooldown_seconds` (`10`), `damage` (`4`), `range` (`12`), `speed` (`1`) | One time in each cooldown, the mob dives at its target, if the target is in the range, lower than the mob, and in sight. For 3 seconds after a dive, each melee hit does `damage` more |
+| `flee` | `threshold` (`0.3`), `seconds` (`4`), `speed` (`1.5`), `cooldown_seconds` (`30`) | When something hurts the mob under the threshold of its maximum health, it moves away from its target for this many seconds, with this many times its speed, one time in each cooldown |
+| `blast_shield_stop` | `seconds` (`5`) | After each blast of the mob, the shields of the players in two times the blast radius are useless for this many seconds, if the players hold them up |
+| `blast_fire` | `blocks` (`8`) | After each blast of the mob, the blast sets up to this many more blocks on fire, in and next to its radius. It obeys the `mobGriefing` gamerule |
+| `small_fireball_fan` | `count` (`3`), `angle` (`15`) | With each large fireball, the mob also shoots this many small fireballs in a fan |
+| `hard_fireball` | none | A player cannot hit the large fireballs of the mob back |
+| `return_ward` | `multiplier` (`0.5`) | A fireball that a player hits back at the mob, and its blast, do their normal damage times the multiplier. A vanilla ghast takes 1000 damage from them |
+| `fireball_speed` | `multiplier` | Multiplies the speed of the fireballs and the wind charges of the mob |
+| `burst_count` | `extra` | A blaze shoots this many more fireballs in each burst. Vanilla is 3. More than one effect adds up |
+| `burst_fan` | `angle` (`30`) | A blaze shoots each burst in a fan of this full width |
+| `fireball_ring` | `count` (`8`), `cooldown_seconds` (`10`) | While the mob has a target, it shoots this many small fireballs in a level ring, one time in each cooldown |
+| `seeker_fireballs` | `degrees` (`5`) | Each tick, the fireballs of the mob turn to its target, at most this many degrees |
+| `fireball_fire_time` | `seconds` | Adds this many seconds to the fire of the small fireballs of the mob. Vanilla is 5 seconds. A negative number makes it shorter. More than one effect adds up |
+| `fireball_blast` | `power` (`0.5`) | Each small fireball makes a blast of this power where it hits. The blast breaks no blocks and starts no fire |
+| `fireball_cloud` | `effect`, `seconds`, `amplifier` (`0`), `cloud_seconds` (`3`), `radius` (`2`) | Each small fireball leaves a cloud of the effect where it hits |
+| `fireball_fire_spread` | `radius` (`1`) | Each small fireball sets fire to the blocks in the radius round the place where it hits. It obeys the `mobGriefing` gamerule |
+| `burn_pain` | `multiplier` | While the target of the mob burns, it takes this many times the damage from each source. The mob must be in 32 blocks of its target |
+| `fire_feed` | `amount` (`1`), `radius` (`8`) | Each second that the target of the mob burns in the radius, the mob heals this much |
+| `snowball_damage_taken` | `multiplier` | Multiplies the damage that a snowball does to the mob. Vanilla is 3 to a blaze |
+| `boil_off` | `radius` (`2`) | Each second, the water source blocks in the radius become air. It obeys the `mobGriefing` gamerule |
+| `push_on_hurt` | `radius` (`3`), `strength` (`1.2`), `melee_only` (`false`), `attacker_only` (`false`), `threshold` (`1`), `once` (`false`) | When something hurts the mob under the threshold of its maximum health, it pushes the other mobs and the players in the radius away. With `melee_only`, a projectile does not count. With `attacker_only`, it pushes only the attacker. With `once`, it pushes one time in its life |
+| `wind_push` | `multiplier`, `targets` (none) | Multiplies the push of the blasts of the wind charges of the mob. With `targets`, only the push of those mobs changes |
+| `wind_lift` | `blocks` (`4`) | The wind charge blasts also throw each living entity that they push up, about this many blocks |
+| `wind_charge_damage` | `extra` | The wind charges do this much more damage to the entity that they hit. Vanilla is 1 |
+| `spin_up` | `per_hit` (`0.1`), `max` (`0.4`), `seconds` (`10`) | Each hit that the mob takes raises its throw rate by `per_hit`, up to `max`, while each new hit comes in `seconds` of the last one |
+| `charge_each_player` | `radius` (`16`), `cooldown_seconds` (`10`) | One time in each cooldown, a breeze shoots a wind charge at each player in the radius that it sees |
+| `lightning_call` | `radius` (`16`), `cooldown_seconds` (`30`) | One time in each cooldown, lightning hits the nearest player in the radius under an open sky |
+| `jump_shot` | none | At the top of each long jump, a breeze shoots a wind charge at its target |
+| `escape_jump` | `threshold` (`0.3`), `speed` (`1.2`) | One time in its life, when something hurts the mob under the threshold, it jumps far away from the attacker |
+| `swim_hop` | none | Water and lava do not slow the long jump of a breeze |
+| `rebound` | `damage_multiplier` (`2`) | A projectile that the mob sends back flies straight at its shooter, at its old speed, and does this many times its damage |
+
+New options: `silence` has `all` (`false`), which stops each sound of the
+mob, and `warning` (`false`), which stops the warning sound of a ghast before
+it shoots. `sidestep` works in the air, and it has `on_hurt` (`false`), so
+that the mob also steps aside after a melee hit hurts it. `shield_break` has
+`hits` (`melee`). With `projectile` or `any`, a projectile of the mob that a
+shield stops also stops the shield. `blast_effect` has `radius` (none). With
+it, each player in the radius of the blast gets the effect. `disarm` has
+`off_hand` (`false`). `landing_damage` has `mobs` (`false`), so that the
+other mobs in the radius take the damage too. `throw_rate` also changes the
+time between the fireballs of a ghast, the rest of a blaze after a burst, and
+the shot of a breeze. `fan_shot` works on a ghast and on a breeze. `hop`
+changes the long jump of a breeze. `arrow_spread` changes the spread of the
+wind charges. `brood` works on a phantom.
+
 #### Spiders
 
 These effects suit a spider, but other mobs can also use them. A gene cobweb
@@ -535,7 +602,7 @@ A resource pack can change the look of any gene.
 | Field | Default | Description |
 |---|---|---|
 | `region_map` | `originofspawns:textures/region/humanoid.png` | The map that labels the pixels of the mob texture |
-| `layers` | | The changes to the texture, in order. A layer with no `regions` or no `materials` covers all of them. A layer can have an `order`, an integer with the default `0`. A layer can have a `target`: `body` (the default) or `outer`. An `outer` layer goes on the outer layer of the mob, such as the cloth of the stray, and covers all of its pixels |
+| `layers` | | The changes to the texture, in order. A layer with no `regions` or no `materials` covers all of them. A layer can have an `order`, an integer with the default `0`. A layer can have a `target`: `body` (the default), `outer`, or `wind`. An `outer` layer goes on the outer layer of the mob, such as the cloth of the stray, and covers all of its pixels. A `wind` layer goes on the wind texture of a breeze in the same way |
 | `model` | none | A gene model that adds cubes to the mob, for example `originofspawns:bone_legs` |
 
 The layers of all the genes of a mob go on in sequence of their `order`.
@@ -597,6 +664,14 @@ part of the body. A baby of these mobs has its own vanilla texture, so it gets
 no marks.
 The coordinates are in pixels, in the coordinates of the bone, as in the
 vanilla models.
+A phantom has `body`, `head`, `tail_base`, `tail_tip`, `left_wing_base`,
+`left_wing_tip`, `right_wing_base`, and `right_wing_tip`. Each tip is a part
+of its base, so a cube on a tip moves with the wing. A ghast has `body` and
+`tentacle0` to `tentacle8`. A blaze has `head` and `part0` to `part11`, the
+twelve rods. A breeze has `body`, `head`, and `rod_1` to `rod_3`. The vanilla
+eyes layer of a phantom and of a breeze draws over the eyes, so a gene that
+changes the eyes uses a gene model with `glow`. A gene model bone can be at
+each depth in the model.
 
     {
         "texture": "originofspawns:textures/entity/bone_leg.png",

@@ -48,8 +48,8 @@ Pixel plan for the Bonebacks.
 Pixel plan for the Maddened.
 - Player Hate has white, mad eyes with small red points.
 - Blind Fury has red, bulging eyes with a dark ring.
-- Mad Squeal has white foam at a wide-open snout: a black opening with a
-  ring of foam.
+- Mad Squeal has a wide-open black snout with yellow, broken teeth round
+  its rim.
 - Berserk Rot has red, open wounds on the body.
 - Creeper Hunter has scorched, black ears.
 - Rabid Bite has a foaming mouth: white foam on the snout and the jaw.
@@ -420,20 +420,37 @@ def blind_fury():
 
 
 def mad_squeal():
-    # White foam at a wide-open snout: the end of the snout is wide open,
-    # black inside, with a thick ring of white foam round the opening and
-    # foam on the end of the face. No foam goes along the sides of the head.
+    # A wide-open black snout with yellow, broken teeth: the end of the snout
+    # is a black opening, and yellow teeth of uneven length stand round its
+    # rim, some of them broken, with black gaps.
     black = Mark("#0E0808")
-    foam = Mark("#FFFFFF")
-    bubble = Mark("#C8DCDC")
+    tooth = Mark("#D8C050")
+    stain = Mark("#8A7020")
+    # The length of each tooth, by column: 0 is a gap, 1 a broken stub, and 2
+    # a whole tooth.
+    upper = (1, 2, 0, 2, 1, 2, 0, 0, 2, 1, 2, 0, 2, 1)
+    lower = (0, 2, 1, 0, 2, 2, 1, 0, 2, 0, 1, 2, 0, 1)
     for x, y, f, col, row in pixels(HEAD, ("front",)):
-        if 2 <= col <= 11 and 1 <= row <= 4:
-            black.put((x, y))
+        if row == 0:
+            (tooth if upper[col] else black).put((x, y))
+        elif row == 1:
+            (tooth if upper[col] == 2 else black).put((x, y))
+        elif row == 5:
+            (tooth if lower[col] else black).put((x, y))
+        elif row == 4:
+            (tooth if lower[col] == 2 else black).put((x, y))
         else:
-            (bubble if (col + row) % 3 == 0 else foam).put((x, y))
-    for x, y, f, col, row in pixels(HEAD, ("top",), rows=(16, 17, 18)):
-        (bubble if (col * 2 + row) % 5 == 0 else foam).put((x, y))
-    return [black, foam, bubble]
+            black.put((x, y))
+    # The opening goes round the edges onto the end of the face and under
+    # the jaw, with a row of teeth along its rim there too. No mark goes on
+    # the sides of the head.
+    for col in range(14):
+        black.put([face(col, 17), face(col, 18), at(HEAD, "bottom", col, 17), at(HEAD, "bottom", col, 18)])
+        if upper[col]:
+            (stain if upper[col] == 1 else tooth).put(face(col, 16))
+        if lower[col]:
+            (stain if lower[col] == 1 else tooth).put(at(HEAD, "bottom", col, 16))
+    return [black, tooth, stain]
 
 
 def berserk_rot():

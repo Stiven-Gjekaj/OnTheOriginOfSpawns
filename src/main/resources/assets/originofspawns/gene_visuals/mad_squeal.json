@@ -12,14 +12,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/mad_squeal_1.png",
-				"tint": "#FFFFFF"
+				"tint": "#D8C050"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/mad_squeal_2.png",
-				"tint": "#C8DCDC"
+				"tint": "#8A7020"
 			}
 		}
 	]

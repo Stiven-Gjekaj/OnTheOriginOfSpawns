@@ -4347,7 +4347,8 @@ public sealed interface GeneEffect {
 
 	/**
 	 * While the ghast has a target, each place that it floats to is at least this many blocks above the target. A
-	 * vanilla ghast floats to random places near it, and it picks only targets in 4 blocks of its own height.
+	 * vanilla ghast floats to random places near it, and it picks only targets in 4 blocks of its own height. A blaze
+	 * rises to this many blocks more than vanilla above its target.
 	 */
 	record FloatHeight(float blocks) implements GeneEffect {
 		public static final MapCodec<FloatHeight> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

@@ -4,6 +4,7 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.mixin.BlazeAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -262,6 +263,31 @@ public class BlazeEffectsTest {
 		helper.assertTrue(plain > 0.0, "the blaze moves in the air");
 		helper.assertTrue(Math.abs(quick / plain - 1.3) < 0.001, "30% more flying speed, not " + quick / plain);
 		helper.succeed();
+	}
+
+	@GameTest
+	public void risingHeatMakesTheBlazeRiseHigherThanItsTarget(GameTestHelper helper) {
+		// The eyes of the pig are lower than the eyes of the blaze, so a plain blaze does not rise.
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		helper.assertValueEqual(riseInOneStep(helper, blazeWith(helper, new BlockPos(2, 1, 2)), pig), 0.0,
+				"a plain blaze does not rise");
+		helper.assertTrue(riseInOneStep(helper, blazeWith(helper, new BlockPos(2, 1, 2), "test_high_float"), pig) > 0.0,
+				"the blaze rises to 4 blocks above its target");
+		helper.succeed();
+	}
+
+	/**
+	 * Returns the speed up that one server step gives the blaze, with the smallest random offset of the game.
+	 */
+	static double riseInOneStep(GameTestHelper helper, Blaze blaze, LivingEntity target) {
+		blaze.setTarget(target);
+		blaze.setDeltaMovement(Vec3.ZERO);
+		((BlazeAccessor) blaze).originofspawns$setHeightOffset(0.5F);
+		((BlazeAccessor) blaze).originofspawns$setNextHeightOffsetChange(100);
+		((BlazeAccessor) blaze).originofspawns$serverStep(helper.getLevel());
+		double rise = blaze.getDeltaMovement().y;
+		blaze.discard();
+		return rise;
 	}
 
 	/**

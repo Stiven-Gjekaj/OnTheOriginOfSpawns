@@ -866,6 +866,19 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the largest number of blocks of the float height genes of the mob, or 0.
+	 */
+	public static float floatBlocks(Mob mob) {
+		float blocks = 0.0F;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.FloatHeight height) {
+				blocks = Math.max(blocks, height.blocks());
+			}
+		}
+		return blocks;
+	}
+
+	/**
 	 * Returns the height of a place that the mob floats to, after its float height genes. While the mob has a target,
 	 * the place is at least the largest number of blocks above the target.
 	 */

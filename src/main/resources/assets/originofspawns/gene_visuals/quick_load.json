@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/piglin.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/quick_load_0.png",
+				"tint": "#4A2418"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/quick_load_1.png",
+				"tint": "#F4C0A0"
+			}
+		}
+	]
+}

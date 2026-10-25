@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/piglin.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/treasure_hunter_0.png",
+				"tint": "#F6D03D"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/treasure_hunter_1.png",
+				"tint": "#FFF4A0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/treasure_hunter_2.png",
+				"tint": "#3A0E08"
+			}
+		}
+	]
+}

@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/piglin.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/soul_brave_0.png",
+				"tint": "#30C0E8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/soul_brave_1.png",
+				"tint": "#B8F4FF"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/soul_brave_2.png",
+				"tint": "#7AB8D0"
+			}
+		}
+	]
+}

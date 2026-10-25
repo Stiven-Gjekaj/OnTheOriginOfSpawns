@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/shade_cloak_cloak.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4.5,
+				0,
+				2.1
+			],
+			"size": [
+				9,
+				16,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				20
+			],
+			"from": [
+				-5,
+				-0.4,
+				-2.5
+			],
+			"size": [
+				10,
+				1,
+				5
+			],
+			"inflate": 0.0
+		}
+	]
+}

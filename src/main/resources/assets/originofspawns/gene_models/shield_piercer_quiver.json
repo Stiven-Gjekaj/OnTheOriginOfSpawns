@@ -1,0 +1,79 @@
+{
+	"texture": "originofspawns:textures/entity/shield_piercer_quiver.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				3,
+				0,
+				-1.5
+			],
+			"size": [
+				2,
+				6,
+				3
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				12
+			],
+			"from": [
+				3.2,
+				-2,
+				-1
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				12
+			],
+			"from": [
+				3.8,
+				-2,
+				0.2
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				12
+			],
+			"from": [
+				4.2,
+				-2,
+				-0.6
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.2
+		}
+	]
+}

@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/greedy_bolt_rings.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "right_ear",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				4,
+				-1
+			],
+			"size": [
+				1,
+				2,
+				2
+			],
+			"inflate": 0.25
+		},
+		{
+			"bone": "left_ear",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				4,
+				-1
+			],
+			"size": [
+				1,
+				2,
+				2
+			],
+			"inflate": 0.25
+		}
+	]
+}

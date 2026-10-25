@@ -69,6 +69,7 @@
 		"RangedBowAttackGoalMixin",
 		"RangedCrossbowAttackGoalMixin",
 		"SensorAccessor",
+		"SmallFireballMixin",
 		"SnowballMixin",
 		"SpellcasterUseSpellGoalAccessor",
 		"SpiderAttackGoalMixin",

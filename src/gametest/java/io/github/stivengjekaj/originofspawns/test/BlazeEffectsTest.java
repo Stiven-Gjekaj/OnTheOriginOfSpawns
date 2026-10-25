@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
+import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -11,9 +12,13 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -100,6 +105,29 @@ public class BlazeEffectsTest {
 			helper.assertTrue(Math.abs(fireball.accelerationPower - 0.15) < 1.0E-6,
 					"1.5 times the acceleration, not " + fireball.accelerationPower);
 		});
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void deepBurnMakesTheFireOfTheFireballsLonger(GameTestHelper helper) {
+		IronGolem plainTarget = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(5, 1, 5));
+		hitWithFireball(helper, blazeWith(helper, new BlockPos(1, 1, 1)), plainTarget);
+		helper.assertValueEqual(plainTarget.getRemainingFireTicks(), 100, "a plain fireball burns for 5 seconds");
+		plainTarget.discard();
+		IronGolem target = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(5, 1, 5));
+		hitWithFireball(helper, blazeWith(helper, new BlockPos(1, 1, 1), "test_deep_burn"), target);
+		helper.assertValueEqual(target.getRemainingFireTicks(), 220, "the fireball burns for 6 more seconds");
+		helper.succeed();
+	}
+
+	/**
+	 * Makes a small fireball of the blaze hit the target directly.
+	 */
+	static SmallFireball hitWithFireball(GameTestHelper helper, Blaze blaze, LivingEntity target) {
+		SmallFireball fireball = new SmallFireball(helper.getLevel(), blaze, new Vec3(1.0, 0.0, 0.0));
+		fireball.setPos(target.position().add(0.0, 1.0, 0.0));
+		helper.getLevel().addFreshEntity(fireball);
+		((ProjectileAccessor) fireball).originofspawns$onHit(new EntityHitResult(target));
+		return fireball;
 	}
 
 	/**

@@ -267,7 +267,8 @@ public sealed interface GeneEffect {
 			Map.entry("return_ward", ReturnWard.CODEC),
 			Map.entry("burst_count", BurstCount.CODEC),
 			Map.entry("burst_fan", BurstFan.CODEC),
-			Map.entry("fireball_speed", FireballSpeed.CODEC)
+			Map.entry("fireball_speed", FireballSpeed.CODEC),
+			Map.entry("fireball_fire_time", FireballFireTime.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4405,6 +4406,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "fireball_speed";
+		}
+	}
+
+	/**
+	 * Adds this many seconds to the fire of the small fireballs of the mob. The vanilla small fireball sets its target
+	 * on fire for 5 seconds. A negative number makes the fire shorter. More than one effect adds up.
+	 */
+	record FireballFireTime(float seconds) implements GeneEffect {
+		public static final MapCodec<FireballFireTime> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(-60.0F, 60.0F).fieldOf("seconds").forGetter(FireballFireTime::seconds)
+		).apply(instance, FireballFireTime::new));
+
+		@Override
+		public String type() {
+			return "fireball_fire_time";
 		}
 	}
 }

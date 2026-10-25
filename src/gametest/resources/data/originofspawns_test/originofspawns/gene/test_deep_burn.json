@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "fireball_fire_time", "seconds": 6 }],
+	"mutation_rate": 0
+}

@@ -882,6 +882,20 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the seconds of fire of a small fireball of the mob, after its fireball fire time genes. The fire is not
+	 * shorter than 0 seconds.
+	 */
+	public static float fireballFireSeconds(Mob mob, float seconds) {
+		float result = seconds;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.FireballFireTime fire) {
+				result += fire.seconds();
+			}
+		}
+		return Math.max(0.0F, result);
+	}
+
+	/**
 	 * Multiplies the speed of a new fireball of the mob by its fireball speed genes. A fireball speeds up by its
 	 * acceleration each tick, so the acceleration changes too.
 	 */

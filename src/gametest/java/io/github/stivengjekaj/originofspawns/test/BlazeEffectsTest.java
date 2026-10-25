@@ -1,6 +1,8 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -197,6 +199,26 @@ public class BlazeEffectsTest {
 		helper.assertTrue(plain < 0.01, "a plain fireball does not turn, but " + plain + " degrees");
 		double seeker = turnInOneTick(helper, blazeWith(helper, new BlockPos(6, 1, 6), "test_seeker_spark"), pig);
 		helper.assertTrue(Math.abs(seeker - 5.0) < 0.01, "the fireball turns 5 degrees, not " + seeker);
+		helper.succeed();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void sparkRingShootsALevelRingOfFireballs(GameTestHelper helper) {
+		Blaze blaze = blazeWith(helper, new BlockPos(4, 2, 4));
+		var ring = new GeneEffect.FireballRing(8, 10.0F);
+		helper.assertFalse(GeneBehaviors.fireballRing(blaze, helper.getLevel(), ring), "no ring with no target");
+		blaze.setTarget(CreeperEffectsTest.pigAt(helper, new BlockPos(1, 2, 1)));
+		helper.assertTrue(GeneBehaviors.fireballRing(blaze, helper.getLevel(), ring), "the blaze shoots the ring");
+		var fireballs = helper.getLevel().getEntitiesOfClass(SmallFireball.class, helper.getBounds().inflate(4.0),
+				fireball -> fireball.getOwner() == blaze);
+		helper.assertValueEqual(fireballs.size(), 8, "fireballs in the ring");
+		helper.assertTrue(fireballs.stream().allMatch(fireball -> Math.abs(fireball.getDeltaMovement().y) < 1.0E-6),
+				"the fireballs go out level");
+		var directions = fireballs.stream().map(fireball -> Math.round(Math.toDegrees(Math.atan2(
+				fireball.getDeltaMovement().z, fireball.getDeltaMovement().x)) + 360.0) % 360L).sorted().toList();
+		helper.assertValueEqual(directions, java.util.List.of(0L, 45L, 90L, 135L, 180L, 225L, 270L, 315L), "the directions");
+		fireballs.forEach(SmallFireball::discard);
+		helper.assertFalse(GeneBehaviors.fireballRing(blaze, helper.getLevel(), ring), "the next ring waits 10 seconds");
 		helper.succeed();
 	}
 

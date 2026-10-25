@@ -271,7 +271,8 @@ public sealed interface GeneEffect {
 			Map.entry("fireball_fire_time", FireballFireTime.CODEC),
 			Map.entry("fireball_blast", FireballBlast.CODEC),
 			Map.entry("fireball_cloud", FireballCloud.CODEC),
-			Map.entry("seeker_fireballs", SeekerFireballs.CODEC)
+			Map.entry("seeker_fireballs", SeekerFireballs.CODEC),
+			Map.entry("fireball_ring", FireballRing.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4479,6 +4480,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "seeker_fireballs";
+		}
+	}
+
+	/**
+	 * While the mob has a target, it shoots this many small fireballs in a level ring, one time in each cooldown. The
+	 * fireballs go out at the same angle from each other, and each one does the normal damage.
+	 */
+	record FireballRing(int count, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<FireballRing> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(2, 32).optionalFieldOf("count", 8).forGetter(FireballRing::count),
+				Codec.floatRange(1.0F, 600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(FireballRing::cooldownSeconds)
+		).apply(instance, FireballRing::new));
+
+		@Override
+		public String type() {
+			return "fireball_ring";
 		}
 	}
 }

@@ -495,6 +495,7 @@ public final class GeneBehaviors {
 				case GeneEffect.WebShot shot -> webShot(mob, level, shot);
 				case GeneEffect.RocketShot shot -> rocketShot(mob, level, shot);
 				case GeneEffect.FireballShot shot -> fireballShot(mob, level, shot);
+				case GeneEffect.FireballRing ring -> fireballRing(mob, level, ring);
 				case GeneEffect.Hex hex -> hex(mob, level, hex);
 				case GeneEffect.HealThrow heal -> healThrow(mob, level, heal);
 				case GeneEffect.EatItems eat -> eatItems(mob, level, eat);
@@ -917,6 +918,26 @@ public final class GeneBehaviors {
 			}
 		}
 		return Math.max(0.0F, result);
+	}
+
+	/**
+	 * Shoots the ring of small fireballs of the mob, if the mob has a target and the cooldown is over.
+	 *
+	 * @return true if the mob shot the ring
+	 */
+	public static boolean fireballRing(Mob mob, ServerLevel level, GeneEffect.FireballRing ring) {
+		LivingEntity target = mob.getTarget();
+		if (target == null || !target.isAlive() || !GeneCombat.ready(mob, ring, ring.cooldownSeconds())) {
+			return false;
+		}
+		GeneCombat.startCooldown(mob, ring);
+		for (int i = 0; i < ring.count(); i++) {
+			float angle = i * Mth.TWO_PI / ring.count();
+			SmallFireball fireball = new SmallFireball(level, mob, new Vec3(Mth.cos(angle), 0.0, Mth.sin(angle)));
+			fireball.setPos(fireball.getX(), mob.getY(0.5) + 0.5, fireball.getZ());
+			level.addFreshEntity(fireball);
+		}
+		return true;
 	}
 
 	/**

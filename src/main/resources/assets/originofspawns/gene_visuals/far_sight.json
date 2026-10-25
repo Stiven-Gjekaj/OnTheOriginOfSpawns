@@ -14,6 +14,13 @@
 				"texture": "originofspawns:textures/gene_marks/far_sight_1.png",
 				"tint": "#141010"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/far_sight_2.png",
+				"tint": "#B8B4B8"
+			}
 		}
 	]
 }

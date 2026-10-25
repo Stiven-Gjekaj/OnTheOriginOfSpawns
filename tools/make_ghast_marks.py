@@ -20,14 +20,17 @@ Pixel plan for the Bombers.
 - Fire Rain has orange, burnt tentacle tips.
 - Blast Shell has gray soot on the body: dark streaks of soot.
 - Shield Burst has red cracks round the mouth.
-- Golem Bomb has iron gray patches on the body: square plates with rivets.
+- Golem Bomb has uneven iron gray patches with rough edges, some with
+  rivets.
 - Twin Shot: two small, red mouths, the gene model twin_shot_mouths.
 
 Pixel plan for the Barragers.
 - Quick Fire has narrow, red eyes: white lids over the high half of the eyes.
-- Far Sight has large, white eyes with a black ring and a black pupil.
+- Far Sight has large, white eyes with a wide, low, dark pupil and a pale
+  lid.
 - Spread Fire has three red rings on the tentacles.
-- Hard Fireball has dark, hard spots on the body.
+- Hard Fireball has hard, dark plates of uneven sizes and shapes on the
+  body, as a crust.
 - Steady Aim has a red mark between the eyes.
 - Ember Spit has red tear streaks.
 
@@ -162,21 +165,26 @@ def shield_burst():
 
 
 def golem_bomb():
-    # Iron gray patches: square iron plates of 8x8 on the body, with dark
-    # edges and pale rivets at their corners.
+    # Iron gray patches: uneven patches of iron with rough edges on the body,
+    # each a round blob of its own size, with a dark rough rim. Some of them
+    # have pale rivets.
     iron = Mark("#9AA0A8")
     edge = Mark("#4A4E54")
     rivet = Mark("#E0E4E8")
-    for x, y, f, col, row in pixels(BODY, SHELL):
-        block = (col // 8, row // 8)
-        if noise100(block[0] + 5 * len(f), block[1], 1201) < 40:
-            cc, rr = col % 8, row % 8
-            if (cc, rr) in ((1, 1), (6, 1), (1, 6), (6, 6)):
-                rivet.put((x, y))
-            elif cc in (0, 7) or rr in (0, 7):
-                edge.put((x, y))
-            else:
-                iron.put((x, y))
+    for f in SHELL:
+        for n in range(5):
+            cx = 3 + noise100(n, len(f), 1201) % 26
+            cy = 3 + noise100(n, len(f), 1202) % 26
+            rx = 3 + noise100(n, len(f), 1203) % 4
+            ry = 2 + noise100(n, len(f), 1204) % 4
+            studded = noise100(n, len(f), 1205) < 50
+            for x, y, ff, col, row in pixels(BODY, (f,)):
+                d = ((col - cx) / rx) ** 2 + ((row - cy) / ry) ** 2 + noise100(x, y, 1206) / 400
+                if d < 0.75:
+                    is_rivet = studded and (col - cx) % 3 == 0 and (row - cy) % 3 == 0 and d < 0.45
+                    (rivet if is_rivet else iron).put((x, y))
+                elif d < 1.05:
+                    edge.put((x, y))
     return [iron, edge, rivet]
 
 
@@ -220,21 +228,25 @@ def quick_fire():
 
 
 def far_sight():
-    # Large, white eyes: each eye is a large, white oval with a black ring
-    # and a black pupil, larger than the eyes of both faces.
+    # Large, white eyes: each eye is a large, white oval, wider than the eyes
+    # of both faces, with a wide, dark pupil low in it, a pale gray lid over
+    # its top, and a soft, pale rim. No outline goes round it.
     white = Mark("#FFFFFF")
-    ring = Mark("#141010")
+    pupil = Mark("#141010")
+    lid = Mark("#B8B4B8")
     for cx in (9.5, 21.5):
         for c in range(int(cx) - 6, int(cx) + 8):
             for r in range(4, 18):
-                d = ((c - cx) / 6) ** 2 + ((r - 10.5) / 6) ** 2
-                if d < 0.15:
-                    ring.put(face(c, r))
-                elif d < 0.75:
+                d = ((c - cx) / 6) ** 2 + ((r - 10.5) / 5.5) ** 2
+                if d >= 1.0:
+                    continue
+                if r <= 6:
+                    lid.put(face(c, r))
+                elif abs(c - cx) < 2.5 and 10 <= r <= 13:
+                    pupil.put(face(c, r))
+                else:
                     white.put(face(c, r))
-                elif d < 1.0:
-                    ring.put(face(c, r))
-    return [white, ring]
+    return [white, pupil, lid]
 
 
 def spread_fire():
@@ -245,17 +257,22 @@ def spread_fire():
 
 
 def hard_fireball():
-    # Dark, hard spots: round, dark spots of 4x4 with a pale point, spread
-    # over the body.
-    dark = Mark("#2E2828")
-    point = Mark("#8A8080")
-    for x, y, f, col, row in pixels(BODY, SHELL):
-        cell = (col // 7, row // 7)
-        if noise100(cell[0] + 7 * len(f), cell[1], 1301) < 45:
-            cc, rr = col % 7, row % 7
-            if 1 <= cc <= 4 and 1 <= rr <= 4 and not (cc in (1, 4) and rr in (1, 4)):
-                (point if (cc, rr) == (2, 2) else dark).put((x, y))
-    return [dark, point]
+    # Dark, hard spots: hard, dark plates of uneven sizes, as a crust. Each
+    # plate is a solid blob of its own size and shape, with a darker low
+    # edge.
+    plate = Mark("#3A3434")
+    dark = Mark("#1A1616")
+    for f in SHELL:
+        for n in range(9):
+            cx = 2 + noise100(n, len(f), 1301) % 28
+            cy = 2 + noise100(n, len(f), 1302) % 28
+            rx = 2 + noise100(n, len(f), 1303) % 4
+            ry = 1.5 + noise100(n, len(f), 1304) % 3
+            for x, y, ff, col, row in pixels(BODY, (f,)):
+                d = abs(col - cx) / rx + abs(row - cy) / ry + noise100(x, y, 1305) / 500
+                if d < 1.0:
+                    (dark if row > cy + ry / 2 else plate).put((x, y))
+    return [plate, dark]
 
 
 def steady_aim():

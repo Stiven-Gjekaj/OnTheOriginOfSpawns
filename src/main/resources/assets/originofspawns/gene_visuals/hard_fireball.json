@@ -5,14 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/hard_fireball_0.png",
-				"tint": "#2E2828"
+				"tint": "#3A3434"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/hard_fireball_1.png",
-				"tint": "#8A8080"
+				"tint": "#1A1616"
 			}
 		}
 	]

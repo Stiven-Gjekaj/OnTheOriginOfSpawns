@@ -396,6 +396,28 @@ public final class GeneCombat {
 	 * Returns true if the entity parries this hit: a melee hit, with the cooldown of its parry over. A parry records
 	 * its time and plays the sound of a shield block.
 	 */
+	/**
+	 * Returns true if the sun shade of the entity stops this fire damage. While the sun burns the entity, the fire
+	 * hurts it only one time in each interval.
+	 */
+	public static boolean sunShaded(LivingEntity entity, DamageSource source) {
+		long now = entity.level().getGameTime();
+		if (!source.is(DamageTypeTags.IS_FIRE) || !Evolution.isSunBurning(entity, now)) {
+			return false;
+		}
+		var interval = GeneEffects.of(entity).filter(GeneEffect.SunShade.class::isInstance)
+				.mapToDouble(effect -> ((GeneEffect.SunShade) effect).intervalSeconds()).max();
+		if (interval.isEmpty()) {
+			return false;
+		}
+		Long last = entity.getAttached(ModAttachments.SUN_SHADE_TIME);
+		if (last != null && now - last < Math.round(interval.getAsDouble() * 20.0)) {
+			return true;
+		}
+		entity.setAttached(ModAttachments.SUN_SHADE_TIME, now);
+		return false;
+	}
+
 	public static boolean parries(LivingEntity entity, DamageSource source) {
 		if (!(source.getEntity() instanceof LivingEntity attacker) || source.getDirectEntity() != attacker
 				|| source.is(DamageTypeTags.IS_PROJECTILE)) {

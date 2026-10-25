@@ -42,7 +42,7 @@ public abstract class LivingEntityMixin {
 		if (self.hasAttached(ModAttachments.GENES)
 				&& (GeneCombat.dodges(self, source) || GeneCombat.protectedWhileDown(self, source)
 						|| GeneCombat.parries(self, source) || GeneTeleports.fromBlast(self, source)
-						|| GeneCombat.blastHeals(self, source, amount))) {
+						|| GeneCombat.blastHeals(self, source, amount) || GeneCombat.sunShaded(self, source))) {
 			info.setReturnValue(false);
 		}
 	}

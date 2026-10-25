@@ -114,6 +114,9 @@ public final class GeneBehaviors {
 	 */
 	public static void installGoals(Mob mob) {
 		freeFromRise(mob);
+		if (GeneEffects.of(mob).anyMatch(effect -> effect instanceof GeneEffect.Silence silence && silence.all())) {
+			mob.setSilent(true);
+		}
 		var goals = ((MobAccessor) mob).originofspawns$goalSelector();
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
@@ -893,6 +896,18 @@ public final class GeneBehaviors {
 					}
 				}
 			}
+			// A mob in the air, such as a phantom, steps aside in the air, at the same height.
+			if (!mob.onGround()) {
+				for (Vec3 direction : List.of(side, side.scale(-1.0))) {
+					Vec3 target = mob.position().add(direction.scale(sidestep.distance()));
+					if (level.noCollision(mob, mob.getDimensions(mob.getPose()).makeBoundingBox(target.x, target.y, target.z))) {
+						level.sendParticles(ParticleTypes.POOF, mob.getX(), mob.getY(0.5), mob.getZ(), 8, 0.3, 0.5, 0.3, 0.02);
+						mob.teleportTo(target.x, target.y, target.z);
+						mob.setAttached(ModAttachments.STATE, state.withSidestepTime(now));
+						return true;
+					}
+				}
+			}
 			return false;
 		}
 		return false;
@@ -1021,6 +1036,24 @@ public final class GeneBehaviors {
 	 * The smallest move in one tick that counts as a run, in blocks.
 	 */
 	private static final double RUN_STEP = 0.05;
+
+	/**
+	 * Lets the mobs of the species of the mob in the radius of its swoop call target its target.
+	 */
+	public static void swoopCall(Mob mob) {
+		LivingEntity target = mob.getTarget();
+		if (target == null) {
+			return;
+		}
+		GeneEffects.of(mob).filter(GeneEffect.SwoopCall.class::isInstance).map(GeneEffect.SwoopCall.class::cast)
+				.mapToDouble(GeneEffect.SwoopCall::radius).max().ifPresent(radius -> {
+					AABB area = mob.getBoundingBox().inflate(radius);
+					for (Mob ally : mob.level().getEntitiesOfClass(Mob.class, area,
+							other -> other != mob && other.getType() == mob.getType() && other.isAlive())) {
+						ally.setTarget(target);
+					}
+				});
+	}
 
 	/**
 	 * Sets the players in the radius of the mob on fire.
@@ -1816,7 +1849,8 @@ public final class GeneBehaviors {
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			if (effect instanceof GeneEffect.Silence silence) {
 				result = result == null ? silence : new GeneEffect.Silence(result.idle() || silence.idle(),
-						result.hurt() || silence.hurt(), result.steps() || silence.steps(), result.death() || silence.death());
+						result.hurt() || silence.hurt(), result.steps() || silence.steps(), result.death() || silence.death(),
+						result.all() || silence.all());
 			}
 		}
 		return result;

@@ -237,6 +237,11 @@ public final class ModAttachments {
 	public static final AttachmentType<net.minecraft.world.phys.Vec3> RUN_POS = AttachmentRegistry.create(OriginOfSpawns.id("run_pos"));
 
 	/**
+	 * The last game time that the sun hurt a mob with a sun shade.
+	 */
+	public static final AttachmentType<Long> SUN_SHADE_TIME = AttachmentRegistry.create(OriginOfSpawns.id("sun_shade_time"));
+
+	/**
 	 * The place where the mob spawned. It is saved with the mob, so a mob that a player moves keeps the old place.
 	 */
 	public static final AttachmentType<net.minecraft.core.BlockPos> HOME =

@@ -46,6 +46,8 @@
 		"MobMixin",
 		"MoveControlAccessor",
 		"PhantomAccessor",
+		"PhantomAttackStrategyGoalMixin",
+		"PhantomMixin",
 		"PhantomMoveControlMixin",
 		"PiglinAiMixin",
 		"PiglinMixin",

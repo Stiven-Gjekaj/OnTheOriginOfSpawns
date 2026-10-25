@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:phantom",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "swoop_call", "radius": 16 }],
+	"mutation_rate": 0
+}

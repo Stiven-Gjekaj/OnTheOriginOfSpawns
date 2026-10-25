@@ -1,7 +1,10 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.mixin.PhantomAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -10,9 +13,13 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.monster.Phantom;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
@@ -55,6 +62,64 @@ public class PhantomEffectsTest {
 					"a phantom that the sun does not burn is not burning in the sun");
 			helper.succeed();
 		});
+	}
+
+	@GameTest
+	public void sunShadeLetsTheSunBurnOnlyOneTimeInEachInterval(GameTestHelper helper) {
+		Phantom plain = phantomWith(helper, new BlockPos(1, 3, 1));
+		Phantom shade = phantomWith(helper, new BlockPos(6, 3, 6), "test_sun_shade");
+		var fire = helper.getLevel().damageSources().onFire();
+		helper.assertFalse(GeneCombat.sunShaded(shade, fire), "no shade while the sun does not burn it");
+		Evolution.markSunBurn(plain);
+		Evolution.markSunBurn(shade);
+		helper.assertFalse(GeneCombat.sunShaded(plain, fire), "the sun burns a plain phantom each time");
+		helper.assertFalse(GeneCombat.sunShaded(plain, fire), "and again");
+		helper.assertFalse(GeneCombat.sunShaded(shade, fire), "the first burn comes");
+		helper.assertTrue(GeneCombat.sunShaded(shade, fire), "the next burn waits");
+		helper.assertFalse(GeneCombat.sunShaded(shade, helper.getLevel().damageSources().generic()), "other damage comes");
+		shade.setAttached(ModAttachments.SUN_SHADE_TIME, helper.getLevel().getGameTime() - 80L);
+		helper.assertFalse(GeneCombat.sunShaded(shade, fire), "the burn comes again after 4 seconds");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void silentWingMakesThePhantomSilent(GameTestHelper helper) {
+		Phantom plain = phantomWith(helper, new BlockPos(1, 3, 1));
+		Phantom silent = phantomWith(helper, new BlockPos(6, 3, 6), "test_silent_wing");
+		GeneBehaviors.installGoals(plain);
+		GeneBehaviors.installGoals(silent);
+		helper.assertFalse(plain.isSilent(), "a plain phantom makes sounds");
+		helper.assertTrue(silent.isSilent(), "Silent Wing makes no sound");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void feintStepsAsideInTheAir(GameTestHelper helper) {
+		Phantom phantom = phantomWith(helper, new BlockPos(4, 3, 1));
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setNoGravity(true);
+		// The eyes of the player are at the height of the phantom, so the bow aims at it.
+		player.setPos(phantom.position().add(0.0, phantom.getEyeHeight() - player.getEyeHeight(), 5.0));
+		CreeperEffectsTest.face(player, 180.0F);
+		player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+		player.startUsingItem(InteractionHand.MAIN_HAND);
+		Vec3 before = phantom.position();
+		helper.assertTrue(GeneBehaviors.sidestep(phantom, helper.getLevel(), new GeneEffect.Sidestep(12.0F, 3.0F, 8.0F, true)),
+				"the phantom steps aside");
+		helper.assertValueEqual(Math.round(Math.abs(phantom.getX() - before.x)), 3L, "the side distance");
+		helper.assertValueEqual(phantom.getY(), before.y, "it stays at the same height in the air");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void swarmDiveMakesThePhantomsNearTargetTheSameMob(GameTestHelper helper) {
+		Phantom caller = phantomWith(helper, new BlockPos(1, 3, 1), "test_swarm_dive");
+		Phantom other = phantomWith(helper, new BlockPos(6, 3, 6));
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		caller.setTarget(player);
+		GeneBehaviors.swoopCall(caller);
+		helper.assertTrue(other.getTarget() == player, "the other phantom targets the player");
+		helper.succeed();
 	}
 
 	/**

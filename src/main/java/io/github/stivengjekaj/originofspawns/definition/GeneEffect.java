@@ -256,7 +256,9 @@ public sealed interface GeneEffect {
 			Map.entry("effect_on_ally_death", EffectOnAllyDeath.CODEC),
 			Map.entry("player_first", PlayerFirst.CODEC),
 			Map.entry("smite_resist", SmiteResist.CODEC),
-			Map.entry("flying_speed", FlyingSpeed.CODEC)
+			Map.entry("flying_speed", FlyingSpeed.CODEC),
+			Map.entry("sun_shade", SunShade.CODEC),
+			Map.entry("swoop_call", SwoopCall.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -857,15 +859,21 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * Stops some sounds of the mob.
+	 * Stops some sounds of the mob. With {@code all}, the mob makes no sound at all, as a silent mob does, also the
+	 * flaps of a phantom. Silent Wing.
 	 */
-	record Silence(boolean idle, boolean hurt, boolean steps, boolean death) implements GeneEffect {
+	record Silence(boolean idle, boolean hurt, boolean steps, boolean death, boolean all) implements GeneEffect {
 		public static final MapCodec<Silence> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.BOOL.optionalFieldOf("idle", false).forGetter(Silence::idle),
 				Codec.BOOL.optionalFieldOf("hurt", false).forGetter(Silence::hurt),
 				Codec.BOOL.optionalFieldOf("steps", false).forGetter(Silence::steps),
-				Codec.BOOL.optionalFieldOf("death", false).forGetter(Silence::death)
+				Codec.BOOL.optionalFieldOf("death", false).forGetter(Silence::death),
+				Codec.BOOL.optionalFieldOf("all", false).forGetter(Silence::all)
 		).apply(instance, Silence::new));
+
+		public Silence(boolean idle, boolean hurt, boolean steps, boolean death) {
+			this(idle, hurt, steps, death, false);
+		}
 
 		@Override
 		public String type() {
@@ -4215,6 +4223,36 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "flying_speed";
+		}
+	}
+
+	/**
+	 * The sun burns the mob only one time in each interval. The other fire damage while the sun burns it does not
+	 * come. Sun Shade: {@code 4}, in place of each second.
+	 */
+	record SunShade(float intervalSeconds) implements GeneEffect {
+		public static final MapCodec<SunShade> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 600.0F).optionalFieldOf("interval_seconds", 4.0F).forGetter(SunShade::intervalSeconds)
+		).apply(instance, SunShade::new));
+
+		@Override
+		public String type() {
+			return "sun_shade";
+		}
+	}
+
+	/**
+	 * When the mob starts a swoop at its target, the mobs of its species in the radius target the same mob. Each one
+	 * swoops after its own wait. Swarm Dive.
+	 */
+	record SwoopCall(float radius) implements GeneEffect {
+		public static final MapCodec<SwoopCall> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("radius", 16.0F).forGetter(SwoopCall::radius)
+		).apply(instance, SwoopCall::new));
+
+		@Override
+		public String type() {
+			return "swoop_call";
 		}
 	}
 }

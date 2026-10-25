@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/first_dive_eyes.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4.0,
+				-1.0,
+				-5.03
+			],
+			"size": [
+				2,
+				1,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				1.0,
+				-1.0,
+				-5.03
+			],
+			"size": [
+				2,
+				1,
+				0
+			],
+			"glow": true
+		}
+	]
+}

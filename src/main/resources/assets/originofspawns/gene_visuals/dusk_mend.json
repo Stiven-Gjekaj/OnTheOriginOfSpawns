@@ -1,0 +1,13 @@
+{
+	"region_map": "originofspawns:textures/region/phantom.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dusk_mend_0.png",
+				"tint": "#3AA040"
+			}
+		}
+	],
+	"model": "originofspawns:dusk_mend_eyes"
+}

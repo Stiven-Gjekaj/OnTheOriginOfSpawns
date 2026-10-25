@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/steep_dive_tail.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "tail_tip",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				0,
+				6
+			],
+			"size": [
+				1,
+				1,
+				5
+			],
+			"inflate": -0.05
+		},
+		{
+			"bone": "tail_tip",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-1,
+				0,
+				11
+			],
+			"size": [
+				1,
+				1,
+				3
+			],
+			"inflate": -0.2
+		}
+	]
+}

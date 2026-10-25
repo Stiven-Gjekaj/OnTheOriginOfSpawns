@@ -1,0 +1,44 @@
+{
+	"texture": "originofspawns:textures/entity/swift_wing_wings.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "left_wing_tip",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				13,
+				0,
+				0
+			],
+			"size": [
+				7,
+				1,
+				3
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "right_wing_tip",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-20,
+				0,
+				0
+			],
+			"size": [
+				7,
+				1,
+				3
+			],
+			"inflate": 0.0,
+			"mirror": true
+		}
+	]
+}

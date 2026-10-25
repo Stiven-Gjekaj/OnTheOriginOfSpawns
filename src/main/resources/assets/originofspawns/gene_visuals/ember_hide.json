@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/phantom.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ember_hide_0.png",
+				"tint": "#141010"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ember_hide_1.png",
+				"tint": "#E8601A"
+			}
+		}
+	]
+}

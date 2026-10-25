@@ -1,0 +1,13 @@
+{
+	"region_map": "originofspawns:textures/region/phantom.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/first_dive_0.png",
+				"tint": "#0A0A14"
+			}
+		}
+	],
+	"model": "originofspawns:first_dive_eyes"
+}

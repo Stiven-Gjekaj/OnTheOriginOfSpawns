@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/dusk_mend_eyes.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4.0,
+				-1.5,
+				-5.04
+			],
+			"size": [
+				2,
+				2,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				1.0,
+				-1.5,
+				-5.04
+			],
+			"size": [
+				2,
+				2,
+				0
+			],
+			"glow": true
+		}
+	]
+}

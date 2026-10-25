@@ -1,0 +1,13 @@
+{
+	"region_map": "originofspawns:textures/region/phantom.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/night_terror_0.png",
+				"tint": "#1A1424"
+			}
+		}
+	],
+	"model": "originofspawns:night_terror_eyes"
+}

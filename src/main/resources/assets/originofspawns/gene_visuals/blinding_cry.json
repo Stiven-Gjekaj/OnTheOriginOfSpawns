@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/phantom.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blinding_cry_0.png",
+				"tint": "#FFFFFF"
+			}
+		}
+	]
+}

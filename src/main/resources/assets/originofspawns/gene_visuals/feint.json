@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/phantom.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/feint_0.png",
+				"tint": "#D8C8A8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/feint_1.png",
+				"tint": "#18182A"
+			}
+		}
+	]
+}

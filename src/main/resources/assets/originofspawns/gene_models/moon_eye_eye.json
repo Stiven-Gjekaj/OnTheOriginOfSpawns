@@ -1,0 +1,25 @@
+{
+	"texture": "originofspawns:textures/entity/moon_eye_eye.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4.5,
+				-1.5,
+				-5.05
+			],
+			"size": [
+				3,
+				2,
+				0
+			],
+			"glow": true
+		}
+	]
+}

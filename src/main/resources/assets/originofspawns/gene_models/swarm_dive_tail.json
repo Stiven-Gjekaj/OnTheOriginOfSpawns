@@ -1,0 +1,79 @@
+{
+	"texture": "originofspawns:textures/entity/swarm_dive_tail.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "tail_tip",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				0,
+				0
+			],
+			"size": [
+				1,
+				1,
+				6
+			],
+			"inflate": 0.05
+		},
+		{
+			"bone": "tail_tip",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-2,
+				0,
+				6
+			],
+			"size": [
+				3,
+				1,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "tail_tip",
+			"uv": [
+				0,
+				12
+			],
+			"from": [
+				-2.5,
+				0,
+				6.5
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "tail_tip",
+			"uv": [
+				0,
+				12
+			],
+			"from": [
+				0.5,
+				0,
+				6.5
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"inflate": -0.1
+		}
+	]
+}

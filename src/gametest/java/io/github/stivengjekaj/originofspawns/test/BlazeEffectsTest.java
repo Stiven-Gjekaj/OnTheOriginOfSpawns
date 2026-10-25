@@ -334,6 +334,31 @@ public class BlazeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void boilOffTurnsTheWaterNearToSteam(GameTestHelper helper) {
+		BlockPos near = new BlockPos(3, 1, 2);
+		BlockPos far = new BlockPos(7, 1, 2);
+		helper.setBlock(near, net.minecraft.world.level.block.Blocks.WATER);
+		helper.setBlock(far, net.minecraft.world.level.block.Blocks.WATER);
+		Blaze blaze = blazeWith(helper, new BlockPos(2, 1, 2));
+		helper.assertValueEqual(GeneBehaviors.boilOff(blaze, helper.getLevel(), new GeneEffect.BoilOff(2.0F)), 1,
+				"blocks that turn to steam");
+		helper.assertBlockNotPresent(net.minecraft.world.level.block.Blocks.WATER, near);
+		helper.assertBlockPresent(net.minecraft.world.level.block.Blocks.WATER, far);
+		helper.succeed();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void boilOffObeysMobGriefing(GameTestHelper helper) {
+		BlockPos near = new BlockPos(3, 1, 2);
+		helper.setBlock(near, net.minecraft.world.level.block.Blocks.WATER);
+		Blaze blaze = blazeWith(helper, new BlockPos(2, 1, 2));
+		helper.assertValueEqual(GeneBehaviors.boilOff(blaze, helper.getLevel(), new GeneEffect.BoilOff(2.0F)), 0,
+				"no steam with mobGriefing off");
+		helper.assertBlockPresent(net.minecraft.world.level.block.Blocks.WATER, near);
+		helper.succeed();
+	}
+
 	static void hitWithSnowball(GameTestHelper helper, Blaze blaze) {
 		var snowball = new net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball(helper.getLevel(),
 				blaze.getX(), blaze.getY() + 3.0, blaze.getZ(), new net.minecraft.world.item.ItemStack(

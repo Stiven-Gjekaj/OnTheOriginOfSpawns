@@ -278,7 +278,8 @@ public sealed interface GeneEffect {
 			Map.entry("keep_above", KeepAbove.CODEC),
 			Map.entry("dive", Dive.CODEC),
 			Map.entry("flee", Flee.CODEC),
-			Map.entry("snowball_damage_taken", SnowballDamageTaken.CODEC)
+			Map.entry("snowball_damage_taken", SnowballDamageTaken.CODEC),
+			Map.entry("boil_off", BoilOff.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4602,6 +4603,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "snowball_damage_taken";
+		}
+	}
+
+	/**
+	 * Each second, the water source blocks in the radius of the mob turn to steam: they become air. It obeys the
+	 * {@code mobGriefing} gamerule.
+	 */
+	record BoilOff(float radius) implements GeneEffect {
+		public static final MapCodec<BoilOff> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 8.0F).optionalFieldOf("radius", 2.0F).forGetter(BoilOff::radius)
+		).apply(instance, BoilOff::new));
+
+		@Override
+		public String type() {
+			return "boil_off";
 		}
 	}
 }

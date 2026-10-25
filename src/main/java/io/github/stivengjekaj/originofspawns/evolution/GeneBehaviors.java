@@ -498,6 +498,7 @@ public final class GeneBehaviors {
 				case GeneEffect.FireballRing ring -> fireballRing(mob, level, ring);
 				case GeneEffect.FireFeed feed -> fireFeed(mob, feed);
 				case GeneEffect.Dive dive -> dive(mob, dive);
+				case GeneEffect.BoilOff boil -> boilOff(mob, level, boil);
 				case GeneEffect.Hex hex -> hex(mob, level, hex);
 				case GeneEffect.HealThrow heal -> healThrow(mob, level, heal);
 				case GeneEffect.EatItems eat -> eatItems(mob, level, eat);
@@ -954,6 +955,33 @@ public final class GeneBehaviors {
 			}
 		}
 		return Math.max(0.0F, result);
+	}
+
+	/**
+	 * Turns the water source blocks in the radius of the mob to air, with the fizz of water on lava, if the
+	 * {@code mobGriefing} gamerule is on.
+	 *
+	 * @return the number of blocks that turned to steam
+	 */
+	public static int boilOff(Mob mob, ServerLevel level, GeneEffect.BoilOff boil) {
+		if (!level.getGameRules().get(net.minecraft.world.level.gamerules.GameRules.MOB_GRIEFING)) {
+			return 0;
+		}
+		int reach = Mth.ceil(boil.radius());
+		int boiled = 0;
+		Vec3 center = mob.position();
+		for (BlockPos pos : BlockPos.betweenClosed(mob.blockPosition().offset(-reach, -reach, -reach),
+				mob.blockPosition().offset(reach, reach, reach))) {
+			var fluid = level.getFluidState(pos);
+			if (fluid.isSource() && fluid.is(net.minecraft.tags.FluidTags.WATER)
+					&& Vec3.atCenterOf(pos).distanceTo(center) <= boil.radius() + 0.5
+					&& level.getBlockState(pos).getBlock() instanceof net.minecraft.world.level.block.LiquidBlock) {
+				level.setBlockAndUpdate(pos, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+				level.levelEvent(1501, pos, 0);
+				boiled++;
+			}
+		}
+		return boiled;
 	}
 
 	/**

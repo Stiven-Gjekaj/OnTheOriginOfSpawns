@@ -477,19 +477,24 @@ def big_litter():
 
 
 def mourning_herd():
-    # Dark, wet eyes: each eye is dark, with a wet, white glint, and a dark,
-    # wet tear mark goes down the face under it and down the side of the
-    # head beside it.
+    # Dark, wet eyes: each eye is dark, with a wet, white glint, and dark,
+    # wet tear streaks two pixels wide run down from it, on the face down to
+    # the snout and on the side of the head beside it.
     dark = Mark("#140A08")
     glint = Mark("#E8F4FF")
-    tear = Mark("#5A3A30")
+    tear = Mark("#3A2018")
+    wet = Mark("#7A5A50")
     eye_block(dark, dark, size=3)
     for n, (c0, r0) in enumerate(EYES):
         glint.put(face(c0, r0))
-        tear.put([face(c0 + 1, r) for r in range(r0 + 2, r0 + 8)])
+        for r in range(r0 + 2, r0 + 11):
+            tear.put([face(c0, r), face(c0 + 1, r)])
+            if r % 3 == 0:
+                wet.put(face(c0 + (2 if n == 0 else -1), r))
         dark.put([cheek(n, c, 0) for c in (6, 7, 8, 9)] + [cheek(n, c, 1) for c in (7, 8)])
-        tear.put([cheek(n, c, r) for c, r in ((8, 2), (8, 3), (9, 4), (9, 5))])
-    return [dark, glint, tear]
+        for r in range(2, 6):
+            tear.put([cheek(n, 7 + r // 2, r), cheek(n, 8 + r // 2, r)])
+    return [dark, glint, tear, wet]
 
 
 def herd_rally():

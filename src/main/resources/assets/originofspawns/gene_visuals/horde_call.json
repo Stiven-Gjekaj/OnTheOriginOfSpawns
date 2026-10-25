@@ -12,7 +12,7 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/horde_call_1.png",
-				"tint": "#8A1A20"
+				"tint": "#7A1A20"
 			}
 		}
 	]

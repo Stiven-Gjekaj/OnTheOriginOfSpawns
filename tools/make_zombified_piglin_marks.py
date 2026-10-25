@@ -177,27 +177,30 @@ def blood_feud():
 
 
 def horde_call():
-    # A wide, open snout: the front of the snout is dark, as an open snout,
-    # with a red inside, and an open, dark mouth goes across the face under
-    # it.
+    # A wide, open snout: two large, dark nostrils on the front of the snout,
+    # and a dark, open mouth under it, from the low edge of the snout out to
+    # the corners of the mouth on the face.
     dark = Mark("#1A0606")
-    inner = Mark("#8A1A20")
-    dark.put([at(SNOUT, "front", c, r) for c in range(4) for r in range(4) if c in (0, 3) or r in (0, 3)])
-    inner.put([at(SNOUT, "front", c, r) for c in (1, 2) for r in (1, 2)])
-    dark.put([face(c, r) for c in range(1, 9) for r in (6, 7) if not (2 < c < 7 and r == 6)])
-    inner.put([face(c, 7) for c in (3, 4, 5, 6)])
+    inner = Mark("#7A1A20")
+    dark.put([at(SNOUT, "front", c, r) for c in (0, 3) for r in (1, 2)])
+    inner.put([at(SNOUT, "front", c, 3) for c in (1, 2)])
+    dark.put([at(SNOUT, "front", c, 3) for c in (0, 3)])
+    put(dark, SNOUT, ("bottom",))
+    dark.put([face(c, r) for c in (1, 2, 7, 8) for r in (6, 7)])
+    inner.put([face(2, 7), face(7, 7)])
     return [dark, inner]
 
 
 def long_memory():
-    # A scar across the eye: a pale scar goes down across the left eye of
-    # the face, with a dark edge.
-    scar = Mark("#F0C8C0")
-    edge = Mark("#7A2A2A")
-    for row, col in ((0, 5), (1, 6), (2, 6), (3, 7), (4, 8), (5, 8), (6, 9)):
-        scar.put(face(col, row))
-        edge.put(face(col - 1, row) if row % 2 else face(col + 1, row) if col < 9 else face(col - 1, row))
-    return [scar, edge]
+    # A scar across the eye: a dark-red slash two pixels wide goes down
+    # across the brow and the left eye of the face, with a pale middle line.
+    slash = Mark("#7A1010")
+    pale = Mark("#E8A8A0")
+    for row, col in ((0, 5), (1, 5), (2, 6), (3, 7), (4, 7), (5, 8), (6, 9)):
+        pale.put(face(col, row))
+        slash.put([face(c, row) for c in (col - 1, col + 1) if 0 <= c < 10])
+    slash.put([face(4, 0), face(8, 7), face(9, 7)])
+    return [slash, pale]
 
 
 def war_squeal():
@@ -554,21 +557,24 @@ def shrunken():
 
 
 def duck():
-    # A low, bent back: the high back is dark, as a hunch, with a pale ridge
-    # down the spine, and the shoulders are dark.
-    dark = Mark("#5A2420")
-    shade = Mark("#9A4A40")
-    ridge = Mark("#F0B8B0")
-    for x, y, f, col, row in pixels(BODY, ("back",), rows=range(0, 6)):
-        if col in (3, 4) and row % 2 == 0:
-            ridge.put((x, y))
-        elif row < 2 or row < 4 and 0 < col < 7:
+    # A low, bent back: dark hunch lines go across the high back and over
+    # the shoulders, a darker stripe goes down the spine, and the top of the
+    # body and the high rows of its sides are dark, so the back looks bent
+    # from the front and the side too.
+    dark = Mark("#4A1C18")
+    spine = Mark("#2A0C0A")
+    for x, y, f, col, row in pixels(BODY, ("back",)):
+        if col in (3, 4):
+            spine.put((x, y))
+        elif row in (1, 3, 5):
             dark.put((x, y))
-        elif 1 < col < 6:
-            shade.put((x, y))
     put(dark, BODY, ("top",))
-    put(dark, BODY, ("right", "left"), rows=(0, 1))
-    return [dark, shade, ridge]
+    put(dark, BODY, ("right", "left"), rows=(0, 1, 3))
+    put(dark, BODY, ("front",), rows=(0,))
+    for arm in ARMS:
+        put(dark, arm, ("top",))
+        put(dark, arm, ("back",), rows=(0, 2))
+    return [dark, spine]
 
 
 def pack_run():

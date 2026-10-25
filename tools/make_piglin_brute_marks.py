@@ -230,17 +230,19 @@ def steady_feet():
 
 
 def thick_neck():
-    # A thick, wide neck: the low rows of the sides and the back of the head
-    # are a darker skin with folds, and the top of the body round the neck
-    # is thick too.
-    neck = Mark("#B86A4A")
-    fold = Mark("#7A3A24")
-    for x, y, f, col, row in pixels(HEAD, ("right", "left", "back"), rows=(5, 6, 7)):
-        (fold if row == 6 else neck).put((x, y))
-    put(neck, HEAD, ("bottom",))
-    put(neck, BODY, ("top",))
-    put(fold, BODY, ("front", "back"), cols=(2, 3, 4, 5), rows=(0,))
-    return [neck, fold]
+    # A thick, wide neck: a dark fold band goes round the low rows of the
+    # head and round the top of the chest, on the body and on the belt layer
+    # over it, with a pale line of skin between the folds.
+    fold = Mark("#6A2A18")
+    skin = Mark("#E8A07A")
+    for x, y, f, col, row in pixels(HEAD, SIDES, rows=(6, 7)):
+        (fold if row == 7 or f != "front" else skin).put((x, y))
+    put(fold, HEAD, ("bottom",))
+    put2(fold, BODY, ("top",))
+    put2(fold, BODY, SIDES, rows=(0,))
+    put2(skin, BODY, SIDES, rows=(1,))
+    put2(fold, BODY, SIDES, rows=(2,))
+    return [fold, skin]
 
 
 def rage_plate():

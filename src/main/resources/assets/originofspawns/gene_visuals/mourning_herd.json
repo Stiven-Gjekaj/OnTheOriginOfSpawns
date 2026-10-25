@@ -19,7 +19,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/mourning_herd_2.png",
-				"tint": "#5A3A30"
+				"tint": "#3A2018"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/mourning_herd_3.png",
+				"tint": "#7A5A50"
 			}
 		}
 	]

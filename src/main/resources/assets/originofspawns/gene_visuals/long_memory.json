@@ -5,14 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/long_memory_0.png",
-				"tint": "#F0C8C0"
+				"tint": "#7A1010"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/long_memory_1.png",
-				"tint": "#7A2A2A"
+				"tint": "#E8A8A0"
 			}
 		}
 	]

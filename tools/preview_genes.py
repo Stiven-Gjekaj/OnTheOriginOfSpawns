@@ -665,6 +665,9 @@ SLIME_CUBES = [
 ]
 SLIME_GEL = [("cube", (0, 0), (-4, 16, -4), (8, 8, 8), False)]
 SLIME_SIZES = {"slime": 4, "slime_2": 2, "slime_1": 1}
+# The game draws the outer gel with the vanilla texture. A mark on the gel
+# shows in the game only when the engine draws the gel with the baked texture.
+SLIME_NOTE = "The marks on the gel show in the game only after the engine draws the gel with the baked texture."
 
 # The magma cube, from MagmaCubeModel: eight thin layers of 8x1x8, cube0 (the
 # top) to cube7 (the bottom), and a core of 4x4x4, inside_cube. Layers 0 to 3
@@ -920,7 +923,7 @@ def split_image(identifier):
 MOB = {"split": False, "outer": None, "cubes": ZOMBIE_CUBES, "pivots": PIVOTS, "outer_target": False,
        "outer_inflate": 0.25, "extra": [], "held": [], "wraps": [], "eyes": None,
        "sheet_views": [(0, 0), (180, 0), (-35, 15)], "closeup_view": ((26, 40), (0, 5)),
-       "hidden": (), "grow": 1, "gel": []}
+       "hidden": (), "grow": 1, "gel": [], "note": ""}
 
 # The mushrooms on the head of the bogged, from BoggedModel: crossed planes
 # of 6x4 pixels, with the texture of the mob. Each is (uv, from, size,
@@ -1205,9 +1208,12 @@ def sheet(title, columns):
     them, and a 3/4 view from the front right at the bottom."""
     gap, top = 2 * SCALE, 11 * SCALE
     w, h = VIEW_W * SCALE, VIEW_H * SCALE
-    im = Image.new("RGBA", (len(columns) * (w + gap) + gap, top + 3 * h + 4 * gap), WHITE)
+    note_h = 4 * SCALE if MOB["note"] else 0
+    im = Image.new("RGBA", (len(columns) * (w + gap) + gap, top + 3 * h + 4 * gap + note_h), WHITE)
     draw = ImageDraw.Draw(im)
     text(draw, (im.width / 2, SCALE), title, 4 * SCALE)
+    if MOB["note"]:
+        text(draw, (im.width / 2, top + 3 * h + 4 * gap), MOB["note"], 2 * SCALE + 4)
     for i, (name, tex, genes, options) in enumerate(columns):
         x = gap + i * (w + gap)
         text(draw, (x + w / 2, 6 * SCALE), name, 2 * SCALE + 4, max_width=w)
@@ -1297,6 +1303,7 @@ def set_mob(species):
     cube = species in SLIME_SIZES or species in MAGMA_CUBE_SIZES
     MOB["grow"] = 3 if species == "endermite" else {**SLIME_SIZES, **MAGMA_CUBE_SIZES}.get(species, 1)
     MOB["gel"] = SLIME_GEL if species in SLIME_SIZES else []
+    MOB["note"] = SLIME_NOTE if species in SLIME_SIZES else ""
     low = spider or species == "endermite" or cube
     if cube:
         # A frame round the cube, which is 8 pixels at size 1 and stands from

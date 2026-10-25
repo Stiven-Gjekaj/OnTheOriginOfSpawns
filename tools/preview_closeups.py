@@ -696,6 +696,8 @@ def closeup(title, rows, views, adult_tex, baby_tex):
                     pg.WHITE)
     draw = ImageDraw.Draw(out)
     pg.text(draw, (out.width / 2, 12), title, 32)
+    if pg.MOB["note"]:
+        pg.text(draw, (out.width / 2, 48), pg.MOB["note"], 16, max_width=out.width - 2 * pad)
     for r, (name, genes, baby) in enumerate(rows):
         y = top + r * (cell_h + label_h + pad)
         draw.text((pad, y), name, fill=(0, 0, 0, 255), font=pg.ImageFont.load_default(size=20))

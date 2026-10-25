@@ -281,7 +281,8 @@ public sealed interface GeneEffect {
 			Map.entry("snowball_damage_taken", SnowballDamageTaken.CODEC),
 			Map.entry("boil_off", BoilOff.CODEC),
 			Map.entry("push_on_hurt", PushOnHurt.CODEC),
-			Map.entry("wind_push", WindPush.CODEC)
+			Map.entry("wind_push", WindPush.CODEC),
+			Map.entry("wind_lift", WindLift.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4656,6 +4657,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "wind_push";
+		}
+	}
+
+	/**
+	 * The blasts of the wind charges of the mob also throw each living entity that they push up, about this many
+	 * blocks high. The largest number counts.
+	 */
+	record WindLift(float blocks) implements GeneEffect {
+		public static final MapCodec<WindLift> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 32.0F).optionalFieldOf("blocks", 4.0F).forGetter(WindLift::blocks)
+		).apply(instance, WindLift::new));
+
+		@Override
+		public String type() {
+			return "wind_lift";
 		}
 	}
 }

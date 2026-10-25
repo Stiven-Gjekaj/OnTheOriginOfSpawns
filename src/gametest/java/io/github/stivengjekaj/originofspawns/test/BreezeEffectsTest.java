@@ -52,6 +52,21 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void liftGustThrowsThePushedTargetUp(GameTestHelper helper) {
+		Pig plainPig = CreeperEffectsTest.pigAt(helper, BURST.east());
+		plainPig.setDeltaMovement(Vec3.ZERO);
+		burst(helper, breezeWith(helper, new BlockPos(6, 1, 6)));
+		double plain = plainPig.getDeltaMovement().y;
+		plainPig.discard();
+		Pig pig = CreeperEffectsTest.pigAt(helper, BURST.east());
+		pig.setDeltaMovement(Vec3.ZERO);
+		burst(helper, breezeWith(helper, new BlockPos(6, 1, 6), "test_lift_gust"));
+		helper.assertTrue(pig.getDeltaMovement().y - plain > 0.79, "a speed up of 0.8 for 4 blocks, not "
+				+ (pig.getDeltaMovement().y - plain));
+		helper.succeed();
+	}
+
 	static IronGolem golemAt(GameTestHelper helper) {
 		IronGolem golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, BURST.east());
 		golem.setNoGravity(true);

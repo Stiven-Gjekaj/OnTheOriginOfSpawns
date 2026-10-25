@@ -1028,13 +1028,18 @@ public final class GeneBehaviors {
 			return knockback;
 		}
 		double multiplier = 1.0;
+		double lift = 0.0;
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			if (effect instanceof GeneEffect.WindPush push
 					&& push.targets().map(targets -> targets.contains(pushed.getType().builtInRegistryHolder())).orElse(true)) {
 				multiplier *= push.multiplier();
+			} else if (effect instanceof GeneEffect.WindLift windLift && pushed instanceof LivingEntity
+					&& knockback.lengthSqr() > 0.0) {
+				// A speed up of v takes an entity about v * v / (2 * 0.08) blocks high.
+				lift = Math.max(lift, Math.sqrt(2.0 * 0.08 * windLift.blocks()));
 			}
 		}
-		return knockback.scale(multiplier);
+		return knockback.scale(multiplier).add(0.0, lift, 0.0);
 	}
 
 	/**

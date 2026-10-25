@@ -23,6 +23,7 @@ import net.minecraft.client.model.monster.creeper.CreeperModel;
 import net.minecraft.client.model.monster.enderman.EndermanModel;
 import net.minecraft.client.model.monster.hoglin.HoglinModel;
 import net.minecraft.client.model.monster.illager.IllagerModel;
+import net.minecraft.client.model.monster.phantom.PhantomModel;
 import net.minecraft.client.model.monster.piglin.PiglinModel;
 import net.minecraft.client.model.monster.piglin.ZombifiedPiglinModel;
 import net.minecraft.client.model.monster.skeleton.SkeletonModel;
@@ -36,6 +37,7 @@ import net.minecraft.client.renderer.entity.EndermanRenderer;
 import net.minecraft.client.renderer.entity.EndermiteRenderer;
 import net.minecraft.client.renderer.entity.EvokerRenderer;
 import net.minecraft.client.renderer.entity.MagmaCubeRenderer;
+import net.minecraft.client.renderer.entity.PhantomRenderer;
 import net.minecraft.client.renderer.entity.PiglinRenderer;
 import net.minecraft.client.renderer.entity.PillagerRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
@@ -50,6 +52,7 @@ import net.minecraft.client.renderer.entity.state.EvokerRenderState;
 import net.minecraft.client.renderer.entity.state.HoglinRenderState;
 import net.minecraft.client.renderer.entity.state.IllagerRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.entity.state.PhantomRenderState;
 import net.minecraft.client.renderer.entity.state.PiglinRenderState;
 import net.minecraft.client.renderer.entity.state.SkeletonRenderState;
 import net.minecraft.client.renderer.entity.state.WitchRenderState;
@@ -93,6 +96,8 @@ public class OriginOfSpawnsClient implements ClientModInitializer {
 						(RenderLayerParent<LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) (Object) renderer));
 			} else if (renderer instanceof WitchRenderer witch) {
 				helper.register(new GeneModelLayer<WitchRenderState, WitchModel>(witch));
+			} else if (renderer instanceof PhantomRenderer phantom) {
+				helper.register(new GeneModelLayer<PhantomRenderState, PhantomModel>(phantom));
 			} else if (renderer instanceof PiglinRenderer piglin) {
 				helper.register(new GeneModelLayer<PiglinRenderState, PiglinModel>(piglin));
 			} else if (renderer instanceof ZombifiedPiglinRenderer zombified) {

@@ -115,7 +115,17 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		/**
 		 * The mane of a hoglin. It is a part of the body.
 		 */
-		MANE;
+		MANE,
+		/**
+		 * The tail and the wings of a phantom, each in two parts. The tip is a part of the base, and the bases are parts
+		 * of the body.
+		 */
+		TAIL_BASE,
+		TAIL_TIP,
+		LEFT_WING_BASE,
+		LEFT_WING_TIP,
+		RIGHT_WING_BASE,
+		RIGHT_WING_TIP;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

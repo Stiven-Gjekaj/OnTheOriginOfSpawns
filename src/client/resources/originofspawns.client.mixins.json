@@ -19,6 +19,8 @@
 		"IllagerRendererMixin",
 		"LivingEntityRendererMixin",
 		"MagmaCubeRendererMixin",
+		"ModelPartAccessor",
+		"PhantomRendererMixin",
 		"PiglinRendererMixin",
 		"PillagerRendererMixin",
 		"SkeletonClothingLayerMixin",

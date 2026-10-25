@@ -1,9 +1,11 @@
 package io.github.stivengjekaj.originofspawns.client.render;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import io.github.stivengjekaj.originofspawns.client.mixin.ModelPartAccessor;
 import io.github.stivengjekaj.originofspawns.visual.BabyLayout;
 import io.github.stivengjekaj.originofspawns.visual.GeneModel;
 import io.github.stivengjekaj.originofspawns.visual.GeneVisual;
@@ -98,24 +100,33 @@ public class GeneModelLayer<S extends LivingEntityRenderState, M extends EntityM
 
 	/**
 	 * Returns the parts from the root to the bone, or an empty list if the model has no such part. Most bones are a
-	 * child of the root. The hat and the nose of the witch and the ears of a piglin are children of the head, so their
-	 * path goes through the head. The mane of a hoglin is a child of the body.
+	 * child of the root. Others are deeper in the tree of parts: the hat of the witch and the ears of a piglin are
+	 * children of the head, the mane of a hoglin is a child of the body, and the wing tip of a phantom is a child of
+	 * the wing base, which is a child of the body. The path goes through each part above the bone.
 	 */
 	private List<ModelPart> bonePath(GeneModel.Bone bone) {
 		ModelPart part = bone(bone);
 		if (part != null) {
 			return List.of(part);
 		}
-		ModelPart root = getParentModel().root();
-		String name = bone.getSerializedName();
-		// A bone such as the ear of a piglin is a child of the head, and the mane of a hoglin is a child of the body.
-		for (String parent : List.of("head", "body")) {
-			if (root.hasChild(parent) && root.getChild(parent).hasChild(name)) {
-				ModelPart owner = root.getChild(parent);
-				return List.of(owner, owner.getChild(name));
+		List<ModelPart> path = new ArrayList<>();
+		return findPath(getParentModel().root(), bone.getSerializedName(), path) ? path : List.of();
+	}
+
+	/**
+	 * Looks for the part with the name below the parent, and adds the parts on the way to the path.
+	 *
+	 * @return true if it found the part
+	 */
+	private static boolean findPath(ModelPart parent, String name, List<ModelPart> path) {
+		for (var child : ((ModelPartAccessor) (Object) parent).originofspawns$children().entrySet()) {
+			path.add(child.getValue());
+			if (child.getKey().equals(name) || findPath(child.getValue(), name, path)) {
+				return true;
 			}
+			path.removeLast();
 		}
-		return List.of();
+		return false;
 	}
 
 	/**

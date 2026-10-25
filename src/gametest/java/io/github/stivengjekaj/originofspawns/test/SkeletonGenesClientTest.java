@@ -127,6 +127,9 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 					Identifier.withDefaultNamespace("textures/entity/hoglin/hoglin.png"), "hoglin");
 			checkMarkAndModel(context, singleplayer, EntityTypes.ZOGLIN, "test_zoglin_mark",
 					Identifier.withDefaultNamespace("textures/entity/hoglin/zoglin.png"), "hoglin");
+			// The phantom gene model sits on the left wing tip, three parts below the root.
+			checkMarkAndModel(context, singleplayer, EntityTypes.PHANTOM, "test_phantom_mark",
+					Identifier.withDefaultNamespace("textures/entity/phantom/phantom.png"), "phantom");
 			checkArmModelOnlyWhileTheArmsAreApart(context, singleplayer);
 			checkEndermanArmModelFollowsTheCarryPose(context, singleplayer);
 			checkEvokerArmModelOnlyWhileItCasts(context, singleplayer);

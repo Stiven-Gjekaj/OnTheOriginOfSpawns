@@ -82,7 +82,26 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		SEGMENT0,
 		SEGMENT1,
 		SEGMENT2,
-		SEGMENT3;
+		SEGMENT3,
+		/**
+		 * The inner cube of a slime, with its eyes and its mouth. The outer gel has the same place as the inner cube.
+		 */
+		CUBE,
+		RIGHT_EYE,
+		LEFT_EYE,
+		MOUTH,
+		/**
+		 * The eight layers of a magma cube, from the top, and its inside cube.
+		 */
+		CUBE0,
+		CUBE1,
+		CUBE2,
+		CUBE3,
+		CUBE4,
+		CUBE5,
+		CUBE6,
+		CUBE7,
+		INSIDE_CUBE;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

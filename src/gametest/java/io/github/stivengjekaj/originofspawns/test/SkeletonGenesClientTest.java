@@ -23,8 +23,12 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.entity.layers.SlimeOuterLayer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.entity.state.SlimeRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -35,6 +39,7 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Enderman;
+import net.minecraft.world.entity.monster.cubemob.Slime;
 import net.minecraft.world.entity.monster.illager.Evoker;
 import net.minecraft.world.entity.monster.illager.Vindicator;
 import net.minecraft.world.level.block.Blocks;
@@ -104,6 +109,12 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			// The endermite gene model sits on segment1, the body.
 			checkMarkAndModel(context, singleplayer, EntityTypes.ENDERMITE, "test_endermite_mark",
 					Identifier.withDefaultNamespace("textures/entity/endermite/endermite.png"), "endermite");
+			// The slime gene model sits on the inner cube, and the magma cube gene model on the inside cube.
+			checkMarkAndModel(context, singleplayer, EntityTypes.SLIME, "test_slime_mark",
+					Identifier.withDefaultNamespace("textures/entity/slime/slime.png"), "slime");
+			checkSlimeGelUsesTheGeneTexture(context);
+			checkMarkAndModel(context, singleplayer, EntityTypes.MAGMA_CUBE, "test_magma_cube_mark",
+					Identifier.withDefaultNamespace("textures/entity/slime/magmacube.png"), "magma_cube");
 			checkArmModelOnlyWhileTheArmsAreApart(context, singleplayer);
 			checkEndermanArmModelFollowsTheCarryPose(context, singleplayer);
 			checkEvokerArmModelOnlyWhileItCasts(context, singleplayer);
@@ -147,6 +158,53 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			}
 			int drawn = drawnModelParts(renderer, state);
 			return drawn > 0 ? null : "The gene model layer draws no part of the gene model on " + type;
+		});
+		if (failure != null) {
+			throw new AssertionError(failure);
+		}
+	}
+
+	/**
+	 * Checks that the outer gel of the slime with the mark gene draws with the baked texture, not with the plain slime
+	 * texture. The vanilla gel layer names the plain texture.
+	 */
+	private static void checkSlimeGelUsesTheGeneTexture(ClientGameTestContext context) {
+		Identifier mark = Identifier.fromNamespaceAndPath("originofspawns_test", "test_slime_mark");
+		String failure = context.computeOnClient(client -> {
+			Slime slime = client.level.getEntitiesOfClass(Slime.class, client.player.getBoundingBox().inflate(8.0),
+					other -> other.getType() == EntityTypes.SLIME && other.getAttached(ModAttachments.GENES) != null
+							&& other.getAttached(ModAttachments.GENES).genes().contains(mark)).stream().findFirst().orElse(null);
+			if (slime == null) {
+				return "The client has no slime with the test gene";
+			}
+			EntityRenderDispatcher dispatcher = client.getEntityRenderDispatcher();
+			EntityRenderState state = dispatcher.extractEntity(slime, 1.0F);
+			var renderer = (LivingEntityRenderer<?, ?, ?>) dispatcher.getRenderer(slime);
+			Identifier baked = textureOf(renderer, state);
+			List<Object> types = new java.util.ArrayList<>();
+			Object[] collector = new Object[1];
+			collector[0] = Proxy.newProxyInstance(SubmitNodeCollector.class.getClassLoader(),
+					new Class<?>[] {SubmitNodeCollector.class}, (proxy, method, args) -> {
+						if (method.getName().equals("submitModel")) {
+							for (Object arg : args) {
+								if (arg instanceof RenderType) {
+									types.add(arg);
+								}
+							}
+						}
+						return method.getReturnType().isInstance(proxy) ? proxy : null;
+					});
+			for (RenderLayer<?, ?> layer : layersOf(renderer)) {
+				if (layer instanceof SlimeOuterLayer gel) {
+					gel.submit(new PoseStack(), (SubmitNodeCollector) collector[0], LightCoordsUtil.FULL_BRIGHT,
+							(SlimeRenderState) state, 0.0F, 0.0F);
+				}
+			}
+			if (types.isEmpty()) {
+				return "The slime gel layer draws nothing";
+			}
+			return types.getFirst() == RenderTypes.entityTranslucent(baked) ? null
+					: "The slime gel draws with " + types.getFirst() + ", not with the baked texture " + baked;
 		});
 		if (failure != null) {
 			throw new AssertionError(failure);

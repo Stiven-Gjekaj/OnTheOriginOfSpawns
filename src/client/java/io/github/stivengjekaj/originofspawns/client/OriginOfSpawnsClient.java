@@ -31,8 +31,10 @@ import net.minecraft.client.renderer.entity.CreeperRenderer;
 import net.minecraft.client.renderer.entity.EndermanRenderer;
 import net.minecraft.client.renderer.entity.EndermiteRenderer;
 import net.minecraft.client.renderer.entity.EvokerRenderer;
+import net.minecraft.client.renderer.entity.MagmaCubeRenderer;
 import net.minecraft.client.renderer.entity.PillagerRenderer;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
+import net.minecraft.client.renderer.entity.SlimeRenderer;
 import net.minecraft.client.renderer.entity.SpiderRenderer;
 import net.minecraft.client.renderer.entity.VindicatorRenderer;
 import net.minecraft.client.renderer.entity.WitchRenderer;
@@ -82,6 +84,10 @@ public class OriginOfSpawnsClient implements ClientModInitializer {
 						(RenderLayerParent<LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) (Object) renderer));
 			} else if (renderer instanceof WitchRenderer witch) {
 				helper.register(new GeneModelLayer<WitchRenderState, WitchModel>(witch));
+			} else if (renderer instanceof SlimeRenderer || renderer instanceof MagmaCubeRenderer) {
+				// The slime model takes any entity render state, so the layer sees it as a model of the living one.
+				helper.register(new GeneModelLayer<>(
+						(RenderLayerParent<LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) (Object) renderer));
 			} else if (renderer instanceof SpiderRenderer<?>) {
 				helper.register(new GeneModelLayer<>(
 						(RenderLayerParent<LivingEntityRenderState, SpiderModel>) renderer));

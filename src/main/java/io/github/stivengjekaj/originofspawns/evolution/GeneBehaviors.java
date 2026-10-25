@@ -979,6 +979,18 @@ public final class GeneBehaviors {
 			// The side is at a right angle to the line from the player to the mob.
 			Vec3 toMob = mob.position().subtract(player.position()).multiply(1.0, 0.0, 1.0).normalize();
 			Vec3 side = new Vec3(-toMob.z, 0.0, toMob.x).scale(mob.getRandom().nextBoolean() ? 1.0 : -1.0);
+			// A mob in the air, such as a phantom or a ghast, steps aside in the air first, at the same height.
+			if (!mob.onGround()) {
+				for (Vec3 direction : List.of(side, side.scale(-1.0))) {
+					Vec3 target = mob.position().add(direction.scale(sidestep.distance()));
+					if (level.noCollision(mob, mob.getDimensions(mob.getPose()).makeBoundingBox(target.x, target.y, target.z))) {
+						level.sendParticles(ParticleTypes.POOF, mob.getX(), mob.getY(0.5), mob.getZ(), 8, 0.3, 0.5, 0.3, 0.02);
+						mob.teleportTo(target.x, target.y, target.z);
+						mob.setAttached(ModAttachments.STATE, state.withSidestepTime(now));
+						return true;
+					}
+				}
+			}
 			for (Vec3 direction : List.of(side, side.scale(-1.0))) {
 				Vec3 target = mob.position().add(direction.scale(sidestep.distance()));
 				for (int dy = 1; dy >= -2; dy--) {
@@ -986,18 +998,6 @@ public final class GeneBehaviors {
 					if (isSafe(mob, level, feet)) {
 						level.sendParticles(ParticleTypes.POOF, mob.getX(), mob.getY(0.5), mob.getZ(), 8, 0.3, 0.5, 0.3, 0.02);
 						mob.teleportTo(feet.getX() + 0.5, feet.getY(), feet.getZ() + 0.5);
-						mob.setAttached(ModAttachments.STATE, state.withSidestepTime(now));
-						return true;
-					}
-				}
-			}
-			// A mob in the air, such as a phantom, steps aside in the air, at the same height.
-			if (!mob.onGround()) {
-				for (Vec3 direction : List.of(side, side.scale(-1.0))) {
-					Vec3 target = mob.position().add(direction.scale(sidestep.distance()));
-					if (level.noCollision(mob, mob.getDimensions(mob.getPose()).makeBoundingBox(target.x, target.y, target.z))) {
-						level.sendParticles(ParticleTypes.POOF, mob.getX(), mob.getY(0.5), mob.getZ(), 8, 0.3, 0.5, 0.3, 0.02);
-						mob.teleportTo(target.x, target.y, target.z);
 						mob.setAttached(ModAttachments.STATE, state.withSidestepTime(now));
 						return true;
 					}

@@ -1,6 +1,8 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
@@ -14,6 +16,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
@@ -22,6 +25,8 @@ import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
 import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -324,6 +329,26 @@ public class GhastEffectsTest {
 		double speed = ghast.getDeltaMovement().length();
 		ghast.discard();
 		return speed;
+	}
+
+	@GameTest
+	public void dodgeDriftStepsAsideInTheAir(GameTestHelper helper) {
+		Ghast ghast = ghastWith(helper, new BlockPos(4, 2, 2));
+		ghast.setNoGravity(true);
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setNoGravity(true);
+		// The eyes of the player are at the height of the eyes of the ghast, so the bow aims at it.
+		player.setPos(ghast.position().add(0.0, ghast.getEyeHeight() - player.getEyeHeight(), 5.0));
+		CreeperEffectsTest.face(player, 180.0F);
+		player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+		player.startUsingItem(InteractionHand.MAIN_HAND);
+		Vec3 before = ghast.position();
+		// The ghast is 4 blocks wide, so a step of 2 blocks keeps it inside the walls of the test on one side.
+		helper.assertTrue(GeneBehaviors.sidestep(ghast, helper.getLevel(), new GeneEffect.Sidestep(12.0F, 2.0F, 8.0F, true)),
+				"the ghast steps aside");
+		helper.assertValueEqual(Math.round(Math.abs(ghast.getX() - before.x)), 2L, "the side distance");
+		helper.assertValueEqual(ghast.getY(), before.y, "it stays at the same height in the air");
+		helper.succeed();
 	}
 
 	/**

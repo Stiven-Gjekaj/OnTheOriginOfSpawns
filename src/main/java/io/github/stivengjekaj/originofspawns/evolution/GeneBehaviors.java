@@ -1790,6 +1790,14 @@ public final class GeneBehaviors {
 		mob.setAttached(ModAttachments.COOLDOWN_END, now + scaled);
 	}
 
+	/**
+	 * Returns the product of the flying speed multipliers of the mob. A mob with no such gene gives 1.
+	 */
+	public static double flyingSpeedMultiplier(LivingEntity mob) {
+		return GeneEffects.of(mob).filter(GeneEffect.FlyingSpeed.class::isInstance)
+				.mapToDouble(effect -> ((GeneEffect.FlyingSpeed) effect).multiplier()).reduce(1.0, (a, b) -> a * b);
+	}
+
 	public static float attackIntervalMultiplier(LivingEntity mob) {
 		float multiplier = 1.0F;
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {

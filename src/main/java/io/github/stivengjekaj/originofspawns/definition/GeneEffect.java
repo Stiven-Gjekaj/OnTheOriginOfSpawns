@@ -255,7 +255,8 @@ public sealed interface GeneEffect {
 			Map.entry("run_strike", RunStrike.CODEC),
 			Map.entry("effect_on_ally_death", EffectOnAllyDeath.CODEC),
 			Map.entry("player_first", PlayerFirst.CODEC),
-			Map.entry("smite_resist", SmiteResist.CODEC)
+			Map.entry("smite_resist", SmiteResist.CODEC),
+			Map.entry("flying_speed", FlyingSpeed.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4199,6 +4200,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "smite_resist";
+		}
+	}
+
+	/**
+	 * Multiplies the flying speed of a flying mob: the circle and the swoop of a phantom, the flight of a ghast, and the
+	 * flight of a blaze. More than one effect multiplies together.
+	 */
+	record FlyingSpeed(float multiplier) implements GeneEffect {
+		public static final MapCodec<FlyingSpeed> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(FlyingSpeed::multiplier)
+		).apply(instance, FlyingSpeed::new));
+
+		@Override
+		public String type() {
+			return "flying_speed";
 		}
 	}
 }

@@ -515,6 +515,8 @@ public class CreeperEffectsTest {
 		Identifier species = Identifier.withDefaultNamespace("creeper");
 		BiomeCategory category = BiomeCategory.of(helper.getLevel().getBiome(creeper.blockPosition()));
 		GenePools pools = GenePools.get(helper.getLevel().getServer());
+		// The test world keeps the gene pools from the last run, so the frequency could already be at 100%.
+		pools.setFrequency(species, category, gene, 0.0F);
 		float before = pools.frequency(species, category, gene);
 		explode(creeper);
 		helper.assertTrue(player.isDeadOrDying(), "the blast kills the player");

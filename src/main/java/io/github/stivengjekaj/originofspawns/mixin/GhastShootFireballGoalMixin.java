@@ -3,8 +3,10 @@ package io.github.stivengjekaj.originofspawns.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
@@ -13,6 +15,7 @@ import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
@@ -43,6 +46,26 @@ public abstract class GhastShootFireballGoalMixin {
 		}
 		return added;
 	}
+
+	/**
+	 * A ghast with a silent warning does not make the warning sound, the level event 1015, half way through the
+	 * charge. The sound of the shot, the level event 1016, stays.
+	 */
+	@WrapOperation(method = "tick", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/level/Level;levelEvent(Lnet/minecraft/world/entity/Entity;ILnet/minecraft/core/BlockPos;I)V"))
+	private void originofspawns$silentWarning(Level level, Entity source, int type, BlockPos pos, int data,
+			Operation<Void> original) {
+		GeneEffect.Silence silence = GeneBehaviors.silence(ghast);
+		if (type != WARNING_EVENT || silence == null || !silence.warning()) {
+			original.call(level, source, type, pos, data);
+		}
+	}
+
+	/**
+	 * The level event of the warning sound of a ghast.
+	 */
+	@Unique
+	private static final int WARNING_EVENT = 1015;
 
 	@ModifyConstant(method = "tick", constant = @Constant(intValue = -40))
 	private int originofspawns$waitAfterShot(int wait) {

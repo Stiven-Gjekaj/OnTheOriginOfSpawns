@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.network.protocol.game.ClientboundLevelEventPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
@@ -224,10 +225,51 @@ public class GhastEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8, maxTicks = 200)
+	public void aPlainGhastWarnsBeforeItShoots(GameTestHelper helper) {
+		var plainListener = CreeperEffectsTest.listener(helper);
+		Shots plain = shooter(helper);
+		helper.succeedWhen(() -> {
+			helper.assertTrue(plain.times.size() >= 1, "the plain ghast shoots");
+			helper.assertTrue(levelEvents(plainListener, plain.ghast).contains(1015), "a plain ghast warns before it shoots");
+		});
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8, maxTicks = 200)
+	public void ghostGlideMakesNoWarningSound(GameTestHelper helper) {
+		var listener = CreeperEffectsTest.listener(helper);
+		Shots shots = shooter(helper, "test_ghost_glide");
+		helper.succeedWhen(() -> {
+			helper.assertTrue(shots.times.size() >= 1, "the ghast shoots");
+			var events = levelEvents(listener, shots.ghast);
+			helper.assertTrue(events.contains(1016), "the ghast makes the sound of the shot");
+			helper.assertFalse(events.contains(1015), "the ghast does not warn");
+		});
+	}
+
+	/**
+	 * Returns the types of the level events of the ghast that the server sent to the player. The ghasts of the other
+	 * tests are near, so only the events at the place of this ghast count. The packets stay in the channel.
+	 */
+	static java.util.List<Integer> levelEvents(CreeperEffectsTest.Listener listener, Ghast ghast) {
+		Object packet;
+		java.util.List<Object> kept = new java.util.ArrayList<>();
+		java.util.List<Integer> events = new java.util.ArrayList<>();
+		while ((packet = listener.channel().readOutbound()) != null) {
+			kept.add(packet);
+			if (packet instanceof ClientboundLevelEventPacket event && event.getPos().equals(ghast.blockPosition())) {
+				events.add(event.getType());
+			}
+		}
+		kept.forEach(listener.channel()::writeOutbound);
+		return events;
+	}
+
 	/**
 	 * The shots of a test ghast: the game time of each shot, and the projectiles of each shot.
 	 */
 	static final class Shots {
+		Ghast ghast;
 		final java.util.List<Long> times = new java.util.ArrayList<>();
 		final java.util.List<java.util.List<Projectile>> projectiles = new java.util.ArrayList<>();
 	}
@@ -245,6 +287,7 @@ public class GhastEffectsTest {
 		ghast.setTarget(pig);
 		Vec3 home = ghast.position();
 		Shots shots = new Shots();
+		shots.ghast = ghast;
 		helper.onEachTick(() -> {
 			ghast.setPos(home);
 			ghast.setDeltaMovement(Vec3.ZERO);

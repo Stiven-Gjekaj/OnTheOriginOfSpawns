@@ -1927,7 +1927,7 @@ public final class GeneBehaviors {
 			if (effect instanceof GeneEffect.Silence silence) {
 				result = result == null ? silence : new GeneEffect.Silence(result.idle() || silence.idle(),
 						result.hurt() || silence.hurt(), result.steps() || silence.steps(), result.death() || silence.death(),
-						result.all() || silence.all());
+						result.all() || silence.all(), result.warning() || silence.warning());
 			}
 		}
 		return result;

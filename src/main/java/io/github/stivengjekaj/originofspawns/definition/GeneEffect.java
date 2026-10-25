@@ -864,19 +864,25 @@ public sealed interface GeneEffect {
 
 	/**
 	 * Stops some sounds of the mob. With {@code all}, the mob makes no sound at all, as a silent mob does, also the
-	 * flaps of a phantom. Silent Wing.
+	 * flaps of a phantom. Silent Wing. With {@code warning}, a ghast makes no warning sound before it shoots. The sound
+	 * of the shot stays. Ghost Glide.
 	 */
-	record Silence(boolean idle, boolean hurt, boolean steps, boolean death, boolean all) implements GeneEffect {
+	record Silence(boolean idle, boolean hurt, boolean steps, boolean death, boolean all, boolean warning) implements GeneEffect {
 		public static final MapCodec<Silence> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.BOOL.optionalFieldOf("idle", false).forGetter(Silence::idle),
 				Codec.BOOL.optionalFieldOf("hurt", false).forGetter(Silence::hurt),
 				Codec.BOOL.optionalFieldOf("steps", false).forGetter(Silence::steps),
 				Codec.BOOL.optionalFieldOf("death", false).forGetter(Silence::death),
-				Codec.BOOL.optionalFieldOf("all", false).forGetter(Silence::all)
+				Codec.BOOL.optionalFieldOf("all", false).forGetter(Silence::all),
+				Codec.BOOL.optionalFieldOf("warning", false).forGetter(Silence::warning)
 		).apply(instance, Silence::new));
 
 		public Silence(boolean idle, boolean hurt, boolean steps, boolean death) {
-			this(idle, hurt, steps, death, false);
+			this(idle, hurt, steps, death, false, false);
+		}
+
+		public Silence(boolean idle, boolean hurt, boolean steps, boolean death, boolean all) {
+			this(idle, hurt, steps, death, all, false);
 		}
 
 		@Override

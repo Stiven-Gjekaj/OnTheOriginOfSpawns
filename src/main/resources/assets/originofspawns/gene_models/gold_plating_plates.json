@@ -1,0 +1,61 @@
+{
+	"texture": "originofspawns:textures/entity/gold_plating_plates.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.5,
+				1,
+				-2.6
+			],
+			"size": [
+				3,
+				4,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				1,
+				-2.6
+			],
+			"size": [
+				3,
+				4,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-3,
+				6,
+				-2.4
+			],
+			"size": [
+				6,
+				2,
+				1
+			],
+			"inflate": 0.0
+		}
+	]
+}

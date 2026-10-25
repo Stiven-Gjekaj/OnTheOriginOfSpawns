@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/gilded_skull_plate.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4,
+				-8.6,
+				-3.5
+			],
+			"size": [
+				8,
+				1,
+				7
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				16
+			],
+			"from": [
+				-1,
+				-9.2,
+				-3.5
+			],
+			"size": [
+				2,
+				1,
+				7
+			],
+			"inflate": -0.1
+		}
+	]
+}

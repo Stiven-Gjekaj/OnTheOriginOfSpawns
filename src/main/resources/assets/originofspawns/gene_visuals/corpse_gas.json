@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/piglin.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/corpse_gas_0.png",
+				"tint": "#E8B0A8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/corpse_gas_1.png",
+				"tint": "#8A4A40"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/corpse_gas_2.png",
+				"tint": "#FFE0D8"
+			}
+		}
+	]
+}

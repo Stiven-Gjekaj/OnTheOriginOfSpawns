@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "landing_shield_stop", "seconds": 5 }],
+	"mutation_rate": 0
+}

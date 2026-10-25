@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "landing_damage", "damage": 2, "radius": 2 }, { "type": "landing_effect", "effect": "minecraft:slowness", "seconds": 3, "radius": 2 }, { "type": "landing_armor_damage", "amount": 5, "radius": 2 }],
+	"mutation_rate": 0
+}

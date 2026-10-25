@@ -14,12 +14,16 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.cubemob.AbstractCubeMob;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -102,6 +106,41 @@ public class SlimeEffectsTest {
 		bouncer.getMoveControl().tick();
 		helper.assertTrue(Math.abs(bouncer.getSpeed() - 1.5F * plain.getSpeed()) < 1.0E-4F,
 				"the bouncer moves 50% faster in the air, so it hops farther");
+		helper.succeed();
+	}
+
+	// The players of the test take the normal damage of the difficulty normal.
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void theLandingGenesHurtSlowAndDamageTheArmorOfPlayersNear(GameTestHelper helper) {
+		AbstractCubeMob slime = cubeWith(helper, EntityTypes.SLIME, new BlockPos(4, 1, 4), 2, "test_slam");
+		ServerPlayer near = CreeperEffectsTest.survivalPlayer(helper).player();
+		near.setPos(slime.position().add(2.0, 0.0, 0.0));
+		near.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.IRON_CHESTPLATE));
+		ServerPlayer far = CreeperEffectsTest.survivalPlayer(helper).player();
+		far.setPos(slime.position().add(0.0, 0.0, -4.0));
+		// The test lands the slime: it is in the air for one tick, and then on the ground.
+		slime.setOnGround(false);
+		slime.tick();
+		helper.assertValueEqual(near.getHealth(), near.getMaxHealth(), "no effect while the slime is in the air");
+		slime.setOnGround(true);
+		slime.tick();
+		helper.assertValueEqual(near.getHealth(), near.getMaxHealth() - 2.0F, "the landing does 2 damage");
+		helper.assertTrue(near.hasEffect(MobEffects.SLOWNESS), "the landing gives Slowness");
+		// The landing damage also wears the armor by 1, as each hit does.
+		helper.assertValueEqual(near.getItemBySlot(EquipmentSlot.CHEST).getDamageValue(), 6, "the landing damages the armor by 5");
+		helper.assertValueEqual(far.getHealth(), far.getMaxHealth(), "a player 4 blocks away is safe");
+		slime.tick();
+		helper.assertValueEqual(near.getItemBySlot(EquipmentSlot.CHEST).getDamageValue(), 6, "a slime on the ground does not land again");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void shieldSlamStopsTheShieldOfThePlayerThatItLandsOn(GameTestHelper helper) {
+		ServerPlayer player = CreeperEffectsTest.shieldedPlayer(helper);
+		AbstractCubeMob slime = cubeWith(helper, EntityTypes.SLIME, new BlockPos(4, 1, 1), 2, "test_shield_slam");
+		slime.snapTo(player.position().add(-0.9, 0.0, 0.0), 0.0F, 0.0F);
+		GeneCubes.onLand(slime, helper.getLevel());
+		helper.assertTrue(player.getCooldowns().isOnCooldown(new ItemStack(Items.SHIELD)), "the shield stops for a time");
 		helper.succeed();
 	}
 

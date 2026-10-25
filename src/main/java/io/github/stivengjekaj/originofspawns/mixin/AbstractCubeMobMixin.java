@@ -13,6 +13,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -56,5 +58,30 @@ public abstract class AbstractCubeMobMixin {
 	@Inject(method = "jumpFromGround", at = @At("TAIL"))
 	private void originofspawns$hopHeight(CallbackInfo info) {
 		GeneCubes.hopHeight((AbstractCubeMob) (Object) this);
+	}
+
+	@Shadow
+	private boolean wasOnGround;
+
+	@Unique
+	private boolean originofspawns$wasOnGround;
+
+	/**
+	 * Keeps the ground state of the last tick. Vanilla changes it in the tick.
+	 */
+	@Inject(method = "tick", at = @At("HEAD"))
+	private void originofspawns$beforeTick(CallbackInfo info) {
+		this.originofspawns$wasOnGround = this.wasOnGround;
+	}
+
+	/**
+	 * The landing effects of the genes run when the cube lands from a hop.
+	 */
+	@Inject(method = "tick", at = @At("TAIL"))
+	private void originofspawns$land(CallbackInfo info) {
+		AbstractCubeMob self = (AbstractCubeMob) (Object) this;
+		if (self.onGround() && !this.originofspawns$wasOnGround && self.level() instanceof ServerLevel level) {
+			GeneCubes.onLand(self, level);
+		}
 	}
 }

@@ -213,7 +213,11 @@ public sealed interface GeneEffect {
 			Map.entry("projectile_teleport", ProjectileTeleport.CODEC),
 			Map.entry("call_others", CallOthers.CODEC),
 			Map.entry("spawn_size", SpawnSize.CODEC),
-			Map.entry("hop", Hop.CODEC)
+			Map.entry("hop", Hop.CODEC),
+			Map.entry("landing_damage", LandingDamage.CODEC),
+			Map.entry("landing_effect", LandingEffect.CODEC),
+			Map.entry("landing_armor_damage", LandingArmorDamage.CODEC),
+			Map.entry("landing_shield_stop", LandingShieldStop.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3461,6 +3465,68 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "hop";
+		}
+	}
+
+	/**
+	 * When a cube lands from a hop, it does this damage to the players in the radius.
+	 */
+	record LandingDamage(float damage, float radius) implements GeneEffect {
+		public static final MapCodec<LandingDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).fieldOf("damage").forGetter(LandingDamage::damage),
+				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 2.0F).forGetter(LandingDamage::radius)
+		).apply(instance, LandingDamage::new));
+
+		@Override
+		public String type() {
+			return "landing_damage";
+		}
+	}
+
+	/**
+	 * When a cube lands from a hop, the players in the radius get the status effect.
+	 */
+	record LandingEffect(Holder<MobEffect> effect, float seconds, int amplifier, float radius) implements GeneEffect {
+		public static final MapCodec<LandingEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(LandingEffect::effect),
+				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(LandingEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(LandingEffect::amplifier),
+				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 2.0F).forGetter(LandingEffect::radius)
+		).apply(instance, LandingEffect::new));
+
+		@Override
+		public String type() {
+			return "landing_effect";
+		}
+	}
+
+	/**
+	 * When a cube lands from a hop, it damages each armor piece of the players in the radius by this amount.
+	 */
+	record LandingArmorDamage(int amount, float radius) implements GeneEffect {
+		public static final MapCodec<LandingArmorDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 1000).fieldOf("amount").forGetter(LandingArmorDamage::amount),
+				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 2.0F).forGetter(LandingArmorDamage::radius)
+		).apply(instance, LandingArmorDamage::new));
+
+		@Override
+		public String type() {
+			return "landing_armor_damage";
+		}
+	}
+
+	/**
+	 * When a cube lands on a player that holds up a shield, the shield is useless for this many seconds. The cube
+	 * lands on a player when the player touches the cube at the landing.
+	 */
+	record LandingShieldStop(float seconds) implements GeneEffect {
+		public static final MapCodec<LandingShieldStop> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).fieldOf("seconds").forGetter(LandingShieldStop::seconds)
+		).apply(instance, LandingShieldStop::new));
+
+		@Override
+		public String type() {
+			return "landing_shield_stop";
 		}
 	}
 }

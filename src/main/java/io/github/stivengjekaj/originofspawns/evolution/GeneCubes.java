@@ -3,7 +3,13 @@ package io.github.stivengjekaj.originofspawns.evolution;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.entity.monster.cubemob.AbstractCubeMob;
 
 /**
@@ -74,5 +80,51 @@ public final class GeneCubes {
 			net.minecraft.world.phys.Vec3 movement = cube.getDeltaMovement();
 			cube.setDeltaMovement(movement.x, movement.y * height, movement.z);
 		}
+	}
+
+	/**
+	 * Runs the landing effects of the cube, when it lands from a hop.
+	 */
+	public static void onLand(AbstractCubeMob cube, ServerLevel level) {
+		for (GeneEffect effect : GeneEffects.of(cube).toList()) {
+			switch (effect) {
+				case GeneEffect.LandingDamage landing -> {
+					for (Player player : playersNear(cube, level, landing.radius())) {
+						player.hurtServer(level, level.damageSources().mobAttack(cube), landing.damage());
+					}
+				}
+				case GeneEffect.LandingEffect landing -> {
+					for (Player player : playersNear(cube, level, landing.radius())) {
+						player.addEffect(new MobEffectInstance(landing.effect(), Math.round(landing.seconds() * 20.0F),
+								landing.amplifier()), cube);
+					}
+				}
+				case GeneEffect.LandingArmorDamage landing -> {
+					for (Player player : playersNear(cube, level, landing.radius())) {
+						for (EquipmentSlot slot : EquipmentSlotGroup.ARMOR) {
+							ItemStack stack = player.getItemBySlot(slot);
+							if (!stack.isEmpty() && stack.isDamageableItem()) {
+								stack.hurtAndBreak(landing.amount(), player, slot);
+							}
+						}
+					}
+				}
+				case GeneEffect.LandingShieldStop stop -> {
+					for (Player player : level.getEntitiesOfClass(Player.class, cube.getBoundingBox().inflate(0.1))) {
+						ItemStack shield = player.getItemBlockingWith();
+						if (shield != null && shield.has(DataComponents.BLOCKS_ATTACKS)) {
+							shield.get(DataComponents.BLOCKS_ATTACKS).disable(level, player, stop.seconds(), shield);
+						}
+					}
+				}
+				default -> {
+				}
+			}
+		}
+	}
+
+	private static java.util.List<Player> playersNear(AbstractCubeMob cube, ServerLevel level, float radius) {
+		return level.getEntitiesOfClass(Player.class, cube.getBoundingBox().inflate(radius),
+				player -> player.isAlive() && !player.isSpectator());
 	}
 }

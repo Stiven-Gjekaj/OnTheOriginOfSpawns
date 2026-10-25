@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "regenerate", "amount": 1, "interval_seconds": 2, "idle_seconds": 0, "when": "in_lava" }],
+	"mutation_rate": 0
+}

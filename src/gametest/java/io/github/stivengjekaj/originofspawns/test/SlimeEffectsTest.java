@@ -21,11 +21,15 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.cubemob.AbstractCubeMob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -326,6 +330,142 @@ public class SlimeEffectsTest {
 			helper.assertTrue(back >= 2.0 && back <= 4.0, "the cube hops about 3 blocks back, not " + back);
 			helper.assertTrue(Math.abs(landing[0].z - start.z) < 1.0, "the cube hops straight back");
 			cube.discard();
+		});
+	}
+
+	/**
+	 * The sizes of a cube that the reused effects must work at.
+	 */
+	static final int[] SIZES = {1, 2, 4};
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void theHitGenesOfASlimeWorkAtEachSizeThatHits(GameTestHelper helper) {
+		// A plain slime of size 1 does no damage, so only sizes 2 and 4 hit.
+		for (int size : new int[] {2, 4}) {
+			AbstractCubeMob slime = cubeWith(helper, EntityTypes.SLIME, new BlockPos(4, 1, 4), size, "test_slime_hits");
+			Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 4));
+			((AbstractCubeMobAccessor) slime).originofspawns$dealDamage(pig);
+			helper.assertTrue(pig.hasEffect(MobEffects.SLOWNESS), "the hit gives Slowness at size " + size);
+			pig.discard();
+			ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+			player.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.IRON_CHESTPLATE));
+			player.setPos(slime.position().add(0.0, 0.0, 0.5 + size * 0.26));
+			((AbstractCubeMobAccessor) slime).originofspawns$dealDamage(player);
+			// The hit wears the armor by 1. Armor break makes it 2 times as much.
+			helper.assertValueEqual(player.getItemBySlot(EquipmentSlot.CHEST).getDamageValue(), 2,
+					"the hit breaks the armor at size " + size);
+			player.discard();
+			slime.discard();
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theMoveGenesOfASlimeWorkAtEachSize(GameTestHelper helper) {
+		for (int size : SIZES) {
+			AbstractCubeMob slime = cubeWith(helper, EntityTypes.SLIME, new BlockPos(4, 1, 4), size, "test_web_trail",
+					"test_climb");
+			slime.setDeltaMovement(0.3, 0.0, 0.0);
+			helper.assertTrue(GeneBehaviors.webTrail(slime, helper.getLevel(), new GeneEffect.WebTrail(10.0F, 30.0F)),
+					"the slime leaves a cobweb at size " + size);
+			helper.assertBlockPresent(Blocks.COBWEB, new BlockPos(4, 1, 4));
+			helper.setBlock(new BlockPos(4, 1, 4), Blocks.AIR);
+			slime.horizontalCollision = true;
+			helper.assertTrue(slime.onClimbable(), "the slime climbs a wall at size " + size);
+			slime.discard();
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void glueGripPullsAPlayerInWaterDownAtEachSize(GameTestHelper helper) {
+		for (int size : SIZES) {
+			AbstractCubeMob slime = cubeWith(helper, EntityTypes.SLIME, new BlockPos(1, 1, 1), size, "test_undertow");
+			ServerPlayer swimmer = DrownedEffectsTest.swimmer(helper, new BlockPos(5, 3, 5));
+			double before = swimmer.getY();
+			GeneCombat.onHit(slime, swimmer);
+			helper.assertValueEqual(before - swimmer.getY(), 2.0, "the hit pulls the player 2 blocks down at size " + size);
+			swimmer.discard();
+			slime.discard();
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theHurtAndDeathGenesOfASlimeWorkAtEachSize(GameTestHelper helper) {
+		hurtAndDeathGenesWorkAtEachSize(helper, EntityTypes.SLIME);
+	}
+
+	@GameTest
+	public void theDamageGenesOfASlimeWorkAtEachSize(GameTestHelper helper) {
+		damageGenesWorkAtEachSize(helper, EntityTypes.SLIME);
+	}
+
+	@GameTest(maxTicks = 40)
+	public void speedWhenWorksOnASlimeAfterEachChangeOfSize(GameTestHelper helper) {
+		speedWhenWorksAfterEachChangeOfSize(helper, EntityTypes.SLIME);
+	}
+
+	/**
+	 * Tests effect on hurt and death cloud on a cube of each size.
+	 */
+	static void hurtAndDeathGenesWorkAtEachSize(GameTestHelper helper, EntityType<? extends AbstractCubeMob> type) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 1));
+		for (int size : SIZES) {
+			AbstractCubeMob cube = cubeWith(helper, type, new BlockPos(4, 1, 4), size, "test_hurt_blind", "test_cloud");
+			pig.removeAllEffects();
+			GeneCombat.onHurt(cube, helper.getLevel().damageSources().mobAttack(pig));
+			helper.assertTrue(pig.hasEffect(MobEffects.BLINDNESS), "the hurt cube blinds the attacker at size " + size);
+			GeneCombat.onDeath(cube, helper.getLevel());
+			List<AreaEffectCloud> clouds = helper.getLevel().getEntitiesOfClass(AreaEffectCloud.class,
+					cube.getBoundingBox().inflate(1.0));
+			helper.assertValueEqual(clouds.size(), 1, "the dead cube leaves a cloud at size " + size);
+			clouds.forEach(AreaEffectCloud::discard);
+			cube.discard();
+		}
+		helper.succeed();
+	}
+
+	/**
+	 * Tests damage to and the damage taken effects on a cube of each size.
+	 */
+	static void damageGenesWorkAtEachSize(GameTestHelper helper, EntityType<? extends AbstractCubeMob> type) {
+		IronGolem golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(1, 1, 1));
+		for (int size : SIZES) {
+			AbstractCubeMob cube = cubeWith(helper, type, new BlockPos(5, 1, 5), size, "test_golem_bane",
+					"test_evoker_wards");
+			helper.assertValueEqual(GeneCombat.modifyDamage(golem, helper.getLevel().damageSources().mobAttack(cube), 4.0F),
+					6.0F, "the cube does 1.5 times the damage to a golem at size " + size);
+			// Fire does half the damage, and each damage is 1.1 times as much.
+			helper.assertTrue(Math.abs(GeneCombat.modifyDamage(cube, helper.getLevel().damageSources().inFire(), 4.0F)
+					- 2.2F) < 0.001F, "fire does less damage at size " + size);
+			helper.assertTrue(Math.abs(GeneCombat.modifyDamage(cube, helper.getLevel().damageSources().generic(), 4.0F)
+					- 4.4F) < 0.001F, "other damage is 1.1 times as much at size " + size);
+			cube.discard();
+		}
+		helper.succeed();
+	}
+
+	/**
+	 * Tests that speed when changes the speed of a cube after each change of size. A change of size sets a new base
+	 * speed.
+	 */
+	static void speedWhenWorksAfterEachChangeOfSize(GameTestHelper helper, EntityType<? extends AbstractCubeMob> type) {
+		AbstractCubeMob cube = cubeWith(helper, type, new BlockPos(4, 1, 4), 1, "test_escape_artist");
+		int[] index = {0};
+		helper.onEachTick(() -> {
+			if (index[0] < SIZES.length && cube.getSize() != SIZES[index[0]]) {
+				cube.setSize(SIZES[index[0]], true);
+			}
+			cube.setHealth(cube.getMaxHealth() * 0.3F);
+		});
+		helper.succeedWhen(() -> {
+			var speed = cube.getAttribute(Attributes.MOVEMENT_SPEED);
+			helper.assertTrue(Math.abs(speed.getValue() - speed.getBaseValue() * 1.3) < 0.0001,
+					"a wounded cube is 30% faster at size " + cube.getSize());
+			if (++index[0] < SIZES.length) {
+				helper.fail("the next size");
+			}
 		});
 	}
 

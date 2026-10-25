@@ -460,7 +460,7 @@ public class DrownedEffectsTest {
 	/**
 	 * Makes a player in a column of water from the floor to the position and one block above it.
 	 */
-	private static ServerPlayer swimmer(GameTestHelper helper, BlockPos pos) {
+	static ServerPlayer swimmer(GameTestHelper helper, BlockPos pos) {
 		helper.setBlock(pos.atY(0), Blocks.STONE);
 		fill(helper, pos.atY(1), pos.getY() + 1);
 		ServerPlayer player = helper.makeMockServerPlayerInLevel();

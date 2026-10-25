@@ -4,9 +4,12 @@ import static io.github.stivengjekaj.originofspawns.test.SlimeEffectsTest.cubeWi
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.DeathTrace;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.evolution.TemporaryBlocks;
+import io.github.stivengjekaj.originofspawns.evolution.goal.LeapGoal;
+import io.github.stivengjekaj.originofspawns.mixin.AbstractCubeMobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import java.util.List;
@@ -267,6 +270,116 @@ public class MagmaCubeEffectsTest {
 		GeneCombat.onDeath(cube, helper.getLevel());
 		helper.assertBlockNotPresent(Blocks.LAVA, new BlockPos(4, 1, 4));
 		helper.succeed();
+	}
+
+	@GameTest
+	public void flameTouchSetsTheTargetOnFireAtEachSizeThatHits(GameTestHelper helper) {
+		for (int size : new int[] {1, 2, 4}) {
+			AbstractCubeMob cube = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(4, 1, 4), size, "test_flame_touch");
+			Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 4));
+			((AbstractCubeMobAccessor) cube).originofspawns$dealDamage(pig);
+			helper.assertValueEqual(pig.getRemainingFireTicks(), 100, "the hit burns the pig for 5 seconds at size " + size);
+			pig.discard();
+			cube.discard();
+		}
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 60)
+	public void basaltSkinAddsToTheArmorOfEachSize(GameTestHelper helper) {
+		AbstractCubeMob plain = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(1, 1, 1), 1);
+		AbstractCubeMob skin = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(5, 1, 5), 1, "test_basalt_skin");
+		// The game puts the attribute genes on a new mob when it rolls the genes. The test cube gets its genes direct.
+		GeneEffects.applyAttributes(skin, GeneEffects.sources(helper.getLevel().registryAccess(),
+				skin.getAttached(ModAttachments.GENES)));
+		for (int size : SlimeEffectsTest.SIZES) {
+			plain.setSize(size, true);
+			skin.setSize(size, true);
+			helper.assertValueEqual(plain.getArmorValue(), 3 * size, "a plain magma cube has 3 armor for each size");
+			helper.assertValueEqual(skin.getArmorValue(), 3 * size + 4, "Basalt Skin adds 4 armor at size " + size);
+		}
+		plain.discard();
+		skin.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 1000.0F);
+		// A dead mob leaves the level after its death time, and the split comes then.
+		helper.succeedWhen(() -> {
+			List<AbstractCubeMob> pieces = SlimeEffectsTest.piecesNear(helper, skin);
+			helper.assertFalse(pieces.isEmpty(), "the cube splits");
+			for (AbstractCubeMob piece : pieces) {
+				helper.assertValueEqual(piece.getArmorValue(), 3 * 2 + 4, "each piece of size 2 has the extra armor");
+			}
+		});
+	}
+
+	@GameTest(maxTicks = 40)
+	public void crustAddsArmorWhileTheCubeIsWoundedAtEachSize(GameTestHelper helper) {
+		AbstractCubeMob cube = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(4, 1, 4), 1, "test_crust");
+		int[] index = {0};
+		helper.onEachTick(() -> {
+			if (index[0] < SlimeEffectsTest.SIZES.length && cube.getSize() != SlimeEffectsTest.SIZES[index[0]]) {
+				cube.setSize(SlimeEffectsTest.SIZES[index[0]], true);
+			}
+			cube.setHealth(cube.getMaxHealth() * 0.3F);
+		});
+		helper.succeedWhen(() -> {
+			helper.assertValueEqual(cube.getArmorValue(), 3 * cube.getSize() + 6,
+					"a wounded cube has 6 more armor at size " + cube.getSize());
+			if (++index[0] < SlimeEffectsTest.SIZES.length) {
+				helper.fail("the next size");
+			}
+		});
+	}
+
+	@GameTest
+	public void lavaLeapLeapsAtATargetAtEachSize(GameTestHelper helper) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(7, 1, 4));
+		for (int size : SlimeEffectsTest.SIZES) {
+			AbstractCubeMob cube = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(1, 1, 4), size);
+			cube.setTarget(pig);
+			cube.setOnGround(true);
+			LeapGoal goal = new LeapGoal(cube, new GeneEffect.Leap(4.0F, 10.0F, 5.0F, 1.0F));
+			helper.assertTrue(goal.canUse(), "the cube can leap at the pig at size " + size);
+			goal.start();
+			helper.assertTrue(cube.getDeltaMovement().x > 0.5 && cube.getDeltaMovement().y > 0.0,
+					"the cube leaps at the pig at size " + size);
+			cube.discard();
+		}
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 80)
+	public void lavaHealAndFireDrinkHealTheCubeAlsoInCombat(GameTestHelper helper) {
+		AbstractCubeMob inLava = cubeInFluid(helper, new BlockPos(1, 1, 1), Blocks.LAVA, "test_lava_heal");
+		AbstractCubeMob dry = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(1, 1, 5), 1, "test_lava_heal");
+		helper.setBlock(new BlockPos(5, 0, 5), Blocks.STONE);
+		helper.setBlock(new BlockPos(5, 1, 5), Blocks.FIRE);
+		AbstractCubeMob inFire = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(5, 1, 5), 1, "test_fire_drink");
+		long now = helper.getLevel().getGameTime();
+		for (AbstractCubeMob cube : List.of(inLava, dry, inFire)) {
+			cube.setHealth(0.5F);
+			// The cubes are in combat now.
+			cube.setAttached(ModAttachments.TRACE, DeathTrace.NONE.withCombat(now));
+		}
+		helper.runAfterDelay(60, () -> {
+			helper.assertTrue(inLava.getHealth() > 0.5F, "Lava Heal heals the cube in lava in combat");
+			helper.assertTrue(inFire.getHealth() > 0.5F, "Fire Drink heals the cube in fire in combat");
+			helper.assertValueEqual(dry.getHealth(), 0.5F, "Lava Heal does not heal out of lava");
+			helper.succeed();
+		});
+	}
+
+	@GameTest
+	public void theHurtAndDeathGenesOfAMagmaCubeWorkAtEachSize(GameTestHelper helper) {
+		SlimeEffectsTest.hurtAndDeathGenesWorkAtEachSize(helper, EntityTypes.MAGMA_CUBE);
+	}
+
+	@GameTest
+	public void theDamageGenesOfAMagmaCubeWorkAtEachSize(GameTestHelper helper) {
+		SlimeEffectsTest.damageGenesWorkAtEachSize(helper, EntityTypes.MAGMA_CUBE);
+	}
+
+	@GameTest(maxTicks = 40)
+	public void speedWhenWorksOnAMagmaCubeAfterEachChangeOfSize(GameTestHelper helper) {
+		SlimeEffectsTest.speedWhenWorksAfterEachChangeOfSize(helper, EntityTypes.MAGMA_CUBE);
 	}
 
 	static AbstractCubeMob cubeInWater(GameTestHelper helper, BlockPos pos, String... genes) {

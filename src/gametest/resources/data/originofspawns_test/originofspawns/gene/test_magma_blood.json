@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "fire_on_hurt", "seconds": 3 }],
+	"mutation_rate": 0
+}

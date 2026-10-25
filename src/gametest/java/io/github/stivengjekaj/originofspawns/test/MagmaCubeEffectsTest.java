@@ -64,6 +64,19 @@ public class MagmaCubeEffectsTest {
 		});
 	}
 
+	@GameTest
+	public void magmaBloodBurnsAnAttackerInMelee(GameTestHelper helper) {
+		AbstractCubeMob cube = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(4, 1, 4), 2, "test_magma_blood");
+		Pig archer = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 1));
+		Pig fighter = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 4));
+		GeneCombat.onHurt(cube, helper.getLevel().damageSources().arrow(
+				new Arrow(helper.getLevel(), archer, new ItemStack(Items.ARROW), null), archer));
+		helper.assertValueEqual(archer.getRemainingFireTicks(), 0, "an arrow does not burn the archer");
+		GeneCombat.onHurt(cube, helper.getLevel().damageSources().mobAttack(fighter));
+		helper.assertValueEqual(fighter.getRemainingFireTicks(), 60, "a melee hit burns the attacker for 3 seconds");
+		helper.succeed();
+	}
+
 	/**
 	 * Adds a magma cube of size 1 in a water source. Glass on the four sides keeps the water in its place.
 	 */

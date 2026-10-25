@@ -911,6 +911,7 @@ public final class GeneCombat {
 						attacker.hurtServer(level, level.damageSources().thorns(mob), thorns.damage());
 				case GeneEffect.EffectOnHurt onHurt when onHurt.hits().includes(source.getDirectEntity() != attacker) ->
 						effectOnHurt(mob, level, onHurt, attacker);
+				case GeneEffect.FireOnHurt fire when source.getDirectEntity() == attacker -> attacker.igniteForSeconds(fire.seconds());
 				case GeneEffect.FreezeAttacker freeze when source.getDirectEntity() == attacker ->
 						freeze(attacker, freeze.seconds());
 				case GeneEffect.Decoy decoy -> GeneBehaviors.decoy(mob, level, decoy, attacker);

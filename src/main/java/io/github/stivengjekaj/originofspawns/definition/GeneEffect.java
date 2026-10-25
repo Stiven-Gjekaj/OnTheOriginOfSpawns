@@ -227,7 +227,8 @@ public sealed interface GeneEffect {
 			Map.entry("bud", Bud.CODEC),
 			Map.entry("touch_reach", TouchReach.CODEC),
 			Map.entry("shield_break", ShieldBreak.CODEC),
-			Map.entry("hop_back", HopBack.CODEC)
+			Map.entry("hop_back", HopBack.CODEC),
+			Map.entry("fire_on_hurt", FireOnHurt.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3697,6 +3698,20 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "hop_back";
+		}
+	}
+
+	/**
+	 * An attacker that hits the mob in melee burns for this many seconds.
+	 */
+	record FireOnHurt(float seconds) implements GeneEffect {
+		public static final MapCodec<FireOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("seconds", 3.0F).forGetter(FireOnHurt::seconds)
+		).apply(instance, FireOnHurt::new));
+
+		@Override
+		public String type() {
+			return "fire_on_hurt";
 		}
 	}
 }

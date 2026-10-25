@@ -3,6 +3,7 @@ package io.github.stivengjekaj.originofspawns.test;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -219,6 +220,20 @@ public class BlazeEffectsTest {
 		helper.assertValueEqual(directions, java.util.List.of(0L, 45L, 90L, 135L, 180L, 225L, 270L, 315L), "the directions");
 		fireballs.forEach(SmallFireball::discard);
 		helper.assertFalse(GeneBehaviors.fireballRing(blaze, helper.getLevel(), ring), "the next ring waits 10 seconds");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void burnPainMakesABurningTargetTakeMoreDamageFromEachSource(GameTestHelper helper) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 1));
+		Blaze blaze = blazeWith(helper, new BlockPos(5, 1, 5), "test_burn_pain");
+		blaze.setTarget(pig);
+		var other = helper.getLevel().damageSources().generic();
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, other, 5.0F), 5.0F, "no change while the target does not burn");
+		pig.igniteForSeconds(5.0F);
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, other, 5.0F), 6.0F, "20% more damage from another source");
+		blaze.setTarget(null);
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, other, 5.0F), 5.0F, "no change when it is not the target");
 		helper.succeed();
 	}
 

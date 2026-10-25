@@ -605,8 +605,32 @@ public final class GeneCombat {
 			}
 			markCombat(attacker);
 		}
+		if (victim.isOnFire()) {
+			result *= burnPain(victim);
+		}
 		markCombat(victim);
 		return result;
+	}
+
+	/**
+	 * The blocks from a mob with a burn pain gene to its target in which the gene acts.
+	 */
+	private static final double BURN_PAIN_RANGE = 32.0;
+
+	/**
+	 * Returns the largest burn pain multiplier of the mobs in range whose target is the burning victim.
+	 */
+	private static float burnPain(LivingEntity victim) {
+		float multiplier = 1.0F;
+		for (Mob mob : victim.level().getEntitiesOfClass(Mob.class, victim.getBoundingBox().inflate(BURN_PAIN_RANGE),
+				mob -> mob.getTarget() == victim && mob.hasAttached(ModAttachments.GENES))) {
+			for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+				if (effect instanceof GeneEffect.BurnPain pain) {
+					multiplier = Math.max(multiplier, pain.multiplier());
+				}
+			}
+		}
+		return multiplier;
 	}
 
 	private static void markCombat(LivingEntity entity) {

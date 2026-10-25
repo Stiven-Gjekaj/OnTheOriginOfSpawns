@@ -272,7 +272,8 @@ public sealed interface GeneEffect {
 			Map.entry("fireball_blast", FireballBlast.CODEC),
 			Map.entry("fireball_cloud", FireballCloud.CODEC),
 			Map.entry("seeker_fireballs", SeekerFireballs.CODEC),
-			Map.entry("fireball_ring", FireballRing.CODEC)
+			Map.entry("fireball_ring", FireballRing.CODEC),
+			Map.entry("burn_pain", BurnPain.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4496,6 +4497,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "fireball_ring";
+		}
+	}
+
+	/**
+	 * While the target of the mob burns, it takes this many times the damage from each source. The mob must be in 32
+	 * blocks of its target. The largest multiplier counts.
+	 */
+	record BurnPain(float multiplier) implements GeneEffect {
+		public static final MapCodec<BurnPain> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(BurnPain::multiplier)
+		).apply(instance, BurnPain::new));
+
+		@Override
+		public String type() {
+			return "burn_pain";
 		}
 	}
 }

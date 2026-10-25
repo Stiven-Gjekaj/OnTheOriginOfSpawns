@@ -108,7 +108,7 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Gold Wise | Hoarder | `spotted` | It attacks a player in gold armor with a 30% chance | 10% less maximum health | Head: narrow, suspicious eyes |
-| Snatch | Hoarder | `melee` | Each melee hit has a 10% chance to make a player drop the item in the main hand | 10% less damage | Arms: long, grabbing fingers |
+| Snatch | Hoarder | `melee` | Each melee hit has a 10% chance to make a player drop the item in the main hand | 10% less damage | Hands: long, gold-stained claws at the finger tips |
 | Glitter Eye | Hoarder | `alone` | It sees invisible players in 16 blocks | 10% less speed | Head: gold-colored eyes |
 | Gilded Hide | Hoarder | `projectile` | 30% less damage from projectiles | 10% less speed | Body: gold studs on the belt |
 | Gold Lust | Hoarder | `crowd` | 30% more damage to a player in gold armor | 10% less maximum health | Body: a gold chain on the chest. This changes the model |
@@ -141,7 +141,7 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Fire Skin | Firewalker | `fire` | Half the fire damage | 10% less speed | Body: a dark, scorched skin |
-| Overworld Lungs | Firewalker | `on_land` | In the Overworld, it turns into a zombified piglin after 60 seconds, not 15 | 10% less maximum health | Head: wide nostrils |
+| Overworld Lungs | Firewalker | `on_land` | In the Overworld, it turns into a zombified piglin after 60 seconds, not 15 | 10% less maximum health | Head: wide, flared nostrils, and a pale chest |
 | Ash Lung | Firewalker | `explosion` | 30% less damage from explosions | 10% less speed | Body: gray ash on the chest |
 | Hot Blade | Firewalker | `melee` | Its melee hits set the target on fire for 3 seconds | 10% less maximum health | Arms: glowing hands |
 | Soul Brave | Firewalker | `shield` | It does not run from soul fire or from zombified piglins | 10% less maximum health | Head: blue, calm eyes |

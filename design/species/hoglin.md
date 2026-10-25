@@ -120,7 +120,7 @@ The visual column gives the region and the mark.
 | Rock Hide | Thickhide | `melee` | 4 more armor | 10% less speed | Body: gray, stony patches |
 | Bristle Mat | Thickhide | `projectile` | 30% less damage from projectiles | 10% less speed | Body: thick, long bristles. This changes the model |
 | Blast Hide | Thickhide | `explosion` | Half the damage from explosions | 10% less speed | Body: a scorched hide |
-| Root Feet | Thickhide | `golem` | Full knockback resistance | 10% less speed | Legs: thick, short legs |
+| Root Feet | Thickhide | `golem` | Full knockback resistance | 10% less speed | Legs: thick, dark hooves |
 | Scar Hide | Thickhide | `critical` | 6 more armor while its health is under half | 10% less maximum health | Body: old scars |
 | Barbed Hide | Thickhide, sub Herdkin | `crowd` | An attacker that hits it in melee takes 1 damage | 10% less maximum health | Body: sharp bristles on the back. This changes the model |
 

@@ -124,7 +124,7 @@ The visual column gives the region and the mark.
 | Stench | Fester | `crowd` | Players in 3 blocks get Nausea | 10% less speed | Body: green fumes. This changes the model |
 | Corpse Gas | Fester | `explosion` | When it dies, it leaves a cloud of Poison | 10% less maximum health | Body: a swollen belly |
 | Golem Rot | Fester | `golem` | Two times the damage to golems | 10% less speed | Arms: rot on the hands |
-| Rot Sprint | Fester, sub Chaser | `unreached` | After it hits, it gets Speed for 3 seconds | 10% less damage | Legs: rotten, thin legs |
+| Rot Sprint | Fester, sub Chaser | `unreached` | After it hits, it gets Speed for 3 seconds | 10% less damage | Legs: green rot patches and torn cloth on the legs |
 
 ### Bladesman genes
 
@@ -133,7 +133,7 @@ The visual column gives the region and the mark.
 | Keen Edge | Bladesman | `melee` | 20% more melee damage | It attacks 15% slower | Arms: a notched sword arm |
 | Sweep | Bladesman | `crowd` | Each hit also hurts the other players in 2 blocks with half the damage | 10% less maximum health | Arms: wide, strong shoulders |
 | Riposte | Bladesman | `shield` | It blocks one melee hit each 8 seconds | 10% less damage | Arms: a gold guard on the arm. This changes the model |
-| Gold Hilt | Bladesman | `critical` | Its first hit on a player does 30% more damage | 2 less armor | Arms: a gold ring on the wrist |
+| Gold Hilt | Bladesman | `critical` | Its first hit on a player does 30% more damage | 2 less armor | Body: a gold sword pommel on the belt |
 | Sword Slap | Bladesman | `spotted` | Each hit has a 10% chance to make a player drop the item in the main hand | 10% less damage | Arms: a flat sword scar |
 | Gilded Blade | Bladesman, sub Gilded | `golem` | Two times the damage to iron golems with its sword | 10% less speed | Arms: gold dust on the arm |
 

@@ -142,7 +142,7 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Player Hate | Maddened | `spotted` | It targets the nearest player before other mobs, in 24 blocks | 10% more damage taken | Head: white, mad eyes |
 | Blind Fury | Maddened | `crowd` | It attacks 20% faster | 10% less maximum health | Head: red, bulging eyes |
-| Mad Squeal | Maddened | `alone` | When something hurts it, it calls the zoglins in 24 blocks | Players hear it from two times farther | Head: a wide, screaming snout |
+| Mad Squeal | Maddened | `alone` | When something hurts it, it calls the zoglins in 24 blocks | Players hear it from two times farther | Head: white foam at a wide-open snout |
 | Berserk Rot | Maddened | `critical` | 30% more damage while its health is under half | 10% less maximum health | Body: red, open wounds |
 | Creeper Hunter | Maddened | `explosion` | It also attacks creepers, and creepers run from it | 10% less maximum health | Head: scorched, black ears |
 | Rabid Bite | Maddened, sub Gorer | `melee` | Its hits give Weakness for 3 seconds | 10% less damage | Head: a foaming mouth |

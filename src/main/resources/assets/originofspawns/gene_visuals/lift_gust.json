@@ -5,14 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/lift_gust_0.png",
-				"tint": "#F0ECFF"
+				"tint": "#FFFFFF"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/lift_gust_1.png",
-				"tint": "#4A5AA8"
+				"tint": "#D8D0FF"
 			}
 		}
 	]

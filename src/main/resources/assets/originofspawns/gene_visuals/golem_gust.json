@@ -5,7 +5,15 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/golem_gust_0.png",
-				"tint": "#6A6A70"
+				"tint": "#8A7A6A"
+			},
+			"target": "wind"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/golem_gust_1.png",
+				"tint": "#A8501E"
 			},
 			"target": "wind"
 		}

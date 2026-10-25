@@ -5,7 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/eye_of_storm_0.png",
-				"tint": "#141428"
+				"tint": "#06060E"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/eye_of_storm_1.png",
+				"tint": "#D8D4F8"
 			}
 		}
 	]

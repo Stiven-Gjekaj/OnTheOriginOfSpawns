@@ -5,14 +5,21 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/choke_wind_0.png",
-				"tint": "#B0B0BC"
+				"tint": "#6A6A78"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/choke_wind_1.png",
-				"tint": "#1A1A22"
+				"tint": "#B8B8C4"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/choke_wind_2.png",
+				"tint": "#08080C"
 			}
 		}
 	]

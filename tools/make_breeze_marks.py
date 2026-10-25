@@ -21,9 +21,10 @@ The gene models use the bones head, rod_1, rod_2, rod_3, and body.
 
 Pixel plan for the Gusters.
 - Hard Gust has a wide, open mouth: dark, with a pale inside.
-- Lift Gust has pale, curled rods: pale rods with a curl at the top.
+- Lift Gust has pale, curled rods: a pale curl winds round the end of each
+  rod.
 - Shield Gust has a sharp, blue brow.
-- Golem Gust has gray, heavy wind.
+- Golem Gust has gray, heavy wind: a warm iron gray with rust spots.
 - Disarm Gust has narrow, white eyes: white slits beside the eyes.
 - Wide Gust: wide, spread wind, the gene model wide_gust_wind.
 
@@ -47,7 +48,7 @@ Pixel plan for the Whirlers.
 - Rapid Wind has fast, thin streaks: thin, mint lines in the wind.
 - Twin Charge: two small mouths, the gene model twin_charge_mouths.
 - Spin Up has rods with a dark blue spiral.
-- True Aim has a blue mark between the eyes.
+- True Aim has a thin, blue line down to the place between the eyes.
 - Fast Charge has a pointed tip of wind: the bottom of the wind is gold.
 - Eye of Storm has a dark ring round the eyes.
 
@@ -140,31 +141,34 @@ def rod_tips(mark, rows=(5, 6, 7)):
 
 def hard_gust():
     # A wide, open mouth: the low face is dark navy, so the open mouth has a
-    # white rim round a black inside, on rows 5 to 7, on the front of the
-    # bottom of the head, and its corners go round onto the sides.
+    # white rim round a black inside. It is wide and tall, on rows 4 to 7 of
+    # the face, on the front of the bottom of the head, and its corners go
+    # round onto the sides.
     rim = Mark("#F4F4FF")
     dark = Mark("#06060E")
     for c in range(1, 7):
-        for r in (5, 6, 7):
-            (dark if 2 <= c <= 5 and r >= 6 else rim).put(face(c, r))
-    dark.put([at(HEAD, "bottom", c, r) for c in range(2, 6) for r in (0, 1, 2)])
-    rim.put([at(HEAD, "bottom", c, 3) for c in range(1, 7)] + [at(HEAD, "bottom", c, r) for c in (1, 6)
-                                                                for r in (0, 1, 2)])
+        for r in (4, 5, 6, 7):
+            (dark if 2 <= c <= 5 and r >= 5 else rim).put(face(c, r))
+    dark.put([at(HEAD, "bottom", c, r) for c in range(2, 6) for r in (0, 1, 2, 3)])
+    rim.put([at(HEAD, "bottom", c, 4) for c in range(1, 7)] + [at(HEAD, "bottom", c, r) for c in (1, 6)
+                                                                for r in (0, 1, 2, 3)])
     eye_sides(rim, rows=(7,), cols=(5, 6, 7))
     return [rim, dark]
 
 
 def lift_gust():
-    # Pale, curled rods: the rods are a pale lavender white, with a curl of
-    # dark blue at their tips.
-    pale = Mark("#F0ECFF")
-    curl = Mark("#4A5AA8")
-    for x, y, f, col, row in pixels(ROD, ALL):
-        if f in SIDES and row >= 5 and (col + row + SIDES.index(f)) % 3 == 0:
-            curl.put((x, y))
-        else:
+    # Pale, curled rods: the rods keep their color, and a pale curl winds
+    # round the high end of each rod, white with a soft lavender edge.
+    pale = Mark("#FFFFFF")
+    soft = Mark("#D8D0FF")
+    for x, y, f, col, row in pixels(ROD, SIDES, rows=range(4, 8)):
+        step = (row + col + 2 * SIDES.index(f)) % 4
+        if step in (0, 1):
             pale.put((x, y))
-    return [pale, curl]
+        elif step == 2:
+            soft.put((x, y))
+    put(pale, ROD, ("bottom",))
+    return [pale, soft]
 
 
 def shield_gust():
@@ -177,9 +181,12 @@ def shield_gust():
 
 
 def golem_gust():
-    gray = wind_mark("#6A6A70")
-    gray.put([(x, y) for x, y, row in wind_pixels()])
-    return [gray]
+    # Gray, heavy wind: a warm iron gray wind, with rust spots.
+    iron = wind_mark("#8A7A6A")
+    rust = wind_mark("#A8501E")
+    for x, y, row in wind_pixels():
+        (rust if noise100(x, y, 4401) < 18 else iron).put((x, y))
+    return [iron, rust]
 
 
 def disarm_gust():
@@ -243,17 +250,18 @@ def gale_guard():
 
 
 def blast_calm():
-    # A calm, closed mouth: a soft, pale line that curves up a little at its
-    # ends, under the eyes and on the front of the bottom of the head, and
-    # soft pink cheeks beside it.
-    line = Mark("#E8E4FF")
-    cheek = Mark("#E8A8C8")
-    put_face(line, [(2, 7), (3, 7), (4, 7), (5, 7), (1, 6), (6, 6)])
-    line.put([at(HEAD, "bottom", c, r) for c in range(1, 7) for r in (0,)])
-    line.put([at(HEAD, "bottom", c, 1) for c in (1, 6)])
-    put_face(cheek, [(1, 5), (6, 5), (0, 5), (7, 5), (0, 7), (7, 7)])
-    eye_sides(cheek, rows=(5, 7), cols=(5, 6, 7))
-    return [line, cheek]
+    # A calm, closed mouth: pale pink lips across the low face, on rows 5 and
+    # 7, with a deep red seam between them on row 6. The lips go on across
+    # the front of the bottom of the head and round the low corners onto the
+    # sides.
+    lip = Mark("#F4C8DC")
+    seam = Mark("#8A2040")
+    put_face(lip, [(c, 5) for c in range(1, 7)] + [(c, 7) for c in range(1, 7)])
+    put_face(seam, [(c, 6) for c in range(1, 7)])
+    lip.put([at(HEAD, "bottom", c, r) for c in range(1, 7) for r in (0, 2)])
+    seam.put([at(HEAD, "bottom", c, 1) for c in range(1, 7)])
+    eye_sides(lip, rows=(7,), cols=(4, 5, 6, 7))
+    return [lip, seam]
 
 
 def fire_shear():
@@ -292,11 +300,12 @@ def sky_hop():
 
 
 def sky_hop_model():
-    # Long, thin rods: a thin, pale end grows from the end of each rod. On
-    # each rod bone, the rod is from x -1 to 1, y 0 to 8, and z -3 to -1.
+    # Long, thin rods: a long, thin, bright end grows from the end of each
+    # rod, cyan white with a strong blue tip. On each rod bone, the rod is
+    # from x -1 to 1, y 0 to 8, and z -3 to -1.
     im = model_image()
-    paint_box(im, 0, 0, 1, 6, 1, lambda f, x, y: "#E8E4FF" if y < 4 else "#9A90D8")
-    parts = [{"bone": bone, "uv": [0, 0], "from": [-0.5, 8, -2.5], "size": [1, 6, 1], "inflate": 0.0}
+    paint_box(im, 0, 0, 1, 9, 1, lambda f, x, y: "#E0FFFF" if y < 5 else "#2A60FF")
+    parts = [{"bone": bone, "uv": [0, 0], "from": [-0.5, 8, -2.5], "size": [1, 9, 1], "inflate": 0.1}
              for bone in RODS]
     save_model("sky_hop_rods", im, parts)
 
@@ -359,12 +368,21 @@ def twin_charge():
 
 
 def twin_charge_model():
-    # Two small mouths: two small, round, dark mouths with a blue rim on the
-    # low face, under the eyes. On the bone head, the face is at z -4, and
-    # the low row is from y -1 to 0.
+    # Two small mouths: two small mouths, apart, between the eyes on
+    # the low face, that stick out a little. Each has a dark edge round a
+    # cyan front with a black hole in its low middle. On the bone head, the
+    # face is at z -4, the low row is from y -1 to 0, and the eyes are at x
+    # -4 and 3.
     im = model_image()
-    paint_box(im, 0, 0, 2, 2, 1, lambda f, x, y: "#0A0A1A" if f == "front" and (x, y) == (1, 1) else "#60E0FF")
-    parts = [{"bone": "head", "uv": [0, 0], "from": [x, -1.5, -4.8], "size": [2, 2, 1], "inflate": 0.0}
+
+    def mouth(f, x, y):
+        if f != "front":
+            return "#0A0A1A"
+        if (x, y) == (1, 1):
+            return "#000000"
+        return "#60E0FF"
+    paint_box(im, 0, 0, 2, 2, 2, mouth)
+    parts = [{"bone": "head", "uv": [0, 0], "from": [x, -2, -5.5], "size": [2, 2, 2], "inflate": -0.1}
              for x in (-3, 1)]
     save_model("twin_charge_mouths", im, parts)
 
@@ -378,12 +396,17 @@ def spin_up():
 
 
 def true_aim():
-    # A blue mark between the eyes: a bright blue line down the middle of
-    # the face, with a small diamond at its end, between the eyes.
+    # A blue mark between the eyes: a thin, bright blue line, one pixel wide,
+    # runs from the back of the top of the head, over the front edge, and
+    # down the middle of the face to the low row between the eyes, with a
+    # small, pale blue point on each side at its low end.
     blue = Mark("#2A8AFF")
-    put_face(blue, [(3, r) for r in range(0, 5)] + [(4, r) for r in range(0, 5)] +
-             [(2, 5), (3, 5), (4, 5), (5, 5), (3, 6), (4, 6)])
-    return [blue]
+    pale = Mark("#B8E0FF")
+    put_face(blue, [(4, r) for r in range(0, 8)])
+    put_face(pale, [(3, 6), (5, 6)])
+    put(blue, HEAD, ("top",), cols=(4,))
+    put(blue, HEAD, ("back",), cols=(3,), rows=(0, 1, 2))
+    return [blue, pale]
 
 
 def fast_charge():
@@ -397,10 +420,17 @@ def fast_charge():
 
 
 def eye_of_storm():
-    ring = Mark("#141428")
-    put_face(ring, [(c, r) for c in (0, 1, 2, 5, 6, 7) for r in (5, 7)] + [(2, 6), (5, 6)])
+    # A dark ring round the eyes: a black ring round each eye, with a pale
+    # outer edge so it shows on the dark low face, on the front and round the
+    # corners onto the sides.
+    ring = Mark("#06060E")
+    edge = Mark("#D8D4F8")
+    put_face(ring, [(c, r) for c in (0, 1, 2) for r in (5, 7)] + [(2, 6)] +
+             [(c, r) for c in (5, 6, 7) for r in (5, 7)] + [(5, 6)])
+    put_face(edge, [(c, 4) for c in (0, 1, 2, 3, 4, 5, 6, 7)] + [(3, 5), (3, 6), (3, 7), (4, 5), (4, 6), (4, 7)])
     eye_sides(ring, rows=(5, 6, 7), cols=(5, 6, 7))
-    return [ring]
+    eye_sides(edge, rows=(4,), cols=(4, 5, 6, 7))
+    return [ring, edge]
 
 
 # The Tempests.
@@ -435,16 +465,20 @@ def dizzy_wind():
 
 
 def choke_wind():
-    # A gray, tight mouth: a short, tight, pale gray mouth on rows 6 and 7,
-    # pinched at both ends by dark lines, and a gray, tight jaw on the front
-    # of the bottom of the head and the low corners of the sides.
-    gray = Mark("#B0B0BC")
-    pinch = Mark("#1A1A22")
-    put_face(gray, [(3, 6), (4, 6), (3, 7), (4, 7)])
-    put_face(pinch, [(2, 6), (5, 6), (2, 7), (5, 7), (1, 7), (6, 7)])
-    gray.put([at(HEAD, "bottom", c, r) for c in range(1, 7) for r in (0, 1, 2)])
-    eye_sides(gray, rows=(7,), cols=(4, 5, 6, 7))
-    return [gray, pinch]
+    # A gray, tight mouth: a large, gray mouth across rows 5 to 7, with a
+    # pale gray rim over it and black pinched corners, a gray jaw on the
+    # front of the bottom of the head, and gray at the low corners of the
+    # sides.
+    gray = Mark("#6A6A78")
+    rim = Mark("#B8B8C4")
+    pinch = Mark("#08080C")
+    put_face(rim, [(c, 4) for c in range(1, 7)])
+    put_face(gray, [(c, r) for c in range(2, 6) for r in (5, 6, 7)])
+    put_face(pinch, [(1, 5), (6, 5), (1, 6), (6, 6), (1, 7), (6, 7)])
+    gray.put([at(HEAD, "bottom", c, r) for c in range(1, 7) for r in (0, 1, 2, 3)])
+    eye_sides(gray, rows=(7,), cols=(3, 4, 5, 6, 7))
+    eye_sides(rim, rows=(6,), cols=(3, 4, 5))
+    return [gray, rim, pinch]
 
 
 def thunder_call():

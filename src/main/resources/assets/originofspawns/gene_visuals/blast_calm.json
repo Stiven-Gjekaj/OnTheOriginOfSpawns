@@ -5,14 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/blast_calm_0.png",
-				"tint": "#E8E4FF"
+				"tint": "#F4C8DC"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/blast_calm_1.png",
-				"tint": "#E8A8C8"
+				"tint": "#8A2040"
 			}
 		}
 	]

@@ -234,7 +234,10 @@ public sealed interface GeneEffect {
 			Map.entry("fireball_shot", FireballShot.CODEC),
 			Map.entry("blast_heal", BlastHeal.CODEC),
 			Map.entry("fire_trail", FireTrail.CODEC),
-			Map.entry("lava_pool", LavaPool.CODEC)
+			Map.entry("lava_pool", LavaPool.CODEC),
+			Map.entry("anger_range", AngerRange.CODEC),
+			Map.entry("anger_time", AngerTime.CODEC),
+			Map.entry("anger_after_death", AngerAfterDeath.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3813,6 +3816,51 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "lava_pool";
+		}
+	}
+
+	/**
+	 * When something hurts the mob, its call for help reaches this many times as far. It changes the vanilla call of
+	 * a mob that calls its kin, such as the zombified piglin. More than one effect multiplies together.
+	 */
+	record AngerRange(float multiplier) implements GeneEffect {
+		public static final MapCodec<AngerRange> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 8.0F).fieldOf("multiplier").forGetter(AngerRange::multiplier)
+		).apply(instance, AngerRange::new));
+
+		@Override
+		public String type() {
+			return "anger_range";
+		}
+	}
+
+	/**
+	 * Multiplies the time that a zombified piglin stays angry. Vanilla is 20 to 39 seconds. More than one effect
+	 * multiplies together.
+	 */
+	record AngerTime(float multiplier) implements GeneEffect {
+		public static final MapCodec<AngerTime> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 100.0F).fieldOf("multiplier").forGetter(AngerTime::multiplier)
+		).apply(instance, AngerTime::new));
+
+		@Override
+		public String type() {
+			return "anger_time";
+		}
+	}
+
+	/**
+	 * When a player dies, a zombified piglin that is angry at the player stays angry at the player for this many
+	 * seconds. Vanilla forgives a dead player.
+	 */
+	record AngerAfterDeath(float seconds) implements GeneEffect {
+		public static final MapCodec<AngerAfterDeath> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 3600.0F).optionalFieldOf("seconds", 300.0F).forGetter(AngerAfterDeath::seconds)
+		).apply(instance, AngerAfterDeath::new));
+
+		@Override
+		public String type() {
+			return "anger_after_death";
 		}
 	}
 }

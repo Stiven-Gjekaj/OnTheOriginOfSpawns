@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombified_piglin",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "anger_range", "multiplier": 2 }],
+	"mutation_rate": 0
+}

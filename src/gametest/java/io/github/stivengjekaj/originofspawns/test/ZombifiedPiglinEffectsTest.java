@@ -2,19 +2,27 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.definition.Gene;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.mixin.ZombifiedPiglinAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 import io.github.stivengjekaj.originofspawns.registry.ModRegistries;
+
+import java.util.List;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.zombie.ZombifiedPiglin;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -66,6 +74,66 @@ public class ZombifiedPiglinEffectsTest {
 		helper.assertValueEqual(plainWeapons, 200, "each zombified piglin keeps its gold weapon");
 		helper.assertValueEqual(enchanted, 0, "no weapon gets a random enchantment");
 		helper.assertValueEqual(babies, 0, "no zombified piglin spawns as a baby in a vanilla way");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void vengefulAngerReachesTwoTimesAsFar(GameTestHelper helper) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 1));
+		ZombifiedPiglin other = piglinWith(helper, new BlockPos(6, 1, 4));
+		// The test makes the follow range 2 blocks, so the call stays in the test area. The other piglin is 5 blocks
+		// away: out of the vanilla call, and in the call that reaches two times as far.
+		for (String gene : new String[] {null, "test_vengeful"}) {
+			ZombifiedPiglin caller = gene == null ? piglinWith(helper, new BlockPos(1, 1, 4))
+					: piglinWith(helper, new BlockPos(1, 1, 4), gene);
+			caller.getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(2.0);
+			caller.setLastHurtByMob(pig);
+			new HurtByTargetGoal(caller).setAlertOthers().start();
+			helper.assertValueEqual(other.getTarget() == pig, gene != null, "the hurt call reaches the other piglin");
+			other.setTarget(null);
+			caller.setTarget(pig);
+			((ZombifiedPiglinAccessor) caller).originofspawns$alertOthers();
+			helper.assertValueEqual(other.getTarget() == pig, gene != null, "the target call reaches the other piglin");
+			other.setTarget(null);
+			caller.discard();
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void bloodFeudMakesTheAngerLastTwoTimesAsLong(GameTestHelper helper) {
+		ZombifiedPiglin plain = piglinWith(helper, new BlockPos(1, 1, 1));
+		ZombifiedPiglin feud = piglinWith(helper, new BlockPos(5, 1, 5), "test_blood_feud");
+		long now = helper.getLevel().getGameTime();
+		// The vanilla anger lasts 20 to 39 seconds.
+		for (int i = 0; i < 20; i++) {
+			plain.startPersistentAngerTimer();
+			feud.startPersistentAngerTimer();
+			long plainTicks = plain.getPersistentAngerEndTime() - now;
+			long feudTicks = feud.getPersistentAngerEndTime() - now;
+			helper.assertTrue(plainTicks >= 400 && plainTicks <= 780, "the vanilla anger time, not " + plainTicks);
+			helper.assertTrue(feudTicks >= 800 && feudTicks <= 1560, "two times the anger time, not " + feudTicks);
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void longMemoryStaysAngryAtAPlayerThatDied(GameTestHelper helper) {
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		ZombifiedPiglin plain = piglinWith(helper, new BlockPos(1, 1, 1));
+		ZombifiedPiglin memory = piglinWith(helper, new BlockPos(5, 1, 5), "test_long_memory");
+		for (ZombifiedPiglin piglin : List.of(plain, memory)) {
+			piglin.setPersistentAngerTarget(EntityReference.of(player));
+			piglin.setTimeToRemainAngry(100L);
+			piglin.setTarget(player);
+			piglin.playerDied(helper.getLevel(), player);
+		}
+		helper.assertFalse(plain.isAngry(), "a plain zombified piglin forgives a dead player");
+		helper.assertTrue(memory.isAngry(), "Long Memory stays angry");
+		helper.assertTrue(memory.getPersistentAngerTarget().matches(player), "it stays angry at the same player");
+		helper.assertValueEqual(memory.getPersistentAngerEndTime() - helper.getLevel().getGameTime(), 6000L,
+				"it stays angry for 5 minutes");
+		helper.assertTrue(memory.getTarget() == null, "it does not chase the dead body");
 		helper.succeed();
 	}
 

@@ -26,10 +26,11 @@
 		"EvokerSummonSpellGoalMixin",
 		"FallingBlockEntityAccessor",
 		"FallingBlockEntityMixin",
-		"FireworkRocketEntityAccessor",
 		"FireBlockMixin",
+		"FireworkRocketEntityAccessor",
 		"FireworkRocketEntityMixin",
 		"FlowingFluidMixin",
+		"HurtByTargetGoalMixin",
 		"LavaFluidMixin",
 		"LeapAtTargetGoalMixin",
 		"LivingEntityMixin",
@@ -53,13 +54,16 @@
 		"SpiderAttackGoalMixin",
 		"SpiderMixin",
 		"SpiderTargetGoalMixin",
+		"TargetGoalAccessor",
 		"ThrownEnderpearlMixin",
 		"ThrownLingeringPotionMixin",
 		"ThrownSplashPotionMixin",
 		"VexAccessor",
 		"WitchAccessor",
 		"WitchMixin",
-		"ZombieMixin"
+		"ZombieMixin",
+		"ZombifiedPiglinAccessor",
+		"ZombifiedPiglinMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

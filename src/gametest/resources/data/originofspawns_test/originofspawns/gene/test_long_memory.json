@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombified_piglin",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "anger_after_death", "seconds": 300 }],
+	"mutation_rate": 0
+}

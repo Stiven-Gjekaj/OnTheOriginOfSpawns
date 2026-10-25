@@ -440,15 +440,25 @@ def hot_blade():
 
 
 def soul_brave():
-    # Blue, calm eyes: only the eyes are blue, a soft, pale blue, with a
-    # brighter point.
+    # Blue, calm eyes: the eyes are a soft, pale blue with a brighter point,
+    # a small, soft blue glow is under each eye, and a thin, pale blue line
+    # is over each eye. The line goes round the front edge onto the sides of
+    # the head, so that the eyes read from the side.
     blue = Mark("#8ACCE8")
     pale = Mark("#C8ECFA")
+    glow = Mark("#9AB8C8")
+    line = Mark("#B0DCEE")
     for col, row in EYES:
         side = 1 if col < 5 else -1
         pale.put(face(col, row))
         blue.put(face(col + side, row))
-    return [blue, pale]
+        glow.put([face(col, row + 1), face(col + side, row + 1)])
+        line.put([face(c, row - 1) for c in (col - side, col)])
+    # On the right side of the head, column 7 is at the front edge. On the
+    # left side, column 0 is.
+    line.put([at(HEAD, "right", c, 2) for c in (5, 6, 7)] + [at(HEAD, "left", c, 2) for c in (0, 1, 2)])
+    glow.put([at(HEAD, "right", c, 3) for c in (6, 7)] + [at(HEAD, "left", c, 3) for c in (0, 1)])
+    return [blue, pale, glow, line]
 
 
 def blaze_bolt():

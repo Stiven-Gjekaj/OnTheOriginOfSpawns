@@ -279,7 +279,8 @@ public sealed interface GeneEffect {
 			Map.entry("dive", Dive.CODEC),
 			Map.entry("flee", Flee.CODEC),
 			Map.entry("snowball_damage_taken", SnowballDamageTaken.CODEC),
-			Map.entry("boil_off", BoilOff.CODEC)
+			Map.entry("boil_off", BoilOff.CODEC),
+			Map.entry("push_on_hurt", PushOnHurt.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4618,6 +4619,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "boil_off";
+		}
+	}
+
+	/**
+	 * When something hurts the mob, it pushes the other mobs and the players in the radius away from it. The push has
+	 * this strength in blocks per tick away from the mob, and a part of it goes up.
+	 */
+	record PushOnHurt(float radius, float strength) implements GeneEffect {
+		public static final MapCodec<PushOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 3.0F).forGetter(PushOnHurt::radius),
+				Codec.floatRange(0.1F, 5.0F).optionalFieldOf("strength", 1.2F).forGetter(PushOnHurt::strength)
+		).apply(instance, PushOnHurt::new));
+
+		@Override
+		public String type() {
+			return "push_on_hurt";
 		}
 	}
 }

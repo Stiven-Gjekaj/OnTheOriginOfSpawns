@@ -359,6 +359,18 @@ public class BlazeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void steamBurstPushesTheMobsNearAwayWhenItIsHurt(GameTestHelper helper) {
+		Blaze blaze = blazeWith(helper, new BlockPos(3, 1, 3), "test_steam_burst");
+		Pig near = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 3));
+		Pig far = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 7));
+		GeneCombat.onHurt(blaze, helper.getLevel().damageSources().mobAttack(near));
+		helper.assertTrue(near.getDeltaMovement().x > 1.0, "the near pig flies away from the blaze");
+		helper.assertTrue(near.getDeltaMovement().y > 0.0, "the push goes up a little");
+		helper.assertValueEqual(far.getDeltaMovement().horizontalDistance(), 0.0, "the far pig does not move");
+		helper.succeed();
+	}
+
 	static void hitWithSnowball(GameTestHelper helper, Blaze blaze) {
 		var snowball = new net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball(helper.getLevel(),
 				blaze.getX(), blaze.getY() + 3.0, blaze.getZ(), new net.minecraft.world.item.ItemStack(

@@ -620,6 +620,24 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Pushes the living entities in the radius of the mob away from it. Spectators and players in creative mode do
+	 * not move.
+	 */
+	public static void pushAway(Mob mob, GeneEffect.PushOnHurt push) {
+		for (LivingEntity other : mob.level().getEntitiesOfClass(LivingEntity.class, mob.getBoundingBox().inflate(push.radius()),
+				other -> other != mob && other.isAlive() && other.distanceTo(mob) <= push.radius()
+						&& !(other instanceof Player player && (player.isSpectator() || player.isCreative())))) {
+			net.minecraft.world.phys.Vec3 away = other.position().subtract(mob.position()).multiply(1.0, 0.0, 1.0);
+			if (away.lengthSqr() < 1.0E-6) {
+				away = new net.minecraft.world.phys.Vec3(1.0, 0.0, 0.0);
+			}
+			other.setDeltaMovement(other.getDeltaMovement().add(away.normalize().scale(push.strength()))
+					.add(0.0, push.strength() * 0.4, 0.0));
+			other.needsSync = true;
+		}
+	}
+
+	/**
 	 * The seconds after a dive in which the melee hits of the mob do more damage.
 	 */
 	private static final float DIVE_SECONDS = 3.0F;
@@ -1076,6 +1094,8 @@ public final class GeneCombat {
 						&& self.damageTypes().map(source::is).orElse(true)) {
 					wounded.addEffect(new MobEffectInstance(self.effect(), Math.round(self.seconds() * 20.0F),
 							self.amplifier()), wounded);
+				} else if (effect instanceof GeneEffect.PushOnHurt push) {
+					pushAway(wounded, push);
 				}
 			}
 		}

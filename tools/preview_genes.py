@@ -63,6 +63,7 @@ ENDERMAN_PATH = "assets/minecraft/textures/entity/enderman/enderman.png"
 ENDERMAN_EYES_PATH = "assets/minecraft/textures/entity/enderman/enderman_eyes.png"
 ENDERMITE_PATH = "assets/minecraft/textures/entity/endermite/endermite.png"
 SLIME_PATH = "assets/minecraft/textures/entity/slime/slime.png"
+MAGMA_CUBE_PATH = "assets/minecraft/textures/entity/slime/magmacube.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -437,6 +438,24 @@ SLIME_EXTRA = {
               ("All 6 + Giants", ["great_blob", "mother_gel"], True, {})],
 }
 
+# The families of the magma cube, from design/species/magma_cube.md.
+MAGMA_CUBE_FAMILIES = {
+    "infernos": ["flame_touch", "ember_trail", "heat_wave", "spit_fire", "soul_burn", "magma_blood"],
+    "ironclads": ["basalt_skin", "obsidian_core", "iron_crust", "heavy_cube", "crust", "shield_slam"],
+    "erupters": ["blast_core", "lava_pool", "ash_cloud", "split_burst", "scatter_shot", "molten_core"],
+    "lavaborn": ["lava_swim", "lava_heal", "steam_body", "lava_leap", "fire_drink", "blaze_heart"],
+    "springers": ["sky_jump", "far_jump", "ground_pound", "quick_jump", "rebound", "iron_pounce"],
+}
+
+MAGMA_CUBE_EXTRA = {
+    "infernos": [("All 6 + Ironclads", ["basalt_skin", "shield_slam"], True, {})],
+    "ironclads": [("All 6 + Erupters", ["blast_core", "ash_cloud"], True, {})],
+    "erupters": [("All 6 + Lavaborn", ["steam_body", "lava_leap"], True, {})],
+    "lavaborn": [("All 6 + Springers", ["sky_jump", "rebound"], True, {})],
+    "springers": [("All 6 at night", [], True, {"light": 0.18}),
+                  ("All 6 + Infernos", ["flame_touch", "spit_fire"], True, {})],
+}
+
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
     "rushers": [("All 6 + Skulkers", ["leafskin", "patient"], True, {})],
@@ -646,6 +665,24 @@ SLIME_CUBES = [
 ]
 SLIME_GEL = [("cube", (0, 0), (-4, 16, -4), (8, 8, 8), False)]
 SLIME_SIZES = {"slime": 4, "slime_2": 2, "slime_1": 1}
+
+# The magma cube, from MagmaCubeModel: eight thin layers of 8x1x8, cube0 (the
+# top) to cube7 (the bottom), and a core of 4x4x4, inside_cube. Layers 0 to 3
+# are at uv (0, 9i), and layers 4 to 7 at uv (32, 9i - 36). When the cube
+# hops, the game moves layer i by -(4 - i) * squish * 1.7 pixels. The key
+# "magma_cube_apart" draws it at size 4 with a squish of 0.6, so that the
+# layers are apart.
+MAGMA_CUBE_CUBES = [(f"cube{i}", (0, 9 * i) if i < 4 else (32, 9 * i - 36), (-4, 16 + i, -4), (8, 1, 8), False)
+                    for i in range(8)] + [("inside_cube", (24, 40), (-2, 18, -2), (4, 4, 4), False)]
+MAGMA_CUBE_SIZES = {"magma_cube": 4, "magma_cube_2": 2, "magma_cube_1": 1, "magma_cube_apart": 4}
+MAGMA_CUBE_SQUISH = 0.6
+
+
+def magma_cube_pivots(squish):
+    """Return the pivots of the magma cube, with its layers moved apart by the squish."""
+    pivots = {f"cube{i}": (0, -(4 - i) * squish * 1.7, 0) for i in range(8)}
+    pivots["inside_cube"] = (0, 0, 0)
+    return pivots
 
 
 def grow(cube, k):
@@ -1204,6 +1241,7 @@ SPECIES = {
     "enderman": (ENDERMAN_PATH, None, ENDERMAN_FAMILIES, ENDERMAN_EXTRA, []),
     "endermite": (ENDERMITE_PATH, None, ENDERMITE_FAMILIES, ENDERMITE_EXTRA, []),
     "slime": (SLIME_PATH, None, SLIME_FAMILIES, SLIME_EXTRA, []),
+    "magma_cube": (MAGMA_CUBE_PATH, None, MAGMA_CUBE_FAMILIES, MAGMA_CUBE_EXTRA, []),
 }
 
 
@@ -1225,6 +1263,7 @@ def set_mob(species):
                     else ENDERMAN_CUBES if species in ("enderman", "enderman_carrying")
                     else ENDERMITE_CUBES if species == "endermite"
                     else SLIME_CUBES if species in SLIME_SIZES
+                    else MAGMA_CUBE_CUBES if species in MAGMA_CUBE_SIZES
                     else VINDICATOR_ATTACK_CUBES if species == "vindicator_attacking"
                     else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
     MOB["pivots"] = (PARCHED_PIVOTS if species == "parched" else CREEPER_PIVOTS if species == "creeper"
@@ -1237,6 +1276,8 @@ def set_mob(species):
                      else ENDERMAN_CARRY_PIVOTS if species == "enderman_carrying"
                      else ENDERMITE_PIVOTS if species == "endermite"
                      else SLIME_PIVOTS if species in SLIME_SIZES
+                     else magma_cube_pivots(MAGMA_CUBE_SQUISH if species == "magma_cube_apart" else 0)
+                     if species in MAGMA_CUBE_SIZES
                      else SKELETON_PIVOTS if skeleton else PIVOTS)
     # With its arms crossed, the vindicator or the evoker hides the arms
     # right_arm and left_arm, and their gene models.
@@ -1253,10 +1294,11 @@ def set_mob(species):
                                       else (17, -40, 34, 36) if species == "endermite" else (11, 11, 22, 37))
     # The endermite is small, so the previews draw it 3 times larger. The slime
     # is drawn at its size.
-    MOB["grow"] = 3 if species == "endermite" else SLIME_SIZES.get(species, 1)
+    cube = species in SLIME_SIZES or species in MAGMA_CUBE_SIZES
+    MOB["grow"] = 3 if species == "endermite" else {**SLIME_SIZES, **MAGMA_CUBE_SIZES}.get(species, 1)
     MOB["gel"] = SLIME_GEL if species in SLIME_SIZES else []
-    low = spider or species == "endermite" or species in SLIME_SIZES
-    if species in SLIME_SIZES:
+    low = spider or species == "endermite" or cube
+    if cube:
         # A frame round the cube, which is 8 pixels at size 1 and stands from
         # y 16 to 24. In the views of the sheets, it fills x -5.6 to 5.6 and
         # y 8 to 24.4, times the size.
@@ -1268,7 +1310,10 @@ def set_mob(species):
                            # In the views of the close-ups, the slime fills x -5.6 to 5.6 and
                            # y 3.3 to 24.4, times the size.
                            else ((12 * MOB["grow"] + 4, 22 * MOB["grow"] + 8), (0, 13.8 * MOB["grow"] + 1))
-                           if species in SLIME_SIZES
+                           if cube and species != "magma_cube_apart"
+                           # Apart, the layers of the magma cube fill y -0.1 to 27.1, times the size.
+                           else ((12 * MOB["grow"] + 4, 28 * MOB["grow"] + 8), (0, 13.5 * MOB["grow"] + 1))
+                           if cube
                            else ((26, 40), (0, 5)))
     MOB["eyes"] = (find_zombie_texture(SPIDER_EYES_PATH) if spider
                    else find_zombie_texture(ENDERMAN_EYES_PATH) if enderman else None)

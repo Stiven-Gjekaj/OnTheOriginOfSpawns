@@ -646,6 +646,16 @@ SLIME_CLOSEUPS = slime_closeup(4)
 SLIME_2_CLOSEUPS = slime_closeup(2)
 SLIME_1_CLOSEUPS = slime_closeup(1)
 
+# The close-ups of the magma cube, at sizes 4, 2, and 1, and at size 4 with
+# its layers apart.
+MAGMA_CUBE = pg.MAGMA_CUBE_FAMILIES
+
+
+def magma_cube_closeup(key, title):
+    # One close-up: all 6 genes of each family, in one row each.
+    rows = [(f"{family.capitalize()}: all 6", genes, False) for family, genes in MAGMA_CUBE.items()]
+    return {key + "_closeup": (title, rows, SPIDER_VIEWS)}
+
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
     "husk": (pg.HUSK_PATH, pg.HUSK_BABY_PATH, HUSK_CLOSEUPS),
@@ -670,6 +680,11 @@ SPECIES = {
     "slime": (pg.SLIME_PATH, None, SLIME_CLOSEUPS),
     "slime_2": (pg.SLIME_PATH, None, SLIME_2_CLOSEUPS),
     "slime_1": (pg.SLIME_PATH, None, SLIME_1_CLOSEUPS),
+    "magma_cube": (pg.MAGMA_CUBE_PATH, None, magma_cube_closeup("magma_cube_4", "Magma cube at size 4")),
+    "magma_cube_2": (pg.MAGMA_CUBE_PATH, None, magma_cube_closeup("magma_cube_2", "Magma cube at size 2")),
+    "magma_cube_1": (pg.MAGMA_CUBE_PATH, None, magma_cube_closeup("magma_cube_1", "Magma cube at size 1")),
+    "magma_cube_apart": (pg.MAGMA_CUBE_PATH, None,
+                         magma_cube_closeup("magma_cube_apart", "Magma cube with its layers apart")),
 }
 
 

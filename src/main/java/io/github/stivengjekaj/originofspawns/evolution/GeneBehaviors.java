@@ -1017,6 +1017,27 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the push of the blast of a wind charge on the entity, after the genes of the mob that shot the charge.
+	 * Other blasts do not change.
+	 *
+	 * @param source the direct source of the blast
+	 */
+	public static Vec3 windPush(Entity source, Entity pushed, Vec3 knockback) {
+		if (!(source instanceof net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.AbstractWindCharge charge)
+				|| !(GeneBlasts.shooter(charge) instanceof Mob mob)) {
+			return knockback;
+		}
+		double multiplier = 1.0;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.WindPush push
+					&& push.targets().map(targets -> targets.contains(pushed.getType().builtInRegistryHolder())).orElse(true)) {
+				multiplier *= push.multiplier();
+			}
+		}
+		return knockback.scale(multiplier);
+	}
+
+	/**
 	 * Shoots the ring of small fireballs of the mob, if the mob has a target and the cooldown is over.
 	 *
 	 * @return true if the mob shot the ring

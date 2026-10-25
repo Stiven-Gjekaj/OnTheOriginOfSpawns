@@ -280,7 +280,8 @@ public sealed interface GeneEffect {
 			Map.entry("flee", Flee.CODEC),
 			Map.entry("snowball_damage_taken", SnowballDamageTaken.CODEC),
 			Map.entry("boil_off", BoilOff.CODEC),
-			Map.entry("push_on_hurt", PushOnHurt.CODEC)
+			Map.entry("push_on_hurt", PushOnHurt.CODEC),
+			Map.entry("wind_push", WindPush.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4639,6 +4640,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "push_on_hurt";
+		}
+	}
+
+	/**
+	 * Multiplies the push of the blasts of the wind charges of the mob. With {@code targets}, only the push of the mobs
+	 * of the list changes. More than one effect multiplies together.
+	 */
+	record WindPush(float multiplier, Optional<HolderSet<EntityType<?>>> targets) implements GeneEffect {
+		public static final MapCodec<WindPush> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(WindPush::multiplier),
+				RegistryCodecs.holderSet(Registries.ENTITY_TYPE).optionalFieldOf("targets").forGetter(WindPush::targets)
+		).apply(instance, WindPush::new));
+
+		@Override
+		public String type() {
+			return "wind_push";
 		}
 	}
 }

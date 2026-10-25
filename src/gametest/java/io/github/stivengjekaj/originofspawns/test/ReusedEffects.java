@@ -258,6 +258,34 @@ final class ReusedEffects {
 		helper.succeedWhen(() -> helper.assertTrue(mob.getHealth() > start, "the mob heals out of combat"));
 	}
 
+	static void thorns(GameTestHelper helper, Maker maker) {
+		Mob mob = maker.at(helper, new BlockPos(4, 1, 4), "test_coral");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 1));
+		float health = pig.getHealth();
+		GeneCombat.onHurt(mob, helper.getLevel().damageSources().mobAttack(pig));
+		helper.assertValueEqual(pig.getHealth(), health - 1.0F, "a melee attacker takes 1 damage");
+	}
+
+	static void armorAttribute(GameTestHelper helper, Maker maker) {
+		Mob plain = maker.at(helper, new BlockPos(1, 1, 1));
+		Mob skin = maker.at(helper, new BlockPos(5, 1, 5), "test_basalt_skin");
+		// The game puts the attribute genes on a new mob when it rolls the genes. The test mob gets its genes direct.
+		GeneEffects.applyAttributes(skin, GeneEffects.sources(helper.getLevel().registryAccess(),
+				skin.getAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.GENES)));
+		helper.assertValueEqual(skin.getArmorValue(), plain.getArmorValue() + 4, "the gene adds 4 armor");
+	}
+
+	/**
+	 * Waits until the attribute when gene gives a wounded mob 6 more armor.
+	 */
+	static void armorWhenWounded(GameTestHelper helper, Maker maker) {
+		Mob plain = maker.at(helper, new BlockPos(1, 1, 1));
+		Mob crust = maker.at(helper, new BlockPos(5, 1, 5), "test_crust");
+		helper.onEachTick(() -> crust.setHealth(crust.getMaxHealth() * 0.3F));
+		helper.succeedWhen(() -> helper.assertValueEqual(crust.getArmorValue(), plain.getArmorValue() + 6,
+				"a wounded mob has 6 more armor"));
+	}
+
 	/**
 	 * Waits until the speed when gene of a wounded mob makes it 30% faster.
 	 */

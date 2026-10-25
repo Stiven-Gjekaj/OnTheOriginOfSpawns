@@ -228,6 +228,61 @@ public class HoglinEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void theReusedDamageEffectsWorkOnAHoglin(GameTestHelper helper) {
+		ReusedEffects.damageToGolems(helper, HoglinEffectsTest::hoglinWith);
+		ReusedEffects.damageTaken(helper, HoglinEffectsTest::hoglinWith);
+		ReusedEffects.thorns(helper, HoglinEffectsTest::hoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedGroupDamageWorksOnAHoglin(GameTestHelper helper) {
+		ReusedEffects.groupedAndAlone(helper, HoglinEffectsTest::hoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedRallyWorksOnAHoglin(GameTestHelper helper) {
+		ReusedEffects.rally(helper, HoglinEffectsTest::hoglinWith, "test_rally_cry");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedCallsWorkOnAHoglin(GameTestHelper helper) {
+		ReusedEffects.callOnHurt(helper, HoglinEffectsTest::hoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedCallOnSightWorksOnAHoglin(GameTestHelper helper) {
+		ReusedEffects.callOnSight(helper, HoglinEffectsTest::hoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedMovesWorkOnAHoglin(GameTestHelper helper) {
+		ReusedEffects.leap(helper, HoglinEffectsTest::hoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedSidestepWorksOnAHoglin(GameTestHelper helper) {
+		ReusedEffects.sidestep(helper, HoglinEffectsTest::hoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedAttributeWorksOnAHoglin(GameTestHelper helper) {
+		ReusedEffects.armorAttribute(helper, HoglinEffectsTest::hoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 40)
+	public void theReusedAttributeWhenWorksOnAHoglin(GameTestHelper helper) {
+		ReusedEffects.armorWhenWounded(helper, HoglinEffectsTest::hoglinWith);
+	}
+
 	/**
 	 * Adds an adult hoglin with the test genes and no AI. The genes go on before it enters the level, so it gets no
 	 * genes from the pool.

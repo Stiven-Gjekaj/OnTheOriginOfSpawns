@@ -837,6 +837,38 @@ public final class GeneCombat {
 	 * Pushes the target away from the mob, so that the full push of a hit is the multiplier times as far.
 	 */
 	/**
+	 * Runs the genes of a hit of a hoglin or a zoglin. The vanilla hit throws the target, and the throw genes change
+	 * the throw: the speed that the hit added to the target. Then the hit genes run, and a shield that the target held
+	 * up can stop.
+	 *
+	 * @param before the speed of the target before the hit
+	 * @param shield the shield that the target held up before the hit, or null
+	 */
+	public static void afterTuskHit(Mob mob, ServerLevel level, LivingEntity target, Vec3 before, ItemStack shield,
+			boolean hurt) {
+		if (shield != null) {
+			GeneCubes.shieldBreak(mob, level, target, shield);
+		}
+		if (!hurt) {
+			return;
+		}
+		double height = 1.0;
+		double distance = 1.0;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.HitThrow toss) {
+				height *= toss.heightMultiplier();
+				distance *= toss.distanceMultiplier();
+			}
+		}
+		if (height != 1.0 || distance != 1.0) {
+			Vec3 thrown = target.getDeltaMovement().subtract(before);
+			target.setDeltaMovement(before.add(thrown.x * distance, thrown.y * height, thrown.z * distance));
+			target.needsSync = true;
+		}
+		onHit(mob, target);
+	}
+
+	/**
 	 * Breaks each worn armor piece of the target that has less than the part of its durability left.
 	 */
 	private static void shatter(LivingEntity target, float threshold) {

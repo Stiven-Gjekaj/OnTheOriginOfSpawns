@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:hoglin",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "conversion_time", "seconds": 60 }],
+	"mutation_rate": 0
+}

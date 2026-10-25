@@ -246,7 +246,8 @@ public sealed interface GeneEffect {
 			Map.entry("gold_armor_attack", GoldArmorAttack.CODEC),
 			Map.entry("no_fear", NoFear.CODEC),
 			Map.entry("guard_gold", GuardGold.CODEC),
-			Map.entry("shatter_armor", ShatterArmor.CODEC)
+			Map.entry("shatter_armor", ShatterArmor.CODEC),
+			Map.entry("hit_throw", HitThrow.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4055,6 +4056,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "shatter_armor";
+		}
+	}
+
+	/**
+	 * Changes the throw of the hit of a hoglin or a zoglin. The vanilla throw is up and back. The height multiplier
+	 * changes the speed up, and the distance multiplier changes the speed back. More than one effect multiplies
+	 * together.
+	 */
+	record HitThrow(float heightMultiplier, float distanceMultiplier) implements GeneEffect {
+		public static final MapCodec<HitThrow> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("height_multiplier", 1.0F).forGetter(HitThrow::heightMultiplier),
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("distance_multiplier", 1.0F).forGetter(HitThrow::distanceMultiplier)
+		).apply(instance, HitThrow::new));
+
+		@Override
+		public String type() {
+			return "hit_throw";
 		}
 	}
 }

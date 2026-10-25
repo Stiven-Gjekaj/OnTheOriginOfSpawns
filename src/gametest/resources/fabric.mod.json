@@ -46,6 +46,8 @@
 			"io.github.stivengjekaj.originofspawns.test.ZombifiedPiglinEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.PiglinEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.PiglinBruteEffectsTest",
+			"io.github.stivengjekaj.originofspawns.test.HoglinEffectsTest",
+			"io.github.stivengjekaj.originofspawns.test.ZoglinEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.DelayedTasksTest"
 		],
 		"fabric-client-gametest": [

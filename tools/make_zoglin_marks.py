@@ -48,7 +48,8 @@ Pixel plan for the Bonebacks.
 Pixel plan for the Maddened.
 - Player Hate has white, mad eyes with small red points.
 - Blind Fury has red, bulging eyes with a dark ring.
-- Mad Squeal has a wide, screaming snout.
+- Mad Squeal has white foam at a wide-open snout: a black opening with a
+  ring of foam.
 - Berserk Rot has red, open wounds on the body.
 - Creeper Hunter has scorched, black ears.
 - Rabid Bite has a foaming mouth: white foam on the snout and the jaw.
@@ -419,16 +420,20 @@ def blind_fury():
 
 
 def mad_squeal():
-    # A wide, screaming snout: the end of the snout is wide open, dark with
-    # a red inside, and the corners of the mouth go back along the sides.
-    dark = Mark("#1A0604")
-    red = Mark("#9A1A1A")
+    # White foam at a wide-open snout: the end of the snout is wide open,
+    # black inside, with a thick ring of white foam round the opening and
+    # foam on the end of the face. No foam goes along the sides of the head.
+    black = Mark("#0E0808")
+    foam = Mark("#FFFFFF")
+    bubble = Mark("#C8DCDC")
     for x, y, f, col, row in pixels(HEAD, ("front",)):
-        (dark if row in (0, 5) or col in (0, 13) else red).put((x, y))
-    for eye in (0, 1):
-        dark.put([cheek(eye, c, r) for c in range(12, 19) for r in (4, 5)])
-    dark.put([face(c, r) for c in (2, 3, 10, 11) for r in (16, 17, 18)])
-    return [dark, red]
+        if 2 <= col <= 11 and 1 <= row <= 4:
+            black.put((x, y))
+        else:
+            (bubble if (col + row) % 3 == 0 else foam).put((x, y))
+    for x, y, f, col, row in pixels(HEAD, ("top",), rows=(16, 17, 18)):
+        (bubble if (col * 2 + row) % 5 == 0 else foam).put((x, y))
+    return [black, foam, bubble]
 
 
 def berserk_rot():

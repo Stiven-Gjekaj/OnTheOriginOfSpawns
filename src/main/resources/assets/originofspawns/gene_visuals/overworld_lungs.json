@@ -14,6 +14,13 @@
 				"texture": "originofspawns:textures/gene_marks/overworld_lungs_1.png",
 				"tint": "#F08080"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/overworld_lungs_2.png",
+				"tint": "#F8D8C0"
+			}
 		}
 	]
 }

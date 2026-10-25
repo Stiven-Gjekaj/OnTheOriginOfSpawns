@@ -42,7 +42,8 @@ Pixel plan for the Thickhides.
 - Rock Hide has gray, stony patches on the body.
 - Bristle Mat: thick, long bristles, the gene model bristle_mat_bristles.
 - Blast Hide has a scorched hide.
-- Root Feet has thick, short legs: a dark top and a wide hoof.
+- Root Feet has thick, dark hooves, split down the middle, with a pale
+  rim.
 - Scar Hide has old scars on the body.
 - Barbed Hide: sharp bristles on the back, the gene model barbed_hide_barbs.
 
@@ -380,18 +381,19 @@ def blast_hide():
 
 
 def root_feet():
-    # Thick, short legs: the high rows of the legs are dark, in the shade of
-    # the body, so the legs look short, and the low rows are a wide, bright
-    # hoof.
-    dark = Mark("#3A2014")
-    hoof = Mark("#2A2420")
-    rim = Mark("#B08060")
+    # Thick, dark hooves: the low three rows and the bottom of each leg are
+    # a thick, dark hoof, split down its middle, with a pale rim on top.
+    hoof = Mark("#1E1814")
+    split = Mark("#5A4A40")
+    rim = Mark("#C8A890")
     for leg in LEGS:
         h = height(leg)
-        put(dark, leg, SIDES, rows=range(0, h // 2))
+        w = leg["front"][2]
         put(rim, leg, SIDES, rows=(h - 4,))
-        put(hoof, leg, SIDES, rows=range(h - 3, h))
-    return [dark, hoof, rim]
+        for x, y, f, col, row in pixels(leg, SIDES, rows=range(h - 3, h)):
+            (split if f in ("front", "back") and col == w // 2 else hoof).put((x, y))
+        put(hoof, leg, ("bottom",))
+    return [hoof, split, rim]
 
 
 def scar_hide():

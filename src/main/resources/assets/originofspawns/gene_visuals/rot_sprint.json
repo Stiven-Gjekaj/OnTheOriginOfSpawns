@@ -5,14 +5,21 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/rot_sprint_0.png",
-				"tint": "#2A1A14"
+				"tint": "#4A6A1E"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/rot_sprint_1.png",
-				"tint": "#4A6A1E"
+				"tint": "#2A3A10"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/rot_sprint_2.png",
+				"tint": "#1A0E08"
 			}
 		}
 	]

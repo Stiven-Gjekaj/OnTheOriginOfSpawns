@@ -41,13 +41,14 @@ Pixel plan for the Fester.
 - Stench: green fumes, the gene model stench_fumes, and green stains.
 - Corpse Gas has a swollen belly: a pale, round belly with a dark edge.
 - Golem Rot has rot on the hands.
-- Rot Sprint has rotten, thin legs: dark edges and rot spots.
+- Rot Sprint has green rot patches on the low legs, and torn holes in the
+  cloth of the high legs.
 
 Pixel plan for the Bladesman.
 - Keen Edge has a notched sword arm: pale notches down the arm.
 - Sweep has wide, strong shoulders: bright shoulders with a dark line under.
 - Riposte: a gold guard on the left arm, the gene model riposte_guard.
-- Gold Hilt has a gold ring on the wrist of each arm.
+- Gold Hilt has a gold sword pommel on the belt, on the right hip.
 - Sword Slap has a flat sword scar: a wide, pale scar across the left arm.
 - Gilded Blade has gold dust on the sword arm.
 
@@ -417,17 +418,20 @@ def golem_rot():
 
 
 def rot_sprint():
-    # Rotten, thin legs: the outer columns of the legs are dark, so the legs
-    # look thin, and green rot spots are on them.
-    dark = Mark("#2A1A14")
+    # Green rot patches and torn cloth on the legs: patches of green rot on
+    # the low legs, and dark, torn holes in the cloth of the high legs.
     rot = Mark(ROT[0])
+    dark = Mark(ROT[1])
+    hole = Mark("#1A0E08")
     for leg in LEGS:
         for x, y, f, col, row in pixels(leg, SIDES):
-            if col in (0, 3):
-                dark.put((x, y))
-            elif noise100(x, y, 1601) < 30:
-                rot.put((x, y))
-    return [dark, rot]
+            n = noise100(x // 2, y // 2, 1601)
+            if row < 5:
+                if (col + row) % 3 == 0 and row > 0:
+                    hole.put((x, y))
+            elif n < 45:
+                (dark if noise100(x, y, 1602) < 30 else rot).put((x, y))
+    return [rot, dark, hole]
 
 
 # The Bladesman.
@@ -477,14 +481,25 @@ def riposte_model():
 
 
 def gold_hilt():
-    # A gold ring on the wrist: a gold ring round row 7 of each arm, with a
-    # bright line on its top.
+    # A gold sword pommel on the belt: a round, gold pommel of 3x3 with a red
+    # gem on the right hip, on the front and on the right side of the body,
+    # and the dark grip of the sword hangs down from it onto the leg.
     gold = Mark(GOLD[0])
     shine = Mark(GOLD[2])
-    for arm in ARMS:
-        put(shine, arm, SIDES, rows=(6,))
-        put(gold, arm, SIDES, rows=(7,))
-    return [gold, shine]
+    gem = Mark("#C01818")
+    grip = Mark("#3A2410")
+    for f, b in (("front", 1), ("right", 2)):
+        for dc in (-1, 0, 1):
+            for row in (8, 9, 10):
+                if dc == 0 and row == 9:
+                    gem.put(at(BODY, f, b, row))
+                elif abs(dc) + abs(row - 9) < 2 or (dc, row) in ((-1, 8), (1, 8), (-1, 10), (1, 10)):
+                    gold.put(at(BODY, f, b + dc, row))
+        shine.put([at(BODY, f, b, 7), at(BODY, f, b - 1, 7)])
+        grip.put(at(BODY, f, b, 11))
+    grip.put([at(RIGHT_LEG, "front", 0, r) for r in (0, 1, 2)] + [at(RIGHT_LEG, "right", 3, r) for r in (0, 1, 2)])
+    gold.put([at(RIGHT_LEG, "front", 0, 3), at(RIGHT_LEG, "right", 3, 3)])
+    return [gold, shine, gem, grip]
 
 
 def sword_slap():

@@ -22,7 +22,7 @@ Pixel plan for the Sharpshots.
 Pixel plan for the Hoarders.
 - Gold Wise has narrow, suspicious eyes: dark lids over and under the eyes,
   and one high brow.
-- Snatch has long, grabbing fingers: long, pale fingers with dark tips.
+- Snatch has long, gold-stained claws at the finger tips.
 - Glitter Eye has gold-colored eyes.
 - Gilded Hide has gold studs on the belt.
 - Gold Lust: a gold chain on the chest, the gene model gold_lust_chain.
@@ -47,7 +47,7 @@ Pixel plan for the Packmates.
 
 Pixel plan for the Firewalkers.
 - Fire Skin has a dark, scorched skin on the body and the arms.
-- Overworld Lungs has wide nostrils.
+- Overworld Lungs has wide, flared nostrils, and a pale chest.
 - Ash Lung has gray ash on the chest.
 - Hot Blade has glowing hands.
 - Soul Brave has blue, calm eyes.
@@ -171,16 +171,22 @@ def gold_wise():
 
 
 def snatch():
-    # Long, grabbing fingers: long, pale fingers down the hands, with dark
-    # tips, as claws.
-    finger = Mark("#F8C8A8")
-    tip = Mark("#2A1008")
+    # Long, gold-stained claws at the finger tips: on the low row and the
+    # bottom of each hand, long, dark claws with gold stains, and gold
+    # stains on the row over them.
+    claw = Mark("#2A1808")
+    gold = Mark("#C8A030")
     for arm in ARMS:
-        for x, y, f, col, row in pixels(arm, SIDES, rows=range(7, 12)):
-            if col % 2 == 0:
-                (tip if row == 11 else finger).put((x, y))
-        put(tip, arm, ("bottom",))
-    return [finger, tip]
+        for x, y, f, col, row in pixels(arm, SIDES, rows=(9, 10, 11)):
+            if row == 11:
+                (claw if col % 2 == 0 else gold).put((x, y))
+            elif row == 10 and col % 2 == 0:
+                claw.put((x, y))
+            elif row == 9 and col % 2:
+                gold.put((x, y))
+        for x, y, f, col, row in pixels(arm, ("bottom",)):
+            (gold if (col + row) % 2 else claw).put((x, y))
+    return [claw, gold]
 
 
 def glitter_eye():
@@ -410,14 +416,19 @@ def fire_skin():
 
 
 def overworld_lungs():
-    # Wide nostrils: two large, dark nostrils on the snout, with a pink rim,
-    # and the sides of the snout flare out on the face.
+    # Wide, flared nostrils, and a pale chest: two large, dark nostrils on
+    # the snout, with a pink rim and flared sides on the face, and the chest
+    # is a pale, light skin.
     dark = Mark("#1A0606")
     rim = Mark("#F08080")
+    pale = Mark("#F8D8C0")
     dark.put([at(SNOUT, "front", c, r) for c in (0, 1, 2, 3) for r in (1, 2) if c != 1 and c != 2 or r == 2])
     rim.put([at(SNOUT, "front", c, r) for c in range(4) for r in (0, 3)])
-    rim.put([face(2, 5), face(2, 6), face(7, 5), face(7, 6)])
-    return [dark, rim]
+    rim.put([face(2, 4), face(2, 5), face(7, 4), face(7, 5)])
+    for x, y, f, col, row in pixels(BODY, ("front",), rows=range(0, 7)):
+        if 0 < col < 7 and not (row == 0 and col in (1, 6)):
+            pale.put((x, y))
+    return [dark, rim, pale]
 
 
 def ash_lung():

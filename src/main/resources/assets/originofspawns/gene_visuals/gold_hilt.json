@@ -14,6 +14,20 @@
 				"texture": "originofspawns:textures/gene_marks/gold_hilt_1.png",
 				"tint": "#FFF4A0"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/gold_hilt_2.png",
+				"tint": "#C01818"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/gold_hilt_3.png",
+				"tint": "#3A2410"
+			}
 		}
 	]
 }

@@ -5,14 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/snatch_0.png",
-				"tint": "#F8C8A8"
+				"tint": "#2A1808"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/snatch_1.png",
-				"tint": "#2A1008"
+				"tint": "#C8A030"
 			}
 		}
 	]

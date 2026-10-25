@@ -5,21 +5,21 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/root_feet_0.png",
-				"tint": "#3A2014"
+				"tint": "#1E1814"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/root_feet_1.png",
-				"tint": "#2A2420"
+				"tint": "#5A4A40"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/root_feet_2.png",
-				"tint": "#B08060"
+				"tint": "#C8A890"
 			}
 		}
 	]

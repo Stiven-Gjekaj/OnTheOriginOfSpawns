@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:magma_cube/springer",
+	"sub_family": "originofspawns:magma_cube/ironclad",
+	"gains": [
+		{
+			"type": "damage_taken_when",
+			"when": "in_air",
+			"multiplier": 0.5,
+			"damage_types": "#minecraft:is_projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

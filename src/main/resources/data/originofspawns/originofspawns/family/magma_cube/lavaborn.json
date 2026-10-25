@@ -1,0 +1,59 @@
+{
+	"species": "minecraft:magma_cube",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "regenerate",
+					"amount": 1,
+					"interval_seconds": 3,
+					"idle_seconds": 0,
+					"when": "in_lava"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "speed_when",
+					"when": "out_of_lava",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "regenerate",
+					"amount": 1,
+					"interval_seconds": 2,
+					"idle_seconds": 0,
+					"when": "in_lava"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "speed_when",
+					"when": "out_of_lava",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "regenerate",
+					"amount": 1,
+					"interval_seconds": 1,
+					"idle_seconds": 0,
+					"when": "in_lava"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "speed_when",
+					"when": "out_of_lava",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

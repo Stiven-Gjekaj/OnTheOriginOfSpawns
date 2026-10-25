@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:magma_cube",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:armor",
+					"amount": 2,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "hop",
+					"wait_multiplier": 1.2
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:armor",
+					"amount": 4,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "hop",
+					"wait_multiplier": 1.15
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:armor",
+					"amount": 6,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "hop",
+					"wait_multiplier": 1.1
+				}
+			]
+		}
+	]
+}

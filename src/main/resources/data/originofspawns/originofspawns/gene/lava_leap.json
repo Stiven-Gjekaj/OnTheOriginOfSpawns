@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:magma_cube/lavaborn",
+	"gains": [
+		{
+			"type": "leap",
+			"min_distance": 4,
+			"max_distance": 10,
+			"cooldown_seconds": 5,
+			"when": "out_of_lava"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

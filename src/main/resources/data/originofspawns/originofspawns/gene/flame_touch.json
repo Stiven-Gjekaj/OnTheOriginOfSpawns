@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:magma_cube/inferno",
+	"gains": [
+		{
+			"type": "ignite_target",
+			"chance": 1,
+			"seconds": 5,
+			"hits": "melee"
+		}
+	],
+	"downsides": [
+		{
+			"type": "water_damage",
+			"amount": 1,
+			"interval": 40
+		}
+	]
+}

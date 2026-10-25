@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:fall",
+	"family": "originofspawns:magma_cube/springer",
+	"gains": [
+		{
+			"type": "hop",
+			"height_multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

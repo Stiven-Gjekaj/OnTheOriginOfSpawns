@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:magma_cube/inferno",
+	"sub_family": "originofspawns:magma_cube/erupter",
+	"gains": [
+		{
+			"type": "fire_on_hurt",
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

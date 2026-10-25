@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:magma_cube/springer",
+	"gains": [
+		{
+			"type": "landing_damage",
+			"damage": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "hop",
+			"wait_multiplier": 1.1
+		}
+	]
+}

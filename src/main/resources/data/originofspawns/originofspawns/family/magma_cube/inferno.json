@@ -1,0 +1,56 @@
+{
+	"species": "minecraft:magma_cube",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "ignite_target",
+					"chance": 1,
+					"seconds": 2,
+					"hits": "melee"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "water_damage",
+					"amount": 1,
+					"interval": 20
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "ignite_target",
+					"chance": 1,
+					"seconds": 3,
+					"hits": "melee"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "water_damage",
+					"amount": 1,
+					"interval": 40
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "ignite_target",
+					"chance": 1,
+					"seconds": 4,
+					"hits": "melee"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "water_damage",
+					"amount": 1,
+					"interval": 60
+				}
+			]
+		}
+	]
+}

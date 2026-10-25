@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:magma_cube/erupter",
+	"gains": [
+		{
+			"type": "split_jump",
+			"blocks": 4,
+			"toward_killer": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

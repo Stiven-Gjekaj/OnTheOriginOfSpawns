@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:magma_cube/erupter",
+	"gains": [
+		{
+			"type": "split_area_effect",
+			"fire_seconds": 3,
+			"radius": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

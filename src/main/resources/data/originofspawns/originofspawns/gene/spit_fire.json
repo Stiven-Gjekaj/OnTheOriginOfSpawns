@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:magma_cube/inferno",
+	"gains": [
+		{
+			"type": "fireball_shot",
+			"cooldown_seconds": 10,
+			"min_range": 6,
+			"range": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

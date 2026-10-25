@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:magma_cube/ironclad",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_projectile",
+			"multiplier": 0.7
+		}
+	],
+	"downsides": [
+		{
+			"type": "hop",
+			"wait_multiplier": 1.1
+		}
+	]
+}

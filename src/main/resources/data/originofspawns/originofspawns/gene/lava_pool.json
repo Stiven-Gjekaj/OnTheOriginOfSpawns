@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:magma_cube/erupter",
+	"gains": [
+		{
+			"type": "lava_pool",
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

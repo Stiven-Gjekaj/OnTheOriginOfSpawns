@@ -1,0 +1,59 @@
+{
+	"species": "minecraft:magma_cube",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "death_burst",
+					"damage": 2,
+					"radius": 2,
+					"fire_seconds": 5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "death_burst",
+					"damage": 3,
+					"radius": 2.5,
+					"fire_seconds": 5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "death_burst",
+					"damage": 4,
+					"radius": 3,
+					"fire_seconds": 5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

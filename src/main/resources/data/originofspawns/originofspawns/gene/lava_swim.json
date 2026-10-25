@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:on_land",
+	"family": "originofspawns:magma_cube/lavaborn",
+	"gains": [
+		{
+			"type": "speed_when",
+			"when": "in_lava",
+			"multiplier": 1.4
+		}
+	],
+	"downsides": [
+		{
+			"type": "speed_when",
+			"when": "out_of_lava",
+			"multiplier": 0.9
+		}
+	]
+}

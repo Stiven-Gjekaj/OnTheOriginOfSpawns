@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:magma_cube/lavaborn",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 1,
+			"idle_seconds": 0,
+			"when": "in_fire"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

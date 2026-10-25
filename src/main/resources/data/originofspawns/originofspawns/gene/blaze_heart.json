@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:magma_cube/lavaborn",
+	"sub_family": "originofspawns:magma_cube/inferno",
+	"gains": [
+		{
+			"type": "lava_exit_fire",
+			"fire_seconds": 8,
+			"seconds": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

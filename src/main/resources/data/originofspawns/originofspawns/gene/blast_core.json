@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:magma_cube/erupter",
+	"gains": [
+		{
+			"type": "death_burst",
+			"damage": 4,
+			"radius": 3,
+			"fire_seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

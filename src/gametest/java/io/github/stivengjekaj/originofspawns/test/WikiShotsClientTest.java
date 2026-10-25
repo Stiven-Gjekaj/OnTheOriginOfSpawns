@@ -52,7 +52,8 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 	private static final List<EntityType<? extends Mob>> SPECIES = List.of(EntityTypes.ZOMBIE, EntityTypes.HUSK,
 			EntityTypes.DROWNED, EntityTypes.SKELETON, EntityTypes.STRAY, EntityTypes.BOGGED, EntityTypes.WITHER_SKELETON,
 			EntityTypes.PARCHED, EntityTypes.CREEPER, EntityTypes.SPIDER, EntityTypes.CAVE_SPIDER, EntityTypes.PILLAGER,
-			EntityTypes.VINDICATOR, EntityTypes.EVOKER, EntityTypes.WITCH);
+			EntityTypes.VINDICATOR, EntityTypes.EVOKER, EntityTypes.WITCH,
+			EntityTypes.ENDERMAN, EntityTypes.ENDERMITE);
 	private static final int SHOT_ID = -424242;
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 960;
@@ -199,7 +200,9 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 		if (mob.getType() == EntityTypes.EVOKER) {
 			castSpell(mob);
 		}
-		mob.snapTo(base.getX() + 0.5, base.getY(), base.getZ() + 3.5, yaw, 0.0F);
+		// A tall mob, such as the enderman, stands farther away, so that the top of its head is in the picture.
+		double depth = mob.getBbHeight() > 2.2F ? 5.5 : 3.5;
+		mob.snapTo(base.getX() + 0.5, base.getY(), base.getZ() + depth, yaw, 0.0F);
 		mob.setYHeadRot(yaw);
 		mob.yHeadRotO = yaw;
 		mob.setYBodyRot(yaw);

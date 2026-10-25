@@ -225,7 +225,7 @@ const milestoneOf = (key) => roadmap.find((r) => r.key === key);
 
 // Species: each folder in family/ is a species. Its design file in
 // design/species/ gives the text, and the language file gives the names.
-const SPECIES_ORDER = ["zombie", "husk", "drowned", "skeleton", "stray", "bogged", "wither_skeleton", "parched", "creeper", "spider", "cave_spider", "pillager", "vindicator", "evoker", "witch", "enderman", "endermite", "slime", "magma_cube", "zombified_piglin", "piglin", "piglin_brute"];
+const SPECIES_ORDER = ["zombie", "husk", "drowned", "skeleton", "stray", "bogged", "wither_skeleton", "parched", "creeper", "spider", "cave_spider", "pillager", "vindicator", "evoker", "witch", "enderman", "endermite", "slime", "magma_cube", "zombified_piglin", "piglin", "piglin_brute", "hoglin"];
 const speciesIds = fs.readdirSync(path.join(DATA, "family"))
   .filter((d) => fs.statSync(path.join(DATA, "family", d)).isDirectory())
   .sort((a, b) => (SPECIES_ORDER.indexOf(a) + 1 || 99) - (SPECIES_ORDER.indexOf(b) + 1 || 99) || a.localeCompare(b));

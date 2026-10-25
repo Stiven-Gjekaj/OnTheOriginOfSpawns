@@ -165,4 +165,19 @@ public abstract class LivingEntityMixin {
 			info.setReturnValue(true);
 		}
 	}
+
+	/**
+	 * A projectile of a mob with genes that a shield stops can stop the shield. Vanilla stops a shield only at the
+	 * hit of a mob that holds an axe.
+	 */
+	@Inject(method = "applyItemBlocking", at = @At("RETURN"))
+	private void originofspawns$projectileShieldBreak(ServerLevel level, DamageSource source, float damage,
+			CallbackInfoReturnable<Float> info) {
+		LivingEntity self = (LivingEntity) (Object) this;
+		if (info.getReturnValueF() > 0.0F && source.getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile
+				&& source.getEntity() instanceof net.minecraft.world.entity.Mob mob && mob != self
+				&& mob.hasAttached(ModAttachments.GENES)) {
+			io.github.stivengjekaj.originofspawns.evolution.GeneCubes.shieldBreak(mob, level, self, self.getItemBlockingWith(), true);
+		}
+	}
 }

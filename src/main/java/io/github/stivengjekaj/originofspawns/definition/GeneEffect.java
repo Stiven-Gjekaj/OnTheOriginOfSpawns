@@ -3778,10 +3778,15 @@ public sealed interface GeneEffect {
 	 * A touch hit of a cube on a player that holds up a shield makes the shield useless for this many seconds. The
 	 * shield stops the hit, as in vanilla.
 	 */
-	record ShieldBreak(float seconds) implements GeneEffect {
+	record ShieldBreak(float seconds, Hits hits) implements GeneEffect {
 		public static final MapCodec<ShieldBreak> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("seconds", 5.0F).forGetter(ShieldBreak::seconds)
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("seconds", 5.0F).forGetter(ShieldBreak::seconds),
+				Hits.CODEC.optionalFieldOf("hits", Hits.MELEE).forGetter(ShieldBreak::hits)
 		).apply(instance, ShieldBreak::new));
+
+		public ShieldBreak(float seconds) {
+			this(seconds, Hits.MELEE);
+		}
 
 		@Override
 		public String type() {

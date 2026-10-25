@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
@@ -151,6 +152,29 @@ public class BlazeEffectsTest {
 
 	static java.util.List<net.minecraft.world.entity.AreaEffectCloud> clouds(GameTestHelper helper) {
 		return helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.AreaEffectCloud.class, helper.getBounds());
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void shieldScorchStopsTheShieldThatStopsTheFireball(GameTestHelper helper) {
+		ServerPlayer plainTarget = CreeperEffectsTest.shieldedPlayer(helper);
+		shieldHit(helper, blazeWith(helper, new BlockPos(1, 1, 4)), plainTarget);
+		helper.assertTrue(plainTarget.getHealth() > plainTarget.getMaxHealth() - 1.0F, "the shield stops the fireball");
+		helper.assertFalse(plainTarget.getCooldowns().isOnCooldown(plainTarget.getOffhandItem()),
+				"a plain fireball does not stop the shield");
+		ServerPlayer target = CreeperEffectsTest.shieldedPlayer(helper);
+		shieldHit(helper, blazeWith(helper, new BlockPos(1, 1, 4), "test_shield_scorch"), target);
+		helper.assertTrue(target.getCooldowns().isOnCooldown(target.getOffhandItem()), "the fireball stops the shield");
+		helper.succeed();
+	}
+
+	/**
+	 * Makes a small fireball of the blaze hit the player from the front. The test player faces west.
+	 */
+	static void shieldHit(GameTestHelper helper, Blaze blaze, ServerPlayer player) {
+		SmallFireball fireball = new SmallFireball(helper.getLevel(), blaze, new Vec3(1.0, 0.0, 0.0));
+		fireball.setPos(player.getEyePosition().add(-1.0, 0.0, 0.0));
+		helper.getLevel().addFreshEntity(fireball);
+		((ProjectileAccessor) fireball).originofspawns$onHit(new EntityHitResult(player));
 	}
 
 	/**

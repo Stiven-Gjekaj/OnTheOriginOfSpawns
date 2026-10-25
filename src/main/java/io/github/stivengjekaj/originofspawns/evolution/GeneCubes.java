@@ -302,10 +302,22 @@ public final class GeneCubes {
 	 * genes.
 	 */
 	public static void shieldBreak(net.minecraft.world.entity.Mob cube, ServerLevel level, LivingEntity target, ItemStack shield) {
+		shieldBreak(cube, level, target, shield, false);
+	}
+
+	/**
+	 * Stops the shield of a target that held it up at a hit of the mob, for the seconds of the genes whose hits
+	 * include this hit.
+	 *
+	 * @param projectile true for the hit of a projectile of the mob
+	 */
+	public static void shieldBreak(net.minecraft.world.entity.Mob cube, ServerLevel level, LivingEntity target, ItemStack shield,
+			boolean projectile) {
 		if (shield == null || !shield.has(DataComponents.BLOCKS_ATTACKS)) {
 			return;
 		}
-		GeneEffects.of(cube).filter(GeneEffect.ShieldBreak.class::isInstance)
+		GeneEffects.of(cube).filter(effect -> effect instanceof GeneEffect.ShieldBreak shieldBreak
+						&& shieldBreak.hits().includes(projectile))
 				.mapToDouble(effect -> ((GeneEffect.ShieldBreak) effect).seconds()).max()
 				.ifPresent(seconds -> shield.get(DataComponents.BLOCKS_ATTACKS)
 						.disable(level, target, (float) seconds, shield));

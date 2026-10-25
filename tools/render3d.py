@@ -126,6 +126,9 @@ def render(cubes, pivots, turn=0, tilt=0, scale=8, size=(24, 40), center=(0, 6),
     # sort of whole faces fails where a large face is near a small one.
     quads = []
     for _, cube, origin, du, dv, (ru, rv, rw, rh) in parts:
+        # A face of a flat cube, as the mane of the hoglin, has no texels.
+        if rw == 0 or rh == 0:
+            continue
         k = cube["scale"]
         cols, rows = max(1, round(rw * k)), max(1, round(rh * k))
         for j in range(rows):

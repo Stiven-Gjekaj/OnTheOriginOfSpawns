@@ -22,6 +22,7 @@ tools/render3d.py draws the views.
 import glob
 import io
 import json
+import math
 import os
 import sys
 import zipfile
@@ -64,6 +65,11 @@ ENDERMAN_EYES_PATH = "assets/minecraft/textures/entity/enderman/enderman_eyes.pn
 ENDERMITE_PATH = "assets/minecraft/textures/entity/endermite/endermite.png"
 SLIME_PATH = "assets/minecraft/textures/entity/slime/slime.png"
 MAGMA_CUBE_PATH = "assets/minecraft/textures/entity/slime/magmacube.png"
+ZOMBIFIED_PIGLIN_PATH = "assets/minecraft/textures/entity/piglin/zombified_piglin.png"
+PIGLIN_PATH = "assets/minecraft/textures/entity/piglin/piglin.png"
+PIGLIN_BRUTE_PATH = "assets/minecraft/textures/entity/piglin/piglin_brute.png"
+HOGLIN_PATH = "assets/minecraft/textures/entity/hoglin/hoglin.png"
+ZOGLIN_PATH = "assets/minecraft/textures/entity/hoglin/zoglin.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -456,6 +462,83 @@ MAGMA_CUBE_EXTRA = {
                   ("All 6 + Infernos", ["flame_touch", "spit_fire"], True, {})],
 }
 
+# The families of the Nether mobs, from design/species/zombified_piglin.md,
+# piglin.md, piglin_brute.md, hoglin.md, and zoglin.md.
+ZOMBIFIED_PIGLIN_FAMILIES = {
+    "vengeful": ["blood_feud", "horde_call", "long_memory", "war_squeal", "wrath", "avenge"],
+    "gilded": ["gold_flesh", "gold_plating", "gilded_skull", "glint", "gold_rush", "tarnish"],
+    "fester": ["rot_bite", "nether_rot", "stench", "corpse_gas", "golem_rot", "rot_sprint"],
+    "bladesman": ["keen_edge", "sweep", "riposte", "gold_hilt", "sword_slap", "gilded_blade"],
+    "chaser": ["sprint", "scent_tracker", "vault", "shrunken", "duck", "pack_run"],
+}
+PIGLIN_FAMILIES = {
+    "sharpshot": ["quick_load", "long_shot", "shield_piercer", "fire_bolt", "bolt_storm", "greedy_bolt"],
+    "hoarder": ["gold_wise", "snatch", "glitter_eye", "gilded_hide", "gold_lust", "treasure_hunter"],
+    "huntsman": ["keen_nose", "wound_hunter", "spear_dash", "hobble", "shade_cloak", "tribe_hunter"],
+    "packmate": ["battle_cry", "shoulder_wall", "piglet", "blood_kin", "kin_rally", "ember_kin"],
+    "firewalker": ["fire_skin", "overworld_lungs", "ash_lung", "hot_blade", "soul_brave", "blaze_bolt"],
+}
+PIGLIN_BRUTE_FAMILIES = {
+    "axeman": ["great_swing", "head_splitter", "wide_arc", "hurl_axe", "bone_breaker", "golden_edge"],
+    "colossus": ["iron_hide", "blast_wall", "arrow_wall", "steady_feet", "thick_neck", "rage_plate"],
+    "mauler": ["blood_rage", "charge", "battle_scars", "roar", "frenzy_axe", "hot_head"],
+    "gatekeeper": ["home_guard", "alarm_horn", "gold_guard", "watch_post", "lava_moat", "golem_wrecker"],
+    "guardbreaker": ["guard_crusher", "armor_splitter", "sunder_strike", "rust_axe", "shatter_blow", "brute_force"],
+}
+HOGLIN_FAMILIES = {
+    "tusker": ["long_tusks", "sky_toss", "gore", "shield_hook", "golem_toss", "ram"],
+    "charger": ["stampede", "long_run", "hoof_leap", "sidestep_hoof", "wild_run", "dust_kick"],
+    "thickhide": ["rock_hide", "bristle_mat", "blast_hide", "root_feet", "scar_hide", "barbed_hide"],
+    "herdkin": ["herd_call", "close_ranks", "big_litter", "mourning_herd", "herd_rally", "fungus_guard"],
+    "fearless": ["warp_eater", "portal_walker", "anchor_brave", "steady_nerves", "overworld_hide", "bold_charge"],
+}
+ZOGLIN_FAMILIES = {
+    "gorer": ["deep_gore", "high_toss", "bleed_out", "hook_tusk", "golem_gore", "grim_charge"],
+    "stampeder": ["dead_run", "hunt_sense", "grave_leap", "dodge_rot", "rot_rush", "mire_trample"],
+    "rotter": ["wither_tusk", "plague_breath", "rot_cloud", "grave_stench", "corpse_feeder", "bone_rot"],
+    "boneback": ["bone_plates", "rib_cage", "bone_brace", "skull_crest", "holy_bane", "spine_spikes"],
+    "maddened": ["player_hate", "blind_fury", "mad_squeal", "berserk_rot", "creeper_hunter", "rabid_bite"],
+}
+
+
+def next_family_extra(families, picks, night_family):
+    """Return the extra columns of the sheets: each family with two genes of the next family.
+
+    The last family also has a column at night.
+    """
+    names = list(families)
+    extra = {}
+    for n, family in enumerate(names):
+        nxt = names[(n + 1) % len(names)]
+        extra[family] = [(f"All 6 + {nxt.capitalize()}", picks[nxt], True, {})]
+    extra[night_family].insert(0, ("All 6 at night", [], True, {"light": 0.18}))
+    return extra
+
+
+ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
+    "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
+    "fester": ["nether_rot", "stench"], "bladesman": ["riposte", "keen_edge"], "chaser": ["scent_tracker", "vault"],
+}, "chaser")
+PIGLIN_EXTRA = next_family_extra(PIGLIN_FAMILIES, {
+    "sharpshot": ["shield_piercer", "bolt_storm"], "hoarder": ["gold_lust", "glitter_eye"],
+    "huntsman": ["shade_cloak", "tribe_hunter"], "packmate": ["shoulder_wall", "blood_kin"],
+    "firewalker": ["fire_skin", "soul_brave"],
+}, "firewalker")
+PIGLIN_BRUTE_EXTRA = next_family_extra(PIGLIN_BRUTE_FAMILIES, {
+    "axeman": ["head_splitter", "hurl_axe"], "colossus": ["iron_hide", "arrow_wall"],
+    "mauler": ["blood_rage", "battle_scars"], "gatekeeper": ["home_guard", "alarm_horn"],
+    "guardbreaker": ["guard_crusher", "rust_axe"],
+}, "guardbreaker")
+HOGLIN_EXTRA = next_family_extra(HOGLIN_FAMILIES, {
+    "tusker": ["long_tusks", "gore"], "charger": ["wild_run", "stampede"], "thickhide": ["bristle_mat", "rock_hide"],
+    "herdkin": ["close_ranks", "herd_rally"], "fearless": ["portal_walker", "anchor_brave"],
+}, "fearless")
+ZOGLIN_EXTRA = next_family_extra(ZOGLIN_FAMILIES, {
+    "gorer": ["deep_gore", "bleed_out"], "stampeder": ["dead_run", "rot_rush"],
+    "rotter": ["plague_breath", "grave_stench"], "boneback": ["bone_plates", "spine_spikes"],
+    "maddened": ["blind_fury", "berserk_rot"],
+}, "maddened")
+
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
     "rushers": [("All 6 + Skulkers", ["leafskin", "patient"], True, {})],
@@ -687,6 +770,124 @@ def magma_cube_pivots(squish):
     pivots["inside_cube"] = (0, 0, 0)
     return pivots
 
+
+
+def child_pivot(parent, offset, angles=(0, 0, 0)):
+    """Return the pivot of a child bone in the space of the model, as (x, y, z, rx, ry, rz).
+
+    The child sits at the offset in the space of its parent, and turns by its
+    own angles after the parent turns. The angles are in degrees.
+    """
+    parent_turn = render3d.part_rotation(parent[3:] if len(parent) > 3 else (0, 0, 0))
+    child_turn = render3d.part_rotation(angles)
+    where = tuple(parent[n] + parent_turn(offset)[n] for n in range(3))
+    # The columns of the matrix of the two turns, one after the other.
+    cols = [parent_turn(child_turn(e)) for e in ((1, 0, 0), (0, 1, 0), (0, 0, 1))]
+    m = [[cols[c][r] for c in range(3)] for r in range(3)]
+    # part_rotation turns around X, then Y, then Z, so the matrix is Rz Ry Rx.
+    ry = math.asin(max(-1.0, min(1.0, -m[2][0])))
+    rx = math.atan2(m[2][1], m[2][2])
+    rz = math.atan2(m[1][0], m[0][0])
+    return where + tuple(math.degrees(a) for a in (rx, ry, rz))
+
+
+# The piglin, from AbstractPiglinModel on PlayerModel: a head of 10x8x8 with
+# a snout and two tusks, ears on the head, and the player body. The ears,
+# right_ear and left_ear, are children of the head, and turn out by 30
+# degrees. The zombified piglin and the piglin brute have the same model.
+# The outer layer (PIGLIN_OUTER) is 0.25 pixel larger than the body.
+PIGLIN_PIVOTS = dict(PIVOTS, right_ear=(-4.5, -6, 0, 0, 0, 30), left_ear=(4.5, -6, 0, 0, 0, -30))
+PIGLIN_CUBES = [
+    ("head", (0, 0), (-5, -8, -4), (10, 8, 8), False),
+    ("head", (31, 1), (-2, -4, -5), (4, 4, 1), False),
+    ("head", (2, 4), (2, -2, -5), (1, 2, 1), False),
+    ("head", (2, 0), (-3, -2, -5), (1, 2, 1), False),
+    ("right_ear", (39, 6), (-1, 0, -2), (1, 5, 4), False),
+    ("left_ear", (51, 6), (0, 0, -2), (1, 5, 4), False),
+    ("body", (16, 16), (-4, 0, -2), (8, 12, 4), False),
+    ("right_arm", (40, 16), (-3, -2, -2), (4, 12, 4), False),
+    ("left_arm", (32, 48), (-1, -2, -2), (4, 12, 4), False),
+    ("right_leg", (0, 16), (-2, 0, -2), (4, 12, 4), False),
+    ("left_leg", (16, 48), (-2, 0, -2), (4, 12, 4), False),
+]
+PIGLIN_OUTER = [
+    ("body", (16, 32), (-4, 0, -2), (8, 12, 4), False, 0.25),
+    ("right_arm", (40, 32), (-3, -2, -2), (4, 12, 4), False, 0.25),
+    ("left_arm", (48, 48), (-1, -2, -2), (4, 12, 4), False, 0.25),
+    ("right_leg", (0, 32), (-2, 0, -2), (4, 12, 4), False, 0.25),
+    ("left_leg", (0, 48), (-2, 0, -2), (4, 12, 4), False, 0.25),
+]
+# With a crossbow, the piglin holds its arms forward, as the pillager does.
+PIGLIN_CROSSBOW_PIVOTS = dict(PIGLIN_PIVOTS, right_arm=PILLAGER_PIVOTS["right_arm"],
+                              left_arm=PILLAGER_PIVOTS["left_arm"])
+
+# The hoglin, from HoglinModel: a large body with a flat mane on its back, a
+# head that tips down by 50 degrees, and four legs. The mane is a child of
+# the body. The ears and the tusks (right_horn and left_horn) are children of
+# the head. The zoglin has the same model. The texture is 128x64.
+HOGLIN_HEAD = (0, 2, -12, 50, 0, 0)
+HOGLIN_PIVOTS = {
+    "body": (0, 7, 0), "mane": (0, -7, -7), "head": HOGLIN_HEAD,
+    "right_ear": child_pivot(HOGLIN_HEAD, (-6, -2, -3), (0, 0, -40)),
+    "left_ear": child_pivot(HOGLIN_HEAD, (6, -2, -3), (0, 0, 40)),
+    "right_horn": child_pivot(HOGLIN_HEAD, (-7, 2, -12)),
+    "left_horn": child_pivot(HOGLIN_HEAD, (7, 2, -12)),
+    "right_front_leg": (-4, 10, -8.5), "left_front_leg": (4, 10, -8.5),
+    "right_hind_leg": (-5, 13, 10), "left_hind_leg": (5, 13, 10),
+}
+HOGLIN_CUBES = [
+    ("body", (1, 1), (-8, -7, -13), (16, 14, 26), False),
+    ("mane", (90, 33), (0, 0, -9), (0, 10, 19), False),
+    ("head", (61, 1), (-7, -3, -19), (14, 6, 19), False),
+    ("right_ear", (1, 1), (-6, -1, -2), (6, 1, 4), False),
+    ("left_ear", (1, 6), (0, -1, -2), (6, 1, 4), False),
+    ("right_horn", (10, 13), (-1, -11, -1), (2, 11, 2), False),
+    ("left_horn", (1, 13), (-1, -11, -1), (2, 11, 2), False),
+    ("right_front_leg", (66, 42), (-3, 0, -3), (6, 14, 6), False),
+    ("left_front_leg", (41, 42), (-3, 0, -3), (6, 14, 6), False),
+    ("right_hind_leg", (21, 45), (-2.5, 0, -2.5), (5, 11, 5), False),
+    ("left_hind_leg", (0, 45), (-2.5, 0, -2.5), (5, 11, 5), False),
+]
+
+
+def held_item(kind):
+    """Return the cubes of a stand-in weapon in the right hand: a gold sword, a gold axe, or a crossbow.
+
+    The previews do not draw held items. A stand-in shows where the weapon
+    is. The sword and the axe point forward from the hand, as the arm hangs
+    down. The crossbow lies along the arm, which points forward.
+    """
+    colors = {"gold": (246, 208, 61, 255), "dark_gold": (196, 150, 30, 255), "wood": (104, 78, 46, 255),
+              "string": (220, 220, 220, 255), "iron": (150, 150, 155, 255)}
+    # Each color is a texture of its own, of one color.
+    images = {name: Image.new("RGBA", (32, 32), c) for name, c in colors.items()}
+
+    def part(color, frm, size):
+        return {"bone": "right_arm", "uv": (0, 0), "from": frm, "size": size, "inflate": 0.0, "mirror": False,
+                "texture": images[color], "scale": 1.0}
+    if kind == "sword":
+        return [part("gold", (-0.5, 9, -11), (1, 1, 8)), part("dark_gold", (-1.5, 9, -4), (3, 1, 1)),
+                part("wood", (-0.5, 9, -3), (1, 1, 3))]
+    if kind == "axe":
+        return [part("wood", (-0.5, 9, -10), (1, 1, 10)), part("gold", (-0.5, 6.5, -11), (1, 4, 3))]
+    return [part("wood", (-0.5, 8, -1.5), (1, 6, 1)), part("wood", (-3.5, 12, -1.5), (7, 1, 1)),
+            part("string", (-3, 11, -1), (6, 1, 0)), part("iron", (-0.5, 14, -1.5), (1, 1, 1))]
+
+
+# Each Nether mob: the cubes, the pivots, the weapon, the wraps, the frame of
+# the sheets (VIEW_X, VIEW_Y, VIEW_W, VIEW_H), the frame of the close-ups,
+# and whether the sheets look down on it.
+PIGLIN_FRAME, PIGLIN_CLOSEUP = (13, 11, 26, 37), ((30, 44), (0, 7))
+HOGLIN_FRAME, HOGLIN_CLOSEUP = (30, 21, 60, 48), ((62, 54), (0, 6))
+NETHER_LOOKS = {
+    "zombified_piglin": (PIGLIN_CUBES, PIGLIN_PIVOTS, "sword", PIGLIN_OUTER, PIGLIN_FRAME, PIGLIN_CLOSEUP, False),
+    "piglin": (PIGLIN_CUBES, PIGLIN_PIVOTS, "sword", PIGLIN_OUTER, PIGLIN_FRAME, PIGLIN_CLOSEUP, False),
+    "piglin_crossbow": (PIGLIN_CUBES, PIGLIN_CROSSBOW_PIVOTS, "crossbow", PIGLIN_OUTER, PIGLIN_FRAME,
+                        PIGLIN_CLOSEUP, False),
+    "piglin_brute": (PIGLIN_CUBES, PIGLIN_PIVOTS, "axe", PIGLIN_OUTER, PIGLIN_FRAME, PIGLIN_CLOSEUP, False),
+    "hoglin": (HOGLIN_CUBES, HOGLIN_PIVOTS, None, [], HOGLIN_FRAME, HOGLIN_CLOSEUP, True),
+    "zoglin": (HOGLIN_CUBES, HOGLIN_PIVOTS, None, [], HOGLIN_FRAME, HOGLIN_CLOSEUP, True),
+}
 
 def grow(cube, k):
     """Return the cube k times larger, with the same texels. The previews draw the small endermite this way."""
@@ -1248,6 +1449,11 @@ SPECIES = {
     "endermite": (ENDERMITE_PATH, None, ENDERMITE_FAMILIES, ENDERMITE_EXTRA, []),
     "slime": (SLIME_PATH, None, SLIME_FAMILIES, SLIME_EXTRA, []),
     "magma_cube": (MAGMA_CUBE_PATH, None, MAGMA_CUBE_FAMILIES, MAGMA_CUBE_EXTRA, []),
+    "zombified_piglin": (ZOMBIFIED_PIGLIN_PATH, None, ZOMBIFIED_PIGLIN_FAMILIES, ZOMBIFIED_PIGLIN_EXTRA, []),
+    "piglin": (PIGLIN_PATH, None, PIGLIN_FAMILIES, PIGLIN_EXTRA, []),
+    "piglin_brute": (PIGLIN_BRUTE_PATH, None, PIGLIN_BRUTE_FAMILIES, PIGLIN_BRUTE_EXTRA, []),
+    "hoglin": (HOGLIN_PATH, None, HOGLIN_FAMILIES, HOGLIN_EXTRA, []),
+    "zoglin": (ZOGLIN_PATH, None, ZOGLIN_FAMILIES, ZOGLIN_EXTRA, []),
 }
 
 
@@ -1340,6 +1546,13 @@ def set_mob(species):
     # at 1 times its size, so the sword is at that size too.
     MOB["held"] = (stone_sword() if species == "wither_skeleton"
                    else carried_block() if species == "enderman_carrying" else [])
+    look = NETHER_LOOKS.get(species)
+    if look:
+        # The Nether mobs: the cubes, the bones, the weapon, and the frames.
+        MOB["cubes"], MOB["pivots"], held, MOB["wraps"], frame, MOB["closeup_view"], low = look
+        MOB["held"] = held_item(held) if held else []
+        VIEW_X, VIEW_Y, VIEW_W, VIEW_H = frame
+        MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if low else [(0, 0), (180, 0), (-35, 15)]
 
 
 def main(species="zombie"):

@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "smite_resist", "multiplier": 0.5 }],
+	"mutation_rate": 0
+}

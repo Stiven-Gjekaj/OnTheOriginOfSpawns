@@ -71,6 +71,7 @@
 		"VexAccessor",
 		"WitchAccessor",
 		"WitchMixin",
+		"ZoglinAccessor",
 		"ZoglinMixin",
 		"ZombieMixin",
 		"ZombifiedPiglinAccessor",

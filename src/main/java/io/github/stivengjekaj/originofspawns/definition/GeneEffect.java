@@ -253,7 +253,9 @@ public sealed interface GeneEffect {
 			Map.entry("eat_items", EatItems.CODEC),
 			Map.entry("hunt_mobs", HuntMobs.CODEC),
 			Map.entry("run_strike", RunStrike.CODEC),
-			Map.entry("effect_on_ally_death", EffectOnAllyDeath.CODEC)
+			Map.entry("effect_on_ally_death", EffectOnAllyDeath.CODEC),
+			Map.entry("player_first", PlayerFirst.CODEC),
+			Map.entry("smite_resist", SmiteResist.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4168,6 +4170,35 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "effect_on_ally_death";
+		}
+	}
+
+	/**
+	 * In its target choice, the mob takes a player in the radius first. A vanilla zoglin targets the nearest mob.
+	 */
+	record PlayerFirst(float radius) implements GeneEffect {
+		public static final MapCodec<PlayerFirst> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("radius", 16.0F).forGetter(PlayerFirst::radius)
+		).apply(instance, PlayerFirst::new));
+
+		@Override
+		public String type() {
+			return "player_first";
+		}
+	}
+
+	/**
+	 * Multiplies the extra damage that Smite does to the mob. Smite does 2.5 more damage for each level to an undead
+	 * mob. Holy Bane: {@code 0.5}.
+	 */
+	record SmiteResist(float multiplier) implements GeneEffect {
+		public static final MapCodec<SmiteResist> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(SmiteResist::multiplier)
+		).apply(instance, SmiteResist::new));
+
+		@Override
+		public String type() {
+			return "smite_resist";
 		}
 	}
 }

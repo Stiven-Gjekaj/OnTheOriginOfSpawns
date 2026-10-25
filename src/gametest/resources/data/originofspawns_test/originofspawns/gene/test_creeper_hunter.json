@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "hunt_mobs", "mobs": "minecraft:creeper" }],
+	"mutation_rate": 0
+}

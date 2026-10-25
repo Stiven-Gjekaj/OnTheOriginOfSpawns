@@ -502,6 +502,9 @@ public final class GeneCombat {
 						result *= front.multiplier();
 				case GeneEffect.DamageFromEnchantment enchanted when hasEnchantment(source, enchanted.enchantment()) ->
 						result *= enchanted.multiplier();
+				case GeneEffect.SmiteResist resist when victim.getType().builtInRegistryHolder().is(net.minecraft.tags.EntityTypeTags.SENSITIVE_TO_SMITE) ->
+						result = Math.max(0.0F, result - SMITE_PER_LEVEL * enchantmentLevel(source,
+								net.minecraft.world.item.enchantment.Enchantments.SMITE) * (1.0F - resist.multiplier()));
 				case GeneEffect.DamageFromItem item when source.getEntity() instanceof LivingEntity attacker
 						&& source.getDirectEntity() == attacker && attacker.getMainHandItem().is(item.items()) ->
 						result *= item.multiplier();
@@ -1057,6 +1060,22 @@ public final class GeneCombat {
 	/**
 	 * Returns true if the weapon of the attacker has the enchantment.
 	 */
+	/**
+	 * The extra damage of Smite for each level to an undead mob.
+	 */
+	private static final float SMITE_PER_LEVEL = 2.5F;
+
+	/**
+	 * Returns the level of the enchantment on the weapon of a melee attacker, or 0.
+	 */
+	public static int enchantmentLevel(DamageSource source, ResourceKey<Enchantment> enchantment) {
+		if (!(source.getEntity() instanceof LivingEntity attacker) || source.getDirectEntity() != attacker) {
+			return 0;
+		}
+		return attacker.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(enchantment)
+				.map(holder -> EnchantmentHelper.getItemEnchantmentLevel(holder, attacker.getMainHandItem())).orElse(0);
+	}
+
 	public static boolean hasEnchantment(DamageSource source, ResourceKey<Enchantment> enchantment) {
 		if (!(source.getEntity() instanceof LivingEntity attacker) || source.getDirectEntity() != attacker) {
 			return false;

@@ -9,11 +9,19 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Zoglin;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
+import net.minecraft.world.entity.ai.sensing.Sensor;
+
+import java.util.Optional;
 import net.minecraft.world.phys.Vec3;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 
 @Mixin(Zoglin.class)
 public abstract class ZoglinMixin {
@@ -30,5 +38,25 @@ public abstract class ZoglinMixin {
 		boolean hurt = original.call(level, body, target);
 		GeneCombat.afterTuskHit((Mob) body, level, target, before, shield, hurt);
 		return hurt;
+	}
+
+	/**
+	 * A zoglin with the player first gene takes a player in the radius first, if it sees one.
+	 */
+	@ModifyReturnValue(method = "findNearestValidAttackTarget", at = @At("RETURN"))
+	private static Optional<? extends LivingEntity> originofspawns$playerFirst(Optional<? extends LivingEntity> nearest,
+			ServerLevel level, Mob mob) {
+		var radius = io.github.stivengjekaj.originofspawns.evolution.GeneEffects.of(mob)
+				.filter(io.github.stivengjekaj.originofspawns.definition.GeneEffect.PlayerFirst.class::isInstance)
+				.mapToDouble(effect -> ((io.github.stivengjekaj.originofspawns.definition.GeneEffect.PlayerFirst) effect).radius())
+				.max();
+		if (radius.isEmpty()) {
+			return nearest;
+		}
+		Optional<LivingEntity> player = mob.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES)
+				.orElse(NearestVisibleLivingEntities.empty())
+				.findClosest(target -> target instanceof Player && mob.distanceTo(target) <= radius.getAsDouble()
+						&& Sensor.isEntityAttackable(level, mob, target));
+		return player.isPresent() ? player : nearest;
 	}
 }

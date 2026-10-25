@@ -33,6 +33,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Creeper.class)
 public abstract class CreeperMixin {
 	/**
+	 * A creeper runs from a mob that hunts creepers.
+	 */
+	@org.spongepowered.asm.mixin.injection.Inject(method = "registerGoals", at = @org.spongepowered.asm.mixin.injection.At("TAIL"))
+	private void originofspawns$fleeHunters(org.spongepowered.asm.mixin.injection.callback.CallbackInfo info) {
+		((MobAccessor) this).originofspawns$goalSelector().addGoal(3,
+				new io.github.stivengjekaj.originofspawns.evolution.goal.CreeperFleeGoal((net.minecraft.world.entity.monster.Creeper) (Object) this));
+	}
+
+	/**
 	 * The radius of the last blast of the creeper, after the charge and the genes.
 	 */
 	@Unique

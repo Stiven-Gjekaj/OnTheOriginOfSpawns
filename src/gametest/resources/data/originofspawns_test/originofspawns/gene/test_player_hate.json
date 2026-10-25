@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zoglin",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "player_first", "radius": 8 }],
+	"mutation_rate": 0
+}

@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/blaze.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blast_ember_0.png",
+				"tint": "#8A1008"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blast_ember_1.png",
+				"tint": "#1A0404"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blast_ember_2.png",
+				"tint": "#FF4020"
+			}
+		}
+	]
+}

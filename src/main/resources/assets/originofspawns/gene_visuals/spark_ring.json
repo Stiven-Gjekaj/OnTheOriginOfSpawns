@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/blaze.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/spark_ring_0.png",
+				"tint": "#C88A10"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/spark_ring_1.png",
+				"tint": "#4A2004"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/spark_ring_2.png",
+				"tint": "#FFFFFF"
+			}
+		}
+	]
+}

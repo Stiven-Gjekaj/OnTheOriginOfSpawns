@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/blaze.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/steam_burst_0.png",
+				"tint": "#1A0804"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/steam_burst_1.png",
+				"tint": "#FFFFFF"
+			}
+		}
+	]
+}

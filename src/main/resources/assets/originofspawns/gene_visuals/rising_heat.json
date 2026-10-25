@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/blaze.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/rising_heat_0.png",
+				"tint": "#FFFFE0"
+			}
+		}
+	]
+}

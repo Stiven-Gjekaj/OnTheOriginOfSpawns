@@ -17,6 +17,7 @@
 		"BlazeAttackGoalMixin",
 		"BlazeMixin",
 		"BoggedMixin",
+		"BreezeShootMixin",
 		"BreezeWindChargeMixin",
 		"CaveSpiderMixin",
 		"CreeperAccessor",

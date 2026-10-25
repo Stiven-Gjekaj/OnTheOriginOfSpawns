@@ -13,6 +13,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.breeze.Breeze;
@@ -100,6 +101,36 @@ public class BreezeEffectsTest {
 		hit(helper, breezeWith(helper, new BlockPos(6, 1, 6), "test_cut_wind"), target);
 		helper.assertValueEqual(target.getMaxHealth() - target.getHealth(), 5.0F, "4 more damage");
 		helper.succeed();
+	}
+
+	@GameTest
+	public void rapidWindMakesTheShotChargeAndWaitShorter(GameTestHelper helper) {
+		// The test gene doubles the throw rate.
+		Breeze plain = shooter(helper, new BlockPos(1, 1, 1));
+		Breeze rapid = shooter(helper, new BlockPos(5, 1, 5), "test_quick_burst");
+		var shoot = new net.minecraft.world.entity.monster.breeze.Shoot();
+		long now = helper.getLevel().getGameTime();
+		helper.assertTrue(shoot.tryStart(helper.getLevel(), plain, now), "the plain breeze starts a shot");
+		helper.assertValueEqual(plain.getBrain().getTimeUntilExpiry(MemoryModuleType.BREEZE_SHOOT_CHARGING), 15L, "the charge");
+		shoot.doStop(helper.getLevel(), plain, now);
+		helper.assertValueEqual(plain.getBrain().getTimeUntilExpiry(MemoryModuleType.BREEZE_SHOOT_COOLDOWN), 10L, "the cooldown");
+		var rapidShoot = new net.minecraft.world.entity.monster.breeze.Shoot();
+		helper.assertTrue(rapidShoot.tryStart(helper.getLevel(), rapid, now), "the rapid breeze starts a shot");
+		helper.assertValueEqual(rapid.getBrain().getTimeUntilExpiry(MemoryModuleType.BREEZE_SHOOT_CHARGING), 8L, "half the charge");
+		rapidShoot.doStop(helper.getLevel(), rapid, now);
+		helper.assertValueEqual(rapid.getBrain().getTimeUntilExpiry(MemoryModuleType.BREEZE_SHOOT_COOLDOWN), 5L, "half the cooldown");
+		helper.succeed();
+	}
+
+	/**
+	 * Makes a breeze that is ready to shoot at a pig: it has the pig as its target and the memory of a shot.
+	 */
+	static Breeze shooter(GameTestHelper helper, BlockPos pos, String... genes) {
+		Breeze breeze = breezeWith(helper, pos, genes);
+		Pig pig = CreeperEffectsTest.pigAt(helper, pos.east(2));
+		breeze.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, pig);
+		breeze.getBrain().setMemory(MemoryModuleType.BREEZE_SHOOT, net.minecraft.util.Unit.INSTANCE);
+		return breeze;
 	}
 
 	/**

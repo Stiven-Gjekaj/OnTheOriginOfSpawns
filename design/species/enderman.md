@@ -160,7 +160,7 @@ The visual column gives the region and the mark.
 | Stone Grip | It obeys the `mobGriefing` gamerule |
 | Bruisers, Heavy Fist, Wide Swing | "Attacks slower" changes the time between two melee attacks |
 | Ender Rage | "Its health is under half" is the `wounded` state |
-| Long Reach | It works as the zombie leap |
+| Long Reach | It works as the zombie Lunger |
 | Wide Swing | It works as the vindicator Chop |
 | Rainwalkers, Dry Skin | They change the damage from water, rain, and splash potions of water |
 | Void Punch | It works as a chorus fruit on the target |

@@ -79,6 +79,17 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void wideGustMakesTheBlastOfTheWindChargesLarger(GameTestHelper helper) {
+		// The pig is 4 blocks away. The vanilla blast reaches 6 blocks, and the larger one reaches 9 blocks.
+		double plain = pushOf(helper, CreeperEffectsTest.pigAt(helper, BURST.east(4)), breezeWith(helper, new BlockPos(1, 1, 6)));
+		double wide = pushOf(helper, CreeperEffectsTest.pigAt(helper, BURST.east(4)),
+				breezeWith(helper, new BlockPos(1, 1, 6), "test_wide_gust"));
+		helper.assertTrue(plain > 0.0, "the plain blast reaches the pig");
+		helper.assertTrue(wide > plain * 1.3, "the larger blast pushes the far pig more, " + wide + " and " + plain);
+		helper.succeed();
+	}
+
 	static IronGolem golemAt(GameTestHelper helper) {
 		IronGolem golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, BURST.east());
 		golem.setNoGravity(true);

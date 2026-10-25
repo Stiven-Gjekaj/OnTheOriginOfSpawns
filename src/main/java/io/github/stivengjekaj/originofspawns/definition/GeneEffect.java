@@ -284,7 +284,8 @@ public sealed interface GeneEffect {
 			Map.entry("wind_push", WindPush.CODEC),
 			Map.entry("wind_lift", WindLift.CODEC),
 			Map.entry("wind_charge_damage", WindChargeDamage.CODEC),
-			Map.entry("jump_shot", JumpShot.CODEC)
+			Map.entry("jump_shot", JumpShot.CODEC),
+			Map.entry("spin_up", SpinUp.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4720,6 +4721,24 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "jump_shot";
+		}
+	}
+
+	/**
+	 * Each hit that the mob takes makes it shoot more often: the throw rate rises by {@code per_hit} for each hit, up
+	 * to {@code max}. The hits count while each new hit comes in {@code seconds} of the last one. A new hit starts the
+	 * time again.
+	 */
+	record SpinUp(float perHit, float max, float seconds) implements GeneEffect {
+		public static final MapCodec<SpinUp> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("per_hit", 0.1F).forGetter(SpinUp::perHit),
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("max", 0.4F).forGetter(SpinUp::max),
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("seconds", 10.0F).forGetter(SpinUp::seconds)
+		).apply(instance, SpinUp::new));
+
+		@Override
+		public String type() {
+			return "spin_up";
 		}
 	}
 }

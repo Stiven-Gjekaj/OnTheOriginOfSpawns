@@ -275,6 +275,22 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void spinUpMakesEachHitRaiseTheThrowRate(GameTestHelper helper) {
+		Breeze breeze = breezeWith(helper, new BlockPos(3, 1, 3), "test_spin_up");
+		var hit = helper.getLevel().damageSources().generic();
+		helper.assertValueEqual(GeneBehaviors.scaleThrowInterval(breeze, 100), 100, "no change with no hits");
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(breeze, hit);
+		helper.assertValueEqual(GeneBehaviors.scaleThrowInterval(breeze, 110), 100, "10% more often after one hit");
+		for (int i = 0; i < 6; i++) {
+			io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(breeze, hit);
+		}
+		helper.assertValueEqual(GeneBehaviors.scaleThrowInterval(breeze, 140), 100, "at most 40% more often");
+		breeze.setAttached(ModAttachments.SPIN_TIME, helper.getLevel().getGameTime() - 201L);
+		helper.assertValueEqual(GeneBehaviors.scaleThrowInterval(breeze, 100), 100, "the hits end after 10 seconds");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes the breeze jump to a place 4 blocks away at the end of its inhale, and returns the speed of the jump. The
 	 * random source has a fixed seed, so each breeze picks the same angle.

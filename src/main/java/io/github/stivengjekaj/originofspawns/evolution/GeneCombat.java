@@ -1095,6 +1095,7 @@ public final class GeneCombat {
 			healOnce(wounded, woundedLevel);
 			GeneTeleports.escape(wounded, woundedLevel);
 			GeneBehaviors.startFlee(wounded);
+			GeneBehaviors.countSpinHit(wounded);
 		}
 		if (entity instanceof Mob wounded) {
 			for (GeneEffect effect : GeneEffects.of(wounded).toList()) {

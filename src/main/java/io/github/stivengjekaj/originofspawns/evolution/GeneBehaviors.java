@@ -1222,6 +1222,33 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the extra throw rate that the recent hits give the mob with the spin up gene.
+	 */
+	public static float spinBonus(Mob mob, GeneEffect.SpinUp spin) {
+		long last = mob.getAttachedOrElse(ModAttachments.SPIN_TIME, Long.MIN_VALUE / 2);
+		if (mob.level().getGameTime() - last > Math.round(spin.seconds() * 20.0F)) {
+			return 0.0F;
+		}
+		return Math.min(spin.max(), spin.perHit() * mob.getAttachedOrElse(ModAttachments.SPIN_HITS, 0));
+	}
+
+	/**
+	 * Counts a hit for the spin up genes of the mob. A hit after the time of the gene starts the count again.
+	 */
+	public static void countSpinHit(Mob mob) {
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.SpinUp spin) {
+				long now = mob.level().getGameTime();
+				long last = mob.getAttachedOrElse(ModAttachments.SPIN_TIME, Long.MIN_VALUE / 2);
+				int hits = now - last > Math.round(spin.seconds() * 20.0F) ? 0 : mob.getAttachedOrElse(ModAttachments.SPIN_HITS, 0);
+				mob.setAttached(ModAttachments.SPIN_HITS, hits + 1);
+				mob.setAttached(ModAttachments.SPIN_TIME, now);
+				return;
+			}
+		}
+	}
+
+	/**
 	 * Returns the ticks that a ghast waits after a shot, after its throw rates. The full time from one shot to the
 	 * next is the wait and the charge of 20 ticks. The throw rate changes the full time.
 	 */
@@ -1242,6 +1269,8 @@ public final class GeneBehaviors {
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			if (effect instanceof GeneEffect.ThrowRate throwRate && GeneCombat.test(mob, throwRate.when())) {
 				rate *= throwRate.multiplier();
+			} else if (effect instanceof GeneEffect.SpinUp spin) {
+				rate *= 1.0F + spinBonus(mob, spin);
 			}
 		}
 		return rate == 1.0F ? ticks : Math.max(1, Math.round(ticks / rate));

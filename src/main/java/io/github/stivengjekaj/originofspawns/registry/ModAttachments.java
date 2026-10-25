@@ -248,6 +248,12 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> SUN_SHADE_TIME = AttachmentRegistry.create(OriginOfSpawns.id("sun_shade_time"));
 
 	/**
+	 * The hits that a mob with a spin up gene took, one after the other, and the game time of the last one.
+	 */
+	public static final AttachmentType<Integer> SPIN_HITS = AttachmentRegistry.create(OriginOfSpawns.id("spin_hits"));
+	public static final AttachmentType<Long> SPIN_TIME = AttachmentRegistry.create(OriginOfSpawns.id("spin_time"));
+
+	/**
 	 * True after a breeze shot its wind charge at the top of the long jump that it does now.
 	 */
 	public static final AttachmentType<Boolean> JUMP_SHOT_DONE = AttachmentRegistry.create(OriginOfSpawns.id("jump_shot_done"));

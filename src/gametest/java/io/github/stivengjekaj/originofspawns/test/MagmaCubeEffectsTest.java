@@ -23,10 +23,12 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.cubemob.AbstractCubeMob;
 import net.minecraft.world.entity.projectile.arrow.Arrow;
+import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Tests the genes that only a magma cube has: the fire, the lava, and the explosions. It also tests that the reused
@@ -114,6 +116,29 @@ public class MagmaCubeEffectsTest {
 				new GeneEffect.FireAura(2.0F, 2.0F, 5.0F)), 1, "one player is in 2 blocks");
 		helper.assertValueEqual(near.getRemainingFireTicks(), 40, "the near player burns for 2 seconds");
 		helper.assertValueEqual(far.getRemainingFireTicks(), 0, "the far player does not burn");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void spitFireShootsASmallFireballAtAFarTargetOneTimeInEachCooldown(GameTestHelper helper) {
+		// The test gene has a minimum range of 4 blocks, so the target and the fireball stay in the test area.
+		var shot = new GeneEffect.FireballShot(10.0F, 4.0F, 16.0F);
+		AbstractCubeMob cube = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(1, 1, 4), 2, "test_spit_fire");
+		Pig near = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 4));
+		cube.setTarget(near);
+		helper.assertFalse(GeneBehaviors.fireballShot(cube, helper.getLevel(), shot), "no shot at a near target");
+		Pig far = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		cube.setTarget(far);
+		helper.assertTrue(GeneBehaviors.fireballShot(cube, helper.getLevel(), shot), "a shot at a far target");
+		List<SmallFireball> fireballs = helper.getLevel().getEntitiesOfClass(SmallFireball.class,
+				cube.getBoundingBox().inflate(3.0));
+		helper.assertValueEqual(fireballs.size(), 1, "one small fireball");
+		SmallFireball fireball = fireballs.get(0);
+		helper.assertTrue(fireball.getOwner() == cube, "the cube shot the fireball");
+		Vec3 toFar = far.position().subtract(cube.position()).normalize();
+		helper.assertTrue(fireball.getDeltaMovement().normalize().dot(toFar) > 0.9, "the fireball flies at the target");
+		fireball.discard();
+		helper.assertFalse(GeneBehaviors.fireballShot(cube, helper.getLevel(), shot), "the next shot waits for the cooldown");
 		helper.succeed();
 	}
 

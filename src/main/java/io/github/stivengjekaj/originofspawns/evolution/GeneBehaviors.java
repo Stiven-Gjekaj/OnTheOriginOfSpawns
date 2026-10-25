@@ -463,6 +463,7 @@ public final class GeneBehaviors {
 				case GeneEffect.WebTrail trail -> webTrail(mob, level, trail);
 				case GeneEffect.WebShot shot -> webShot(mob, level, shot);
 				case GeneEffect.RocketShot shot -> rocketShot(mob, level, shot);
+				case GeneEffect.FireballShot shot -> fireballShot(mob, level, shot);
 				case GeneEffect.Hex hex -> hex(mob, level, hex);
 				case GeneEffect.HealThrow heal -> healThrow(mob, level, heal);
 				case GeneEffect.FireAura aura when now % Math.max(1, Math.round(aura.intervalSeconds() * 20.0F)) < TICK_INTERVAL ->
@@ -1001,6 +1002,30 @@ public final class GeneBehaviors {
 		level.playSound(null, mob.getX(), mob.getY(), mob.getZ(), net.minecraft.sounds.SoundEvents.CROSSBOW_SHOOT,
 				mob.getSoundSource(), 1.0F, 1.0F);
 		mob.setAttached(ModAttachments.ROCKET_TIME, now);
+		return true;
+	}
+
+	/**
+	 * Shoots a small fireball at the target of the mob between the two ranges, one time in each cooldown.
+	 *
+	 * @return true if the mob shot
+	 */
+	public static boolean fireballShot(Mob mob, ServerLevel level, GeneEffect.FireballShot shot) {
+		LivingEntity target = mob.getTarget();
+		if (target == null || !target.isAlive() || mob.distanceTo(target) < shot.minRange()
+				|| mob.distanceTo(target) > shot.range() || !mob.hasLineOfSight(target)
+				|| !GeneCombat.ready(mob, shot, shot.cooldownSeconds())) {
+			return false;
+		}
+		Vec3 direction = new Vec3(target.getX() - mob.getX(), target.getY(0.5) - mob.getY(0.5), target.getZ() - mob.getZ());
+		var fireball = new net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball(level, mob,
+				direction.normalize());
+		fireball.setPos(fireball.getX(), mob.getY(0.5) + 0.5, fireball.getZ());
+		level.addFreshEntity(fireball);
+		if (!mob.isSilent()) {
+			level.levelEvent(null, net.minecraft.world.level.block.LevelEvent.SOUND_BLAZE_FIREBALL, mob.blockPosition(), 0);
+		}
+		GeneCombat.startCooldown(mob, shot);
 		return true;
 	}
 

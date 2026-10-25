@@ -230,7 +230,8 @@ public sealed interface GeneEffect {
 			Map.entry("hop_back", HopBack.CODEC),
 			Map.entry("fire_on_hurt", FireOnHurt.CODEC),
 			Map.entry("lava_exit_fire", LavaExitFire.CODEC),
-			Map.entry("fire_aura", FireAura.CODEC)
+			Map.entry("fire_aura", FireAura.CODEC),
+			Map.entry("fireball_shot", FireballShot.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3745,6 +3746,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "fire_aura";
+		}
+	}
+
+	/**
+	 * One time in each cooldown, the mob shoots a small fireball at its target, if the target is between the two
+	 * ranges and the mob sees it. It is the fireball of a blaze.
+	 */
+	record FireballShot(float cooldownSeconds, float minRange, float range) implements GeneEffect {
+		public static final MapCodec<FireballShot> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(FireballShot::cooldownSeconds),
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("min_range", 6.0F).forGetter(FireballShot::minRange),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 16.0F).forGetter(FireballShot::range)
+		).apply(instance, FireballShot::new));
+
+		@Override
+		public String type() {
+			return "fireball_shot";
 		}
 	}
 }

@@ -164,6 +164,37 @@ public class SlimeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(maxTicks = 60)
+	public void thePiecesGetTheEffectAndJumpApart(GameTestHelper helper) {
+		AbstractCubeMob slime = cubeWith(helper, EntityTypes.SLIME, new BlockPos(4, 1, 4), 2, "test_quick_split");
+		slime.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 1000.0F);
+		helper.succeedWhen(() -> {
+			List<AbstractCubeMob> pieces = piecesNear(helper, slime);
+			helper.assertFalse(pieces.isEmpty(), "the slime splits");
+			for (AbstractCubeMob piece : pieces) {
+				helper.assertTrue(piece.hasEffect(MobEffects.SPEED), "each piece gets Speed");
+				Vec3 away = piece.position().subtract(slime.position());
+				Vec3 jump = piece.getDeltaMovement();
+				helper.assertTrue(jump.y > 0.3, "each piece jumps up");
+				helper.assertTrue(jump.x * away.x + jump.z * away.z > 0.0, "each piece jumps away from the slime");
+			}
+		});
+	}
+
+	@GameTest(maxTicks = 60)
+	public void scatterShotSendsThePiecesTowardTheKiller(GameTestHelper helper) {
+		AbstractCubeMob slime = cubeWith(helper, EntityTypes.SLIME, new BlockPos(2, 1, 4), 2, "test_scatter_shot");
+		Pig killer = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 4));
+		slime.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(killer), 1000.0F);
+		helper.succeedWhen(() -> {
+			List<AbstractCubeMob> pieces = piecesNear(helper, slime);
+			helper.assertFalse(pieces.isEmpty(), "the slime splits");
+			for (AbstractCubeMob piece : pieces) {
+				helper.assertTrue(piece.getDeltaMovement().x > 0.0, "each piece jumps toward the pig");
+			}
+		});
+	}
+
 	static List<AbstractCubeMob> piecesNear(GameTestHelper helper, AbstractCubeMob cube) {
 		return helper.getLevel().getEntitiesOfClass(AbstractCubeMob.class,
 				new AABB(cube.blockPosition()).inflate(4.0), other -> other != cube && other.isAlive());

@@ -218,7 +218,9 @@ public sealed interface GeneEffect {
 			Map.entry("landing_effect", LandingEffect.CODEC),
 			Map.entry("landing_armor_damage", LandingArmorDamage.CODEC),
 			Map.entry("landing_shield_stop", LandingShieldStop.CODEC),
-			Map.entry("split_count", SplitCount.CODEC)
+			Map.entry("split_count", SplitCount.CODEC),
+			Map.entry("split_effect", SplitEffect.CODEC),
+			Map.entry("split_jump", SplitJump.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3545,6 +3547,38 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "split_count";
+		}
+	}
+
+	/**
+	 * When a cube splits, its pieces get the status effect.
+	 */
+	record SplitEffect(Holder<MobEffect> effect, float seconds, int amplifier) implements GeneEffect {
+		public static final MapCodec<SplitEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(SplitEffect::effect),
+				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(SplitEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(SplitEffect::amplifier)
+		).apply(instance, SplitEffect::new));
+
+		@Override
+		public String type() {
+			return "split_effect";
+		}
+	}
+
+	/**
+	 * When a cube splits, its pieces jump about this many blocks: away from the place of the cube, or with
+	 * {@code toward_killer}, toward the entity that killed it.
+	 */
+	record SplitJump(float blocks, boolean towardKiller) implements GeneEffect {
+		public static final MapCodec<SplitJump> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("blocks", 3.0F).forGetter(SplitJump::blocks),
+				Codec.BOOL.optionalFieldOf("toward_killer", false).forGetter(SplitJump::towardKiller)
+		).apply(instance, SplitJump::new));
+
+		@Override
+		public String type() {
+			return "split_jump";
 		}
 	}
 }

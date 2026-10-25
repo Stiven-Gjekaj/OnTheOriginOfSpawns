@@ -32,6 +32,45 @@ public final class GeneCubes {
 		}
 		piece.setAttached(ModAttachments.GENES, genes);
 		GeneEffects.applyAttributes(piece, GeneEffects.sources(level.registryAccess(), genes));
+		for (GeneEffect effect : GeneEffects.of(cube).toList()) {
+			switch (effect) {
+				case GeneEffect.SplitEffect split -> piece.addEffect(new MobEffectInstance(split.effect(),
+						Math.round(split.seconds() * 20.0F), split.amplifier()), cube);
+				case GeneEffect.SplitJump jump -> jump(cube, piece, jump);
+				default -> {
+				}
+			}
+		}
+	}
+
+	/**
+	 * The speed up at the start of the jump of a piece, as the vanilla jump of a mob.
+	 */
+	private static final double JUMP_SPEED_UP = 0.42;
+	/**
+	 * The distance of the jump of a piece for each unit of its start speed. The jump is about 12 ticks in the air,
+	 * and the air takes 9% of the speed each tick.
+	 */
+	private static final double HOP_REACH = 7.4;
+
+	/**
+	 * Lets the piece jump away from the cube, or toward the killer of the cube.
+	 */
+	private static void jump(AbstractCubeMob cube, AbstractCubeMob piece, GeneEffect.SplitJump jump) {
+		net.minecraft.world.phys.Vec3 direction;
+		net.minecraft.world.entity.LivingEntity killer = cube.getLastHurtByMob();
+		if (jump.towardKiller() && killer != null) {
+			direction = killer.position().subtract(piece.position());
+		} else {
+			direction = piece.position().subtract(cube.position());
+		}
+		direction = new net.minecraft.world.phys.Vec3(direction.x, 0.0, direction.z);
+		if (direction.lengthSqr() < 1.0E-6) {
+			double angle = cube.getRandom().nextDouble() * Math.PI * 2.0;
+			direction = new net.minecraft.world.phys.Vec3(Math.cos(angle), 0.0, Math.sin(angle));
+		}
+		net.minecraft.world.phys.Vec3 speed = direction.normalize().scale(jump.blocks() / HOP_REACH);
+		piece.setDeltaMovement(speed.x, JUMP_SPEED_UP, speed.z);
 	}
 
 	/**

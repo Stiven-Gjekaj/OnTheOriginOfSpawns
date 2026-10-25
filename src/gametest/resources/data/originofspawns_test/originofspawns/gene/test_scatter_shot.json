@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "split_jump", "blocks": 3, "toward_killer": true }],
+	"mutation_rate": 0
+}

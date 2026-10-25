@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:piglin_brute",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "shatter_armor", "threshold": 0.25 }],
+	"mutation_rate": 0
+}

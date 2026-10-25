@@ -244,7 +244,9 @@ public sealed interface GeneEffect {
 			Map.entry("spawn_enchantment", SpawnEnchantment.CODEC),
 			Map.entry("conversion_time", ConversionTime.CODEC),
 			Map.entry("gold_armor_attack", GoldArmorAttack.CODEC),
-			Map.entry("no_fear", NoFear.CODEC)
+			Map.entry("no_fear", NoFear.CODEC),
+			Map.entry("guard_gold", GuardGold.CODEC),
+			Map.entry("shatter_armor", ShatterArmor.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -561,6 +563,10 @@ public sealed interface GeneEffect {
 		/**
 		 * The mob is in 16 blocks of the place where it spawned.
 		 */
+		/**
+		 * The target of the mob is a player that does not hold a shield up.
+		 */
+		TARGET_NO_SHIELD,
 		NEAR_HOME,
 		/**
 		 * The mob is farther than 32 blocks from the place where it spawned.
@@ -697,21 +703,30 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * Gives the target a status effect when the mob hits it.
+	 * Gives the target a status effect when the mob hits it. With {@code targets}, only the mobs of the tag get it.
+	 * Rust Axe: {@code minecraft:iron_golem}.
 	 */
-	record EffectOnHit(Holder<MobEffect> effect, float seconds, int amplifier, float chance, When when, Hits hits)
-			implements GeneEffect {
+	record EffectOnHit(Holder<MobEffect> effect, float seconds, int amplifier, float chance, When when, Hits hits,
+			Optional<HolderSet<EntityType<?>>> targets) implements GeneEffect {
 		public static final MapCodec<EffectOnHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				MobEffect.CODEC.fieldOf("effect").forGetter(EffectOnHit::effect),
 				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(EffectOnHit::seconds),
 				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(EffectOnHit::amplifier),
 				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("chance", 1.0F).forGetter(EffectOnHit::chance),
 				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(EffectOnHit::when),
-				Hits.CODEC.optionalFieldOf("hits", Hits.MELEE).forGetter(EffectOnHit::hits)
+				Hits.CODEC.optionalFieldOf("hits", Hits.MELEE).forGetter(EffectOnHit::hits),
+				RegistryCodecs.holderSet(Registries.ENTITY_TYPE).optionalFieldOf("targets").forGetter(EffectOnHit::targets)
 		).apply(instance, EffectOnHit::new));
 
 		public EffectOnHit(Holder<MobEffect> effect, float seconds, int amplifier, float chance) {
-			this(effect, seconds, amplifier, chance, When.ALWAYS, Hits.MELEE);
+			this(effect, seconds, amplifier, chance, When.ALWAYS, Hits.MELEE, Optional.empty());
+		}
+
+		/**
+		 * Returns true if the target gets the effect.
+		 */
+		public boolean reaches(net.minecraft.world.entity.Entity target) {
+			return targets.map(set -> set.contains(target.getType().builtInRegistryHolder())).orElse(true);
 		}
 
 		@Override
@@ -1085,13 +1100,16 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * When the mob first targets a player, all mobs of its species in the radius target that player.
+	 * When the mob first targets a player, all mobs of its species in the radius target that player. With
+	 * {@code mobs}, the mobs of the list or tag answer the call in place of its species. Alarm Horn:
+	 * {@code ["minecraft:piglin", "minecraft:piglin_brute"]}.
 	 */
-	record CallOnSight(float radius, float cooldownSeconds) implements GeneEffect {
+	record CallOnSight(float radius, float cooldownSeconds, Optional<HolderSet<EntityType<?>>> mobs) implements GeneEffect {
 		public static final MapCodec<CallOnSight> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.0F, 128.0F).fieldOf("radius").forGetter(CallOnSight::radius),
 				Codec.floatRange(0.0F, 3600.0F).optionalFieldOf("cooldown_seconds", 30.0F)
-						.forGetter(CallOnSight::cooldownSeconds)
+						.forGetter(CallOnSight::cooldownSeconds),
+				RegistryCodecs.holderSet(Registries.ENTITY_TYPE).optionalFieldOf("mobs").forGetter(CallOnSight::mobs)
 		).apply(instance, CallOnSight::new));
 
 		@Override
@@ -4007,6 +4025,36 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "no_fear";
+		}
+	}
+
+	/**
+	 * When a player breaks a gold block or opens a chest in the radius, the mob attacks the player. It works as the
+	 * vanilla anger of a piglin, for example on a piglin brute.
+	 */
+	record GuardGold(float radius) implements GeneEffect {
+		public static final MapCodec<GuardGold> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("radius", 16.0F).forGetter(GuardGold::radius)
+		).apply(instance, GuardGold::new));
+
+		@Override
+		public String type() {
+			return "guard_gold";
+		}
+	}
+
+	/**
+	 * Each melee hit breaks each worn armor piece of the target that has less than this part of its durability left.
+	 * Shatter Blow: {@code 0.25}.
+	 */
+	record ShatterArmor(float threshold) implements GeneEffect {
+		public static final MapCodec<ShatterArmor> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("threshold", 0.25F).forGetter(ShatterArmor::threshold)
+		).apply(instance, ShatterArmor::new));
+
+		@Override
+		public String type() {
+			return "shatter_armor";
 		}
 	}
 }

@@ -298,9 +298,10 @@ public final class GeneCubes {
 	}
 
 	/**
-	 * Stops the shield of a target that held it up at a touch hit of the cube, for the seconds of the genes.
+	 * Stops the shield of a target that held it up at a melee hit or a touch hit of the mob, for the seconds of the
+	 * genes.
 	 */
-	public static void shieldBreak(AbstractCubeMob cube, ServerLevel level, LivingEntity target, ItemStack shield) {
+	public static void shieldBreak(net.minecraft.world.entity.Mob cube, ServerLevel level, LivingEntity target, ItemStack shield) {
 		if (shield == null || !shield.has(DataComponents.BLOCKS_ATTACKS)) {
 			return;
 		}

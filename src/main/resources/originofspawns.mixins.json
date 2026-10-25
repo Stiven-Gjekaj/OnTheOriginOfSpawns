@@ -41,6 +41,7 @@
 		"MobAccessor",
 		"MobMixin",
 		"MoveControlAccessor",
+		"PiglinAiMixin",
 		"PiglinMixin",
 		"PiglinSpecificSensorMixin",
 		"PillagerMixin",

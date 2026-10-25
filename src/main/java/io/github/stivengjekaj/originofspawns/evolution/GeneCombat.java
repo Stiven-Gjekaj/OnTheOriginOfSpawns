@@ -186,6 +186,7 @@ public final class GeneCombat {
 					&& enderman.getCarriedBlock() != null;
 			case IN_AIR -> !entity.onGround() && !entity.isInLiquid();
 			case TARGET_PLAYER -> entity instanceof Mob mob && mob.getTarget() instanceof Player;
+			case TARGET_NO_SHIELD -> entity instanceof Mob mob && mob.getTarget() instanceof Player player && !player.isBlocking();
 			case NEAR_HOME -> entity.hasAttached(ModAttachments.HOME)
 					&& entity.blockPosition().distSqr(entity.getAttached(ModAttachments.HOME)) <= NEAR_HOME_BLOCKS * NEAR_HOME_BLOCKS;
 			case FAR_FROM_HOME -> entity.hasAttached(ModAttachments.HOME)
@@ -597,6 +598,7 @@ public final class GeneCombat {
 						&& mob.getRandom().nextFloat() < ignite.chance() ->
 						target.igniteForSeconds(ignite.seconds());
 				case GeneEffect.EffectOnHit onHit when onHit.hits().includes(false) && target instanceof LivingEntity living
+						&& onHit.reaches(target)
 						&& mob.getRandom().nextFloat() < onHit.chance() && test(mob, onHit.when()) ->
 						living.addEffect(new MobEffectInstance(onHit.effect(), Math.round(onHit.seconds() * 20.0F),
 								onHit.amplifier()), mob);
@@ -616,6 +618,7 @@ public final class GeneCombat {
 				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(false) && target instanceof LivingEntity living
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(living, freeze.seconds());
 				case GeneEffect.HopBack back -> hopBack(mob, target);
+				case GeneEffect.ShatterArmor shatter when target instanceof LivingEntity living -> shatter(living, shatter.threshold());
 				case GeneEffect.SelfEffectOnHit self -> mob.addEffect(new MobEffectInstance(self.effect(),
 						Math.round(self.seconds() * 20.0F), self.amplifier()), mob);
 				case GeneEffect.LavaExitFire fire when !mob.isInLava() && mob.hasAttached(ModAttachments.LAVA_TIME)
@@ -834,6 +837,19 @@ public final class GeneCombat {
 	 * Pushes the target away from the mob, so that the full push of a hit is the multiplier times as far.
 	 */
 	/**
+	 * Breaks each worn armor piece of the target that has less than the part of its durability left.
+	 */
+	private static void shatter(LivingEntity target, float threshold) {
+		for (EquipmentSlot slot : EquipmentSlotGroup.ARMOR) {
+			ItemStack stack = target.getItemBySlot(slot);
+			if (!stack.isEmpty() && stack.isDamageableItem()
+					&& (stack.getMaxDamage() - stack.getDamageValue()) < threshold * stack.getMaxDamage()) {
+				stack.hurtAndBreak(stack.getMaxDamage(), target, slot);
+			}
+		}
+	}
+
+	/**
 	 * Makes the mob hop back, away from the target, with the largest hop back of its genes.
 	 */
 	private static void hopBack(Mob mob, Entity target) {
@@ -884,7 +900,7 @@ public final class GeneCombat {
 	public static void onProjectileHit(Mob mob, LivingEntity target) {
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
-				case GeneEffect.EffectOnHit onHit when onHit.hits().includes(true)
+				case GeneEffect.EffectOnHit onHit when onHit.hits().includes(true) && onHit.reaches(target)
 						&& mob.getRandom().nextFloat() < onHit.chance() && test(mob, onHit.when()) ->
 						target.addEffect(new MobEffectInstance(onHit.effect(), Math.round(onHit.seconds() * 20.0F),
 								onHit.amplifier()), mob);

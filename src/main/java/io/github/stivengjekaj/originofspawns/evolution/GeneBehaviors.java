@@ -942,6 +942,22 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Lets each mob with the guard gold gene in its radius attack the player that broke a gold block or opened a
+	 * chest. With {@code mustSee}, only a mob that sees the player attacks.
+	 */
+	public static void guardGold(ServerLevel level, Player player, boolean mustSee) {
+		AABB area = player.getBoundingBox().inflate(64.0);
+		for (Mob mob : level.getEntitiesOfClass(Mob.class, area, other -> other.hasAttached(ModAttachments.GENES))) {
+			GeneEffects.of(mob).filter(GeneEffect.GuardGold.class::isInstance).map(GeneEffect.GuardGold.class::cast)
+					.filter(guard -> mob.distanceTo(player) <= guard.radius()).findFirst().ifPresent(guard -> {
+						if ((!mustSee || mob.hasLineOfSight(player)) && mob.canAttack(player)) {
+							mob.setTarget(player);
+						}
+					});
+		}
+	}
+
+	/**
 	 * Sets the players in the radius of the mob on fire.
 	 *
 	 * @return the number of players that burn
@@ -1162,7 +1178,15 @@ public final class GeneBehaviors {
 		if (state.callTime() >= 0L && now - state.callTime() < Math.round(call.cooldownSeconds() * 20.0F)) {
 			return;
 		}
-		callAllies(mob, call.radius(), player);
+		if (call.mobs().isPresent()) {
+			AABB area = mob.getBoundingBox().inflate(call.radius());
+			for (Mob ally : level.getEntitiesOfClass(Mob.class, area,
+					other -> other != mob && call.mobs().get().contains(other.getType().builtInRegistryHolder()))) {
+				ally.setTarget(player);
+			}
+		} else {
+			callAllies(mob, call.radius(), player);
+		}
 		mob.setAttached(ModAttachments.STATE, state.withCallTime(now));
 	}
 

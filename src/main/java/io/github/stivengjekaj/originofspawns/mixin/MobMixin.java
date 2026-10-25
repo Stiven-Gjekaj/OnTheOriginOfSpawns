@@ -62,6 +62,21 @@ public abstract class MobMixin {
 		}
 	}
 
+	/**
+	 * A melee hit of a mob with the shield break gene stops the shield that the target holds up.
+	 */
+	@com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation(method = "doHurtTarget", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/Entity;hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
+	private boolean originofspawns$shieldBreak(Entity target, ServerLevel level, net.minecraft.world.damagesource.DamageSource source,
+			float damage, com.llamalad7.mixinextras.injector.wrapoperation.Operation<Boolean> original) {
+		net.minecraft.world.item.ItemStack shield = target instanceof LivingEntity living ? living.getItemBlockingWith() : null;
+		boolean hurt = original.call(target, level, source, damage);
+		if (shield != null && target instanceof LivingEntity living) {
+			io.github.stivengjekaj.originofspawns.evolution.GeneCubes.shieldBreak((Mob) (Object) this, level, living, shield);
+		}
+		return hurt;
+	}
+
 	@Inject(method = "finalizeSpawn", at = @At("HEAD"))
 	private void originofspawns$recordSpawnReason(ServerLevelAccessor level, DifficultyInstance difficulty,
 			EntitySpawnReason reason, SpawnGroupData data, CallbackInfoReturnable<SpawnGroupData> info) {

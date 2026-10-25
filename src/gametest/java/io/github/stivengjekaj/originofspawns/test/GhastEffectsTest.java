@@ -20,6 +20,7 @@ import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -178,6 +179,17 @@ public class GhastEffectsTest {
 				double degrees = Math.toDegrees(Math.acos(Math.min(1.0, first.dot(second))));
 				helper.assertTrue(Math.abs(degrees - 10.0) < 1.0, "the fireballs are 10 degrees apart, not " + degrees);
 			}
+		});
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8, maxTicks = 200)
+	public void spreadFireShootsSmallFireballsWithTheLargeOne(GameTestHelper helper) {
+		Shots shots = shooter(helper, "test_spread_fire");
+		helper.succeedWhen(() -> {
+			helper.assertTrue(shots.times.size() >= 1, "the ghast shoots");
+			var shot = shots.projectiles.get(0);
+			helper.assertValueEqual(shot.stream().filter(LargeFireball.class::isInstance).count(), 1L, "large fireballs");
+			helper.assertValueEqual(shot.stream().filter(SmallFireball.class::isInstance).count(), 3L, "small fireballs");
 		});
 	}
 

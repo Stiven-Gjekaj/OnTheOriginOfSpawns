@@ -13,6 +13,7 @@ import io.github.stivengjekaj.originofspawns.evolution.goal.SiegeGoal;
 import io.github.stivengjekaj.originofspawns.mixin.AbstractSkeletonAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
@@ -799,6 +800,26 @@ public final class GeneBehaviors {
 			Vec3 turned = offset.yRot(angle);
 			fireball.setPos(ghast.getX() + turned.x, main.getY(), ghast.getZ() + turned.z);
 			level.addFreshEntity(fireball);
+		}
+	}
+
+	/**
+	 * After a shot of a large fireball, shoots the small fireballs of the small fireball fans of the mob.
+	 */
+	public static void smallFireballFan(Mob mob, LargeFireball main) {
+		if (!(mob.level() instanceof ServerLevel level)) {
+			return;
+		}
+		Vec3 direction = main.getDeltaMovement().normalize();
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.SmallFireballFan fan) {
+				for (int i = 0; i < fan.count(); i++) {
+					float angle = (i - (fan.count() - 1) / 2.0F) * fan.angle() * Mth.DEG_TO_RAD;
+					SmallFireball fireball = new SmallFireball(level, mob, direction.yRot(angle));
+					fireball.setPos(main.position());
+					level.addFreshEntity(fireball);
+				}
+			}
 		}
 	}
 

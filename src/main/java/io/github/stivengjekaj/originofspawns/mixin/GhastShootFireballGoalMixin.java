@@ -39,6 +39,7 @@ public abstract class GhastShootFireballGoalMixin {
 		boolean added = original.call(level, entity);
 		if (added && entity instanceof LargeFireball fireball) {
 			GeneBehaviors.ghastFanShot(ghast, fireball);
+			GeneBehaviors.smallFireballFan(ghast, fireball);
 		}
 		return added;
 	}

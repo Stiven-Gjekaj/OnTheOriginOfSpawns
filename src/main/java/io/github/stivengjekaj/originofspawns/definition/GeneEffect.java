@@ -260,7 +260,8 @@ public sealed interface GeneEffect {
 			Map.entry("sun_shade", SunShade.CODEC),
 			Map.entry("swoop_call", SwoopCall.CODEC),
 			Map.entry("blast_shield_stop", BlastShieldStop.CODEC),
-			Map.entry("blast_fire", BlastFire.CODEC)
+			Map.entry("blast_fire", BlastFire.CODEC),
+			Map.entry("small_fireball_fan", SmallFireballFan.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4288,6 +4289,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "blast_fire";
+		}
+	}
+
+	/**
+	 * With each shot of a large fireball, the mob also shoots this many small fireballs in a fan, as a blaze shoots
+	 * them. The fan has its center on the direction of the large fireball, and the angle is between two small
+	 * fireballs.
+	 */
+	record SmallFireballFan(int count, float angle) implements GeneEffect {
+		public static final MapCodec<SmallFireballFan> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 9).optionalFieldOf("count", 3).forGetter(SmallFireballFan::count),
+				Codec.floatRange(0.0F, 90.0F).optionalFieldOf("angle", 15.0F).forGetter(SmallFireballFan::angle)
+		).apply(instance, SmallFireballFan::new));
+
+		@Override
+		public String type() {
+			return "small_fireball_fan";
 		}
 	}
 }

@@ -966,6 +966,23 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Returns the damage that a fireball that a player hit back does to the mob. With a return ward, it is the damage
+	 * of the fireball times the smallest multiplier. Else it is the vanilla damage.
+	 *
+	 * @param reflected the vanilla damage
+	 * @param damage the damage of the fireball or its blast
+	 */
+	public static float returnedFireballDamage(LivingEntity mob, float reflected, float damage) {
+		float result = reflected;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.ReturnWard ward) {
+				result = Math.min(result, damage * ward.multiplier());
+			}
+		}
+		return result;
+	}
+
+	/**
 	 * Runs the effects that act when a projectile of the mob hits a target, for example a thrown trident.
 	 */
 	public static void onProjectileHit(Mob mob, LivingEntity target) {

@@ -213,6 +213,29 @@ public class GhastEffectsTest {
 	}
 
 	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8)
+	public void returnWardHalvesTheDamageOfAReturnedFireball(GameTestHelper helper) {
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		Ghast plain = ghastWith(helper, new BlockPos(5, 1, 5));
+		helper.assertFalse(hitByReturnedFireball(helper, plain, player), "a returned fireball kills a plain ghast");
+		Ghast warded = ghastWith(helper, new BlockPos(5, 1, 5), "test_return_ward");
+		helper.assertTrue(hitByReturnedFireball(helper, warded, player), "the warded ghast lives");
+		helper.assertValueEqual(warded.getHealth(), warded.getMaxHealth() - 3.0F, "half of the 6 damage of the fireball");
+		helper.succeed();
+	}
+
+	/**
+	 * Hurts the ghast with a fireball that the player hit back, with the damage of a fireball hit, and returns true
+	 * if the ghast is still alive.
+	 */
+	static boolean hitByReturnedFireball(GameTestHelper helper, Ghast ghast, ServerPlayer player) {
+		LargeFireball fireball = fireball(helper, ghast, BLAST);
+		fireball.setOwner(player);
+		ghast.hurtServer(helper.getLevel(), helper.getLevel().damageSources().fireball(fireball, player), 6.0F);
+		fireball.discard();
+		return ghast.isAlive();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8)
 	public void theFireballsOfOneMobDoNotHitEachOther(GameTestHelper helper) {
 		Ghast ghast = ghastWith(helper, new BlockPos(5, 1, 5), "test_twin_shot");
 		LargeFireball first = fireball(helper, ghast, BLAST);

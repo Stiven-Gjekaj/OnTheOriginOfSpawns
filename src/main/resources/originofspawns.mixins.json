@@ -32,6 +32,7 @@
 		"FireworkRocketEntityAccessor",
 		"FireworkRocketEntityMixin",
 		"FlowingFluidMixin",
+		"GhastMixin",
 		"GhastMoveControlMixin",
 		"GhastRandomFloatAroundGoalMixin",
 		"GhastShootFireballGoalMixin",

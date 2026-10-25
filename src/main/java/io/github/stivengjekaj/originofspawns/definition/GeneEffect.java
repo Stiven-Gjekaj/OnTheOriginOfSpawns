@@ -263,7 +263,8 @@ public sealed interface GeneEffect {
 			Map.entry("blast_fire", BlastFire.CODEC),
 			Map.entry("small_fireball_fan", SmallFireballFan.CODEC),
 			Map.entry("hard_fireball", HardFireball.CODEC),
-			Map.entry("float_height", FloatHeight.CODEC)
+			Map.entry("float_height", FloatHeight.CODEC),
+			Map.entry("return_ward", ReturnWard.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4341,6 +4342,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "float_height";
+		}
+	}
+
+	/**
+	 * A fireball that a player hits back at the ghast, and its blast, do the normal damage of the fireball times the
+	 * multiplier. A vanilla ghast takes 1000 damage from them, so each of them kills it.
+	 */
+	record ReturnWard(float multiplier) implements GeneEffect {
+		public static final MapCodec<ReturnWard> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("multiplier", 0.5F).forGetter(ReturnWard::multiplier)
+		).apply(instance, ReturnWard::new));
+
+		@Override
+		public String type() {
+			return "return_ward";
 		}
 	}
 }

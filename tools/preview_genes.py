@@ -72,6 +72,8 @@ HOGLIN_PATH = "assets/minecraft/textures/entity/hoglin/hoglin.png"
 ZOGLIN_PATH = "assets/minecraft/textures/entity/hoglin/zoglin.png"
 PHANTOM_PATH = "assets/minecraft/textures/entity/phantom/phantom.png"
 PHANTOM_EYES_PATH = "assets/minecraft/textures/entity/phantom/phantom_eyes.png"
+GHAST_PATH = "assets/minecraft/textures/entity/ghast/ghast.png"
+GHAST_SHOOTING_PATH = "assets/minecraft/textures/entity/ghast/ghast_shooting.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -527,6 +529,16 @@ PHANTOM_FAMILIES = {
 }
 
 
+# The families of the ghast, from design/species/ghast.md.
+GHAST_FAMILIES = {
+    "bomber": ["great_blast", "fire_rain", "blast_shell", "shield_burst", "golem_bomb", "twin_shot"],
+    "barrager": ["quick_fire", "far_sight", "spread_fire", "hard_fireball", "steady_aim", "ember_spit"],
+    "weeper": ["healing_tears", "soul_tears", "tear_rain", "sad_shell", "kin_grief", "grief_cry"],
+    "driftwing": ["swift_drift", "dodge_drift", "high_float", "haze_skin", "return_ward", "ghost_glide"],
+    "moaner": ["dread_moan", "weak_wail", "echo_call", "dark_cry", "shrill_cry", "blast_cry"],
+}
+
+
 ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
     "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
     "fester": ["nether_rot", "stench"], "bladesman": ["riposte", "keen_edge"], "chaser": ["scent_tracker", "vault"],
@@ -555,6 +567,11 @@ PHANTOM_EXTRA = next_family_extra(PHANTOM_FAMILIES, {
     "nightwing": ["sun_shade", "pale_bone"], "shrieker": ["flock_cry", "echo_cry"],
     "swarmwing": ["pack_wing", "swarm_dive"],
 }, "swarmwing")
+GHAST_EXTRA = next_family_extra(GHAST_FAMILIES, {
+    "bomber": ["great_blast", "twin_shot"], "barrager": ["far_sight", "spread_fire"],
+    "weeper": ["healing_tears", "tear_rain"], "driftwing": ["swift_drift", "return_ward"],
+    "moaner": ["dread_moan", "blast_cry"],
+}, "moaner")
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -921,6 +938,19 @@ PHANTOM_CUBES = [
     ("right_wing_tip", (16, 24), (-13, 0, 0), (13, 1, 9), True),
 ]
 
+
+# The ghast, from GhastModel: a body cube of 16, and nine tentacles, which
+# are root bones. The lengths of the tentacles come from a random source with
+# the seed 1660: 8, 13, 9, 11, 11, 10, 12, 9, and 12. The game draws the
+# ghast 4.5 times larger. The texture is 128x64, with 2x2 pixels for each uv
+# unit. The shooting face is a second texture.
+GHAST_LENGTHS = (8, 13, 9, 11, 11, 10, 12, 9, 12)
+GHAST_PIVOTS = {"body": (0, 17.6, 0)}
+GHAST_PIVOTS.update({f"tentacle{i}": ((i % 3 - (i // 3 % 2) * 0.5 + 0.25 - 1) * 5, 24.6, (i // 3 - 1) * 5)
+                     for i in range(9)})
+GHAST_CUBES = [("body", (0, 0), (-8, -8, -8), (16, 16, 16), False)] + [
+    (f"tentacle{i}", (0, 0), (-1, 0, -1), (2, GHAST_LENGTHS[i], 2), False) for i in range(9)]
+
 # Each Nether mob: the cubes, the pivots, the weapon, the wraps, the frame of
 # the sheets (VIEW_X, VIEW_Y, VIEW_W, VIEW_H), the frame of the close-ups,
 # and whether the sheets look down on it.
@@ -935,6 +965,8 @@ NETHER_LOOKS = {
     "hoglin": (HOGLIN_CUBES, HOGLIN_PIVOTS, None, [], HOGLIN_FRAME, HOGLIN_CLOSEUP, True),
     "zoglin": (HOGLIN_CUBES, HOGLIN_PIVOTS, None, [], HOGLIN_FRAME, HOGLIN_CLOSEUP, True),
     "phantom": (PHANTOM_CUBES, PHANTOM_PIVOTS, None, [], (24, 12, 48, 24), ((48, 26), (0, -1)), True),
+    "ghast": (GHAST_CUBES, GHAST_PIVOTS, None, [], (14, -6, 28, 34), ((30, 36), (0, 23)), False),
+    "ghast_shooting": (GHAST_CUBES, GHAST_PIVOTS, None, [], (14, -6, 28, 34), ((30, 36), (0, 23)), False),
 }
 # The flyers are seen from below in the game, so their sheets look at them
 # from above, from below, and from the side.
@@ -1353,8 +1385,9 @@ def cubes_of(tex, genes, baby=False):
     the layers with the target "outer" go on it.
     """
     body = BABY_CUBES if baby else MOB["cubes"]
+    # The ghast texture has 2x2 pixels for each uv unit.
     cubes = [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": m,
-              "texture": tex, "scale": 1.0} for b, uv, f, s, m in body]
+              "texture": tex, "scale": MOB.get("tex_scale", 1.0)} for b, uv, f, s, m in body]
     if MOB["outer"]:
         outer = zombie(MOB["outer"][1 if baby else 0], genes, baby, outer=True)
         outer_body = ZOMBIE_CUBES if MOB["outer_target"] else body
@@ -1507,6 +1540,8 @@ SPECIES = {
     "hoglin": (HOGLIN_PATH, None, HOGLIN_FAMILIES, HOGLIN_EXTRA, []),
     "zoglin": (ZOGLIN_PATH, None, ZOGLIN_FAMILIES, ZOGLIN_EXTRA, []),
     "phantom": (PHANTOM_PATH, None, PHANTOM_FAMILIES, PHANTOM_EXTRA, []),
+    "ghast": (GHAST_PATH, None, GHAST_FAMILIES, GHAST_EXTRA, []),
+    "ghast_shooting": (GHAST_SHOOTING_PATH, None, GHAST_FAMILIES, GHAST_EXTRA, []),
 }
 
 
@@ -1597,6 +1632,7 @@ def set_mob(species):
     MOB["extra"] = BOGGED_MUSHROOMS if species == "bogged" else []
     # The wither skeleton holds a stone sword. The previews draw the body
     # at 1 times its size, so the sword is at that size too.
+    MOB["tex_scale"] = 1.0
     MOB["held"] = (stone_sword() if species == "wither_skeleton"
                    else carried_block() if species == "enderman_carrying" else [])
     look = NETHER_LOOKS.get(species)
@@ -1606,6 +1642,11 @@ def set_mob(species):
         MOB["held"] = held_item(held) if held else []
         VIEW_X, VIEW_Y, VIEW_W, VIEW_H = frame
         MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if low else [(0, 0), (180, 0), (-35, 15)]
+        MOB["tex_scale"] = 2.0 if species.startswith("ghast") else 1.0
+        if species.startswith("ghast"):
+            # The ghast floats over the player, so its sheets look at it from
+            # the front, from below at the side, and from behind.
+            MOB["sheet_views"] = [(-20, 10), (-60, -30), (160, 15)]
         if species in EYES_PATHS:
             MOB["sheet_views"] = FLYER_VIEWS
             MOB["eyes"] = find_zombie_texture(EYES_PATHS[species])

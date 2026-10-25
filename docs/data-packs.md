@@ -156,6 +156,7 @@ The states for `when` are:
 | `target_unreachable` | The mob has a target, and it finds no path that reaches it |
 | `wet` | The mob is in water, or rain falls on it |
 | `carrying_block` | The mob is an enderman that carries a block |
+| `in_air` | The mob does not stand on the ground, and it is not in water or in lava |
 | `sunlit` | The mob is out of water and rain, in the daylight, under the open sky |
 | `target_below` | The target of the mob is 2 or more blocks lower than the mob |
 | `target_above` | The target of the mob is 2 or more blocks higher than the mob |
@@ -392,6 +393,43 @@ teleport, and its cooldown does not start. The teleports work on each mob.
 genes from the pool, as new mobs. A brood and a burrow also start at an
 event, such as an endermite from an ender pearl.
 
+#### Cubes
+
+A cube is a slime or a magma cube. The pieces of a split have the genes of
+the cube that split. They are not new mobs, so they get no genes from the
+pool. A gene acts at each size. A cube hits with a touch, and the hit
+effects of the mob, such as `effect_on_hit`, work on a touch hit.
+
+| Type | Fields | Result |
+|---|---|---|
+| `split_count` | `count` (none), `extra` (`0`) | Changes the number of pieces. Vanilla makes 2 to 4. With `count`, the split always makes this many. Else it makes `extra` more. The fixed count counts first, and the extras add up |
+| `split_effect` | `effect`, `seconds`, `amplifier` (`0`) | The pieces get the status effect |
+| `split_jump` | `blocks` (`3`), `toward_killer` (`false`) | The pieces jump about this many blocks away from the place of the cube, or toward the killer |
+| `split_area_effect` | `effect` (none), `seconds` (`0`), `amplifier` (`0`), `fire_seconds` (`0`), `radius` (`3`) | At the split, the players in the radius get the status effect, or burn, or both |
+| `spawn_size` | `size` (`4`), `chance` | When a cube spawns in a natural way or from a spawner, it has this size with this chance. The other sizes share the rest of the chance |
+| `tiny_damage` | | A cube of size 1 does damage with its touch |
+| `grow` | `seconds` (`60`), `max_size` (`4`) | After this many seconds out of combat, the cube grows one size, up to `max_size`, and heals to the health of its new size |
+| `bud` | `seconds` (`30`) | Each this many seconds out of combat, a cube of size 1 buds off the cube. The bud has its genes, but it makes no buds |
+| `hop` | `wait_multiplier` (`1`), `distance_multiplier` (`1`), `height_multiplier` (`1`) | Changes the hop. `0.77` as the wait hops 30% more often. More than one effect multiplies together |
+| `landing_damage` | `damage`, `radius` (`2`) | When the cube lands, it does this damage to the players in the radius |
+| `landing_effect` | `effect`, `seconds`, `amplifier` (`0`), `radius` (`2`) | When the cube lands, the players in the radius get the status effect |
+| `landing_armor_damage` | `amount`, `radius` (`2`) | When the cube lands, each armor piece of the players in the radius takes this much damage |
+| `landing_shield_stop` | `seconds` | When the cube lands on a player that holds up a shield, the shield is useless for this many seconds |
+| `touch_reach` | `blocks` (`1`) | The touch attack reaches this many blocks farther. More than one effect adds up |
+| `shield_break` | `seconds` (`5`) | A touch hit on a player that holds up a shield makes the shield useless for this many seconds |
+| `hop_back` | `blocks` (`3`) | After a melee hit, the mob hops about this many blocks back. It works on each mob |
+| `fire_trail` | `interval_seconds` (`3`), `seconds` (`4`) | The mob leaves fire at its place one time in each interval. The fire does not spread or burn blocks, and it goes away. It obeys `mobGriefing` |
+| `fire_aura` | `seconds` (`2`), `radius` (`2`), `interval_seconds` (`5`) | One time in each interval, the players in the radius burn for the seconds |
+| `fireball_shot` | `cooldown_seconds` (`10`), `min_range` (`6`), `range` (`16`) | One time in each cooldown, the mob shoots the small fireball of a blaze at its target in the range, if it sees it |
+| `fire_on_hurt` | `seconds` (`3`) | An attacker that hits the mob in melee burns for this many seconds |
+| `lava_exit_fire` | `fire_seconds` (`8`), `seconds` (`10`) | For `seconds` after the mob leaves lava, its melee hits set the target on fire for `fire_seconds` |
+| `lava_pool` | `seconds` (`3`) | When the mob dies, it leaves a lava source at its place for the seconds. The lava does not flow. It obeys `mobGriefing` |
+| `blast_heal` | `fraction` (`0.5`) | An explosion does no damage to the mob. It heals the mob for this part of the damage |
+
+`death_burst` has the option `fire_seconds` (`0`): the players in the radius
+also burn. `water_damage` stops while a fire immune mob has Fire Resistance.
+`water_damage_taken` also works on a mob that `water_damage` hurts.
+
 #### Spiders
 
 These effects suit a spider, but other mobs can also use them. A gene cobweb
@@ -499,6 +537,11 @@ An enderman has the humanoid bones. The vanilla eyes layer draws over its
 eyes, so a gene that changes the eyes uses a gene model with `glow`. An
 endermite has `segment0` (the head), `segment1` (the body), `segment2` (the
 tail), and `segment3` (the tip of the tail).
+A slime has `cube` (the inner cube), `right_eye`, `left_eye`, and `mouth`.
+The outer gel has the same place as the inner cube, and it also draws with
+the gene marks. A magma cube has `cube0` to `cube7`, the eight layers from
+the top, and `inside_cube`. The marks and the models grow with the size of
+the cube.
 The coordinates are in pixels, in the coordinates of the bone, as in the
 vanilla models.
 

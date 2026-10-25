@@ -11,7 +11,7 @@ natural selection. Burn the zombies, and their children resist fire. Shoot
 them, and they grow armor plates. Every gene changes how a mob looks, so you
 can read the evolution of your world on the bodies of its mobs.
 
-| 15 | 450 | 75 | 450 | 31 | 6 | 2,616,540 |
+| 17 | 510 | 85 | 510 | 31 | 6 | 2,965,412 |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | species | genes | families | named family mixes | causes of death | biome pools for each species | possible gene mixes |
 
@@ -43,11 +43,12 @@ can read the evolution of your world on the bodies of its mobs.
 > **The mod is in development.** Version 0.4.0-alpha is out: the zombie, the
 > husk, the drowned, the skeleton, the stray, the bogged, the wither skeleton,
 > and the parched are complete. The main branch adds the creeper, the spider,
-> the cave spider, the pillager, the vindicator, the evoker, and the witch.
+> the cave spider, the pillager, the vindicator, the evoker, the witch, the
+> enderman, and the endermite.
 > Each species has 30 genes, 5 families, 20 minor families, and 10 hybrids.
 > The numbers above count the main branch.
 > The Beagle Notebook shows the gene pools and what you know of each family.
-> The endermen and the other hostile mobs come next, in milestone 2c.
+> The slimes and the other hostile mobs come next, in milestone 2c.
 > The [wiki](https://stiven-gjekaj.github.io/OnTheOriginOfSpawns/) shows each
 > gene and family.
 > [ROADMAP.md](design/ROADMAP.md) lists the milestones to version 1.0.0.

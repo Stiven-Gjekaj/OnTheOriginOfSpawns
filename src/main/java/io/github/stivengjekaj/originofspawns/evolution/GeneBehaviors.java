@@ -35,6 +35,7 @@ import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -501,6 +502,7 @@ public final class GeneBehaviors {
 				case GeneEffect.Dive dive -> dive(mob, dive);
 				case GeneEffect.BoilOff boil -> boilOff(mob, level, boil);
 				case GeneEffect.ChargeEachPlayer charge -> chargeEachPlayer(mob, level, charge);
+				case GeneEffect.LightningCall call -> lightningCall(mob, level, call);
 				case GeneEffect.Hex hex -> hex(mob, level, hex);
 				case GeneEffect.HealThrow heal -> healThrow(mob, level, heal);
 				case GeneEffect.EatItems eat -> eatItems(mob, level, eat);
@@ -1070,6 +1072,31 @@ public final class GeneBehaviors {
 		net.minecraft.world.entity.projectile.Projectile.spawnProjectileUsingShoot(charge, level, ItemStack.EMPTY, dx, dy, dz,
 				0.7F, (5 - level.getDifficulty().getId() * 4) * arrowSpreadMultiplier(breeze));
 		fireballSpeed(breeze, charge);
+	}
+
+	/**
+	 * Calls lightning on the nearest player in the radius under an open sky, if the cooldown is over.
+	 *
+	 * @return the player that the lightning hits, or null
+	 */
+	public static Player lightningCall(Mob mob, ServerLevel level, GeneEffect.LightningCall call) {
+		if (!GeneCombat.ready(mob, call, call.cooldownSeconds())) {
+			return null;
+		}
+		var player = level.getEntitiesOfClass(Player.class, mob.getBoundingBox().inflate(call.radius()),
+						other -> other.isAlive() && !other.isSpectator() && !other.isCreative()
+								&& other.distanceTo(mob) <= call.radius() && level.canSeeSky(other.blockPosition()))
+				.stream().min(java.util.Comparator.comparingDouble(other -> other.distanceToSqr(mob))).orElse(null);
+		if (player == null) {
+			return null;
+		}
+		GeneCombat.startCooldown(mob, call);
+		LightningBolt bolt = EntityTypes.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
+		if (bolt != null) {
+			bolt.snapTo(player.getX(), player.getY(), player.getZ());
+			level.addFreshEntity(bolt);
+		}
+		return player;
 	}
 
 	/**

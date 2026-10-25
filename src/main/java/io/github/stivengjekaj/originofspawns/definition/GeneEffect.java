@@ -286,7 +286,8 @@ public sealed interface GeneEffect {
 			Map.entry("wind_charge_damage", WindChargeDamage.CODEC),
 			Map.entry("jump_shot", JumpShot.CODEC),
 			Map.entry("spin_up", SpinUp.CODEC),
-			Map.entry("charge_each_player", ChargeEachPlayer.CODEC)
+			Map.entry("charge_each_player", ChargeEachPlayer.CODEC),
+			Map.entry("lightning_call", LightningCall.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4756,6 +4757,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "charge_each_player";
+		}
+	}
+
+	/**
+	 * One time in each cooldown, lightning hits the nearest player in the radius that is under an open sky. It does
+	 * the vanilla damage of lightning. Players in creative mode and spectators do not count.
+	 */
+	record LightningCall(float radius, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<LightningCall> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("radius", 16.0F).forGetter(LightningCall::radius),
+				Codec.floatRange(1.0F, 600.0F).optionalFieldOf("cooldown_seconds", 30.0F).forGetter(LightningCall::cooldownSeconds)
+		).apply(instance, LightningCall::new));
+
+		@Override
+		public String type() {
+			return "lightning_call";
 		}
 	}
 }

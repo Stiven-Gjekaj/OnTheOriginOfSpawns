@@ -305,6 +305,20 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void thunderCallHitsAPlayerUnderAnOpenSky(GameTestHelper helper) {
+		Breeze breeze = breezeWith(helper, new BlockPos(1, 1, 1));
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(5, 1, 1))));
+		var call = new io.github.stivengjekaj.originofspawns.definition.GeneEffect.LightningCall(5.0F, 30.0F);
+		helper.assertTrue(GeneBehaviors.lightningCall(breeze, helper.getLevel(), call) == player, "the lightning hits the player");
+		var bolts = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.LightningBolt.class, helper.getBounds().inflate(4.0));
+		helper.assertValueEqual(bolts.size(), 1, "lightning bolts");
+		bolts.forEach(net.minecraft.world.entity.LightningBolt::discard);
+		helper.assertTrue(GeneBehaviors.lightningCall(breeze, helper.getLevel(), call) == null, "the next waits 30 seconds");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes the breeze jump to a place 4 blocks away at the end of its inhale, and returns the speed of the jump. The
 	 * random source has a fixed seed, so each breeze picks the same angle.

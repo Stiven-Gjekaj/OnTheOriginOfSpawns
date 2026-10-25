@@ -62,6 +62,7 @@ WITCH_PATH = "assets/minecraft/textures/entity/witch/witch.png"
 ENDERMAN_PATH = "assets/minecraft/textures/entity/enderman/enderman.png"
 ENDERMAN_EYES_PATH = "assets/minecraft/textures/entity/enderman/enderman_eyes.png"
 ENDERMITE_PATH = "assets/minecraft/textures/entity/endermite/endermite.png"
+SLIME_PATH = "assets/minecraft/textures/entity/slime/slime.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -418,6 +419,17 @@ ENDERMITE_EXTRA = {
                 ("All 6 + Swarmers", ["mite_call", "pearl_brood"], True, {})],
 }
 
+# The families of the slime, from design/species/slime.md.
+SLIME_FAMILIES = {
+    "giants": ["great_blob", "heavy_body", "thick_gel", "swell", "mother_gel", "wide_reach"],
+    "splitters": ["many_pieces", "tiny_teeth", "quick_split", "scatter", "gel_trap", "bud"],
+    "gluers": ["sticky_hit", "gel_trail", "gum_skin", "glue_grip", "sticky_pounce", "cling"],
+    "bouncers": ["high_hop", "long_hop", "quick_hop", "slam", "water_hop", "acid_landing"],
+    "acids": ["acid_touch", "shield_melt", "acid_blood", "burning_gel", "acid_pool", "dissolve"],
+}
+
+SLIME_EXTRA = {}
+
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
     "rushers": [("All 6 + Skulkers", ["leafskin", "patient"], True, {})],
@@ -611,6 +623,22 @@ ENDERMITE_CUBES = [
     ("segment2", (0, 14), (-1.5, 0, -0.5), (3, 3, 1), False),
     ("segment3", (0, 18), (-0.5, 0, -0.5), (1, 2, 1), False),
 ]
+
+
+# The slime, from SlimeModel: an inner cube (the part "cube"), two eyes, and a
+# mouth. The outer gel is a second model, in SlimeOuterLayer: a clear cube of
+# 8x8x8 round it, which the previews draw as a translucent cube. The game
+# draws the slime at its size, 1, 2, or 4 times; the keys "slime" (size 4),
+# "slime_2", and "slime_1" draw it at each size.
+SLIME_PIVOTS = {"cube": (0, 0, 0), "right_eye": (0, 0, 0), "left_eye": (0, 0, 0), "mouth": (0, 0, 0)}
+SLIME_CUBES = [
+    ("cube", (0, 16), (-3, 17, -3), (6, 6, 6), False),
+    ("right_eye", (32, 0), (-3.25, 18, -3.5), (2, 2, 2), False),
+    ("left_eye", (32, 4), (1.25, 18, -3.5), (2, 2, 2), False),
+    ("mouth", (32, 8), (0, 21, -3.5), (1, 1, 1), False),
+]
+SLIME_GEL = [("cube", (0, 0), (-4, 16, -4), (8, 8, 8), False)]
+SLIME_SIZES = {"slime": 4, "slime_2": 2, "slime_1": 1}
 
 
 def grow(cube, k):
@@ -848,7 +876,7 @@ def split_image(identifier):
 MOB = {"split": False, "outer": None, "cubes": ZOMBIE_CUBES, "pivots": PIVOTS, "outer_target": False,
        "outer_inflate": 0.25, "extra": [], "held": [], "wraps": [], "eyes": None,
        "sheet_views": [(0, 0), (180, 0), (-35, 15)], "closeup_view": ((26, 40), (0, 5)),
-       "hidden": (), "grow": 1}
+       "hidden": (), "grow": 1, "gel": []}
 
 # The mushrooms on the head of the bogged, from BoggedModel: crossed planes
 # of 6x4 pixels, with the texture of the mob. Each is (uv, from, size,
@@ -1035,6 +1063,8 @@ def cubes_of(tex, genes, baby=False):
     cubes += [{"bone": "head", "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": False, "texture": tex,
                "scale": 1.0, "pivot": p, "rotation": rot} for uv, f, s, p, rot in MOB["extra"]]
     cubes += MOB["held"]
+    cubes += [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": m, "texture": tex,
+               "scale": 1.0, "translucent": True} for b, uv, f, s, m in MOB["gel"]]
     # The glowing eyes of the spider draw over the marks, with full light.
     if MOB["eyes"]:
         head = next(c for c in MOB["cubes"] if c[0] == "head")
@@ -1166,6 +1196,7 @@ SPECIES = {
     "witch": (WITCH_PATH, None, WITCH_FAMILIES, WITCH_EXTRA, []),
     "enderman": (ENDERMAN_PATH, None, ENDERMAN_FAMILIES, ENDERMAN_EXTRA, []),
     "endermite": (ENDERMITE_PATH, None, ENDERMITE_FAMILIES, ENDERMITE_EXTRA, []),
+    "slime": (SLIME_PATH, None, SLIME_FAMILIES, SLIME_EXTRA, []),
 }
 
 
@@ -1186,6 +1217,7 @@ def set_mob(species):
                     else WITCH_CUBES if species == "witch"
                     else ENDERMAN_CUBES if species in ("enderman", "enderman_carrying")
                     else ENDERMITE_CUBES if species == "endermite"
+                    else SLIME_CUBES if species in SLIME_SIZES
                     else VINDICATOR_ATTACK_CUBES if species == "vindicator_attacking"
                     else SKELETON_CUBES if skeleton else ZOMBIE_CUBES)
     MOB["pivots"] = (PARCHED_PIVOTS if species == "parched" else CREEPER_PIVOTS if species == "creeper"
@@ -1197,6 +1229,7 @@ def set_mob(species):
                      else ENDERMAN_PIVOTS if species == "enderman"
                      else ENDERMAN_CARRY_PIVOTS if species == "enderman_carrying"
                      else ENDERMITE_PIVOTS if species == "endermite"
+                     else SLIME_PIVOTS if species in SLIME_SIZES
                      else SKELETON_PIVOTS if skeleton else PIVOTS)
     # With its arms crossed, the vindicator or the evoker hides the arms
     # right_arm and left_arm, and their gene models.
@@ -1211,12 +1244,24 @@ def set_mob(species):
                                       else (12, 24, 24, 49) if species == "witch"
                                       else (12, 23, 24, 50) if enderman
                                       else (17, -40, 34, 36) if species == "endermite" else (11, 11, 22, 37))
-    # The endermite is small, so the previews draw it 3 times larger.
-    MOB["grow"] = 3 if species == "endermite" else 1
-    low = spider or species == "endermite"
+    # The endermite is small, so the previews draw it 3 times larger. The slime
+    # is drawn at its size.
+    MOB["grow"] = 3 if species == "endermite" else SLIME_SIZES.get(species, 1)
+    MOB["gel"] = SLIME_GEL if species in SLIME_SIZES else []
+    low = spider or species == "endermite" or species in SLIME_SIZES
+    if species in SLIME_SIZES:
+        # A frame round the cube, which is 8 pixels at size 1 and stands from
+        # y 16 to 24. In the views of the sheets, it fills x -5.6 to 5.6 and
+        # y 8 to 24.4, times the size.
+        k = MOB["grow"]
+        VIEW_X, VIEW_Y, VIEW_W, VIEW_H = 6 * k + 2, 2 - 8 * k, 12 * k + 4, 17 * k + 4
     MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if low else [(0, 0), (180, 0), (-35, 15)]
     MOB["closeup_view"] = (((40, 34), (0, 13)) if spider else ((26, 50), (0, 0)) if species == "witch"
                            else ((28, 52), (0, 2)) if enderman else ((34, 60), (0, 47)) if species == "endermite"
+                           # In the views of the close-ups, the slime fills x -5.6 to 5.6 and
+                           # y 3.3 to 24.4, times the size.
+                           else ((12 * MOB["grow"] + 4, 22 * MOB["grow"] + 8), (0, 13.8 * MOB["grow"] + 1))
+                           if species in SLIME_SIZES
                            else ((26, 40), (0, 5)))
     MOB["eyes"] = (find_zombie_texture(SPIDER_EYES_PATH) if spider
                    else find_zombie_texture(ENDERMAN_EYES_PATH) if enderman else None)

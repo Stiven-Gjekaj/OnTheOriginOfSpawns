@@ -631,6 +631,13 @@ ENDERMITE_CLOSEUPS = {
                            ("All 6", ENDERMITE["warpers"], False)], SPIDER_NIGHT_VIEWS),
 }
 
+# The close-ups of the slime, at size 4. The keys "slime_2" and "slime_1"
+# show it at sizes 2 and 1.
+SLIME = pg.SLIME_FAMILIES
+SLIME_CLOSEUPS = {}
+SLIME_2_CLOSEUPS = {}
+SLIME_1_CLOSEUPS = {}
+
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
     "husk": (pg.HUSK_PATH, pg.HUSK_BABY_PATH, HUSK_CLOSEUPS),
@@ -652,6 +659,9 @@ SPECIES = {
     "enderman": (pg.ENDERMAN_PATH, None, ENDERMAN_CLOSEUPS),
     "enderman_carrying": (pg.ENDERMAN_PATH, None, ENDERMAN_CARRY_CLOSEUPS),
     "endermite": (pg.ENDERMITE_PATH, None, ENDERMITE_CLOSEUPS),
+    "slime": (pg.SLIME_PATH, None, SLIME_CLOSEUPS),
+    "slime_2": (pg.SLIME_PATH, None, SLIME_2_CLOSEUPS),
+    "slime_1": (pg.SLIME_PATH, None, SLIME_1_CLOSEUPS),
 }
 
 

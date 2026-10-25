@@ -13,6 +13,9 @@ of a gene model, "glow": True to keep its full light in the dark, and
 point p then goes to move + (p - adult) * scale, after the part turns. The faces use the box UV layout of the vanilla ModelPart: in the
 side row, the faces are the right side (-x), the front, the left side (+x),
 and the back.
+A cube with "translucent": True, as the clear gel of the slime, is drawn
+after all the other cubes, on a layer of its own that keeps the alpha of its
+texture, and the layer goes over the image.
 A bone pivot is (x, y, z), or (x, y, z, rx, ry, rz) for a bone that turns,
 as the legs of the spider. The angles are in degrees.
 This script needs Pillow.
@@ -137,9 +140,15 @@ def render(cubes, pivots, turn=0, tilt=0, scale=8, size=(24, 40), center=(0, 6),
                 for a, b in ((i, j), (i + 1, j), (i + 1, j + 1), (i, j + 1)):
                     points.append([origin[n] + du[n] * a / cols + dv[n] * b / rows for n in range(3)])
                 middle = [sum(p[n] for p in points) / 4 for n in range(3)]
-                quads.append((rotate(*middle)[2], [screen(p) for p in points], color))
-    for _, corners, color in sorted(quads, key=lambda q: -q[0]):
-        draw.polygon(corners, fill=color, outline=color)
+                quads.append((rotate(*middle)[2], [screen(p) for p in points], color, cube.get("translucent")))
+    clear = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    clear_draw = ImageDraw.Draw(clear)
+    for _, corners, color, translucent in sorted(quads, key=lambda q: -q[0]):
+        if translucent:
+            clear_draw.polygon(corners, fill=color)
+        else:
+            draw.polygon(corners, fill=color, outline=color)
+    im.alpha_composite(clear)
     if opacity < 1:
         alpha = im.getchannel("A").point(lambda a: int(a * opacity))
         im.putalpha(alpha)

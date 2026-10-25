@@ -3,6 +3,8 @@ package io.github.stivengjekaj.originofspawns.evolution;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
+import java.util.Optional;
+
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -126,5 +128,23 @@ public final class GeneCubes {
 	private static java.util.List<Player> playersNear(AbstractCubeMob cube, ServerLevel level, float radius) {
 		return level.getEntitiesOfClass(Player.class, cube.getBoundingBox().inflate(radius),
 				player -> player.isAlive() && !player.isSpectator());
+	}
+
+	/**
+	 * Returns the number of pieces of the split of the cube, with the split count genes. The pieces can be more than
+	 * 4, so a fixed count over 4 puts the extra pieces at the same corners.
+	 */
+	public static int splitCount(AbstractCubeMob cube, int count) {
+		Optional<Integer> fixed = Optional.empty();
+		int extra = 0;
+		for (GeneEffect effect : GeneEffects.of(cube).toList()) {
+			if (effect instanceof GeneEffect.SplitCount split) {
+				if (fixed.isEmpty()) {
+					fixed = split.count();
+				}
+				extra += split.extra();
+			}
+		}
+		return fixed.orElse(count) + extra;
 	}
 }

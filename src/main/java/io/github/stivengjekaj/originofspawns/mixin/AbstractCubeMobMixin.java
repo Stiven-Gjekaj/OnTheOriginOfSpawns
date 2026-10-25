@@ -84,4 +84,12 @@ public abstract class AbstractCubeMobMixin {
 			GeneCubes.onLand(self, level);
 		}
 	}
+
+	/**
+	 * The genes change the number of pieces of a split.
+	 */
+	@ModifyReturnValue(method = "getSplitCount", at = @At("RETURN"))
+	private int originofspawns$splitCount(int count) {
+		return GeneCubes.splitCount((AbstractCubeMob) (Object) this, count);
+	}
 }

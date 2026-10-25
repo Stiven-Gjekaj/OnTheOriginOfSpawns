@@ -217,7 +217,8 @@ public sealed interface GeneEffect {
 			Map.entry("landing_damage", LandingDamage.CODEC),
 			Map.entry("landing_effect", LandingEffect.CODEC),
 			Map.entry("landing_armor_damage", LandingArmorDamage.CODEC),
-			Map.entry("landing_shield_stop", LandingShieldStop.CODEC)
+			Map.entry("landing_shield_stop", LandingShieldStop.CODEC),
+			Map.entry("split_count", SplitCount.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3527,6 +3528,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "landing_shield_stop";
+		}
+	}
+
+	/**
+	 * Changes the number of pieces when a cube splits. Vanilla makes 2 to 4 pieces. With {@code count}, the split
+	 * always makes this many. Else the split makes {@code extra} more than vanilla. With more than one effect, the
+	 * fixed count counts first, and the extras add up.
+	 */
+	record SplitCount(Optional<Integer> count, int extra) implements GeneEffect {
+		public static final MapCodec<SplitCount> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 16).optionalFieldOf("count").forGetter(SplitCount::count),
+				Codec.intRange(0, 16).optionalFieldOf("extra", 0).forGetter(SplitCount::extra)
+		).apply(instance, SplitCount::new));
+
+		@Override
+		public String type() {
+			return "split_count";
 		}
 	}
 }

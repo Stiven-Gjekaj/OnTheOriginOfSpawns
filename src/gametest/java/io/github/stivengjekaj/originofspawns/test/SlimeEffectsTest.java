@@ -144,6 +144,26 @@ public class SlimeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void theSplitCountGenesChangeTheNumberOfPieces(GameTestHelper helper) {
+		AbstractCubeMob plain = cubeWith(helper, EntityTypes.SLIME, new BlockPos(1, 1, 1), 2);
+		AbstractCubeMob many = cubeWith(helper, EntityTypes.SLIME, new BlockPos(4, 1, 1), 2, "test_many_pieces");
+		AbstractCubeMob splitter = cubeWith(helper, EntityTypes.SLIME, new BlockPos(1, 1, 5), 2, "test_splitter");
+		// The split count is random, so the test asks each count many times and checks the range.
+		java.util.Set<Integer> plainCounts = new java.util.TreeSet<>();
+		java.util.Set<Integer> manyCounts = new java.util.TreeSet<>();
+		java.util.Set<Integer> splitterCounts = new java.util.TreeSet<>();
+		for (int i = 0; i < 100; i++) {
+			plainCounts.add(((AbstractCubeMobAccessor) plain).originofspawns$splitCount());
+			manyCounts.add(((AbstractCubeMobAccessor) many).originofspawns$splitCount());
+			splitterCounts.add(((AbstractCubeMobAccessor) splitter).originofspawns$splitCount());
+		}
+		helper.assertValueEqual(plainCounts, java.util.Set.of(2, 3, 4), "a plain slime makes 2 to 4 pieces");
+		helper.assertValueEqual(manyCounts, java.util.Set.of(4), "Many Pieces always makes 4");
+		helper.assertValueEqual(splitterCounts, java.util.Set.of(4, 5, 6), "2 more pieces make 4 to 6");
+		helper.succeed();
+	}
+
 	static List<AbstractCubeMob> piecesNear(GameTestHelper helper, AbstractCubeMob cube) {
 		return helper.getLevel().getEntitiesOfClass(AbstractCubeMob.class,
 				new AABB(cube.blockPosition()).inflate(4.0), other -> other != cube && other.isAlive());

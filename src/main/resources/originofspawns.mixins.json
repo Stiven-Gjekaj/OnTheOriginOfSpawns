@@ -11,6 +11,7 @@
 		"AbstractSkeletonAccessor",
 		"AbstractSkeletonMixin",
 		"AbstractThrownPotionMixin",
+		"AbstractWindChargeMixin",
 		"BehaviorUtilsMixin",
 		"BlazeAccessor",
 		"BlazeAttackGoalMixin",

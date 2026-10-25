@@ -90,6 +90,28 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void cutWindMakesTheWindChargesDoMoreDamage(GameTestHelper helper) {
+		IronGolem plainTarget = golemAt(helper);
+		hit(helper, breezeWith(helper, new BlockPos(6, 1, 6)), plainTarget);
+		helper.assertValueEqual(plainTarget.getMaxHealth() - plainTarget.getHealth(), 1.0F, "a plain charge does 1 damage");
+		plainTarget.discard();
+		IronGolem target = golemAt(helper);
+		hit(helper, breezeWith(helper, new BlockPos(6, 1, 6), "test_cut_wind"), target);
+		helper.assertValueEqual(target.getMaxHealth() - target.getHealth(), 5.0F, "4 more damage");
+		helper.succeed();
+	}
+
+	/**
+	 * Makes a wind charge of the breeze hit the entity directly.
+	 */
+	static void hit(GameTestHelper helper, Breeze breeze, LivingEntity target) {
+		BreezeWindCharge charge = new BreezeWindCharge(breeze, helper.getLevel());
+		charge.setPos(target.position().add(-1.0, 1.0, 0.0));
+		helper.getLevel().addFreshEntity(charge);
+		((ProjectileAccessor) charge).originofspawns$onHit(new net.minecraft.world.phys.EntityHitResult(target));
+	}
+
 	static IronGolem golemAt(GameTestHelper helper) {
 		IronGolem golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, BURST.east());
 		golem.setNoGravity(true);

@@ -282,7 +282,8 @@ public sealed interface GeneEffect {
 			Map.entry("boil_off", BoilOff.CODEC),
 			Map.entry("push_on_hurt", PushOnHurt.CODEC),
 			Map.entry("wind_push", WindPush.CODEC),
-			Map.entry("wind_lift", WindLift.CODEC)
+			Map.entry("wind_lift", WindLift.CODEC),
+			Map.entry("wind_charge_damage", WindChargeDamage.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4672,6 +4673,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "wind_lift";
+		}
+	}
+
+	/**
+	 * The wind charges of the mob do this much more damage to the entity that they hit. The wind charge of a vanilla
+	 * breeze does 1 damage. More than one effect adds up.
+	 */
+	record WindChargeDamage(float extra) implements GeneEffect {
+		public static final MapCodec<WindChargeDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(-1.0F, 100.0F).fieldOf("extra").forGetter(WindChargeDamage::extra)
+		).apply(instance, WindChargeDamage::new));
+
+		@Override
+		public String type() {
+			return "wind_charge_damage";
 		}
 	}
 }

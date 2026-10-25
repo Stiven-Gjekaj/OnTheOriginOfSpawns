@@ -1017,6 +1017,20 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the damage of the hit of a wind charge of the mob, after its wind charge damage genes. The damage is not
+	 * less than 0.
+	 */
+	public static float windChargeDamage(Mob mob, float damage) {
+		float result = damage;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.WindChargeDamage extra) {
+				result += extra.extra();
+			}
+		}
+		return Math.max(0.0F, result);
+	}
+
+	/**
 	 * Returns the push of the blast of a wind charge on the entity, after the genes of the mob that shot the charge.
 	 * Other blasts do not change.
 	 *

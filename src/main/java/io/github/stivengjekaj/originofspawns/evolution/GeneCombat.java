@@ -1103,7 +1103,12 @@ public final class GeneCombat {
 					wounded.addEffect(new MobEffectInstance(self.effect(), Math.round(self.seconds() * 20.0F),
 							self.amplifier()), wounded);
 				} else if (effect instanceof GeneEffect.PushOnHurt push && (!push.meleeOnly()
-						|| source.getEntity() instanceof LivingEntity && source.getDirectEntity() == source.getEntity())) {
+						|| source.getEntity() instanceof LivingEntity && source.getDirectEntity() == source.getEntity())
+						&& wounded.getHealth() < wounded.getMaxHealth() * push.threshold() + 1.0E-4F
+						&& !(push.once() && wounded.getAttachedOrElse(ModAttachments.PUSH_ONCE_USED, false))) {
+					if (push.once()) {
+						wounded.setAttached(ModAttachments.PUSH_ONCE_USED, true);
+					}
 					pushAway(wounded, push, source.getEntity());
 				}
 			}

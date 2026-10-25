@@ -4640,18 +4640,23 @@ public sealed interface GeneEffect {
 	 * When something hurts the mob, it pushes the other mobs and the players in the radius away from it. The push has
 	 * this strength in blocks per tick away from the mob, and a part of it goes up. With {@code melee_only}, only a
 	 * melee hit counts: the hit of a mob or a player, not of a projectile. With {@code attacker_only}, it pushes only
-	 * the attacker, if the attacker is in the radius.
+	 * the attacker, if the attacker is in the radius. It pushes only while the health of the mob is under the
+	 * threshold of its maximum health. With {@code once}, it pushes one time in the life of the mob. It is saved with
+	 * the mob.
 	 */
-	record PushOnHurt(float radius, float strength, boolean meleeOnly, boolean attackerOnly) implements GeneEffect {
+	record PushOnHurt(float radius, float strength, boolean meleeOnly, boolean attackerOnly, float threshold, boolean once)
+			implements GeneEffect {
 		public static final MapCodec<PushOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 3.0F).forGetter(PushOnHurt::radius),
 				Codec.floatRange(0.1F, 5.0F).optionalFieldOf("strength", 1.2F).forGetter(PushOnHurt::strength),
 				Codec.BOOL.optionalFieldOf("melee_only", false).forGetter(PushOnHurt::meleeOnly),
-				Codec.BOOL.optionalFieldOf("attacker_only", false).forGetter(PushOnHurt::attackerOnly)
+				Codec.BOOL.optionalFieldOf("attacker_only", false).forGetter(PushOnHurt::attackerOnly),
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("threshold", 1.0F).forGetter(PushOnHurt::threshold),
+				Codec.BOOL.optionalFieldOf("once", false).forGetter(PushOnHurt::once)
 		).apply(instance, PushOnHurt::new));
 
 		public PushOnHurt(float radius, float strength) {
-			this(radius, strength, false, false);
+			this(radius, strength, false, false, 1.0F, false);
 		}
 
 		@Override

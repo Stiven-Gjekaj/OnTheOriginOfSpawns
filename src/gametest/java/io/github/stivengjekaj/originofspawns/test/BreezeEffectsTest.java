@@ -258,6 +258,23 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void stormGalePushesOneTimeUnderThirtyPercentHealth(GameTestHelper helper) {
+		Breeze breeze = breezeWith(helper, new BlockPos(3, 1, 3), "test_storm_gale");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 3));
+		var hit = helper.getLevel().damageSources().mobAttack(pig);
+		breeze.setHealth(breeze.getMaxHealth() / 2.0F);
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(breeze, hit);
+		helper.assertValueEqual(pig.getDeltaMovement().horizontalDistance(), 0.0, "no gale at half health");
+		breeze.setHealth(breeze.getMaxHealth() / 5.0F);
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(breeze, hit);
+		helper.assertTrue(pig.getDeltaMovement().x > 1.0, "the gale pushes the pig 3 blocks away");
+		pig.setDeltaMovement(Vec3.ZERO);
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(breeze, hit);
+		helper.assertValueEqual(pig.getDeltaMovement().horizontalDistance(), 0.0, "the gale acts one time in its life");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes the breeze jump to a place 4 blocks away at the end of its inhale, and returns the speed of the jump. The
 	 * random source has a fixed seed, so each breeze picks the same angle.

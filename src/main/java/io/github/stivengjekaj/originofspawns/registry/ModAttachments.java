@@ -70,6 +70,12 @@ public final class ModAttachments {
 			AttachmentRegistry.createPersistent(OriginOfSpawns.id("heal_once_used"), com.mojang.serialization.Codec.BOOL);
 
 	/**
+	 * True when a mob used its one push on hurt with {@code once}.
+	 */
+	public static final AttachmentType<Boolean> PUSH_ONCE_USED =
+			AttachmentRegistry.createPersistent(OriginOfSpawns.id("push_once_used"), com.mojang.serialization.Codec.BOOL);
+
+	/**
 	 * The game time when a player last blocked a hit with a shield. The game does not save it.
 	 */
 	public static final AttachmentType<Long> SHIELD_BLOCK = AttachmentRegistry.create(OriginOfSpawns.id("shield_block"));

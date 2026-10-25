@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "push_on_hurt", "radius": 6, "strength": 1.2, "threshold": 0.3, "once": true }],
+	"mutation_rate": 0
+}

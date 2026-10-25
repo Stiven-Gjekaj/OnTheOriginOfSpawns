@@ -237,6 +237,23 @@ public class BlazeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void fireFeedHealsWhileTheTargetBurnsNear(GameTestHelper helper) {
+		Blaze blaze = blazeWith(helper, new BlockPos(1, 1, 1));
+		blaze.setHealth(10.0F);
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 1));
+		blaze.setTarget(pig);
+		var feed = new GeneEffect.FireFeed(1.0F, 8.0F);
+		helper.assertFalse(GeneBehaviors.fireFeed(blaze, feed), "no heal while the target does not burn");
+		pig.igniteForSeconds(5.0F);
+		helper.assertTrue(GeneBehaviors.fireFeed(blaze, feed), "a heal while the target burns");
+		helper.assertValueEqual(blaze.getHealth(), 11.0F, "the blaze heals 1");
+		pig.snapTo(pig.position().add(0.0, 0.0, 6.0));
+		helper.assertFalse(GeneBehaviors.fireFeed(blaze, new GeneEffect.FireFeed(1.0F, 5.0F)),
+				"no heal when the target is out of the radius");
+		helper.succeed();
+	}
+
 	/**
 	 * Returns the degrees that a small fireball of the blaze turns in one tick, while the blaze has the target.
 	 */

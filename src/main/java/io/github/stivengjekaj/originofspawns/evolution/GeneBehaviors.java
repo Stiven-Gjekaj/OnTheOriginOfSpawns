@@ -496,6 +496,7 @@ public final class GeneBehaviors {
 				case GeneEffect.RocketShot shot -> rocketShot(mob, level, shot);
 				case GeneEffect.FireballShot shot -> fireballShot(mob, level, shot);
 				case GeneEffect.FireballRing ring -> fireballRing(mob, level, ring);
+				case GeneEffect.FireFeed feed -> fireFeed(mob, feed);
 				case GeneEffect.Hex hex -> hex(mob, level, hex);
 				case GeneEffect.HealThrow heal -> healThrow(mob, level, heal);
 				case GeneEffect.EatItems eat -> eatItems(mob, level, eat);
@@ -918,6 +919,20 @@ public final class GeneBehaviors {
 			}
 		}
 		return Math.max(0.0F, result);
+	}
+
+	/**
+	 * Heals the mob if its target burns in the radius. The behavior tick runs this one time each second.
+	 *
+	 * @return true if the mob healed
+	 */
+	public static boolean fireFeed(Mob mob, GeneEffect.FireFeed feed) {
+		LivingEntity target = mob.getTarget();
+		if (target == null || !target.isAlive() || !target.isOnFire() || mob.distanceTo(target) > feed.radius()) {
+			return false;
+		}
+		mob.heal(feed.amount());
+		return true;
 	}
 
 	/**

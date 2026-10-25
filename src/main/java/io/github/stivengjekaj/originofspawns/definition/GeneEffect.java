@@ -273,7 +273,8 @@ public sealed interface GeneEffect {
 			Map.entry("fireball_cloud", FireballCloud.CODEC),
 			Map.entry("seeker_fireballs", SeekerFireballs.CODEC),
 			Map.entry("fireball_ring", FireballRing.CODEC),
-			Map.entry("burn_pain", BurnPain.CODEC)
+			Map.entry("burn_pain", BurnPain.CODEC),
+			Map.entry("fire_feed", FireFeed.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4512,6 +4513,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "burn_pain";
+		}
+	}
+
+	/**
+	 * Each second that the target of the mob burns in the radius, the mob heals this much health.
+	 */
+	record FireFeed(float amount, float radius) implements GeneEffect {
+		public static final MapCodec<FireFeed> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("amount", 1.0F).forGetter(FireFeed::amount),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("radius", 8.0F).forGetter(FireFeed::radius)
+		).apply(instance, FireFeed::new));
+
+		@Override
+		public String type() {
+			return "fire_feed";
 		}
 	}
 }

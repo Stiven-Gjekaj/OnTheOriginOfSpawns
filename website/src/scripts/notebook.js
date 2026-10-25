@@ -119,7 +119,7 @@ renderGenes();
 renderFamilies();
 nextZombie();
 
-// On a phone the ribbons scroll. Keep the ribbon of the species in view.
+// The ribbons scroll when they do not fit. Keep the ribbon of the species in view.
 function showRibbon() {
   const b = document.querySelector(".ribbon[aria-pressed='true']");
   const row = b?.parentElement;

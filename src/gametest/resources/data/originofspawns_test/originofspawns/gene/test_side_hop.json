@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "sidestep", "distance": 2, "cooldown_seconds": 8, "on_hurt": true }],
+	"mutation_rate": 0
+}

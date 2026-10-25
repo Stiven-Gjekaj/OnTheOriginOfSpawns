@@ -1403,34 +1403,64 @@ public final class GeneBehaviors {
 			if (player.isSpectator() || !seen) {
 				continue;
 			}
-			// The side is at a right angle to the line from the player to the mob.
-			Vec3 toMob = mob.position().subtract(player.position()).multiply(1.0, 0.0, 1.0).normalize();
-			Vec3 side = new Vec3(-toMob.z, 0.0, toMob.x).scale(mob.getRandom().nextBoolean() ? 1.0 : -1.0);
-			// A mob in the air, such as a phantom or a ghast, steps aside in the air first, at the same height.
-			if (!mob.onGround()) {
-				for (Vec3 direction : List.of(side, side.scale(-1.0))) {
-					Vec3 target = mob.position().add(direction.scale(sidestep.distance()));
-					if (level.noCollision(mob, mob.getDimensions(mob.getPose()).makeBoundingBox(target.x, target.y, target.z))) {
-						level.sendParticles(ParticleTypes.POOF, mob.getX(), mob.getY(0.5), mob.getZ(), 8, 0.3, 0.5, 0.3, 0.02);
-						mob.teleportTo(target.x, target.y, target.z);
-						mob.setAttached(ModAttachments.STATE, state.withSidestepTime(now));
-						return true;
-					}
-				}
-			}
-			for (Vec3 direction : List.of(side, side.scale(-1.0))) {
-				Vec3 target = mob.position().add(direction.scale(sidestep.distance()));
-				for (int dy = 1; dy >= -2; dy--) {
-					BlockPos feet = BlockPos.containing(target.x, mob.getY() + dy, target.z);
-					if (isSafe(mob, level, feet)) {
-						level.sendParticles(ParticleTypes.POOF, mob.getX(), mob.getY(0.5), mob.getZ(), 8, 0.3, 0.5, 0.3, 0.02);
-						mob.teleportTo(feet.getX() + 0.5, feet.getY(), feet.getZ() + 0.5);
-						mob.setAttached(ModAttachments.STATE, state.withSidestepTime(now));
-						return true;
-					}
-				}
-			}
+			return stepAside(mob, level, player.position(), sidestep.distance(), state, now);
+		}
+		return false;
+	}
+
+	/**
+	 * Makes the mob step aside from a hit, if the sidestep gene has {@code on_hurt}, the hit is a melee hit, and the
+	 * cooldown is over.
+	 *
+	 * @return true if the mob stepped aside
+	 */
+	public static boolean sidestepOnHurt(Mob mob, net.minecraft.world.damagesource.DamageSource source) {
+		if (!(mob.level() instanceof ServerLevel level) || !(source.getEntity() instanceof LivingEntity attacker)
+				|| source.getDirectEntity() != attacker) {
 			return false;
+		}
+		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
+		long now = level.getGameTime();
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.Sidestep sidestep && sidestep.onHurt() && (state.sidestepTime() < 0L
+					|| now - state.sidestepTime() >= Math.round(sidestep.cooldownSeconds() * 20.0F))) {
+				return stepAside(mob, level, attacker.position(), sidestep.distance(), state, now);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Moves the mob to the side, at a right angle to the line from the place to the mob, and starts the cooldown of
+	 * its sidestep.
+	 */
+	private static boolean stepAside(Mob mob, ServerLevel level, Vec3 from, float distance, BehaviorState state, long now) {
+		// The side is at a right angle to the line from the place to the mob.
+		Vec3 toMob = mob.position().subtract(from).multiply(1.0, 0.0, 1.0).normalize();
+		Vec3 side = new Vec3(-toMob.z, 0.0, toMob.x).scale(mob.getRandom().nextBoolean() ? 1.0 : -1.0);
+		// A mob in the air, such as a phantom or a ghast, steps aside in the air first, at the same height.
+		if (!mob.onGround()) {
+			for (Vec3 direction : List.of(side, side.scale(-1.0))) {
+				Vec3 target = mob.position().add(direction.scale(distance));
+				if (level.noCollision(mob, mob.getDimensions(mob.getPose()).makeBoundingBox(target.x, target.y, target.z))) {
+					level.sendParticles(ParticleTypes.POOF, mob.getX(), mob.getY(0.5), mob.getZ(), 8, 0.3, 0.5, 0.3, 0.02);
+					mob.teleportTo(target.x, target.y, target.z);
+					mob.setAttached(ModAttachments.STATE, state.withSidestepTime(now));
+					return true;
+				}
+			}
+		}
+		for (Vec3 direction : List.of(side, side.scale(-1.0))) {
+			Vec3 target = mob.position().add(direction.scale(distance));
+			for (int dy = 1; dy >= -2; dy--) {
+				BlockPos feet = BlockPos.containing(target.x, mob.getY() + dy, target.z);
+				if (isSafe(mob, level, feet)) {
+					level.sendParticles(ParticleTypes.POOF, mob.getX(), mob.getY(0.5), mob.getZ(), 8, 0.3, 0.5, 0.3, 0.02);
+					mob.teleportTo(feet.getX() + 0.5, feet.getY(), feet.getZ() + 0.5);
+					mob.setAttached(ModAttachments.STATE, state.withSidestepTime(now));
+					return true;
+				}
+			}
 		}
 		return false;
 	}

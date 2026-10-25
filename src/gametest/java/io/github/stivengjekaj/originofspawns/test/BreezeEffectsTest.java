@@ -336,6 +336,22 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void sideHopStepsAsideFromAMeleeHit(GameTestHelper helper) {
+		Breeze breeze = breezeWith(helper, new BlockPos(3, 1, 3), "test_side_hop");
+		Pig attacker = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 1));
+		Vec3 before = breeze.position();
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(breeze,
+				helper.getLevel().damageSources().mobAttack(attacker));
+		helper.assertValueEqual(Math.round(Math.abs(breeze.getX() - before.x)), 2L, "the breeze steps 2 blocks aside");
+		helper.assertTrue(Math.abs(breeze.getZ() - before.z) < 0.6, "at a right angle to the attacker");
+		Vec3 after = breeze.position();
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(breeze,
+				helper.getLevel().damageSources().mobAttack(attacker));
+		helper.assertTrue(breeze.position().equals(after), "the next step waits 8 seconds");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes the breeze jump to a place 4 blocks away at the end of its inhale, and returns the speed of the jump. The
 	 * random source has a fixed seed, so each breeze picks the same angle.

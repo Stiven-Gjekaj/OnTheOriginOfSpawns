@@ -97,11 +97,13 @@ The husk and the drowned come out together in one alpha release.
 - The order is: skeletons (skeleton, stray, bogged, wither skeleton,
   parched), the creeper, spiders (spider, cave spider), illagers (pillager,
   vindicator, evoker, witch), endermen (enderman, endermite), slimes (slime,
-  magma cube, sulfur cube), the Nether mobs (zombified piglin, piglin, piglin
+  magma cube), the Nether mobs (zombified piglin, piglin, piglin
   brute, hoglin, zoglin), the flyers (phantom, vex, ghast, blaze, breeze), the
   guardian, the undead mounts (camel husk, zombie nautilus, zombie horse,
   skeleton horse), and the others (silverfish, shulker, ravager, creaking).
 - The zombie villager comes in milestone 6, with the villagers.
+- The sulfur cube comes in milestone 6, with the mobs that the player breeds.
+  It is passive. It breeds, and it swallows items that change its body.
 - The neutral mobs that fight the player come after the hostile mobs: polar
   bear, bee, wolf, goat, dolphin, panda, llama, and iron golem.
 
@@ -173,6 +175,8 @@ The husk and the drowned come out together in one alpha release.
 
 - Give genes to each mob that the player can breed, and add artificial
   selection.
+- Give genes to the sulfur cube. Its babies, its food, and the items that it
+  swallows fit artificial selection.
 - Give genes to the wild mobs, and add habitat selection.
 - Give genes to the villagers and the wandering trader, and add social
   selection.

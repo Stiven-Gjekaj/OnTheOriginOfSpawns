@@ -1,0 +1,33 @@
+{
+	"region_map": "originofspawns:textures/region/magma_cube.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fire_drink_0.png",
+				"tint": "#300800"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fire_drink_1.png",
+				"tint": "#FF6A10"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fire_drink_2.png",
+				"tint": "#FFB028"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fire_drink_3.png",
+				"tint": "#FFF0A0"
+			}
+		}
+	]
+}

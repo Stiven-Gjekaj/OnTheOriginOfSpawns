@@ -1,0 +1,25 @@
+{
+	"texture": "originofspawns:textures/entity/shield_slam_brow.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "cube1",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4,
+				17,
+				-5
+			],
+			"size": [
+				8,
+				1,
+				1
+			],
+			"inflate": 0.05
+		}
+	]
+}

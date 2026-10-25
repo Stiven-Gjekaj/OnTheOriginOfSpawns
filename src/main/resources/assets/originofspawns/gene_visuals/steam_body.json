@@ -1,0 +1,13 @@
+{
+	"region_map": "originofspawns:textures/region/magma_cube.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/steam_body_0.png",
+				"tint": "#E4E4E4"
+			}
+		}
+	],
+	"model": "originofspawns:steam_body_puffs"
+}

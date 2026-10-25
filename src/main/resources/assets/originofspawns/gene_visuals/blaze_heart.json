@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/magma_cube.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blaze_heart_0.png",
+				"tint": "#FFC020"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blaze_heart_1.png",
+				"tint": "#FFF080"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blaze_heart_2.png",
+				"tint": "#D06010"
+			}
+		}
+	]
+}

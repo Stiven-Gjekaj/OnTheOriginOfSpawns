@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/magma_cube.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ground_pound_0.png",
+				"tint": "#080404"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ground_pound_1.png",
+				"tint": "#C83A10"
+			}
+		}
+	]
+}

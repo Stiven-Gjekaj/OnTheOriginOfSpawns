@@ -1,0 +1,61 @@
+{
+	"texture": "originofspawns:textures/entity/rebound_coil.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "inside_cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				17.5,
+				-3
+			],
+			"size": [
+				6,
+				1,
+				6
+			],
+			"inflate": -0.3
+		},
+		{
+			"bone": "inside_cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				19.5,
+				-3
+			],
+			"size": [
+				6,
+				1,
+				6
+			],
+			"inflate": -0.3
+		},
+		{
+			"bone": "inside_cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				21.5,
+				-3
+			],
+			"size": [
+				6,
+				1,
+				6
+			],
+			"inflate": -0.3
+		}
+	]
+}

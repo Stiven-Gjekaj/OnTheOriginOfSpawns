@@ -1,0 +1,24 @@
+{
+	"texture": "originofspawns:textures/entity/molten_core_core.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "inside_cube",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				17,
+				-3
+			],
+			"size": [
+				6,
+				6,
+				6
+			]
+		}
+	]
+}

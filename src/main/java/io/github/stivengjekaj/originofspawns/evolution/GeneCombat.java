@@ -512,6 +512,9 @@ public final class GeneCombat {
 	 */
 	public static float modifyDamage(LivingEntity victim, DamageSource source, float amount) {
 		float result = amount;
+		if (source.getDirectEntity() != null) {
+			result *= source.getDirectEntity().getAttachedOrElse(ModAttachments.REBOUND_DAMAGE, 1.0F);
+		}
 		List<GeneEffect> victimEffects = GeneEffects.of(victim).toList();
 		for (GeneEffect effect : victimEffects) {
 			switch (effect) {

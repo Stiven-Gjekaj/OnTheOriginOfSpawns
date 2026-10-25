@@ -36,6 +36,41 @@ public abstract class ProjectileMixin {
 	}
 
 	/**
+	 * The speed of the projectile before its last deflection.
+	 */
+	@org.spongepowered.asm.mixin.Unique
+	private double originofspawns$speedBefore;
+
+	@Inject(method = "deflect(Lnet/minecraft/world/entity/projectile/ProjectileDeflection;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/EntityReference;ZLnet/minecraft/world/phys/Vec3;)Z",
+			at = @At("HEAD"))
+	private void originofspawns$speedBeforeDeflection(ProjectileDeflection deflection, Entity deflecting,
+			EntityReference<Entity> newOwner, boolean byAttack, Vec3 power, CallbackInfoReturnable<Boolean> info) {
+		originofspawns$speedBefore = ((Projectile) (Object) this).getDeltaMovement().length();
+	}
+
+	/**
+	 * A mob with a rebound gene sends the projectile straight back at its shooter, at its speed before, and marks it
+	 * for more damage.
+	 */
+	@Inject(method = "deflect(Lnet/minecraft/world/entity/projectile/ProjectileDeflection;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/EntityReference;ZLnet/minecraft/world/phys/Vec3;)Z",
+			at = @At("RETURN"))
+	private void originofspawns$rebound(ProjectileDeflection deflection, Entity deflecting,
+			EntityReference<Entity> newOwner, boolean byAttack, Vec3 power, CallbackInfoReturnable<Boolean> info) {
+		Projectile self = (Projectile) (Object) this;
+		if (!info.getReturnValueZ() || self.level().isClientSide() || !(deflecting instanceof Mob mob)
+				|| !(self.getOwner() instanceof Entity shooter) || shooter == mob) {
+			return;
+		}
+		GeneEffects.of(mob).filter(GeneEffect.Rebound.class::isInstance).map(GeneEffect.Rebound.class::cast)
+				.mapToDouble(GeneEffect.Rebound::damageMultiplier).max().ifPresent(multiplier -> {
+					Vec3 toShooter = shooter.getBoundingBox().getCenter().subtract(self.position()).normalize();
+					self.setDeltaMovement(toShooter.scale(originofspawns$speedBefore));
+					self.needsSync = true;
+					self.setAttached(ModAttachments.REBOUND_DAMAGE, (float) multiplier);
+				});
+	}
+
+	/**
 	 * A player does not turn back a large fireball of a mob with a hard fireball.
 	 */
 	@Inject(method = "deflect(Lnet/minecraft/world/entity/projectile/ProjectileDeflection;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/EntityReference;ZLnet/minecraft/world/phys/Vec3;)Z",

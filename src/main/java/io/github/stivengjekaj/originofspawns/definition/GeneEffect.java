@@ -290,7 +290,8 @@ public sealed interface GeneEffect {
 			Map.entry("lightning_call", LightningCall.CODEC),
 			Map.entry("escape_jump", EscapeJump.CODEC),
 			Map.entry("fireball_fire_spread", FireballFireSpread.CODEC),
-			Map.entry("swim_hop", SwimHop.CODEC)
+			Map.entry("swim_hop", SwimHop.CODEC),
+			Map.entry("rebound", Rebound.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4832,6 +4833,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "swim_hop";
+		}
+	}
+
+	/**
+	 * A projectile that the mob sends back flies straight at its shooter, at the speed that it had before, and does
+	 * this many times its damage. A vanilla breeze sends projectiles back at half their speed, in about the reverse
+	 * direction. The largest multiplier counts.
+	 */
+	record Rebound(float damageMultiplier) implements GeneEffect {
+		public static final MapCodec<Rebound> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("damage_multiplier", 2.0F).forGetter(Rebound::damageMultiplier)
+		).apply(instance, Rebound::new));
+
+		@Override
+		public String type() {
+			return "rebound";
 		}
 	}
 }

@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.mixin.LongJumpAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -411,6 +412,34 @@ public class BreezeEffectsTest {
 		helper.assertTrue(breeze.isInWater(), "the breeze is in water");
 		breeze.travel(Vec3.ZERO);
 		return breeze.getDeltaMovement().horizontalDistance();
+	}
+
+	@GameTest
+	public void windMirrorSendsTheArrowStraightBackHarder(GameTestHelper helper) {
+		var shooter = helper.spawnWithNoFreeWill(EntityTypes.SKELETON, new BlockPos(1, 1, 3));
+		var plain = mirror(helper, breezeWith(helper, new BlockPos(5, 1, 1)), shooter);
+		helper.assertTrue(plain.getDeltaMovement().length() < 1.0, "a plain breeze sends the arrow back slower");
+		float plainDamage = GeneCombat.modifyDamage(shooter, helper.getLevel().damageSources().arrow(plain, shooter), 4.0F);
+		var arrow = mirror(helper, breezeWith(helper, new BlockPos(5, 1, 5), "test_wind_mirror"), shooter);
+		helper.assertTrue(Math.abs(arrow.getDeltaMovement().length() - 1.5) < 1.0E-6, "the arrow keeps its speed");
+		Vec3 toShooter = shooter.getBoundingBox().getCenter().subtract(arrow.position()).normalize();
+		helper.assertTrue(arrow.getDeltaMovement().normalize().dot(toShooter) > 0.9999, "the arrow flies at the shooter");
+		helper.assertValueEqual(GeneCombat.modifyDamage(shooter, helper.getLevel().damageSources().arrow(arrow, shooter), 4.0F),
+				plainDamage * 2.0F, "two times the damage of a plain arrow back");
+		helper.succeed();
+	}
+
+	/**
+	 * Shoots an arrow of the shooter at the breeze, at 1.5 blocks a tick, and lets the breeze send it back.
+	 */
+	static net.minecraft.world.entity.projectile.arrow.Arrow mirror(GameTestHelper helper, Breeze breeze, LivingEntity shooter) {
+		var arrow = new net.minecraft.world.entity.projectile.arrow.Arrow(helper.getLevel(), shooter,
+				new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW), null);
+		arrow.setPos(breeze.position().add(-1.0, 1.0, 0.0));
+		arrow.setDeltaMovement(1.5, 0.0, 0.0);
+		helper.getLevel().addFreshEntity(arrow);
+		arrow.deflect(breeze.deflection(arrow), breeze, net.minecraft.world.entity.EntityReference.of(shooter), false, 1.0);
+		return arrow;
 	}
 
 	/**

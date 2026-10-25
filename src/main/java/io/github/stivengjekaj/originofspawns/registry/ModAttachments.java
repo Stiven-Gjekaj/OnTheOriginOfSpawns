@@ -260,6 +260,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> SPIN_TIME = AttachmentRegistry.create(OriginOfSpawns.id("spin_time"));
 
 	/**
+	 * The damage multiplier of a projectile that a mob with a rebound gene sent back.
+	 */
+	public static final AttachmentType<Float> REBOUND_DAMAGE = AttachmentRegistry.create(OriginOfSpawns.id("rebound_damage"));
+
+	/**
 	 * True after a breeze shot its wind charge at the top of the long jump that it does now.
 	 */
 	public static final AttachmentType<Boolean> JUMP_SHOT_DONE = AttachmentRegistry.create(OriginOfSpawns.id("jump_shot_done"));

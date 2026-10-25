@@ -212,7 +212,8 @@ public sealed interface GeneEffect {
 			Map.entry("age_spawn", AgeSpawn.CODEC),
 			Map.entry("projectile_teleport", ProjectileTeleport.CODEC),
 			Map.entry("call_others", CallOthers.CODEC),
-			Map.entry("spawn_size", SpawnSize.CODEC)
+			Map.entry("spawn_size", SpawnSize.CODEC),
+			Map.entry("hop", Hop.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3442,6 +3443,24 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "spawn_size";
+		}
+	}
+
+	/**
+	 * Changes the hop of a cube. The wait multiplier changes the wait between two hops: {@code 0.77} hops 30% more
+	 * often. The distance multiplier changes the speed in the air, so the hop goes farther. The height multiplier
+	 * changes the speed up at the start of the hop. More than one effect multiplies together.
+	 */
+	record Hop(float waitMultiplier, float distanceMultiplier, float heightMultiplier) implements GeneEffect {
+		public static final MapCodec<Hop> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 20.0F).optionalFieldOf("wait_multiplier", 1.0F).forGetter(Hop::waitMultiplier),
+				Codec.floatRange(0.05F, 10.0F).optionalFieldOf("distance_multiplier", 1.0F).forGetter(Hop::distanceMultiplier),
+				Codec.floatRange(0.05F, 10.0F).optionalFieldOf("height_multiplier", 1.0F).forGetter(Hop::heightMultiplier)
+		).apply(instance, Hop::new));
+
+		@Override
+		public String type() {
+			return "hop";
 		}
 	}
 }

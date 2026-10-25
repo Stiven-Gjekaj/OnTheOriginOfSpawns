@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "hop", "wait_multiplier": 2, "distance_multiplier": 1.5, "height_multiplier": 2 }],
+	"mutation_rate": 0
+}

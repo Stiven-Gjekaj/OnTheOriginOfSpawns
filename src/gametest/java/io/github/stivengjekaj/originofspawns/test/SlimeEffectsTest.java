@@ -74,6 +74,37 @@ public class SlimeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void theHopGeneChangesTheWaitTheDistanceAndTheHeight(GameTestHelper helper) {
+		AbstractCubeMob plain = cubeWith(helper, EntityTypes.SLIME, new BlockPos(2, 1, 2), 2);
+		AbstractCubeMob bouncer = cubeWith(helper, EntityTypes.SLIME, new BlockPos(5, 1, 5), 2, "test_bouncer");
+		// The vanilla wait is 10 to 29 ticks. Two times the wait is 20 to 58 ticks, so the counts show the change.
+		int plainShort = 0;
+		int bouncerShort = 0;
+		for (int i = 0; i < 100; i++) {
+			plainShort += ((AbstractCubeMobAccessor) plain).originofspawns$jumpDelay() < 20 ? 1 : 0;
+			bouncerShort += ((AbstractCubeMobAccessor) bouncer).originofspawns$jumpDelay() < 20 ? 1 : 0;
+		}
+		helper.assertTrue(plainShort > 20, "a plain slime often waits less than 20 ticks, " + plainShort);
+		helper.assertValueEqual(bouncerShort, 0, "the bouncer never waits less than 20 ticks");
+		plain.setDeltaMovement(Vec3.ZERO);
+		bouncer.setDeltaMovement(Vec3.ZERO);
+		plain.jumpFromGround();
+		bouncer.jumpFromGround();
+		helper.assertTrue(Math.abs(bouncer.getDeltaMovement().y - 2.0 * plain.getDeltaMovement().y) < 1.0E-4,
+				"the bouncer hops two times as high");
+		// In the air, the move control sets the speed of the hop.
+		plain.setOnGround(false);
+		bouncer.setOnGround(false);
+		plain.getMoveControl().setWantedPosition(plain.getX() + 3.0, plain.getY(), plain.getZ(), 1.0);
+		bouncer.getMoveControl().setWantedPosition(bouncer.getX() + 3.0, bouncer.getY(), bouncer.getZ(), 1.0);
+		plain.getMoveControl().tick();
+		bouncer.getMoveControl().tick();
+		helper.assertTrue(Math.abs(bouncer.getSpeed() - 1.5F * plain.getSpeed()) < 1.0E-4F,
+				"the bouncer moves 50% faster in the air, so it hops farther");
+		helper.succeed();
+	}
+
 	static List<AbstractCubeMob> piecesNear(GameTestHelper helper, AbstractCubeMob cube) {
 		return helper.getLevel().getEntitiesOfClass(AbstractCubeMob.class,
 				new AABB(cube.blockPosition()).inflate(4.0), other -> other != cube && other.isAlive());

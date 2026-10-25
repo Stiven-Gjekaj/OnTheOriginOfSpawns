@@ -49,4 +49,30 @@ public final class GeneCubes {
 		int[] others = java.util.Arrays.stream(NATURAL_SIZES).filter(size -> size != spawn.size()).toArray();
 		return others[Math.min(others.length - 1, (int) (otherRoll * others.length))];
 	}
+
+	/**
+	 * Returns the products of the hop multipliers of the mob: the wait, the distance, and the height.
+	 */
+	public static float[] hop(net.minecraft.world.entity.Mob mob) {
+		float[] hop = {1.0F, 1.0F, 1.0F};
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.Hop more) {
+				hop[0] *= more.waitMultiplier();
+				hop[1] *= more.distanceMultiplier();
+				hop[2] *= more.heightMultiplier();
+			}
+		}
+		return hop;
+	}
+
+	/**
+	 * Multiplies the speed up of the hop that starts now by the height multiplier of the genes.
+	 */
+	public static void hopHeight(AbstractCubeMob cube) {
+		float height = hop(cube)[2];
+		if (height != 1.0F) {
+			net.minecraft.world.phys.Vec3 movement = cube.getDeltaMovement();
+			cube.setDeltaMovement(movement.x, movement.y * height, movement.z);
+		}
+	}
 }

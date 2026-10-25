@@ -8,6 +8,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.cubemob.AbstractCubeMob;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
@@ -38,5 +39,22 @@ public abstract class AbstractCubeMobMixin {
 			GeneCombat.onHit((AbstractCubeMob) (Object) this, target);
 		}
 		return hurt;
+	}
+
+	/**
+	 * The genes change the wait between two hops. The magma cube waits 4 times as long after this.
+	 */
+	@ModifyReturnValue(method = "getJumpDelay", at = @At("RETURN"))
+	private int originofspawns$hopWait(int ticks) {
+		float wait = GeneCubes.hop((AbstractCubeMob) (Object) this)[0];
+		return wait == 1.0F ? ticks : Math.max(1, Math.round(ticks * wait));
+	}
+
+	/**
+	 * The genes make the hop higher.
+	 */
+	@Inject(method = "jumpFromGround", at = @At("TAIL"))
+	private void originofspawns$hopHeight(CallbackInfo info) {
+		GeneCubes.hopHeight((AbstractCubeMob) (Object) this);
 	}
 }

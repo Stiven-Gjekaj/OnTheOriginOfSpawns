@@ -11,6 +11,7 @@ import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,13 +24,17 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
 import net.minecraft.world.entity.ai.sensing.PiglinSpecificSensor;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.monster.zombie.ZombifiedPiglin;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
@@ -168,6 +173,43 @@ public class PiglinEffectsTest {
 			helper.assertTrue(mob.getTarget() == null, "the brain forgets the target of " + mob.getType());
 		}
 		helper.succeed();
+	}
+
+	@GameTest
+	public void theBowGenesWorkOnTheCrossbowOfAPiglin(GameTestHelper helper) {
+		// The pig is 9.9 blocks away: out of the vanilla crossbow range of 8 blocks, and in a range 1.5 times as far.
+		Pig far = CreeperEffectsTest.pigAt(helper, new BlockPos(7, 1, 7));
+		Piglin plain = crossbowPiglin(helper, new BlockPos(0, 1, 0));
+		helper.assertFalse(BehaviorUtils.isWithinAttackRange(plain, far, 0), "the vanilla range does not reach the pig");
+		int plainLoad = CrossbowItem.getChargeDuration(plain.getMainHandItem(), plain);
+		plain.discard();
+		Piglin sharp = crossbowPiglin(helper, new BlockPos(0, 1, 0), "test_eagle_eye", "test_quick_charge");
+		helper.assertTrue(BehaviorUtils.isWithinAttackRange(sharp, far, 0), "Long Shot reaches the pig");
+		helper.assertTrue(CrossbowItem.getChargeDuration(sharp.getMainHandItem(), sharp) < plainLoad, "Quick Load loads faster");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void boltStormShootsAFanOfBoltsFromTheCrossbow(GameTestHelper helper) {
+		Piglin piglin = crossbowPiglin(helper, new BlockPos(1, 1, 4), "test_fan_shot");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 4));
+		piglin.getMainHandItem().set(DataComponents.CHARGED_PROJECTILES,
+				ChargedProjectiles.ofNonEmpty(java.util.List.of(new ItemStack(Items.ARROW))));
+		piglin.performRangedAttack(pig, 1.0F);
+		var bolts = helper.getLevel().getEntitiesOfClass(AbstractArrow.class, piglin.getBoundingBox().inflate(3.0),
+				bolt -> bolt.getOwner() == piglin);
+		helper.assertValueEqual(bolts.size(), 3, "the shot and two more bolts of the fan");
+		bolts.forEach(AbstractArrow::discard);
+		helper.succeed();
+	}
+
+	/**
+	 * Adds a piglin with a crossbow and the test genes.
+	 */
+	static Piglin crossbowPiglin(GameTestHelper helper, BlockPos pos, String... genes) {
+		Piglin piglin = piglinWith(helper, pos, genes);
+		piglin.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.CROSSBOW));
+		return piglin;
 	}
 
 	/**

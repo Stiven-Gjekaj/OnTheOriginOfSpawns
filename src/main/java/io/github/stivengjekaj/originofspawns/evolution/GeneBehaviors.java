@@ -719,6 +719,25 @@ public final class GeneBehaviors {
 	 * state is true.
 	 */
 	public static void fanShot(AbstractSkeleton mob, LivingEntity target) {
+		fanShot(mob, target, () -> ((AbstractSkeletonAccessor) mob).originofspawns$getArrow(new ItemStack(Items.ARROW), 1.0F,
+				mob.getMainHandItem()));
+	}
+
+	/**
+	 * After a crossbow shot of a mob with a fan shot, such as a piglin, shoots the other bolts of the fan. The bolts
+	 * get the arrow genes of the mob, as its own bolt does.
+	 */
+	public static void crossbowFanShot(Mob mob, LivingEntity target) {
+		fanShot(mob, target, () -> {
+			var bolt = new net.minecraft.world.entity.projectile.arrow.Arrow(mob.level(), mob, new ItemStack(Items.ARROW),
+					mob.getMainHandItem());
+			bolt.setCritArrow(true);
+			armArrow(mob, bolt);
+			return bolt;
+		});
+	}
+
+	private static void fanShot(Mob mob, LivingEntity target, java.util.function.Supplier<AbstractArrow> makeArrow) {
 		if (!(mob.level() instanceof ServerLevel level) || target == null) {
 			return;
 		}
@@ -733,14 +752,12 @@ public final class GeneBehaviors {
 			return;
 		}
 		mob.setAttached(ModAttachments.FAN_SHOT_TIME, now);
-		ItemStack bow = mob.getMainHandItem();
 		int extra = fan.get().arrows() - 1;
 		for (int i = 0; i < extra; i++) {
 			// The arrows go to each side in turn: +1, -1, +2, -2, and so on, times the angle.
 			int step = i / 2 + 1;
 			float angle = (i % 2 == 0 ? step : -step) * fan.get().angle() * Mth.DEG_TO_RAD;
-			AbstractArrow arrow = ((AbstractSkeletonAccessor) mob).originofspawns$getArrow(new ItemStack(Items.ARROW), 1.0F,
-					bow);
+			AbstractArrow arrow = makeArrow.get();
 			double dx = target.getX() - mob.getX();
 			double dz = target.getZ() - mob.getZ();
 			double dy = target.getY(0.3333333333333333) - arrow.getY();

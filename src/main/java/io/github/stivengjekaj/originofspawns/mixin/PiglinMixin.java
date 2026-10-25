@@ -3,9 +3,11 @@ package io.github.stivengjekaj.originofspawns.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import io.github.stivengjekaj.originofspawns.evolution.Evolution;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.piglin.Piglin;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,6 +25,14 @@ public abstract class PiglinMixin {
 		if (((Piglin) (Object) this).getType().builtInRegistryHolder().is(Evolution.NO_RANDOM_EQUIPMENT)) {
 			info.cancel();
 		}
+	}
+
+	/**
+	 * A piglin with a fan shot shoots the other bolts of the fan after its crossbow shot.
+	 */
+	@Inject(method = "performRangedAttack", at = @At("TAIL"))
+	private void originofspawns$fanShot(LivingEntity target, float power, CallbackInfo info) {
+		GeneBehaviors.crossbowFanShot((Piglin) (Object) this, target);
 	}
 
 	/**

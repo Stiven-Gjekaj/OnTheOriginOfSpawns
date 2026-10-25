@@ -21,6 +21,8 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
 import net.minecraft.world.entity.ai.sensing.PiglinSpecificSensor;
@@ -149,6 +151,22 @@ public class PiglinEffectsTest {
 		helper.assertFalse(GeneCombat.test(piglin, GeneEffect.When.TARGET_GOLD_ARMOR), "no gold armor");
 		player.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.GOLDEN_BOOTS));
 		helper.assertTrue(GeneCombat.test(piglin, GeneEffect.When.TARGET_GOLD_ARMOR), "gold boots");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aGeneTargetReachesTheBrainOfThePiglinKin(GameTestHelper helper) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 1));
+		Piglin piglin = piglinWith(helper, new BlockPos(1, 1, 4));
+		Mob brute = helper.spawnWithNoFreeWill(EntityTypes.PIGLIN_BRUTE, new BlockPos(3, 1, 4));
+		Mob hoglin = helper.spawnWithNoFreeWill(EntityTypes.HOGLIN, new BlockPos(5, 1, 4));
+		Mob zoglin = helper.spawnWithNoFreeWill(EntityTypes.ZOGLIN, new BlockPos(7, 1, 4));
+		for (Mob mob : new Mob[] {piglin, brute, hoglin, zoglin}) {
+			mob.setTarget(pig);
+			helper.assertTrue(mob.getTarget() == pig, "the target goes in the brain of " + mob.getType());
+			mob.setTarget(null);
+			helper.assertTrue(mob.getTarget() == null, "the brain forgets the target of " + mob.getType());
+		}
 		helper.succeed();
 	}
 

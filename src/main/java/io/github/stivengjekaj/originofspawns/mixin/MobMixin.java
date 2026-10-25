@@ -44,6 +44,24 @@ public abstract class MobMixin {
 		}
 	}
 
+	/**
+	 * A piglin, a piglin brute, a hoglin, and a zoglin keep their target in their brain, and the field that this method
+	 * sets does not count for them. So a target that a gene gives them goes in the brain too.
+	 */
+	@Inject(method = "setTarget", at = @At("TAIL"))
+	private void originofspawns$brainTarget(LivingEntity target, CallbackInfo info) {
+		Mob self = (Mob) (Object) this;
+		if (self instanceof net.minecraft.world.entity.monster.piglin.AbstractPiglin
+				|| self instanceof net.minecraft.world.entity.monster.hoglin.Hoglin
+				|| self instanceof net.minecraft.world.entity.monster.Zoglin) {
+			if (target == null) {
+				self.getBrain().eraseMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGET);
+			} else if (self.canAttack(target)) {
+				self.getBrain().setMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGET, target);
+			}
+		}
+	}
+
 	@Inject(method = "finalizeSpawn", at = @At("HEAD"))
 	private void originofspawns$recordSpawnReason(ServerLevelAccessor level, DifficultyInstance difficulty,
 			EntitySpawnReason reason, SpawnGroupData data, CallbackInfoReturnable<SpawnGroupData> info) {

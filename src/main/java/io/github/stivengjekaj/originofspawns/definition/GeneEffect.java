@@ -2392,15 +2392,21 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * Each hit of the mob has a chance to make a player drop the item in the main hand. A player loses an item one
-	 * time in each cooldown at most. An item with Curse of Binding does not drop.
+	 * Each hit of the mob has a chance to make a player drop the item in the main hand, or with {@code off_hand} the
+	 * item in the off hand. A player loses an item one time in each cooldown at most. An item with Curse of Binding
+	 * does not drop.
 	 */
-	record Disarm(float chance, float cooldownSeconds, Hits hits) implements GeneEffect {
+	record Disarm(float chance, float cooldownSeconds, Hits hits, boolean offHand) implements GeneEffect {
 		public static final MapCodec<Disarm> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(Disarm::chance),
 				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(Disarm::cooldownSeconds),
-				Hits.CODEC.optionalFieldOf("hits", Hits.PROJECTILE).forGetter(Disarm::hits)
+				Hits.CODEC.optionalFieldOf("hits", Hits.PROJECTILE).forGetter(Disarm::hits),
+				Codec.BOOL.optionalFieldOf("off_hand", false).forGetter(Disarm::offHand)
 		).apply(instance, Disarm::new));
+
+		public Disarm(float chance, float cooldownSeconds, Hits hits) {
+			this(chance, cooldownSeconds, hits, false);
+		}
 
 		@Override
 		public String type() {

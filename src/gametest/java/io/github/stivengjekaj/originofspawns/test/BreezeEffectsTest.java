@@ -352,6 +352,40 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void disarmGustMakesThePlayerDropTheItemInTheOffHand(GameTestHelper helper) {
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(4, 1, 4))));
+		player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(
+				net.minecraft.world.item.Items.STONE_SWORD));
+		player.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND, new net.minecraft.world.item.ItemStack(
+				net.minecraft.world.item.Items.TORCH));
+		hit(helper, breezeWith(helper, new BlockPos(1, 1, 1), "test_disarm_gust"), player);
+		helper.assertTrue(player.getOffhandItem().isEmpty(), "the player drops the torch in the off hand");
+		helper.assertTrue(player.getMainHandItem().is(net.minecraft.world.item.Items.STONE_SWORD), "the sword stays");
+		helper.succeed();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void shieldGustStopsTheShieldThatStopsTheWindCharge(GameTestHelper helper) {
+		var player = CreeperEffectsTest.shieldedPlayer(helper);
+		// The test player faces west, so the charge comes from the west.
+		BreezeWindCharge charge = new BreezeWindCharge(breezeWith(helper, new BlockPos(1, 1, 1), "test_shield_scorch"),
+				helper.getLevel());
+		charge.setPos(player.getEyePosition().add(-1.0, 0.0, 0.0));
+		helper.getLevel().addFreshEntity(charge);
+		((ProjectileAccessor) charge).originofspawns$onHit(new net.minecraft.world.phys.EntityHitResult(player));
+		helper.assertTrue(player.getCooldowns().isOnCooldown(player.getOffhandItem()), "the wind charge stops the shield");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedDamageEffectsWorkOnABreeze(GameTestHelper helper) {
+		ReusedEffects.damageTaken(helper, BreezeEffectsTest::breezeWith);
+		ReusedEffects.damageToGolems(helper, BreezeEffectsTest::breezeWith);
+		helper.succeed();
+	}
+
 	/**
 	 * Makes the breeze jump to a place 4 blocks away at the end of its inhale, and returns the speed of the jump. The
 	 * random source has a fixed seed, so each breeze picks the same angle.

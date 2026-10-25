@@ -350,11 +350,12 @@ public final class GeneCombat {
 	}
 
 	/**
-	 * Makes the player drop the item in the main hand, if the cooldown of the player is over and the item has no
+	 * Makes the player drop the item in the hand of the gene, if the cooldown of the player is over and the item has no
 	 * Curse of Binding. Returns true if the item dropped.
 	 */
 	public static boolean disarm(Player player, GeneEffect.Disarm disarm) {
-		var stack = player.getMainHandItem();
+		var hand = disarm.offHand() ? net.minecraft.world.InteractionHand.OFF_HAND : net.minecraft.world.InteractionHand.MAIN_HAND;
+		var stack = player.getItemInHand(hand);
 		long now = player.level().getGameTime();
 		long last = player.getAttachedOrElse(ModAttachments.DISARM_TIME, Long.MIN_VALUE);
 		if (stack.isEmpty() || (last != Long.MIN_VALUE && now - last < Math.round(disarm.cooldownSeconds() * 20.0F))
@@ -364,7 +365,7 @@ public final class GeneCombat {
 		}
 		player.setAttached(ModAttachments.DISARM_TIME, now);
 		player.drop(stack.copy(), true, net.minecraft.util.Prediction.SERVER_ONLY);
-		player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.item.ItemStack.EMPTY);
+		player.setItemInHand(hand, net.minecraft.world.item.ItemStack.EMPTY);
 		return true;
 	}
 

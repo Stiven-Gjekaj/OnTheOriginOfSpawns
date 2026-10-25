@@ -21,8 +21,8 @@ The gene models use the bones head, rod_1, rod_2, rod_3, and body.
 
 Pixel plan for the Gusters.
 - Hard Gust has a wide, open mouth: dark, with a pale inside.
-- Lift Gust has pale, curled rods: a pale curl winds round the end of each
-  rod.
+- Lift Gust: pale, curled rods, the gene model lift_gust_curls: a pale curl
+  winds round each rod near the head. The rods keep their color.
 - Shield Gust has a sharp, blue brow.
 - Golem Gust has gray, heavy wind: a warm iron gray with rust spots.
 - Disarm Gust has narrow, white eyes: white slits beside the eyes.
@@ -157,18 +157,26 @@ def hard_gust():
 
 
 def lift_gust():
-    # Pale, curled rods: the rods keep their color, and a pale curl winds
-    # round the high end of each rod, white with a soft lavender edge.
-    pale = Mark("#FFFFFF")
-    soft = Mark("#D8D0FF")
-    for x, y, f, col, row in pixels(ROD, SIDES, rows=range(4, 8)):
-        step = (row + col + 2 * SIDES.index(f)) % 4
-        if step in (0, 1):
-            pale.put((x, y))
-        elif step == 2:
-            soft.put((x, y))
-    put(pale, ROD, ("bottom",))
-    return [pale, soft]
+    # The rods keep their own color. The curl is the gene model
+    # lift_gust_curls.
+    return []
+
+
+def lift_gust_model():
+    # Pale, curled rods: a pale curl of wind winds round each rod near the
+    # head, in four short steps that go round the rod, with a darker lavender
+    # edge. On each rod bone, the rod is from x -1 to 1, y 0 to 8, and z -3
+    # to -1, and y 0 is the end near the head.
+    im = model_image()
+    paint_box(im, 0, 0, 3, 1, 1, lambda f, x, y: "#F4F0FF" if f in ("top", "front") else "#7A6AC8")
+    steps = ((-1.5, 0.5, -3.8), (1.2, 1.5, -3.5), (-1.5, 2.5, -1.2), (-2.2, 3.5, -3.5))
+    parts = []
+    for n, (x, y, z) in enumerate(steps):
+        turn = 90 if n % 2 else 0
+        for bone in RODS:
+            parts.append({"bone": bone, "uv": [0, 0], "from": [x, y, z], "size": [3, 1, 1], "inflate": -0.1,
+                          "pivot": [0, y + 0.5, -2], "rotation": [0, turn, 0]})
+    save_model("lift_gust_curls", im, parts)
 
 
 def shield_gust():
@@ -516,6 +524,7 @@ GENES = {
 MODEL_GENES = {
     "wide_gust": (wide_gust_model, "wide_gust_wind"),
     "sky_hop": (sky_hop_model, "sky_hop_rods"),
+    "lift_gust": (lift_gust_model, "lift_gust_curls"),
     "twin_charge": (twin_charge_model, "twin_charge_mouths"),
 }
 

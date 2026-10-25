@@ -1,19 +1,5 @@
 {
 	"region_map": "originofspawns:textures/region/breeze.png",
-	"layers": [
-		{
-			"effect": {
-				"type": "pattern",
-				"texture": "originofspawns:textures/gene_marks/lift_gust_0.png",
-				"tint": "#FFFFFF"
-			}
-		},
-		{
-			"effect": {
-				"type": "pattern",
-				"texture": "originofspawns:textures/gene_marks/lift_gust_1.png",
-				"tint": "#D8D0FF"
-			}
-		}
-	]
+	"layers": [],
+	"model": "originofspawns:lift_gust_curls"
 }

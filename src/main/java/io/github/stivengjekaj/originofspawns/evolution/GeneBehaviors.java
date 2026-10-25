@@ -465,6 +465,8 @@ public final class GeneBehaviors {
 				case GeneEffect.RocketShot shot -> rocketShot(mob, level, shot);
 				case GeneEffect.Hex hex -> hex(mob, level, hex);
 				case GeneEffect.HealThrow heal -> healThrow(mob, level, heal);
+				case GeneEffect.FireAura aura when now % Math.max(1, Math.round(aura.intervalSeconds() * 20.0F)) < TICK_INTERVAL ->
+						fireAura(mob, level, aura);
 				case GeneEffect.Grow grow when mob instanceof net.minecraft.world.entity.monster.cubemob.AbstractCubeMob cube ->
 						GeneCubes.grow(cube, level, grow);
 				case GeneEffect.Bud bud when mob instanceof net.minecraft.world.entity.monster.cubemob.AbstractCubeMob cube ->
@@ -883,6 +885,24 @@ public final class GeneBehaviors {
 		}
 		mob.setAttached(ModAttachments.STATE, state.withThrowTime(now));
 		return true;
+	}
+
+	/**
+	 * Sets the players in the radius of the mob on fire.
+	 *
+	 * @return the number of players that burn
+	 */
+	public static int fireAura(Mob mob, ServerLevel level, GeneEffect.FireAura aura) {
+		List<Player> players = level.getEntitiesOfClass(Player.class, mob.getBoundingBox().inflate(aura.radius()),
+				player -> player.isAlive() && !player.isSpectator() && !player.isCreative());
+		for (Player player : players) {
+			player.igniteForSeconds(aura.seconds());
+		}
+		if (!players.isEmpty()) {
+			level.sendParticles(ParticleTypes.FLAME, mob.getX(), mob.getY(0.5), mob.getZ(), 12, aura.radius() / 2.0, 0.2,
+					aura.radius() / 2.0, 0.02);
+		}
+		return players.size();
 	}
 
 	/**

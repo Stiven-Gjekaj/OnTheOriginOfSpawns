@@ -229,7 +229,8 @@ public sealed interface GeneEffect {
 			Map.entry("shield_break", ShieldBreak.CODEC),
 			Map.entry("hop_back", HopBack.CODEC),
 			Map.entry("fire_on_hurt", FireOnHurt.CODEC),
-			Map.entry("lava_exit_fire", LavaExitFire.CODEC)
+			Map.entry("lava_exit_fire", LavaExitFire.CODEC),
+			Map.entry("fire_aura", FireAura.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3728,6 +3729,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "lava_exit_fire";
+		}
+	}
+
+	/**
+	 * One time in each interval, the players in the radius burn for the seconds.
+	 */
+	record FireAura(float seconds, float radius, float intervalSeconds) implements GeneEffect {
+		public static final MapCodec<FireAura> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("seconds", 2.0F).forGetter(FireAura::seconds),
+				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 2.0F).forGetter(FireAura::radius),
+				Codec.floatRange(1.0F, 600.0F).optionalFieldOf("interval_seconds", 5.0F).forGetter(FireAura::intervalSeconds)
+		).apply(instance, FireAura::new));
+
+		@Override
+		public String type() {
+			return "fire_aura";
 		}
 	}
 }

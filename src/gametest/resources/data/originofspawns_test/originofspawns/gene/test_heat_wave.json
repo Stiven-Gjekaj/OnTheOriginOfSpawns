@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "fire_aura", "seconds": 2, "radius": 2, "interval_seconds": 5 }],
+	"mutation_rate": 0
+}

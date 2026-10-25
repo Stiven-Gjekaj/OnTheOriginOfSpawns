@@ -2,6 +2,8 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import static io.github.stivengjekaj.originofspawns.test.SlimeEffectsTest.cubeWith;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -13,6 +15,7 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -98,6 +101,20 @@ public class MagmaCubeEffectsTest {
 			helper.assertValueEqual(pig.getRemainingFireTicks(), 0, "after 10 seconds, the hit does not burn");
 			helper.succeed();
 		});
+	}
+
+	@GameTest
+	public void heatWaveSetsThePlayersNearOnFire(GameTestHelper helper) {
+		AbstractCubeMob cube = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(2, 1, 4), 2, "test_heat_wave");
+		ServerPlayer near = CreeperEffectsTest.survivalPlayer(helper).player();
+		near.setPos(cube.position().add(2.0, 0.0, 0.0));
+		ServerPlayer far = CreeperEffectsTest.survivalPlayer(helper).player();
+		far.setPos(cube.position().add(4.0, 0.0, 0.0));
+		helper.assertValueEqual(GeneBehaviors.fireAura(cube, helper.getLevel(),
+				new GeneEffect.FireAura(2.0F, 2.0F, 5.0F)), 1, "one player is in 2 blocks");
+		helper.assertValueEqual(near.getRemainingFireTicks(), 40, "the near player burns for 2 seconds");
+		helper.assertValueEqual(far.getRemainingFireTicks(), 0, "the far player does not burn");
+		helper.succeed();
 	}
 
 	static AbstractCubeMob cubeInWater(GameTestHelper helper, BlockPos pos, String... genes) {

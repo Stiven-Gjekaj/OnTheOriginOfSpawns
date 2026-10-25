@@ -286,6 +286,23 @@ final class ReusedEffects {
 				"a wounded mob has 6 more armor"));
 	}
 
+	static void playerAura(GameTestHelper helper, Maker maker) {
+		Mob mob = maker.at(helper, new BlockPos(1, 1, 1), "test_aura");
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(3, 1, 1))));
+		mob.tickCount = 20;
+		GeneBehaviors.tick(mob, helper.getLevel());
+		helper.assertTrue(player.hasEffect(MobEffects.WEAKNESS), "the aura gives the player Weakness");
+	}
+
+	static void brainCooldown(GameTestHelper helper, Maker maker) {
+		Mob mob = maker.at(helper, new BlockPos(4, 1, 4), "test_enderman_bruiser");
+		mob.getBrain().setMemoryWithExpiry(net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_COOLING_DOWN, true, 40L);
+		GeneBehaviors.tick(mob, helper.getLevel());
+		helper.assertValueEqual(mob.getBrain().getTimeUntilExpiry(
+				net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_COOLING_DOWN), 46L, "15% more time between attacks");
+	}
+
 	/**
 	 * Waits until the speed when gene of a wounded mob makes it 30% faster.
 	 */

@@ -93,6 +93,67 @@ public class ZoglinEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void theReusedHitEffectsWorkOnAZoglin(GameTestHelper helper) {
+		ReusedEffects.healOnHit(helper, ZoglinEffectsTest::zoglinWith);
+		ReusedEffects.brainCooldown(helper, ZoglinEffectsTest::zoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedDamageEffectsWorkOnAZoglin(GameTestHelper helper) {
+		ReusedEffects.damageToGolems(helper, ZoglinEffectsTest::zoglinWith);
+		ReusedEffects.damageTaken(helper, ZoglinEffectsTest::zoglinWith);
+		ReusedEffects.thorns(helper, ZoglinEffectsTest::zoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedGroupDamageWorksOnAZoglin(GameTestHelper helper) {
+		ReusedEffects.groupedAndAlone(helper, ZoglinEffectsTest::zoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedAuraWorksOnAZoglin(GameTestHelper helper) {
+		ReusedEffects.playerAura(helper, ZoglinEffectsTest::zoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedDeathCloudWorksOnAZoglin(GameTestHelper helper) {
+		ReusedEffects.deathCloud(helper, ZoglinEffectsTest::zoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedCallWorksOnAZoglin(GameTestHelper helper) {
+		ReusedEffects.callOnHurt(helper, ZoglinEffectsTest::zoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedMovesWorkOnAZoglin(GameTestHelper helper) {
+		ReusedEffects.leap(helper, ZoglinEffectsTest::zoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedSidestepWorksOnAZoglin(GameTestHelper helper) {
+		ReusedEffects.sidestep(helper, ZoglinEffectsTest::zoglinWith);
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 40)
+	public void theReusedAttributeWhenWorksOnAZoglin(GameTestHelper helper) {
+		ReusedEffects.armorWhenWounded(helper, ZoglinEffectsTest::zoglinWith);
+	}
+
+	@GameTest(maxTicks = 40)
+	public void theReusedSpeedWhenWorksOnAZoglin(GameTestHelper helper) {
+		ReusedEffects.speedWhenWounded(helper, ZoglinEffectsTest::zoglinWith);
+	}
+
 	/**
 	 * Adds an adult zoglin with the test genes and no AI. The genes go on before it enters the level, so it gets no
 	 * genes from the pool.

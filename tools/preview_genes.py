@@ -428,7 +428,14 @@ SLIME_FAMILIES = {
     "acids": ["acid_touch", "shield_melt", "acid_blood", "burning_gel", "acid_pool", "dissolve"],
 }
 
-SLIME_EXTRA = {}
+SLIME_EXTRA = {
+    "giants": [("All 6 + Splitters", ["many_pieces", "bud"], True, {})],
+    "splitters": [("All 6 + Gluers", ["gum_skin", "glue_grip"], True, {})],
+    "gluers": [("All 6 + Bouncers", ["high_hop", "slam"], True, {})],
+    "bouncers": [("All 6 + Acids", ["acid_touch", "acid_pool"], True, {})],
+    "acids": [("All 6 at night", [], True, {"light": 0.18}),
+              ("All 6 + Giants", ["great_blob", "mother_gel"], True, {})],
+}
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],

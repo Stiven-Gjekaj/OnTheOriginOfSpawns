@@ -634,9 +634,17 @@ ENDERMITE_CLOSEUPS = {
 # The close-ups of the slime, at size 4. The keys "slime_2" and "slime_1"
 # show it at sizes 2 and 1.
 SLIME = pg.SLIME_FAMILIES
-SLIME_CLOSEUPS = {}
-SLIME_2_CLOSEUPS = {}
-SLIME_1_CLOSEUPS = {}
+
+
+def slime_closeup(size):
+    # One close-up at a size: all 6 genes of each family, in one row each.
+    rows = [(f"{family.capitalize()}: all 6", genes, False) for family, genes in SLIME.items()]
+    return {f"slime_{size}_closeup": (f"Slime at size {size}", rows, SPIDER_VIEWS)}
+
+
+SLIME_CLOSEUPS = slime_closeup(4)
+SLIME_2_CLOSEUPS = slime_closeup(2)
+SLIME_1_CLOSEUPS = slime_closeup(1)
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),

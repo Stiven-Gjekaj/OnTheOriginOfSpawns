@@ -98,10 +98,12 @@ The husk and the drowned come out together in one alpha release.
   parched), the creeper, spiders (spider, cave spider), illagers (pillager,
   vindicator, evoker, witch), endermen (enderman, endermite), slimes (slime,
   magma cube), the Nether mobs (zombified piglin, piglin, piglin
-  brute, hoglin, zoglin), the flyers (phantom, vex, ghast, blaze, breeze), the
+  brute, hoglin, zoglin), the flyers (phantom, ghast, blaze, breeze), the
   guardian, the undead mounts (camel husk, zombie nautilus, zombie horse,
   skeleton horse), and the others (silverfish, shulker, ravager, creaking).
 - The zombie villager comes in milestone 6, with the villagers.
+- The vex gets no genes. It comes only from an evoker, and the genes of the
+  evoker shape its vexes.
 - The sulfur cube comes in milestone 6, with the mobs that the player breeds.
   It is passive. It breeds, and it swallows items that change its body.
 - The neutral mobs that fight the player come after the hostile mobs: polar

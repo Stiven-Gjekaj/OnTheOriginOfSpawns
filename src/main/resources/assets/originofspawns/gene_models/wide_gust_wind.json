@@ -1,0 +1,119 @@
+{
+	"texture": "originofspawns:textures/entity/wide_gust_wind.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				4,
+				10,
+				-0.5
+			],
+			"size": [
+				10,
+				1,
+				1
+			],
+			"inflate": -0.2,
+			"pivot": [
+				0,
+				10,
+				0
+			],
+			"rotation": [
+				0,
+				45,
+				-8
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				4,
+				10,
+				-0.5
+			],
+			"size": [
+				10,
+				1,
+				1
+			],
+			"inflate": -0.2,
+			"pivot": [
+				0,
+				10,
+				0
+			],
+			"rotation": [
+				0,
+				135,
+				-8
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				4,
+				10,
+				-0.5
+			],
+			"size": [
+				10,
+				1,
+				1
+			],
+			"inflate": -0.2,
+			"pivot": [
+				0,
+				10,
+				0
+			],
+			"rotation": [
+				0,
+				225,
+				-8
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				4,
+				10,
+				-0.5
+			],
+			"size": [
+				10,
+				1,
+				1
+			],
+			"inflate": -0.2,
+			"pivot": [
+				0,
+				10,
+				0
+			],
+			"rotation": [
+				0,
+				315,
+				-8
+			]
+		}
+	]
+}

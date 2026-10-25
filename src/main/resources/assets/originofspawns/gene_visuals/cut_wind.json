@@ -1,0 +1,21 @@
+{
+	"region_map": "originofspawns:textures/region/breeze.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/cut_wind_0.png",
+				"tint": "#FFFFFF"
+			},
+			"target": "wind"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/cut_wind_1.png",
+				"tint": "#1E2A60"
+			},
+			"target": "wind"
+		}
+	]
+}

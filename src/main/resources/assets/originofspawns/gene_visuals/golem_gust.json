@@ -1,0 +1,13 @@
+{
+	"region_map": "originofspawns:textures/region/breeze.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/golem_gust_0.png",
+				"tint": "#6A6A70"
+			},
+			"target": "wind"
+		}
+	]
+}

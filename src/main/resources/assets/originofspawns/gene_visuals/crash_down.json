@@ -1,0 +1,21 @@
+{
+	"region_map": "originofspawns:textures/region/breeze.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/crash_down_0.png",
+				"tint": "#A08060"
+			},
+			"target": "wind"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/crash_down_1.png",
+				"tint": "#6A5040"
+			},
+			"target": "wind"
+		}
+	]
+}

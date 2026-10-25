@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/breeze.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/steel_core_0.png",
+				"tint": "#6A6E78"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/steel_core_1.png",
+				"tint": "#D8DCE4"
+			}
+		}
+	]
+}

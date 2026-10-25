@@ -1,0 +1,21 @@
+{
+	"region_map": "originofspawns:textures/region/breeze.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fast_charge_0.png",
+				"tint": "#FFC820"
+			},
+			"target": "wind"
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fast_charge_1.png",
+				"tint": "#FFE890"
+			},
+			"target": "wind"
+		}
+	]
+}

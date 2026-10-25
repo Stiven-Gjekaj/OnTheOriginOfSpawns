@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/breeze.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/true_aim_0.png",
+				"tint": "#2A8AFF"
+			}
+		}
+	]
+}

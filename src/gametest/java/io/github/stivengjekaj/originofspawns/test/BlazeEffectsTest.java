@@ -287,6 +287,24 @@ public class BlazeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void divingFlameDivesAtTheTargetAndHitsHarder(GameTestHelper helper) {
+		Blaze blaze = blazeWith(helper, new BlockPos(2, 4, 2));
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		blaze.setTarget(pig);
+		var dive = new GeneEffect.Dive(10.0F, 4.0F, 12.0F, 1.0F);
+		var hit = helper.getLevel().damageSources().mobAttack(blaze);
+		blaze.setAttached(ModAttachments.GENES, new CarriedGenes(java.util.List.of(
+				Identifier.fromNamespaceAndPath("originofspawns_test", "test_diving_flame"))));
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, hit, 6.0F), 6.0F, "no extra damage before a dive");
+		helper.assertTrue(GeneBehaviors.dive(blaze, dive), "the blaze dives");
+		Vec3 motion = blaze.getDeltaMovement();
+		helper.assertTrue(motion.y < 0.0 && motion.x > 0.0 && motion.z > 0.0, "the blaze dives down at the pig");
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, hit, 6.0F), 10.0F, "4 more damage after the dive");
+		helper.assertFalse(GeneBehaviors.dive(blaze, dive), "the next dive waits 10 seconds");
+		helper.succeed();
+	}
+
 	/**
 	 * Returns the speed up that one server step gives the blaze, with the smallest random offset of the game.
 	 */

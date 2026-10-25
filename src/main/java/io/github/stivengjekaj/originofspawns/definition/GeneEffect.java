@@ -275,7 +275,8 @@ public sealed interface GeneEffect {
 			Map.entry("fireball_ring", FireballRing.CODEC),
 			Map.entry("burn_pain", BurnPain.CODEC),
 			Map.entry("fire_feed", FireFeed.CODEC),
-			Map.entry("keep_above", KeepAbove.CODEC)
+			Map.entry("keep_above", KeepAbove.CODEC),
+			Map.entry("dive", Dive.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4547,6 +4548,24 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "keep_above";
+		}
+	}
+
+	/**
+	 * One time in each cooldown, the mob dives at its target, if the target is in the range and lower than the mob.
+	 * For 3 seconds after a dive, each melee hit of the mob does {@code damage} more.
+	 */
+	record Dive(float cooldownSeconds, float damage, float range, float speed) implements GeneEffect {
+		public static final MapCodec<Dive> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(Dive::cooldownSeconds),
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("damage", 4.0F).forGetter(Dive::damage),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 12.0F).forGetter(Dive::range),
+				Codec.floatRange(0.1F, 4.0F).optionalFieldOf("speed", 1.0F).forGetter(Dive::speed)
+		).apply(instance, Dive::new));
+
+		@Override
+		public String type() {
+			return "dive";
 		}
 	}
 }

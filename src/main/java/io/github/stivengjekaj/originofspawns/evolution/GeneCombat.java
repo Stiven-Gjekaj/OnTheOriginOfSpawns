@@ -580,6 +580,8 @@ public final class GeneCombat {
 						}
 						attacker.setAttached(ModAttachments.STRIKE_TIMES, strikes);
 					}
+					case GeneEffect.Dive dive when source.getDirectEntity() == attacker && !ready(attacker, dive, DIVE_SECONDS) ->
+							result += dive.damage();
 					case GeneEffect.RunStrike run when source.getDirectEntity() == attacker
 							&& attacker.getAttachedOrElse(ModAttachments.RUN_BLOCKS, 0.0) >= run.blocks() ->
 							result *= run.multiplier();
@@ -611,6 +613,11 @@ public final class GeneCombat {
 		markCombat(victim);
 		return result;
 	}
+
+	/**
+	 * The seconds after a dive in which the melee hits of the mob do more damage.
+	 */
+	private static final float DIVE_SECONDS = 3.0F;
 
 	/**
 	 * The blocks from a mob with a burn pain gene to its target in which the gene acts.

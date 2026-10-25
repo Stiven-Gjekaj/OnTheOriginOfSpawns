@@ -497,6 +497,7 @@ public final class GeneBehaviors {
 				case GeneEffect.FireballShot shot -> fireballShot(mob, level, shot);
 				case GeneEffect.FireballRing ring -> fireballRing(mob, level, ring);
 				case GeneEffect.FireFeed feed -> fireFeed(mob, feed);
+				case GeneEffect.Dive dive -> dive(mob, dive);
 				case GeneEffect.Hex hex -> hex(mob, level, hex);
 				case GeneEffect.HealThrow heal -> healThrow(mob, level, heal);
 				case GeneEffect.EatItems eat -> eatItems(mob, level, eat);
@@ -953,6 +954,24 @@ public final class GeneBehaviors {
 			}
 		}
 		return Math.max(0.0F, result);
+	}
+
+	/**
+	 * Makes the mob dive at its target, if the target is in range and lower than the mob, and the cooldown is over.
+	 *
+	 * @return true if the mob dived
+	 */
+	public static boolean dive(Mob mob, GeneEffect.Dive dive) {
+		LivingEntity target = mob.getTarget();
+		if (target == null || !target.isAlive() || mob.distanceTo(target) > dive.range() || target.getY() >= mob.getY()
+				|| !mob.hasLineOfSight(target) || !GeneCombat.ready(mob, dive, dive.cooldownSeconds())) {
+			return false;
+		}
+		GeneCombat.startCooldown(mob, dive);
+		Vec3 toTarget = new Vec3(target.getX(), target.getY(0.5), target.getZ()).subtract(mob.position());
+		mob.setDeltaMovement(toTarget.normalize().scale(dive.speed()));
+		mob.needsSync = true;
+		return true;
 	}
 
 	/**

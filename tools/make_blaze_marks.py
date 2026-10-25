@@ -29,7 +29,8 @@ Pixel plan for the Volleyers.
 - Quick Burst has three thin, yellow rings on each rod, with dark gaps.
 - Fan Shot: spread, wide rods, the gene model fan_shot_fins: a second rod
   that leans out from each rod.
-- Seeker Spark has a gold mark on the brow.
+- Seeker Spark has a large, dark gold diamond on the brow and on the top of
+  the head.
 - Spark Ring has one thick, gold band round the middle of each rod.
 - Soot Cloud has black ash on the face.
 
@@ -38,8 +39,10 @@ Pixel plan for the Smolderers.
 - Fire Trail has black, sooty rods.
 - Burn Pain has a deep, cruel frown.
 - Fire Feed has rods that glow at the base: the high ends glow white.
-- Rod Wall: thick, short rods, the gene model rod_wall_collars.
-- Heat Haze has pale, faded eyes on a faded face.
+- Rod Wall: thick, short rods, the gene model rod_wall_collars, charred dark
+  red to black with hot orange cracks.
+- Heat Haze has pale, faded eyes on a face that fades to pale yellow in
+  wavy bands, as heat shimmer.
 
 Pixel plan for the Hoverers.
 - Rising Heat has rods that point up: pale chevrons up the rods.
@@ -222,14 +225,26 @@ def fan_shot_model():
 
 
 def seeker_spark():
-    # A gold mark on the brow: a gold diamond with a white point between the
-    # eyes, and a gold line up onto the top of the head.
-    gold = Mark("#C08010")
+    # A gold mark on the brow: a large, dark gold diamond with a white point
+    # in the middle of the brow, between and over the eyes, and a dark gold
+    # diamond on the top of the head.
+    gold = Mark("#B07000")
+    rim = Mark("#5A3400")
     point = Mark("#FFFFFF")
-    put_face(gold, [(3, 0), (4, 0), (2, 1), (3, 1), (4, 1), (5, 1), (3, 2), (4, 2)])
-    put_face(point, [(3, 1), (4, 1)])
-    put(gold, HEAD, ("top",), cols=(3, 4), rows=(5, 6, 7))
-    return [gold, point]
+    for c in range(8):
+        for r in range(0, 4):
+            d = abs(c - 3.5) + abs(r - 1.5)
+            if d < 1.6:
+                (point if d < 0.6 else gold).put(face(c, r))
+            elif d < 2.6:
+                rim.put(face(c, r)) if d >= 2.0 else gold.put(face(c, r))
+    for x, y, f, col, row in pixels(HEAD, ("top",)):
+        d = abs(col - 3.5) + abs(row - 4.5)
+        if d < 2.6:
+            gold.put((x, y))
+        elif d < 3.6:
+            rim.put((x, y))
+    return [gold, rim, point]
 
 
 def spark_ring():
@@ -304,23 +319,35 @@ def rod_wall():
 
 
 def rod_wall_model():
-    # Thick, short rods: a thick, dark collar round the high half of each
-    # rod, larger than the rod, so the rods look thick and short.
-    rod_parts("rod_wall_collars", 2, 4, 2, lambda f, x, y: "#5A2006" if y % 2 else "#8A3A0A", (0, 0, 0),
-              inflate=0.6)
+    # Thick, short rods: a thick collar round the high half of each rod,
+    # larger than the rod, charred from dark red to black, with hot orange
+    # cracks.
+    def char(f, x, y):
+        if (x + 2 * y + len(f)) % 5 == 0:
+            return "#FF7A18"
+        return "#1A0806" if y >= 2 else "#5A1408"
+    rod_parts("rod_wall_collars", 2, 4, 2, char, (0, 0, 0), inflate=0.6)
 
 
 def heat_haze():
-    # Pale, faded eyes on a faded face: the face is a pale, faded cream, and
-    # the eyes are a pale, faded gray.
-    cream = Mark("#F4E8C8")
-    pale = Mark("#B8B0A8")
+    # Pale, faded eyes on a face that shimmers with heat: the face fades to a
+    # pale yellow in wavy bands, with soft, uneven edges, and the eyes are a
+    # pale, faded gray.
+    pale = Mark("#FFF4B8")
+    soft = Mark("#FFE888")
+    eye = Mark("#C8C0B0")
+    import math
     for x, y, f, col, row in pixels(HEAD, ("front",)):
         if row == EYE_ROW and (col in EYES[0] or col in EYES[1]):
+            eye.put((x, y))
+            continue
+        wave = math.sin((col + row * 1.7) * 1.1)
+        edge = col in (0, 7) or row == 7
+        if wave > 0.2 and not (edge and noise100(x, y, 3302) < 60):
             pale.put((x, y))
-        elif noise100(x, y, 3301) < 70:
-            cream.put((x, y))
-    return [cream, pale]
+        elif wave > -0.4 and noise100(x, y, 3303) < 70:
+            soft.put((x, y))
+    return [pale, soft, eye]
 
 
 # The Hoverers.
@@ -377,12 +404,15 @@ def sky_guard():
 
 
 def diving_flame():
-    # A sharp, red brow: a thin, red V that points down between the eyes,
-    # with a red flame point up on the brow.
+    # A sharp, red brow: a clear, thick, red V that points down between the
+    # eyes, from the high corners of the face to rows 2 and 3 in the middle,
+    # with a dark edge under it.
     red = Mark("#E01010")
-    put_face(red, [(0, 0), (1, 1), (2, 1), (3, 2), (4, 2), (5, 1), (6, 1), (7, 0)])
-    put_face(red, [(3, 0), (4, 0)])
-    return [red]
+    dark = Mark("#4A0404")
+    v = [(0, 0), (1, 0), (1, 1), (2, 1), (2, 2), (3, 2), (4, 2), (5, 2), (5, 1), (6, 1), (6, 0), (7, 0)]
+    put_face(red, v + [(3, 3), (4, 3)])
+    put_face(dark, [(0, 1), (1, 2), (2, 3), (5, 3), (6, 2), (7, 1)])
+    return [red, dark]
 
 
 # The Steamhides.

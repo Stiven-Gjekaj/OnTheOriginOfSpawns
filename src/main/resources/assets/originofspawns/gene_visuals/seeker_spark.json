@@ -5,13 +5,20 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/seeker_spark_0.png",
-				"tint": "#C08010"
+				"tint": "#B07000"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/seeker_spark_1.png",
+				"tint": "#5A3400"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/seeker_spark_2.png",
 				"tint": "#FFFFFF"
 			}
 		}

@@ -7,6 +7,13 @@
 				"texture": "originofspawns:textures/gene_marks/diving_flame_0.png",
 				"tint": "#E01010"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/diving_flame_1.png",
+				"tint": "#4A0404"
+			}
 		}
 	]
 }

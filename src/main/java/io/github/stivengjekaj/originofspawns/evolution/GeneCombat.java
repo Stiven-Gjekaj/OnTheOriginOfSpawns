@@ -622,12 +622,13 @@ public final class GeneCombat {
 	}
 
 	/**
-	 * Pushes the living entities in the radius of the mob away from it. Spectators and players in creative mode do
-	 * not move.
+	 * Pushes the living entities in the radius of the mob away from it, or only the attacker. Spectators and players in
+	 * creative mode do not move.
 	 */
-	public static void pushAway(Mob mob, GeneEffect.PushOnHurt push) {
+	public static void pushAway(Mob mob, GeneEffect.PushOnHurt push, Entity attacker) {
 		for (LivingEntity other : mob.level().getEntitiesOfClass(LivingEntity.class, mob.getBoundingBox().inflate(push.radius()),
 				other -> other != mob && other.isAlive() && other.distanceTo(mob) <= push.radius()
+						&& (!push.attackerOnly() || other == attacker)
 						&& !(other instanceof Player player && (player.isSpectator() || player.isCreative())))) {
 			net.minecraft.world.phys.Vec3 away = other.position().subtract(mob.position()).multiply(1.0, 0.0, 1.0);
 			if (away.lengthSqr() < 1.0E-6) {
@@ -1101,8 +1102,9 @@ public final class GeneCombat {
 						&& self.damageTypes().map(source::is).orElse(true)) {
 					wounded.addEffect(new MobEffectInstance(self.effect(), Math.round(self.seconds() * 20.0F),
 							self.amplifier()), wounded);
-				} else if (effect instanceof GeneEffect.PushOnHurt push) {
-					pushAway(wounded, push);
+				} else if (effect instanceof GeneEffect.PushOnHurt push && (!push.meleeOnly()
+						|| source.getEntity() instanceof LivingEntity && source.getDirectEntity() == source.getEntity())) {
+					pushAway(wounded, push, source.getEntity());
 				}
 			}
 		}

@@ -241,6 +241,23 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void galeGuardPushesOnlyTheMeleeAttackerBack(GameTestHelper helper) {
+		Breeze breeze = breezeWith(helper, new BlockPos(3, 1, 3), "test_gale_guard");
+		Pig attacker = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 3));
+		Pig other = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 5));
+		var level = helper.getLevel();
+		var arrow = new net.minecraft.world.entity.projectile.arrow.Arrow(level, attacker,
+				new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW), null);
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(breeze, level.damageSources().arrow(arrow, attacker));
+		arrow.discard();
+		helper.assertValueEqual(attacker.getDeltaMovement().horizontalDistance(), 0.0, "an arrow does not count");
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(breeze, level.damageSources().mobAttack(attacker));
+		helper.assertTrue(attacker.getDeltaMovement().x > 1.0, "the melee attacker flies back");
+		helper.assertValueEqual(other.getDeltaMovement().horizontalDistance(), 0.0, "the other pig does not move");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes the breeze jump to a place 4 blocks away at the end of its inhale, and returns the speed of the jump. The
 	 * random source has a fixed seed, so each breeze picks the same angle.

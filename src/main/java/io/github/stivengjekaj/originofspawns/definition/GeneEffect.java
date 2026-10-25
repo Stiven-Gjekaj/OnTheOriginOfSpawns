@@ -4638,13 +4638,21 @@ public sealed interface GeneEffect {
 
 	/**
 	 * When something hurts the mob, it pushes the other mobs and the players in the radius away from it. The push has
-	 * this strength in blocks per tick away from the mob, and a part of it goes up.
+	 * this strength in blocks per tick away from the mob, and a part of it goes up. With {@code melee_only}, only a
+	 * melee hit counts: the hit of a mob or a player, not of a projectile. With {@code attacker_only}, it pushes only
+	 * the attacker, if the attacker is in the radius.
 	 */
-	record PushOnHurt(float radius, float strength) implements GeneEffect {
+	record PushOnHurt(float radius, float strength, boolean meleeOnly, boolean attackerOnly) implements GeneEffect {
 		public static final MapCodec<PushOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 3.0F).forGetter(PushOnHurt::radius),
-				Codec.floatRange(0.1F, 5.0F).optionalFieldOf("strength", 1.2F).forGetter(PushOnHurt::strength)
+				Codec.floatRange(0.1F, 5.0F).optionalFieldOf("strength", 1.2F).forGetter(PushOnHurt::strength),
+				Codec.BOOL.optionalFieldOf("melee_only", false).forGetter(PushOnHurt::meleeOnly),
+				Codec.BOOL.optionalFieldOf("attacker_only", false).forGetter(PushOnHurt::attackerOnly)
 		).apply(instance, PushOnHurt::new));
+
+		public PushOnHurt(float radius, float strength) {
+			this(radius, strength, false, false);
+		}
 
 		@Override
 		public String type() {

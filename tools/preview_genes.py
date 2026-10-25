@@ -70,6 +70,8 @@ PIGLIN_PATH = "assets/minecraft/textures/entity/piglin/piglin.png"
 PIGLIN_BRUTE_PATH = "assets/minecraft/textures/entity/piglin/piglin_brute.png"
 HOGLIN_PATH = "assets/minecraft/textures/entity/hoglin/hoglin.png"
 ZOGLIN_PATH = "assets/minecraft/textures/entity/hoglin/zoglin.png"
+PHANTOM_PATH = "assets/minecraft/textures/entity/phantom/phantom.png"
+PHANTOM_EYES_PATH = "assets/minecraft/textures/entity/phantom/phantom_eyes.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -515,6 +517,16 @@ def next_family_extra(families, picks, night_family):
     return extra
 
 
+# The families of the phantom, from design/species/phantom.md.
+PHANTOM_FAMILIES = {
+    "swooper": ["talon_dive", "rending_bite", "wing_slam", "golem_diver", "steep_dive", "first_dive"],
+    "glider": ["swift_wing", "wide_circle", "feint", "silent_wing", "wind_rider", "night_glide"],
+    "nightwing": ["sun_shade", "ember_hide", "pale_bone", "dusk_mend", "moon_eye", "night_terror"],
+    "shrieker": ["shriek", "blinding_cry", "gnaw", "sleepless_bite", "echo_cry", "flock_cry"],
+    "swarmwing": ["big_flock", "pack_wing", "flock_shield", "last_flight", "flock_rally", "swarm_dive"],
+}
+
+
 ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
     "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
     "fester": ["nether_rot", "stench"], "bladesman": ["riposte", "keen_edge"], "chaser": ["scent_tracker", "vault"],
@@ -538,6 +550,11 @@ ZOGLIN_EXTRA = next_family_extra(ZOGLIN_FAMILIES, {
     "rotter": ["plague_breath", "grave_stench"], "boneback": ["bone_plates", "spine_spikes"],
     "maddened": ["blind_fury", "berserk_rot"],
 }, "maddened")
+PHANTOM_EXTRA = next_family_extra(PHANTOM_FAMILIES, {
+    "swooper": ["talon_dive", "wing_slam"], "glider": ["swift_wing", "night_glide"],
+    "nightwing": ["sun_shade", "pale_bone"], "shrieker": ["flock_cry", "echo_cry"],
+    "swarmwing": ["pack_wing", "swarm_dive"],
+}, "swarmwing")
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -874,6 +891,36 @@ def held_item(kind):
             part("string", (-3, 11, -1), (6, 1, 0)), part("iron", (-0.5, 14, -1.5), (1, 1, 1))]
 
 
+
+# The phantom, from PhantomModel: a body that tips up by 0.1 radians, and,
+# as its children, a head, a tail in two parts, and two wings in two parts.
+# The right wing mirrors the left wing. The texture is 64x64, and the eyes
+# glow (phantom_eyes.png).
+PHANTOM_BODY = (0, 0, 0, math.degrees(-0.1), 0, 0)
+PHANTOM_TAIL_BASE = child_pivot(PHANTOM_BODY, (0, -2, 1))
+PHANTOM_LEFT_WING = child_pivot(PHANTOM_BODY, (2, -2, -8), (0, 0, math.degrees(0.1)))
+PHANTOM_RIGHT_WING = child_pivot(PHANTOM_BODY, (-3, -2, -8), (0, 0, math.degrees(-0.1)))
+PHANTOM_PIVOTS = {
+    "body": PHANTOM_BODY,
+    "head": child_pivot(PHANTOM_BODY, (0, 1, -7), (math.degrees(0.2), 0, 0)),
+    "tail_base": PHANTOM_TAIL_BASE,
+    "tail_tip": child_pivot(PHANTOM_TAIL_BASE, (0, 0.5, 6)),
+    "left_wing_base": PHANTOM_LEFT_WING,
+    "left_wing_tip": child_pivot(PHANTOM_LEFT_WING, (6, 0, 0), (0, 0, math.degrees(0.1))),
+    "right_wing_base": PHANTOM_RIGHT_WING,
+    "right_wing_tip": child_pivot(PHANTOM_RIGHT_WING, (-6, 0, 0), (0, 0, math.degrees(-0.1))),
+}
+PHANTOM_CUBES = [
+    ("head", (0, 0), (-4, -2, -5), (7, 3, 5), False),
+    ("body", (0, 8), (-3, -2, -8), (5, 3, 9), False),
+    ("tail_base", (3, 20), (-2, 0, 0), (3, 2, 6), False),
+    ("tail_tip", (4, 29), (-1, 0, 0), (1, 1, 6), False),
+    ("left_wing_base", (23, 12), (0, 0, 0), (6, 2, 9), False),
+    ("left_wing_tip", (16, 24), (0, 0, 0), (13, 1, 9), False),
+    ("right_wing_base", (23, 12), (-6, 0, 0), (6, 2, 9), True),
+    ("right_wing_tip", (16, 24), (-13, 0, 0), (13, 1, 9), True),
+]
+
 # Each Nether mob: the cubes, the pivots, the weapon, the wraps, the frame of
 # the sheets (VIEW_X, VIEW_Y, VIEW_W, VIEW_H), the frame of the close-ups,
 # and whether the sheets look down on it.
@@ -887,7 +934,12 @@ NETHER_LOOKS = {
     "piglin_brute": (PIGLIN_CUBES, PIGLIN_PIVOTS, "axe", PIGLIN_OUTER, PIGLIN_FRAME, PIGLIN_CLOSEUP, False),
     "hoglin": (HOGLIN_CUBES, HOGLIN_PIVOTS, None, [], HOGLIN_FRAME, HOGLIN_CLOSEUP, True),
     "zoglin": (HOGLIN_CUBES, HOGLIN_PIVOTS, None, [], HOGLIN_FRAME, HOGLIN_CLOSEUP, True),
+    "phantom": (PHANTOM_CUBES, PHANTOM_PIVOTS, None, [], (24, 12, 48, 24), ((48, 26), (0, -1)), True),
 }
+# The flyers are seen from below in the game, so their sheets look at them
+# from above, from below, and from the side.
+FLYER_VIEWS = [(-30, 35), (-30, -35), (-90, 5)]
+EYES_PATHS = {"phantom": PHANTOM_EYES_PATH}
 
 def grow(cube, k):
     """Return the cube k times larger, with the same texels. The previews draw the small endermite this way."""
@@ -1454,6 +1506,7 @@ SPECIES = {
     "piglin_brute": (PIGLIN_BRUTE_PATH, None, PIGLIN_BRUTE_FAMILIES, PIGLIN_BRUTE_EXTRA, []),
     "hoglin": (HOGLIN_PATH, None, HOGLIN_FAMILIES, HOGLIN_EXTRA, []),
     "zoglin": (ZOGLIN_PATH, None, ZOGLIN_FAMILIES, ZOGLIN_EXTRA, []),
+    "phantom": (PHANTOM_PATH, None, PHANTOM_FAMILIES, PHANTOM_EXTRA, []),
 }
 
 
@@ -1553,6 +1606,9 @@ def set_mob(species):
         MOB["held"] = held_item(held) if held else []
         VIEW_X, VIEW_Y, VIEW_W, VIEW_H = frame
         MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if low else [(0, 0), (180, 0), (-35, 15)]
+        if species in EYES_PATHS:
+            MOB["sheet_views"] = FLYER_VIEWS
+            MOB["eyes"] = find_zombie_texture(EYES_PATHS[species])
 
 
 def main(species="zombie"):

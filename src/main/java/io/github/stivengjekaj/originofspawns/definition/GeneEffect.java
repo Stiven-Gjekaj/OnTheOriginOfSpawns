@@ -222,7 +222,9 @@ public sealed interface GeneEffect {
 			Map.entry("split_effect", SplitEffect.CODEC),
 			Map.entry("split_jump", SplitJump.CODEC),
 			Map.entry("split_area_effect", SplitAreaEffect.CODEC),
-			Map.entry("tiny_damage", TinyDamage.CODEC)
+			Map.entry("tiny_damage", TinyDamage.CODEC),
+			Map.entry("grow", Grow.CODEC),
+			Map.entry("bud", Bud.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3613,6 +3615,37 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "tiny_damage";
+		}
+	}
+
+	/**
+	 * After this many seconds out of combat, a cube grows one size: 1 to 2, then 2 to 4, up to {@code max_size}. It
+	 * heals to the health of its new size.
+	 */
+	record Grow(float seconds, int maxSize) implements GeneEffect {
+		public static final MapCodec<Grow> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 3600.0F).optionalFieldOf("seconds", 60.0F).forGetter(Grow::seconds),
+				Codec.intRange(2, 8).optionalFieldOf("max_size", 4).forGetter(Grow::maxSize)
+		).apply(instance, Grow::new));
+
+		@Override
+		public String type() {
+			return "grow";
+		}
+	}
+
+	/**
+	 * Each this many seconds out of combat, a new cube of size 1 buds off the cube. The bud has the genes of the cube,
+	 * but it makes no buds of its own.
+	 */
+	record Bud(float seconds) implements GeneEffect {
+		public static final MapCodec<Bud> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 3600.0F).optionalFieldOf("seconds", 30.0F).forGetter(Bud::seconds)
+		).apply(instance, Bud::new));
+
+		@Override
+		public String type() {
+			return "bud";
 		}
 	}
 }

@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.DeathTrace;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCubes;
 import io.github.stivengjekaj.originofspawns.mixin.AbstractCubeMobAccessor;
@@ -221,6 +222,47 @@ public class SlimeEffectsTest {
 		teeth.setNoAi(true);
 		helper.assertFalse(plainDeals, "a plain slime of size 1 does no damage");
 		helper.assertTrue(teethDeals, "a slime of size 1 with Tiny Teeth does damage");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void swellGrowsTheSlimeOutOfCombatUpToSizeFour(GameTestHelper helper) {
+		AbstractCubeMob slime = cubeWith(helper, EntityTypes.SLIME, new BlockPos(4, 1, 4), 1, "test_swell_bud");
+		var grow = new GeneEffect.Grow(60.0F, 4);
+		long now = helper.getLevel().getGameTime();
+		helper.assertFalse(GeneCubes.grow(slime, helper.getLevel(), grow), "the first question starts the time");
+		slime.setAttached(ModAttachments.GROW_TIME, now - 1199L);
+		helper.assertFalse(GeneCubes.grow(slime, helper.getLevel(), grow), "no growth before 60 seconds");
+		slime.setAttached(ModAttachments.GROW_TIME, now - 1200L);
+		helper.assertTrue(GeneCubes.grow(slime, helper.getLevel(), grow), "the slime grows after 60 seconds");
+		helper.assertValueEqual(slime.getSize(), 2, "size 1 grows to size 2");
+		helper.assertValueEqual(slime.getHealth(), slime.getMaxHealth(), "it heals to the health of its new size");
+		slime.setAttached(ModAttachments.GROW_TIME, now - 1200L);
+		slime.setAttached(ModAttachments.TRACE, DeathTrace.NONE.withCombat(now - 10L));
+		helper.assertFalse(GeneCubes.grow(slime, helper.getLevel(), grow), "no growth soon after a fight");
+		slime.setAttached(ModAttachments.TRACE, DeathTrace.NONE);
+		helper.assertTrue(GeneCubes.grow(slime, helper.getLevel(), grow), "size 2 grows to size 4");
+		helper.assertValueEqual(slime.getSize(), 4, "size 4");
+		slime.setAttached(ModAttachments.GROW_TIME, now - 1200L);
+		helper.assertFalse(GeneCubes.grow(slime, helper.getLevel(), grow), "no growth past size 4");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void budMakesANewSlimeWithTheGenesAndNoBudsOfItsOwn(GameTestHelper helper) {
+		AbstractCubeMob slime = cubeWith(helper, EntityTypes.SLIME, new BlockPos(4, 1, 4), 2, "test_swell_bud");
+		var bud = new GeneEffect.Bud(30.0F);
+		long now = helper.getLevel().getGameTime();
+		slime.setAttached(ModAttachments.BUD_TIME, now - 600L);
+		AbstractCubeMob child = GeneCubes.bud(slime, helper.getLevel(), bud);
+		helper.assertTrue(child != null, "a slime buds off after 30 seconds");
+		helper.assertValueEqual(child.getSize(), 1, "the bud has size 1");
+		helper.assertTrue(slime.getAttached(ModAttachments.GENES).equals(child.getAttached(ModAttachments.GENES)),
+				"the bud has the genes of the slime");
+		helper.assertTrue(GeneCubes.bud(slime, helper.getLevel(), bud) == null, "the next bud waits 30 seconds");
+		child.setAttached(ModAttachments.BUD_TIME, now - 600L);
+		helper.assertTrue(GeneCubes.bud(child, helper.getLevel(), bud) == null, "a bud makes no buds");
+		child.discard();
 		helper.succeed();
 	}
 

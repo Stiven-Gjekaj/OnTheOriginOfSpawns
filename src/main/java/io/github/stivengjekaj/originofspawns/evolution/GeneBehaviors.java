@@ -462,6 +462,10 @@ public final class GeneBehaviors {
 				case GeneEffect.RocketShot shot -> rocketShot(mob, level, shot);
 				case GeneEffect.Hex hex -> hex(mob, level, hex);
 				case GeneEffect.HealThrow heal -> healThrow(mob, level, heal);
+				case GeneEffect.Grow grow when mob instanceof net.minecraft.world.entity.monster.cubemob.AbstractCubeMob cube ->
+						GeneCubes.grow(cube, level, grow);
+				case GeneEffect.Bud bud when mob instanceof net.minecraft.world.entity.monster.cubemob.AbstractCubeMob cube ->
+						GeneCubes.bud(cube, level, bud);
 				case GeneEffect.TeleportToTarget teleport -> GeneTeleports.toTarget(mob, level, teleport);
 				case GeneEffect.StareEffect stare -> stareEffect(mob, level, stare);
 				case GeneEffect.BlockThrow thrown when mob instanceof Enderman enderman ->

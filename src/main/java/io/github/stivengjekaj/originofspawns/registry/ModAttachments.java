@@ -204,6 +204,22 @@ public final class ModAttachments {
 			AttachmentRegistry.create(OriginOfSpawns.id("thrown_block"));
 
 	/**
+	 * The game time of the last growth of a cube, or of the first time that the game asked about it.
+	 */
+	public static final AttachmentType<Long> GROW_TIME = AttachmentRegistry.create(OriginOfSpawns.id("grow_time"));
+
+	/**
+	 * The game time of the last bud of a cube, or of the first time that the game asked about it.
+	 */
+	public static final AttachmentType<Long> BUD_TIME = AttachmentRegistry.create(OriginOfSpawns.id("bud_time"));
+
+	/**
+	 * True on a cube that budded off another cube. It makes no buds of its own. It is saved with the cube.
+	 */
+	public static final AttachmentType<Boolean> BUD_CHILD =
+			AttachmentRegistry.createPersistent(OriginOfSpawns.id("bud_child"), com.mojang.serialization.Codec.BOOL);
+
+	/**
 	 * The game time of the last teleport of a mob.
 	 */
 	public static final AttachmentType<Long> TELEPORT_TIME = AttachmentRegistry.create(OriginOfSpawns.id("teleport_time"));

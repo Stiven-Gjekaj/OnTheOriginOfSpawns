@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "grow", "seconds": 60, "max_size": 4 }, { "type": "bud", "seconds": 30 }],
+	"mutation_rate": 0
+}

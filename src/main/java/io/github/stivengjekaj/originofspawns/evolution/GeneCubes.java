@@ -203,4 +203,58 @@ public final class GeneCubes {
 			}
 		}
 	}
+
+	/**
+	 * Lets the cube grow one size, if it was out of combat for the seconds of the gene.
+	 *
+	 * @return true if the cube grew
+	 */
+	public static boolean grow(AbstractCubeMob cube, ServerLevel level, GeneEffect.Grow grow) {
+		if (cube.getSize() >= grow.maxSize() || !quietFor(cube, level, ModAttachments.GROW_TIME, grow.seconds())) {
+			return false;
+		}
+		cube.setSize(Math.min(grow.maxSize(), cube.getSize() * 2), true);
+		cube.setAttached(ModAttachments.GROW_TIME, level.getGameTime());
+		return true;
+	}
+
+	/**
+	 * Lets a new cube of size 1 bud off the cube, if the cube was out of combat for the seconds of the gene.
+	 *
+	 * @return the new cube, or null
+	 */
+	public static AbstractCubeMob bud(AbstractCubeMob cube, ServerLevel level, GeneEffect.Bud bud) {
+		if (cube.getAttachedOrElse(ModAttachments.BUD_CHILD, false)
+				|| !quietFor(cube, level, ModAttachments.BUD_TIME, bud.seconds())
+				|| !(cube.getType().create(level, net.minecraft.world.entity.EntitySpawnReason.REINFORCEMENT)
+						instanceof AbstractCubeMob child)) {
+			return null;
+		}
+		child.setSize(1, true);
+		child.snapTo(cube.getX(), cube.getY(), cube.getZ(), cube.getRandom().nextFloat() * 360.0F, 0.0F);
+		child.setAttached(ModAttachments.BUD_CHILD, true);
+		// The bud has the genes of the cube, as a piece of a split, so the load does not roll new genes.
+		splitPiece(cube, child);
+		level.addFreshEntity(child);
+		cube.setAttached(ModAttachments.BUD_TIME, level.getGameTime());
+		return child;
+	}
+
+	/**
+	 * Returns true if the cube was out of combat since the mark, for the seconds. The first question only sets the
+	 * mark, so the time starts there.
+	 */
+	private static boolean quietFor(AbstractCubeMob cube, ServerLevel level,
+			net.fabricmc.fabric.api.attachment.v1.AttachmentType<Long> mark, float seconds) {
+		long now = level.getGameTime();
+		Long since = cube.getAttached(mark);
+		if (since == null) {
+			cube.setAttached(mark, now);
+			return false;
+		}
+		long combat = cube.getAttachedOrElse(ModAttachments.TRACE, DeathTrace.NONE).combatTime();
+		// A combat time under 0 means no combat.
+		long start = combat < 0 ? since : Math.max(since, combat);
+		return now - start >= Math.round(seconds * 20.0F);
+	}
 }

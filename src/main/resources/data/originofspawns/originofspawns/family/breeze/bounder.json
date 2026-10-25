@@ -1,0 +1,47 @@
+{
+	"species": "minecraft:breeze",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "hop",
+					"distance_multiplier": 1.2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "wind_push",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "hop",
+					"distance_multiplier": 1.3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "wind_push",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "hop",
+					"distance_multiplier": 1.5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "wind_push",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

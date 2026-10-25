@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:breeze/guster",
+	"gains": [
+		{
+			"type": "wind_push",
+			"multiplier": 2,
+			"targets": "#originofspawns:all_golems"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:breeze/whirler",
+	"gains": [
+		{
+			"type": "arrow_spread",
+			"multiplier": 0
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

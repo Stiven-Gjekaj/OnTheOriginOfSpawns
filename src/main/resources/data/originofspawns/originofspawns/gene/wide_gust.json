@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:breeze/guster",
+	"sub_family": "originofspawns:breeze/tempest",
+	"gains": [
+		{
+			"type": "blast_size",
+			"multiplier": 1.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

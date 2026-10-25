@@ -1,0 +1,56 @@
+{
+	"species": "minecraft:breeze",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#originofspawns:melee",
+					"multiplier": 0.85
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#originofspawns:melee",
+					"multiplier": 0.8
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#originofspawns:melee",
+					"multiplier": 0.7
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

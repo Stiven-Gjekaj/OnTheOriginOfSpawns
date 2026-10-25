@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:breeze/tempest",
+	"gains": [
+		{
+			"type": "blast_effect",
+			"effect": "minecraft:weakness",
+			"seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

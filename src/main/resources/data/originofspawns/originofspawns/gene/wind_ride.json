@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:breeze/bounder",
+	"sub_family": "originofspawns:breeze/whirler",
+	"gains": [
+		{
+			"type": "jump_shot"
+		}
+	],
+	"downsides": [
+		{
+			"type": "hop",
+			"distance_multiplier": 0.9
+		}
+	]
+}

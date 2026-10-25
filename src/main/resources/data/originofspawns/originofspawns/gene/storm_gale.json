@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:breeze/tempest",
+	"sub_family": "originofspawns:breeze/guster",
+	"gains": [
+		{
+			"type": "push_on_hurt",
+			"radius": 6,
+			"threshold": 0.3,
+			"once": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -4,
+			"operation": "add_value"
+		}
+	]
+}

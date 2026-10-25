@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:breeze/deflector",
+	"gains": [
+		{
+			"type": "rebound",
+			"damage_multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

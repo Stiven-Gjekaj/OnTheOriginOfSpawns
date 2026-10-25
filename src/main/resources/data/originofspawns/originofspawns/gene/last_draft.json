@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:breeze/deflector",
+	"sub_family": "originofspawns:breeze/bounder",
+	"gains": [
+		{
+			"type": "escape_jump",
+			"threshold": 0.3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

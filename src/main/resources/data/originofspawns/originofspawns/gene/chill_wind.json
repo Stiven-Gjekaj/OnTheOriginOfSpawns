@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:breeze/tempest",
+	"gains": [
+		{
+			"type": "blast_effect",
+			"effect": "minecraft:slowness",
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

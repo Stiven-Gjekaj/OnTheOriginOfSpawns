@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:breeze/deflector",
+	"gains": [
+		{
+			"type": "damage_from",
+			"attackers": "#originofspawns:all_golems",
+			"multiplier": 0.7
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

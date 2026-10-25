@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:breeze/bounder",
+	"gains": [
+		{
+			"type": "hop",
+			"height_multiplier": 1.22
+		}
+	],
+	"downsides": [
+		{
+			"type": "wind_push",
+			"multiplier": 0.9
+		}
+	]
+}

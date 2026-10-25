@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:breeze/guster",
+	"gains": [
+		{
+			"type": "wind_push",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

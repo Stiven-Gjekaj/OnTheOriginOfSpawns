@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:breeze/deflector",
+	"gains": [
+		{
+			"type": "push_on_hurt",
+			"melee_only": true,
+			"attacker_only": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

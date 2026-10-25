@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:breeze/guster",
+	"gains": [
+		{
+			"type": "shield_break",
+			"seconds": 3,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

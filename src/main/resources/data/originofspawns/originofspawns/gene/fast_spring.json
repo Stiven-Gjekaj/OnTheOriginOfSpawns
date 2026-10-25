@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:breeze/bounder",
+	"gains": [
+		{
+			"type": "hop",
+			"wait_multiplier": 0.7
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

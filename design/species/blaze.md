@@ -118,7 +118,7 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Deep Burn | Smolderer | `critical` | Its fire burns the target for 6 more seconds | 10% less flying speed | Head: dark red eyes |
-| Fire Trail | Smolderer | `unreached` | Its fireballs set the blocks where they hit on fire | 10% less maximum health | Rods: black, sooty rods |
+| Fire Trail | Smolderer | `unreached` | Its fireballs set fire to the blocks in 1 block round the place where they hit | 10% less maximum health | Rods: black, sooty rods |
 | Burn Pain | Smolderer | `player_death` | A target that burns takes 20% more damage | 10% less maximum health | Head: a deep, cruel frown |
 | Fire Feed | Smolderer | `alone` | It heals 1 health each second that a target near it burns | 10% less flying speed | Rods: rods that glow at the base |
 | Rod Wall | Smolderer | `projectile` | 30% less damage from projectiles | 10% less flying speed | Rods: thick, short rods. This changes the model |
@@ -164,7 +164,7 @@ The visual column gives the region and the mark.
 | Seeker Spark | Each fireball turns at most 5 degrees each tick, so a player can step aside |
 | Spark Ring | The fireballs go out level, and each one does the normal damage |
 | Soot Cloud | The cloud stays for 3 seconds and has a radius of 2 blocks |
-| Fire Trail | It sets the blocks on fire only if the `mobGriefing` gamerule is on, as in vanilla |
+| Fire Trail | A vanilla small fireball sets fire only to the block that it hits. It sets the blocks on fire only if the `mobGriefing` gamerule is on, as in vanilla |
 | Burn Pain | The extra damage comes from all sources |
 | Fire Feed | "Near" is 8 blocks |
 | Heat Haze | It works as the creeper Gloom. It becomes visible for 2 seconds after it shoots |

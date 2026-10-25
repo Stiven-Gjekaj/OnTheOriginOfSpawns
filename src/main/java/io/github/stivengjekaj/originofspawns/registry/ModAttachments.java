@@ -204,6 +204,11 @@ public final class ModAttachments {
 			AttachmentRegistry.create(OriginOfSpawns.id("thrown_block"));
 
 	/**
+	 * The last game time that the mob was in lava.
+	 */
+	public static final AttachmentType<Long> LAVA_TIME = AttachmentRegistry.create(OriginOfSpawns.id("lava_time"));
+
+	/**
 	 * The game time of the last growth of a cube, or of the first time that the game asked about it.
 	 */
 	public static final AttachmentType<Long> GROW_TIME = AttachmentRegistry.create(OriginOfSpawns.id("grow_time"));

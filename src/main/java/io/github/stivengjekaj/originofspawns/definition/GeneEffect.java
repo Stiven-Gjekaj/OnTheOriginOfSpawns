@@ -228,7 +228,8 @@ public sealed interface GeneEffect {
 			Map.entry("touch_reach", TouchReach.CODEC),
 			Map.entry("shield_break", ShieldBreak.CODEC),
 			Map.entry("hop_back", HopBack.CODEC),
-			Map.entry("fire_on_hurt", FireOnHurt.CODEC)
+			Map.entry("fire_on_hurt", FireOnHurt.CODEC),
+			Map.entry("lava_exit_fire", LavaExitFire.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3712,6 +3713,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "fire_on_hurt";
+		}
+	}
+
+	/**
+	 * For {@code seconds} after the mob leaves lava, its melee hits set the target on fire for {@code fire_seconds}.
+	 */
+	record LavaExitFire(float fireSeconds, float seconds) implements GeneEffect {
+		public static final MapCodec<LavaExitFire> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("fire_seconds", 8.0F).forGetter(LavaExitFire::fireSeconds),
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("seconds", 10.0F).forGetter(LavaExitFire::seconds)
+		).apply(instance, LavaExitFire::new));
+
+		@Override
+		public String type() {
+			return "lava_exit_fire";
 		}
 	}
 }

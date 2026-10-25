@@ -4,6 +4,7 @@ import static io.github.stivengjekaj.originofspawns.test.SlimeEffectsTest.cubeWi
 
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ import net.minecraft.world.entity.monster.cubemob.AbstractCubeMob;
 import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 /**
@@ -77,14 +79,39 @@ public class MagmaCubeEffectsTest {
 		helper.succeed();
 	}
 
-	/**
-	 * Adds a magma cube of size 1 in a water source. Glass on the four sides keeps the water in its place.
-	 */
+	@GameTest(maxTicks = 40)
+	public void blazeHeartBurnsTheTargetForTenSecondsAfterLava(GameTestHelper helper) {
+		AbstractCubeMob dry = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(5, 1, 5), 1, "test_blaze_heart");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		GeneCombat.onHit(dry, pig);
+		helper.assertValueEqual(pig.getRemainingFireTicks(), 0, "a cube that was not in lava does not burn the pig");
+		AbstractCubeMob bathed = cubeInFluid(helper, new BlockPos(1, 1, 1), Blocks.LAVA, "test_blaze_heart");
+		helper.runAfterDelay(2, () -> {
+			long now = helper.getLevel().getGameTime();
+			helper.assertValueEqual(bathed.getAttached(ModAttachments.LAVA_TIME), now, "the cube keeps the time in lava");
+			dry.setAttached(ModAttachments.LAVA_TIME, now - 200L);
+			GeneCombat.onHit(dry, pig);
+			helper.assertValueEqual(pig.getRemainingFireTicks(), 160, "10 seconds after lava, the hit burns for 8 seconds");
+			pig.clearFire();
+			dry.setAttached(ModAttachments.LAVA_TIME, now - 201L);
+			GeneCombat.onHit(dry, pig);
+			helper.assertValueEqual(pig.getRemainingFireTicks(), 0, "after 10 seconds, the hit does not burn");
+			helper.succeed();
+		});
+	}
+
 	static AbstractCubeMob cubeInWater(GameTestHelper helper, BlockPos pos, String... genes) {
+		return cubeInFluid(helper, pos, Blocks.WATER, genes);
+	}
+
+	/**
+	 * Adds a magma cube of size 1 in a source of the fluid. Glass on the four sides keeps the fluid in its place.
+	 */
+	static AbstractCubeMob cubeInFluid(GameTestHelper helper, BlockPos pos, Block fluid, String... genes) {
 		for (Direction side : Direction.Plane.HORIZONTAL) {
 			helper.setBlock(pos.relative(side), Blocks.GLASS);
 		}
-		helper.setBlock(pos, Blocks.WATER);
+		helper.setBlock(pos, fluid);
 		return cubeWith(helper, EntityTypes.MAGMA_CUBE, pos, 1, genes);
 	}
 }

@@ -575,6 +575,9 @@ public final class GeneCombat {
 				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(false) && target instanceof LivingEntity living
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(living, freeze.seconds());
 				case GeneEffect.HopBack back -> hopBack(mob, target);
+				case GeneEffect.LavaExitFire fire when !mob.isInLava() && mob.hasAttached(ModAttachments.LAVA_TIME)
+						&& mob.level().getGameTime() - mob.getAttached(ModAttachments.LAVA_TIME)
+								<= Math.round(fire.seconds() * 20.0F) -> target.igniteForSeconds(fire.fireSeconds());
 				case GeneEffect.Knockback knockback when knockback.hits().includes(false) ->
 						pushBack(mob, target, knockback.multiplier());
 				case GeneEffect.WebOnHit web when web.hits().includes(false) && mob.level() instanceof ServerLevel level

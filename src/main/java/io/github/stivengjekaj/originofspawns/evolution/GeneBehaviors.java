@@ -12,6 +12,8 @@ import io.github.stivengjekaj.originofspawns.evolution.goal.SiegeDoorGoal;
 import io.github.stivengjekaj.originofspawns.evolution.goal.SiegeGoal;
 import io.github.stivengjekaj.originofspawns.mixin.AbstractSkeletonAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
+import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
+import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import io.github.stivengjekaj.originofspawns.mixin.RangedBowAttackGoalAccessor;
@@ -750,26 +752,67 @@ public final class GeneBehaviors {
 		});
 	}
 
-	private static void fanShot(Mob mob, LivingEntity target, java.util.function.Supplier<AbstractArrow> makeArrow) {
-		if (!(mob.level() instanceof ServerLevel level) || target == null) {
-			return;
-		}
+	/**
+	 * Returns the fan shot of the mob whose state is true, if its cooldown is over, and starts the cooldown.
+	 */
+	private static java.util.Optional<GeneEffect.FanShot> readyFanShot(Mob mob, ServerLevel level) {
 		var fan = GeneEffects.of(mob).filter(GeneEffect.FanShot.class::isInstance).map(GeneEffect.FanShot.class::cast)
 				.filter(effect -> GeneCombat.test(mob, effect.when())).findFirst();
 		if (fan.isEmpty()) {
-			return;
+			return fan;
 		}
 		long now = level.getGameTime();
 		long last = mob.getAttachedOrElse(ModAttachments.FAN_SHOT_TIME, Long.MIN_VALUE);
 		if (last != Long.MIN_VALUE && now - last < Math.round(fan.get().cooldownSeconds() * 20.0F)) {
-			return;
+			return java.util.Optional.empty();
 		}
 		mob.setAttached(ModAttachments.FAN_SHOT_TIME, now);
+		return fan;
+	}
+
+	/**
+	 * Returns the turn in radians of the extra shot with the index. The shots go to each side in turn: +1, -1, +2, -2,
+	 * and so on, times the angle.
+	 */
+	private static float fanAngle(GeneEffect.FanShot fan, int index) {
+		int step = index / 2 + 1;
+		return (index % 2 == 0 ? step : -step) * fan.angle() * Mth.DEG_TO_RAD;
+	}
+
+	/**
+	 * After a shot of a ghast with a fan shot, shoots the other fireballs of the fan. Each extra fireball is the main
+	 * one, turned about the center of the ghast. It has the same blast power, so it follows the rules of the main one.
+	 */
+	public static void ghastFanShot(Ghast ghast, LargeFireball main) {
+		if (!(ghast.level() instanceof ServerLevel level)) {
+			return;
+		}
+		var fan = readyFanShot(ghast, level);
+		if (fan.isEmpty()) {
+			return;
+		}
+		Vec3 direction = main.getDeltaMovement().normalize();
+		Vec3 offset = main.position().subtract(ghast.position());
+		for (int i = 0; i < fan.get().arrows() - 1; i++) {
+			float angle = fanAngle(fan.get(), i);
+			LargeFireball fireball = new LargeFireball(level, ghast, direction.yRot(angle), ghast.getExplosionPower());
+			Vec3 turned = offset.yRot(angle);
+			fireball.setPos(ghast.getX() + turned.x, main.getY(), ghast.getZ() + turned.z);
+			level.addFreshEntity(fireball);
+		}
+	}
+
+	private static void fanShot(Mob mob, LivingEntity target, java.util.function.Supplier<AbstractArrow> makeArrow) {
+		if (!(mob.level() instanceof ServerLevel level) || target == null) {
+			return;
+		}
+		var fan = readyFanShot(mob, level);
+		if (fan.isEmpty()) {
+			return;
+		}
 		int extra = fan.get().arrows() - 1;
 		for (int i = 0; i < extra; i++) {
-			// The arrows go to each side in turn: +1, -1, +2, -2, and so on, times the angle.
-			int step = i / 2 + 1;
-			float angle = (i % 2 == 0 ? step : -step) * fan.get().angle() * Mth.DEG_TO_RAD;
+			float angle = fanAngle(fan.get(), i);
 			AbstractArrow arrow = makeArrow.get();
 			double dx = target.getX() - mob.getX();
 			double dz = target.getZ() - mob.getZ();

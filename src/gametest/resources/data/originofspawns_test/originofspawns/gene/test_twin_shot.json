@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:ghast",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "fan_shot", "arrows": 2, "angle": 10, "cooldown_seconds": 0 }],
+	"mutation_rate": 0
+}

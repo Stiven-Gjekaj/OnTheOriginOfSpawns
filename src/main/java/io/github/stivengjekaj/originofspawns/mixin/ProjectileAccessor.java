@@ -1,5 +1,6 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.HitResult;
 
@@ -13,4 +14,10 @@ public interface ProjectileAccessor {
 	 */
 	@Invoker("onHit")
 	void originofspawns$onHit(HitResult hit);
+
+	/**
+	 * Returns true if the projectile can hit the entity.
+	 */
+	@Invoker("canHitEntity")
+	boolean originofspawns$canHitEntity(Entity entity);
 }

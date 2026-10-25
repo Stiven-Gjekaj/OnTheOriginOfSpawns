@@ -4,6 +4,7 @@ import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
 import io.github.stivengjekaj.originofspawns.mixin.LargeFireballAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
+import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -162,6 +163,36 @@ public class GhastEffectsTest {
 			helper.assertTrue(shots.times.size() >= 2, "the ghast shoots two times");
 			helper.assertValueEqual(shots.times.get(1) - shots.times.get(0), 40L, "ticks from one shot to the next");
 		});
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8, maxTicks = 200)
+	public void twinShotShootsTwoFireballsAtOnce(GameTestHelper helper) {
+		Shots shots = shooter(helper, "test_twin_shot");
+		helper.succeedWhen(() -> {
+			helper.assertTrue(shots.times.size() >= 2, "the ghast shoots two times");
+			for (var shot : shots.projectiles) {
+				helper.assertValueEqual(shot.size(), 2, "fireballs in each shot");
+				helper.assertTrue(shot.stream().allMatch(LargeFireball.class::isInstance), "both are large fireballs");
+				// The fan turns about the up axis, so the test compares the directions on the ground.
+				Vec3 first = shot.get(0).getDeltaMovement().multiply(1.0, 0.0, 1.0).normalize();
+				Vec3 second = shot.get(1).getDeltaMovement().multiply(1.0, 0.0, 1.0).normalize();
+				double degrees = Math.toDegrees(Math.acos(Math.min(1.0, first.dot(second))));
+				helper.assertTrue(Math.abs(degrees - 10.0) < 1.0, "the fireballs are 10 degrees apart, not " + degrees);
+			}
+		});
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8)
+	public void theFireballsOfOneMobDoNotHitEachOther(GameTestHelper helper) {
+		Ghast ghast = ghastWith(helper, new BlockPos(5, 1, 5), "test_twin_shot");
+		LargeFireball first = fireball(helper, ghast, BLAST);
+		LargeFireball second = fireball(helper, ghast, BLAST);
+		helper.assertFalse(((ProjectileAccessor) first).originofspawns$canHitEntity(second),
+				"a fireball does not hit a fireball of the same ghast");
+		LargeFireball plain = fireball(helper, ghastWith(helper, new BlockPos(5, 1, 5)), BLAST);
+		helper.assertTrue(((ProjectileAccessor) plain).originofspawns$canHitEntity(second),
+				"a fireball of a plain ghast still hits a fireball");
+		helper.succeed();
 	}
 
 	/**

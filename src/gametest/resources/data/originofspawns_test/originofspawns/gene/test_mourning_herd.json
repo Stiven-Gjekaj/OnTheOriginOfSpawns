@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:hoglin",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "effect_on_ally_death", "effect": "minecraft:strength", "seconds": 10, "radius": 16 }],
+	"mutation_rate": 0
+}

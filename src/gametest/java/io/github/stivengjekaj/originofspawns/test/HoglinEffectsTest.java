@@ -17,6 +17,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -160,6 +161,70 @@ public class HoglinEffectsTest {
 		helper.assertTrue(GeneBehaviors.huntMobs(steady, helper.getLevel(),
 				new GeneEffect.HuntMobs(HolderSet.direct(EntityTypes.PIGLIN.builtInRegistryHolder()))), "it finds the piglin");
 		helper.assertTrue(steady.getTarget() == piglin, "it attacks the piglin");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theChaseStatesFollowThePlayerTarget(GameTestHelper helper) {
+		Hoglin hoglin = hoglinWith(helper, new BlockPos(1, 1, 1));
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(hoglin.position().add(2.0, 0.0, 0.0));
+		hoglin.setTarget(player);
+		helper.assertFalse(GeneCombat.test(hoglin, GeneEffect.When.CHASING_PLAYER), "a player 2 blocks away");
+		player.setPos(hoglin.position().add(6.0, 0.0, 0.0));
+		helper.assertTrue(GeneCombat.test(hoglin, GeneEffect.When.CHASING_PLAYER), "a player 6 blocks away");
+		helper.assertFalse(GeneCombat.test(hoglin, GeneEffect.When.TARGET_HOLDS_WARPED_FUNGUS), "no fungus");
+		player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.WARPED_FUNGUS));
+		helper.assertTrue(GeneCombat.test(hoglin, GeneEffect.When.TARGET_HOLDS_WARPED_FUNGUS), "fungus in the off hand");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void ramHitsHarderAfterARunOfSixBlocks(GameTestHelper helper) {
+		Hoglin hoglin = hoglinWith(helper, new BlockPos(1, 1, 4), "test_ram");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 4));
+		var hit = helper.getLevel().damageSources().mobAttack(hoglin);
+		// The run counts the moves of each tick. The test moves the hoglin one block each time.
+		GeneBehaviors.countRun(hoglin);
+		for (int i = 0; i < 3; i++) {
+			hoglin.snapTo(hoglin.position().add(1.0, 0.0, 0.0), 0.0F, 0.0F);
+			GeneBehaviors.countRun(hoglin);
+		}
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, hit, 10.0F), 10.0F, "no extra damage after 3 blocks");
+		GeneBehaviors.countRun(hoglin);
+		helper.assertTrue(hoglin.getAttached(ModAttachments.RUN_BLOCKS) == null, "a stop ends the run");
+		hoglin.setAttached(ModAttachments.RUN_BLOCKS, 6.5);
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(pig, hit, 10.0F) - 13.0F) < 0.001F, "30% more after 6 blocks");
+		GeneCombat.onHit(hoglin, pig);
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, hit, 10.0F), 10.0F, "the hit ends the run");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void bigLitterSpawnsABabyHoglinWithIt(GameTestHelper helper) {
+		Hoglin hoglin = hoglinWith(helper, new BlockPos(4, 1, 4), "test_big_litter");
+		// A vanilla hoglin spawns as a baby with a 20% chance, so the test counts 10 spawns.
+		int babies = 0;
+		for (int i = 0; i < 10; i++) {
+			GeneBehaviors.onSpawn(hoglin, helper.getLevel(), EntitySpawnReason.NATURAL);
+			var litter = helper.getLevel().getEntitiesOfClass(Hoglin.class, hoglin.getBoundingBox().inflate(3.0),
+					other -> other != hoglin);
+			helper.assertValueEqual(litter.size(), 1, "one more hoglin");
+			if (litter.get(0).isBaby()) {
+				babies++;
+			}
+			litter.get(0).discard();
+		}
+		helper.assertValueEqual(babies, 10, "each extra hoglin is a baby");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void mourningHerdGivesStrengthWhenAHoglinDiesNear(GameTestHelper helper) {
+		Hoglin mourner = hoglinWith(helper, new BlockPos(1, 1, 1), "test_mourning_herd");
+		Hoglin dead = hoglinWith(helper, new BlockPos(5, 1, 5));
+		GeneCombat.onDeath(dead, helper.getLevel());
+		helper.assertTrue(mourner.hasEffect(MobEffects.STRENGTH), "the hoglin gets Strength");
 		helper.succeed();
 	}
 

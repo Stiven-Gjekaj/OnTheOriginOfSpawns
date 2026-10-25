@@ -251,7 +251,9 @@ public sealed interface GeneEffect {
 			Map.entry("hit_throw", HitThrow.CODEC),
 			Map.entry("fear_guard", FearGuard.CODEC),
 			Map.entry("eat_items", EatItems.CODEC),
-			Map.entry("hunt_mobs", HuntMobs.CODEC)
+			Map.entry("hunt_mobs", HuntMobs.CODEC),
+			Map.entry("run_strike", RunStrike.CODEC),
+			Map.entry("effect_on_ally_death", EffectOnAllyDeath.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -572,6 +574,14 @@ public sealed interface GeneEffect {
 		 * The target of the mob is a player that does not hold a shield up.
 		 */
 		TARGET_NO_SHIELD,
+		/**
+		 * The target of the mob is a player farther than 4 blocks: the mob chases it.
+		 */
+		CHASING_PLAYER,
+		/**
+		 * The target of the mob is a player that holds warped fungus.
+		 */
+		TARGET_HOLDS_WARPED_FUNGUS,
 		NEAR_HOME,
 		/**
 		 * The mob is farther than 32 blocks from the place where it spawned.
@@ -1140,12 +1150,14 @@ public sealed interface GeneEffect {
 
 	/**
 	 * When the mob spawns in a natural way, from a spawner, or from an event such as an ender pearl, more mobs spawn
-	 * near it. They have the same genes, or with {@code pool_genes} they get new genes from the pool, as new mobs.
+	 * near it. They have the same genes, or with {@code pool_genes} they get new genes from the pool, as new mobs. With
+	 * {@code baby_chance}, each extra mob is a baby with this chance. Big Litter: {@code 0.5}.
 	 */
-	record Brood(int extra, boolean poolGenes) implements GeneEffect {
+	record Brood(int extra, boolean poolGenes, float babyChance) implements GeneEffect {
 		public static final MapCodec<Brood> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.intRange(1, 8).fieldOf("extra").forGetter(Brood::extra),
-				Codec.BOOL.optionalFieldOf("pool_genes", false).forGetter(Brood::poolGenes)
+				Codec.BOOL.optionalFieldOf("pool_genes", false).forGetter(Brood::poolGenes),
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("baby_chance", 0.0F).forGetter(Brood::babyChance)
 		).apply(instance, Brood::new));
 
 		@Override
@@ -4124,6 +4136,38 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "hunt_mobs";
+		}
+	}
+
+	/**
+	 * The first melee hit after a run of this many blocks does more damage. A stop ends the run.
+	 */
+	record RunStrike(float blocks, float multiplier) implements GeneEffect {
+		public static final MapCodec<RunStrike> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 64.0F).optionalFieldOf("blocks", 6.0F).forGetter(RunStrike::blocks),
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(RunStrike::multiplier)
+		).apply(instance, RunStrike::new));
+
+		@Override
+		public String type() {
+			return "run_strike";
+		}
+	}
+
+	/**
+	 * When another mob of its species dies in the radius, the mob gets the status effect. Mourning Herd: Strength.
+	 */
+	record EffectOnAllyDeath(Holder<MobEffect> effect, float seconds, int amplifier, float radius) implements GeneEffect {
+		public static final MapCodec<EffectOnAllyDeath> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(EffectOnAllyDeath::effect),
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(EffectOnAllyDeath::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(EffectOnAllyDeath::amplifier),
+				Codec.floatRange(0.5F, 32.0F).optionalFieldOf("radius", 16.0F).forGetter(EffectOnAllyDeath::radius)
+		).apply(instance, EffectOnAllyDeath::new));
+
+		@Override
+		public String type() {
+			return "effect_on_ally_death";
 		}
 	}
 }

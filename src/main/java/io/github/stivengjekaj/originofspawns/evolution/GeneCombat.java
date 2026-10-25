@@ -95,6 +95,10 @@ public final class GeneCombat {
 	 * The states {@code near_home} and {@code far_from_home} count from the place where the mob spawned.
 	 */
 	private static final double NEAR_HOME_BLOCKS = 16.0;
+	/**
+	 * The state {@code chasing_player} is true for a player target farther than this.
+	 */
+	private static final double CHASE_BLOCKS = 4.0;
 	private static final double FAR_HOME_BLOCKS = 32.0;
 
 	public static boolean test(LivingEntity entity, When when) {
@@ -187,6 +191,10 @@ public final class GeneCombat {
 			case IN_AIR -> !entity.onGround() && !entity.isInLiquid();
 			case TARGET_PLAYER -> entity instanceof Mob mob && mob.getTarget() instanceof Player;
 			case TARGET_NO_SHIELD -> entity instanceof Mob mob && mob.getTarget() instanceof Player player && !player.isBlocking();
+			case CHASING_PLAYER -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
+					&& mob.distanceTo(player) > CHASE_BLOCKS;
+			case TARGET_HOLDS_WARPED_FUNGUS -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
+					&& player.isHolding(net.minecraft.world.item.Items.WARPED_FUNGUS);
 			case NEAR_HOME -> entity.hasAttached(ModAttachments.HOME)
 					&& entity.blockPosition().distSqr(entity.getAttached(ModAttachments.HOME)) <= NEAR_HOME_BLOCKS * NEAR_HOME_BLOCKS;
 			case FAR_FROM_HOME -> entity.hasAttached(ModAttachments.HOME)
@@ -275,6 +283,8 @@ public final class GeneCombat {
 			for (GeneEffect effect : GeneEffects.of(ally).toList()) {
 				if (effect instanceof GeneEffect.HealOnAllyDeath heal && ally.distanceTo(dead) <= heal.radius()) {
 					ally.heal(heal.amount());
+				} else if (effect instanceof GeneEffect.EffectOnAllyDeath mourn && ally.distanceTo(dead) <= mourn.radius()) {
+					ally.addEffect(new MobEffectInstance(mourn.effect(), Math.round(mourn.seconds() * 20.0F), mourn.amplifier()));
 				}
 			}
 		}
@@ -545,6 +555,9 @@ public final class GeneCombat {
 						}
 						attacker.setAttached(ModAttachments.STRIKE_TIMES, strikes);
 					}
+					case GeneEffect.RunStrike run when source.getDirectEntity() == attacker
+							&& attacker.getAttachedOrElse(ModAttachments.RUN_BLOCKS, 0.0) >= run.blocks() ->
+							result *= run.multiplier();
 					case GeneEffect.Rally rally -> result *= 1.0F + Math.min(rally.max(), rally.perAlly()
 							* (rally.angryOnly() ? angrySpeciesNear(attacker, rally.radius()) : sameSpeciesNear(attacker, rally.radius())));
 					case GeneEffect.SoulHunger hunger when source.getDirectEntity() == attacker ->
@@ -618,6 +631,7 @@ public final class GeneCombat {
 				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(false) && target instanceof LivingEntity living
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(living, freeze.seconds());
 				case GeneEffect.HopBack back -> hopBack(mob, target);
+				case GeneEffect.RunStrike run -> mob.removeAttached(ModAttachments.RUN_BLOCKS);
 				case GeneEffect.ShatterArmor shatter when target instanceof LivingEntity living -> shatter(living, shatter.threshold());
 				case GeneEffect.SelfEffectOnHit self -> mob.addEffect(new MobEffectInstance(self.effect(),
 						Math.round(self.seconds() * 20.0F), self.amplifier()), mob);

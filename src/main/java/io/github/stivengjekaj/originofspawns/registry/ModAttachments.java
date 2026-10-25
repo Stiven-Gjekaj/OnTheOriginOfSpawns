@@ -231,6 +231,12 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> COOLDOWN_END = AttachmentRegistry.create(OriginOfSpawns.id("cooldown_end"));
 
 	/**
+	 * The blocks that the mob ran with no stop, and its place in the last tick.
+	 */
+	public static final AttachmentType<Double> RUN_BLOCKS = AttachmentRegistry.create(OriginOfSpawns.id("run_blocks"));
+	public static final AttachmentType<net.minecraft.world.phys.Vec3> RUN_POS = AttachmentRegistry.create(OriginOfSpawns.id("run_pos"));
+
+	/**
 	 * The place where the mob spawned. It is saved with the mob, so a mob that a player moves keeps the old place.
 	 */
 	public static final AttachmentType<net.minecraft.core.BlockPos> HOME =

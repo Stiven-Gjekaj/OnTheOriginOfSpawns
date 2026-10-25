@@ -150,9 +150,9 @@ public final class GeneBehaviors {
 				case GeneEffect.TridentChance trident -> rollTrident(mob, trident);
 				case GeneEffect.Runt runt when mob.getRandom().nextFloat() < runt.chance() -> makeRunt(mob, level, runt);
 				case GeneEffect.Brood brood when broodReason(reason) ->
-						spawnBrood(mob, level, brood.extra(), EntitySpawnReason.REINFORCEMENT, brood.poolGenes());
+						spawnBrood(mob, level, brood.extra(), EntitySpawnReason.REINFORCEMENT, brood.poolGenes(), brood.babyChance());
 				case GeneEffect.PatrolSize patrol when reason == EntitySpawnReason.PATROL ->
-						spawnBrood(mob, level, patrol.extra(), EntitySpawnReason.PATROL, false);
+						spawnBrood(mob, level, patrol.extra(), EntitySpawnReason.PATROL, false, 0.0F);
 				case GeneEffect.Jockey jockey when reason == EntitySpawnReason.NATURAL
 						&& mob.getRandom().nextFloat() < jockey.chance() -> mount(mob, level, jockey);
 				// An endermite comes from an ender pearl, an event, so the burrow also runs at an event.
@@ -263,7 +263,7 @@ public final class GeneBehaviors {
 	 * spawn: a reinforcement for a brood, or a patrol for the extra member of a patrol.
 	 */
 	private static void spawnBrood(Mob mob, ServerLevel level, int count, EntitySpawnReason spawnReason,
-			boolean poolGenes) {
+			boolean poolGenes, float babyChance) {
 		CarriedGenes genes = mob.getAttached(ModAttachments.GENES);
 		for (int i = 0; i < count; i++) {
 			if (!(mob.getType().create(level, EntitySpawnReason.REINFORCEMENT) instanceof Mob extra)) {
@@ -273,6 +273,9 @@ public final class GeneBehaviors {
 					mob.getRandom().nextFloat() * 360.0F, 0.0F);
 			// The vanilla spawn gives the extra mob its natural gear, for example the bow of a skeleton.
 			extra.finalizeSpawn(level, level.getCurrentDifficultyAt(extra.blockPosition()), spawnReason, null);
+			if (babyChance > 0.0F) {
+				extra.setBaby(mob.getRandom().nextFloat() < babyChance);
+			}
 			// An extra mob of a patrol follows the patrol, to the same place.
 			if (mob instanceof PatrollingMonster leader && extra instanceof PatrollingMonster member
 					&& leader.getPatrolTarget() != null) {
@@ -401,6 +404,7 @@ public final class GeneBehaviors {
 						&& mob.hasLineOfSight(player) -> creeper.ignite();
 				case GeneEffect.Drink drink when mob instanceof Witch witch -> drink(witch, level, drink);
 				case GeneEffect.LavaExitFire fire when mob.isInLava() -> mob.setAttached(ModAttachments.LAVA_TIME, level.getGameTime());
+				case GeneEffect.RunStrike run -> countRun(mob);
 				case GeneEffect.TouchReach reach when mob instanceof net.minecraft.world.entity.monster.cubemob.AbstractCubeMob cube ->
 						GeneCubes.reachHit(cube);
 				default -> {
@@ -996,6 +1000,29 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Adds the move of the mob in this tick to its run. A tick with almost no move ends the run.
+	 */
+	public static void countRun(Mob mob) {
+		Vec3 last = mob.getAttached(ModAttachments.RUN_POS);
+		Vec3 now = mob.position();
+		mob.setAttached(ModAttachments.RUN_POS, now);
+		if (last == null) {
+			return;
+		}
+		double moved = Math.sqrt((now.x - last.x) * (now.x - last.x) + (now.z - last.z) * (now.z - last.z));
+		if (moved < RUN_STEP) {
+			mob.removeAttached(ModAttachments.RUN_BLOCKS);
+		} else {
+			mob.setAttached(ModAttachments.RUN_BLOCKS, mob.getAttachedOrElse(ModAttachments.RUN_BLOCKS, 0.0) + moved);
+		}
+	}
+
+	/**
+	 * The smallest move in one tick that counts as a run, in blocks.
+	 */
+	private static final double RUN_STEP = 0.05;
+
+	/**
 	 * Sets the players in the radius of the mob on fire.
 	 *
 	 * @return the number of players that burn
@@ -1381,7 +1408,7 @@ public final class GeneBehaviors {
 	public static void ageSpawn(Mob mob, ServerLevel level) {
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			if (effect instanceof GeneEffect.AgeSpawn spawn) {
-				spawnBrood(mob, level, spawn.count(), EntitySpawnReason.REINFORCEMENT, true);
+				spawnBrood(mob, level, spawn.count(), EntitySpawnReason.REINFORCEMENT, true, 0.0F);
 			}
 		}
 	}

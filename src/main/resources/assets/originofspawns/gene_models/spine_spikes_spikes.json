@@ -1,0 +1,151 @@
+{
+	"texture": "originofspawns:textures/entity/spine_spikes_spikes.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-11,
+				-12
+			],
+			"size": [
+				2,
+				4,
+				2
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-11,
+				-9
+			],
+			"size": [
+				2,
+				4,
+				2
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-11,
+				-6
+			],
+			"size": [
+				2,
+				4,
+				2
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-10,
+				-3
+			],
+			"size": [
+				2,
+				3,
+				2
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-10,
+				0
+			],
+			"size": [
+				2,
+				3,
+				2
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-10,
+				3
+			],
+			"size": [
+				2,
+				3,
+				2
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-9,
+				6
+			],
+			"size": [
+				2,
+				2,
+				2
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-9,
+				9
+			],
+			"size": [
+				2,
+				2,
+				2
+			],
+			"inflate": -0.2
+		}
+	]
+}

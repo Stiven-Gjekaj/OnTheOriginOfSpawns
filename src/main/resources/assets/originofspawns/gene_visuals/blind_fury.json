@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/hoglin.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blind_fury_0.png",
+				"tint": "#E01010"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blind_fury_1.png",
+				"tint": "#FF6040"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blind_fury_2.png",
+				"tint": "#3A0606"
+			}
+		}
+	]
+}

@@ -1,0 +1,151 @@
+{
+	"texture": "originofspawns:textures/entity/bone_plates_plates.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-5.5,
+				-7.8,
+				-12
+			],
+			"size": [
+				5,
+				1,
+				3
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				-7.8,
+				-9
+			],
+			"size": [
+				5,
+				1,
+				3
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-5.5,
+				-7.8,
+				-6
+			],
+			"size": [
+				5,
+				1,
+				3
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				-7.8,
+				-3
+			],
+			"size": [
+				5,
+				1,
+				3
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-5.5,
+				-7.8,
+				0
+			],
+			"size": [
+				5,
+				1,
+				3
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				-7.8,
+				3
+			],
+			"size": [
+				5,
+				1,
+				3
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-5.5,
+				-7.8,
+				6
+			],
+			"size": [
+				5,
+				1,
+				3
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				-7.8,
+				9
+			],
+			"size": [
+				5,
+				1,
+				3
+			],
+			"inflate": 0.0
+		}
+	]
+}

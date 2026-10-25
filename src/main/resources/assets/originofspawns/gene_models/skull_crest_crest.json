@@ -1,0 +1,61 @@
+{
+	"texture": "originofspawns:textures/entity/skull_crest_crest.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-5,
+				-13
+			],
+			"size": [
+				2,
+				2,
+				12
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				16
+			],
+			"from": [
+				-0.5,
+				-7,
+				-4
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				16
+			],
+			"from": [
+				-0.5,
+				-7,
+				-2
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": 0.0
+		}
+	]
+}

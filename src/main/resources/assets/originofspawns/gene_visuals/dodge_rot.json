@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/hoglin.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dodge_rot_0.png",
+				"tint": "#5A2A20"
+			}
+		}
+	]
+}

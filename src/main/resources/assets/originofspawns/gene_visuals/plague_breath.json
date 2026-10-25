@@ -1,0 +1,13 @@
+{
+	"region_map": "originofspawns:textures/region/hoglin.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/plague_breath_0.png",
+				"tint": "#7AA040"
+			}
+		}
+	],
+	"model": "originofspawns:plague_breath_fumes"
+}

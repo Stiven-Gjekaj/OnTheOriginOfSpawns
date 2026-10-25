@@ -10,6 +10,7 @@
 		"AbstractSkeletonAccessor",
 		"AbstractSkeletonMixin",
 		"AbstractThrownPotionMixin",
+		"BehaviorUtilsMixin",
 		"BoggedMixin",
 		"CaveSpiderMixin",
 		"CreeperAccessor",

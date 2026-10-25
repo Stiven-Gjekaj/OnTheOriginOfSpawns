@@ -5,6 +5,7 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.mixin.CreeperAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
@@ -18,7 +19,10 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -86,6 +90,15 @@ public final class GeneBlasts {
 					// This plain blast does not run the effects after a blast, so it causes no more aftershocks.
 					DelayedTasks.schedule(level, Math.round(aftershock.seconds() * 20.0F), () -> level.explode(mob,
 							pos.x, pos.y, pos.z, radius * aftershock.fraction(), Level.ExplosionInteraction.MOB));
+				case GeneEffect.BlastShieldStop stop -> {
+					for (Player player : level.getEntitiesOfClass(Player.class, AABB.ofSize(pos, radius * 4.0, radius * 4.0,
+							radius * 4.0), player -> player.position().distanceTo(pos) <= radius * 2.0F)) {
+						ItemStack shield = player.getItemBlockingWith();
+						if (shield != null && shield.has(DataComponents.BLOCKS_ATTACKS)) {
+							shield.get(DataComponents.BLOCKS_ATTACKS).disable(level, player, stop.seconds(), shield);
+						}
+					}
+				}
 				default -> {
 				}
 			}

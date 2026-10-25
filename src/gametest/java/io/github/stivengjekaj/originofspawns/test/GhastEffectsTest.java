@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
@@ -63,6 +64,24 @@ public class GhastEffectsTest {
 		helper.assertTrue(pig.getHealth() < pig.getMaxHealth(), "the blast hurts the pig");
 		helper.assertFalse(pig.hasEffect(MobEffects.NAUSEA), "the blast of a fireball that came back gives no effect");
 		helper.succeed();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8)
+	public void shieldBurstStopsTheShieldsInTheBlast(GameTestHelper helper) {
+		ServerPlayer plainTarget = shieldedPlayerAt(helper, BLAST.east(1));
+		explodeFireball(helper, ghastWith(helper, new BlockPos(5, 1, 5)), BLAST);
+		helper.assertFalse(plainTarget.getCooldowns().isOnCooldown(plainTarget.getOffhandItem()),
+				"a plain blast does not stop the shield");
+		ServerPlayer target = shieldedPlayerAt(helper, BLAST.east(1));
+		explodeFireball(helper, ghastWith(helper, new BlockPos(5, 1, 5), "test_shield_burst"), BLAST);
+		helper.assertTrue(target.getCooldowns().isOnCooldown(target.getOffhandItem()), "the blast stops the shield");
+		helper.succeed();
+	}
+
+	static ServerPlayer shieldedPlayerAt(GameTestHelper helper, BlockPos pos) {
+		ServerPlayer player = CreeperEffectsTest.shieldedPlayer(helper);
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(pos)));
+		return player;
 	}
 
 	/**

@@ -258,7 +258,8 @@ public sealed interface GeneEffect {
 			Map.entry("smite_resist", SmiteResist.CODEC),
 			Map.entry("flying_speed", FlyingSpeed.CODEC),
 			Map.entry("sun_shade", SunShade.CODEC),
-			Map.entry("swoop_call", SwoopCall.CODEC)
+			Map.entry("swoop_call", SwoopCall.CODEC),
+			Map.entry("blast_shield_stop", BlastShieldStop.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4253,6 +4254,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "swoop_call";
+		}
+	}
+
+	/**
+	 * After each blast of the mob, the shields of the players that the blast reaches are useless for this many
+	 * seconds, if the players hold them up. A blast reaches two times its radius.
+	 */
+	record BlastShieldStop(float seconds) implements GeneEffect {
+		public static final MapCodec<BlastShieldStop> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("seconds", 5.0F).forGetter(BlastShieldStop::seconds)
+		).apply(instance, BlastShieldStop::new));
+
+		@Override
+		public String type() {
+			return "blast_shield_stop";
 		}
 	}
 }

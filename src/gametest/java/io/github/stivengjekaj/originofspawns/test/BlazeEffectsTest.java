@@ -429,6 +429,16 @@ public class BlazeEffectsTest {
 		return fireball;
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void theNotShootingStateEndsAtAShot(GameTestHelper helper) {
+		Shots shots = shooter(helper);
+		helper.assertTrue(GeneCombat.test(shots.blaze, GeneEffect.When.NOT_SHOOTING), "the blaze did not shoot yet");
+		helper.succeedWhen(() -> {
+			helper.assertTrue(shots.times.size() >= 1, "the blaze shoots");
+			helper.assertFalse(GeneCombat.test(shots.blaze, GeneEffect.When.NOT_SHOOTING), "the blaze just shot");
+		});
+	}
+
 	/**
 	 * Returns the angle in degrees on the ground between the first and the third fireball.
 	 */
@@ -442,6 +452,7 @@ public class BlazeEffectsTest {
 	 * The shots of a test blaze: the game time and the projectiles of each fireball.
 	 */
 	static final class Shots {
+		Blaze blaze;
 		final java.util.List<Long> times = new java.util.ArrayList<>();
 		final java.util.List<Projectile> projectiles = new java.util.ArrayList<>();
 		final java.util.List<Vec3> motions = new java.util.ArrayList<>();
@@ -475,6 +486,7 @@ public class BlazeEffectsTest {
 		blaze.setTarget(pig);
 		Vec3 home = blaze.position();
 		Shots shots = new Shots();
+		shots.blaze = blaze;
 		helper.onEachTick(() -> {
 			blaze.setPos(home);
 			blaze.setDeltaMovement(Vec3.ZERO);

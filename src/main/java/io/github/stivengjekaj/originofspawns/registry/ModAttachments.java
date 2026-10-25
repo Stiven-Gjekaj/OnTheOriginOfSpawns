@@ -242,6 +242,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> SUN_SHADE_TIME = AttachmentRegistry.create(OriginOfSpawns.id("sun_shade_time"));
 
 	/**
+	 * The last game time that the mob shot a fireball.
+	 */
+	public static final AttachmentType<Long> SHOT_TIME = AttachmentRegistry.create(OriginOfSpawns.id("shot_time"));
+
+	/**
 	 * The place where the mob spawned. It is saved with the mob, so a mob that a player moves keeps the old place.
 	 */
 	public static final AttachmentType<net.minecraft.core.BlockPos> HOME =

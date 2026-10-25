@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Blaze;
@@ -40,6 +41,7 @@ public abstract class BlazeAttackGoalMixin {
 			// The steps 2 and on shoot, so the first fireball of the burst has the index 0.
 			GeneBehaviors.turnInBurstFan(blaze, fireball, attackStep - 2);
 			GeneBehaviors.fireballSpeed(blaze, fireball);
+			blaze.setAttached(ModAttachments.SHOT_TIME, blaze.level().getGameTime());
 		}
 		return original.call(level, entity);
 	}

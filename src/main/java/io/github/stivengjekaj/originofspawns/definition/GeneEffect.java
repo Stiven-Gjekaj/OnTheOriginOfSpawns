@@ -617,7 +617,11 @@ public sealed interface GeneEffect {
 		/**
 		 * The mob is in the air: it does not stand on the ground, and it is not in water or in lava.
 		 */
-		IN_AIR;
+		IN_AIR,
+		/**
+		 * The mob did not shoot in the last 2 seconds. A shot is a fireball of a blaze or of a ghast.
+		 */
+		NOT_SHOOTING;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 

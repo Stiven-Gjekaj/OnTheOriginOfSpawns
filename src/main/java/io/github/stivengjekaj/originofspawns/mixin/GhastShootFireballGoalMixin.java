@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -41,6 +42,7 @@ public abstract class GhastShootFireballGoalMixin {
 	private boolean originofspawns$extraShots(Level level, Entity entity, Operation<Boolean> original) {
 		if (entity instanceof LargeFireball fireball) {
 			GeneBehaviors.fireballSpeed(ghast, fireball);
+			ghast.setAttached(ModAttachments.SHOT_TIME, ghast.level().getGameTime());
 		}
 		boolean added = original.call(level, entity);
 		if (added && entity instanceof LargeFireball fireball) {

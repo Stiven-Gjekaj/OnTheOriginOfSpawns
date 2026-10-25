@@ -189,6 +189,8 @@ public final class GeneCombat {
 			case CARRYING_BLOCK -> entity instanceof net.minecraft.world.entity.monster.Enderman enderman
 					&& enderman.getCarriedBlock() != null;
 			case IN_AIR -> !entity.onGround() && !entity.isInLiquid();
+			case NOT_SHOOTING -> entity.level().getGameTime() - entity.getAttachedOrElse(ModAttachments.SHOT_TIME, Long.MIN_VALUE / 2)
+					> SHOT_TICKS;
 			case TARGET_PLAYER -> entity instanceof Mob mob && mob.getTarget() instanceof Player;
 			case TARGET_NO_SHIELD -> entity instanceof Mob mob && mob.getTarget() instanceof Player player && !player.isBlocking();
 			case CHASING_PLAYER -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
@@ -636,6 +638,11 @@ public final class GeneCombat {
 			other.needsSync = true;
 		}
 	}
+
+	/**
+	 * The ticks after a shot in which the state {@code not_shooting} is false.
+	 */
+	private static final long SHOT_TICKS = 40L;
 
 	/**
 	 * The seconds after a dive in which the melee hits of the mob do more damage.

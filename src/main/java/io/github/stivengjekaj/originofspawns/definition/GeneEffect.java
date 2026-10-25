@@ -266,7 +266,8 @@ public sealed interface GeneEffect {
 			Map.entry("float_height", FloatHeight.CODEC),
 			Map.entry("return_ward", ReturnWard.CODEC),
 			Map.entry("burst_count", BurstCount.CODEC),
-			Map.entry("burst_fan", BurstFan.CODEC)
+			Map.entry("burst_fan", BurstFan.CODEC),
+			Map.entry("fireball_speed", FireballSpeed.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4389,6 +4390,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "burst_fan";
+		}
+	}
+
+	/**
+	 * Multiplies the speed of the fireballs that the mob shoots: the small fireballs of a blaze and the large fireballs
+	 * of a ghast. More than one effect multiplies together.
+	 */
+	record FireballSpeed(float multiplier) implements GeneEffect {
+		public static final MapCodec<FireballSpeed> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 10.0F).fieldOf("multiplier").forGetter(FireballSpeed::multiplier)
+		).apply(instance, FireballSpeed::new));
+
+		@Override
+		public String type() {
+			return "fireball_speed";
 		}
 	}
 }

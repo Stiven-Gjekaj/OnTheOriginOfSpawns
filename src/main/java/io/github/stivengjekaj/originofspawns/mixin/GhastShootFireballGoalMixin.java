@@ -39,6 +39,9 @@ public abstract class GhastShootFireballGoalMixin {
 	@WrapOperation(method = "tick", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
 	private boolean originofspawns$extraShots(Level level, Entity entity, Operation<Boolean> original) {
+		if (entity instanceof LargeFireball fireball) {
+			GeneBehaviors.fireballSpeed(ghast, fireball);
+		}
 		boolean added = original.call(level, entity);
 		if (added && entity instanceof LargeFireball fireball) {
 			GeneBehaviors.ghastFanShot(ghast, fireball);

@@ -80,6 +80,28 @@ public class BlazeEffectsTest {
 		});
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void swiftShotMakesTheFireballsOfABlazeFaster(GameTestHelper helper) {
+		Shots shots = shooter(helper, "test_swift_shot");
+		helper.succeedWhen(() -> {
+			helper.assertTrue(shots.projectiles.size() >= 1, "the blaze shoots");
+			var fireball = (net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball) shots.projectiles.get(0);
+			helper.assertTrue(Math.abs(fireball.accelerationPower - 0.15) < 1.0E-6,
+					"1.5 times the acceleration, not " + fireball.accelerationPower);
+		});
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8, maxTicks = 200)
+	public void swiftShotMakesTheFireballsOfAGhastFaster(GameTestHelper helper) {
+		GhastEffectsTest.Shots shots = GhastEffectsTest.shooter(helper, "test_swift_shot");
+		helper.succeedWhen(() -> {
+			helper.assertTrue(shots.times.size() >= 1, "the ghast shoots");
+			var fireball = (net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball) shots.projectiles.get(0).get(0);
+			helper.assertTrue(Math.abs(fireball.accelerationPower - 0.15) < 1.0E-6,
+					"1.5 times the acceleration, not " + fireball.accelerationPower);
+		});
+	}
+
 	/**
 	 * Returns the angle in degrees on the ground between the first and the third fireball.
 	 */

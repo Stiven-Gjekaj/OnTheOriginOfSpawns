@@ -39,6 +39,7 @@ public abstract class BlazeAttackGoalMixin {
 		if (entity instanceof SmallFireball fireball) {
 			// The steps 2 and on shoot, so the first fireball of the burst has the index 0.
 			GeneBehaviors.turnInBurstFan(blaze, fireball, attackStep - 2);
+			GeneBehaviors.fireballSpeed(blaze, fireball);
 		}
 		return original.call(level, entity);
 	}

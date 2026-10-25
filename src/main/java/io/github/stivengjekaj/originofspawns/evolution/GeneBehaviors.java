@@ -12,6 +12,7 @@ import io.github.stivengjekaj.originofspawns.evolution.goal.SiegeDoorGoal;
 import io.github.stivengjekaj.originofspawns.evolution.goal.SiegeGoal;
 import io.github.stivengjekaj.originofspawns.mixin.AbstractSkeletonAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
+import net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
 import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
 import net.minecraft.world.entity.monster.Ghast;
@@ -878,6 +879,23 @@ public final class GeneBehaviors {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Multiplies the speed of a new fireball of the mob by its fireball speed genes. A fireball speeds up by its
+	 * acceleration each tick, so the acceleration changes too.
+	 */
+	public static void fireballSpeed(Mob mob, AbstractHurtingProjectile fireball) {
+		double multiplier = 1.0;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.FireballSpeed speed) {
+				multiplier *= speed.multiplier();
+			}
+		}
+		if (multiplier != 1.0) {
+			fireball.accelerationPower *= multiplier;
+			fireball.setDeltaMovement(fireball.getDeltaMovement().scale(multiplier));
+		}
 	}
 
 	/**

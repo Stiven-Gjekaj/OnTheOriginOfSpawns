@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.monster.breeze.Breeze;
 import net.minecraft.world.entity.monster.breeze.Shoot;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile;
 import net.minecraft.world.item.ItemStack;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,7 +32,11 @@ public abstract class BreezeShootMixin {
 		if (!(charge.getOwner() instanceof Breeze breeze)) {
 			return original.call(charge, level, stack, x, y, z, power, uncertainty);
 		}
-		return original.call(charge, level, stack, x, y, z, power, uncertainty * GeneBehaviors.arrowSpreadMultiplier(breeze));
+		Projectile shot = original.call(charge, level, stack, x, y, z, power, uncertainty * GeneBehaviors.arrowSpreadMultiplier(breeze));
+		if (shot instanceof AbstractHurtingProjectile hurting) {
+			GeneBehaviors.fireballSpeed(breeze, hurting);
+		}
+		return shot;
 	}
 
 	@ModifyExpressionValue(method = "start", at = @At(value = "FIELD",

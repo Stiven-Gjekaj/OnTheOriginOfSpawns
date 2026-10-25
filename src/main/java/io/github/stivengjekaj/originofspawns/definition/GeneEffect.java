@@ -4420,8 +4420,8 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * Multiplies the speed of the fireballs that the mob shoots: the small fireballs of a blaze and the large fireballs
-	 * of a ghast. More than one effect multiplies together.
+	 * Multiplies the speed of the fireballs that the mob shoots: the small fireballs of a blaze, the large fireballs
+	 * of a ghast, and the wind charges of a breeze. More than one effect multiplies together.
 	 */
 	record FireballSpeed(float multiplier) implements GeneEffect {
 		public static final MapCodec<FireballSpeed> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

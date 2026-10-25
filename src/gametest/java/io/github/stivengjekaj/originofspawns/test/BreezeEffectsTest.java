@@ -138,6 +138,18 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void fastChargeMakesTheWindChargesFaster(GameTestHelper helper) {
+		// The random spread also changes the speed a little, so both breezes shoot with no spread.
+		var plain = shoot(helper, shooter(helper, new BlockPos(1, 1, 1), "test_true_aim"));
+		var fast = shoot(helper, shooter(helper, new BlockPos(1, 1, 5), "test_true_aim", "test_swift_shot"));
+		double ratio = fast.getFirst().getDeltaMovement().length() / plain.getFirst().getDeltaMovement().length();
+		helper.assertTrue(Math.abs(ratio - 1.5) < 0.001, "1.5 times the speed, not " + ratio);
+		plain.forEach(BreezeWindCharge::discard);
+		fast.forEach(BreezeWindCharge::discard);
+		helper.succeed();
+	}
+
 	/**
 	 * Makes a breeze shoot one wind charge at a pig, and returns the angle in radians between the charge and the line
 	 * that the shot aims at.

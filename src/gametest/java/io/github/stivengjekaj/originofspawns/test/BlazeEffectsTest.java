@@ -323,6 +323,25 @@ public class BlazeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void snowShrugStopsTheDamageOfSnowballs(GameTestHelper helper) {
+		Blaze plain = blazeWith(helper, new BlockPos(1, 1, 1));
+		hitWithSnowball(helper, plain);
+		helper.assertValueEqual(plain.getHealth(), plain.getMaxHealth() - 3.0F, "a snowball does 3 damage to a blaze");
+		Blaze shrug = blazeWith(helper, new BlockPos(5, 1, 5), "test_snow_shrug");
+		hitWithSnowball(helper, shrug);
+		helper.assertValueEqual(shrug.getHealth(), shrug.getMaxHealth(), "a snowball does no damage");
+		helper.succeed();
+	}
+
+	static void hitWithSnowball(GameTestHelper helper, Blaze blaze) {
+		var snowball = new net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball(helper.getLevel(),
+				blaze.getX(), blaze.getY() + 3.0, blaze.getZ(), new net.minecraft.world.item.ItemStack(
+						net.minecraft.world.item.Items.SNOWBALL));
+		helper.getLevel().addFreshEntity(snowball);
+		((ProjectileAccessor) snowball).originofspawns$onHit(new EntityHitResult(blaze));
+	}
+
 	/**
 	 * Returns the speed up that one server step gives the blaze, with the smallest random offset of the game.
 	 */

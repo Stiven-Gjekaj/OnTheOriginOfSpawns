@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "snowball_damage_taken", "multiplier": 0 }],
+	"mutation_rate": 0
+}

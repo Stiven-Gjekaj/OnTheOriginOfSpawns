@@ -277,7 +277,8 @@ public sealed interface GeneEffect {
 			Map.entry("fire_feed", FireFeed.CODEC),
 			Map.entry("keep_above", KeepAbove.CODEC),
 			Map.entry("dive", Dive.CODEC),
-			Map.entry("flee", Flee.CODEC)
+			Map.entry("flee", Flee.CODEC),
+			Map.entry("snowball_damage_taken", SnowballDamageTaken.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4586,6 +4587,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "flee";
+		}
+	}
+
+	/**
+	 * Multiplies the damage that a snowball does to the mob. A snowball does 3 damage to a vanilla blaze. More than
+	 * one effect multiplies together.
+	 */
+	record SnowballDamageTaken(float multiplier) implements GeneEffect {
+		public static final MapCodec<SnowballDamageTaken> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).fieldOf("multiplier").forGetter(SnowballDamageTaken::multiplier)
+		).apply(instance, SnowballDamageTaken::new));
+
+		@Override
+		public String type() {
+			return "snowball_damage_taken";
 		}
 	}
 }

@@ -450,6 +450,11 @@ public final class GeneCombat {
 				result = Math.max(result, snowball.damage());
 			}
 		}
+		for (GeneEffect effect : GeneEffects.of(entity).toList()) {
+			if (effect instanceof GeneEffect.SnowballDamageTaken taken) {
+				result *= taken.multiplier();
+			}
+		}
 		return result;
 	}
 

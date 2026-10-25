@@ -240,7 +240,8 @@ public sealed interface GeneEffect {
 			Map.entry("anger_after_death", AngerAfterDeath.CODEC),
 			Map.entry("self_effect_on_hurt", SelfEffectOnHurt.CODEC),
 			Map.entry("self_effect_on_hit", SelfEffectOnHit.CODEC),
-			Map.entry("spawn_enchantment", SpawnEnchantment.CODEC)
+			Map.entry("spawn_enchantment", SpawnEnchantment.CODEC),
+			Map.entry("conversion_time", ConversionTime.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3921,6 +3922,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "spawn_enchantment";
+		}
+	}
+
+	/**
+	 * Sets the time in the Overworld after which the mob turns into its Nether kin: a piglin or a piglin brute into a
+	 * zombified piglin, a hoglin into a zoglin. Vanilla is 15 seconds. The longest time counts.
+	 */
+	record ConversionTime(float seconds) implements GeneEffect {
+		public static final MapCodec<ConversionTime> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 36000.0F).fieldOf("seconds").forGetter(ConversionTime::seconds)
+		).apply(instance, ConversionTime::new));
+
+		@Override
+		public String type() {
+			return "conversion_time";
 		}
 	}
 }

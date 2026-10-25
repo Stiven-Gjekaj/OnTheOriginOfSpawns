@@ -22,4 +22,10 @@ public interface MobAccessor {
 	 */
 	@Invoker("pickUpItem")
 	void originofspawns$pickUpItem(ServerLevel level, ItemEntity item);
+
+	/**
+	 * Runs the AI step of the mob on the server, as its tick does.
+	 */
+	@Invoker("customServerAiStep")
+	void originofspawns$customServerAiStep(ServerLevel level);
 }

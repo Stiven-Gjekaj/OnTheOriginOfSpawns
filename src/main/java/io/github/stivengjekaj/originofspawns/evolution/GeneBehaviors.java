@@ -145,8 +145,7 @@ public final class GeneBehaviors {
 						level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
 								.get(enchant.enchantment()).ifPresent(holder -> mob.getMainHandItem().enchant(holder, enchant.level()));
 				case GeneEffect.TridentChance trident -> rollTrident(mob, trident);
-				case GeneEffect.Runt runt when mob instanceof Zombie zombie && mob.getRandom().nextFloat() < runt.chance() ->
-						makeRunt(zombie, level, runt);
+				case GeneEffect.Runt runt when mob.getRandom().nextFloat() < runt.chance() -> makeRunt(mob, level, runt);
 				case GeneEffect.Brood brood when broodReason(reason) ->
 						spawnBrood(mob, level, brood.extra(), EntitySpawnReason.REINFORCEMENT, brood.poolGenes());
 				case GeneEffect.PatrolSize patrol when reason == EntitySpawnReason.PATROL ->
@@ -224,21 +223,34 @@ public final class GeneBehaviors {
 
 	private static final Identifier RUNT_HEALTH = OriginOfSpawns.id("runt_health");
 
-	private static void makeRunt(Zombie zombie, ServerLevel level, GeneEffect.Runt runt) {
-		zombie.setBaby(true);
-		AttributeInstance health = zombie.getAttribute(Attributes.MAX_HEALTH);
+	/**
+	 * Returns the ticks in the Overworld after which the mob turns into its Nether kin, after its conversion time
+	 * genes. The longest time counts.
+	 */
+	public static int conversionTicks(Mob mob, int ticks) {
+		return GeneEffects.of(mob).filter(GeneEffect.ConversionTime.class::isInstance)
+				.mapToInt(effect -> Math.round(((GeneEffect.ConversionTime) effect).seconds() * 20.0F)).max().orElse(ticks);
+	}
+
+	/**
+	 * Makes the mob a baby with the health of the gene. A baby zombie or a baby zombified piglin can ride a chicken,
+	 * as in vanilla. A baby piglin does not.
+	 */
+	private static void makeRunt(Mob baby, ServerLevel level, GeneEffect.Runt runt) {
+		baby.setBaby(true);
+		AttributeInstance health = baby.getAttribute(Attributes.MAX_HEALTH);
 		if (health != null && !health.hasModifier(RUNT_HEALTH)) {
 			health.addPermanentModifier(new AttributeModifier(RUNT_HEALTH,
 					runt.babyHealthMultiplier() - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
-			zombie.setHealth(zombie.getMaxHealth());
+			baby.setHealth(baby.getMaxHealth());
 		}
-		if (zombie.getRandom().nextFloat() < CHICKEN_JOCKEY_CHANCE) {
+		if (baby instanceof Zombie && baby.getRandom().nextFloat() < CHICKEN_JOCKEY_CHANCE) {
 			Chicken chicken = EntityTypes.CHICKEN.create(level, EntitySpawnReason.JOCKEY);
 			if (chicken != null) {
-				chicken.snapTo(zombie.getX(), zombie.getY(), zombie.getZ(), zombie.getYRot(), 0.0F);
+				chicken.snapTo(baby.getX(), baby.getY(), baby.getZ(), baby.getYRot(), 0.0F);
 				chicken.setChickenJockey(true);
 				level.addFreshEntity(chicken);
-				zombie.startRiding(chicken);
+				baby.startRiding(chicken);
 			}
 		}
 	}

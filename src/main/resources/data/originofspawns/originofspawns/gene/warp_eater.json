@@ -1,0 +1,25 @@
+{
+	"species": "minecraft:hoglin",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:hoglin/fearless",
+	"gains": [
+		{
+			"type": "no_fear",
+			"fears": [
+				"warped_fungus"
+			]
+		},
+		{
+			"type": "eat_items",
+			"items": "minecraft:warped_fungus"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:hoglin",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:hoglin/tusker",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": 0.2,
+			"operation": "add_multiplied_total"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attack_interval",
+			"multiplier": 1.1
+		}
+	]
+}

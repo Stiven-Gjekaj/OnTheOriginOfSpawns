@@ -1,0 +1,62 @@
+{
+	"species": "minecraft:hoglin",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "no_fear",
+					"fears": [
+						"warped_fungus"
+					]
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "no_fear",
+					"fears": [
+						"warped_fungus",
+						"nether_portal"
+					]
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "no_fear",
+					"fears": [
+						"warped_fungus",
+						"nether_portal",
+						"respawn_anchor"
+					]
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

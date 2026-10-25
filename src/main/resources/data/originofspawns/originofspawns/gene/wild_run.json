@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:hoglin",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:hoglin/charger",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": 0.2,
+			"operation": "add_multiplied_total"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken_when",
+			"when": "always",
+			"multiplier": 1.1
+		}
+	]
+}

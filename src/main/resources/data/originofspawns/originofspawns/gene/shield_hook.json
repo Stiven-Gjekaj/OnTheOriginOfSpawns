@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:hoglin",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:hoglin/tusker",
+	"gains": [
+		{
+			"type": "shield_break",
+			"seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

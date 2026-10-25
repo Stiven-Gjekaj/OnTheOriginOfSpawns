@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:hoglin",
+	"counters": "originofspawns:on_land",
+	"family": "originofspawns:hoglin/fearless",
+	"gains": [
+		{
+			"type": "conversion_time",
+			"seconds": 60
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

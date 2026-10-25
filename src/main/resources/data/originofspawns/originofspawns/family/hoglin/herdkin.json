@@ -1,0 +1,50 @@
+{
+	"species": "minecraft:hoglin",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "call_on_hurt",
+					"radius": 8
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "call_on_hurt",
+					"radius": 12
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "call_on_hurt",
+					"radius": 16
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

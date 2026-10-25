@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:hoglin",
+	"counters": "originofspawns:wolf",
+	"family": "originofspawns:hoglin/herdkin",
+	"sub_family": "originofspawns:hoglin/fearless",
+	"gains": [
+		{
+			"type": "fear_guard",
+			"fear": "warped_fungus",
+			"radius": 8
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

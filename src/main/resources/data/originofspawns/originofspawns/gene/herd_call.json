@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:hoglin",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:hoglin/herdkin",
+	"gains": [
+		{
+			"type": "call_on_sight",
+			"radius": 24
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

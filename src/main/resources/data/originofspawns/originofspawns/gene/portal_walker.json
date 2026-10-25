@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:hoglin",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:hoglin/fearless",
+	"gains": [
+		{
+			"type": "no_fear",
+			"fears": [
+				"nether_portal"
+			]
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

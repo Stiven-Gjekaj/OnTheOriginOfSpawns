@@ -15,6 +15,7 @@
 		"EndermiteRendererMixin",
 		"EntityRenderDispatcherMixin",
 		"EvokerRendererMixin",
+		"GhastRendererMixin",
 		"HoglinRendererMixin",
 		"IllagerRendererMixin",
 		"LivingEntityRendererMixin",

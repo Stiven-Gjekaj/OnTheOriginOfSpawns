@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.layers.SlimeOuterLayer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.GhastRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.entity.state.SlimeRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
@@ -38,6 +39,7 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.monster.Enderman;
 import net.minecraft.world.entity.monster.cubemob.Slime;
 import net.minecraft.world.entity.monster.illager.Evoker;
@@ -130,6 +132,11 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			// The phantom gene model sits on the left wing tip, three parts below the root.
 			checkMarkAndModel(context, singleplayer, EntityTypes.PHANTOM, "test_phantom_mark",
 					Identifier.withDefaultNamespace("textures/entity/phantom/phantom.png"), "phantom");
+			// The ghast gene model sits on the first tentacle. The face of a shot is a second texture, and it gets the
+			// marks too.
+			checkMarkAndModel(context, singleplayer, EntityTypes.GHAST, "test_ghast_mark",
+					Identifier.withDefaultNamespace("textures/entity/ghast/ghast.png"), "ghast");
+			checkGhastShootingFace(context);
 			checkArmModelOnlyWhileTheArmsAreApart(context, singleplayer);
 			checkEndermanArmModelFollowsTheCarryPose(context, singleplayer);
 			checkEvokerArmModelOnlyWhileItCasts(context, singleplayer);
@@ -173,6 +180,33 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			}
 			int drawn = drawnModelParts(renderer, state);
 			return drawn > 0 ? null : "The gene model layer draws no part of the gene model on " + type;
+		});
+		if (failure != null) {
+			throw new AssertionError(failure);
+		}
+	}
+
+	/**
+	 * Checks that a ghast with the mark gene that shoots gets the shooting texture with the gene marks.
+	 */
+	private static void checkGhastShootingFace(ClientGameTestContext context) {
+		Identifier mark = Identifier.fromNamespaceAndPath("originofspawns_test", "test_ghast_mark");
+		Identifier shooting = Identifier.withDefaultNamespace("textures/entity/ghast/ghast_shooting.png");
+		String failure = context.computeOnClient(client -> {
+			Ghast ghast = client.level.getEntitiesOfClass(Ghast.class, client.player.getBoundingBox().inflate(8.0),
+					other -> other.getAttached(ModAttachments.GENES) != null
+							&& other.getAttached(ModAttachments.GENES).genes().contains(mark)).stream().findFirst().orElse(null);
+			if (ghast == null) {
+				return "The client has no ghast with the test gene";
+			}
+			EntityRenderDispatcher dispatcher = client.getEntityRenderDispatcher();
+			GhastRenderState state = (GhastRenderState) dispatcher.extractEntity(ghast, 1.0F);
+			state.isCharging = true;
+			Identifier baked = textureOf((LivingEntityRenderer<?, ?, ?>) dispatcher.getRenderer(ghast), state);
+			if (baked.equals(shooting)) {
+				return "The ghast that shoots has the plain shooting texture, with no gene marks";
+			}
+			return checkRegionMark(client, shooting, baked, "ghast");
 		});
 		if (failure != null) {
 			throw new AssertionError(failure);

@@ -125,7 +125,19 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		LEFT_WING_BASE,
 		LEFT_WING_TIP,
 		RIGHT_WING_BASE,
-		RIGHT_WING_TIP;
+		RIGHT_WING_TIP,
+		/**
+		 * The nine tentacles of a ghast. They are parts of the root.
+		 */
+		TENTACLE0,
+		TENTACLE1,
+		TENTACLE2,
+		TENTACLE3,
+		TENTACLE4,
+		TENTACLE5,
+		TENTACLE6,
+		TENTACLE7,
+		TENTACLE8;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

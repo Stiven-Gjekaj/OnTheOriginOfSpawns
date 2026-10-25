@@ -112,7 +112,7 @@ The visual column gives the region and the mark.
 | Arrow Wall | Colossus | `projectile` | 30% less damage from projectiles | 10% less speed | Body: arrows stuck in the back. This changes the model |
 | Steady Feet | Colossus | `golem` | Full knockback resistance | 10% less speed | Legs: heavy, gold greaves |
 | Thick Neck | Colossus | `critical` | 6 more armor while its health is under half | 10% less maximum health | Head: a thick, wide neck |
-| Rage Plate | Colossus, sub Mauler | `crowd` | 20% less damage taken with 2 or more piglins near it | 20% more damage taken alone | Body: red marks on the plates |
+| Rage Plate | Colossus, sub Mauler | `crowd` | 20% less damage taken with 2 or more piglin brutes near it | 20% more damage taken alone | Body: red marks on the plates |
 
 ### Mauler genes
 

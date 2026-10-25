@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:slime",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "split_area_effect", "effect": "minecraft:slowness", "seconds": 3, "fire_seconds": 3, "radius": 3 }],
+	"mutation_rate": 0
+}

@@ -195,6 +195,19 @@ public class SlimeEffectsTest {
 		});
 	}
 
+	@GameTest(maxTicks = 60)
+	public void gelTrapSlowsAndBurnsThePlayersNearASplit(GameTestHelper helper) {
+		AbstractCubeMob slime = cubeWith(helper, EntityTypes.SLIME, new BlockPos(4, 1, 4), 2, "test_gel_trap");
+		ServerPlayer near = CreeperEffectsTest.survivalPlayer(helper).player();
+		near.setPos(slime.position().add(2.0, 0.0, 0.0));
+		slime.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 1000.0F);
+		helper.assertFalse(near.hasEffect(MobEffects.SLOWNESS), "no effect before the split");
+		helper.succeedWhen(() -> {
+			helper.assertTrue(near.hasEffect(MobEffects.SLOWNESS), "the split gives Slowness");
+			helper.assertTrue(near.getRemainingFireTicks() > 0, "the split sets the player on fire");
+		});
+	}
+
 	static List<AbstractCubeMob> piecesNear(GameTestHelper helper, AbstractCubeMob cube) {
 		return helper.getLevel().getEntitiesOfClass(AbstractCubeMob.class,
 				new AABB(cube.blockPosition()).inflate(4.0), other -> other != cube && other.isAlive());

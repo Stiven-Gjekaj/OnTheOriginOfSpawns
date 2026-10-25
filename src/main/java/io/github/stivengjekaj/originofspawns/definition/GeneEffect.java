@@ -220,7 +220,8 @@ public sealed interface GeneEffect {
 			Map.entry("landing_shield_stop", LandingShieldStop.CODEC),
 			Map.entry("split_count", SplitCount.CODEC),
 			Map.entry("split_effect", SplitEffect.CODEC),
-			Map.entry("split_jump", SplitJump.CODEC)
+			Map.entry("split_jump", SplitJump.CODEC),
+			Map.entry("split_area_effect", SplitAreaEffect.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3579,6 +3580,25 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "split_jump";
+		}
+	}
+
+	/**
+	 * When a cube splits, the players in the radius get the status effect, or burn for {@code fire_seconds}, or both.
+	 */
+	record SplitAreaEffect(Optional<Holder<MobEffect>> effect, float seconds, int amplifier, float fireSeconds,
+			float radius) implements GeneEffect {
+		public static final MapCodec<SplitAreaEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.optionalFieldOf("effect").forGetter(SplitAreaEffect::effect),
+				Codec.floatRange(0.0F, 3600.0F).optionalFieldOf("seconds", 0.0F).forGetter(SplitAreaEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(SplitAreaEffect::amplifier),
+				Codec.floatRange(0.0F, 600.0F).optionalFieldOf("fire_seconds", 0.0F).forGetter(SplitAreaEffect::fireSeconds),
+				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 3.0F).forGetter(SplitAreaEffect::radius)
+		).apply(instance, SplitAreaEffect::new));
+
+		@Override
+		public String type() {
+			return "split_area_effect";
 		}
 	}
 }

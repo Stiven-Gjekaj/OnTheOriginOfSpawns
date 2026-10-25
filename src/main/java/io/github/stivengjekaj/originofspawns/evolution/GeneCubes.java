@@ -186,4 +186,21 @@ public final class GeneCubes {
 		}
 		return fixed.orElse(count) + extra;
 	}
+
+	/**
+	 * Runs the effects of the cube on the players near it, when it splits.
+	 */
+	public static void onSplit(AbstractCubeMob cube, ServerLevel level) {
+		for (GeneEffect effect : GeneEffects.of(cube).toList()) {
+			if (effect instanceof GeneEffect.SplitAreaEffect area) {
+				for (Player player : playersNear(cube, level, area.radius())) {
+					area.effect().ifPresent(type -> player.addEffect(new MobEffectInstance(type,
+							Math.round(area.seconds() * 20.0F), area.amplifier()), cube));
+					if (area.fireSeconds() > 0.0F) {
+						player.igniteForSeconds(area.fireSeconds());
+					}
+				}
+			}
+		}
+	}
 }

@@ -92,4 +92,16 @@ public abstract class AbstractCubeMobMixin {
 	private int originofspawns$splitCount(int count) {
 		return GeneCubes.splitCount((AbstractCubeMob) (Object) this, count);
 	}
+
+	/**
+	 * The split effects of the genes on the players near the cube run when it splits. A cube splits when it leaves
+	 * the level after its death, at size 2 or more.
+	 */
+	@Inject(method = "remove", at = @At("HEAD"))
+	private void originofspawns$split(net.minecraft.world.entity.Entity.RemovalReason reason, CallbackInfo info) {
+		AbstractCubeMob self = (AbstractCubeMob) (Object) this;
+		if (self.level() instanceof ServerLevel level && self.getSize() > 1 && self.isDeadOrDying()) {
+			GeneCubes.onSplit(self, level);
+		}
+	}
 }

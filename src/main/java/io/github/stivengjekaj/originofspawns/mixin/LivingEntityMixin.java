@@ -41,7 +41,8 @@ public abstract class LivingEntityMixin {
 		LivingEntity self = (LivingEntity) (Object) this;
 		if (self.hasAttached(ModAttachments.GENES)
 				&& (GeneCombat.dodges(self, source) || GeneCombat.protectedWhileDown(self, source)
-						|| GeneCombat.parries(self, source) || GeneTeleports.fromBlast(self, source))) {
+						|| GeneCombat.parries(self, source) || GeneTeleports.fromBlast(self, source)
+						|| GeneCombat.blastHeals(self, source, amount))) {
 			info.setReturnValue(false);
 		}
 	}

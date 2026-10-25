@@ -154,6 +154,23 @@ public class MagmaCubeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void moltenCoreHealsTheCubeForHalfTheDamageOfAnExplosion(GameTestHelper helper) {
+		AbstractCubeMob plain = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(1, 1, 1), 4);
+		AbstractCubeMob molten = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(5, 1, 5), 4, "test_molten_core");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 6));
+		DamageSource blast = helper.getLevel().damageSources().explosion(pig, pig);
+		for (AbstractCubeMob cube : List.of(plain, molten)) {
+			cube.setHealth(cube.getMaxHealth() - 8.0F);
+			cube.hurtServer(helper.getLevel(), blast, 4.0F);
+		}
+		helper.assertTrue(plain.getHealth() < plain.getMaxHealth() - 8.0F, "an explosion hurts a plain magma cube");
+		helper.assertValueEqual(molten.getHealth(), molten.getMaxHealth() - 6.0F, "the explosion heals 2 health");
+		molten.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(pig), 4.0F);
+		helper.assertTrue(molten.getHealth() < molten.getMaxHealth() - 6.0F, "a melee hit still hurts it");
+		helper.succeed();
+	}
+
 	static AbstractCubeMob cubeInWater(GameTestHelper helper, BlockPos pos, String... genes) {
 		return cubeInFluid(helper, pos, Blocks.WATER, genes);
 	}

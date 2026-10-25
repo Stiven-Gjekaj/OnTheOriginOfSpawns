@@ -231,7 +231,8 @@ public sealed interface GeneEffect {
 			Map.entry("fire_on_hurt", FireOnHurt.CODEC),
 			Map.entry("lava_exit_fire", LavaExitFire.CODEC),
 			Map.entry("fire_aura", FireAura.CODEC),
-			Map.entry("fireball_shot", FireballShot.CODEC)
+			Map.entry("fireball_shot", FireballShot.CODEC),
+			Map.entry("blast_heal", BlastHeal.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3765,6 +3766,20 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "fireball_shot";
+		}
+	}
+
+	/**
+	 * An explosion does no damage to the mob. It heals the mob for this part of the damage.
+	 */
+	record BlastHeal(float fraction) implements GeneEffect {
+		public static final MapCodec<BlastHeal> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("fraction", 0.5F).forGetter(BlastHeal::fraction)
+		).apply(instance, BlastHeal::new));
+
+		@Override
+		public String type() {
+			return "blast_heal";
 		}
 	}
 }

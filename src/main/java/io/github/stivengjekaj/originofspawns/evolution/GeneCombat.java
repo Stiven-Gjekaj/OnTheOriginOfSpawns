@@ -352,6 +352,24 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * Returns true if an explosion heals the entity in place of the damage. The heal is the largest part of the
+	 * genes.
+	 */
+	public static boolean blastHeals(LivingEntity entity, DamageSource source, float amount) {
+		if (!source.is(DamageTypeTags.IS_EXPLOSION) || !(entity.level() instanceof ServerLevel level)) {
+			return false;
+		}
+		var fraction = GeneEffects.of(entity).filter(GeneEffect.BlastHeal.class::isInstance)
+				.mapToDouble(effect -> ((GeneEffect.BlastHeal) effect).fraction()).max();
+		if (fraction.isEmpty()) {
+			return false;
+		}
+		entity.heal((float) (amount * fraction.getAsDouble()));
+		level.sendParticles(ParticleTypes.HEART, entity.getX(), entity.getY(1.0), entity.getZ(), 3, 0.3, 0.2, 0.3, 0.0);
+		return true;
+	}
+
+	/**
 	 * Returns true if the entity parries this hit: a melee hit, with the cooldown of its parry over. A parry records
 	 * its time and plays the sound of a shield block.
 	 */

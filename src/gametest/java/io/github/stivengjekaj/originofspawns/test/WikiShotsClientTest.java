@@ -55,7 +55,8 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 			EntityTypes.VINDICATOR, EntityTypes.EVOKER, EntityTypes.WITCH,
 			EntityTypes.ENDERMAN, EntityTypes.ENDERMITE, EntityTypes.SLIME,
 			EntityTypes.MAGMA_CUBE, EntityTypes.ZOMBIFIED_PIGLIN, EntityTypes.PIGLIN, EntityTypes.PIGLIN_BRUTE,
-			EntityTypes.HOGLIN, EntityTypes.ZOGLIN);
+			EntityTypes.HOGLIN, EntityTypes.ZOGLIN, EntityTypes.PHANTOM, EntityTypes.GHAST, EntityTypes.BLAZE,
+			EntityTypes.BREEZE);
 	private static final int SHOT_ID = -424242;
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 960;
@@ -212,7 +213,18 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 		// A tall or a wide mob, such as the enderman or the hoglin, stands farther away, so that all of it is in the
 		// picture.
 		double depth = mob.getBbHeight() > 2.2F || mob.getBbWidth() > 1.2F ? 5.5 : 3.5;
-		mob.snapTo(base.getX() + 0.5, base.getY(), base.getZ() + depth, yaw, 0.0F);
+		double height = 0.0;
+		// A ghast is about 7 blocks high with its tentacles, so it floats far away and lower.
+		if (mob.getType() == EntityTypes.GHAST) {
+			depth = 12.0;
+			height = -0.5;
+		}
+		// A phantom is flat, so it flies lower, and the camera sees its back and its wings from above.
+		if (mob.getType() == EntityTypes.PHANTOM) {
+			depth = 6.0;
+			height = -1.0;
+		}
+		mob.snapTo(base.getX() + 0.5, base.getY() + height, base.getZ() + depth, yaw, 0.0F);
 		mob.setYHeadRot(yaw);
 		mob.yHeadRotO = yaw;
 		mob.setYBodyRot(yaw);
@@ -225,15 +237,15 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 	 * Builds a closed room of one block around the camera and the mob, with full light inside.
 	 */
 	private static void room(ServerLevel level, BlockPos base, Block wall) {
-		BlockPos from = base.offset(-6, -1, -3);
-		BlockPos to = base.offset(6, 6, 9);
+		BlockPos from = base.offset(-10, -6, -3);
+		BlockPos to = base.offset(10, 10, 16);
 		for (BlockPos pos : BlockPos.betweenClosed(from, to)) {
 			boolean edge = pos.getX() == from.getX() || pos.getX() == to.getX() || pos.getY() == from.getY()
 					|| pos.getY() == to.getY() || pos.getZ() == from.getZ() || pos.getZ() == to.getZ();
 			level.setBlock(pos, edge ? wall.defaultBlockState() : Blocks.AIR.defaultBlockState(), 2);
 		}
 		// Light blocks give full light and cannot be seen.
-		for (BlockPos pos : BlockPos.betweenClosed(base.offset(-4, 0, -1), base.offset(4, 5, 7))) {
+		for (BlockPos pos : BlockPos.betweenClosed(base.offset(-8, -5, -1), base.offset(8, 9, 15))) {
 			if ((pos.getX() + pos.getY() + pos.getZ()) % 3 == 0 && !pos.equals(base) && !pos.equals(base.above())) {
 				level.setBlock(pos, Blocks.LIGHT.defaultBlockState().setValue(LightBlock.LEVEL, 15), 2);
 			}

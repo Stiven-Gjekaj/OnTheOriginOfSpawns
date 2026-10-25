@@ -126,14 +126,22 @@ public final class GeneCubes {
 	}
 
 	/**
-	 * Runs the landing effects of the cube, when it lands from a hop.
+	 * Runs the landing effects of the mob, when it lands from a hop of a cube or a long jump of a breeze.
 	 */
-	public static void onLand(AbstractCubeMob cube, ServerLevel level) {
+	public static void onLand(net.minecraft.world.entity.Mob cube, ServerLevel level) {
 		for (GeneEffect effect : GeneEffects.of(cube).toList()) {
 			switch (effect) {
 				case GeneEffect.LandingDamage landing -> {
 					for (Player player : playersNear(cube, level, landing.radius())) {
 						player.hurtServer(level, level.damageSources().mobAttack(cube), landing.damage());
+					}
+					// With mobs, the other mobs in the radius take the damage too, but not the mobs of its own species.
+					if (landing.mobs()) {
+						for (net.minecraft.world.entity.Mob mob : level.getEntitiesOfClass(net.minecraft.world.entity.Mob.class,
+								cube.getBoundingBox().inflate(landing.radius()),
+								mob -> mob != cube && mob.isAlive() && mob.getType() != cube.getType())) {
+							mob.hurtServer(level, level.damageSources().mobAttack(cube), landing.damage());
+						}
 					}
 				}
 				case GeneEffect.LandingEffect landing -> {
@@ -166,7 +174,7 @@ public final class GeneCubes {
 		}
 	}
 
-	private static java.util.List<Player> playersNear(AbstractCubeMob cube, ServerLevel level, float radius) {
+	private static java.util.List<Player> playersNear(net.minecraft.world.entity.Mob cube, ServerLevel level, float radius) {
 		return level.getEntitiesOfClass(Player.class, cube.getBoundingBox().inflate(radius),
 				player -> player.isAlive() && !player.isSpectator());
 	}

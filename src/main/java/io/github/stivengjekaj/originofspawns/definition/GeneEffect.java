@@ -3603,13 +3603,19 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * When a cube lands from a hop, it does this damage to the players in the radius.
+	 * When a cube lands from a hop, or a breeze from a long jump, it does this damage to the players in the radius.
+	 * With {@code mobs}, the other mobs in the radius take the damage too, but not the mobs of its own species.
 	 */
-	record LandingDamage(float damage, float radius) implements GeneEffect {
+	record LandingDamage(float damage, float radius, boolean mobs) implements GeneEffect {
 		public static final MapCodec<LandingDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.0F, 100.0F).fieldOf("damage").forGetter(LandingDamage::damage),
-				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 2.0F).forGetter(LandingDamage::radius)
+				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 2.0F).forGetter(LandingDamage::radius),
+				Codec.BOOL.optionalFieldOf("mobs", false).forGetter(LandingDamage::mobs)
 		).apply(instance, LandingDamage::new));
+
+		public LandingDamage(float damage, float radius) {
+			this(damage, radius, false);
+		}
 
 		@Override
 		public String type() {

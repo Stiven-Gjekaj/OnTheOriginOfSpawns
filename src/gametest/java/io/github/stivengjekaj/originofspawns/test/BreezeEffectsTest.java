@@ -208,6 +208,17 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void crashDownHurtsTheMobsNearWhenTheBreezeLands(GameTestHelper helper) {
+		Breeze breeze = breezeWith(helper, new BlockPos(3, 1, 3), "test_crash_down");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 3));
+		Breeze other = breezeWith(helper, new BlockPos(3, 1, 5));
+		restAfterLanding(helper, breeze);
+		helper.assertValueEqual(pig.getHealth(), pig.getMaxHealth() - 3.0F, "the pig near takes 3 damage");
+		helper.assertValueEqual(other.getHealth(), other.getMaxHealth(), "another breeze takes no damage");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes the breeze jump to a place 4 blocks away at the end of its inhale, and returns the speed of the jump. The
 	 * random source has a fixed seed, so each breeze picks the same angle.

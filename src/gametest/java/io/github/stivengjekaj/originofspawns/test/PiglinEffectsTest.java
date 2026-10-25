@@ -1,8 +1,11 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
+import io.github.stivengjekaj.originofspawns.mixin.SensorAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -10,15 +13,22 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
+import net.minecraft.world.entity.ai.sensing.PiglinSpecificSensor;
 import net.minecraft.world.entity.monster.piglin.Piglin;
+import net.minecraft.world.entity.monster.zombie.ZombifiedPiglin;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -92,6 +102,63 @@ public class PiglinEffectsTest {
 				new net.minecraft.world.phys.AABB(helper.absolutePos(new BlockPos(0, 0, 0))).inflate(10.0))
 				.forEach(net.minecraft.world.entity.Entity::discard);
 		helper.succeed();
+	}
+
+	@GameTest
+	public void goldWiseSeesAPlayerInGoldArmorAsATarget(GameTestHelper helper) {
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(new Vec3(4.5, 1.0, 1.5)));
+		player.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.GOLDEN_HELMET));
+		Piglin plain = piglinWith(helper, new BlockPos(1, 1, 4));
+		Piglin wise = piglinWith(helper, new BlockPos(6, 1, 4), "test_gold_wise");
+		for (Piglin piglin : new Piglin[] {plain, wise}) {
+			sense(helper, piglin, player);
+		}
+		helper.assertFalse(plain.getBrain().hasMemoryValue(MemoryModuleType.NEAREST_TARGETABLE_PLAYER_NOT_WEARING_GOLD),
+				"a plain piglin leaves a player in gold armor alone");
+		helper.assertTrue(wise.getBrain().getMemory(MemoryModuleType.NEAREST_TARGETABLE_PLAYER_NOT_WEARING_GOLD)
+				.filter(seen -> seen == player).isPresent(), "Gold Wise sees the player in gold armor as a target");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void soulBraveDoesNotFearSoulFireOrZombifiedPiglins(GameTestHelper helper) {
+		helper.setBlock(new BlockPos(4, 1, 1), Blocks.SOUL_LANTERN);
+		ZombifiedPiglin zombified = ZombifiedPiglinEffectsTest.piglinWith(helper, new BlockPos(4, 1, 6));
+		Piglin plain = piglinWith(helper, new BlockPos(2, 1, 3));
+		Piglin brave = piglinWith(helper, new BlockPos(6, 1, 3), "test_soul_brave");
+		for (Piglin piglin : new Piglin[] {plain, brave}) {
+			sense(helper, piglin, zombified);
+		}
+		helper.assertTrue(plain.getBrain().hasMemoryValue(MemoryModuleType.NEAREST_REPELLENT), "a plain piglin fears the soul lantern");
+		helper.assertTrue(plain.getBrain().hasMemoryValue(MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED),
+				"a plain piglin sees the zombified piglin as a danger");
+		helper.assertFalse(brave.getBrain().hasMemoryValue(MemoryModuleType.NEAREST_REPELLENT), "Soul Brave does not fear soul fire");
+		helper.assertFalse(brave.getBrain().hasMemoryValue(MemoryModuleType.NEAREST_VISIBLE_ZOMBIFIED),
+				"Soul Brave does not fear the zombified piglin");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theStateTargetGoldArmorIsTrueForAPlayerInGold(GameTestHelper helper) {
+		Piglin piglin = piglinWith(helper, new BlockPos(4, 1, 4));
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		// A piglin keeps its target in its brain.
+		piglin.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, player);
+		helper.assertTrue(piglin.getTarget() == player, "the piglin targets the player");
+		helper.assertFalse(GeneCombat.test(piglin, GeneEffect.When.TARGET_GOLD_ARMOR), "no gold armor");
+		player.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.GOLDEN_BOOTS));
+		helper.assertTrue(GeneCombat.test(piglin, GeneEffect.When.TARGET_GOLD_ARMOR), "gold boots");
+		helper.succeed();
+	}
+
+	/**
+	 * Runs the piglin sensor one time. The piglin sees the entities of the list.
+	 */
+	static void sense(GameTestHelper helper, Piglin piglin, LivingEntity... seen) {
+		piglin.getBrain().setMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES,
+				new NearestVisibleLivingEntities(helper.getLevel(), piglin, java.util.List.of(seen)));
+		((SensorAccessor) new PiglinSpecificSensor()).originofspawns$doTick(helper.getLevel(), piglin);
 	}
 
 	/**

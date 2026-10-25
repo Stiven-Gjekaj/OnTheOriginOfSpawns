@@ -181,6 +181,8 @@ public final class GeneCombat {
 					&& enderman.getCarriedBlock() != null;
 			case IN_AIR -> !entity.onGround() && !entity.isInLiquid();
 			case TARGET_PLAYER -> entity instanceof Mob mob && mob.getTarget() instanceof Player;
+			case TARGET_GOLD_ARMOR -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
+					&& net.minecraft.world.entity.monster.piglin.PiglinAi.isWearingSafeArmor(player);
 		};
 	}
 

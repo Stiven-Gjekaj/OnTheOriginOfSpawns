@@ -1,5 +1,6 @@
 package io.github.stivengjekaj.originofspawns.definition;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -241,7 +242,9 @@ public sealed interface GeneEffect {
 			Map.entry("self_effect_on_hurt", SelfEffectOnHurt.CODEC),
 			Map.entry("self_effect_on_hit", SelfEffectOnHit.CODEC),
 			Map.entry("spawn_enchantment", SpawnEnchantment.CODEC),
-			Map.entry("conversion_time", ConversionTime.CODEC)
+			Map.entry("conversion_time", ConversionTime.CODEC),
+			Map.entry("gold_armor_attack", GoldArmorAttack.CODEC),
+			Map.entry("no_fear", NoFear.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -551,6 +554,10 @@ public sealed interface GeneEffect {
 		 * The target of the mob is a player.
 		 */
 		TARGET_PLAYER,
+		/**
+		 * The target of the mob is a player with at least one piece of gold armor.
+		 */
+		TARGET_GOLD_ARMOR,
 		/**
 		 * The mob is in the air: it does not stand on the ground, and it is not in water or in lava.
 		 */
@@ -3937,6 +3944,61 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "conversion_time";
+		}
+	}
+
+	/**
+	 * A piglin attacks a player in gold armor with this chance. Vanilla piglins leave a player in gold armor alone.
+	 * The piglin rolls the chance one time for each player that it sees.
+	 */
+	record GoldArmorAttack(float chance) implements GeneEffect {
+		public static final MapCodec<GoldArmorAttack> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(GoldArmorAttack::chance)
+		).apply(instance, GoldArmorAttack::new));
+
+		@Override
+		public String type() {
+			return "gold_armor_attack";
+		}
+	}
+
+	/**
+	 * Stops vanilla fears of the mob. A piglin fears soul fire and zombified piglins. A hoglin fears warped fungus,
+	 * nether portals, respawn anchors, and piglins in a group.
+	 */
+	record NoFear(List<Fear> fears) implements GeneEffect {
+		public static final MapCodec<NoFear> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Fear.CODEC.listOf().fieldOf("fears").forGetter(NoFear::fears)
+		).apply(instance, NoFear::new));
+
+		/**
+		 * A vanilla fear of a piglin or a hoglin.
+		 */
+		public enum Fear implements StringRepresentable {
+			/**
+			 * Soul fire, soul torches, soul lanterns, and soul campfires. They are the piglin repellents.
+			 */
+			SOUL_FIRE,
+			ZOMBIFIED_PIGLIN,
+			WARPED_FUNGUS,
+			NETHER_PORTAL,
+			RESPAWN_ANCHOR,
+			/**
+			 * A hoglin runs from a group of piglins that is larger than its own group.
+			 */
+			PIGLIN;
+
+			public static final Codec<Fear> CODEC = StringRepresentable.fromEnum(Fear::values);
+
+			@Override
+			public String getSerializedName() {
+				return name().toLowerCase(Locale.ROOT);
+			}
+		}
+
+		@Override
+		public String type() {
+			return "no_fear";
 		}
 	}
 }

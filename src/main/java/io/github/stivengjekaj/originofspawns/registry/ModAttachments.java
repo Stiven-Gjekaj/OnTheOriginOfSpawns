@@ -204,6 +204,13 @@ public final class ModAttachments {
 			AttachmentRegistry.create(OriginOfSpawns.id("thrown_block"));
 
 	/**
+	 * The rolls of a piglin with the gold armor attack gene: for each player that it saw, true if it attacks the
+	 * player in gold armor.
+	 */
+	public static final AttachmentType<java.util.Map<java.util.UUID, Boolean>> GOLD_ROLLS =
+			AttachmentRegistry.create(OriginOfSpawns.id("gold_rolls"));
+
+	/**
 	 * The last game time that the mob was in lava.
 	 */
 	public static final AttachmentType<Long> LAVA_TIME = AttachmentRegistry.create(OriginOfSpawns.id("lava_time"));

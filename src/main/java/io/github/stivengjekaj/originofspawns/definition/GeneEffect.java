@@ -265,7 +265,8 @@ public sealed interface GeneEffect {
 			Map.entry("hard_fireball", HardFireball.CODEC),
 			Map.entry("float_height", FloatHeight.CODEC),
 			Map.entry("return_ward", ReturnWard.CODEC),
-			Map.entry("burst_count", BurstCount.CODEC)
+			Map.entry("burst_count", BurstCount.CODEC),
+			Map.entry("burst_fan", BurstFan.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4373,6 +4374,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "burst_count";
+		}
+	}
+
+	/**
+	 * A blaze shoots each burst in a fan. The first fireball of a burst goes to one side, the last one to the other
+	 * side, and the angle is the full width of the fan. The vanilla spread of each fireball stays.
+	 */
+	record BurstFan(float angle) implements GeneEffect {
+		public static final MapCodec<BurstFan> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 180.0F).optionalFieldOf("angle", 30.0F).forGetter(BurstFan::angle)
+		).apply(instance, BurstFan::new));
+
+		@Override
+		public String type() {
+			return "burst_fan";
 		}
 	}
 }

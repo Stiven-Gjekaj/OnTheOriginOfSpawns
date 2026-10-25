@@ -881,6 +881,23 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Turns the fireball with the index in the burst of the blaze to its place in the burst fan of the blaze.
+	 */
+	public static void turnInBurstFan(Mob blaze, SmallFireball fireball, int index) {
+		int count = 3 + burstExtra(blaze);
+		if (count < 2) {
+			return;
+		}
+		for (GeneEffect effect : GeneEffects.of(blaze).toList()) {
+			if (effect instanceof GeneEffect.BurstFan fan) {
+				float angle = ((float) index / (count - 1) - 0.5F) * fan.angle() * Mth.DEG_TO_RAD;
+				fireball.setDeltaMovement(fireball.getDeltaMovement().yRot(angle));
+				return;
+			}
+		}
+	}
+
+	/**
 	 * Returns the number of extra fireballs in each burst of a blaze. A burst has at least one fireball.
 	 */
 	public static int burstExtra(Mob blaze) {

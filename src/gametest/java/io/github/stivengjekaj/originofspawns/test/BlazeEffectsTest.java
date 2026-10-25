@@ -58,12 +58,44 @@ public class BlazeEffectsTest {
 		});
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void aPlainBurstStaysNarrow(GameTestHelper helper) {
+		// The vanilla spread turns each fireball at most about 27 degrees at this distance.
+		Shots shots = shooter(helper);
+		helper.succeedWhen(() -> {
+			helper.assertTrue(shots.projectiles.size() >= 3, "the blaze shoots a burst");
+			double width = burstWidth(shots);
+			helper.assertTrue(width < 60.0, "the plain burst is narrow, not " + width + " degrees");
+		});
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void fanShotShootsTheBurstInAFan(GameTestHelper helper) {
+		// The test fan is 170 degrees wide, so the vanilla spread cannot hide it.
+		Shots shots = shooter(helper, "test_fan_burst");
+		helper.succeedWhen(() -> {
+			helper.assertTrue(shots.projectiles.size() >= 3, "the blaze shoots a burst");
+			double width = burstWidth(shots);
+			helper.assertTrue(width > 100.0, "the burst is a wide fan, not " + width + " degrees");
+		});
+	}
+
+	/**
+	 * Returns the angle in degrees on the ground between the first and the third fireball.
+	 */
+	static double burstWidth(Shots shots) {
+		Vec3 first = shots.motions.get(0).multiply(1.0, 0.0, 1.0).normalize();
+		Vec3 last = shots.motions.get(2).multiply(1.0, 0.0, 1.0).normalize();
+		return Math.toDegrees(Math.acos(Math.max(-1.0, Math.min(1.0, first.dot(last)))));
+	}
+
 	/**
 	 * The shots of a test blaze: the game time and the projectiles of each fireball.
 	 */
 	static final class Shots {
 		final java.util.List<Long> times = new java.util.ArrayList<>();
 		final java.util.List<Projectile> projectiles = new java.util.ArrayList<>();
+		final java.util.List<Vec3> motions = new java.util.ArrayList<>();
 
 		/**
 		 * Returns the times of the shots, in groups. A group ends at a gap of more than 20 ticks.
@@ -101,6 +133,7 @@ public class BlazeEffectsTest {
 					projectile -> projectile.getOwner() == blaze && projectile.isAlive())) {
 				shots.times.add(helper.getLevel().getGameTime());
 				shots.projectiles.add(shot);
+				shots.motions.add(shot.getDeltaMovement());
 				shot.discard();
 			}
 		});

@@ -54,7 +54,8 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 			EntityTypes.PARCHED, EntityTypes.CREEPER, EntityTypes.SPIDER, EntityTypes.CAVE_SPIDER, EntityTypes.PILLAGER,
 			EntityTypes.VINDICATOR, EntityTypes.EVOKER, EntityTypes.WITCH,
 			EntityTypes.ENDERMAN, EntityTypes.ENDERMITE, EntityTypes.SLIME,
-			EntityTypes.MAGMA_CUBE);
+			EntityTypes.MAGMA_CUBE, EntityTypes.ZOMBIFIED_PIGLIN, EntityTypes.PIGLIN, EntityTypes.PIGLIN_BRUTE,
+			EntityTypes.HOGLIN, EntityTypes.ZOGLIN);
 	private static final int SHOT_ID = -424242;
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 960;
@@ -186,12 +187,15 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 		client.level.removeEntity(SHOT_ID, Entity.RemovalReason.DISCARDED);
 		Mob mob = type.create(client.level, EntitySpawnReason.COMMAND);
 		mob.setId(SHOT_ID);
-		// The natural weapons: the stone sword of the wither skeleton, the bow of the other skeleton species, and the
-		// crossbow of the pillager. The vindicator holds no axe, because the raised axe covers its face.
+		// The natural weapons: the stone sword of the wither skeleton, the bow of the other skeleton species, the crossbow
+		// of the pillager, the gold sword of the piglin, and the gold axe of the brute. The vindicator and the zombified
+		// piglin hold nothing, because their raised weapon covers the face.
 		mob.setItemSlot(EquipmentSlot.MAINHAND, mob instanceof net.minecraft.world.entity.monster.skeleton.WitherSkeleton
 				? new ItemStack(Items.STONE_SWORD)
 				: mob instanceof net.minecraft.world.entity.monster.skeleton.AbstractSkeleton ? new ItemStack(Items.BOW)
 				: mob.getType() == EntityTypes.PILLAGER ? new ItemStack(Items.CROSSBOW)
+				: mob.getType() == EntityTypes.PIGLIN ? new ItemStack(Items.GOLDEN_SWORD)
+				: mob.getType() == EntityTypes.PIGLIN_BRUTE ? new ItemStack(Items.GOLDEN_AXE)
 				: ItemStack.EMPTY);
 		// A vindicator crosses its arms until it attacks. The attack pose shows the marks and the models on the arms.
 		if (mob.getType() == EntityTypes.VINDICATOR) {
@@ -205,8 +209,9 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 		if (mob.getType() == EntityTypes.EVOKER) {
 			castSpell(mob);
 		}
-		// A tall mob, such as the enderman, stands farther away, so that the top of its head is in the picture.
-		double depth = mob.getBbHeight() > 2.2F ? 5.5 : 3.5;
+		// A tall or a wide mob, such as the enderman or the hoglin, stands farther away, so that all of it is in the
+		// picture.
+		double depth = mob.getBbHeight() > 2.2F || mob.getBbWidth() > 1.2F ? 5.5 : 3.5;
 		mob.snapTo(base.getX() + 0.5, base.getY(), base.getZ() + depth, yaw, 0.0F);
 		mob.setYHeadRot(yaw);
 		mob.yHeadRotO = yaw;

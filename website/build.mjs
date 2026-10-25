@@ -332,8 +332,9 @@ for (const sp of speciesIds) {
   const limits = Object.fromEntries(limitTable.map((r) => [r.Gene, r["In the mod now"]]));
 
   // The state of the species comes from the first milestone that names it.
-  // A species id like wither_skeleton is "wither skeleton" in the text.
-  const plural = new RegExp(`\\b${sp.replace(/_/g, " ")}s?\\b`, "i");
+  // A species id like wither_skeleton is "wither skeleton" in the text. A
+  // line break can come between the two words.
+  const plural = new RegExp(`\\b${sp.replace(/_/g, "\\s+")}s?\\b`, "i");
   // A milestone that names the species in its title comes first. Else the
   // first milestone that names it in its text, for example in a list of mobs.
   const milestone = roadmap.find((r) => r.items.length && plural.test(r.title))

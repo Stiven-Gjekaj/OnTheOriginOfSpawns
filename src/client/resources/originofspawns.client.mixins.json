@@ -4,6 +4,7 @@
 	"compatibilityLevel": "JAVA_25",
 	"client": [
 		"AbstractCubeMobRendererMixin",
+		"AbstractHoglinRendererMixin",
 		"AbstractSkeletonRendererMixin",
 		"AbstractZombieRendererMixin",
 		"BoggedTextureMixin",
@@ -14,9 +15,11 @@
 		"EndermiteRendererMixin",
 		"EntityRenderDispatcherMixin",
 		"EvokerRendererMixin",
+		"HoglinRendererMixin",
 		"IllagerRendererMixin",
 		"LivingEntityRendererMixin",
 		"MagmaCubeRendererMixin",
+		"PiglinRendererMixin",
 		"PillagerRendererMixin",
 		"SkeletonClothingLayerMixin",
 		"SkeletonTextureMixin",
@@ -25,7 +28,9 @@
 		"SpiderRendererMixin",
 		"VindicatorRendererMixin",
 		"WitchRendererMixin",
-		"ZombieVariantTextureMixin"
+		"ZoglinRendererMixin",
+		"ZombieVariantTextureMixin",
+		"ZombifiedPiglinRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

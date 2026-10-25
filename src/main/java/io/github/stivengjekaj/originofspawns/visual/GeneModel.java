@@ -101,7 +101,21 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		CUBE5,
 		CUBE6,
 		CUBE7,
-		INSIDE_CUBE;
+		INSIDE_CUBE,
+		/**
+		 * The ears of a piglin or a hoglin. They are parts of the head, so they move with the head.
+		 */
+		RIGHT_EAR,
+		LEFT_EAR,
+		/**
+		 * The tusks of a hoglin. They are parts of the head.
+		 */
+		RIGHT_HORN,
+		LEFT_HORN,
+		/**
+		 * The mane of a hoglin. It is a part of the body.
+		 */
+		MANE;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

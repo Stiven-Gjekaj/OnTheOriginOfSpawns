@@ -98,8 +98,8 @@ public class GeneModelLayer<S extends LivingEntityRenderState, M extends EntityM
 
 	/**
 	 * Returns the parts from the root to the bone, or an empty list if the model has no such part. Most bones are a
-	 * child of the root. The hat and the nose of the witch are children of the head, so their path goes through the
-	 * head.
+	 * child of the root. The hat and the nose of the witch and the ears of a piglin are children of the head, so their
+	 * path goes through the head. The mane of a hoglin is a child of the body.
 	 */
 	private List<ModelPart> bonePath(GeneModel.Bone bone) {
 		ModelPart part = bone(bone);
@@ -108,9 +108,12 @@ public class GeneModelLayer<S extends LivingEntityRenderState, M extends EntityM
 		}
 		ModelPart root = getParentModel().root();
 		String name = bone.getSerializedName();
-		if (root.hasChild("head") && root.getChild("head").hasChild(name)) {
-			ModelPart head = root.getChild("head");
-			return List.of(head, head.getChild(name));
+		// A bone such as the ear of a piglin is a child of the head, and the mane of a hoglin is a child of the body.
+		for (String parent : List.of("head", "body")) {
+			if (root.hasChild(parent) && root.getChild(parent).hasChild(name)) {
+				ModelPart owner = root.getChild(parent);
+				return List.of(owner, owner.getChild(name));
+			}
 		}
 		return List.of();
 	}

@@ -115,6 +115,18 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			checkSlimeGelUsesTheGeneTexture(context);
 			checkMarkAndModel(context, singleplayer, EntityTypes.MAGMA_CUBE, "test_magma_cube_mark",
 					Identifier.withDefaultNamespace("textures/entity/slime/magmacube.png"), "magma_cube");
+			// The piglin gene models sit on the right ear, a part of the head. The hoglin gene models sit on the mane,
+			// a part of the body.
+			checkMarkAndModel(context, singleplayer, EntityTypes.PIGLIN, "test_piglin_mark",
+					Identifier.withDefaultNamespace("textures/entity/piglin/piglin.png"), "piglin");
+			checkMarkAndModel(context, singleplayer, EntityTypes.PIGLIN_BRUTE, "test_brute_mark",
+					Identifier.withDefaultNamespace("textures/entity/piglin/piglin_brute.png"), "piglin");
+			checkMarkAndModel(context, singleplayer, EntityTypes.ZOMBIFIED_PIGLIN, "test_zombified_piglin_mark",
+					Identifier.withDefaultNamespace("textures/entity/piglin/zombified_piglin.png"), "piglin");
+			checkMarkAndModel(context, singleplayer, EntityTypes.HOGLIN, "test_hoglin_mark",
+					Identifier.withDefaultNamespace("textures/entity/hoglin/hoglin.png"), "hoglin");
+			checkMarkAndModel(context, singleplayer, EntityTypes.ZOGLIN, "test_zoglin_mark",
+					Identifier.withDefaultNamespace("textures/entity/hoglin/zoglin.png"), "hoglin");
 			checkArmModelOnlyWhileTheArmsAreApart(context, singleplayer);
 			checkEndermanArmModelFollowsTheCarryPose(context, singleplayer);
 			checkEvokerArmModelOnlyWhileItCasts(context, singleplayer);

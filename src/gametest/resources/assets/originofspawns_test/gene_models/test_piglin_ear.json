@@ -1,0 +1,8 @@
+{
+	"texture": "originofspawns:textures/entity/bone_leg.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{ "bone": "right_ear", "uv": [0, 0], "from": [-1, -1, -1], "size": [2, 2, 2] }
+	]
+}

@@ -291,6 +291,20 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void eyeOfStormShootsAtEachPlayerNear(GameTestHelper helper) {
+		Breeze breeze = breezeWith(helper, new BlockPos(1, 1, 1));
+		var first = CreeperEffectsTest.survivalPlayer(helper).player();
+		first.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(5, 1, 1))));
+		var second = CreeperEffectsTest.survivalPlayer(helper).player();
+		second.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(1, 1, 5))));
+		var charge = new io.github.stivengjekaj.originofspawns.definition.GeneEffect.ChargeEachPlayer(5.0F, 10.0F);
+		helper.assertValueEqual(GeneBehaviors.chargeEachPlayer(breeze, helper.getLevel(), charge), 2, "one charge for each player");
+		helper.assertValueEqual(GeneBehaviors.chargeEachPlayer(breeze, helper.getLevel(), charge), 0, "the next waits 10 seconds");
+		helper.getLevel().getEntitiesOfClass(BreezeWindCharge.class, helper.getBounds().inflate(4.0)).forEach(BreezeWindCharge::discard);
+		helper.succeed();
+	}
+
 	/**
 	 * Makes the breeze jump to a place 4 blocks away at the end of its inhale, and returns the speed of the jump. The
 	 * random source has a fixed seed, so each breeze picks the same angle.

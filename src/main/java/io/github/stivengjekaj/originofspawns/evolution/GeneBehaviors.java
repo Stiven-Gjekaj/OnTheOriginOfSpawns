@@ -500,6 +500,7 @@ public final class GeneBehaviors {
 				case GeneEffect.FireFeed feed -> fireFeed(mob, feed);
 				case GeneEffect.Dive dive -> dive(mob, dive);
 				case GeneEffect.BoilOff boil -> boilOff(mob, level, boil);
+				case GeneEffect.ChargeEachPlayer charge -> chargeEachPlayer(mob, level, charge);
 				case GeneEffect.Hex hex -> hex(mob, level, hex);
 				case GeneEffect.HealThrow heal -> healThrow(mob, level, heal);
 				case GeneEffect.EatItems eat -> eatItems(mob, level, eat);
@@ -1053,6 +1054,15 @@ public final class GeneBehaviors {
 			return false;
 		}
 		breeze.setAttached(ModAttachments.JUMP_SHOT_DONE, true);
+		shootWindCharge(breeze, level, target);
+		return true;
+	}
+
+	/**
+	 * Makes the breeze shoot a wind charge at the target, as its vanilla shot does, with its aim and speed genes.
+	 */
+	private static void shootWindCharge(net.minecraft.world.entity.monster.breeze.Breeze breeze, ServerLevel level,
+			LivingEntity target) {
 		var charge = new net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.BreezeWindCharge(breeze, level);
 		double dx = target.getX() - breeze.getX();
 		double dy = target.getY(0.3) - breeze.getFiringYPosition();
@@ -1060,7 +1070,27 @@ public final class GeneBehaviors {
 		net.minecraft.world.entity.projectile.Projectile.spawnProjectileUsingShoot(charge, level, ItemStack.EMPTY, dx, dy, dz,
 				0.7F, (5 - level.getDifficulty().getId() * 4) * arrowSpreadMultiplier(breeze));
 		fireballSpeed(breeze, charge);
-		return true;
+	}
+
+	/**
+	 * Makes a breeze shoot a wind charge at each player in the radius that it sees, if the cooldown is over.
+	 *
+	 * @return the number of wind charges
+	 */
+	public static int chargeEachPlayer(Mob mob, ServerLevel level, GeneEffect.ChargeEachPlayer charge) {
+		if (!(mob instanceof net.minecraft.world.entity.monster.breeze.Breeze breeze)
+				|| !GeneCombat.ready(mob, charge, charge.cooldownSeconds())) {
+			return 0;
+		}
+		var players = level.getEntitiesOfClass(Player.class, mob.getBoundingBox().inflate(charge.radius()),
+				player -> player.isAlive() && !player.isSpectator() && !player.isCreative()
+						&& player.distanceTo(mob) <= charge.radius() && mob.hasLineOfSight(player));
+		if (players.isEmpty()) {
+			return 0;
+		}
+		GeneCombat.startCooldown(mob, charge);
+		players.forEach(player -> shootWindCharge(breeze, level, player));
+		return players.size();
 	}
 
 	/**

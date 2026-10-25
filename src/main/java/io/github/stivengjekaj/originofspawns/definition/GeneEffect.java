@@ -285,7 +285,8 @@ public sealed interface GeneEffect {
 			Map.entry("wind_lift", WindLift.CODEC),
 			Map.entry("wind_charge_damage", WindChargeDamage.CODEC),
 			Map.entry("jump_shot", JumpShot.CODEC),
-			Map.entry("spin_up", SpinUp.CODEC)
+			Map.entry("spin_up", SpinUp.CODEC),
+			Map.entry("charge_each_player", ChargeEachPlayer.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4739,6 +4740,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "spin_up";
+		}
+	}
+
+	/**
+	 * One time in each cooldown, a breeze shoots a wind charge at each player in the radius that it sees. Players in
+	 * creative mode and spectators do not count.
+	 */
+	record ChargeEachPlayer(float radius, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<ChargeEachPlayer> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("radius", 16.0F).forGetter(ChargeEachPlayer::radius),
+				Codec.floatRange(1.0F, 600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(ChargeEachPlayer::cooldownSeconds)
+		).apply(instance, ChargeEachPlayer::new));
+
+		@Override
+		public String type() {
+			return "charge_each_player";
 		}
 	}
 }

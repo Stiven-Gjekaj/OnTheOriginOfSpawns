@@ -289,7 +289,8 @@ public sealed interface GeneEffect {
 			Map.entry("charge_each_player", ChargeEachPlayer.CODEC),
 			Map.entry("lightning_call", LightningCall.CODEC),
 			Map.entry("escape_jump", EscapeJump.CODEC),
-			Map.entry("fireball_fire_spread", FireballFireSpread.CODEC)
+			Map.entry("fireball_fire_spread", FireballFireSpread.CODEC),
+			Map.entry("swim_hop", SwimHop.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4818,6 +4819,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "fireball_fire_spread";
+		}
+	}
+
+	/**
+	 * While a breeze is in a long jump in water or in lava, the liquid does not slow it. The jump moves as in air, so
+	 * it has its full distance and height. The rest after the jump is the same as on land.
+	 */
+	record SwimHop() implements GeneEffect {
+		public static final MapCodec<SwimHop> CODEC = MapCodec.unit(new SwimHop());
+
+		@Override
+		public String type() {
+			return "swim_hop";
 		}
 	}
 }

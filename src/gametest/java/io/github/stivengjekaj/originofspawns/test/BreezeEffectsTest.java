@@ -386,6 +386,33 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void swimHopJumpsInWaterAtFullSpeed(GameTestHelper helper) {
+		double plain = jumpStepInWater(helper, breezeWith(helper, new BlockPos(1, 1, 1)), new BlockPos(1, 1, 1));
+		double hop = jumpStepInWater(helper, breezeWith(helper, new BlockPos(5, 1, 5), "test_swim_hop"), new BlockPos(5, 1, 5));
+		helper.assertTrue(plain < 0.45, "the water slows a plain jump, to " + plain);
+		helper.assertTrue(Math.abs(hop - 0.5) < 1.0E-6, "the jump keeps its full speed, not " + hop);
+		helper.succeed();
+	}
+
+	/**
+	 * Puts the breeze in water in a long jump at 0.5 blocks a tick along the ground, moves it one tick, and returns its
+	 * new speed along the ground.
+	 */
+	static double jumpStepInWater(GameTestHelper helper, Breeze breeze, BlockPos pos) {
+		helper.setBlock(pos, net.minecraft.world.level.block.Blocks.WATER);
+		helper.setBlock(pos.above(), net.minecraft.world.level.block.Blocks.WATER);
+		breeze.setPose(net.minecraft.world.entity.Pose.LONG_JUMPING);
+		breeze.setDiscardFriction(true);
+		breeze.setDeltaMovement(0.5, 0.0, 0.0);
+		// The base tick finds the water around the breeze.
+		breeze.baseTick();
+		breeze.setDeltaMovement(0.5, 0.0, 0.0);
+		helper.assertTrue(breeze.isInWater(), "the breeze is in water");
+		breeze.travel(Vec3.ZERO);
+		return breeze.getDeltaMovement().horizontalDistance();
+	}
+
 	/**
 	 * Makes the breeze jump to a place 4 blocks away at the end of its inhale, and returns the speed of the jump. The
 	 * random source has a fixed seed, so each breeze picks the same angle.

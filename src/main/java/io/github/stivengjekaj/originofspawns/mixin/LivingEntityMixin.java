@@ -195,4 +195,17 @@ public abstract class LivingEntityMixin {
 			}
 		}
 	}
+
+	/**
+	 * A breeze with a swim hop moves as in air while it is in a long jump, also in a liquid.
+	 */
+	@com.llamalad7.mixinextras.injector.ModifyExpressionValue(method = "travel", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/LivingEntity;shouldTravelInFluid(Lnet/minecraft/world/level/material/FluidState;)Z"))
+	private boolean originofspawns$swimHop(boolean inFluid) {
+		LivingEntity self = (LivingEntity) (Object) this;
+		return inFluid && !(self instanceof net.minecraft.world.entity.monster.breeze.Breeze
+				&& self.getPose() == net.minecraft.world.entity.Pose.LONG_JUMPING
+				&& io.github.stivengjekaj.originofspawns.evolution.GeneEffects.of(self)
+						.anyMatch(io.github.stivengjekaj.originofspawns.definition.GeneEffect.SwimHop.class::isInstance));
+	}
 }

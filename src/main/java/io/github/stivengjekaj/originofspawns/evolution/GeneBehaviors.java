@@ -882,6 +882,22 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Runs the effects of the genes of the mob where its small fireball hits: the blast.
+	 */
+	public static void smallFireballHit(Mob mob, SmallFireball fireball, ServerLevel level) {
+		float power = 0.0F;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.FireballBlast blast) {
+				power = Math.max(power, blast.power());
+			}
+		}
+		if (power > 0.0F) {
+			level.explode(fireball, fireball.getX(), fireball.getY(), fireball.getZ(), power, false,
+					net.minecraft.world.level.Level.ExplosionInteraction.NONE);
+		}
+	}
+
+	/**
 	 * Returns the seconds of fire of a small fireball of the mob, after its fireball fire time genes. The fire is not
 	 * shorter than 0 seconds.
 	 */

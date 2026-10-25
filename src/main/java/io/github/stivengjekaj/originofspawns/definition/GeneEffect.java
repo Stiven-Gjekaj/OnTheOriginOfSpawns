@@ -268,7 +268,8 @@ public sealed interface GeneEffect {
 			Map.entry("burst_count", BurstCount.CODEC),
 			Map.entry("burst_fan", BurstFan.CODEC),
 			Map.entry("fireball_speed", FireballSpeed.CODEC),
-			Map.entry("fireball_fire_time", FireballFireTime.CODEC)
+			Map.entry("fireball_fire_time", FireballFireTime.CODEC),
+			Map.entry("fireball_blast", FireballBlast.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4421,6 +4422,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "fireball_fire_time";
+		}
+	}
+
+	/**
+	 * Each small fireball of the mob makes a blast of this power where it hits. The blast breaks no blocks and starts
+	 * no fire. The largest power counts.
+	 */
+	record FireballBlast(float power) implements GeneEffect {
+		public static final MapCodec<FireballBlast> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 4.0F).optionalFieldOf("power", 0.5F).forGetter(FireballBlast::power)
+		).apply(instance, FireballBlast::new));
+
+		@Override
+		public String type() {
+			return "fireball_blast";
 		}
 	}
 }

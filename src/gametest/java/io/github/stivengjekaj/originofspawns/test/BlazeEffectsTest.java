@@ -119,6 +119,33 @@ public class BlazeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void blastEmberMakesASmallBlastThatBreaksNoBlocks(GameTestHelper helper) {
+		BlockPos stone = new BlockPos(3, 1, 3);
+		helper.setBlock(stone, net.minecraft.world.level.block.Blocks.STONE);
+		Pig plainPig = CreeperEffectsTest.pigAt(helper, stone.above());
+		hitBlockWithFireball(helper, blazeWith(helper, new BlockPos(1, 1, 1)), stone);
+		helper.assertValueEqual(plainPig.getHealth(), plainPig.getMaxHealth(), "a plain fireball makes no blast");
+		plainPig.discard();
+		Pig pig = CreeperEffectsTest.pigAt(helper, stone.above());
+		hitBlockWithFireball(helper, blazeWith(helper, new BlockPos(1, 1, 1), "test_blast_ember"), stone);
+		helper.assertTrue(pig.getHealth() < pig.getMaxHealth(), "the blast hurts the pig next to the hit");
+		helper.assertBlockPresent(net.minecraft.world.level.block.Blocks.STONE, stone);
+		helper.succeed();
+	}
+
+	/**
+	 * Makes a small fireball of the blaze hit the top of the block.
+	 */
+	static void hitBlockWithFireball(GameTestHelper helper, Blaze blaze, BlockPos block) {
+		SmallFireball fireball = new SmallFireball(helper.getLevel(), blaze, new Vec3(0.0, -1.0, 0.0));
+		Vec3 top = helper.absoluteVec(Vec3.atBottomCenterOf(block.above()));
+		fireball.setPos(top);
+		helper.getLevel().addFreshEntity(fireball);
+		((ProjectileAccessor) fireball).originofspawns$onHit(new net.minecraft.world.phys.BlockHitResult(top,
+				net.minecraft.core.Direction.UP, helper.absolutePos(block), false));
+	}
+
 	/**
 	 * Makes a small fireball of the blaze hit the target directly.
 	 */

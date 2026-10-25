@@ -97,7 +97,7 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Hard Gust | Guster | `melee` | Its wind charges push two times farther | 10% less maximum health | Head: a wide, open mouth |
-| Lift Gust | Guster | `unreached` | Its wind charges throw the target up 4 blocks | 10% less maximum health | Rods: pale, curled rods |
+| Lift Gust | Guster | `unreached` | Its wind charges throw the target up 4 blocks | 10% less maximum health | Rods: pale wind curls round the rods. This changes the model |
 | Shield Gust | Guster | `shield` | Its wind charges stop a shield for 3 seconds | 10% less movement speed | Head: a sharp, blue brow |
 | Golem Gust | Guster | `golem` | Its wind charges push golems two times farther | 10% less maximum health | Wind: gray, heavy wind |
 | Disarm Gust | Guster | `spotted` | Its wind charges make a player drop the item in the off hand, one time each 20 seconds | 10% less maximum health | Head: narrow, white eyes |

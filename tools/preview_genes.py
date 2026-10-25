@@ -75,6 +75,9 @@ PHANTOM_EYES_PATH = "assets/minecraft/textures/entity/phantom/phantom_eyes.png"
 GHAST_PATH = "assets/minecraft/textures/entity/ghast/ghast.png"
 GHAST_SHOOTING_PATH = "assets/minecraft/textures/entity/ghast/ghast_shooting.png"
 BLAZE_PATH = "assets/minecraft/textures/entity/blaze/blaze.png"
+BREEZE_PATH = "assets/minecraft/textures/entity/breeze/breeze.png"
+BREEZE_WIND_PATH = "assets/minecraft/textures/entity/breeze/breeze_wind.png"
+BREEZE_EYES_PATH = "assets/minecraft/textures/entity/breeze/breeze_eyes.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -550,6 +553,16 @@ BLAZE_FAMILIES = {
 }
 
 
+# The families of the breeze, from design/species/breeze.md.
+BREEZE_FAMILIES = {
+    "guster": ["hard_gust", "lift_gust", "shield_gust", "golem_gust", "disarm_gust", "wide_gust"],
+    "deflector": ["wind_mirror", "gale_guard", "blast_calm", "fire_shear", "steel_core", "last_draft"],
+    "bounder": ["sky_hop", "fast_spring", "crash_down", "side_hop", "swim_hop", "wind_ride"],
+    "whirler": ["rapid_wind", "twin_charge", "spin_up", "true_aim", "fast_charge", "eye_of_storm"],
+    "tempest": ["cut_wind", "chill_wind", "dizzy_wind", "choke_wind", "thunder_call", "storm_gale"],
+}
+
+
 ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
     "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
     "fester": ["nether_rot", "stench"], "bladesman": ["riposte", "keen_edge"], "chaser": ["scent_tracker", "vault"],
@@ -588,6 +601,11 @@ BLAZE_EXTRA = next_family_extra(BLAZE_FAMILIES, {
     "smolderer": ["rod_wall", "fire_trail"], "hoverer": ["quick_wings", "sky_guard"],
     "steamhide": ["steam_shell", "hot_core"],
 }, "steamhide")
+BREEZE_EXTRA = next_family_extra(BREEZE_FAMILIES, {
+    "guster": ["golem_gust", "wide_gust"], "deflector": ["gale_guard", "wind_mirror"],
+    "bounder": ["sky_hop", "swim_hop"], "whirler": ["twin_charge", "spin_up"],
+    "tempest": ["storm_gale", "dizzy_wind"],
+}, "tempest")
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -984,6 +1002,36 @@ BLAZE_PIVOTS.update({f"part{i}": blaze_rod(i) for i in range(12)})
 BLAZE_CUBES = [("head", (0, 0), (-4, -4, -4), (8, 8, 8), False)] + [
     (f"part{i}", (0, 16), (0, 0, 0), (2, 8, 2), False) for i in range(12)]
 
+
+# The breeze, from BreezeModel. The body model (32x32) has the body, the rods
+# with three rods in it, and the head, with a band of wind under the eyes.
+# The wind model (128x128) has wind_body, wind_bottom, wind_mid, and
+# wind_top, each a child of the one before it, with see-through shells of
+# wind.
+BREEZE_RODS = (0, 8, 0)
+BREEZE_PIVOTS = {
+    "body": (0, 0, 0), "rods": BREEZE_RODS, "head": (0, 4, 0),
+    "rod_1": child_pivot(BREEZE_RODS, (2.5981, -3, 1.5), (math.degrees(-2.7489), math.degrees(-1.0472),
+                                                          math.degrees(3.1416))),
+    "rod_2": child_pivot(BREEZE_RODS, (-2.5981, -3, 1.5), (math.degrees(-2.7489), math.degrees(1.0472),
+                                                           math.degrees(3.1416))),
+    "rod_3": child_pivot(BREEZE_RODS, (0, -3, -3), (math.degrees(0.3927), 0, 0)),
+    "wind_body": (0, 0, 0), "wind_bottom": (0, 24, 0), "wind_mid": (0, 17, 0), "wind_top": (0, 11, 0),
+}
+BREEZE_CUBES = [
+    ("head", (0, 0), (-4, -8, -4), (8, 8, 8), False),
+    ("head", (4, 24), (-5, -5, -4.2), (10, 3, 4), False),
+] + [(f"rod_{i}", (0, 17), (-1, 0, -3), (2, 8, 2), False) for i in (1, 2, 3)]
+BREEZE_WIND = [
+    ("wind_bottom", (1, 83), (-2.5, -7, -2.5), (5, 7, 5), False),
+    ("wind_mid", (74, 28), (-6, -6, -6), (12, 6, 12), False),
+    ("wind_mid", (78, 32), (-4, -6, -4), (8, 6, 8), False),
+    ("wind_mid", (49, 71), (-2.5, -6, -2.5), (5, 6, 5), False),
+    ("wind_top", (0, 0), (-9, -8, -9), (18, 8, 18), False),
+    ("wind_top", (6, 6), (-6, -8, -6), (12, 8, 12), False),
+    ("wind_top", (105, 57), (-2.5, -8, -2.5), (5, 8, 5), False),
+]
+
 # Each Nether mob: the cubes, the pivots, the weapon, the wraps, the frame of
 # the sheets (VIEW_X, VIEW_Y, VIEW_W, VIEW_H), the frame of the close-ups,
 # and whether the sheets look down on it.
@@ -1001,11 +1049,12 @@ NETHER_LOOKS = {
     "ghast": (GHAST_CUBES, GHAST_PIVOTS, None, [], (14, -6, 28, 34), ((30, 36), (0, 23)), False),
     "ghast_shooting": (GHAST_CUBES, GHAST_PIVOTS, None, [], (14, -6, 28, 34), ((30, 36), (0, 23)), False),
     "blaze": (BLAZE_CUBES, BLAZE_PIVOTS, None, [], (13, 8, 26, 32), ((28, 34), (0, 8)), False),
+    "breeze": (BREEZE_CUBES, BREEZE_PIVOTS, None, [], (12, 7, 24, 33), ((26, 34), (0, 9)), False),
 }
 # The flyers are seen from below in the game, so their sheets look at them
 # from above, from below, and from the side.
 FLYER_VIEWS = [(-30, 35), (-30, -35), (-90, 5)]
-EYES_PATHS = {"phantom": PHANTOM_EYES_PATH}
+EYES_PATHS = {"phantom": PHANTOM_EYES_PATH, "breeze": BREEZE_EYES_PATH}
 
 def grow(cube, k):
     """Return the cube k times larger, with the same texels. The previews draw the small endermite this way."""
@@ -1352,7 +1401,7 @@ def bake_layer(out, gene, layer, baby=False):
     A layer with the target "outer" goes on the stray cloth, which has the
     zombie layout. It does not use the region map.
     """
-    if layer.get("target") == "outer":
+    if layer.get("target") in ("outer", "wind"):
         seed = identifier_hash("originofspawns:" + gene)
         for y in range(out.height):
             for x in range(out.width):
@@ -1430,6 +1479,12 @@ def cubes_of(tex, genes, baby=False):
     cubes += [{"bone": "head", "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": False, "texture": tex,
                "scale": 1.0, "pivot": p, "rotation": rot} for uv, f, s, p, rot in MOB["extra"]]
     cubes += MOB["held"]
+    if MOB.get("wind"):
+        # The wind of the breeze: a second texture, with only the layers with
+        # the target "wind", on see-through cubes.
+        wind_tex = zombie(find_zombie_texture(MOB["wind"][0]), genes, target="wind")
+        cubes += [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": m, "texture": wind_tex,
+                   "scale": 1.0, "translucent": True} for b, uv, f, s, m in MOB["wind"][1]]
     cubes += [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.0, "mirror": m, "texture": tex,
                "scale": 1.0, "translucent": True} for b, uv, f, s, m in MOB["gel"]]
     # The glowing eyes of the spider draw over the marks, with full light.
@@ -1481,7 +1536,7 @@ def label(gene):
     return gene.replace("_", " ").title()
 
 
-def zombie(tex, genes, baby=False, outer=False):
+def zombie(tex, genes, baby=False, outer=False, target=None):
     """Return the baked texture of a zombie with the genes, like TextureBaker.bakeAll.
 
     The layers of all the genes go on in the order of their "order" field. The
@@ -1492,15 +1547,24 @@ def zombie(tex, genes, baby=False, outer=False):
     stray. With outer, the bake is for the outer layer: on the stray, only
     the layers with the target "outer" go on it, and on the drowned, all the
     layers go on it.
+
+    With a target, as "wind" for the wind of the breeze, only the layers with
+    that target go on, on the whole texture.
     """
     steps = []
     for gene in sorted(genes):
         vis = visual(gene)
         if vis is not None:
             for layer in vis.get("layers", []):
-                on_outer = layer.get("target") == "outer"
-                if on_outer != (outer and MOB["outer_target"]):
+                if target is not None:
+                    if layer.get("target") != target:
+                        continue
+                elif layer.get("target") == "wind":
                     continue
+                else:
+                    on_outer = layer.get("target") == "outer"
+                    if on_outer != (outer and MOB["outer_target"]):
+                        continue
                 steps.append((layer.get("order", 0), gene, layer))
     steps.sort(key=lambda step: step[0])
     out = tex.copy()
@@ -1577,6 +1641,7 @@ SPECIES = {
     "ghast": (GHAST_PATH, None, GHAST_FAMILIES, GHAST_EXTRA, []),
     "ghast_shooting": (GHAST_SHOOTING_PATH, None, GHAST_FAMILIES, GHAST_EXTRA, []),
     "blaze": (BLAZE_PATH, None, BLAZE_FAMILIES, BLAZE_EXTRA, []),
+    "breeze": (BREEZE_PATH, None, BREEZE_FAMILIES, BREEZE_EXTRA, []),
 }
 
 
@@ -1668,6 +1733,7 @@ def set_mob(species):
     # The wither skeleton holds a stone sword. The previews draw the body
     # at 1 times its size, so the sword is at that size too.
     MOB["tex_scale"] = 1.0
+    MOB["wind"] = None
     MOB["held"] = (stone_sword() if species == "wither_skeleton"
                    else carried_block() if species == "enderman_carrying" else [])
     look = NETHER_LOOKS.get(species)
@@ -1678,12 +1744,13 @@ def set_mob(species):
         VIEW_X, VIEW_Y, VIEW_W, VIEW_H = frame
         MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if low else [(0, 0), (180, 0), (-35, 15)]
         MOB["tex_scale"] = 2.0 if species.startswith("ghast") else 1.0
+        MOB["wind"] = (BREEZE_WIND_PATH, BREEZE_WIND) if species == "breeze" else None
         if species.startswith("ghast"):
             # The ghast floats over the player, so its sheets look at it from
             # the front, from below at the side, and from behind.
             MOB["sheet_views"] = [(-20, 10), (-60, -30), (160, 15)]
         if species in EYES_PATHS:
-            MOB["sheet_views"] = FLYER_VIEWS
+            MOB["sheet_views"] = FLYER_VIEWS if species == "phantom" else [(-20, 10), (160, 15), (-90, 5)]
             MOB["eyes"] = find_zombie_texture(EYES_PATHS[species])
 
 

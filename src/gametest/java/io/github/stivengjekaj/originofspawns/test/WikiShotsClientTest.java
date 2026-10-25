@@ -53,7 +53,8 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 			EntityTypes.DROWNED, EntityTypes.SKELETON, EntityTypes.STRAY, EntityTypes.BOGGED, EntityTypes.WITHER_SKELETON,
 			EntityTypes.PARCHED, EntityTypes.CREEPER, EntityTypes.SPIDER, EntityTypes.CAVE_SPIDER, EntityTypes.PILLAGER,
 			EntityTypes.VINDICATOR, EntityTypes.EVOKER, EntityTypes.WITCH,
-			EntityTypes.ENDERMAN, EntityTypes.ENDERMITE);
+			EntityTypes.ENDERMAN, EntityTypes.ENDERMITE, EntityTypes.SLIME,
+			EntityTypes.MAGMA_CUBE);
 	private static final int SHOT_ID = -424242;
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 960;
@@ -195,6 +196,10 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 		// A vindicator crosses its arms until it attacks. The attack pose shows the marks and the models on the arms.
 		if (mob.getType() == EntityTypes.VINDICATOR) {
 			mob.setAggressive(true);
+		}
+		// A slime and a magma cube show at size 2, so that the marks are large enough to see.
+		if (mob instanceof net.minecraft.world.entity.monster.cubemob.AbstractCubeMob cube) {
+			cube.setSize(2, true);
 		}
 		// An evoker crosses its arms until it casts. The spell pose shows the marks and the models on the arms.
 		if (mob.getType() == EntityTypes.EVOKER) {

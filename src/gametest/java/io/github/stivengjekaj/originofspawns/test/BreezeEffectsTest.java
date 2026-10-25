@@ -122,6 +122,52 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void trueAimShootsTheWindChargesWithNoSpread(GameTestHelper helper) {
+		// The vanilla aim has a random spread. With no spread, each charge goes on the line to the pig.
+		double worst = 0.0;
+		for (int i = 0; i < 5; i++) {
+			worst = Math.max(worst, aimError(helper, "test_true_aim"));
+		}
+		helper.assertTrue(worst < 1.0E-4, "no spread, but an error of " + worst);
+		double plain = 0.0;
+		for (int i = 0; i < 5; i++) {
+			plain = Math.max(plain, aimError(helper));
+		}
+		helper.assertTrue(plain > 1.0E-3, "the plain aim has a spread");
+		helper.succeed();
+	}
+
+	/**
+	 * Makes a breeze shoot one wind charge at a pig, and returns the angle in radians between the charge and the line
+	 * that the shot aims at.
+	 */
+	static double aimError(GameTestHelper helper, String... genes) {
+		Breeze breeze = shooter(helper, new BlockPos(1, 1, 3), genes);
+		LivingEntity pig = breeze.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET).orElseThrow();
+		var charges = shoot(helper, breeze);
+		Vec3 aim = new Vec3(pig.getX() - breeze.getX(), pig.getY(0.3) - breeze.getFiringYPosition(), pig.getZ() - breeze.getZ())
+				.normalize();
+		double error = Math.acos(Math.min(1.0, charges.getFirst().getDeltaMovement().normalize().dot(aim)));
+		charges.forEach(BreezeWindCharge::discard);
+		breeze.discard();
+		pig.discard();
+		return error;
+	}
+
+	/**
+	 * Makes the breeze shoot now, with the vanilla shot behavior, and returns its new wind charges.
+	 */
+	static java.util.List<BreezeWindCharge> shoot(GameTestHelper helper, Breeze breeze) {
+		var shoot = new net.minecraft.world.entity.monster.breeze.Shoot();
+		long now = helper.getLevel().getGameTime();
+		helper.assertTrue(shoot.tryStart(helper.getLevel(), breeze, now), "the breeze starts a shot");
+		breeze.getBrain().eraseMemory(MemoryModuleType.BREEZE_SHOOT_CHARGING);
+		shoot.tickOrStop(helper.getLevel(), breeze, now);
+		return helper.getLevel().getEntitiesOfClass(BreezeWindCharge.class, helper.getBounds().inflate(4.0),
+				charge -> charge.getOwner() == breeze);
+	}
+
 	/**
 	 * Makes a breeze that is ready to shoot at a pig: it has the pig as its target and the memory of a shot.
 	 */

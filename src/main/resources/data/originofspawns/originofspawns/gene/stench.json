@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:zombified_piglin",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:zombified_piglin/fester",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:nausea",
+			"radius": 3,
+			"interval_seconds": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

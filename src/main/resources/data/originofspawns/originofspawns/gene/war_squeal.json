@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:zombified_piglin",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:zombified_piglin/vengeful",
+	"gains": [
+		{
+			"type": "rally",
+			"per_ally": 0.05,
+			"max": 0.2,
+			"radius": 8,
+			"angry_only": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

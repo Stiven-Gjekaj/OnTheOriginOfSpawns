@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:zombified_piglin",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:zombified_piglin/vengeful",
+	"gains": [
+		{
+			"type": "anger_after_death",
+			"seconds": 300
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

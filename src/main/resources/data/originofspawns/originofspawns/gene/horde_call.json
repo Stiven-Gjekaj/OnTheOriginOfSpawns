@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:zombified_piglin",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:zombified_piglin/vengeful",
+	"gains": [
+		{
+			"type": "call_on_hurt",
+			"radius": 32
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

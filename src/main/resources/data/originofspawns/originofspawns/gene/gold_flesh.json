@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:zombified_piglin",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:zombified_piglin/gilded",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": 2,
+			"operation": "add_value"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:zombified_piglin",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:zombified_piglin/bladesman",
+	"gains": [
+		{
+			"type": "first_strike",
+			"multiplier": 1.3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:armor",
+			"amount": -2,
+			"operation": "add_value"
+		}
+	]
+}

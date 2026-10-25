@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:zombified_piglin",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:zombified_piglin/vengeful",
+	"sub_family": "originofspawns:zombified_piglin/bladesman",
+	"gains": [
+		{
+			"type": "self_effect_on_hurt",
+			"effect": "minecraft:strength",
+			"seconds": 5,
+			"damage_types": "#minecraft:is_projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

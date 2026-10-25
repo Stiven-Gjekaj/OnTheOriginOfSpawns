@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:zombified_piglin",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:hunger",
+					"seconds": 2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:hunger",
+					"seconds": 4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hit",
+					"effect": "minecraft:hunger",
+					"seconds": 6
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

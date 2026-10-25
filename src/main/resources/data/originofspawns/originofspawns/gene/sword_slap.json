@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:zombified_piglin",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:zombified_piglin/bladesman",
+	"gains": [
+		{
+			"type": "disarm",
+			"chance": 0.1,
+			"cooldown_seconds": 10,
+			"hits": "melee"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9
+		}
+	]
+}

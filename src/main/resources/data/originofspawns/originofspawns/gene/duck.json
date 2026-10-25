@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:zombified_piglin",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:zombified_piglin/chaser",
+	"gains": [
+		{
+			"type": "sidestep",
+			"range": 24,
+			"distance": 3,
+			"cooldown_seconds": 8,
+			"aimed": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

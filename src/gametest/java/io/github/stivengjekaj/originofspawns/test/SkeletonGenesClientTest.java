@@ -137,6 +137,9 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			checkMarkAndModel(context, singleplayer, EntityTypes.GHAST, "test_ghast_mark",
 					Identifier.withDefaultNamespace("textures/entity/ghast/ghast.png"), "ghast");
 			checkGhastShootingFace(context);
+			// The blaze gene model sits on the first rod.
+			checkMarkAndModel(context, singleplayer, EntityTypes.BLAZE, "test_blaze_mark",
+					Identifier.withDefaultNamespace("textures/entity/blaze/blaze.png"), "blaze");
 			checkArmModelOnlyWhileTheArmsAreApart(context, singleplayer);
 			checkEndermanArmModelFollowsTheCarryPose(context, singleplayer);
 			checkEvokerArmModelOnlyWhileItCasts(context, singleplayer);

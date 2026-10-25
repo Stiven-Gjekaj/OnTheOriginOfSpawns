@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Endermite;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -41,21 +42,21 @@ public abstract class LivingEntityRendererMixin {
 	}
 
 	/**
-	 * Puts the genes of an endermite in its render state. The endermite renderer has no render state method of its
-	 * own, so the genes come from here.
+	 * Puts the genes of an endermite or a blaze in its render state. Their renderers have no render state method of
+	 * their own, so the genes come from here.
 	 */
 	@Inject(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V",
 			at = @At("TAIL"))
-	private void originofspawns$extractEndermiteGenes(LivingEntity entity, LivingEntityRenderState state, float partialTick,
+	private void originofspawns$extractPlainStateGenes(LivingEntity entity, LivingEntityRenderState state, float partialTick,
 			CallbackInfo info) {
-		if (!(entity instanceof Endermite endermite)) {
+		if (!(entity instanceof Endermite) && !(entity instanceof Blaze)) {
 			return;
 		}
-		CarriedGenes genes = endermite.getAttached(ModAttachments.GENES);
+		CarriedGenes genes = entity.getAttached(ModAttachments.GENES);
 		state.setData(GeneTextures.GENES, genes == null ? List.of() : genes.genes());
 		state.setData(GeneTextures.OPACITY, null);
 		if (genes != null) {
-			GeneEffects.translucentOpacity(endermite).ifPresent(opacity -> state.setData(GeneTextures.OPACITY, opacity));
+			GeneEffects.translucentOpacity(entity).ifPresent(opacity -> state.setData(GeneTextures.OPACITY, opacity));
 		}
 	}
 }

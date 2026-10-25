@@ -137,7 +137,22 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		TENTACLE5,
 		TENTACLE6,
 		TENTACLE7,
-		TENTACLE8;
+		TENTACLE8,
+		/**
+		 * The twelve rods of a blaze, in three rings of four from the top. They are parts of the root, as the head is.
+		 */
+		PART0,
+		PART1,
+		PART2,
+		PART3,
+		PART4,
+		PART5,
+		PART6,
+		PART7,
+		PART8,
+		PART9,
+		PART10,
+		PART11;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

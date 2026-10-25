@@ -204,7 +204,10 @@ public final class GeneEffects {
 		of(entity).forEach(effects::add);
 		for (GeneEffect effect : effects) {
 			if (effect instanceof GeneEffect.WaterDamage water) {
-				if (entity.tickCount % water.interval() == 0 && entity.isInWaterOrRain()) {
+				// A mob that fire does not hurt, such as a magma cube, takes no water damage while it has Fire Resistance.
+				boolean resists = entity.getType().fireImmune()
+						&& entity.hasEffect(net.minecraft.world.effect.MobEffects.FIRE_RESISTANCE);
+				if (entity.tickCount % water.interval() == 0 && entity.isInWaterOrRain() && !resists) {
 					entity.hurtServer(level, level.damageSources().drown(), water.amount());
 				}
 			} else if (effect instanceof GeneEffect.AirLoss loss) {

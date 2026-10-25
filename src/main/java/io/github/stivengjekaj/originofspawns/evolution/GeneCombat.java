@@ -436,7 +436,8 @@ public final class GeneCombat {
 				case GeneEffect.ShareDamage share when !SHARING.get() && victim.level() instanceof ServerLevel level ->
 						result -= shareDamage(victim, level, share, result);
 				case GeneEffect.DamageTaken taken when source.is(taken.damageTypes()) -> result *= taken.multiplier();
-				case GeneEffect.WaterDamageTaken water when victim.isSensitiveToWater() && (waterSplash(source)
+				case GeneEffect.WaterDamageTaken water when (victim.isSensitiveToWater() || has(victim, GeneEffect.WaterDamage.class))
+						&& (waterSplash(source)
 						|| !water.splashOnly() && source.is(DamageTypes.DROWN)) -> result *= water.multiplier();
 				case GeneEffect.Sunburn sunburn when source.is(DamageTypeTags.IS_FIRE)
 						&& Evolution.isSunBurning(victim, victim.level().getGameTime()) -> result *= sunburn.multiplier();

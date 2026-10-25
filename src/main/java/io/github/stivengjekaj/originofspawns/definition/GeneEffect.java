@@ -269,7 +269,8 @@ public sealed interface GeneEffect {
 			Map.entry("burst_fan", BurstFan.CODEC),
 			Map.entry("fireball_speed", FireballSpeed.CODEC),
 			Map.entry("fireball_fire_time", FireballFireTime.CODEC),
-			Map.entry("fireball_blast", FireballBlast.CODEC)
+			Map.entry("fireball_blast", FireballBlast.CODEC),
+			Map.entry("fireball_cloud", FireballCloud.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4437,6 +4438,26 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "fireball_blast";
+		}
+	}
+
+	/**
+	 * Each small fireball of the mob leaves a cloud where it hits. The cloud stays for {@code cloud_seconds}, and it
+	 * gives the effect for {@code seconds} to the entities in it.
+	 */
+	record FireballCloud(Holder<MobEffect> effect, float seconds, int amplifier, float cloudSeconds, float radius)
+			implements GeneEffect {
+		public static final MapCodec<FireballCloud> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(FireballCloud::effect),
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(FireballCloud::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(FireballCloud::amplifier),
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("cloud_seconds", 3.0F).forGetter(FireballCloud::cloudSeconds),
+				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 2.0F).forGetter(FireballCloud::radius)
+		).apply(instance, FireballCloud::new));
+
+		@Override
+		public String type() {
+			return "fireball_cloud";
 		}
 	}
 }

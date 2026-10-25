@@ -134,6 +134,25 @@ public class BlazeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void sootCloudLeavesACloudWhereTheFireballHits(GameTestHelper helper) {
+		BlockPos stone = new BlockPos(3, 1, 3);
+		helper.setBlock(stone, net.minecraft.world.level.block.Blocks.STONE);
+		hitBlockWithFireball(helper, blazeWith(helper, new BlockPos(1, 1, 1)), stone);
+		helper.assertTrue(clouds(helper).isEmpty(), "a plain fireball leaves no cloud");
+		hitBlockWithFireball(helper, blazeWith(helper, new BlockPos(1, 1, 1), "test_soot_cloud"), stone);
+		var clouds = clouds(helper);
+		helper.assertValueEqual(clouds.size(), 1, "clouds");
+		var cloud = clouds.getFirst();
+		helper.assertValueEqual(cloud.getRadius(), 2.0F, "the radius of the cloud");
+		helper.assertValueEqual(cloud.getDuration(), 60, "the cloud stays for 3 seconds");
+		helper.succeed();
+	}
+
+	static java.util.List<net.minecraft.world.entity.AreaEffectCloud> clouds(GameTestHelper helper) {
+		return helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.AreaEffectCloud.class, helper.getBounds());
+	}
+
 	/**
 	 * Makes a small fireball of the blaze hit the top of the block.
 	 */

@@ -882,13 +882,21 @@ public final class GeneBehaviors {
 	}
 
 	/**
-	 * Runs the effects of the genes of the mob where its small fireball hits: the blast.
+	 * Runs the effects of the genes of the mob where its small fireball hits: the blast and the clouds.
 	 */
 	public static void smallFireballHit(Mob mob, SmallFireball fireball, ServerLevel level) {
 		float power = 0.0F;
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			if (effect instanceof GeneEffect.FireballBlast blast) {
 				power = Math.max(power, blast.power());
+			} else if (effect instanceof GeneEffect.FireballCloud cloud) {
+				var area = new net.minecraft.world.entity.AreaEffectCloud(level, fireball.getX(), fireball.getY(),
+						fireball.getZ());
+				area.setOwner(mob);
+				area.setRadius(cloud.radius());
+				area.setDuration(Math.max(1, Math.round(cloud.cloudSeconds() * 20.0F)));
+				area.addEffect(new MobEffectInstance(cloud.effect(), Math.round(cloud.seconds() * 20.0F), cloud.amplifier()));
+				level.addFreshEntity(area);
 			}
 		}
 		if (power > 0.0F) {

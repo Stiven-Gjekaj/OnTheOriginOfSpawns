@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/ghast.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/kin_grief_0.png",
+				"tint": "#3A3440"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/kin_grief_1.png",
+				"tint": "#6A6470"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/kin_grief_2.png",
+				"tint": "#B8B0BC"
+			}
+		}
+	]
+}

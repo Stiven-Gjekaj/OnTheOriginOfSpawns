@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/ghast.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/high_float_0.png",
+				"tint": "#C88AA0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/high_float_1.png",
+				"tint": "#8A8090"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/high_float_2.png",
+				"tint": "#4A4050"
+			}
+		}
+	]
+}

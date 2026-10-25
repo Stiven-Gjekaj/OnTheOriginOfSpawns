@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/ghast.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fire_rain_0.png",
+				"tint": "#FF7A20"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fire_rain_1.png",
+				"tint": "#FFC040"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fire_rain_2.png",
+				"tint": "#2A1A10"
+			}
+		}
+	]
+}

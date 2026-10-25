@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/ghast.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/golem_bomb_0.png",
+				"tint": "#9AA0A8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/golem_bomb_1.png",
+				"tint": "#4A4E54"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/golem_bomb_2.png",
+				"tint": "#E0E4E8"
+			}
+		}
+	]
+}

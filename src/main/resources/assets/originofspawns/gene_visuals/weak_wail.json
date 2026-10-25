@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/ghast.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/weak_wail_0.png",
+				"tint": "#8A8890"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/weak_wail_1.png",
+				"tint": "#4A4850"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/weak_wail_2.png",
+				"tint": "#C0BEC4"
+			}
+		}
+	]
+}

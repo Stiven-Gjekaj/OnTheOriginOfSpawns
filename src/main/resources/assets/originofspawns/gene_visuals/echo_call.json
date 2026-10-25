@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/ghast.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/echo_call_0.png",
+				"tint": "#7A90B8"
+			}
+		}
+	]
+}

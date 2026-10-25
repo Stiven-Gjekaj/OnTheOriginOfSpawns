@@ -1,0 +1,169 @@
+{
+	"texture": "originofspawns:textures/entity/swift_drift_tentacles.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "tentacle0",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				8,
+				-0.5
+			],
+			"size": [
+				1,
+				6,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "tentacle1",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				13,
+				-0.5
+			],
+			"size": [
+				1,
+				6,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "tentacle2",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				9,
+				-0.5
+			],
+			"size": [
+				1,
+				6,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "tentacle3",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				11,
+				-0.5
+			],
+			"size": [
+				1,
+				6,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "tentacle4",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				11,
+				-0.5
+			],
+			"size": [
+				1,
+				6,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "tentacle5",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				10,
+				-0.5
+			],
+			"size": [
+				1,
+				6,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "tentacle6",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				12,
+				-0.5
+			],
+			"size": [
+				1,
+				6,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "tentacle7",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				9,
+				-0.5
+			],
+			"size": [
+				1,
+				6,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "tentacle8",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				12,
+				-0.5
+			],
+			"size": [
+				1,
+				6,
+				1
+			],
+			"inflate": 0.0
+		}
+	]
+}

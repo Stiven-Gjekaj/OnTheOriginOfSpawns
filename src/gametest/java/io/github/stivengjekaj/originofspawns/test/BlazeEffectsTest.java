@@ -189,6 +189,32 @@ public class BlazeEffectsTest {
 				net.minecraft.core.Direction.UP, helper.absolutePos(block), false));
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void seekerSparkTurnsTheFireballsAtMostFiveDegreesEachTick(GameTestHelper helper) {
+		// The fireball flies east, and the target is to the south, at a right angle.
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(2, 2, 6));
+		double plain = turnInOneTick(helper, blazeWith(helper, new BlockPos(6, 1, 6)), pig);
+		helper.assertTrue(plain < 0.01, "a plain fireball does not turn, but " + plain + " degrees");
+		double seeker = turnInOneTick(helper, blazeWith(helper, new BlockPos(6, 1, 6), "test_seeker_spark"), pig);
+		helper.assertTrue(Math.abs(seeker - 5.0) < 0.01, "the fireball turns 5 degrees, not " + seeker);
+		helper.succeed();
+	}
+
+	/**
+	 * Returns the degrees that a small fireball of the blaze turns in one tick, while the blaze has the target.
+	 */
+	static double turnInOneTick(GameTestHelper helper, Blaze blaze, LivingEntity target) {
+		blaze.setTarget(target);
+		SmallFireball fireball = new SmallFireball(helper.getLevel(), blaze, new Vec3(1.0, 0.0, 0.0));
+		fireball.setPos(helper.absoluteVec(new Vec3(2.5, 2.5, 1.5)));
+		helper.getLevel().addFreshEntity(fireball);
+		Vec3 before = fireball.getDeltaMovement().normalize();
+		fireball.tick();
+		Vec3 after = fireball.getDeltaMovement().normalize();
+		fireball.discard();
+		return Math.toDegrees(Math.acos(Math.min(1.0, before.dot(after))));
+	}
+
 	/**
 	 * Makes a small fireball of the blaze hit the target directly.
 	 */

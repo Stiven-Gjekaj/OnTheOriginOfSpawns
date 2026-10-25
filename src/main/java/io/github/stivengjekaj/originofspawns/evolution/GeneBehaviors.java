@@ -920,6 +920,39 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Turns the fireball of the mob to the center of the target of the mob, at most the largest angle of its seeker
+	 * genes. The speed of the fireball stays.
+	 */
+	public static void seek(Mob mob, AbstractHurtingProjectile fireball) {
+		LivingEntity target = mob.getTarget();
+		if (target == null || !target.isAlive()) {
+			return;
+		}
+		float degrees = 0.0F;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.SeekerFireballs seeker) {
+				degrees = Math.max(degrees, seeker.degrees());
+			}
+		}
+		Vec3 motion = fireball.getDeltaMovement();
+		double speed = motion.length();
+		Vec3 wanted = new Vec3(target.getX(), target.getY(0.5), target.getZ()).subtract(fireball.position());
+		if (degrees <= 0.0F || speed < 1.0E-6 || wanted.lengthSqr() < 1.0E-6) {
+			return;
+		}
+		Vec3 now = motion.normalize();
+		Vec3 to = wanted.normalize();
+		double angle = Math.acos(Mth.clamp(now.dot(to), -1.0, 1.0));
+		double turn = Math.min(angle, degrees * Mth.DEG_TO_RAD);
+		Vec3 side = to.subtract(now.scale(now.dot(to)));
+		if (side.lengthSqr() < 1.0E-9) {
+			return;
+		}
+		Vec3 turned = now.scale(Math.cos(turn)).add(side.normalize().scale(Math.sin(turn)));
+		fireball.setDeltaMovement(turned.scale(speed));
+	}
+
+	/**
 	 * Multiplies the speed of a new fireball of the mob by its fireball speed genes. A fireball speeds up by its
 	 * acceleration each tick, so the acceleration changes too.
 	 */

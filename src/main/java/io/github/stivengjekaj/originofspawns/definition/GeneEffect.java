@@ -270,7 +270,8 @@ public sealed interface GeneEffect {
 			Map.entry("fireball_speed", FireballSpeed.CODEC),
 			Map.entry("fireball_fire_time", FireballFireTime.CODEC),
 			Map.entry("fireball_blast", FireballBlast.CODEC),
-			Map.entry("fireball_cloud", FireballCloud.CODEC)
+			Map.entry("fireball_cloud", FireballCloud.CODEC),
+			Map.entry("seeker_fireballs", SeekerFireballs.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4463,6 +4464,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "fireball_cloud";
+		}
+	}
+
+	/**
+	 * Each tick, the fireballs of the mob turn to the target of the mob, at most this many degrees. So a player can
+	 * still step aside from a fireball. The largest number counts.
+	 */
+	record SeekerFireballs(float degrees) implements GeneEffect {
+		public static final MapCodec<SeekerFireballs> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 90.0F).optionalFieldOf("degrees", 5.0F).forGetter(SeekerFireballs::degrees)
+		).apply(instance, SeekerFireballs::new));
+
+		@Override
+		public String type() {
+			return "seeker_fireballs";
 		}
 	}
 }

@@ -203,6 +203,63 @@ public class PiglinEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void theReusedHitEffectsWorkOnAPiglin(GameTestHelper helper) {
+		ReusedEffects.effectOnHit(helper, PiglinEffectsTest::piglinWith);
+		ReusedEffects.igniteTarget(helper, PiglinEffectsTest::piglinWith);
+		ReusedEffects.meleeDisarm(helper, PiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedDamageEffectsWorkOnAPiglin(GameTestHelper helper) {
+		ReusedEffects.damageTaken(helper, PiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedGroupDamageWorksOnAPiglin(GameTestHelper helper) {
+		ReusedEffects.groupedAndAlone(helper, PiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedRallyWorksOnAPiglin(GameTestHelper helper) {
+		ReusedEffects.rally(helper, PiglinEffectsTest::piglinWith, "test_rally_cry");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedSightEffectsWorkOnAPiglin(GameTestHelper helper) {
+		ReusedEffects.translucent(helper, PiglinEffectsTest::piglinWith);
+		ReusedEffects.seeInvisible(helper, PiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedCallOnSightWorksOnAPiglin(GameTestHelper helper) {
+		ReusedEffects.callOnSight(helper, PiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedAllyEffectsWorkOnAPiglin(GameTestHelper helper) {
+		ReusedEffects.deathEffectOnAllies(helper, PiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedAuraWorksOnAPiglin(GameTestHelper helper) {
+		ReusedEffects.allyAura(helper, PiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedLeapWorksOnAPiglin(GameTestHelper helper) {
+		ReusedEffects.leap(helper, PiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
 	/**
 	 * Adds a piglin with a crossbow and the test genes.
 	 */

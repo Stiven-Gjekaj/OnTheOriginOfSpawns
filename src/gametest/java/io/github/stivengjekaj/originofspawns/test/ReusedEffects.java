@@ -5,6 +5,7 @@ import java.util.List;
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.evolution.goal.LeapGoal;
 
 import net.minecraft.core.BlockPos;
@@ -158,6 +159,63 @@ final class ReusedEffects {
 		player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
 		GeneCombat.onHit(mob, player);
 		helper.assertTrue(player.getMainHandItem().isEmpty(), "a melee hit makes the player drop the sword");
+	}
+
+	static void translucent(GameTestHelper helper, Maker maker) {
+		Mob mob = maker.at(helper, new BlockPos(4, 1, 4), "test_always_translucent");
+		helper.assertTrue(GeneEffects.translucentOpacity(mob).isPresent(), "the mob is translucent");
+	}
+
+	static void seeInvisible(GameTestHelper helper, Maker maker) {
+		Mob sees = maker.at(helper, new BlockPos(1, 1, 1), "test_blind_hunter");
+		Mob plain = maker.at(helper, new BlockPos(1, 1, 5));
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(3, 1, 3))));
+		player.setInvisible(true);
+		helper.assertValueEqual(GeneBehaviors.visibility(player, sees, 0.1), 1.0, "the mob sees the invisible player");
+		helper.assertValueEqual(GeneBehaviors.visibility(player, plain, 0.1), 0.1, "a plain mob does not");
+	}
+
+	static void groupedAndAlone(GameTestHelper helper, Maker maker) {
+		// The alone state counts the mobs in 8 blocks, so the lone mob is the only one at first.
+		Mob lone = maker.at(helper, new BlockPos(7, 1, 7), "test_alone_weak");
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		helper.assertValueEqual(GeneCombat.modifyDamage(player, helper.getLevel().damageSources().mobAttack(lone), 10.0F),
+				5.0F, "half the damage alone");
+		lone.discard();
+		Mob pack = maker.at(helper, new BlockPos(1, 1, 1), "test_pack_bite");
+		helper.assertValueEqual(GeneCombat.modifyDamage(player, helper.getLevel().damageSources().mobAttack(pack), 10.0F),
+				10.0F, "no extra damage with no ally near");
+		maker.at(helper, new BlockPos(2, 1, 1));
+		maker.at(helper, new BlockPos(1, 1, 2));
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(player, helper.getLevel().damageSources().mobAttack(pack), 10.0F)
+				- 12.0F) < 0.001F, "20% more damage in a group");
+	}
+
+	static void callOnSight(GameTestHelper helper, Maker maker) {
+		Mob caller = maker.at(helper, new BlockPos(1, 1, 4), "test_call_sight");
+		Mob ally = maker.at(helper, new BlockPos(6, 1, 4));
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(4, 1, 1))));
+		caller.setTarget(player);
+		caller.tickCount = 20;
+		GeneBehaviors.tick(caller, helper.getLevel());
+		helper.assertTrue(ally.getTarget() == player, "the call makes the ally target the player");
+	}
+
+	static void deathEffectOnAllies(GameTestHelper helper, Maker maker) {
+		Mob mob = maker.at(helper, new BlockPos(1, 1, 1), "test_death_allies");
+		Mob ally = maker.at(helper, new BlockPos(3, 1, 1));
+		GeneCombat.onDeath(mob, helper.getLevel());
+		helper.assertTrue(ally.hasEffect(MobEffects.RESISTANCE), "the dead mob gives its ally Resistance");
+	}
+
+	static void rally(GameTestHelper helper, Maker maker, String gene) {
+		Mob mob = maker.at(helper, new BlockPos(4, 1, 4), gene);
+		maker.at(helper, new BlockPos(2, 1, 4));
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 1));
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(pig, helper.getLevel().damageSources().mobAttack(mob), 10.0F)
+				- 10.5F) < 0.001F, "5% more damage for the one ally");
 	}
 
 	/**

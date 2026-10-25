@@ -152,7 +152,13 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		PART8,
 		PART9,
 		PART10,
-		PART11;
+		PART11,
+		/**
+		 * The three wind rods of a breeze. They are parts of the rods part, which is a part of the body.
+		 */
+		ROD_1,
+		ROD_2,
+		ROD_3;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

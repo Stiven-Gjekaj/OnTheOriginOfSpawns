@@ -1,0 +1,21 @@
+{
+	"region_map": "originofspawns:textures/region/breeze.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "desaturate",
+				"amount": 1,
+				"darken": 1
+			}
+		},
+		{
+			"target": "wind",
+			"effect": {
+				"type": "desaturate",
+				"amount": 1,
+				"darken": 1
+			}
+		}
+	],
+	"model": "originofspawns_test:test_breeze_rod"
+}

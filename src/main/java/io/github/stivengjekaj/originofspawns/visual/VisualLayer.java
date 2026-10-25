@@ -12,8 +12,9 @@ import net.minecraft.util.StringRepresentable;
  * An empty list means all regions, or all materials.
  * The order puts the layers of all the genes of a mob in sequence. A layer with a lower order goes on first.
  * Layers with the same order keep the order of the genes, and the order in their recipe.
- * The target selects the texture: the body texture, or the outer layer of a mob, such as the cloth of the stray.
- * A layer on the outer layer covers all of its pixels, because the outer layer has no region map.
+ * The target selects the texture: the body texture, the outer layer of a mob, such as the cloth of the stray, or
+ * the wind of a breeze. A layer on the outer layer or on the wind covers all of its pixels, because these textures
+ * have no region map.
  */
 public record VisualLayer(List<BodyRegion> regions, List<BodyMaterial> materials, VisualEffect effect, int order,
 		Target target) {
@@ -38,7 +39,8 @@ public record VisualLayer(List<BodyRegion> regions, List<BodyMaterial> materials
 	 */
 	public enum Target implements StringRepresentable {
 		BODY("body"),
-		OUTER("outer");
+		OUTER("outer"),
+		WIND("wind");
 
 		public static final Codec<Target> CODEC = StringRepresentable.fromEnum(Target::values);
 		private final String name;

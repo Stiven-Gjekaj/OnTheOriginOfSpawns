@@ -140,6 +140,10 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			// The blaze gene model sits on the first rod.
 			checkMarkAndModel(context, singleplayer, EntityTypes.BLAZE, "test_blaze_mark",
 					Identifier.withDefaultNamespace("textures/entity/blaze/blaze.png"), "blaze");
+			// The breeze gene model sits on the first wind rod, two parts below the body. The wind gets its own marks.
+			checkMarkAndModel(context, singleplayer, EntityTypes.BREEZE, "test_breeze_mark",
+					Identifier.withDefaultNamespace("textures/entity/breeze/breeze.png"), "breeze");
+			checkBreezeWindUsesTheGeneTexture(context);
 			checkArmModelOnlyWhileTheArmsAreApart(context, singleplayer);
 			checkEndermanArmModelFollowsTheCarryPose(context, singleplayer);
 			checkEvokerArmModelOnlyWhileItCasts(context, singleplayer);
@@ -183,6 +187,58 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			}
 			int drawn = drawnModelParts(renderer, state);
 			return drawn > 0 ? null : "The gene model layer draws no part of the gene model on " + type;
+		});
+		if (failure != null) {
+			throw new AssertionError(failure);
+		}
+	}
+
+	/**
+	 * Checks that the wind layer of the breeze with the mark gene draws with the wind texture with the wind layers of
+	 * the gene, not with the plain wind texture.
+	 */
+	private static void checkBreezeWindUsesTheGeneTexture(ClientGameTestContext context) {
+		Identifier mark = Identifier.fromNamespaceAndPath("originofspawns_test", "test_breeze_mark");
+		Identifier wind = Identifier.withDefaultNamespace("textures/entity/breeze/breeze_wind.png");
+		String failure = context.computeOnClient(client -> {
+			var breeze = client.level.getEntitiesOfClass(net.minecraft.world.entity.monster.breeze.Breeze.class,
+					client.player.getBoundingBox().inflate(8.0), other -> other.getAttached(ModAttachments.GENES) != null
+							&& other.getAttached(ModAttachments.GENES).genes().contains(mark)).stream().findFirst().orElse(null);
+			if (breeze == null) {
+				return "The client has no breeze with the test gene";
+			}
+			EntityRenderDispatcher dispatcher = client.getEntityRenderDispatcher();
+			var state = (net.minecraft.client.renderer.entity.state.BreezeRenderState) dispatcher.extractEntity(breeze, 1.0F);
+			Identifier baked = GeneTextures.textureFor(wind, state.getData(GeneTextures.GENES), GeneTextures.Layout.ADULT,
+					io.github.stivengjekaj.originofspawns.visual.VisualLayer.Target.WIND);
+			if (baked.equals(wind)) {
+				return "The gene of the breeze gives no wind texture";
+			}
+			List<Object> types = new java.util.ArrayList<>();
+			Object[] collector = new Object[1];
+			collector[0] = Proxy.newProxyInstance(SubmitNodeCollector.class.getClassLoader(),
+					new Class<?>[] {SubmitNodeCollector.class}, (proxy, method, args) -> {
+						if (method.getName().equals("submitModel")) {
+							for (Object arg : args) {
+								if (arg instanceof RenderType) {
+									types.add(arg);
+								}
+							}
+						}
+						return method.getReturnType().isInstance(proxy) ? proxy : null;
+					});
+			var renderer = (LivingEntityRenderer<?, ?, ?>) dispatcher.getRenderer(breeze);
+			for (RenderLayer<?, ?> layer : layersOf(renderer)) {
+				if (layer instanceof net.minecraft.client.renderer.entity.layers.BreezeWindLayer windLayer) {
+					windLayer.submit(new PoseStack(), (SubmitNodeCollector) collector[0], LightCoordsUtil.FULL_BRIGHT, state,
+							0.0F, 0.0F);
+				}
+			}
+			if (types.isEmpty()) {
+				return "The breeze wind layer draws nothing";
+			}
+			return String.valueOf(types.getFirst()).contains(baked.toString()) ? null
+					: "The breeze wind draws with " + types.getFirst() + ", not with the baked texture " + baked;
 		});
 		if (failure != null) {
 			throw new AssertionError(failure);

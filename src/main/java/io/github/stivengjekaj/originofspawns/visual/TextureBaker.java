@@ -41,7 +41,7 @@ public final class TextureBaker {
 
 	/**
 	 * Applies the layers of all the genes of a mob that have the target to the texture, in place, in the order of the
-	 * layers. A layer on the outer layer covers all the pixels, with no region map.
+	 * layers. A layer on the outer layer or on the wind covers all the pixels, with no region map.
 	 */
 	public static void bakeAll(Image texture, List<GeneLayers> genes, Function<Identifier, Image> patterns,
 			VisualLayer.Target target) {
@@ -58,7 +58,7 @@ public final class TextureBaker {
 		// The sort is stable, so steps with the same order keep the order of the genes.
 		steps.sort(Comparator.comparingInt(step -> step.layer().order()));
 		for (Step step : steps) {
-			if (target == VisualLayer.Target.OUTER) {
+			if (target != VisualLayer.Target.BODY) {
 				bakeEverywhere(texture, step.layer(), step.gene().seed(), patterns);
 			} else {
 				bake(texture, step.gene().regionMap(), List.of(step.layer()), step.gene().seed(), patterns);

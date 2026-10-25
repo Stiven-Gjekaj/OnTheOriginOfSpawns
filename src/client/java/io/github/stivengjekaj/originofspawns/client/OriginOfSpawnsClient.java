@@ -20,6 +20,7 @@ import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.monster.blaze.BlazeModel;
+import net.minecraft.client.model.monster.breeze.BreezeModel;
 import net.minecraft.client.model.monster.creeper.CreeperModel;
 import net.minecraft.client.model.monster.enderman.EndermanModel;
 import net.minecraft.client.model.monster.hoglin.HoglinModel;
@@ -32,6 +33,7 @@ import net.minecraft.client.model.monster.skeleton.SkeletonModel;
 import net.minecraft.client.model.monster.spider.SpiderModel;
 import net.minecraft.client.model.monster.witch.WitchModel;
 import net.minecraft.client.renderer.entity.BlazeRenderer;
+import net.minecraft.client.renderer.entity.BreezeRenderer;
 import net.minecraft.client.renderer.entity.AbstractHoglinRenderer;
 import net.minecraft.client.renderer.entity.AbstractSkeletonRenderer;
 import net.minecraft.client.renderer.entity.AbstractZombieRenderer;
@@ -50,6 +52,7 @@ import net.minecraft.client.renderer.entity.SpiderRenderer;
 import net.minecraft.client.renderer.entity.VindicatorRenderer;
 import net.minecraft.client.renderer.entity.WitchRenderer;
 import net.minecraft.client.renderer.entity.ZombifiedPiglinRenderer;
+import net.minecraft.client.renderer.entity.state.BreezeRenderState;
 import net.minecraft.client.renderer.entity.state.CreeperRenderState;
 import net.minecraft.client.renderer.entity.state.EndermanRenderState;
 import net.minecraft.client.renderer.entity.state.EvokerRenderState;
@@ -101,6 +104,8 @@ public class OriginOfSpawnsClient implements ClientModInitializer {
 						(RenderLayerParent<LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) (Object) renderer));
 			} else if (renderer instanceof WitchRenderer witch) {
 				helper.register(new GeneModelLayer<WitchRenderState, WitchModel>(witch));
+			} else if (renderer instanceof BreezeRenderer breeze) {
+				helper.register(new GeneModelLayer<BreezeRenderState, BreezeModel>(breeze));
 			} else if (renderer instanceof BlazeRenderer blaze) {
 				helper.register(new GeneModelLayer<LivingEntityRenderState, BlazeModel>(blaze));
 			} else if (renderer instanceof GhastRenderer ghast) {

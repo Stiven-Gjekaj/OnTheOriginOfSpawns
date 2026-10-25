@@ -9,6 +9,8 @@
 		"AbstractZombieRendererMixin",
 		"BlazeRendererMixin",
 		"BoggedTextureMixin",
+		"BreezeRendererMixin",
+		"BreezeWindLayerMixin",
 		"CaveSpiderRendererMixin",
 		"CreeperRendererMixin",
 		"DrownedOuterLayerMixin",

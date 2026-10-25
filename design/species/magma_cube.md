@@ -44,9 +44,9 @@ Ironclads grow a thick crust. The weight makes them hop less often.
 
 | Tier | Buff | Debuff |
 |---|---|---|
-| Tier 3 | 3 more armor for each size | It hops 10% less often |
-| Tier 2 | 2 more armor for each size | It hops 15% less often |
-| Tier 1 | 1 more armor for each size | It hops 20% less often |
+| Tier 3 | 6 more armor | It hops 10% less often |
+| Tier 2 | 4 more armor | It hops 15% less often |
+| Tier 1 | 2 more armor | It hops 20% less often |
 
 ### Erupters
 
@@ -60,13 +60,13 @@ Erupters burst when they die. Their crust is thin.
 
 ### Lavaborn
 
-Lavaborn heal in lava. On land, they are slow.
+Lavaborn heal in lava. Out of lava, they are slow.
 
 | Tier | Buff | Debuff |
 |---|---|---|
-| Tier 3 | It heals 1 health each second in lava | 10% less speed on land |
-| Tier 2 | It heals 1 health each 2 seconds in lava | 15% less speed on land |
-| Tier 1 | It heals 1 health each 3 seconds in lava | 20% less speed on land |
+| Tier 3 | It heals 1 health each second in lava | 10% less speed out of lava |
+| Tier 2 | It heals 1 health each 2 seconds in lava | 15% less speed out of lava |
+| Tier 1 | It heals 1 health each 3 seconds in lava | 20% less speed out of lava |
 
 ### Springers
 
@@ -128,7 +128,7 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Lava Swim | Lavaborn | `on_land` | 40% more speed in lava | 10% less speed on land | Body: smooth, wet layers |
+| Lava Swim | Lavaborn | `on_land` | 40% more speed in lava | 10% less speed out of lava | Body: smooth, wet layers |
 | Lava Heal | Lavaborn | `alone` | It heals 1 health each 2 seconds in lava | 10% less maximum health | Core: a deep red core. Body: deep red veins on the layers |
 | Steam Body | Lavaborn | `in_water` | Water does not hurt it, and 20% more speed in water | 10% less damage | Body: white steam marks. This changes the model |
 | Lava Leap | Lavaborn | `unreached` | Out of lava, it leaps at a target 4 to 10 blocks away | 10% less maximum health | Face: a long, open mouth |
@@ -152,13 +152,12 @@ The visual column gives the region and the mark.
 |---|---|
 | All | The pieces of a split have the genes of the cube that split, as for the slime. A gene acts at each size, unless its rules say different |
 | Infernos, Flame Touch | The magma cube does not take water damage in vanilla. Water damage stops while it has Fire Resistance from a potion |
-| Ironclads | The armor adds to the vanilla 3 armor for each size |
+| Ironclads | The armor adds to the vanilla 3 armor for each size. It is the same at each size |
 | Ironclads, Iron Crust, Shield Slam, Ground Pound | "Hops less often" changes the wait between two hops |
 | Erupters, Blast Core | It works as the bombardier Powder Keg, with fire. It breaks no blocks |
 | Lava Pool | It obeys the `mobGriefing` gamerule. The lava goes away after 3 seconds and does not flow |
 | Ash Cloud | It works as the zombie Bloat, with Blindness |
 | Lavaborn, Lava Heal, Fire Drink | They work as a regeneration that also acts in combat |
-| Lava Swim, Lavaborn | "On land" is out of lava and out of water |
 | Steam Body | It stops the water damage of Infernos and Flame Touch |
 | Lava Leap | It works as the zombie Lunger |
 | Spit Fire | It works as the blaze small fireball. One fireball each time |
@@ -257,7 +256,6 @@ slime work makes most of the cube parts.
 |---|---|
 | A magma cube region map, and the gene textures and gene models on the magma cube model, at each size | All visuals |
 | The slime cube parts on the magma cube: split genes, the hop, landing effects, and split effects | Ironclads, Springers, Shield Slam, Ground Pound, Split Burst, Scatter Shot, Sky Jump, Far Jump, Quick Jump |
-| Armor for each size | Ironclads |
 | A fire trail | Ember Trail |
 | A fire aura on players | Heat Wave |
 | A small fireball shot | Spit Fire |

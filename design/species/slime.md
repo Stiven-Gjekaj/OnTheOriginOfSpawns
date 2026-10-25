@@ -120,7 +120,7 @@ The visual column gives the region and the mark.
 | Sticky Hit | Gluer | `melee` | Its hits give Slowness II for 2 seconds | 10% less damage | Body: a shiny, wet gel |
 | Gel Trail | Gluer | `unreached` | It leaves a cobweb behind it now and then | 10% less speed | Body: drips at the bottom. This changes the model |
 | Gum Skin | Gluer | `projectile` | 30% less damage from projectiles | 10% less speed | Body: a yellow-green gum gel |
-| Glue Grip | Gluer | `spotted` | Its hits pull a target in the air down | 10% less damage | Face: a long tongue. This changes the model |
+| Glue Grip | Gluer | `spotted` | Its hits give Weakness for 3 seconds | 10% less damage | Face: a long tongue. This changes the model |
 | Sticky Pounce | Gluer, sub Bouncer | `crowd` | When it lands next to a player, the player gets Slowness for 3 seconds | It hops 10% less often | Body: a sticky bottom |
 | Cling | Gluer | `alone` | It climbs walls | 10% less maximum health | Body: gel feet on the sides |
 
@@ -159,7 +159,6 @@ The visual column gives the region and the mark.
 | Bud | The new slime has the genes of the slime that made it. It does not make buds |
 | Wide Reach | It works on the touch attack of the slime |
 | Gel Trail | It works as the spider Tripwire |
-| Glue Grip | It works as the drowned Undertow |
 | Cling | It works as the vindicator Climber |
 | Acid Touch, Acids | They work as the cave spider Corrosive |
 | Acid Blood | It works as the bogged Rotting Touch |
@@ -263,4 +262,4 @@ cube needs most of them too.
 | A bud: a new size 1 slime out of combat | Bud |
 | More reach of the touch attack | Wide Reach |
 | A hit that stops a shield | Shield Melt |
-| A check that the reused effects work on a slime: effect on hit, web trail, pull down, climb, armor break, effect on hurt, death cloud, damage to, speed when, and the damage taken effects, at each size | Many genes |
+| A check that the reused effects work on a slime: effect on hit, web trail, climb, armor break, effect on hurt, death cloud, damage to, speed when, and the damage taken effects, at each size | Many genes |

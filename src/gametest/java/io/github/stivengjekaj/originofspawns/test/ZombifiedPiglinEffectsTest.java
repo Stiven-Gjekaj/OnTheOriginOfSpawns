@@ -195,6 +195,66 @@ public class ZombifiedPiglinEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void theReusedHitEffectsWorkOnAZombifiedPiglin(GameTestHelper helper) {
+		ReusedEffects.armorBreak(helper, ZombifiedPiglinEffectsTest::piglinWith);
+		ReusedEffects.cleave(helper, ZombifiedPiglinEffectsTest::piglinWith);
+		ReusedEffects.firstStrike(helper, ZombifiedPiglinEffectsTest::piglinWith);
+		ReusedEffects.meleeDisarm(helper, ZombifiedPiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedDamageEffectsWorkOnAZombifiedPiglin(GameTestHelper helper) {
+		ReusedEffects.damageToGolems(helper, ZombifiedPiglinEffectsTest::piglinWith);
+		ReusedEffects.damageTaken(helper, ZombifiedPiglinEffectsTest::piglinWith);
+		ReusedEffects.parry(helper, ZombifiedPiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedGroupEffectsWorkOnAZombifiedPiglin(GameTestHelper helper) {
+		ReusedEffects.allyAura(helper, ZombifiedPiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedCallWorksOnAZombifiedPiglin(GameTestHelper helper) {
+		ReusedEffects.callOnHurt(helper, ZombifiedPiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedDeathCloudWorksOnAZombifiedPiglin(GameTestHelper helper) {
+		ReusedEffects.deathCloud(helper, ZombifiedPiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedMovesWorkOnAZombifiedPiglin(GameTestHelper helper) {
+		ReusedEffects.leap(helper, ZombifiedPiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedSidestepWorksOnAZombifiedPiglin(GameTestHelper helper) {
+		ReusedEffects.sidestep(helper, ZombifiedPiglinEffectsTest::piglinWith);
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 40)
+	public void theReusedSpeedWhenWorksOnAZombifiedPiglin(GameTestHelper helper) {
+		ReusedEffects.speedWhenWounded(helper, ZombifiedPiglinEffectsTest::piglinWith);
+	}
+
+	@GameTest
+	public void shrunkenMakesAZombifiedPiglinABaby(GameTestHelper helper) {
+		ZombifiedPiglin piglin = piglinWith(helper, new BlockPos(4, 1, 4), "test_runt");
+		GeneBehaviors.onSpawn(piglin, helper.getLevel(), EntitySpawnReason.NATURAL);
+		helper.assertTrue(piglin.isBaby(), "the baby gene makes a baby");
+		helper.succeed();
+	}
+
 	/**
 	 * Adds a zombified piglin with the test genes and no AI. The genes go on before it enters the level, so it gets
 	 * no genes from the pool.

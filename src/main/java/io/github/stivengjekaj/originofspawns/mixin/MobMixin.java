@@ -102,7 +102,12 @@ public abstract class MobMixin {
 		}
 	}
 
-	@Inject(method = "burnUndead", at = @At("HEAD"))
+	/**
+	 * Records the time when the sun sets the mob on fire. The game asks about the sun each tick, so the record comes
+	 * only when the sun really burns the mob.
+	 */
+	@Inject(method = "burnUndead", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/Mob;igniteForSeconds(F)V"))
 	private void originofspawns$recordSunBurn(CallbackInfo info) {
 		Evolution.markSunBurn((Mob) (Object) this);
 	}

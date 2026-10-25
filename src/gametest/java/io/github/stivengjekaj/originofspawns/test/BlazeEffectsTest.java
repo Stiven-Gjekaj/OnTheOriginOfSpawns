@@ -4,6 +4,7 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.mixin.BlazeAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
@@ -437,6 +438,74 @@ public class BlazeEffectsTest {
 			helper.assertTrue(shots.times.size() >= 1, "the blaze shoots");
 			helper.assertFalse(GeneCombat.test(shots.blaze, GeneEffect.When.NOT_SHOOTING), "the blaze just shot");
 		});
+	}
+
+	@GameTest
+	public void whiteHeatAndGolemMeltChangeTheDamageOfTheFireballs(GameTestHelper helper) {
+		IronGolem golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(5, 1, 5));
+		Blaze hot = blazeWith(helper, new BlockPos(1, 1, 1), "test_white_heat");
+		helper.assertValueEqual(GeneCombat.modifyDamage(golem, fireballHit(helper, hot), 5.0F), 7.0F,
+				"40% more damage from a fireball");
+		helper.assertValueEqual(GeneCombat.modifyDamage(golem, helper.getLevel().damageSources().mobAttack(hot), 5.0F), 5.0F,
+				"no change to the touch");
+		Blaze melt = blazeWith(helper, new BlockPos(1, 1, 4), "test_golem_bane");
+		helper.assertValueEqual(GeneCombat.modifyDamage(golem, fireballHit(helper, melt), 5.0F), 7.5F,
+				"1.5 times the fireball damage to a golem");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void heatHazeHidesTheBlazeOnlyWhenItDoesNotShoot(GameTestHelper helper) {
+		Blaze blaze = blazeWith(helper, new BlockPos(4, 1, 4), "test_heat_haze");
+		helper.assertTrue(GeneEffects.translucentOpacity(blaze).isPresent(), "the blaze is near invisible");
+		blaze.setAttached(ModAttachments.SHOT_TIME, helper.getLevel().getGameTime());
+		helper.assertTrue(GeneEffects.translucentOpacity(blaze).isEmpty(), "the blaze shows after a shot");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void steamShellChangesTheDamageOfWater(GameTestHelper helper) {
+		Blaze blaze = blazeWith(helper, new BlockPos(4, 1, 4), "test_dry_skin");
+		helper.assertValueEqual(GeneCombat.modifyDamage(blaze, helper.getLevel().damageSources().drown(), 1.0F), 0.5F,
+				"half the damage of water and rain");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void airDodgeStepsAsideInTheAir(GameTestHelper helper) {
+		Blaze blaze = blazeWith(helper, new BlockPos(4, 3, 1));
+		blaze.setNoGravity(true);
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setNoGravity(true);
+		// The eyes of the player are at the height of the eyes of the blaze, so the bow aims at it.
+		player.setPos(blaze.position().add(0.0, blaze.getEyeHeight() - player.getEyeHeight(), 5.0));
+		CreeperEffectsTest.face(player, 180.0F);
+		player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND,
+				new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.BOW));
+		player.startUsingItem(net.minecraft.world.InteractionHand.MAIN_HAND);
+		Vec3 before = blaze.position();
+		helper.assertTrue(GeneBehaviors.sidestep(blaze, helper.getLevel(), new GeneEffect.Sidestep(12.0F, 3.0F, 8.0F, true)),
+				"the blaze steps aside");
+		helper.assertValueEqual(Math.round(Math.abs(blaze.getX() - before.x)), 3L, "the side distance");
+		helper.assertValueEqual(blaze.getY(), before.y, "it stays at the same height in the air");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedEffectsWorkOnABlaze(GameTestHelper helper) {
+		ReusedEffects.igniteTarget(helper, BlazeEffectsTest::blazeWith);
+		ReusedEffects.healOnce(helper, BlazeEffectsTest::blazeWith);
+		ReusedEffects.damageTaken(helper, BlazeEffectsTest::blazeWith);
+		ReusedEffects.translucent(helper, BlazeEffectsTest::blazeWith);
+		helper.succeed();
+	}
+
+	/**
+	 * Returns the damage source of a hit of a small fireball of the blaze.
+	 */
+	static net.minecraft.world.damagesource.DamageSource fireballHit(GameTestHelper helper, Blaze blaze) {
+		SmallFireball fireball = new SmallFireball(helper.getLevel(), blaze, new Vec3(1.0, 0.0, 0.0));
+		return helper.getLevel().damageSources().fireball(fireball, blaze);
 	}
 
 	/**

@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/piglin.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shatter_blow_0.png",
+				"tint": "#B0B4BA"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shatter_blow_1.png",
+				"tint": "#4A4C52"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shatter_blow_2.png",
+				"tint": "#F6D03D"
+			}
+		}
+	]
+}

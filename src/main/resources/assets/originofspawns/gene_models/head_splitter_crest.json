@@ -1,0 +1,79 @@
+{
+	"texture": "originofspawns:textures/entity/head_splitter_crest.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-10,
+				-4.5
+			],
+			"size": [
+				2,
+				2,
+				9
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				16
+			],
+			"from": [
+				-0.5,
+				-12,
+				-3.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				16
+			],
+			"from": [
+				-0.5,
+				-12,
+				-0.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				16
+			],
+			"from": [
+				-0.5,
+				-12,
+				2.5
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": 0.0
+		}
+	]
+}

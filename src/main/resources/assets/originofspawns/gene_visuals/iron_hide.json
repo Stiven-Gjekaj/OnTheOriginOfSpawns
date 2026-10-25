@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/piglin.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/iron_hide_0.png",
+				"tint": "#4A4C52"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/iron_hide_1.png",
+				"tint": "#2A2C30"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/iron_hide_2.png",
+				"tint": "#B0B4BA"
+			}
+		}
+	]
+}

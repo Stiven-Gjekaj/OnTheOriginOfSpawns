@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/piglin.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/steady_feet_0.png",
+				"tint": "#F6D03D"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/steady_feet_1.png",
+				"tint": "#C8961E"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/steady_feet_2.png",
+				"tint": "#FFF4A0"
+			}
+		}
+	]
+}

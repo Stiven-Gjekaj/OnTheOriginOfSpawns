@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/piglin.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/golem_wrecker_0.png",
+				"tint": "#A0A4AA"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/golem_wrecker_1.png",
+				"tint": "#4A4C52"
+			}
+		}
+	]
+}

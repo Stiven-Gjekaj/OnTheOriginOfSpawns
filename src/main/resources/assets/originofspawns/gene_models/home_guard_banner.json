@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/home_guard_banner.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.5,
+				0.5,
+				2.1
+			],
+			"size": [
+				7,
+				12,
+				1
+			],
+			"inflate": 0.0
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				20
+			],
+			"from": [
+				-4.5,
+				-0.5,
+				2.1
+			],
+			"size": [
+				9,
+				1,
+				1
+			],
+			"inflate": 0.0
+		}
+	]
+}

@@ -60,7 +60,8 @@ Pixel plan for the Fearless.
 - Portal Walker has purple sparks on the hide.
 - Anchor Brave has a glowing purple eye.
 - Steady Nerves has a calm, steady look: heavy lids over the eyes.
-- Overworld Hide has a pale, gray hide.
+- Overworld Hide has green moss and grass patches: a few round clumps of
+  fresh grass green on the back and the flanks.
 - Bold Charge has blue stripes round the legs.
 This script needs Pillow.
 """
@@ -570,12 +571,23 @@ def steady_nerves():
 
 
 def overworld_hide():
-    pale = Mark("#B8B0A8")
-    gray = Mark("#9A928A")
-    for part in (BODY, HEAD) + EARS + LEGS:
-        for x, y, f, col, row in pixels(part, ALL):
-            (gray if noise100(x, y, 6301) < 30 else pale).put((x, y))
-    return [pale, gray]
+    # Green moss and grass patches: a few round clumps of fresh grass green
+    # on the back and on the flanks, each with dark moss at its edge and
+    # bright tufts of grass in it.
+    moss = Mark("#3A7A24")
+    grass = Mark("#5AAE34")
+    tuft = Mark("#9AE05A")
+    clumps = (("top", 4, 5, 3.5, 3), ("top", 11, 14, 3, 4), ("top", 5, 21, 3, 3),
+              ("right", 6, 4, 4, 2.5), ("right", 18, 3, 3.5, 2.5), ("right", 12, 10, 3, 2.5),
+              ("left", 8, 3, 3.5, 2.5), ("left", 20, 5, 4, 2.5), ("left", 14, 11, 3, 2.5))
+    for f, cc, cr, rc, rr in clumps:
+        for x, y, ff, col, row in pixels(BODY, (f,)):
+            r = ((col - cc) / rc) ** 2 + ((row - cr) / rr) ** 2
+            if r < 0.55:
+                (tuft if (col + 2 * row) % 4 == 0 else grass).put((x, y))
+            elif r < 1.0 and noise100(x, y, 6301) < 80:
+                moss.put((x, y))
+    return [moss, grass, tuft]
 
 
 def bold_charge():

@@ -138,6 +138,9 @@ public final class GeneBehaviors {
 	 * Runs the effects that act one time, when a mob first spawns with its genes.
 	 */
 	public static void onSpawn(Mob mob, ServerLevel level, EntitySpawnReason reason) {
+		if (!mob.hasAttached(ModAttachments.HOME)) {
+			mob.setAttached(ModAttachments.HOME, mob.blockPosition());
+		}
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
 				case GeneEffect.PickUpItems pickUp -> mob.setCanPickUpLoot(true);

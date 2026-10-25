@@ -559,6 +559,14 @@ public sealed interface GeneEffect {
 		 */
 		TARGET_GOLD_ARMOR,
 		/**
+		 * The mob is in 16 blocks of the place where it spawned.
+		 */
+		NEAR_HOME,
+		/**
+		 * The mob is farther than 32 blocks from the place where it spawned.
+		 */
+		FAR_FROM_HOME,
+		/**
 		 * The mob is in the air: it does not stand on the ground, and it is not in water or in lava.
 		 */
 		IN_AIR;

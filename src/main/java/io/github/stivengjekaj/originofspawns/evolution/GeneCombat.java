@@ -91,6 +91,11 @@ public final class GeneCombat {
 	 * The fall past which a mob falls.
 	 */
 	private static final double FALLING_BLOCKS = 2.0;
+	/**
+	 * The states {@code near_home} and {@code far_from_home} count from the place where the mob spawned.
+	 */
+	private static final double NEAR_HOME_BLOCKS = 16.0;
+	private static final double FAR_HOME_BLOCKS = 32.0;
 
 	public static boolean test(LivingEntity entity, When when) {
 		return test(entity, when, ALONE_RADIUS);
@@ -181,6 +186,10 @@ public final class GeneCombat {
 					&& enderman.getCarriedBlock() != null;
 			case IN_AIR -> !entity.onGround() && !entity.isInLiquid();
 			case TARGET_PLAYER -> entity instanceof Mob mob && mob.getTarget() instanceof Player;
+			case NEAR_HOME -> entity.hasAttached(ModAttachments.HOME)
+					&& entity.blockPosition().distSqr(entity.getAttached(ModAttachments.HOME)) <= NEAR_HOME_BLOCKS * NEAR_HOME_BLOCKS;
+			case FAR_FROM_HOME -> entity.hasAttached(ModAttachments.HOME)
+					&& entity.blockPosition().distSqr(entity.getAttached(ModAttachments.HOME)) > FAR_HOME_BLOCKS * FAR_HOME_BLOCKS;
 			case TARGET_GOLD_ARMOR -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
 					&& net.minecraft.world.entity.monster.piglin.PiglinAi.isWearingSafeArmor(player);
 		};

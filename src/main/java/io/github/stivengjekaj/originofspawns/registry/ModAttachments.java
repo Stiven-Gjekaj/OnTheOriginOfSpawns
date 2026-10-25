@@ -226,6 +226,12 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> BUD_TIME = AttachmentRegistry.create(OriginOfSpawns.id("bud_time"));
 
 	/**
+	 * The place where the mob spawned. It is saved with the mob, so a mob that a player moves keeps the old place.
+	 */
+	public static final AttachmentType<net.minecraft.core.BlockPos> HOME =
+			AttachmentRegistry.createPersistent(OriginOfSpawns.id("home"), net.minecraft.core.BlockPos.CODEC);
+
+	/**
 	 * True on a cube that budded off another cube. It makes no buds of its own. It is saved with the cube.
 	 */
 	public static final AttachmentType<Boolean> BUD_CHILD =

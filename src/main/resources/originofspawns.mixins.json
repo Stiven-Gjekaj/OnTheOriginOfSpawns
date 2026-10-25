@@ -29,6 +29,8 @@
 		"FireworkRocketEntityAccessor",
 		"FireBlockMixin",
 		"FireworkRocketEntityMixin",
+		"FlowingFluidMixin",
+		"LavaFluidMixin",
 		"LeapAtTargetGoalMixin",
 		"LivingEntityMixin",
 		"MagmaCubeMixin",

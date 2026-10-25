@@ -233,7 +233,8 @@ public sealed interface GeneEffect {
 			Map.entry("fire_aura", FireAura.CODEC),
 			Map.entry("fireball_shot", FireballShot.CODEC),
 			Map.entry("blast_heal", BlastHeal.CODEC),
-			Map.entry("fire_trail", FireTrail.CODEC)
+			Map.entry("fire_trail", FireTrail.CODEC),
+			Map.entry("lava_pool", LavaPool.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -3797,6 +3798,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "fire_trail";
+		}
+	}
+
+	/**
+	 * When the mob dies, it leaves a lava source at its place for the seconds. The lava goes only in air, it does not
+	 * flow, and it starts no fires. It obeys the {@code mobGriefing} gamerule.
+	 */
+	record LavaPool(float seconds) implements GeneEffect {
+		public static final MapCodec<LavaPool> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("seconds", 3.0F).forGetter(LavaPool::seconds)
+		).apply(instance, LavaPool::new));
+
+		@Override
+		public String type() {
+			return "lava_pool";
 		}
 	}
 }

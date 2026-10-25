@@ -6,6 +6,7 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
+import io.github.stivengjekaj.originofspawns.evolution.TemporaryBlocks;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import java.util.List;
@@ -30,6 +31,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -223,6 +225,47 @@ public class MagmaCubeEffectsTest {
 		helper.assertFalse(GeneBehaviors.fireTrail(cube, helper.getLevel(), new GeneEffect.FireTrail(3.0F, 4.0F)),
 				"no fire with mobGriefing off");
 		helper.assertBlockNotPresent(Blocks.FIRE, new BlockPos(4, 1, 4));
+		helper.succeed();
+	}
+
+	@GameTest
+	public void lavaPoolLeavesLavaThatDoesNotFlow(GameTestHelper helper) {
+		// The lava needs a solid block under it, else it flows down.
+		BlockPos genePool = new BlockPos(5, 1, 5);
+		BlockPos plainPool = new BlockPos(1, 1, 1);
+		helper.setBlock(genePool.below(), Blocks.STONE);
+		helper.setBlock(plainPool.below(), Blocks.STONE);
+		AbstractCubeMob cube = cubeWith(helper, EntityTypes.MAGMA_CUBE, genePool, 1, "test_lava_pool");
+		GeneCombat.onDeath(cube, helper.getLevel());
+		cube.discard();
+		helper.assertBlockPresent(Blocks.LAVA, genePool);
+		helper.assertTrue(TemporaryBlocks.isTemporary(helper.getLevel(), helper.absolutePos(genePool)),
+				"the lava goes away at its time");
+		// A plain lava source shows that the lava of the test world can flow.
+		helper.setBlock(plainPool, Blocks.LAVA);
+		for (int i = 0; i < 4; i++) {
+			for (BlockPos pool : List.of(plainPool, genePool)) {
+				for (BlockPos pos : BlockPos.betweenClosed(pool.offset(-1, 0, -1), pool.offset(1, 0, 1))) {
+					BlockPos at = helper.absolutePos(pos);
+					FluidState fluid = helper.getLevel().getFluidState(at);
+					if (!fluid.isEmpty()) {
+						fluid.tick(helper.getLevel(), at, helper.getLevel().getBlockState(at));
+					}
+				}
+			}
+		}
+		helper.assertTrue(Direction.Plane.HORIZONTAL.stream().anyMatch(side -> helper.getBlockState(plainPool.relative(side))
+				.is(Blocks.LAVA)), "a plain lava source flows");
+		helper.assertTrue(Direction.Plane.HORIZONTAL.stream().allMatch(side -> helper.getBlockState(genePool.relative(side))
+				.isAir()), "the lava of the gene does not flow");
+		helper.succeed();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void lavaPoolObeysMobGriefing(GameTestHelper helper) {
+		AbstractCubeMob cube = cubeWith(helper, EntityTypes.MAGMA_CUBE, new BlockPos(4, 1, 4), 1, "test_lava_pool");
+		GeneCombat.onDeath(cube, helper.getLevel());
+		helper.assertBlockNotPresent(Blocks.LAVA, new BlockPos(4, 1, 4));
 		helper.succeed();
 	}
 

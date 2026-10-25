@@ -1141,6 +1141,9 @@ public final class GeneCombat {
 					level.sendParticles(ParticleTypes.DAMAGE_INDICATOR, mob.getX(), mob.getY(0.5), mob.getZ(),
 							12, burst.radius() / 2.0, 0.3, burst.radius() / 2.0, 0.1);
 				}
+				case GeneEffect.LavaPool pool when level.getGameRules().get(net.minecraft.world.level.gamerules.GameRules.MOB_GRIEFING) ->
+						TemporaryBlocks.place(level, mob.blockPosition(), net.minecraft.world.level.block.Blocks.LAVA.defaultBlockState(),
+								Math.round(pool.seconds() * 20.0F));
 				case GeneEffect.DeathCloud cloud -> {
 					AreaEffectCloud area = new AreaEffectCloud(level, mob.getX(), mob.getY(), mob.getZ());
 					int duration = Math.round(cloud.cloudSeconds() * 20.0F);

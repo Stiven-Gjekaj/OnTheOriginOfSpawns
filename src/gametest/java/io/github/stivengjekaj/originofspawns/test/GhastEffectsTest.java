@@ -194,6 +194,24 @@ public class GhastEffectsTest {
 	}
 
 	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8)
+	public void aPlayerCannotHitAHardFireballBack(GameTestHelper helper) {
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(BLAST.east(2))));
+		Ghast plain = ghastWith(helper, new BlockPos(5, 1, 5));
+		LargeFireball plainFireball = fireball(helper, plain, BLAST.above());
+		player.attack(plainFireball);
+		helper.assertTrue(plainFireball.getOwner() == player, "the player hits a plain fireball back");
+		plainFireball.discard();
+		Ghast hard = ghastWith(helper, new BlockPos(5, 1, 5), "test_hard_fireball");
+		LargeFireball fireball = fireball(helper, hard, BLAST.above());
+		Vec3 motion = fireball.getDeltaMovement();
+		player.attack(fireball);
+		helper.assertTrue(fireball.getOwner() == hard, "the hard fireball stays the fireball of the ghast");
+		helper.assertTrue(fireball.getDeltaMovement().equals(motion), "the hard fireball does not turn");
+		helper.succeed();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8)
 	public void theFireballsOfOneMobDoNotHitEachOther(GameTestHelper helper) {
 		Ghast ghast = ghastWith(helper, new BlockPos(5, 1, 5), "test_twin_shot");
 		LargeFireball first = fireball(helper, ghast, BLAST);

@@ -261,7 +261,8 @@ public sealed interface GeneEffect {
 			Map.entry("swoop_call", SwoopCall.CODEC),
 			Map.entry("blast_shield_stop", BlastShieldStop.CODEC),
 			Map.entry("blast_fire", BlastFire.CODEC),
-			Map.entry("small_fireball_fan", SmallFireballFan.CODEC)
+			Map.entry("small_fireball_fan", SmallFireballFan.CODEC),
+			Map.entry("hard_fireball", HardFireball.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4306,6 +4307,18 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "small_fireball_fan";
+		}
+	}
+
+	/**
+	 * A player cannot hit the large fireballs of the mob back. The player can hit a fireball, but it does not turn.
+	 */
+	record HardFireball() implements GeneEffect {
+		public static final MapCodec<HardFireball> CODEC = MapCodec.unit(new HardFireball());
+
+		@Override
+		public String type() {
+			return "hard_fireball";
 		}
 	}
 }

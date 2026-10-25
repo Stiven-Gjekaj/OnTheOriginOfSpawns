@@ -226,6 +226,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> BUD_TIME = AttachmentRegistry.create(OriginOfSpawns.id("bud_time"));
 
 	/**
+	 * The game time at which the brain attack cooldown of a mob ends, after the attack interval genes changed it.
+	 */
+	public static final AttachmentType<Long> COOLDOWN_END = AttachmentRegistry.create(OriginOfSpawns.id("cooldown_end"));
+
+	/**
 	 * The place where the mob spawned. It is saved with the mob, so a mob that a player moves keeps the old place.
 	 */
 	public static final AttachmentType<net.minecraft.core.BlockPos> HOME =

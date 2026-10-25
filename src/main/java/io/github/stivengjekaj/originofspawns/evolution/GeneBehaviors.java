@@ -390,6 +390,7 @@ public final class GeneBehaviors {
 		}
 		List<GeneEffect> effects = GeneEffects.of(mob).toList();
 		updateSpeed(mob, effects);
+		scaleBrainCooldown(mob, level);
 		for (GeneEffect effect : effects) {
 			switch (effect) {
 				case GeneEffect.WaterPull pull -> waterPull(mob, level, pull);
@@ -1704,6 +1705,27 @@ public final class GeneBehaviors {
 	/**
 	 * Returns the product of the attack interval multipliers of the mob.
 	 */
+	/**
+	 * Changes the attack cooldown of a mob with a brain, such as a piglin brute or a hoglin, by its attack interval
+	 * genes. The brain sets a new cooldown after each hit, and this changes each new cooldown one time.
+	 */
+	public static void scaleBrainCooldown(Mob mob, ServerLevel level) {
+		var brain = mob.getBrain();
+		var cooling = net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_COOLING_DOWN;
+		if (!brain.checkMemory(cooling, net.minecraft.world.entity.ai.memory.MemoryStatus.VALUE_PRESENT)) {
+			return;
+		}
+		float multiplier = attackIntervalMultiplier(mob);
+		long now = level.getGameTime();
+		long remaining = brain.getTimeUntilExpiry(cooling);
+		if (multiplier == 1.0F || mob.getAttachedOrElse(ModAttachments.COOLDOWN_END, -1L) == now + remaining) {
+			return;
+		}
+		long scaled = Math.max(1L, Math.round(remaining * multiplier));
+		brain.setMemoryWithExpiry(cooling, true, scaled);
+		mob.setAttached(ModAttachments.COOLDOWN_END, now + scaled);
+	}
+
 	public static float attackIntervalMultiplier(LivingEntity mob) {
 		float multiplier = 1.0F;
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {

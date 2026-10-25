@@ -17,6 +17,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.piglin.Piglin;
@@ -133,6 +134,25 @@ public class PiglinBruteEffectsTest {
 		plain.discard();
 		brute.doHurtTarget(helper.getLevel(), player);
 		helper.assertTrue(player.getCooldowns().isOnCooldown(new ItemStack(Items.SHIELD)), "the shield stops for a time");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theAttackIntervalGenesChangeTheBrainCooldownOfABrute(GameTestHelper helper) {
+		PiglinBrute plain = bruteWith(helper, new BlockPos(1, 1, 1));
+		PiglinBrute slow = bruteWith(helper, new BlockPos(6, 1, 6), "test_enderman_bruiser");
+		for (PiglinBrute brute : new PiglinBrute[] {plain, slow}) {
+			// The brain of a brute sets a cooldown of 20 ticks after each hit.
+			brute.getBrain().setMemoryWithExpiry(MemoryModuleType.ATTACK_COOLING_DOWN, true, 20L);
+			GeneBehaviors.tick(brute, helper.getLevel());
+		}
+		helper.assertValueEqual(plain.getBrain().getTimeUntilExpiry(MemoryModuleType.ATTACK_COOLING_DOWN), 20L,
+				"the vanilla cooldown");
+		helper.assertValueEqual(slow.getBrain().getTimeUntilExpiry(MemoryModuleType.ATTACK_COOLING_DOWN), 23L,
+				"15% more time between two attacks");
+		GeneBehaviors.tick(slow, helper.getLevel());
+		helper.assertValueEqual(slow.getBrain().getTimeUntilExpiry(MemoryModuleType.ATTACK_COOLING_DOWN), 23L,
+				"the change comes one time for each cooldown");
 		helper.succeed();
 	}
 

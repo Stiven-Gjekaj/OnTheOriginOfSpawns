@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:phantom",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:phantom/shrieker",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:slowness",
+			"seconds": 2,
+			"amplifier": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:phantom",
+	"counters": "originofspawns:smite",
+	"family": "originofspawns:phantom/nightwing",
+	"gains": [
+		{
+			"type": "smite_resist",
+			"multiplier": 0.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:phantom",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:phantom/swarmwing",
+	"gains": [
+		{
+			"type": "death_effect",
+			"effect": "minecraft:strength",
+			"seconds": 10,
+			"radius": 16,
+			"allies": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

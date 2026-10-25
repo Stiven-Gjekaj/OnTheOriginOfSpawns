@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:phantom",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:phantom/shrieker",
+	"sub_family": "originofspawns:phantom/swarmwing",
+	"gains": [
+		{
+			"type": "call_on_sight",
+			"radius": 32
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

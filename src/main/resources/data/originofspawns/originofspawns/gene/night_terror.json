@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:phantom",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:phantom/nightwing",
+	"sub_family": "originofspawns:phantom/shrieker",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:darkness",
+			"radius": 8,
+			"interval_seconds": 15,
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

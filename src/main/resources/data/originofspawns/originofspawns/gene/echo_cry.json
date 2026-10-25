@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:phantom",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:phantom/shrieker",
+	"gains": [
+		{
+			"type": "call_on_hurt",
+			"radius": 32
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

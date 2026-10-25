@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:phantom",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:phantom/nightwing",
+	"gains": [
+		{
+			"type": "see_invisible",
+			"radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "flying_speed",
+			"multiplier": 0.9
+		}
+	]
+}

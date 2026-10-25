@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:phantom",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:phantom/swarmwing",
+	"gains": [
+		{
+			"type": "damage_dealt_when",
+			"when": "grouped",
+			"multiplier": 1.2
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "alone",
+			"multiplier": 0.8
+		}
+	]
+}

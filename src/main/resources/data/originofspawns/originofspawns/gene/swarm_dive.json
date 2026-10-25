@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:phantom",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:phantom/swarmwing",
+	"sub_family": "originofspawns:phantom/swooper",
+	"gains": [
+		{
+			"type": "swoop_call",
+			"radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

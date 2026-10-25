@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:phantom",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:phantom/swooper",
+	"gains": [
+		{
+			"type": "damage_to",
+			"targets": "#originofspawns:all_golems",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "flying_speed",
+			"multiplier": 0.9
+		}
+	]
+}

@@ -1,0 +1,50 @@
+{
+	"species": "minecraft:phantom",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "sun_shade",
+					"interval_seconds": 2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "sun_shade",
+					"interval_seconds": 3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "sun_shade",
+					"interval_seconds": 4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

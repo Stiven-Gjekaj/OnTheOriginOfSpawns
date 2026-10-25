@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:phantom",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:phantom/swooper",
+	"gains": [
+		{
+			"type": "shield_break",
+			"seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "flying_speed",
+			"multiplier": 0.9
+		}
+	]
+}

@@ -110,7 +110,7 @@ The visual column gives the region and the mark.
 | Far Sight | Barrager | `alone` | Two times the follow range | 10% less flying speed | Face: large, white eyes |
 | Spread Fire | Barrager | `crowd` | It shoots three small fireballs in a fan with each big one | It shoots 10% less often | Tentacles: three red rings |
 | Hard Fireball | Barrager | `melee` | A player cannot hit its fireballs back | 10% less maximum health | Body: dark, hard spots |
-| Steady Aim | Barrager | `unreached` | Its fireballs fly straight at the target, with no spread | 10% less flying speed | Face: a red mark between the eyes |
+| Steady Aim | Barrager | `unreached` | Its fireballs fly 50% faster | 10% less flying speed | Face: a red mark between the eyes |
 | Ember Spit | Barrager, sub Weeper | `projectile` | Its fireballs set the target on fire for 4 more seconds | 10% less maximum health | Face: red tear streaks |
 
 ### Weeper genes
@@ -158,7 +158,7 @@ The visual column gives the region and the mark.
 | Golem Bomb | "Golems" are the iron golem and the snow golem |
 | Twin Shot, Spread Fire | The extra fireballs follow the rules of the main one |
 | Hard Fireball | The player can hit the fireball, but it does not turn back |
-| Steady Aim | It works as the skeleton arrow spread at `0` |
+| Steady Aim | The speed is the speed of the flight of each fireball. A vanilla ghast already shoots with no spread |
 | Healing Tears | It works as the vindicator Death Wish |
 | Soul Tears, Weepers | They work as the vindicator Thick Blood |
 | Tear Rain | It works as the witch Coven Ward, with Regeneration |
@@ -266,7 +266,6 @@ These genes and families need parts that the mod does not have yet.
 | The time between its fireballs | Barragers, Quick Fire, and the downsides |
 | Two fireballs, and small fireballs in a fan | Twin Shot, Spread Fire |
 | A fireball that a player cannot hit back | Hard Fireball |
-| No spread of its fireballs | Steady Aim |
 | More fire time from its fireballs | Ember Spit |
 | The flying speed of the ghast | Driftwings, Swift Drift, and the downsides |
 | A sidestep in the air | Dodge Drift |

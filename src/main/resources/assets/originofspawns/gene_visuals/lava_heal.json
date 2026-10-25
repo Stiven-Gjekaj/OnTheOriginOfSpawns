@@ -14,6 +14,20 @@
 				"texture": "originofspawns:textures/gene_marks/lava_heal_1.png",
 				"tint": "#5A0008"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/lava_heal_2.png",
+				"tint": "#D01828"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/lava_heal_3.png",
+				"tint": "#FF4050"
+			}
 		}
 	]
 }

@@ -5,14 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/heavy_cube_0.png",
-				"tint": "#2E1610"
+				"tint": "#4A3A34"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/heavy_cube_1.png",
-				"tint": "#1A0C08"
+				"tint": "#2E2420"
 			}
 		}
 	]

@@ -1,5 +1,20 @@
 {
 	"region_map": "originofspawns:textures/region/magma_cube.png",
-	"layers": [],
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ember_trail_0.png",
+				"tint": "#FF8A1E"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ember_trail_1.png",
+				"tint": "#FFE070"
+			}
+		}
+	],
 	"model": "originofspawns:ember_trail_embers"
 }

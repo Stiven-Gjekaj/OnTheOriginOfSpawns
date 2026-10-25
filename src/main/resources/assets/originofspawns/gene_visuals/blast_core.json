@@ -14,6 +14,13 @@
 				"texture": "originofspawns:textures/gene_marks/blast_core_1.png",
 				"tint": "#FF8A20"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/blast_core_2.png",
+				"tint": "#FFE840"
+			}
 		}
 	]
 }

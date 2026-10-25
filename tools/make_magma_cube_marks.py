@@ -158,8 +158,15 @@ def flame_touch():
 
 
 def ember_trail():
-    # The embers are the gene model ember_trail_embers.
-    return []
+    # Glowing embers in the bottom layer, and the gene model
+    # ember_trail_embers at its edges.
+    ember = Mark("#FF8A1E")
+    hot = Mark("#FFE070")
+    for x, y, face, col, i in sides(layers=(6, 7)):
+        n = noise100(x, y, 3121)
+        if i == 7 and n < 45 or i == 6 and n < 15:
+            (hot if n < 12 else ember).put((x, y))
+    return [ember, hot]
 
 
 def ember_trail_model():
@@ -181,7 +188,14 @@ def heat_wave():
     edge = Mark("#FFE680")
     for x, y, face, col, row in core():
         (white if 0 < col < 3 and 0 < row < 3 else edge).put((x, y))
-    return [white, edge]
+    # White-hot lines between the layers: short white lines on layers 1, 3,
+    # 5, and 7, two pixels on and two off, round the sides. The face stays
+    # clear.
+    line = Mark("#FFF4C8")
+    for x, y, face, col, i in sides(layers=(1, 3, 5, 7)):
+        if not is_face(face, i) and (col + RING[face] + i) % 4 < 2:
+            line.put((x, y))
+    return [white, edge, line]
 
 
 def spit_fire():
@@ -216,6 +230,13 @@ def magma_blood():
             drop.put((x, y))
         else:
             dark.put((x, y))
+    # Lava drips down the sides: from the top, drips of lava of different
+    # lengths go down the sides, with a bright drop at the end of each.
+    for face in SIDES:
+        for col in (0, 7) if face == "front" else (1, 4, 6):
+            length = 3 + noise100(col, RING[face], 3111) % 5
+            for i in range(length):
+                (drop if i == length - 1 else lava).put(side(i, face, col))
     return [dark, lava, drop]
 
 
@@ -244,7 +265,24 @@ def obsidian_core():
     purple = Mark("#7A30B0")
     for x, y, face, col, row in core():
         (purple if noise100(x, y, 3401) < 25 else black).put((x, y))
-    return [black, purple]
+    # Black obsidian flecks with purple glints on the sides and the top.
+    glint = Mark("#9A48D8")
+    for x, y, face, col, i in sides():
+        if is_eye(face, col, i):
+            continue
+        n = noise100(x, y, 3403)
+        if n < 22:
+            black.put((x, y))
+        elif n < 28:
+            glint.put((x, y))
+    for col in range(8):
+        for row in range(8):
+            n = noise100(col, row, 3404)
+            if n < 22:
+                black.put(top(col, row))
+            elif n < 28:
+                glint.put(top(col, row))
+    return [black, purple, glint]
 
 
 def iron_crust():
@@ -269,10 +307,10 @@ def iron_crust():
 
 
 def heavy_cube():
-    # A thick, dark bottom: layers 5 to 7 are a dark brown, darker at the
-    # bottom, and so is the bottom of the cube.
-    mid = Mark("#2E1610")
-    low = Mark("#1A0C08")
+    # A thick, dark bottom: layers 5 to 7 are a dark gray brown, darker at
+    # the bottom, and so is the bottom of the cube.
+    mid = Mark("#4A3A34")
+    low = Mark("#2E2420")
     for x, y, face, col, i in sides(layers=(5, 6, 7)):
         if not is_face(face, i):
             (mid if i == 5 else low).put((x, y))
@@ -319,7 +357,14 @@ def blast_core():
     ring = Mark("#FF8A20")
     for x, y, face, col, row in core():
         (yellow if 0 < col < 3 and 0 < row < 3 else ring).put((x, y))
-    return [yellow, ring]
+    # Bright yellow rings around the layers: solid rings round layers 2 and
+    # 5, and a ring round the edge of the top. The face stays clear.
+    band = Mark("#FFE840")
+    for x, y, face, col, i in sides(layers=(2, 5)):
+        if not is_face(face, i):
+            band.put((x, y))
+    band.put([top(c, r) for c in range(8) for r in range(8) if c in (0, 7) or r in (0, 7)])
+    return [yellow, ring, band]
 
 
 def lava_pool():
@@ -383,7 +428,18 @@ def scatter_shot():
 
 def molten_core():
     # The core is the gene model molten_core_core.
-    return []
+    # Orange molten seams: seams that go up the sides in short steps, as
+    # between bricks, and across the top. The face stays clear. The core is
+    # the gene model molten_core_core.
+    seam = Mark("#FF8A20")
+    hot = Mark("#FFC040")
+    for x, y, face, col, i in sides():
+        if is_face(face, i):
+            continue
+        if (col + RING[face] + 3 * (i // 2)) % 6 == 0:
+            (hot if i % 2 else seam).put((x, y))
+    seam.put([top(c, 3) for c in range(8)] + [top(5, r) for r in range(8)])
+    return [seam, hot]
 
 
 def molten_core_model():
@@ -418,7 +474,14 @@ def lava_heal():
     dark = Mark("#5A0008")
     for x, y, face, col, row in core():
         (dark if col in (0, 3) or row in (0, 3) else deep).put((x, y))
-    return [deep, dark]
+    # Deep red veins on the layers: bright red veins that zigzag down the
+    # sides, and across the top.
+    vein = Mark("#D01828")
+    pale = Mark("#FF4050")
+    zigzag_cracks(vein, pale, (("front", 0), ("front", 7), ("right", 2), ("right", 6), ("left", 3), ("back", 1),
+                               ("back", 5)), 3901)
+    vein.put([top(c, r) for c, r in ((1, 1), (2, 2), (3, 2), (4, 3), (4, 4), (5, 5), (6, 6), (2, 5), (3, 4))])
+    return [deep, dark, vein, pale]
 
 
 def steam_body():
@@ -445,12 +508,12 @@ def steam_body_model():
 
 
 def lava_leap():
-    # A long, open mouth: a dark mouth on layers 4 and 5, columns 1 to 6,
-    # with lava in its low middle.
-    dark = Mark("#0C0200")
-    lava = Mark("#FF6A10")
-    dark.put([side(4, "front", c) for c in range(1, 7)] + [side(5, "front", c) for c in (1, 2, 5, 6)])
-    lava.put([side(5, "front", c) for c in (3, 4)])
+    # A long, open mouth: a black mouth across layer 5, columns 1 to 6, with
+    # a rim of lava on layer 4 and at its ends.
+    dark = Mark("#000000")
+    lava = Mark("#FF7A20")
+    lava.put([side(4, "front", c) for c in range(8)] + [side(5, "front", c) for c in (0, 7)])
+    dark.put([side(5, "front", c) for c in range(1, 7)])
     return [dark, lava]
 
 
@@ -466,6 +529,11 @@ def fire_drink():
              (1, 1): tip, (2, 1): yellow, (2, 0): tip}
     for x, y, face, col, row in core():
         (flame.get((col, row), dark) if face in CORE_SIDES else orange if face == "bottom" else dark).put((x, y))
+    # Small flames above the eyes: on the front of layer 1 over each eye an
+    # orange flame, and on layer 0 a yellow tip.
+    orange.put([side(1, "front", c) for c in EYE_COLUMNS])
+    yellow.put([side(0, "front", c) for c in (1, 2, 5, 6)])
+    tip.put([side(0, "front", c) for c in (2, 5)])
     return [dark, orange, yellow, tip]
 
 
@@ -478,7 +546,26 @@ def blaze_heart():
     for x, y, face, col, row in core():
         corner = col in (0, 3) and row in (0, 3)
         (deep if corner else pale if 0 < col < 3 and 0 < row < 3 else gold).put((x, y))
-    return [gold, pale, deep]
+    # Gold flecks on the layers: gold and pale gold flecks on the sides and
+    # the top. The eyes stay clear.
+    fleck = Mark("#FFC020")
+    shine = Mark("#FFF080")
+    for x, y, face, col, i in sides():
+        if is_eye(face, col, i):
+            continue
+        n = noise100(x, y, 4101)
+        if n < 18:
+            fleck.put((x, y))
+        elif n < 24:
+            shine.put((x, y))
+    for col in range(8):
+        for row in range(8):
+            n = noise100(col, row, 4102)
+            if n < 18:
+                fleck.put(top(col, row))
+            elif n < 24:
+                shine.put(top(col, row))
+    return [gold, pale, deep, fleck, shine]
 
 
 # The Springers.
@@ -532,7 +619,18 @@ def quick_jump():
 
 def rebound():
     # The coil is the gene model rebound_coil.
-    return []
+    # Gray coil bands on the outer layers: bands three pixels wide that turn
+    # round the cube as they go down, as a spring. The face stays clear. The
+    # coil inside is the gene model rebound_coil.
+    band = Mark("#9A9EA6")
+    edge = Mark("#C8CCD2")
+    for x, y, face, col, i in sides():
+        if is_face(face, i):
+            continue
+        step = (col + RING[face] - i) % 10
+        if step < 3:
+            (edge if step == 0 else band).put((x, y))
+    return [band, edge]
 
 
 def rebound_model():

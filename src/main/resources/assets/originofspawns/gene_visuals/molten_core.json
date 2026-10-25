@@ -1,5 +1,20 @@
 {
 	"region_map": "originofspawns:textures/region/magma_cube.png",
-	"layers": [],
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/molten_core_0.png",
+				"tint": "#FF8A20"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/molten_core_1.png",
+				"tint": "#FFC040"
+			}
+		}
+	],
 	"model": "originofspawns:molten_core_core"
 }

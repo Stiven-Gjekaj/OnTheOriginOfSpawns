@@ -5,14 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/lava_leap_0.png",
-				"tint": "#0C0200"
+				"tint": "#000000"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/lava_leap_1.png",
-				"tint": "#FF6A10"
+				"tint": "#FF7A20"
 			}
 		}
 	]

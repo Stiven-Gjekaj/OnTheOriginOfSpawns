@@ -14,6 +14,13 @@
 				"texture": "originofspawns:textures/gene_marks/heat_wave_1.png",
 				"tint": "#FFE680"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/heat_wave_2.png",
+				"tint": "#FFF4C8"
+			}
 		}
 	]
 }

@@ -14,6 +14,13 @@
 				"texture": "originofspawns:textures/gene_marks/obsidian_core_1.png",
 				"tint": "#7A30B0"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/obsidian_core_2.png",
+				"tint": "#9A48D8"
+			}
 		}
 	]
 }

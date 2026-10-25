@@ -4,6 +4,7 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -20,6 +21,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -29,6 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -349,6 +353,87 @@ public class GhastEffectsTest {
 		helper.assertValueEqual(Math.round(Math.abs(ghast.getX() - before.x)), 2L, "the side distance");
 		helper.assertValueEqual(ghast.getY(), before.y, "it stays at the same height in the air");
 		helper.succeed();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8)
+	public void emberSpitSetsTheTargetOfTheFireballOnFire(GameTestHelper helper) {
+		IronGolem plainTarget = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, BLAST);
+		hitWithFireball(helper, ghastWith(helper, new BlockPos(5, 1, 5)), plainTarget);
+		helper.assertValueEqual(plainTarget.getRemainingFireTicks(), 0, "a plain fireball does not set the target on fire");
+		plainTarget.discard();
+		IronGolem target = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, BLAST);
+		hitWithFireball(helper, ghastWith(helper, new BlockPos(5, 1, 5), "test_ember_spit"), target);
+		helper.assertValueEqual(target.getRemainingFireTicks(), 80, "the fireball sets the target on fire for 4 seconds");
+		helper.succeed();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, padding = 8)
+	public void golemBombDoesMoreBlastDamageToGolems(GameTestHelper helper) {
+		IronGolem plainGolem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, BLAST.east(1));
+		explodeFireball(helper, ghastWith(helper, new BlockPos(5, 1, 5)), BLAST);
+		float plain = plainGolem.getMaxHealth() - plainGolem.getHealth();
+		plainGolem.discard();
+		IronGolem golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, BLAST.east(1));
+		explodeFireball(helper, ghastWith(helper, new BlockPos(5, 1, 5), "test_golem_bane"), BLAST);
+		float bomb = golem.getMaxHealth() - golem.getHealth();
+		helper.assertTrue(plain > 0.0F, "the plain blast hurts the golem");
+		helper.assertTrue(Math.abs(bomb / plain - 1.5F) < 0.01F, "1.5 times the blast damage, not " + bomb / plain);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void kinGriefHealsWhenAnotherGhastDies(GameTestHelper helper) {
+		Ghast mourner = ghastWith(helper, new BlockPos(5, 1, 5), "test_mourner");
+		Ghast dead = ghastWith(helper, new BlockPos(1, 1, 1));
+		mourner.setHealth(4.0F);
+		GeneCombat.onDeath(dead, helper.getLevel(), helper.getLevel().damageSources().generic());
+		helper.assertValueEqual(mourner.getHealth(), 8.0F, "the ghast heals 4");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void griefCryGivesAnEffectToThePlayersNearWhenItIsHurt(GameTestHelper helper) {
+		Ghast ghast = ghastWith(helper, new BlockPos(2, 1, 2), "test_smoke_veil");
+		ServerPlayer attacker = CreeperEffectsTest.survivalPlayer(helper).player();
+		attacker.setPos(ghast.position().add(3.0, 0.0, 0.0));
+		GeneCombat.onHurt(ghast, helper.getLevel().damageSources().playerAttack(attacker));
+		helper.assertTrue(attacker.hasEffect(MobEffects.BLINDNESS), "a player in 4 blocks gets the effect");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedHealsWorkOnAGhast(GameTestHelper helper) {
+		ReusedEffects.regenerate(helper, GhastEffectsTest::ghastWith);
+		ReusedEffects.healOnce(helper, GhastEffectsTest::ghastWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedAurasWorkOnAGhast(GameTestHelper helper) {
+		ReusedEffects.allyAura(helper, GhastEffectsTest::ghastWith);
+		ReusedEffects.playerAura(helper, GhastEffectsTest::ghastWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedEffectsOnTheBodyWorkOnAGhast(GameTestHelper helper) {
+		ReusedEffects.translucent(helper, GhastEffectsTest::ghastWith);
+		ReusedEffects.damageTaken(helper, GhastEffectsTest::ghastWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedCallOnHurtWorksOnAGhast(GameTestHelper helper) {
+		ReusedEffects.callOnHurt(helper, GhastEffectsTest::ghastWith);
+		helper.succeed();
+	}
+
+	/**
+	 * Makes a fireball of the ghast hit the target directly.
+	 */
+	static void hitWithFireball(GameTestHelper helper, Ghast ghast, LivingEntity target) {
+		LargeFireball fireball = fireball(helper, ghast, BLAST.above(3));
+		((ProjectileAccessor) fireball).originofspawns$onHit(new EntityHitResult(target));
 	}
 
 	/**

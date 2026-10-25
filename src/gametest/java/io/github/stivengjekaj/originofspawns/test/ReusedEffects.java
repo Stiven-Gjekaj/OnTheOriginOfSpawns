@@ -303,6 +303,32 @@ final class ReusedEffects {
 				net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_COOLING_DOWN), 46L, "15% more time between attacks");
 	}
 
+	static void smiteResist(GameTestHelper helper, Maker maker) {
+		Mob bane = maker.at(helper, new BlockPos(5, 1, 5), "test_holy_bane");
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		ItemStack sword = new ItemStack(Items.IRON_SWORD);
+		sword.enchant(helper.getLevel().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+				.getOrThrow(net.minecraft.world.item.enchantment.Enchantments.SMITE), 2);
+		player.setItemSlot(EquipmentSlot.MAINHAND, sword);
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(bane, helper.getLevel().damageSources().playerAttack(player), 11.0F)
+				- 8.5F) < 0.001F, "half the extra damage of Smite II");
+	}
+
+	static void meleeShieldBreak(GameTestHelper helper, Maker maker) {
+		ServerPlayer player = CreeperEffectsTest.shieldedPlayer(helper);
+		Mob mob = maker.at(helper, new BlockPos(4, 1, 1), "test_guard_crusher");
+		mob.snapTo(player.position().add(-1.0, 0.0, 0.0), -90.0F, 0.0F);
+		mob.doHurtTarget(helper.getLevel(), player);
+		helper.assertTrue(player.getCooldowns().isOnCooldown(new ItemStack(Items.SHIELD)), "the hit stops the shield");
+	}
+
+	static void meleeHitGenes(GameTestHelper helper, Maker maker) {
+		Mob mob = maker.at(helper, new BlockPos(1, 1, 4), "test_slime_hits");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(2, 1, 4));
+		mob.doHurtTarget(helper.getLevel(), pig);
+		helper.assertTrue(pig.hasEffect(MobEffects.SLOWNESS), "the real hit gives Slowness");
+	}
+
 	/**
 	 * Waits until the speed when gene of a wounded mob makes it 30% faster.
 	 */

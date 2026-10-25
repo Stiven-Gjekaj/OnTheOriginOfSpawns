@@ -122,6 +122,88 @@ public class PhantomEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void theReusedBiteEffectsWorkOnAPhantom(GameTestHelper helper) {
+		ReusedEffects.meleeHitGenes(helper, PhantomEffectsTest::phantomWith);
+		ReusedEffects.knockback(helper, PhantomEffectsTest::phantomWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedShieldBreakWorksOnAPhantom(GameTestHelper helper) {
+		ReusedEffects.meleeShieldBreak(helper, PhantomEffectsTest::phantomWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedDamageEffectsWorkOnAPhantom(GameTestHelper helper) {
+		ReusedEffects.damageToGolems(helper, PhantomEffectsTest::phantomWith);
+		ReusedEffects.damageTaken(helper, PhantomEffectsTest::phantomWith);
+		ReusedEffects.smiteResist(helper, PhantomEffectsTest::phantomWith);
+		helper.succeed();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void theReusedFirstStrikeWorksOnAPhantom(GameTestHelper helper) {
+		ReusedEffects.firstStrike(helper, PhantomEffectsTest::phantomWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedSightEffectsWorkOnAPhantom(GameTestHelper helper) {
+		ReusedEffects.translucent(helper, PhantomEffectsTest::phantomWith);
+		ReusedEffects.seeInvisible(helper, PhantomEffectsTest::phantomWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedAuraWorksOnAPhantom(GameTestHelper helper) {
+		ReusedEffects.playerAura(helper, PhantomEffectsTest::phantomWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedCallOnHurtWorksOnAPhantom(GameTestHelper helper) {
+		ReusedEffects.callOnHurt(helper, PhantomEffectsTest::phantomWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedCallOnSightWorksOnAPhantom(GameTestHelper helper) {
+		ReusedEffects.callOnSight(helper, PhantomEffectsTest::phantomWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedGroupDamageWorksOnAPhantom(GameTestHelper helper) {
+		ReusedEffects.groupedAndAlone(helper, PhantomEffectsTest::phantomWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedDeathEffectWorksOnAPhantom(GameTestHelper helper) {
+		ReusedEffects.deathEffectOnAllies(helper, PhantomEffectsTest::phantomWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedRallyWorksOnAPhantom(GameTestHelper helper) {
+		ReusedEffects.rally(helper, PhantomEffectsTest::phantomWith, "test_rally_cry");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void bigFlockSpawnsAPhantomWithGenesFromThePool(GameTestHelper helper) {
+		Phantom phantom = phantomWith(helper, new BlockPos(4, 3, 4), "test_big_litter");
+		GeneBehaviors.onSpawn(phantom, helper.getLevel(), EntitySpawnReason.NATURAL);
+		var flock = helper.getLevel().getEntitiesOfClass(Phantom.class, phantom.getBoundingBox().inflate(3.0),
+				other -> other != phantom);
+		helper.assertValueEqual(flock.size(), 1, "one more phantom");
+		helper.assertFalse(phantom.getAttached(ModAttachments.GENES).equals(flock.get(0).getAttached(ModAttachments.GENES)),
+				"the extra phantom has genes from the pool, not the genes of the first");
+		helper.succeed();
+	}
+
 	/**
 	 * Adds a phantom with the test genes and no AI. The genes go on before it enters the level, so it gets no genes
 	 * from the pool.

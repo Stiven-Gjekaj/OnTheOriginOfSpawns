@@ -288,7 +288,8 @@ public sealed interface GeneEffect {
 			Map.entry("spin_up", SpinUp.CODEC),
 			Map.entry("charge_each_player", ChargeEachPlayer.CODEC),
 			Map.entry("lightning_call", LightningCall.CODEC),
-			Map.entry("escape_jump", EscapeJump.CODEC)
+			Map.entry("escape_jump", EscapeJump.CODEC),
+			Map.entry("fireball_fire_spread", FireballFireSpread.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4802,6 +4803,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "escape_jump";
+		}
+	}
+
+	/**
+	 * Each small fireball of the mob sets fire to the blocks in the radius round the place where it hits. The fire
+	 * goes only in air, on a block with a full top. It obeys the {@code mobGriefing} gamerule.
+	 */
+	record FireballFireSpread(int radius) implements GeneEffect {
+		public static final MapCodec<FireballFireSpread> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 4).optionalFieldOf("radius", 1).forGetter(FireballFireSpread::radius)
+		).apply(instance, FireballFireSpread::new));
+
+		@Override
+		public String type() {
+			return "fireball_fire_spread";
 		}
 	}
 }

@@ -182,6 +182,47 @@ public class BlazeEffectsTest {
 		((ProjectileAccessor) fireball).originofspawns$onHit(new EntityHitResult(player));
 	}
 
+	@GameTest
+	public void fireTrailSetsFireRoundTheHit(GameTestHelper helper) {
+		BlockPos stone = new BlockPos(3, 1, 3);
+		stoneSquare(helper, stone);
+		hitBlockWithFireball(helper, blazeWith(helper, new BlockPos(6, 1, 6)), stone);
+		helper.assertValueEqual(firesOver(helper, stone), 1, "a plain fireball sets fire to the hit block only");
+		stoneSquare(helper, stone);
+		hitBlockWithFireball(helper, blazeWith(helper, new BlockPos(6, 1, 6), "test_fire_trail"), stone);
+		helper.assertValueEqual(firesOver(helper, stone), 9, "fire on each block in 1 block round the hit");
+		helper.succeed();
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void fireTrailObeysMobGriefing(GameTestHelper helper) {
+		BlockPos stone = new BlockPos(3, 1, 3);
+		stoneSquare(helper, stone);
+		hitBlockWithFireball(helper, blazeWith(helper, new BlockPos(6, 1, 6), "test_fire_trail"), stone);
+		helper.assertValueEqual(firesOver(helper, stone), 0, "no fire with mobGriefing off");
+		helper.succeed();
+	}
+
+	/**
+	 * Puts stone in a square of 3 x 3 with the center at the place, and air over it.
+	 */
+	static void stoneSquare(GameTestHelper helper, BlockPos center) {
+		for (BlockPos pos : BlockPos.betweenClosed(center.offset(-1, 0, -1), center.offset(1, 0, 1))) {
+			helper.setBlock(pos, net.minecraft.world.level.block.Blocks.STONE);
+			helper.setBlock(pos.above(), net.minecraft.world.level.block.Blocks.AIR);
+		}
+	}
+
+	static int firesOver(GameTestHelper helper, BlockPos center) {
+		int fires = 0;
+		for (BlockPos pos : BlockPos.betweenClosed(center.offset(-1, 1, -1), center.offset(1, 1, 1))) {
+			if (helper.getBlockState(pos).is(net.minecraft.world.level.block.Blocks.FIRE)) {
+				fires++;
+			}
+		}
+		return fires;
+	}
+
 	/**
 	 * Makes a small fireball of the blaze hit the top of the block.
 	 */

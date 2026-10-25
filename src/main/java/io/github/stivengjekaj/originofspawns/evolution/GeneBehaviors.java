@@ -940,7 +940,7 @@ public final class GeneBehaviors {
 	}
 
 	/**
-	 * Runs the effects of the genes of the mob where its small fireball hits: the blast and the clouds.
+	 * Runs the effects of the genes of the mob where its small fireball hits: the blast, the clouds, and the fire.
 	 */
 	public static void smallFireballHit(Mob mob, SmallFireball fireball, ServerLevel level) {
 		float power = 0.0F;
@@ -955,6 +955,16 @@ public final class GeneBehaviors {
 				area.setDuration(Math.max(1, Math.round(cloud.cloudSeconds() * 20.0F)));
 				area.addEffect(new MobEffectInstance(cloud.effect(), Math.round(cloud.seconds() * 20.0F), cloud.amplifier()));
 				level.addFreshEntity(area);
+			} else if (effect instanceof GeneEffect.FireballFireSpread spread
+					&& level.getGameRules().get(net.minecraft.world.level.gamerules.GameRules.MOB_GRIEFING)) {
+				BlockPos center = fireball.blockPosition();
+				for (BlockPos pos : BlockPos.betweenClosed(center.offset(-spread.radius(), -spread.radius(), -spread.radius()),
+						center.offset(spread.radius(), spread.radius(), spread.radius()))) {
+					if (level.getBlockState(pos).isAir()
+							&& level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP)) {
+						level.setBlockAndUpdate(pos, net.minecraft.world.level.block.BaseFireBlock.getState(level, pos));
+					}
+				}
 			}
 		}
 		if (power > 0.0F) {

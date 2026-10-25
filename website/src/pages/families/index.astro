@@ -18,6 +18,8 @@ const tierNote = ["The sub of a minor family gets tier 1.", "A major family alon
 const minor = (a, b) => site.minors.find((m) => m.major === a && m.sub === b);
 const hybridsOf = (sp) => site.hybrids.filter((h) => h.species === sp);
 const minorsOf = (sp) => site.minors.filter((m) => m.species === sp);
+// The Nether mobs whose babies show no gene marks. The design files do not say this yet.
+const unmarkedBabies = ["zombified_piglin", "piglin", "hoglin", "zoglin"];
 ---
 <Layout title="Families" description="The families, minor families, and hybrids of each species of On the Origin of Spawns.">
   <PageHeader eyebrow="Families" title="The genes of a mob select its family">
@@ -38,6 +40,8 @@ const minorsOf = (sp) => site.minors.filter((m) => m.species === sp);
           <ul class="equip-rules small">{sp.equipment.slice(1).map((x) => <li>{x}</li>)}</ul>
         )}
         {sp.geneRules.length > 0 && <ul class="equip-rules small">{sp.geneRules.map((x) => <li>{x}</li>)}</ul>}
+        {sp.conversion.length > 0 && <ul class="equip-rules small">{sp.conversion.map((x) => <li>{x}</li>)}</ul>}
+        <ul class="equip-rules small">{[...new Set([...sp.babies, ...sp.jockeys])].map((x) => <li>{x}</li>)}{unmarkedBabies.includes(sp.id) && <li>A baby shows no gene marks.</li>}</ul>
         <p class="muted small">The picture shows {an(sp.name)} {sp.name.toLowerCase()} with no genes. Each family picture shows {an(sp.name)} {sp.name.toLowerCase()} with all 6 genes of the family.</p>
       </div>
     </div>

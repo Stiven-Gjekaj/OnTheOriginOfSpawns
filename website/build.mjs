@@ -376,6 +376,7 @@ for (const sp of speciesIds) {
   const babies = md.find((x) => /^Bab(y|ies)\b/.test(x.title));
   const jockeys = md.find((x) => /jockeys$/i.test(x.title));
   const equipment = md.find((x) => x.title === "Equipment");
+  const conversion = md.find((x) => x.title === "Conversion");
   species.push({
     id: sp,
     entity,
@@ -390,6 +391,7 @@ for (const sp of speciesIds) {
     hasBabies: babies ? bullets(babies.lines).some((x) => /^Only the .* gene makes/.test(x.text)) : false,
     jockeys: jockeys ? bullets(jockeys.lines).map((x) => x.text) : [],
     equipment: equipment ? bullets(equipment.lines).map((x) => x.text) : [],
+    conversion: conversion ? bullets(conversion.lines).map((x) => x.text) : [],
     // The rows for "All" in the gene details are rules for each gene of the species.
     geneRules: detailTable.filter((r) => r.Gene === "All").map((r) => r.Rules),
   });

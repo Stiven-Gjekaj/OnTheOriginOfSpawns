@@ -27,6 +27,8 @@ public abstract class ServerExplosionMixin {
 	 */
 	@ModifyVariable(method = "hurtEntities", at = @At("STORE"), ordinal = 2)
 	private Vec3 originofspawns$windPush(Vec3 knockback, @Local Entity entity) {
-		return GeneBehaviors.windPush(source, entity, knockback);
+		Vec3 push = GeneBehaviors.windPush(source, entity, knockback);
+		GeneBehaviors.windBlastEffects(source, entity, push);
+		return push;
 	}
 }

@@ -1043,6 +1043,24 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Gives the blast effects of the mob that shot a wind charge to each living entity that the blast of the charge
+	 * pushes. The blast of a wind charge does no damage, so the effects go with the push. A blast effect with a radius
+	 * acts only on the blasts that do damage.
+	 */
+	public static void windBlastEffects(Entity source, Entity pushed, Vec3 push) {
+		if (!(source instanceof net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.AbstractWindCharge charge)
+				|| !(GeneBlasts.shooter(charge) instanceof Mob mob) || !(pushed instanceof LivingEntity living)
+				|| living == mob || push.lengthSqr() <= 0.0) {
+			return;
+		}
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.BlastEffect blast && blast.radius().isEmpty()) {
+				living.addEffect(new MobEffectInstance(blast.effect(), Math.round(blast.seconds() * 20.0F), blast.amplifier()), mob);
+			}
+		}
+	}
+
+	/**
 	 * Shoots the ring of small fireballs of the mob, if the mob has a target and the cooldown is over.
 	 *
 	 * @return true if the mob shot the ring

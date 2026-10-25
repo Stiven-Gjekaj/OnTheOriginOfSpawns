@@ -67,6 +67,18 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void chillWindGivesTheEffectToThePushedEntities(GameTestHelper helper) {
+		Pig plainPig = CreeperEffectsTest.pigAt(helper, BURST.east());
+		burst(helper, breezeWith(helper, new BlockPos(6, 1, 6)));
+		helper.assertTrue(plainPig.getActiveEffects().isEmpty(), "a plain charge gives no effect");
+		plainPig.discard();
+		Pig pig = CreeperEffectsTest.pigAt(helper, BURST.east());
+		burst(helper, breezeWith(helper, new BlockPos(6, 1, 6), "test_concussion"));
+		helper.assertTrue(pig.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS), "the pushed pig gets the effect");
+		helper.succeed();
+	}
+
 	static IronGolem golemAt(GameTestHelper helper) {
 		IronGolem golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, BURST.east());
 		golem.setNoGravity(true);

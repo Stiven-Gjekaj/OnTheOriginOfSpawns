@@ -52,6 +52,8 @@
 		"LavaFluidMixin",
 		"LeapAtTargetGoalMixin",
 		"LivingEntityMixin",
+		"LongJumpAccessor",
+		"LongJumpMixin",
 		"MagmaCubeMixin",
 		"MeleeAttackGoalMixin",
 		"MobAccessor",

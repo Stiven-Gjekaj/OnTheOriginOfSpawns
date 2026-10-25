@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:breeze",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "hop", "wait_multiplier": 0.7, "distance_multiplier": 1.5, "height_multiplier": 1.2 }],
+	"mutation_rate": 0
+}

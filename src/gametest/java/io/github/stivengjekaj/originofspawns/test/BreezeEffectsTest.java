@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.mixin.LongJumpAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -191,6 +192,50 @@ public class BreezeEffectsTest {
 		shoot.tickOrStop(helper.getLevel(), breeze, now);
 		return helper.getLevel().getEntitiesOfClass(BreezeWindCharge.class, helper.getBounds().inflate(4.0),
 				charge -> charge.getOwner() == breeze);
+	}
+
+	@GameTest
+	public void skyHopChangesTheLongJumpOfABreeze(GameTestHelper helper) {
+		Vec3 plain = jumpOf(helper, breezeWith(helper, new BlockPos(1, 1, 1)));
+		Vec3 sky = jumpOf(helper, breezeWith(helper, new BlockPos(1, 1, 1), "test_sky_hop"));
+		helper.assertTrue(plain.horizontalDistance() > 0.0, "the plain breeze jumps");
+		helper.assertTrue(Math.abs(sky.horizontalDistance() / plain.horizontalDistance() - 1.5) < 0.001,
+				"1.5 times the speed along the ground");
+		helper.assertTrue(Math.abs(sky.y / plain.y - 1.2) < 0.001, "1.2 times the speed up");
+		helper.assertValueEqual(restAfterLanding(helper, breezeWith(helper, new BlockPos(1, 1, 1))), 10L, "the plain rest");
+		helper.assertValueEqual(restAfterLanding(helper, breezeWith(helper, new BlockPos(1, 1, 1), "test_sky_hop")), 7L,
+				"30% less rest");
+		helper.succeed();
+	}
+
+	/**
+	 * Makes the breeze jump to a place 4 blocks away at the end of its inhale, and returns the speed of the jump. The
+	 * random source has a fixed seed, so each breeze picks the same angle.
+	 */
+	static Vec3 jumpOf(GameTestHelper helper, Breeze breeze) {
+		breeze.setNoGravity(false);
+		breeze.setOnGround(true);
+		breeze.getRandom().setSeed(42L);
+		breeze.setPose(net.minecraft.world.entity.Pose.INHALING);
+		breeze.getBrain().setMemory(MemoryModuleType.BREEZE_JUMP_TARGET, helper.absolutePos(new BlockPos(5, 1, 1)));
+		((LongJumpAccessor) new net.minecraft.world.entity.monster.breeze.LongJump())
+				.originofspawns$tick(helper.getLevel(), breeze, helper.getLevel().getGameTime());
+		Vec3 jump = breeze.getDeltaMovement();
+		breeze.discard();
+		return jump;
+	}
+
+	/**
+	 * Makes the breeze land from a long jump, and returns the ticks of its rest before the next jump.
+	 */
+	static long restAfterLanding(GameTestHelper helper, Breeze breeze) {
+		breeze.setPose(net.minecraft.world.entity.Pose.LONG_JUMPING);
+		breeze.setOnGround(true);
+		((LongJumpAccessor) new net.minecraft.world.entity.monster.breeze.LongJump())
+				.originofspawns$tick(helper.getLevel(), breeze, helper.getLevel().getGameTime());
+		long rest = breeze.getBrain().getTimeUntilExpiry(MemoryModuleType.BREEZE_JUMP_COOLDOWN);
+		breeze.discard();
+		return rest;
 	}
 
 	/**

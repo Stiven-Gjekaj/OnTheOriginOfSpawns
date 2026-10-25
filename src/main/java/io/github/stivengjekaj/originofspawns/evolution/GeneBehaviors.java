@@ -786,6 +786,22 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the turns in radians of the extra shots of the fan shot of the mob, if its state is true and its cooldown
+	 * is over, and starts the cooldown. Else it returns no turns.
+	 */
+	public static float[] fanShotTurns(Mob mob, ServerLevel level) {
+		var fan = readyFanShot(mob, level);
+		if (fan.isEmpty()) {
+			return new float[0];
+		}
+		float[] turns = new float[fan.get().arrows() - 1];
+		for (int i = 0; i < turns.length; i++) {
+			turns[i] = fanAngle(fan.get(), i);
+		}
+		return turns;
+	}
+
+	/**
 	 * After a shot of a ghast with a fan shot, shoots the other fireballs of the fan. Each extra fireball is the main
 	 * one, turned about the center of the ghast. It has the same blast power, so it follows the rules of the main one.
 	 */

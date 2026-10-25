@@ -150,6 +150,19 @@ public class BreezeEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void twinChargeShootsTwoWindChargesAtOnce(GameTestHelper helper) {
+		helper.assertValueEqual(shoot(helper, shooter(helper, new BlockPos(1, 1, 1))).size(), 1, "a plain breeze shoots one");
+		var twin = shoot(helper, shooter(helper, new BlockPos(1, 1, 5), "test_true_aim", "test_twin_shot"));
+		helper.assertValueEqual(twin.size(), 2, "wind charges in a twin shot");
+		Vec3 first = twin.get(0).getDeltaMovement().multiply(1.0, 0.0, 1.0).normalize();
+		Vec3 second = twin.get(1).getDeltaMovement().multiply(1.0, 0.0, 1.0).normalize();
+		double degrees = Math.toDegrees(Math.acos(Math.min(1.0, first.dot(second))));
+		helper.assertTrue(Math.abs(degrees - 10.0) < 0.5, "the charges are 10 degrees apart, not " + degrees);
+		twin.forEach(BreezeWindCharge::discard);
+		helper.succeed();
+	}
+
 	/**
 	 * Makes a breeze shoot one wind charge at a pig, and returns the angle in radians between the charge and the line
 	 * that the shot aims at.

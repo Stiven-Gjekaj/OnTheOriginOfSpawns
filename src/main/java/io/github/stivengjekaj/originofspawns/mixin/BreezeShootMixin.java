@@ -10,7 +10,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.monster.breeze.Breeze;
 import net.minecraft.world.entity.monster.breeze.Shoot;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.hurtingprojectile.windcharge.BreezeWindCharge;
 import net.minecraft.world.item.ItemStack;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,9 +34,18 @@ public abstract class BreezeShootMixin {
 		if (!(charge.getOwner() instanceof Breeze breeze)) {
 			return original.call(charge, level, stack, x, y, z, power, uncertainty);
 		}
-		Projectile shot = original.call(charge, level, stack, x, y, z, power, uncertainty * GeneBehaviors.arrowSpreadMultiplier(breeze));
+		float spread = uncertainty * GeneBehaviors.arrowSpreadMultiplier(breeze);
+		Projectile shot = original.call(charge, level, stack, x, y, z, power, spread);
 		if (shot instanceof AbstractHurtingProjectile hurting) {
 			GeneBehaviors.fireballSpeed(breeze, hurting);
+		}
+		// The other wind charges of a fan shot follow the rules of the first one, turned about the up axis.
+		for (float turn : GeneBehaviors.fanShotTurns(breeze, level)) {
+			Projectile extra = original.call(new BreezeWindCharge(breeze, level), level, stack,
+					x * Mth.cos(turn) - z * Mth.sin(turn), y, x * Mth.sin(turn) + z * Mth.cos(turn), power, spread);
+			if (extra instanceof AbstractHurtingProjectile hurting) {
+				GeneBehaviors.fireballSpeed(breeze, hurting);
+			}
 		}
 		return shot;
 	}

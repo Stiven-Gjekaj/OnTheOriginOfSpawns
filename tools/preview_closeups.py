@@ -656,6 +656,24 @@ def magma_cube_closeup(key, title):
     rows = [(f"{family.capitalize()}: all 6", genes, False) for family, genes in MAGMA_CUBE.items()]
     return {key + "_closeup": (title, rows, SPIDER_VIEWS)}
 
+
+# The close-ups of the Nether mobs: all 6 genes of each family, in one row
+# each. The piglin has a second close-up with its crossbow.
+def nether_closeup(species, title, views=ALL_SIDES):
+    families = pg.SPECIES[species][2]
+    rows = [(f"{family.capitalize()}: all 6", genes, False) for family, genes in families.items()]
+    return {species + "_closeup": (title, rows, views)}
+
+
+ZOMBIFIED_PIGLIN_CLOSEUPS = nether_closeup("zombified_piglin", "Zombified piglin with a gold sword")
+PIGLIN_CLOSEUPS = nether_closeup("piglin", "Piglin with a gold sword")
+PIGLIN_CROSSBOW_CLOSEUPS = {"piglin_crossbow_closeup": (
+    "Piglin with a crossbow", [(f"{family.capitalize()}: all 6", genes, False)
+                               for family, genes in pg.PIGLIN_FAMILIES.items()], ALL_SIDES)}
+PIGLIN_BRUTE_CLOSEUPS = nether_closeup("piglin_brute", "Piglin brute with a gold axe")
+HOGLIN_CLOSEUPS = nether_closeup("hoglin", "Hoglin", SPIDER_VIEWS)
+ZOGLIN_CLOSEUPS = nether_closeup("zoglin", "Zoglin", SPIDER_VIEWS)
+
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
     "husk": (pg.HUSK_PATH, pg.HUSK_BABY_PATH, HUSK_CLOSEUPS),
@@ -685,6 +703,12 @@ SPECIES = {
     "magma_cube_1": (pg.MAGMA_CUBE_PATH, None, magma_cube_closeup("magma_cube_1", "Magma cube at size 1")),
     "magma_cube_apart": (pg.MAGMA_CUBE_PATH, None,
                          magma_cube_closeup("magma_cube_apart", "Magma cube with its layers apart")),
+    "zombified_piglin": (pg.ZOMBIFIED_PIGLIN_PATH, None, ZOMBIFIED_PIGLIN_CLOSEUPS),
+    "piglin": (pg.PIGLIN_PATH, None, PIGLIN_CLOSEUPS),
+    "piglin_crossbow": (pg.PIGLIN_PATH, None, PIGLIN_CROSSBOW_CLOSEUPS),
+    "piglin_brute": (pg.PIGLIN_BRUTE_PATH, None, PIGLIN_BRUTE_CLOSEUPS),
+    "hoglin": (pg.HOGLIN_PATH, None, HOGLIN_CLOSEUPS),
+    "zoglin": (pg.ZOGLIN_PATH, None, ZOGLIN_CLOSEUPS),
 }
 
 

@@ -878,7 +878,7 @@ def held_item(kind):
 # the sheets (VIEW_X, VIEW_Y, VIEW_W, VIEW_H), the frame of the close-ups,
 # and whether the sheets look down on it.
 PIGLIN_FRAME, PIGLIN_CLOSEUP = (13, 11, 26, 37), ((30, 44), (0, 7))
-HOGLIN_FRAME, HOGLIN_CLOSEUP = (30, 21, 60, 48), ((62, 54), (0, 6))
+HOGLIN_FRAME, HOGLIN_CLOSEUP = (36, 22, 72, 56), ((72, 56), (0, 6))
 NETHER_LOOKS = {
     "zombified_piglin": (PIGLIN_CUBES, PIGLIN_PIVOTS, "sword", PIGLIN_OUTER, PIGLIN_FRAME, PIGLIN_CLOSEUP, False),
     "piglin": (PIGLIN_CUBES, PIGLIN_PIVOTS, "sword", PIGLIN_OUTER, PIGLIN_FRAME, PIGLIN_CLOSEUP, False),

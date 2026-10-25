@@ -218,6 +218,46 @@ final class ReusedEffects {
 				- 10.5F) < 0.001F, "5% more damage for the one ally");
 	}
 
+	static void throwEffect(GameTestHelper helper, Maker maker) {
+		Mob mob = maker.at(helper, new BlockPos(1, 1, 1), "test_hatchet");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(7, 1, 1));
+		mob.setTarget(pig);
+		var hatchet = new GeneEffect.ThrowEffect(MobEffects.SLOWNESS, 3.0F, 0, 10.0F, 8.0F, 4.0F);
+		helper.assertTrue(GeneBehaviors.throwEffect(mob, helper.getLevel(), hatchet), "the mob throws at the target");
+		helper.assertTrue(pig.hasEffect(MobEffects.SLOWNESS), "the throw gives Slowness");
+	}
+
+	static void knockback(GameTestHelper helper, Maker maker) {
+		Mob mob = maker.at(helper, new BlockPos(1, 1, 4), "test_chop");
+		Pig target = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 4));
+		GeneCombat.onHit(mob, target);
+		helper.assertTrue(Math.abs(target.getDeltaMovement().x - 0.4) < 0.001, "the hit adds one more push away");
+	}
+
+	static void healOnHit(GameTestHelper helper, Maker maker) {
+		Mob mob = maker.at(helper, new BlockPos(1, 1, 4), "test_bloodlust");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 4));
+		mob.setHealth(10.0F);
+		GeneCombat.onHit(mob, pig);
+		helper.assertValueEqual(mob.getHealth(), 11.0F, "each hit heals 1 health");
+	}
+
+	static void healOnce(GameTestHelper helper, Maker maker) {
+		Mob mob = maker.at(helper, new BlockPos(4, 1, 4), "test_pearl");
+		mob.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), mob.getMaxHealth() * 0.8F);
+		helper.assertValueEqual(mob.getHealth(), mob.getMaxHealth(), "the first heal to full health");
+	}
+
+	/**
+	 * Waits until the regeneration heals a mob that is out of combat.
+	 */
+	static void regenerate(GameTestHelper helper, Maker maker) {
+		Mob mob = maker.at(helper, new BlockPos(4, 1, 4), "test_regen");
+		mob.setHealth(mob.getMaxHealth() / 2.0F);
+		float start = mob.getHealth();
+		helper.succeedWhen(() -> helper.assertTrue(mob.getHealth() > start, "the mob heals out of combat"));
+	}
+
 	/**
 	 * Waits until the speed when gene of a wounded mob makes it 30% faster.
 	 */

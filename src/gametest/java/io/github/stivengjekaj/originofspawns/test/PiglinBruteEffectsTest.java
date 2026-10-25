@@ -156,6 +156,57 @@ public class PiglinBruteEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void theReusedHitEffectsWorkOnABrute(GameTestHelper helper) {
+		ReusedEffects.armorBreak(helper, PiglinBruteEffectsTest::bruteWith);
+		ReusedEffects.cleave(helper, PiglinBruteEffectsTest::bruteWith);
+		ReusedEffects.firstStrike(helper, PiglinBruteEffectsTest::bruteWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedMeleeEffectsWorkOnABrute(GameTestHelper helper) {
+		ReusedEffects.knockback(helper, PiglinBruteEffectsTest::bruteWith);
+		ReusedEffects.healOnHit(helper, PiglinBruteEffectsTest::bruteWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedThrowWorksOnABrute(GameTestHelper helper) {
+		ReusedEffects.throwEffect(helper, PiglinBruteEffectsTest::bruteWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedHealOnceWorksOnABrute(GameTestHelper helper) {
+		ReusedEffects.healOnce(helper, PiglinBruteEffectsTest::bruteWith);
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 300)
+	public void theReusedRegenerationWorksOnABrute(GameTestHelper helper) {
+		ReusedEffects.regenerate(helper, PiglinBruteEffectsTest::bruteWith);
+	}
+
+	@GameTest
+	public void theReusedDamageEffectsWorkOnABrute(GameTestHelper helper) {
+		ReusedEffects.damageToGolems(helper, PiglinBruteEffectsTest::bruteWith);
+		ReusedEffects.damageTaken(helper, PiglinBruteEffectsTest::bruteWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedGroupDamageWorksOnABrute(GameTestHelper helper) {
+		ReusedEffects.groupedAndAlone(helper, PiglinBruteEffectsTest::bruteWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedAuraWorksOnABrute(GameTestHelper helper) {
+		ReusedEffects.allyAura(helper, PiglinBruteEffectsTest::bruteWith);
+		helper.succeed();
+	}
+
 	/**
 	 * Adds a piglin brute with the test genes, a gold axe, and no AI. The genes go on before it enters the level, so
 	 * it gets no genes from the pool.

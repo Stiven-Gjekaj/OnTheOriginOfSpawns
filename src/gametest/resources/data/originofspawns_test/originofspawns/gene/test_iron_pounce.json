@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:magma_cube",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "damage_taken_when", "when": "in_air", "multiplier": 0.5, "damage_types": "#minecraft:is_projectile" }],
+	"mutation_rate": 0
+}

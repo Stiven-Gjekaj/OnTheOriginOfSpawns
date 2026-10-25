@@ -532,7 +532,11 @@ public sealed interface GeneEffect {
 		/**
 		 * The mob is an enderman that carries a block.
 		 */
-		CARRYING_BLOCK;
+		CARRYING_BLOCK,
+		/**
+		 * The mob is in the air: it does not stand on the ground, and it is not in water or in lava.
+		 */
+		IN_AIR;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 

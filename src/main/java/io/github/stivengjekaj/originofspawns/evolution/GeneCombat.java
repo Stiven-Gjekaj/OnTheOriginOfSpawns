@@ -179,6 +179,7 @@ public final class GeneCombat {
 			case WET -> entity.isInWaterOrRain();
 			case CARRYING_BLOCK -> entity instanceof net.minecraft.world.entity.monster.Enderman enderman
 					&& enderman.getCarriedBlock() != null;
+			case IN_AIR -> !entity.onGround() && !entity.isInLiquid();
 		};
 	}
 

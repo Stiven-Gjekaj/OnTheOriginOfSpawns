@@ -41,6 +41,7 @@
 			"io.github.stivengjekaj.originofspawns.test.WitchEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.EndermanEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.EndermiteEffectsTest",
+			"io.github.stivengjekaj.originofspawns.test.SlimeEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.DelayedTasksTest"
 		],
 		"fabric-client-gametest": [

@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:blaze/searer",
+	"gains": [
+		{
+			"type": "fireball_blast",
+			"power": 0.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

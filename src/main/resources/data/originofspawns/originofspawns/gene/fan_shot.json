@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:blaze/volleyer",
+	"gains": [
+		{
+			"type": "burst_fan",
+			"angle": 30
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

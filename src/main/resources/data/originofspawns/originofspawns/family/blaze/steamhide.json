@@ -1,0 +1,59 @@
+{
+	"species": "minecraft:blaze",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "water_damage_taken",
+					"multiplier": 0.6
+				},
+				{
+					"type": "snowball_damage_taken",
+					"multiplier": 0.6
+				}
+			],
+			"debuffs": [
+				{
+					"type": "fireball_fire_time",
+					"seconds": -3
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "water_damage_taken",
+					"multiplier": 0.5
+				},
+				{
+					"type": "snowball_damage_taken",
+					"multiplier": 0.5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "fireball_fire_time",
+					"seconds": -2
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "water_damage_taken",
+					"multiplier": 0.3
+				},
+				{
+					"type": "snowball_damage_taken",
+					"multiplier": 0.3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "fireball_fire_time",
+					"seconds": -1
+				}
+			]
+		}
+	]
+}

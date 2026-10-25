@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:blaze/smolderer",
+	"gains": [
+		{
+			"type": "fire_feed",
+			"amount": 1,
+			"radius": 8
+		}
+	],
+	"downsides": [
+		{
+			"type": "flying_speed",
+			"multiplier": 0.9
+		}
+	]
+}

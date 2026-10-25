@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:blaze/hoverer",
+	"gains": [
+		{
+			"type": "flying_speed",
+			"multiplier": 1.2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

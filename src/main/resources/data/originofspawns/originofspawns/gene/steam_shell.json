@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns:in_water",
+	"family": "originofspawns:blaze/steamhide",
+	"gains": [
+		{
+			"type": "water_damage_taken",
+			"multiplier": 0
+		}
+	],
+	"downsides": [
+		{
+			"type": "flying_speed",
+			"multiplier": 0.9
+		}
+	]
+}

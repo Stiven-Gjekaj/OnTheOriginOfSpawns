@@ -1,0 +1,47 @@
+{
+	"species": "minecraft:blaze",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "fireball_fire_time",
+					"seconds": 3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "flying_speed",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "fireball_fire_time",
+					"seconds": 4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "flying_speed",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "fireball_fire_time",
+					"seconds": 5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "flying_speed",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

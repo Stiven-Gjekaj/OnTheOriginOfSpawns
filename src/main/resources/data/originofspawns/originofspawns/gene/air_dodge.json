@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:blaze/hoverer",
+	"gains": [
+		{
+			"type": "sidestep",
+			"range": 24,
+			"distance": 3,
+			"cooldown_seconds": 8,
+			"aimed": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

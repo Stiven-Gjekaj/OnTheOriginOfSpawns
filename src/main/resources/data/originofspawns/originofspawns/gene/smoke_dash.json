@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:blaze/hoverer",
+	"gains": [
+		{
+			"type": "flee",
+			"threshold": 0.3,
+			"seconds": 4,
+			"speed": 1.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 0.9,
+			"hits": "melee"
+		}
+	]
+}

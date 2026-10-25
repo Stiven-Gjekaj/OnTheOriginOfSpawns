@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:blaze/volleyer",
+	"sub_family": "originofspawns:blaze/smolderer",
+	"gains": [
+		{
+			"type": "fireball_cloud",
+			"effect": "minecraft:blindness",
+			"seconds": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "flying_speed",
+			"multiplier": 0.9
+		}
+	]
+}

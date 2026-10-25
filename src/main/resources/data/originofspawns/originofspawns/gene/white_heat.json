@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:blaze/searer",
+	"gains": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"multiplier": 1.4,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

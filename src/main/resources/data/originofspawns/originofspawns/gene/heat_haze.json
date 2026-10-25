@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:blaze/smolderer",
+	"sub_family": "originofspawns:blaze/hoverer",
+	"gains": [
+		{
+			"type": "translucent",
+			"max_light": 7,
+			"opacity": 0.1,
+			"when": "not_shooting"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

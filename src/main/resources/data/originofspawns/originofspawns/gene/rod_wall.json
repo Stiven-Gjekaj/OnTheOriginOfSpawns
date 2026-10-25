@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:blaze/smolderer",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_projectile",
+			"multiplier": 0.7
+		}
+	],
+	"downsides": [
+		{
+			"type": "flying_speed",
+			"multiplier": 0.9
+		}
+	]
+}

@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:blaze",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "burst_count",
+					"extra": 1
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.8,
+					"hits": "projectile"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "burst_count",
+					"extra": 1
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.85,
+					"hits": "projectile"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "burst_count",
+					"extra": 2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"multiplier": 0.9,
+					"hits": "projectile"
+				}
+			]
+		}
+	]
+}

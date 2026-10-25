@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:blaze/volleyer",
+	"gains": [
+		{
+			"type": "seeker_fireballs",
+			"degrees": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.9
+		}
+	]
+}

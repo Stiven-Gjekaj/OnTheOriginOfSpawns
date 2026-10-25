@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:blaze/hoverer",
+	"gains": [
+		{
+			"type": "keep_above",
+			"mobs": "#originofspawns:all_golems",
+			"blocks": 4,
+			"radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "flying_speed",
+			"multiplier": 0.9
+		}
+	]
+}

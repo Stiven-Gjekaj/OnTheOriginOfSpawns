@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:blaze",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:blaze/searer",
+	"gains": [
+		{
+			"type": "shield_break",
+			"seconds": 3,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "flying_speed",
+			"multiplier": 0.9
+		}
+	]
+}

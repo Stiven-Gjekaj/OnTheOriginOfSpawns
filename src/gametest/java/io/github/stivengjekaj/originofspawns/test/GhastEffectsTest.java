@@ -2,7 +2,6 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
 import io.github.stivengjekaj.originofspawns.evolution.GeneBlasts;
-import io.github.stivengjekaj.originofspawns.mixin.LargeFireballAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.mixin.ProjectileAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -65,7 +64,7 @@ public class GhastEffectsTest {
 		Pig pig = CreeperEffectsTest.pigAt(helper, BLAST.east(1));
 		LargeFireball fireball = fireball(helper, ghast, BLAST);
 		fireball.setOwner(CreeperEffectsTest.survivalPlayer(helper).player());
-		((LargeFireballAccessor) fireball).originofspawns$onHit(hitAt(fireball));
+		((ProjectileAccessor) fireball).originofspawns$onHit(hitAt(fireball));
 		helper.assertTrue(pig.getHealth() < pig.getMaxHealth(), "the blast hurts the pig");
 		helper.assertFalse(pig.hasEffect(MobEffects.NAUSEA), "the blast of a fireball that came back gives no effect");
 		helper.succeed();
@@ -235,7 +234,7 @@ public class GhastEffectsTest {
 	 */
 	static void explodeFireball(GameTestHelper helper, Ghast ghast, BlockPos pos) {
 		LargeFireball fireball = fireball(helper, ghast, pos);
-		((LargeFireballAccessor) fireball).originofspawns$onHit(hitAt(fireball));
+		((ProjectileAccessor) fireball).originofspawns$onHit(hitAt(fireball));
 	}
 
 	static LargeFireball fireball(GameTestHelper helper, Ghast ghast, BlockPos pos) {

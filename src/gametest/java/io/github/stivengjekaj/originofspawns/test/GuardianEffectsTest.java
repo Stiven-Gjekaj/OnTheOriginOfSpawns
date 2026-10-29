@@ -355,6 +355,30 @@ public class GuardianEffectsTest {
 		});
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void aPlainGuardianStopsItsLaserOnANearTarget(GameTestHelper helper) {
+		pool(helper);
+		IronGolem golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, SHOOTER.east(2));
+		Guardian guardian = shooter(helper, golem);
+		helper.runAtTickTime(150, () -> {
+			helper.assertTrue(guardian.getTarget() == null, "the guardian drops a target in 3 blocks");
+			helper.assertValueEqual(golem.getHealth(), golem.getMaxHealth(), "the laser does not fire");
+			helper.succeed();
+		});
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void closeSnapFiresAtOnceOnANearTarget(GameTestHelper helper) {
+		pool(helper);
+		IronGolem golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, SHOOTER.east(2));
+		shooter(helper, golem, "test_close_snap");
+		// The goal waits 10 ticks before the lock, and the laser fires one tick after it.
+		helper.succeedWhen(() -> {
+			helper.assertValueEqual(golem.getMaxHealth() - golem.getHealth(), 6.0F, "the laser fires with its full damage");
+			helper.assertTrue(helper.getTick() < 30, "the laser fires with no charge");
+		});
+	}
+
 	/**
 	 * Builds a pool of glass, 6 blocks long and 3 blocks wide inside, with water 2 blocks deep, from x 1 to 6 and z 3
 	 * to 5. The guardian and its target are in the pool.

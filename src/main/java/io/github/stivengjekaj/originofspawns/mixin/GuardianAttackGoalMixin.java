@@ -18,7 +18,9 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
@@ -44,6 +46,29 @@ public abstract class GuardianAttackGoalMixin {
 		GeneBehaviors.swoopCall(guardian);
 		if (guardian.getAttachedOrElse(ModAttachments.LASER_READY, false)) {
 			guardian.removeAttached(ModAttachments.LASER_READY);
+			attackTime = guardian.getAttackDuration() - 1;
+		}
+	}
+
+	/**
+	 * A guardian with a close snap keeps its laser on a near target. A vanilla guardian stops the laser when the target
+	 * comes in 3 blocks: the distance squared must be more than 9.
+	 */
+	@ModifyConstant(method = "canContinueToUse", constant = @Constant(doubleValue = 9.0))
+	private double originofspawns$keepNearTarget(double distanceSquared) {
+		return GeneBehaviors.closeSnapRadius(guardian) > 0.0F ? -1.0 : distanceSquared;
+	}
+
+	/**
+	 * When the target of a guardian with a close snap is in the radius after the lock, the laser fires on the next
+	 * tick.
+	 */
+	@Inject(method = "tick", at = @At("TAIL"))
+	private void originofspawns$closeSnap(CallbackInfo info) {
+		LivingEntity target = guardian.getTarget();
+		float radius = GeneBehaviors.closeSnapRadius(guardian);
+		if (target != null && radius > 0.0F && attackTime >= 0 && attackTime < guardian.getAttackDuration() - 1
+				&& guardian.distanceTo(target) <= radius) {
 			attackTime = guardian.getAttackDuration() - 1;
 		}
 	}

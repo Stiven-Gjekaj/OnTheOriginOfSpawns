@@ -301,7 +301,8 @@ public sealed interface GeneEffect {
 			Map.entry("spike_damage", SpikeDamage.CODEC),
 			Map.entry("spike_effect", SpikeEffect.CODEC),
 			Map.entry("shore_hop", ShoreHop.CODEC),
-			Map.entry("ram", Ram.CODEC)
+			Map.entry("ram", Ram.CODEC),
+			Map.entry("close_snap", CloseSnap.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5016,6 +5017,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "ram";
+		}
+	}
+
+	/**
+	 * A guardian keeps its laser on a target in the radius, and when the target is in the radius, the laser fires at
+	 * once with its full damage. A vanilla guardian stops its laser when the target comes in 3 blocks. The target
+	 * goal still picks only targets farther than 3 blocks, as in vanilla.
+	 */
+	record CloseSnap(float radius) implements GeneEffect {
+		public static final MapCodec<CloseSnap> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 3.0F).forGetter(CloseSnap::radius)
+		).apply(instance, CloseSnap::new));
+
+		@Override
+		public String type() {
+			return "close_snap";
 		}
 	}
 }

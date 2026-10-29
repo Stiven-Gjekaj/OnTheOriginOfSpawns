@@ -1453,6 +1453,19 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the largest radius of the close snap genes of the guardian, or 0.
+	 */
+	public static float closeSnapRadius(Mob guardian) {
+		float radius = 0.0F;
+		for (GeneEffect effect : GeneEffects.of(guardian).toList()) {
+			if (effect instanceof GeneEffect.CloseSnap snap) {
+				radius = Math.max(radius, snap.radius());
+			}
+		}
+		return radius;
+	}
+
+	/**
 	 * Returns the ticks of the charge of the laser of a guardian, after its laser charge genes. The charge is at least
 	 * 1 tick.
 	 */

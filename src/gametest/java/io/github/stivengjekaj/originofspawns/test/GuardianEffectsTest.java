@@ -66,6 +66,22 @@ public class GuardianEffectsTest {
 		});
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void killFocusChargesTheNextLaserAtOnceAfterAKill(GameTestHelper helper) {
+		pool(helper);
+		IronGolem golem = target(helper);
+		Guardian guardian = shooter(helper, golem, "test_kill_focus");
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		io.github.stivengjekaj.originofspawns.evolution.Evolution.onPlayerKilled(helper.getLevel(), guardian,
+				helper.getLevel().damageSources().mobAttack(guardian));
+		player.discard();
+		// The goal waits 10 ticks before the lock, and the laser fires one tick after it.
+		helper.succeedWhen(() -> {
+			helper.assertTrue(golem.getHealth() < golem.getMaxHealth(), "the laser fires");
+			helper.assertTrue(helper.getTick() < 30, "the laser fires with no charge");
+		});
+	}
+
 	/**
 	 * Builds a pool of glass, 6 blocks long and 3 blocks wide inside, with water 2 blocks deep, from x 1 to 6 and z 3
 	 * to 5. The guardian and its target are in the pool.

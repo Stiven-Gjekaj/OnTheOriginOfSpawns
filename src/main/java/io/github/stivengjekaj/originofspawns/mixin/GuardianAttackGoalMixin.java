@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -11,8 +12,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Guardian;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * Changes the laser of a guardian with its genes. A vanilla guardian locks on its target, charges for 80 ticks, and
@@ -20,6 +25,25 @@ import org.spongepowered.asm.mixin.injection.At;
  */
 @Mixin(targets = "net.minecraft.world.entity.monster.Guardian$GuardianAttackGoal")
 public abstract class GuardianAttackGoalMixin {
+	@Shadow
+	@Final
+	private Guardian guardian;
+
+	@Shadow
+	private int attackTime;
+
+	/**
+	 * At the lock, a guardian whose next laser is ready skips the charge: the laser fires on the next tick.
+	 */
+	@Inject(method = "tick", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/monster/Guardian;setActiveAttackTarget(I)V", shift = At.Shift.AFTER))
+	private void originofspawns$lock(CallbackInfo info) {
+		if (guardian.getAttachedOrElse(ModAttachments.LASER_READY, false)) {
+			guardian.removeAttached(ModAttachments.LASER_READY);
+			attackTime = guardian.getAttackDuration() - 1;
+		}
+	}
+
 	/**
 	 * The magic damage of the laser is a laser hit.
 	 */

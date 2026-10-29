@@ -270,6 +270,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Boolean> JUMP_SHOT_DONE = AttachmentRegistry.create(OriginOfSpawns.id("jump_shot_done"));
 
 	/**
+	 * True when the next laser of a guardian charges at once, after it killed a player.
+	 */
+	public static final AttachmentType<Boolean> LASER_READY = AttachmentRegistry.create(OriginOfSpawns.id("laser_ready"));
+
+	/**
 	 * The last game time that the mob shot a fireball.
 	 */
 	public static final AttachmentType<Long> SHOT_TIME = AttachmentRegistry.create(OriginOfSpawns.id("shot_time"));

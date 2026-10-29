@@ -293,7 +293,8 @@ public sealed interface GeneEffect {
 			Map.entry("swim_hop", SwimHop.CODEC),
 			Map.entry("rebound", Rebound.CODEC),
 			Map.entry("laser_damage", LaserDamage.CODEC),
-			Map.entry("laser_charge", LaserCharge.CODEC)
+			Map.entry("laser_charge", LaserCharge.CODEC),
+			Map.entry("charge_after_kill", ChargeAfterKill.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4883,6 +4884,18 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "laser_charge";
+		}
+	}
+
+	/**
+	 * After the guardian kills a player, its next laser charges at once: it fires one tick after the lock.
+	 */
+	record ChargeAfterKill() implements GeneEffect {
+		public static final MapCodec<ChargeAfterKill> CODEC = MapCodec.unit(new ChargeAfterKill());
+
+		@Override
+		public String type() {
+			return "charge_after_kill";
 		}
 	}
 }

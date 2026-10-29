@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "charge_after_kill" }],
+	"mutation_rate": 0
+}

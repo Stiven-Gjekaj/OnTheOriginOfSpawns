@@ -35,11 +35,13 @@ public abstract class GuardianAttackGoalMixin {
 	private int attackTime;
 
 	/**
-	 * At the lock, a guardian whose next laser is ready skips the charge: the laser fires on the next tick.
+	 * At the lock, a guardian whose next laser is ready skips the charge: the laser fires on the next tick. The swoop
+	 * call genes call the other guardians to the same target.
 	 */
 	@Inject(method = "tick", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/world/entity/monster/Guardian;setActiveAttackTarget(I)V", shift = At.Shift.AFTER))
 	private void originofspawns$lock(CallbackInfo info) {
+		GeneBehaviors.swoopCall(guardian);
 		if (guardian.getAttachedOrElse(ModAttachments.LASER_READY, false)) {
 			guardian.removeAttached(ModAttachments.LASER_READY);
 			attackTime = guardian.getAttackDuration() - 1;

@@ -4316,7 +4316,8 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * When the mob starts a swoop at its target, the mobs of its species in the radius target the same mob. Each one
+	 * When the mob starts a swoop at its target, or a guardian locks its laser on its target, the mobs of its species
+	 * in the radius target the same mob. Each one
 	 * swoops after its own wait. Swarm Dive.
 	 */
 	record SwoopCall(float radius) implements GeneEffect {

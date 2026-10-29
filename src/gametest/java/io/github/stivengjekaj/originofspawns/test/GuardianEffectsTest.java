@@ -128,6 +128,15 @@ public class GuardianEffectsTest {
 				"the laser fires after the pulses"));
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 100)
+	public void guideBeamCallsTheGuardiansNearToTheLockedTarget(GameTestHelper helper) {
+		pool(helper);
+		IronGolem golem = target(helper);
+		Guardian other = guardianWith(helper, SHOOTER.north());
+		shooter(helper, golem, "test_guide_beam");
+		helper.succeedWhen(() -> helper.assertTrue(other.getTarget() == golem, "the other guardian targets the golem"));
+	}
+
 	/**
 	 * Puts a glass wall between the guardian and its target in the middle of the charge, and takes it away 10 ticks
 	 * later.

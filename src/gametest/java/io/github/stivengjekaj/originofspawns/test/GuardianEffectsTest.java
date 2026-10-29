@@ -137,6 +137,25 @@ public class GuardianEffectsTest {
 		helper.succeedWhen(() -> helper.assertTrue(other.getTarget() == golem, "the other guardian targets the golem"));
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void longSpikesHurtTheAttackerMore(GameTestHelper helper) {
+		pool(helper);
+		helper.assertValueEqual(spikeHitOn(helper, guardianWith(helper, SHOOTER)), 2.0F, "the vanilla spikes do 2 damage");
+		helper.assertValueEqual(spikeHitOn(helper, guardianWith(helper, TARGET, "test_long_spikes")), 4.0F, "2 more damage");
+		helper.succeed();
+	}
+
+	/**
+	 * Makes a pig hit the guardian in melee while its spikes are out, and returns the damage that the pig takes.
+	 */
+	static float spikeHitOn(GameTestHelper helper, Guardian guardian) {
+		var pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 3, 4));
+		guardian.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(pig), 1.0F);
+		float damage = pig.getMaxHealth() - pig.getHealth();
+		pig.discard();
+		return damage;
+	}
+
 	/**
 	 * Puts a glass wall between the guardian and its target in the middle of the charge, and takes it away 10 ticks
 	 * later.

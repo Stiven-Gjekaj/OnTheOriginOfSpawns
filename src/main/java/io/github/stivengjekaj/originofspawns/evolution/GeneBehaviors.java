@@ -1358,6 +1358,19 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the damage of the spikes of the guardian, after its spike damage genes. It is not less than 0.
+	 */
+	public static float spikeDamage(Mob guardian, float damage) {
+		float result = damage;
+		for (GeneEffect effect : GeneEffects.of(guardian).toList()) {
+			if (effect instanceof GeneEffect.SpikeDamage spike) {
+				result += spike.extra();
+			}
+		}
+		return Math.max(0.0F, result);
+	}
+
+	/**
 	 * Returns the ticks of the charge of the laser of a guardian, after its laser charge genes. The charge is at least
 	 * 1 tick.
 	 */

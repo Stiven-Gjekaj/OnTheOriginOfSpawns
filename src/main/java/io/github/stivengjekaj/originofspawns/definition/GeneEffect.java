@@ -297,7 +297,8 @@ public sealed interface GeneEffect {
 			Map.entry("charge_after_kill", ChargeAfterKill.CODEC),
 			Map.entry("laser_split", LaserSplit.CODEC),
 			Map.entry("laser_lock", LaserLock.CODEC),
-			Map.entry("charge_damage", ChargeDamage.CODEC)
+			Map.entry("charge_damage", ChargeDamage.CODEC),
+			Map.entry("spike_damage", SpikeDamage.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4948,6 +4949,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "charge_damage";
+		}
+	}
+
+	/**
+	 * The spikes of a guardian do this much more damage to an attacker that hits it while the spikes are out. The
+	 * vanilla spikes do 2 damage. More than one effect adds up.
+	 */
+	record SpikeDamage(float extra) implements GeneEffect {
+		public static final MapCodec<SpikeDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(-2.0F, 100.0F).fieldOf("extra").forGetter(SpikeDamage::extra)
+		).apply(instance, SpikeDamage::new));
+
+		@Override
+		public String type() {
+			return "spike_damage";
 		}
 	}
 }

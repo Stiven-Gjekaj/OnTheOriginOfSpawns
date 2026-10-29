@@ -116,6 +116,18 @@ public class GuardianEffectsTest {
 		helper.succeedWhen(() -> helper.assertTrue(golem.getHealth() < golem.getMaxHealth(), "the laser fires"));
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void pulseBeamHurtsTheTargetWhileTheLaserCharges(GameTestHelper helper) {
+		pool(helper);
+		IronGolem golem = target(helper);
+		Guardian guardian = shooter(helper, golem, "test_pulse_beam");
+		// The charge of 80 ticks gives a pulse at the ticks 20, 40, and 60 of the charge. The goal waits 10 ticks first.
+		helper.runAtTickTime(75, () -> helper.assertValueEqual(golem.getMaxHealth() - golem.getHealth(), 3.0F,
+				"three pulses of 1 damage before the laser fires"));
+		helper.succeedWhen(() -> helper.assertTrue(guardian.getTarget() == null && golem.getHealth() < golem.getMaxHealth() - 3.0F,
+				"the laser fires after the pulses"));
+	}
+
 	/**
 	 * Puts a glass wall between the guardian and its target in the middle of the charge, and takes it away 10 ticks
 	 * later.

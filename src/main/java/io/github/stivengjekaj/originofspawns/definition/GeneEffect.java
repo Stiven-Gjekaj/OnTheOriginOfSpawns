@@ -296,7 +296,8 @@ public sealed interface GeneEffect {
 			Map.entry("laser_charge", LaserCharge.CODEC),
 			Map.entry("charge_after_kill", ChargeAfterKill.CODEC),
 			Map.entry("laser_split", LaserSplit.CODEC),
-			Map.entry("laser_lock", LaserLock.CODEC)
+			Map.entry("laser_lock", LaserLock.CODEC),
+			Map.entry("charge_damage", ChargeDamage.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4930,6 +4931,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "laser_lock";
+		}
+	}
+
+	/**
+	 * While the laser of a guardian charges, its target takes this much magic damage one time in each interval. The
+	 * laser genes do not act on this damage.
+	 */
+	record ChargeDamage(float damage, float intervalSeconds) implements GeneEffect {
+		public static final MapCodec<ChargeDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("damage", 1.0F).forGetter(ChargeDamage::damage),
+				Codec.floatRange(0.05F, 60.0F).optionalFieldOf("interval_seconds", 1.0F).forGetter(ChargeDamage::intervalSeconds)
+		).apply(instance, ChargeDamage::new));
+
+		@Override
+		public String type() {
+			return "charge_damage";
 		}
 	}
 }

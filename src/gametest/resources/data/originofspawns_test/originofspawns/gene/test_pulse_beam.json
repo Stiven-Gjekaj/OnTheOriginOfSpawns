@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "charge_damage", "damage": 1, "interval_seconds": 1 }],
+	"mutation_rate": 0
+}

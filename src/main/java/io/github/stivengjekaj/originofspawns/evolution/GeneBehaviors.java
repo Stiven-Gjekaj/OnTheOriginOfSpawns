@@ -1316,6 +1316,20 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Hurts the target of the charging laser of the guardian with the charge damage genes whose interval ends now.
+	 *
+	 * @param charge the ticks of the charge so far
+	 */
+	public static void chargeDamage(Mob guardian, ServerLevel level, LivingEntity target, int charge) {
+		for (GeneEffect effect : GeneEffects.of(guardian).toList()) {
+			if (effect instanceof GeneEffect.ChargeDamage damage
+					&& charge % Math.max(1, Math.round(damage.intervalSeconds() * 20.0F)) == 0) {
+				target.hurtServer(level, guardian.damageSources().indirectMagic(guardian, guardian), damage.damage());
+			}
+		}
+	}
+
+	/**
 	 * Returns true if the guardian keeps its laser on its target. It keeps it while it sees the target, and with a
 	 * laser lock gene also for the seconds of the gene after it loses the sight.
 	 */

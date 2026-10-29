@@ -47,6 +47,18 @@ public abstract class GuardianAttackGoalMixin {
 	}
 
 	/**
+	 * While the laser charges, the charge damage genes hurt the target.
+	 */
+	@Inject(method = "tick", at = @At("TAIL"))
+	private void originofspawns$chargeDamage(CallbackInfo info) {
+		LivingEntity target = guardian.getTarget();
+		if (target != null && attackTime > 0 && attackTime < guardian.getAttackDuration()
+				&& guardian.level() instanceof ServerLevel level) {
+			GeneBehaviors.chargeDamage(guardian, level, target, attackTime);
+		}
+	}
+
+	/**
 	 * A guardian with a laser lock keeps its target for a short time out of sight.
 	 */
 	@ModifyExpressionValue(method = "tick", at = @At(value = "INVOKE",

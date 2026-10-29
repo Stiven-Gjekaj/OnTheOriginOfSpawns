@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:guardian/beamer",
+	"gains": [
+		{
+			"type": "laser_split",
+			"radius": 8,
+			"damage_fraction": 0.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

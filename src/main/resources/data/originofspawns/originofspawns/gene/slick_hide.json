@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns:trident",
+	"family": "originofspawns:guardian/darter",
+	"gains": [
+		{
+			"type": "dodge_projectiles",
+			"chance": 0.25
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_base"
+		}
+	]
+}

@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns:trident",
+	"family": "originofspawns:guardian/spikeback",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#originofspawns:trident",
+			"multiplier": 0.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_base"
+		}
+	]
+}

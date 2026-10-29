@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns:boat",
+	"family": "originofspawns:guardian/beamer",
+	"gains": [
+		{
+			"type": "break_boats",
+			"hits": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_base"
+		}
+	]
+}

@@ -1,0 +1,47 @@
+{
+	"species": "minecraft:guardian",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "call_on_sight",
+					"radius": 8
+				}
+			],
+			"debuffs": [
+				{
+					"type": "laser_damage",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "call_on_sight",
+					"radius": 12
+				}
+			],
+			"debuffs": [
+				{
+					"type": "laser_damage",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "call_on_sight",
+					"radius": 16
+				}
+			],
+			"debuffs": [
+				{
+					"type": "laser_damage",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

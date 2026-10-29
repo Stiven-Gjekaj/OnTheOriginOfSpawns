@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:guardian/focuser",
+	"gains": [
+		{
+			"type": "laser_lock",
+			"seconds": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "laser_damage",
+			"multiplier": 0.9
+		}
+	]
+}

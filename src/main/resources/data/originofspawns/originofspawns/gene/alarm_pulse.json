@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:guardian/shoaler",
+	"gains": [
+		{
+			"type": "call_on_hurt",
+			"radius": 32
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

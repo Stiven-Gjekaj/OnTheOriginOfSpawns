@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:guardian/darter",
+	"sub_family": "originofspawns:guardian/spikeback",
+	"gains": [
+		{
+			"type": "ram",
+			"damage": 4,
+			"cooldown_seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

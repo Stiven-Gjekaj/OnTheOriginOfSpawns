@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:guardian/focuser",
+	"gains": [
+		{
+			"type": "close_snap",
+			"radius": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

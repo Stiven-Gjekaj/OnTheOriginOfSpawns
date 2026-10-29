@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:guardian/focuser",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:follow_range",
+			"amount": 1,
+			"operation": "add_multiplied_base"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_base"
+		}
+	]
+}

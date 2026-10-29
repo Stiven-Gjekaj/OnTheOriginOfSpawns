@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns:on_land",
+	"family": "originofspawns:guardian/darter",
+	"gains": [
+		{
+			"type": "shore_hop",
+			"radius": 8
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

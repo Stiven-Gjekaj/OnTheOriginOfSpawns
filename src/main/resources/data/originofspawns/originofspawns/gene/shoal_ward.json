@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:guardian/shoaler",
+	"gains": [
+		{
+			"type": "damage_taken_when",
+			"when": "grouped",
+			"multiplier": 0.8
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken_when",
+			"when": "alone",
+			"multiplier": 1.2
+		}
+	]
+}

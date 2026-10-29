@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns:in_water",
+	"family": "originofspawns:guardian/darter",
+	"gains": [
+		{
+			"type": "flee",
+			"threshold": 0.3,
+			"seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

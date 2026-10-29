@@ -1,0 +1,56 @@
+{
+	"species": "minecraft:guardian",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": 0.15,
+					"operation": "add_multiplied_base"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "always",
+					"multiplier": 1.2
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": 0.2,
+					"operation": "add_multiplied_base"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "always",
+					"multiplier": 1.15
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": 0.3,
+					"operation": "add_multiplied_base"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "always",
+					"multiplier": 1.1
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:guardian/shoaler",
+	"gains": [
+		{
+			"type": "laser_damage",
+			"multiplier": 1.2,
+			"when": "grouped"
+		}
+	],
+	"downsides": [
+		{
+			"type": "laser_damage",
+			"multiplier": 0.8,
+			"when": "alone"
+		}
+	]
+}

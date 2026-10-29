@@ -1,0 +1,47 @@
+{
+	"species": "minecraft:guardian",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "laser_charge",
+					"speed": 1.15
+				}
+			],
+			"debuffs": [
+				{
+					"type": "laser_damage",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "laser_charge",
+					"speed": 1.2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "laser_damage",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "laser_charge",
+					"speed": 1.3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "laser_damage",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

@@ -503,6 +503,7 @@ public final class GeneBehaviors {
 				case GeneEffect.BoilOff boil -> boilOff(mob, level, boil);
 				case GeneEffect.ChargeEachPlayer charge -> chargeEachPlayer(mob, level, charge);
 				case GeneEffect.LightningCall call -> lightningCall(mob, level, call);
+				case GeneEffect.ShoreHop hop -> shoreHop(mob, level, hop);
 				case GeneEffect.Hex hex -> hex(mob, level, hex);
 				case GeneEffect.HealThrow heal -> healThrow(mob, level, heal);
 				case GeneEffect.EatItems eat -> eatItems(mob, level, eat);
@@ -1355,6 +1356,32 @@ public final class GeneBehaviors {
 		}
 		guardian.removeAttached(ModAttachments.SIGHT_LOST);
 		return false;
+	}
+
+	/**
+	 * Makes the mob on land hop to the nearest water in the radius. The behavior tick runs this one time each second.
+	 *
+	 * @return true if the mob hopped
+	 */
+	public static boolean shoreHop(Mob mob, ServerLevel level, GeneEffect.ShoreHop hop) {
+		if (mob.isInWater() || !mob.onGround()) {
+			return false;
+		}
+		int reach = Mth.ceil(hop.radius());
+		var water = BlockPos.betweenClosedStream(mob.blockPosition().offset(-reach, -2, -reach),
+						mob.blockPosition().offset(reach, 2, reach))
+				.filter(pos -> level.getFluidState(pos).is(net.minecraft.tags.FluidTags.WATER)
+						&& Vec3.atCenterOf(pos).distanceTo(mob.position()) <= hop.radius())
+				.map(BlockPos::immutable)
+				.min(java.util.Comparator.comparingDouble(pos -> Vec3.atCenterOf(pos).distanceToSqr(mob.position())));
+		if (water.isEmpty()) {
+			return false;
+		}
+		Vec3 toWater = Vec3.atBottomCenterOf(water.get()).subtract(mob.position()).multiply(1.0, 0.0, 1.0);
+		Vec3 along = toWater.lengthSqr() < 1.0E-6 ? Vec3.ZERO : toWater.normalize().scale(0.4);
+		mob.setDeltaMovement(along.x, 0.5, along.z);
+		mob.needsSync = true;
+		return true;
 	}
 
 	/**

@@ -156,6 +156,21 @@ public class GuardianEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void shoreHopHopsToTheNearestWater(GameTestHelper helper) {
+		// This test needs a guardian on land, next to the pool. The pool is east of it.
+		pool(helper);
+		Guardian guardian = guardianWith(helper, new BlockPos(1, 4, 0));
+		helper.setBlock(new BlockPos(1, 3, 0), Blocks.STONE);
+		guardian.setOnGround(true);
+		var hop = new io.github.stivengjekaj.originofspawns.definition.GeneEffect.ShoreHop(8.0F);
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.shoreHop(guardian, helper.getLevel(), hop),
+				"the guardian hops");
+		Vec3 motion = guardian.getDeltaMovement();
+		helper.assertTrue(motion.y > 0.0 && motion.z > 0.0, "it hops up and south, to the water, not " + motion);
+		helper.succeed();
+	}
+
 	/**
 	 * Makes a pig hit the guardian in melee while its spikes are out, and returns the damage that the pig takes.
 	 */

@@ -299,7 +299,8 @@ public sealed interface GeneEffect {
 			Map.entry("laser_lock", LaserLock.CODEC),
 			Map.entry("charge_damage", ChargeDamage.CODEC),
 			Map.entry("spike_damage", SpikeDamage.CODEC),
-			Map.entry("spike_effect", SpikeEffect.CODEC)
+			Map.entry("spike_effect", SpikeEffect.CODEC),
+			Map.entry("shore_hop", ShoreHop.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4981,6 +4982,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "spike_effect";
+		}
+	}
+
+	/**
+	 * While the mob is on land, it hops to the nearest water in the radius, one time each second. A vanilla guardian
+	 * on land hops in a random direction.
+	 */
+	record ShoreHop(float radius) implements GeneEffect {
+		public static final MapCodec<ShoreHop> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 16.0F).optionalFieldOf("radius", 8.0F).forGetter(ShoreHop::radius)
+		).apply(instance, ShoreHop::new));
+
+		@Override
+		public String type() {
+			return "shore_hop";
 		}
 	}
 }

@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/guardian.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/kill_focus_0.png",
+				"tint": "#2A4A40"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/kill_focus_1.png",
+				"tint": "#C8D8C8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/kill_focus_2.png",
+				"tint": "#14241E"
+			}
+		}
+	]
+}

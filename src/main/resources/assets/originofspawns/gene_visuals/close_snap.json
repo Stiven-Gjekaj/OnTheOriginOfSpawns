@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/guardian.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/close_snap_0.png",
+				"tint": "#FFE840"
+			}
+		}
+	]
+}

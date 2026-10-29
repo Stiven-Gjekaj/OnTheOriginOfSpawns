@@ -1,0 +1,25 @@
+{
+	"texture": "originofspawns:textures/entity/fast_fin_fin.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "tail2",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-6,
+				14.5,
+				4
+			],
+			"size": [
+				14,
+				1,
+				6
+			],
+			"inflate": -0.1
+		}
+	]
+}

@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/guardian.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/trident_plate_0.png",
+				"tint": "#4A6A98"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/trident_plate_1.png",
+				"tint": "#22344E"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/trident_plate_2.png",
+				"tint": "#8AA8D0"
+			}
+		}
+	]
+}

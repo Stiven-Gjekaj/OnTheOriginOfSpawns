@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/guardian.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/deep_beam_0.png",
+				"tint": "#FFFFF0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/deep_beam_1.png",
+				"tint": "#FF9A20"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/deep_beam_2.png",
+				"tint": "#FFE070"
+			}
+		}
+	]
+}

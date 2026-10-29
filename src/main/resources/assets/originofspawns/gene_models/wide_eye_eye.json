@@ -1,0 +1,25 @@
+{
+	"texture": "originofspawns:textures/entity/wide_eye_eye.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-5,
+				13,
+				-8.6
+			],
+			"size": [
+				10,
+				5,
+				1
+			],
+			"inflate": -0.1
+		}
+	]
+}

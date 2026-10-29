@@ -1,0 +1,47 @@
+{
+	"region_map": "originofspawns:textures/region/guardian.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/prism_flash_0.png",
+				"tint": "#FF3030"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/prism_flash_1.png",
+				"tint": "#FF9A20"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/prism_flash_2.png",
+				"tint": "#FFE830"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/prism_flash_3.png",
+				"tint": "#40D040"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/prism_flash_4.png",
+				"tint": "#3080FF"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/prism_flash_5.png",
+				"tint": "#A040E0"
+			}
+		}
+	]
+}

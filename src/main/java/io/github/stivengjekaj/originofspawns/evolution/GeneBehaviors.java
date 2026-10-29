@@ -2583,6 +2583,14 @@ public final class GeneBehaviors {
 			away = new Vec3(1.0, 0.0, 0.0);
 		}
 		Vec3 place = mob.position().add(away.normalize().scale(16.0));
+		// Some move controls act only while the navigation has a path, for example the one of a guardian. The path
+		// goes to a random place away from the target that the mob can reach.
+		if (mob.getNavigation().isDone() && mob instanceof net.minecraft.world.entity.PathfinderMob pathfinder) {
+			Vec3 reachable = net.minecraft.world.entity.ai.util.DefaultRandomPos.getPosAway(pathfinder, 16, 7, target.position());
+			if (reachable != null) {
+				mob.getNavigation().moveTo(reachable.x, reachable.y, reachable.z, flee.get().speed());
+			}
+		}
 		mob.getMoveControl().setWantedPosition(place.x, mob.getY(), place.z, flee.get().speed());
 	}
 

@@ -191,6 +191,26 @@ public class GuardianEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void deepFlightSwimsAwayFromTheTarget(GameTestHelper helper) {
+		pool(helper);
+		IronGolem golem = target(helper);
+		Guardian guardian = guardianWith(helper, new BlockPos(4, 1, 4), "test_smoke_dash");
+		guardian.setTarget(golem);
+		// The base tick finds the water around the guardian. The water navigation works only in water.
+		guardian.baseTick();
+		helper.assertTrue(guardian.isInWater(), "the guardian is in water");
+		guardian.setHealth(guardian.getMaxHealth() / 5.0F);
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(guardian,
+				helper.getLevel().damageSources().mobAttack(golem));
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.fleeing(guardian).isPresent(),
+				"the guardian flees under 30% health");
+		io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.fleeMove(guardian);
+		// A guardian swims only while its navigation has a path.
+		helper.assertFalse(guardian.getNavigation().isDone(), "the guardian has a path away from the golem");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes a pig hit the guardian in melee while its spikes are out, and returns the damage that the pig takes.
 	 */

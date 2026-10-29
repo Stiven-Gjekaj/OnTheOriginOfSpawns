@@ -261,16 +261,13 @@ def wide_eye_model():
 
 
 def kill_focus():
-    # A half-closed lid: a flat, dark lid covers the high half of the eye and
-    # the face over it, with a pale edge, and a low, hard brow over the lid.
-    lid = Mark("#2A4A40")
-    edge = Mark("#C8D8C8")
-    brow = Mark("#14241E")
-    put_face(lid, [(c, r) for c in range(1, 11) for r in (3, 4, 5)])
-    put_face(edge, [(c, 6) for c in (2, 3, 4, 7, 8, 9)])
-    put_face(brow, [(c, 2) for c in range(0, 12)])
-    lid.put([at(PUPIL, f, c, 0) for f in ("front", "right", "left") for c in range(PUPIL[f][2])])
-    return [lid, edge, brow]
+    # Kill marks: a red ring round the eye, with notches cut in it, and a row
+    # of short, red tally marks over it, one for each kill.
+    red = Mark("#C81818")
+    tally = Mark("#7A0808")
+    put_face(red, [(c, r) for c, r in ring(1, 3, 10, 9) if (c + r) % 3 != 0])
+    put_face(tally, [(c, r) for c in (2, 4, 6, 8) for r in (0, 1)] + [(c, 1) for c in (3, 5, 7)])
+    return [red, tally]
 
 
 def pulse_beam():
@@ -386,10 +383,21 @@ def fast_fin_model():
 
 
 def dodge_fin():
-    # Torn fin edges: wide, dark, ragged notches cut into the edges of the
-    # fin and the end of the tail, with pale, torn edges round them.
+    # Torn fins: dark, ragged notches go along the full length of the tail,
+    # with pale, torn gaps between them. The fin and the end of the tail
+    # have torn edges too.
     dark = Mark("#1A1410")
     pale = Mark("#F0D8B0")
+    for n, part in enumerate(TAIL):
+        for x, y, f, col, row in pixels(part):
+            w, h = part[f][2], part[f][3]
+            # The torn edges go along the long edges of each face.
+            if (row in (0, h - 1)) if w > h else (col in (0, w - 1)):
+                k = noise100(x, y, 4301 + n)
+                if k < 35:
+                    dark.put((x, y))
+                elif k < 65:
+                    pale.put((x, y))
     for x, y, f, col, row in pixels(FIN, ("right", "left")):
         edge = row in (0, 1, 7, 8) or col in (0, 1, 7, 8)
         if edge and ((row // 2) + (col // 2)) % 2 == 0:
@@ -397,9 +405,6 @@ def dodge_fin():
         elif edge:
             pale.put((x, y))
     put(dark, TAIL2, ("back",))
-    for x, y, f, col, row in pixels(TAIL2, SIDES):
-        if (col + row) % 3 == 0:
-            dark.put((x, y))
     return [dark, pale]
 
 

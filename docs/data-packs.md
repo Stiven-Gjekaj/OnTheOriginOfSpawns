@@ -544,6 +544,31 @@ the shot of a breeze. `fan_shot` works on a ghast and on a breeze. `hop`
 changes the long jump of a breeze. `arrow_spread` changes the spread of the
 wind charges. `brood` works on a phantom.
 
+#### Guardians
+
+The laser of a guardian is a melee hit, so the hit effects of the guardian
+act on it. The guardian swims with its movement speed. The elder guardian is a
+different species, and it gets no guardian genes.
+
+| Type | Fields | Result |
+|---|---|---|
+| `laser_damage` | `multiplier`, `when` (`always`) | Multiplies the damage of the laser while the state is true. More than one effect multiplies together. The vanilla laser does 6 damage on Normal |
+| `laser_charge` | `speed` | Multiplies the speed of the charge. The vanilla charge takes 80 ticks |
+| `close_snap` | `radius` (`3`) | The guardian keeps its laser on a target in the radius, and then the laser fires at once with its full damage. A vanilla guardian stops its laser at 3 blocks |
+| `charge_after_kill` | none | After the guardian kills a player, its next laser fires one tick after the lock |
+| `laser_split` | `radius` (`8`), `damage_fraction` (`0.5`) | The laser also hits the nearest second target in the radius of the first one, with this part of the damage. The second target is a player, a squid, or an axolotl that the guardian sees |
+| `laser_lock` | `seconds` (`1`) | The laser keeps its lock and its charge while the target is out of sight for this many seconds or less |
+| `charge_damage` | `damage` (`1`), `interval_seconds` (`1`) | While the laser charges, the target takes this much magic damage one time in each interval |
+| `spike_damage` | `extra` | The spikes do this much more damage to a melee attacker. Vanilla is 2. More than one effect adds up |
+| `spike_effect` | `effect`, `seconds`, `amplifier` (`0`) | Each attacker that the spikes hurt gets the effect |
+| `shore_hop` | `radius` (`8`) | While the mob is on land, it hops to the nearest water in the radius, one time each second |
+| `ram` | `damage` (`4`), `cooldown_seconds` (`5`), `range` (`8`), `speed` (`0.8`) | One time in each cooldown, the mob darts at its target in the range. A touch in 2 seconds does the damage and pushes the target back a little |
+
+New behavior: `swoop_call` also acts when a guardian locks its laser on its
+target. `sidestep` works in water, and a player that draws a trident counts
+as aimed. `flee` gives the mob a path away from its target, so a mob that
+swims along a path also flees. `break_boats` acts on the laser.
+
 #### Spiders
 
 These effects suit a spider, but other mobs can also use them. A gene cobweb
@@ -672,6 +697,10 @@ twelve rods. A breeze has `body`, `head`, and `rod_1` to `rod_3`. The vanilla
 eyes layer of a phantom and of a breeze draws over the eyes, so a gene that
 changes the eyes uses a gene model with `glow`. A gene model bone can be at
 each depth in the model.
+A guardian has `head`, `eye`, `tail0`, `tail1`, `tail2`, and `spike0` to
+`spike11`. The eye, the first tail part, and the spikes are parts of the
+head. Each next tail part is a part of the one before it. The twelve spikes
+share one place on the texture, so a spike mark shows on each spike.
 
     {
         "texture": "originofspawns:textures/entity/bone_leg.png",

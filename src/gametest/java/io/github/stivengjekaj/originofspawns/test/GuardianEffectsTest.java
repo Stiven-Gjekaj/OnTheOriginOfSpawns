@@ -82,6 +82,18 @@ public class GuardianEffectsTest {
 		});
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void splitBeamAlsoHitsASecondTargetWithHalfTheDamage(GameTestHelper helper) {
+		pool(helper);
+		IronGolem golem = target(helper);
+		var squid = helper.spawnWithNoFreeWill(EntityTypes.SQUID, TARGET.north());
+		shooter(helper, golem, "test_split_beam");
+		helper.succeedWhen(() -> {
+			helper.assertTrue(golem.getHealth() < golem.getMaxHealth(), "the laser fires");
+			helper.assertValueEqual(squid.getMaxHealth() - squid.getHealth(), 3.0F, "half of the 6 damage of the laser");
+		});
+	}
+
 	/**
 	 * Builds a pool of glass, 6 blocks long and 3 blocks wide inside, with water 2 blocks deep, from x 1 to 6 and z 3
 	 * to 5. The guardian and its target are in the pool.

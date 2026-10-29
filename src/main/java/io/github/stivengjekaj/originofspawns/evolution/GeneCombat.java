@@ -515,6 +515,9 @@ public final class GeneCombat {
 		if (source.getDirectEntity() != null) {
 			result *= source.getDirectEntity().getAttachedOrElse(ModAttachments.REBOUND_DAMAGE, 1.0F);
 		}
+		if (LASER.get()) {
+			result *= LASER_FRACTION.get();
+		}
 		List<GeneEffect> victimEffects = GeneEffects.of(victim).toList();
 		for (GeneEffect effect : victimEffects) {
 			switch (effect) {
@@ -1440,15 +1443,54 @@ public final class GeneCombat {
 	private static final ThreadLocal<Boolean> LASER = ThreadLocal.withInitial(() -> false);
 
 	/**
+	 * The part of the damage of the laser hit that runs now. A split beam does a part of the damage.
+	 */
+	private static final ThreadLocal<Float> LASER_FRACTION = ThreadLocal.withInitial(() -> 1.0F);
+
+	/**
 	 * Runs the hit as a laser hit, so that the laser genes of the guardian act on its damage.
 	 */
 	public static boolean asLaser(java.util.function.BooleanSupplier hit) {
+		return asLaser(1.0F, hit);
+	}
+
+	/**
+	 * Runs the hit as a laser hit that does this part of its damage.
+	 */
+	public static boolean asLaser(float fraction, java.util.function.BooleanSupplier hit) {
 		boolean before = LASER.get();
+		float beforeFraction = LASER_FRACTION.get();
 		LASER.set(true);
+		LASER_FRACTION.set(fraction);
 		try {
 			return hit.getAsBoolean();
 		} finally {
 			LASER.set(before);
+			LASER_FRACTION.set(beforeFraction);
+		}
+	}
+
+	/**
+	 * After the laser of the guardian hits its target, it hits the second target of each split beam gene too.
+	 */
+	public static void splitLaser(net.minecraft.world.entity.monster.Guardian guardian, ServerLevel level, LivingEntity first,
+			float magicDamage) {
+		for (GeneEffect effect : GeneEffects.of(guardian).toList()) {
+			if (effect instanceof GeneEffect.LaserSplit split) {
+				level.getEntitiesOfClass(LivingEntity.class, first.getBoundingBox().inflate(split.radius()),
+								other -> other != first && other != guardian && other.isAlive()
+										&& (other instanceof Player player && !player.isSpectator() && !player.isCreative()
+										|| other instanceof net.minecraft.world.entity.animal.squid.Squid
+										|| other instanceof net.minecraft.world.entity.animal.axolotl.Axolotl)
+										&& other.distanceTo(first) <= split.radius() && other.distanceToSqr(guardian) > 9.0
+										&& guardian.hasLineOfSight(other))
+						.stream().min(java.util.Comparator.comparingDouble(other -> other.distanceToSqr(first)))
+						.ifPresent(second -> {
+							asLaser(split.damageFraction(), () -> second.hurtServer(level,
+									guardian.damageSources().indirectMagic(guardian, guardian), magicDamage));
+							asLaser(split.damageFraction(), () -> guardian.doHurtTarget(level, second));
+						});
+			}
 		}
 	}
 

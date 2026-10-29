@@ -60,6 +60,10 @@ public abstract class GuardianAttackGoalMixin {
 	@WrapOperation(method = "tick", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/world/entity/monster/Guardian;doHurtTarget(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;)Z"))
 	private boolean originofspawns$laserAttack(Guardian guardian, ServerLevel level, Entity target, Operation<Boolean> original) {
-		return GeneCombat.asLaser(() -> original.call(guardian, level, target));
+		boolean hit = GeneCombat.asLaser(() -> original.call(guardian, level, target));
+		if (target instanceof LivingEntity living) {
+			GeneCombat.splitLaser(guardian, level, living, level.getDifficulty() == net.minecraft.world.Difficulty.HARD ? 3.0F : 1.0F);
+		}
+		return hit;
 	}
 }

@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "laser_split", "radius": 8, "damage_fraction": 0.5 }],
+	"mutation_rate": 0
+}

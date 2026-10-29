@@ -294,7 +294,8 @@ public sealed interface GeneEffect {
 			Map.entry("rebound", Rebound.CODEC),
 			Map.entry("laser_damage", LaserDamage.CODEC),
 			Map.entry("laser_charge", LaserCharge.CODEC),
-			Map.entry("charge_after_kill", ChargeAfterKill.CODEC)
+			Map.entry("charge_after_kill", ChargeAfterKill.CODEC),
+			Map.entry("laser_split", LaserSplit.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4896,6 +4897,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "charge_after_kill";
+		}
+	}
+
+	/**
+	 * When the laser of a guardian fires, it also hits the nearest second target in the radius of the first one, with
+	 * this part of the damage. The second target is one that a vanilla guardian attacks: a player, a squid, or an
+	 * axolotl. The guardian must see it, and it must be farther than 3 blocks from the guardian.
+	 */
+	record LaserSplit(float radius, float damageFraction) implements GeneEffect {
+		public static final MapCodec<LaserSplit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 32.0F).optionalFieldOf("radius", 8.0F).forGetter(LaserSplit::radius),
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("damage_fraction", 0.5F).forGetter(LaserSplit::damageFraction)
+		).apply(instance, LaserSplit::new));
+
+		@Override
+		public String type() {
+			return "laser_split";
 		}
 	}
 }

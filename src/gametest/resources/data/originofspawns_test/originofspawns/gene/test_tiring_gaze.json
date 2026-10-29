@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "effect_on_hit", "effect": "minecraft:mining_fatigue", "seconds": 6, "amplifier": 1 }],
+	"mutation_rate": 0
+}

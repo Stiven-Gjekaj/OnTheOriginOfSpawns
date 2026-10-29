@@ -211,6 +211,124 @@ public class GuardianEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void tiringGazeGivesTheEffectWithTheLaser(GameTestHelper helper) {
+		pool(helper);
+		IronGolem golem = target(helper);
+		shooter(helper, golem, "test_tiring_gaze");
+		helper.succeedWhen(() -> {
+			helper.assertTrue(golem.getHealth() < golem.getMaxHealth(), "the laser fires");
+			var fatigue = golem.getEffect(net.minecraft.world.effect.MobEffects.MINING_FATIGUE);
+			helper.assertTrue(fatigue != null && fatigue.getAmplifier() == 1 && fatigue.getDuration() == 120,
+					"Mining Fatigue II for 6 seconds");
+		});
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void hullCutterBreaksTheBoatOfThePlayerThatTheLaserHits(GameTestHelper helper) {
+		pool(helper);
+		var boat = EntityTypes.OAK_BOAT.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
+		// The boat floats on the top of the water. Vanilla makes the rider of a boat under water leave it.
+		boat.snapTo(helper.absoluteVec(Vec3.atBottomCenterOf(TARGET.above(2))), 0.0F, 0.0F);
+		helper.getLevel().addFreshEntity(boat);
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(boat.position());
+		player.startRiding(boat);
+		shooter(helper, player, "test_hull_cutter");
+		helper.succeedWhen(() -> {
+			helper.assertTrue(player.getHealth() < player.getMaxHealth(), "the laser hits the player");
+			helper.assertFalse(boat.isAlive(), "the boat breaks");
+		});
+	}
+
+	@GameTest
+	public void packGazeAndShoalWardActWithTwoGuardiansNear(GameTestHelper helper) {
+		pool(helper);
+		IronGolem golem = target(helper);
+		Guardian guardian = guardianWith(helper, SHOOTER, "test_pack_gaze");
+		var hit = helper.getLevel().damageSources().indirectMagic(guardian, guardian);
+		boolean[] checked = new boolean[1];
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.asLaser(() -> {
+			helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(golem, hit, 5.0F),
+					5.0F, "no change with no guardians near");
+			return checked[0] = true;
+		});
+		guardianWith(helper, SHOOTER.north());
+		guardianWith(helper, SHOOTER.south());
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.asLaser(() -> {
+			helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(golem, hit, 5.0F),
+					6.0F, "20% more laser damage with two guardians near");
+			return true;
+		});
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(guardian,
+				helper.getLevel().damageSources().generic(), 5.0F), 4.0F, "20% less damage taken with two guardians near");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void spikeBurstHurtsThePlayersNearButNotTheGuardians(GameTestHelper helper) {
+		pool(helper);
+		Guardian guardian = guardianWith(helper, new BlockPos(3, 1, 4), "test_spike_burst");
+		Guardian other = guardianWith(helper, new BlockPos(5, 1, 4));
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(3, 3, 4))));
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onDeath(guardian, helper.getLevel(),
+				helper.getLevel().damageSources().generic());
+		helper.assertValueEqual(player.getMaxHealth() - player.getHealth(), 4.0F, "the spikes do 4 damage to the player");
+		helper.assertValueEqual(other.getHealth(), other.getMaxHealth(), "the other guardian takes no damage");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void dodgeFinAndSlickHideStepAsideInWater(GameTestHelper helper) {
+		pool(helper);
+		for (var item : java.util.List.of(net.minecraft.world.item.Items.BOW, net.minecraft.world.item.Items.TRIDENT)) {
+			Guardian guardian = guardianWith(helper, SHOOTER);
+			guardian.baseTick();
+			var player = CreeperEffectsTest.survivalPlayer(helper).player();
+			player.setNoGravity(true);
+			// The player is in the pool at the east end, and looks west at the guardian. The pool is 3 blocks wide, so the
+			// step is 1 block.
+			player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(TARGET)));
+			player.setYRot(90.0F);
+			player.setYHeadRot(90.0F);
+			Vec3 toGuardian = guardian.getEyePosition().subtract(player.getEyePosition());
+			player.setXRot((float) Math.toDegrees(Math.atan2(-toGuardian.y, toGuardian.horizontalDistance())));
+			player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new net.minecraft.world.item.ItemStack(item));
+			player.startUsingItem(net.minecraft.world.InteractionHand.MAIN_HAND);
+			Vec3 before = guardian.position();
+			helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.sidestep(guardian, helper.getLevel(),
+					new io.github.stivengjekaj.originofspawns.definition.GeneEffect.Sidestep(12.0F, 1.0F, 8.0F, true)),
+					"the guardian steps aside from the " + item);
+			helper.assertValueEqual(Math.round(Math.abs(guardian.getZ() - before.z)), 1L, "the side distance");
+			helper.assertTrue(guardian.isInWater() || helper.getLevel().getFluidState(guardian.blockPosition()).isSource(),
+					"it stays in the water");
+			guardian.discard();
+			player.discard();
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedEffectsWorkOnAGuardian(GameTestHelper helper) {
+		pool(helper);
+		ReusedEffects.callOnHurt(helper, GuardianEffectsTest::guardianWith);
+		ReusedEffects.damageTaken(helper, GuardianEffectsTest::guardianWith);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void kinGrievingHealsWhenAnotherGuardianDies(GameTestHelper helper) {
+		pool(helper);
+		Guardian mourner = guardianWith(helper, SHOOTER, "test_mourner");
+		Guardian dead = guardianWith(helper, TARGET);
+		mourner.setHealth(10.0F);
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onDeath(dead, helper.getLevel(),
+				helper.getLevel().damageSources().generic());
+		helper.assertValueEqual(mourner.getHealth(), 14.0F, "the guardian heals 4");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes a pig hit the guardian in melee while its spikes are out, and returns the damage that the pig takes.
 	 */

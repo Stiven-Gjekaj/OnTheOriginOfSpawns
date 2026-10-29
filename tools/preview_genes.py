@@ -78,6 +78,7 @@ BLAZE_PATH = "assets/minecraft/textures/entity/blaze/blaze.png"
 BREEZE_PATH = "assets/minecraft/textures/entity/breeze/breeze.png"
 BREEZE_WIND_PATH = "assets/minecraft/textures/entity/breeze/breeze_wind.png"
 BREEZE_EYES_PATH = "assets/minecraft/textures/entity/breeze/breeze_eyes.png"
+GUARDIAN_PATH = "assets/minecraft/textures/entity/guardian/guardian.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -563,6 +564,16 @@ BREEZE_FAMILIES = {
 }
 
 
+# The families of the guardian, from design/species/guardian.md.
+GUARDIAN_FAMILIES = {
+    "beamer": ["deep_beam", "tiring_gaze", "hull_cutter", "split_beam", "dying_glare", "prism_flash"],
+    "focuser": ["quick_focus", "steady_lock", "close_snap", "wide_eye", "kill_focus", "pulse_beam"],
+    "spikeback": ["long_spikes", "trident_plate", "coral_shell", "blast_plate", "venom_spikes", "spike_burst"],
+    "darter": ["fast_fin", "dodge_fin", "shore_hop", "slick_hide", "deep_flight", "ram_fin"],
+    "shoaler": ["school_call", "shoal_ward", "pack_gaze", "alarm_pulse", "kin_grieving", "guide_beam"],
+}
+
+
 ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
     "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
     "fester": ["nether_rot", "stench"], "bladesman": ["riposte", "keen_edge"], "chaser": ["scent_tracker", "vault"],
@@ -606,6 +617,11 @@ BREEZE_EXTRA = next_family_extra(BREEZE_FAMILIES, {
     "bounder": ["sky_hop", "swim_hop"], "whirler": ["twin_charge", "spin_up"],
     "tempest": ["storm_gale", "dizzy_wind"],
 }, "tempest")
+GUARDIAN_EXTRA = next_family_extra(GUARDIAN_FAMILIES, {
+    "beamer": ["deep_beam", "hull_cutter"], "focuser": ["wide_eye", "steady_lock"],
+    "spikeback": ["long_spikes", "coral_shell"], "darter": ["fast_fin", "deep_flight"],
+    "shoaler": ["shoal_ward", "guide_beam"],
+}, "shoaler")
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -1032,6 +1048,33 @@ BREEZE_WIND = [
     ("wind_top", (105, 57), (-2.5, -8, -2.5), (5, 8, 5), False),
 ]
 
+
+# The guardian, from GuardianModel. The head is the root bone: a core with
+# plates round it. The twelve spikes, the eye, and the tail are children of
+# the head, and each part of the tail is a child of the one before it. The
+# spikes come out of the edges of the body, as at rest.
+GUARDIAN_SPIKES = (
+    (0, -8, 8, 1.75, 0, 0), (0, -8, -8, 0.25, 0, 0), (8, -8, 0, 0, 0, 0.25), (-8, -8, 0, 0, 0, 1.75),
+    (-8, 0, -8, 0.5, 0.25, 0), (8, 0, -8, 0.5, 1.75, 0), (8, 0, 8, 0.5, 1.25, 0), (-8, 0, 8, 0.5, 0.75, 0),
+    (0, 8, 8, 1.25, 0, 0), (0, 8, -8, 0.75, 0, 0), (8, 8, 0, 0, 0, 0.75), (-8, 8, 0, 0, 0, 1.25),
+)
+GUARDIAN_PIVOTS = {"head": (0, 0, 0), "eye": (0, 0, -8.25), "tail0": (0, 0, 0), "tail1": (-1.5, 0.5, 14),
+                   "tail2": (-1, 1, 20)}
+GUARDIAN_PIVOTS.update({f"spike{i}": (x, 16 + y, z, rx * 180, ry * 180, rz * 180)
+                        for i, (x, y, z, rx, ry, rz) in enumerate(GUARDIAN_SPIKES)})
+GUARDIAN_CUBES = [
+    ("head", (0, 0), (-6, 10, -8), (12, 12, 16), False),
+    ("head", (0, 28), (-8, 10, -6), (2, 12, 12), False),
+    ("head", (0, 28), (6, 10, -6), (2, 12, 12), True),
+    ("head", (16, 40), (-6, 8, -6), (12, 2, 12), False),
+    ("head", (16, 40), (-6, 22, -6), (12, 2, 12), False),
+    ("eye", (8, 0), (-1, 15, 0), (2, 2, 1), False),
+    ("tail0", (40, 0), (-2, 14, 7), (4, 4, 8), False),
+    ("tail1", (0, 54), (0, 14, 0), (3, 3, 7), False),
+    ("tail2", (41, 32), (0, 14, 0), (2, 2, 6), False),
+    ("tail2", (25, 19), (1, 10.5, 3), (1, 9, 9), False),
+] + [(f"spike{i}", (0, 0), (-1, -4.5, -1), (2, 9, 2), False) for i in range(12)]
+
 # Each Nether mob: the cubes, the pivots, the weapon, the wraps, the frame of
 # the sheets (VIEW_X, VIEW_Y, VIEW_W, VIEW_H), the frame of the close-ups,
 # and whether the sheets look down on it.
@@ -1050,6 +1093,7 @@ NETHER_LOOKS = {
     "ghast_shooting": (GHAST_CUBES, GHAST_PIVOTS, None, [], (14, -6, 28, 34), ((30, 36), (0, 23)), False),
     "blaze": (BLAZE_CUBES, BLAZE_PIVOTS, None, [], (13, 8, 26, 32), ((28, 34), (0, 8)), False),
     "breeze": (BREEZE_CUBES, BREEZE_PIVOTS, None, [], (12, 7, 24, 33), ((26, 34), (0, 9)), False),
+    "guardian": (GUARDIAN_CUBES, GUARDIAN_PIVOTS, None, [], (24, 6, 48, 44), ((50, 46), (0, 16)), False),
 }
 # The flyers are seen from below in the game, so their sheets look at them
 # from above, from below, and from the side.
@@ -1642,6 +1686,7 @@ SPECIES = {
     "ghast_shooting": (GHAST_SHOOTING_PATH, None, GHAST_FAMILIES, GHAST_EXTRA, []),
     "blaze": (BLAZE_PATH, None, BLAZE_FAMILIES, BLAZE_EXTRA, []),
     "breeze": (BREEZE_PATH, None, BREEZE_FAMILIES, BREEZE_EXTRA, []),
+    "guardian": (GUARDIAN_PATH, None, GUARDIAN_FAMILIES, GUARDIAN_EXTRA, []),
 }
 
 
@@ -1745,6 +1790,11 @@ def set_mob(species):
         MOB["sheet_views"] = [(-20, 30), (160, 30), (-90, 10)] if low else [(0, 0), (180, 0), (-35, 15)]
         MOB["tex_scale"] = 2.0 if species.startswith("ghast") else 1.0
         MOB["wind"] = (BREEZE_WIND_PATH, BREEZE_WIND) if species == "breeze" else None
+        if species == "guardian":
+            # The guardian swims at the height of the player, so its sheets
+            # look at it from the front at a turn, from behind, and from the
+            # side.
+            MOB["sheet_views"] = [(-30, 15), (150, 20), (-90, 5)]
         if species.startswith("ghast"):
             # The ghast floats over the player, so its sheets look at it from
             # the front, from below at the side, and from behind.

@@ -110,7 +110,7 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Quick Focus | Focuser | `spotted` | Its laser charges 40% faster | 10% less maximum health | Eye: a narrow, slit pupil |
 | Steady Lock | Focuser | `projectile` | The beam does not break when the target goes out of sight for 1 second or less | Its laser does 10% less damage | Eye: a gold ring round the eye |
-| Close Snap | Focuser | `melee` | When its target is in 3 blocks, the laser fires at once | 10% less maximum health | Tail: a bright tail tip |
+| Close Snap | Focuser | `melee` | It keeps its laser on a target in 3 blocks, and then the laser fires at once | 10% less maximum health | Tail: a bright tail tip |
 | Wide Eye | Focuser | `unreached` | Two times the follow range | 10% less swim speed | Eye: a large, wide eye. This changes the model |
 | Kill Focus | Focuser | `player_death` | After it kills a player, its next laser charges at once | 10% less maximum health | Eye: a half-closed lid |
 | Pulse Beam | Focuser, sub Beamer | `alone` | While its laser charges, the target takes 1 damage each second | 10% less maximum health | Body: glowing lines on the body |
@@ -161,7 +161,7 @@ The visual column gives the region and the mark.
 | Split Beam | The second target must be a target that the guardian attacks in vanilla |
 | Dying Glare | It works as the zombified piglin Wrath, on the laser |
 | Steady Lock | In vanilla, the beam breaks at once when the target goes out of sight |
-| Close Snap | The laser does its full damage |
+| Close Snap | A vanilla guardian does not attack a target in 3 blocks. The laser does its full damage |
 | Wide Eye | The vanilla follow range is 16 blocks |
 | Pulse Beam | The damage is magic damage, as the laser |
 | Trident Plate | The trident tag holds a thrown trident and a melee hit with a trident |

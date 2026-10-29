@@ -101,7 +101,7 @@ The visual column gives the region and the mark.
 | Tiring Gaze | Beamer | `melee` | Its laser gives Mining Fatigue II for 6 seconds | 10% less maximum health | Eye: a gray ring round the pupil |
 | Hull Cutter | Beamer | `boat` | When its laser hits a player in a boat, the boat breaks | 10% less swim speed | Body: a dark red band round the body |
 | Split Beam | Beamer | `crowd` | Its laser also hits a second target in 8 blocks of the first, with half the damage | 10% less maximum health | Eye: two pupils |
-| Dying Glare | Beamer | `critical` | At under 30% health, its laser does 30% more damage | 10% less swim speed | Eye: red veins round the eye |
+| Dying Glare | Beamer | `critical` | At under half health, its laser does 30% more damage | 10% less swim speed | Eye: red veins round the eye |
 | Prism Flash | Beamer, sub Focuser | `spotted` | Its laser gives Blindness for 2 seconds | 10% less maximum health | Eye: a ring of many colors |
 
 ### Focuser genes
@@ -133,7 +133,7 @@ The visual column gives the region and the mark.
 | Fast Fin | Darter | `unreached` | 20% more swim speed | 10% less maximum health | Tail: a wide tail fin. This changes the model |
 | Dodge Fin | Darter | `projectile` | It moves aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Tail: torn fin edges |
 | Shore Hop | Darter | `on_land` | On land, it hops to the nearest water in 8 blocks | 10% less maximum health | Body: wet, dark patches |
-| Slick Hide | Darter | `trident` | It moves aside from a thrown trident, one time each 8 seconds | 10% less swim speed | Body: smooth, pale scales |
+| Slick Hide | Darter | `trident` | Each projectile, also a thrown trident, has a 25% chance to slide off with no damage | 10% less swim speed | Body: smooth, pale scales |
 | Deep Flight | Darter | `in_water` | At under 30% health, it swims away fast for 4 seconds | 10% less maximum health | Tail: a dark tail |
 | Ram Fin | Darter, sub Spikeback | `melee` | It rams its target for 4 damage, one time each 5 seconds | 10% less maximum health | Body: a hard, gray brow on the body |
 
@@ -164,10 +164,11 @@ The visual column gives the region and the mark.
 | Close Snap | A vanilla guardian does not attack a target in 3 blocks. The laser does its full damage |
 | Wide Eye | The vanilla follow range is 16 blocks |
 | Pulse Beam | The damage is magic damage, as the laser |
-| Trident Plate | The trident tag holds a thrown trident and a melee hit with a trident |
+| Trident Plate | The trident tag holds only a thrown trident. A melee hit with a trident does not count |
 | Venom Spikes | The effect goes to each attacker that the spikes hurt |
 | Spike Burst | It does no damage to other guardians |
-| Dodge Fin, Slick Hide | They work as the pillager Evasion, in water |
+| Dodge Fin | It works as the pillager Evasion, in water. A player that draws a trident also counts |
+| Slick Hide | A projectile that slides off goes on through the place of the guardian |
 | Shore Hop | It hops one time each second while it is on land |
 | Deep Flight | It works as the blaze Smoke Dash |
 | Ram Fin | The ram knocks the target back a little |
@@ -274,7 +275,7 @@ These genes and families need parts that the mod does not have yet.
 | The damage of the spikes, and an effect from the spikes | Spikebacks, Long Spikes, Venom Spikes |
 | Spikes that fly out at death | Spike Burst |
 | The swim speed of the guardian | Darters, Fast Fin, and the downsides |
-| A sidestep in water, also from a thrown trident | Dodge Fin, Slick Hide |
+| A sidestep in water | Dodge Fin |
 | A hop to water on land | Shore Hop |
 | A ram at the target | Ram Fin |
 | A call of the school to its locked target | Guide Beam |

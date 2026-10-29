@@ -11,7 +11,7 @@ natural selection. Burn the zombies, and their children resist fire. Shoot
 them, and they grow armor plates. Every gene changes how a mob looks, so you
 can read the evolution of your world on the bodies of its mobs.
 
-| 28 | 840 | 140 | 840 | 31 | 6 | 4,884,208 |
+| 29 | 870 | 145 | 870 | 31 | 6 | 5,058,644 |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | species | genes | families | named family mixes | causes of death | biome pools for each species | possible gene mixes |
 
@@ -46,7 +46,7 @@ can read the evolution of your world on the bodies of its mobs.
 > the cave spider, the pillager, the vindicator, the evoker, the witch, the
 > enderman, the endermite, the slime, the magma cube, the zombified piglin,
 > the piglin, the piglin brute, the hoglin, the zoglin, the phantom, the
-> ghast, the blaze, and the breeze.
+> ghast, the blaze, the breeze, and the guardian.
 > Each species has 30 genes, 5 families, 20 minor families, and 10 hybrids.
 > The numbers above count the main branch.
 > The Beagle Notebook shows the gene pools and what you know of each family.

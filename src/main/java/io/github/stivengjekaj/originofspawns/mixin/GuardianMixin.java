@@ -24,7 +24,12 @@ public abstract class GuardianMixin {
 			target = "Lnet/minecraft/world/entity/LivingEntity;hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
 	private boolean originofspawns$spikes(LivingEntity attacker, ServerLevel level, DamageSource source, float damage,
 			Operation<Boolean> original) {
-		return original.call(attacker, level, source, GeneBehaviors.spikeDamage((Guardian) (Object) this, damage));
+		Guardian self = (Guardian) (Object) this;
+		boolean hurt = original.call(attacker, level, source, GeneBehaviors.spikeDamage(self, damage));
+		if (hurt) {
+			GeneBehaviors.spikeEffects(self, attacker);
+		}
+		return hurt;
 	}
 
 	/**

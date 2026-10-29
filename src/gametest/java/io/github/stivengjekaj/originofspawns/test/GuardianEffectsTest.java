@@ -145,6 +145,17 @@ public class GuardianEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS)
+	public void venomSpikesPoisonTheAttacker(GameTestHelper helper) {
+		pool(helper);
+		Guardian guardian = guardianWith(helper, SHOOTER, "test_venom_spikes");
+		var pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 3, 4));
+		guardian.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(pig), 1.0F);
+		helper.assertValueEqual(pig.getEffect(net.minecraft.world.effect.MobEffects.POISON).getDuration(), 60,
+				"Poison for 3 seconds");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes a pig hit the guardian in melee while its spikes are out, and returns the damage that the pig takes.
 	 */

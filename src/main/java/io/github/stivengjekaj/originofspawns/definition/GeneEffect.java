@@ -298,7 +298,8 @@ public sealed interface GeneEffect {
 			Map.entry("laser_split", LaserSplit.CODEC),
 			Map.entry("laser_lock", LaserLock.CODEC),
 			Map.entry("charge_damage", ChargeDamage.CODEC),
-			Map.entry("spike_damage", SpikeDamage.CODEC)
+			Map.entry("spike_damage", SpikeDamage.CODEC),
+			Map.entry("spike_effect", SpikeEffect.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4964,6 +4965,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "spike_damage";
+		}
+	}
+
+	/**
+	 * Each attacker that the spikes of a guardian hurt gets the status effect.
+	 */
+	record SpikeEffect(Holder<MobEffect> effect, float seconds, int amplifier) implements GeneEffect {
+		public static final MapCodec<SpikeEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(SpikeEffect::effect),
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(SpikeEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(SpikeEffect::amplifier)
+		).apply(instance, SpikeEffect::new));
+
+		@Override
+		public String type() {
+			return "spike_effect";
 		}
 	}
 }

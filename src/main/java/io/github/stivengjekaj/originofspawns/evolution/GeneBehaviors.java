@@ -1371,6 +1371,18 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Gives the spike effects of the guardian to the attacker that its spikes hurt.
+	 */
+	public static void spikeEffects(Mob guardian, LivingEntity attacker) {
+		for (GeneEffect effect : GeneEffects.of(guardian).toList()) {
+			if (effect instanceof GeneEffect.SpikeEffect spike) {
+				attacker.addEffect(new MobEffectInstance(spike.effect(), Math.round(spike.seconds() * 20.0F), spike.amplifier()),
+						guardian);
+			}
+		}
+	}
+
+	/**
 	 * Returns the ticks of the charge of the laser of a guardian, after its laser charge genes. The charge is at least
 	 * 1 tick.
 	 */

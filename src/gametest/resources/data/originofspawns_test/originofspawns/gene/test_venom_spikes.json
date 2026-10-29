@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:guardian",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "spike_effect", "effect": "minecraft:poison", "seconds": 3 }],
+	"mutation_rate": 0
+}

@@ -43,6 +43,7 @@
 		"GhastMoveControlMixin",
 		"GhastRandomFloatAroundGoalMixin",
 		"GhastShootFireballGoalMixin",
+		"GuardianAttackGoalMixin",
 		"HoglinAiAccessor",
 		"HoglinAiMixin",
 		"HoglinMixin",

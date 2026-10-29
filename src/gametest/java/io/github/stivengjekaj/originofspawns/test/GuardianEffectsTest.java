@@ -1,0 +1,97 @@
+package io.github.stivengjekaj.originofspawns.test;
+
+import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
+
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.entity.monster.Guardian;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
+
+/**
+ * Checks the genes of a guardian: its laser, its spikes, its swim, and the reused effects. Each guardian of a test is
+ * in water: the tests build a pool of glass with water in it.
+ */
+public class GuardianEffectsTest {
+	/**
+	 * The places in the pool of a laser test: the guardian at the west end, the target 4 blocks east of it. A
+	 * vanilla guardian does not attack a target in 3 blocks.
+	 */
+	static final BlockPos SHOOTER = new BlockPos(2, 1, 4);
+	static final BlockPos TARGET = new BlockPos(6, 1, 4);
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void aPlainLaserDoesSixDamage(GameTestHelper helper) {
+		pool(helper);
+		IronGolem plain = target(helper);
+		shooter(helper, plain);
+		helper.succeedWhen(() -> {
+			helper.assertTrue(plain.getHealth() < plain.getMaxHealth(), "the plain laser fires");
+			float plainDamage = plain.getMaxHealth() - plain.getHealth();
+			// The magic damage of 1 comes first. The attack of 6 comes in the hurt time of the target, so it adds only 5.
+			helper.assertValueEqual(plainDamage, 6.0F, "the plain laser does 6 damage in all");
+		});
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void deepBeamDoublesTheDamageOfTheLaser(GameTestHelper helper) {
+		pool(helper);
+		IronGolem golem = target(helper);
+		shooter(helper, golem, "test_deep_beam");
+		helper.succeedWhen(() -> {
+			helper.assertTrue(golem.getHealth() < golem.getMaxHealth(), "the laser fires");
+			helper.assertValueEqual(golem.getMaxHealth() - golem.getHealth(), 12.0F, "two times the damage of the laser");
+		});
+	}
+
+	/**
+	 * Builds a pool of glass, 6 blocks long and 3 blocks wide inside, with water 2 blocks deep, from x 1 to 6 and z 3
+	 * to 5. The guardian and its target are in the pool.
+	 */
+	static void pool(GameTestHelper helper) {
+		for (int x = 0; x <= 7; x++) {
+			for (int z = 2; z <= 6; z++) {
+				for (int y = 0; y <= 3; y++) {
+					boolean wall = x == 0 || x == 7 || z == 2 || z == 6 || y == 0;
+					helper.setBlock(new BlockPos(x, y, z), wall ? Blocks.GLASS : y <= 2 ? Blocks.WATER : Blocks.AIR);
+				}
+			}
+		}
+	}
+
+	static IronGolem target(GameTestHelper helper) {
+		return helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, TARGET);
+	}
+
+	/**
+	 * Makes a guardian with its AI at the west end of the pool, with the target. It has no target goals, so it
+	 * attacks only the target.
+	 */
+	static Guardian shooter(GameTestHelper helper, LivingEntity target, String... genes) {
+		Guardian guardian = guardianWith(helper, SHOOTER, genes);
+		guardian.setNoAi(false);
+		((MobAccessor) guardian).originofspawns$targetSelector().removeAllGoals(goal -> true);
+		guardian.setTarget(target);
+		return guardian;
+	}
+
+	static Guardian guardianWith(GameTestHelper helper, BlockPos pos, String... genes) {
+		Guardian guardian = EntityTypes.GUARDIAN.create(helper.getLevel(), EntitySpawnReason.TRIGGERED);
+		guardian.setAttached(ModAttachments.GENES, new CarriedGenes(java.util.Arrays.stream(genes)
+				.map(gene -> Identifier.fromNamespaceAndPath("originofspawns_test", gene)).toList()));
+		guardian.setNoAi(true);
+		guardian.setPersistenceRequired();
+		guardian.snapTo(helper.absoluteVec(Vec3.atBottomCenterOf(pos)), 0.0F, 0.0F);
+		helper.getLevel().addFreshEntity(guardian);
+		return guardian;
+	}
+}

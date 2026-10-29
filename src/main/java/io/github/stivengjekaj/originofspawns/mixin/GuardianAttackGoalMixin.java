@@ -1,0 +1,41 @@
+package io.github.stivengjekaj.originofspawns.mixin;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
+
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Guardian;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+
+/**
+ * Changes the laser of a guardian with its genes. A vanilla guardian locks on its target, charges for 80 ticks, and
+ * then hits the target with magic damage and with its attack.
+ */
+@Mixin(targets = "net.minecraft.world.entity.monster.Guardian$GuardianAttackGoal")
+public abstract class GuardianAttackGoalMixin {
+	/**
+	 * The magic damage of the laser is a laser hit.
+	 */
+	@WrapOperation(method = "tick", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/LivingEntity;hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z"))
+	private boolean originofspawns$laserMagic(LivingEntity target, ServerLevel level, DamageSource source, float damage,
+			Operation<Boolean> original) {
+		return GeneCombat.asLaser(() -> original.call(target, level, source, damage));
+	}
+
+	/**
+	 * The attack of the guardian at the end of the charge is a laser hit too.
+	 */
+	@WrapOperation(method = "tick", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/monster/Guardian;doHurtTarget(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;)Z"))
+	private boolean originofspawns$laserAttack(Guardian guardian, ServerLevel level, Entity target, Operation<Boolean> original) {
+		return GeneCombat.asLaser(() -> original.call(guardian, level, target));
+	}
+}

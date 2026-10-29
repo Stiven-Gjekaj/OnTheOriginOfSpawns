@@ -554,6 +554,8 @@ public final class GeneCombat {
 		if (source.getEntity() instanceof LivingEntity attacker && attacker != victim) {
 			for (GeneEffect effect : GeneEffects.of(attacker).toList()) {
 				switch (effect) {
+					case GeneEffect.LaserDamage laser when LASER.get() && test(attacker, laser.when(), victim) ->
+							result *= laser.multiplier();
 					case GeneEffect.DamageDealtWhen dealt when (!dealt.playersOnly() || victim instanceof Player)
 							&& dealt.hits().includes(source.getDirectEntity() instanceof Projectile)
 							&& test(attacker, dealt.when(), victim) -> result *= dealt.multiplier();
@@ -1431,6 +1433,24 @@ public final class GeneCombat {
 	 * True while the mod passes shared damage or shared healing to other mobs, so that the share does not repeat.
 	 */
 	private static final ThreadLocal<Boolean> SHARING = ThreadLocal.withInitial(() -> false);
+
+	/**
+	 * True while the laser of a guardian hits its target.
+	 */
+	private static final ThreadLocal<Boolean> LASER = ThreadLocal.withInitial(() -> false);
+
+	/**
+	 * Runs the hit as a laser hit, so that the laser genes of the guardian act on its damage.
+	 */
+	public static boolean asLaser(java.util.function.BooleanSupplier hit) {
+		boolean before = LASER.get();
+		LASER.set(true);
+		try {
+			return hit.getAsBoolean();
+		} finally {
+			LASER.set(before);
+		}
+	}
 
 	/**
 	 * Gives a part of the damage to the mobs of the same species near the victim.

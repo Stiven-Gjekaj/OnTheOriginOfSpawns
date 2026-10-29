@@ -291,7 +291,8 @@ public sealed interface GeneEffect {
 			Map.entry("escape_jump", EscapeJump.CODEC),
 			Map.entry("fireball_fire_spread", FireballFireSpread.CODEC),
 			Map.entry("swim_hop", SwimHop.CODEC),
-			Map.entry("rebound", Rebound.CODEC)
+			Map.entry("rebound", Rebound.CODEC),
+			Map.entry("laser_damage", LaserDamage.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4849,6 +4850,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "rebound";
+		}
+	}
+
+	/**
+	 * Multiplies the damage of the laser of a guardian while the state is true. The laser hit has two parts: the
+	 * magic damage and the attack damage of the guardian. The multiplier acts on both. More than one effect multiplies
+	 * together.
+	 */
+	record LaserDamage(float multiplier, When when) implements GeneEffect {
+		public static final MapCodec<LaserDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(LaserDamage::multiplier),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(LaserDamage::when)
+		).apply(instance, LaserDamage::new));
+
+		@Override
+		public String type() {
+			return "laser_damage";
 		}
 	}
 }

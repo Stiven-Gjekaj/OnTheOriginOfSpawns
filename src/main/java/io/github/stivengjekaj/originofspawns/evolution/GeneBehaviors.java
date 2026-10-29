@@ -1316,6 +1316,20 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the ticks of the charge of the laser of a guardian, after its laser charge genes. The charge is at least
+	 * 1 tick.
+	 */
+	public static int laserChargeTicks(Mob guardian, int ticks) {
+		float speed = 1.0F;
+		for (GeneEffect effect : GeneEffects.of(guardian).toList()) {
+			if (effect instanceof GeneEffect.LaserCharge charge) {
+				speed *= charge.speed();
+			}
+		}
+		return speed == 1.0F ? ticks : Math.max(1, Math.round(ticks / speed));
+	}
+
+	/**
 	 * Returns the ticks that a ghast waits after a shot, after its throw rates. The full time from one shot to the
 	 * next is the wait and the charge of 20 ticks. The throw rate changes the full time.
 	 */

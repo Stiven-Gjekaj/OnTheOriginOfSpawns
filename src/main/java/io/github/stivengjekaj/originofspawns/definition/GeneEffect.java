@@ -292,7 +292,8 @@ public sealed interface GeneEffect {
 			Map.entry("fireball_fire_spread", FireballFireSpread.CODEC),
 			Map.entry("swim_hop", SwimHop.CODEC),
 			Map.entry("rebound", Rebound.CODEC),
-			Map.entry("laser_damage", LaserDamage.CODEC)
+			Map.entry("laser_damage", LaserDamage.CODEC),
+			Map.entry("laser_charge", LaserCharge.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4867,6 +4868,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "laser_damage";
+		}
+	}
+
+	/**
+	 * Multiplies the speed of the charge of the laser of a guardian. The vanilla charge takes 80 ticks, and a speed of
+	 * 1.3 takes about 61 ticks. More than one effect multiplies together.
+	 */
+	record LaserCharge(float speed) implements GeneEffect {
+		public static final MapCodec<LaserCharge> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 10.0F).fieldOf("speed").forGetter(LaserCharge::speed)
+		).apply(instance, LaserCharge::new));
+
+		@Override
+		public String type() {
+			return "laser_charge";
 		}
 	}
 }

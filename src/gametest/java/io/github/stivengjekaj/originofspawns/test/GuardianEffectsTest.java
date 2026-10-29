@@ -53,6 +53,19 @@ public class GuardianEffectsTest {
 		});
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void quickFocusMakesTheLaserChargeFaster(GameTestHelper helper) {
+		pool(helper);
+		IronGolem golem = target(helper);
+		Guardian guardian = shooter(helper, golem, "test_quick_focus");
+		helper.assertValueEqual(guardian.getAttackDuration(), 40, "half of the 80 ticks of the charge");
+		// The goal waits 10 ticks before the charge, so the laser fires about 50 ticks after the start.
+		helper.succeedWhen(() -> {
+			helper.assertTrue(golem.getHealth() < golem.getMaxHealth(), "the laser fires");
+			helper.assertTrue(helper.getTick() < 70, "the laser fires before a vanilla charge could end");
+		});
+	}
+
 	/**
 	 * Builds a pool of glass, 6 blocks long and 3 blocks wide inside, with water 2 blocks deep, from x 1 to 6 and z 3
 	 * to 5. The guardian and its target are in the pool.

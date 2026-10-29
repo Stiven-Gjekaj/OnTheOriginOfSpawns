@@ -419,20 +419,26 @@ def shore_hop():
 
 
 def slick_hide():
-    # Smooth, pale scales: a smooth, pale hide, with soft, light shine in
-    # places and a few faint scale arcs.
-    pale = Mark("#B8E0D0")
-    soft = Mark("#9AD0C0")
-    shine = Mark("#E8FFF8")
+    # A wet, smooth hide: small, even scales overlap in rows, each scale an
+    # arc of a slightly darker teal. Bright, glossy streaks run along the top
+    # edge of each face and down across the faces, as light on wet skin. The
+    # vanilla colors stay between the marks.
+    scale = Mark("#2E7468")
+    gloss = Mark("#9FE8E0")
+    shine = Mark("#F0FFFF")
     for x, y, f, col, row in body():
-        n = noise100(x // 3, y // 3, 4201)
-        if n < 12 and noise100(x, y, 4202) < 50:
+        band = row // 3
+        cx, cy = (col + band * 2) % 4, row % 3
+        streak = (col - row) % 9 == 0 and noise100(col // 3, row // 3, 4401 + len(f)) < 60
+        if row == 0 and noise100(col, 0, 4402) < 75:
             shine.put((x, y))
-        elif row % 4 == 3 and (col + (row // 4) * 2) % 6 in (1, 2) and noise100(col // 6, row // 4, 4203) < 50:
-            soft.put((x, y))
-        else:
-            pale.put((x, y))
-    return [pale, soft, shine]
+        elif streak:
+            shine.put((x, y))
+        elif (col - row) % 9 in (1, 8) and noise100(col // 3, row // 3, 4401 + len(f)) < 60:
+            gloss.put((x, y))
+        elif (cy == 2 and cx in (1, 2)) or (cy == 1 and cx in (0, 3)):
+            scale.put((x, y))
+    return [scale, gloss, shine]
 
 
 def deep_flight():

@@ -158,7 +158,30 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		 */
 		ROD_1,
 		ROD_2,
-		ROD_3;
+		ROD_3,
+		/**
+		 * The eye of a guardian, and its tail in three parts. The eye and the first tail part are parts of the head,
+		 * and each next tail part is a part of the one before it.
+		 */
+		EYE,
+		TAIL0,
+		TAIL1,
+		TAIL2,
+		/**
+		 * The twelve spikes of a guardian. They are parts of the head.
+		 */
+		SPIKE0,
+		SPIKE1,
+		SPIKE2,
+		SPIKE3,
+		SPIKE4,
+		SPIKE5,
+		SPIKE6,
+		SPIKE7,
+		SPIKE8,
+		SPIKE9,
+		SPIKE10,
+		SPIKE11;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

@@ -19,6 +19,7 @@
 		"EntityRenderDispatcherMixin",
 		"EvokerRendererMixin",
 		"GhastRendererMixin",
+		"GuardianRendererMixin",
 		"HoglinRendererMixin",
 		"IllagerRendererMixin",
 		"LivingEntityRendererMixin",

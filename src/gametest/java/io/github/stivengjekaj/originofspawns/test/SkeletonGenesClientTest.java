@@ -144,6 +144,9 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			checkMarkAndModel(context, singleplayer, EntityTypes.BREEZE, "test_breeze_mark",
 					Identifier.withDefaultNamespace("textures/entity/breeze/breeze.png"), "breeze");
 			checkBreezeWindUsesTheGeneTexture(context);
+			// The guardian gene model sits on the last tail part, four parts below the root.
+			checkMarkAndModel(context, singleplayer, EntityTypes.GUARDIAN, "test_guardian_mark",
+					Identifier.withDefaultNamespace("textures/entity/guardian/guardian.png"), "guardian");
 			checkArmModelOnlyWhileTheArmsAreApart(context, singleplayer);
 			checkEndermanArmModelFollowsTheCarryPose(context, singleplayer);
 			checkEvokerArmModelOnlyWhileItCasts(context, singleplayer);

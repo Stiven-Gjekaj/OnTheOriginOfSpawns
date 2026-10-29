@@ -171,6 +171,26 @@ public class GuardianEffectsTest {
 		helper.succeed();
 	}
 
+	@GameTest
+	public void ramFinDartsAtTheTargetAndHitsIt(GameTestHelper helper) {
+		pool(helper);
+		IronGolem golem = target(helper);
+		Guardian guardian = guardianWith(helper, SHOOTER);
+		guardian.setTarget(golem);
+		var ram = new io.github.stivengjekaj.originofspawns.definition.GeneEffect.Ram(4.0F, 5.0F, 8.0F, 0.8F);
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.ram(guardian, helper.getLevel(), ram),
+				"the ram starts");
+		helper.assertTrue(guardian.getDeltaMovement().x > 0.7, "the guardian darts east, at the golem");
+		helper.assertValueEqual(golem.getHealth(), golem.getMaxHealth(), "no hit before the touch");
+		guardian.snapTo(golem.position().add(-1.0, 0.0, 0.0), 0.0F, 0.0F);
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.ram(guardian, helper.getLevel(), ram),
+				"the ram hits at the touch");
+		helper.assertValueEqual(golem.getMaxHealth() - golem.getHealth(), 4.0F, "the ram does 4 damage");
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.ram(guardian, helper.getLevel(), ram),
+				"the next ram waits 5 seconds");
+		helper.succeed();
+	}
+
 	/**
 	 * Makes a pig hit the guardian in melee while its spikes are out, and returns the damage that the pig takes.
 	 */

@@ -270,6 +270,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Boolean> JUMP_SHOT_DONE = AttachmentRegistry.create(OriginOfSpawns.id("jump_shot_done"));
 
 	/**
+	 * The game time when a mob started its ram. It ends at the hit or after 2 seconds.
+	 */
+	public static final AttachmentType<Long> RAM_TIME = AttachmentRegistry.create(OriginOfSpawns.id("ram_time"));
+
+	/**
 	 * The game time when a guardian with a laser lock lost the sight of its target.
 	 */
 	public static final AttachmentType<Long> SIGHT_LOST = AttachmentRegistry.create(OriginOfSpawns.id("sight_lost"));

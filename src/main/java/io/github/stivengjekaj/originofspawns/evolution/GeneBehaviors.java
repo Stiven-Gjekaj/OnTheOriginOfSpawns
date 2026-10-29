@@ -414,6 +414,7 @@ public final class GeneBehaviors {
 				case GeneEffect.LavaExitFire fire when mob.isInLava() -> mob.setAttached(ModAttachments.LAVA_TIME, level.getGameTime());
 				case GeneEffect.RunStrike run -> countRun(mob);
 				case GeneEffect.JumpShot shot -> jumpShot(mob, level);
+				case GeneEffect.Ram ram -> ram(mob, level, ram);
 				case GeneEffect.TouchReach reach when mob instanceof net.minecraft.world.entity.monster.cubemob.AbstractCubeMob cube ->
 						GeneCubes.reachHit(cube);
 				default -> {
@@ -1356,6 +1357,48 @@ public final class GeneBehaviors {
 		}
 		guardian.removeAttached(ModAttachments.SIGHT_LOST);
 		return false;
+	}
+
+	/**
+	 * The ticks of a ram in which a touch hits the target.
+	 */
+	private static final long RAM_TICKS = 40L;
+
+	/**
+	 * Runs the ram of the mob for one tick: it starts a ram at its target in range, and it hits the target that it
+	 * touches during the ram.
+	 *
+	 * @return true if the ram started or hit now
+	 */
+	public static boolean ram(Mob mob, ServerLevel level, GeneEffect.Ram ram) {
+		LivingEntity target = mob.getTarget();
+		if (target == null || !target.isAlive()) {
+			return false;
+		}
+		long now = level.getGameTime();
+		Long start = mob.getAttached(ModAttachments.RAM_TIME);
+		if (start != null && now - start <= RAM_TICKS) {
+			if (mob.getBoundingBox().inflate(0.5).intersects(target.getBoundingBox())) {
+				mob.removeAttached(ModAttachments.RAM_TIME);
+				target.hurtServer(level, mob.damageSources().mobAttack(mob), ram.damage());
+				Vec3 away = target.position().subtract(mob.position()).multiply(1.0, 0.0, 1.0);
+				if (away.lengthSqr() > 1.0E-6) {
+					target.push(away.normalize().scale(0.5).add(0.0, 0.1, 0.0));
+					target.needsSync = true;
+				}
+				return true;
+			}
+			return false;
+		}
+		if (mob.distanceTo(target) > ram.range() || !mob.hasLineOfSight(target) || !GeneCombat.ready(mob, ram, ram.cooldownSeconds())) {
+			return false;
+		}
+		GeneCombat.startCooldown(mob, ram);
+		mob.setAttached(ModAttachments.RAM_TIME, now);
+		Vec3 toTarget = target.getBoundingBox().getCenter().subtract(mob.getBoundingBox().getCenter());
+		mob.setDeltaMovement(toTarget.normalize().scale(ram.speed()));
+		mob.needsSync = true;
+		return true;
 	}
 
 	/**

@@ -300,7 +300,8 @@ public sealed interface GeneEffect {
 			Map.entry("charge_damage", ChargeDamage.CODEC),
 			Map.entry("spike_damage", SpikeDamage.CODEC),
 			Map.entry("spike_effect", SpikeEffect.CODEC),
-			Map.entry("shore_hop", ShoreHop.CODEC)
+			Map.entry("shore_hop", ShoreHop.CODEC),
+			Map.entry("ram", Ram.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4997,6 +4998,24 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "shore_hop";
+		}
+	}
+
+	/**
+	 * One time in each cooldown, the mob rams its target, if the target is in the range. It darts at the target with
+	 * the speed, and when it touches the target in 2 seconds, the target takes the damage and moves back a little.
+	 */
+	record Ram(float damage, float cooldownSeconds, float range, float speed) implements GeneEffect {
+		public static final MapCodec<Ram> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("damage", 4.0F).forGetter(Ram::damage),
+				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 5.0F).forGetter(Ram::cooldownSeconds),
+				Codec.floatRange(1.0F, 32.0F).optionalFieldOf("range", 8.0F).forGetter(Ram::range),
+				Codec.floatRange(0.1F, 4.0F).optionalFieldOf("speed", 0.8F).forGetter(Ram::speed)
+		).apply(instance, Ram::new));
+
+		@Override
+		public String type() {
+			return "ram";
 		}
 	}
 }

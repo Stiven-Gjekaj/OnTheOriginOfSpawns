@@ -295,7 +295,8 @@ public sealed interface GeneEffect {
 			Map.entry("laser_damage", LaserDamage.CODEC),
 			Map.entry("laser_charge", LaserCharge.CODEC),
 			Map.entry("charge_after_kill", ChargeAfterKill.CODEC),
-			Map.entry("laser_split", LaserSplit.CODEC)
+			Map.entry("laser_split", LaserSplit.CODEC),
+			Map.entry("laser_lock", LaserLock.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -4914,6 +4915,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "laser_split";
+		}
+	}
+
+	/**
+	 * The laser of a guardian keeps its lock and its charge while the target is out of sight for this many seconds
+	 * or less. A vanilla guardian loses its target at once when it does not see it.
+	 */
+	record LaserLock(float seconds) implements GeneEffect {
+		public static final MapCodec<LaserLock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 60.0F).optionalFieldOf("seconds", 1.0F).forGetter(LaserLock::seconds)
+		).apply(instance, LaserLock::new));
+
+		@Override
+		public String type() {
+			return "laser_lock";
 		}
 	}
 }

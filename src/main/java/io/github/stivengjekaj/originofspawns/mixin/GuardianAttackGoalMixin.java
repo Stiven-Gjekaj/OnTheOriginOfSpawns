@@ -1,8 +1,10 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -42,6 +44,15 @@ public abstract class GuardianAttackGoalMixin {
 			guardian.removeAttached(ModAttachments.LASER_READY);
 			attackTime = guardian.getAttackDuration() - 1;
 		}
+	}
+
+	/**
+	 * A guardian with a laser lock keeps its target for a short time out of sight.
+	 */
+	@ModifyExpressionValue(method = "tick", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/monster/Guardian;hasLineOfSight(Lnet/minecraft/world/entity/Entity;)Z"))
+	private boolean originofspawns$laserLock(boolean sees) {
+		return GeneBehaviors.laserSight(guardian, sees);
 	}
 
 	/**

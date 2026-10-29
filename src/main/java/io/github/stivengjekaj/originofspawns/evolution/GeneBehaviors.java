@@ -1316,6 +1316,34 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns true if the guardian keeps its laser on its target. It keeps it while it sees the target, and with a
+	 * laser lock gene also for the seconds of the gene after it loses the sight.
+	 */
+	public static boolean laserSight(Mob guardian, boolean sees) {
+		if (sees) {
+			guardian.removeAttached(ModAttachments.SIGHT_LOST);
+			return true;
+		}
+		float seconds = 0.0F;
+		for (GeneEffect effect : GeneEffects.of(guardian).toList()) {
+			if (effect instanceof GeneEffect.LaserLock lock) {
+				seconds = Math.max(seconds, lock.seconds());
+			}
+		}
+		if (seconds <= 0.0F) {
+			return false;
+		}
+		long now = guardian.level().getGameTime();
+		long lost = guardian.getAttachedOrElse(ModAttachments.SIGHT_LOST, now);
+		guardian.setAttached(ModAttachments.SIGHT_LOST, lost);
+		if (now - lost <= Math.round(seconds * 20.0F)) {
+			return true;
+		}
+		guardian.removeAttached(ModAttachments.SIGHT_LOST);
+		return false;
+	}
+
+	/**
 	 * Returns the ticks of the charge of the laser of a guardian, after its laser charge genes. The charge is at least
 	 * 1 tick.
 	 */

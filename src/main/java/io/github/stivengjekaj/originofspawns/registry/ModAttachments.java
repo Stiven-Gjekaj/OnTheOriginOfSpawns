@@ -270,6 +270,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Boolean> JUMP_SHOT_DONE = AttachmentRegistry.create(OriginOfSpawns.id("jump_shot_done"));
 
 	/**
+	 * The game time when a guardian with a laser lock lost the sight of its target.
+	 */
+	public static final AttachmentType<Long> SIGHT_LOST = AttachmentRegistry.create(OriginOfSpawns.id("sight_lost"));
+
+	/**
 	 * True when the next laser of a guardian charges at once, after it killed a player.
 	 */
 	public static final AttachmentType<Boolean> LASER_READY = AttachmentRegistry.create(OriginOfSpawns.id("laser_ready"));

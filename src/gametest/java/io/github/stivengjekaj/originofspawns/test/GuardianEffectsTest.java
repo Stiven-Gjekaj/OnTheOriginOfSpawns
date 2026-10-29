@@ -94,6 +94,43 @@ public class GuardianEffectsTest {
 		});
 	}
 
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void aPlainLaserBreaksWhenTheTargetGoesOutOfSight(GameTestHelper helper) {
+		pool(helper);
+		IronGolem golem = target(helper);
+		Guardian guardian = shooter(helper, golem);
+		blockSightForHalfASecond(helper);
+		helper.runAtTickTime(150, () -> {
+			helper.assertTrue(guardian.getTarget() == null, "the guardian lost its target");
+			helper.assertValueEqual(golem.getHealth(), golem.getMaxHealth(), "the laser does not fire");
+			helper.succeed();
+		});
+	}
+
+	@GameTest(environment = CreeperEffectsTest.BLASTS, maxTicks = 200)
+	public void steadyLockKeepsTheLaserWhenTheTargetIsOutOfSightForAShortTime(GameTestHelper helper) {
+		pool(helper);
+		IronGolem golem = target(helper);
+		shooter(helper, golem, "test_steady_lock");
+		blockSightForHalfASecond(helper);
+		helper.succeedWhen(() -> helper.assertTrue(golem.getHealth() < golem.getMaxHealth(), "the laser fires"));
+	}
+
+	/**
+	 * Puts a glass wall between the guardian and its target in the middle of the charge, and takes it away 10 ticks
+	 * later.
+	 */
+	static void blockSightForHalfASecond(GameTestHelper helper) {
+		helper.runAtTickTime(40, () -> {
+			helper.setBlock(new BlockPos(4, 1, 4), Blocks.GLASS);
+			helper.setBlock(new BlockPos(4, 2, 4), Blocks.GLASS);
+		});
+		helper.runAtTickTime(50, () -> {
+			helper.setBlock(new BlockPos(4, 1, 4), Blocks.WATER);
+			helper.setBlock(new BlockPos(4, 2, 4), Blocks.WATER);
+		});
+	}
+
 	/**
 	 * Builds a pool of glass, 6 blocks long and 3 blocks wide inside, with water 2 blocks deep, from x 1 to 6 and z 3
 	 * to 5. The guardian and its target are in the pool.

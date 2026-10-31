@@ -22,8 +22,8 @@ Pixel plan for the Bombers.
 - Shield Burst has red cracks round the mouth.
 - Golem Bomb has uneven iron gray patches with rough edges, some with
   rivets.
-- Twin Shot has two small mouths side by side, in the gray of the
-  mouth, with dark insides, on both faces.
+- Twin Shot has two small, open mouths at the low left and the low right of
+  the face: a black rim with a dark inside.
 
 Pixel plan for the Barragers.
 - Quick Fire has narrow, red eyes: white lids over the high half of the eyes.
@@ -190,25 +190,20 @@ def golem_bomb():
 
 
 def twin_shot():
-    # Two small mouths: two small, wide mouths side by side on the mouth
-    # row, each a rim in the gray of the vanilla mouth round a dark inside.
-    # Pale skin covers the rest of the mouth of both faces, so the shooting
-    # face also shows the two small mouths. The mark adds no red.
-    skin = Mark("#F0F0F0")
-    rim = Mark("#9D9999")
-    inner = Mark("#737373")
-    dark = Mark("#313131")
-    shape = [" rrrr ", "riddir", " riir "]
-    cells = {}
-    for c0 in (8, 18):
+    # Two small, open mouths: one at the low left and one at the low right of
+    # the face, a column away from the wide mouth of Great Blast (columns 7
+    # to 24). Each is a black rim with a dark inside, in the style of the
+    # Great Blast mouth but smaller. The vanilla mouth and the middle of the
+    # face stay as they are. The mark adds no red.
+    black = Mark("#0A0606")
+    inner = Mark("#2A1E1E")
+    shape = [" bbbb ", "bddddb", "bddddb", "bddddb", "bddddb", " bbbb "]
+    for c0 in (0, 26):
         for r, line in enumerate(shape):
             for c, ch in enumerate(line):
                 if ch != " ":
-                    cells[(c0 + c, 24 + r)] = {"r": rim, "i": inner, "d": dark}[ch]
-    for c in range(8, 24):
-        for r in range(18, 31):
-            cells.get((c, r), skin).put(face(c, r))
-    return [skin, rim, inner, dark]
+                    (black if ch == "b" else inner).put(face(c0 + c, 23 + r))
+    return [black, inner]
 
 
 # The Barragers.

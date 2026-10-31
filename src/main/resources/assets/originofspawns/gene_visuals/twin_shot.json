@@ -5,28 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/twin_shot_0.png",
-				"tint": "#F0F0F0"
+				"tint": "#0A0606"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/twin_shot_1.png",
-				"tint": "#9D9999"
-			}
-		},
-		{
-			"effect": {
-				"type": "pattern",
-				"texture": "originofspawns:textures/gene_marks/twin_shot_2.png",
-				"tint": "#737373"
-			}
-		},
-		{
-			"effect": {
-				"type": "pattern",
-				"texture": "originofspawns:textures/gene_marks/twin_shot_3.png",
-				"tint": "#313131"
+				"tint": "#2A1E1E"
 			}
 		}
 	]

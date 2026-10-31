@@ -23,7 +23,7 @@ Pixel plan for the Bombers.
 - Golem Bomb has uneven iron gray patches with rough edges, some with
   rivets.
 - Twin Shot has two small, open mouths at the low left and the low right of
-  the face: a black rim with a dark inside.
+  the face: a gray rim with a dark gray inside.
 
 Pixel plan for the Barragers.
 - Quick Fire has narrow, red eyes: white lids over the high half of the eyes.
@@ -192,18 +192,21 @@ def golem_bomb():
 def twin_shot():
     # Two small, open mouths: one at the low left and one at the low right of
     # the face, a column away from the wide mouth of Great Blast (columns 7
-    # to 24). Each is a black rim with a dark inside, in the style of the
-    # Great Blast mouth but smaller. The vanilla mouth and the middle of the
-    # face stay as they are. The mark adds no red.
-    black = Mark("#0A0606")
-    inner = Mark("#2A1E1E")
-    shape = [" bbbb ", "bddddb", "bddddb", "bddddb", "bddddb", " bbbb "]
+    # to 24). Each is a round mouth in the grays of the vanilla mouth: a gray
+    # rim with pale gray highlights on its top, round a dark gray inside. The
+    # vanilla mouth and the middle of the face stay as they are. The mark
+    # adds no red.
+    rim = Mark("#737373")
+    light = Mark("#9D9999")
+    inner = Mark("#313131")
+    shape = [" hhhh ", "hddddr", "rddddr", "rddddr", "rddddr", " rrrr "]
+    marks = {"r": rim, "h": light, "d": inner}
     for c0 in (0, 26):
         for r, line in enumerate(shape):
             for c, ch in enumerate(line):
                 if ch != " ":
-                    (black if ch == "b" else inner).put(face(c0 + c, 23 + r))
-    return [black, inner]
+                    marks[ch].put(face(c0 + c, 23 + r))
+    return [rim, light, inner]
 
 
 # The Barragers.

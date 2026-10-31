@@ -5,14 +5,21 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/twin_shot_0.png",
-				"tint": "#0A0606"
+				"tint": "#737373"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/twin_shot_1.png",
-				"tint": "#2A1E1E"
+				"tint": "#9D9999"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/twin_shot_2.png",
+				"tint": "#313131"
 			}
 		}
 	]

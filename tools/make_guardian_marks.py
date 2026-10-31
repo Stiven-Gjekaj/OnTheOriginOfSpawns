@@ -40,7 +40,8 @@ Pixel plan for the Focusers.
 
 Pixel plan for the Spikebacks.
 - Long Spikes: long spikes, the gene model long_spikes_tips.
-- Trident Plate has thick, steel blue plates of uneven sizes that overlap.
+- Trident Plate has riveted steel armor plates of different sizes, two or
+  three on each large face.
 - Coral Shell has pink coral plates.
 - Blast Plate has dark, sooty plates.
 - Venom Spikes has green tips that drip.
@@ -306,22 +307,54 @@ def plates(colors, seed):
     return [main, edge]
 
 
+# The plates of Trident Plate on a large face of 12 by 12, as (col, row, width,
+# height). Each layout has plates of different sizes. The front layout keeps
+# the eye clear.
+PLATE_LAYOUTS = [
+    [(0, 0, 7, 7), (7, 1, 5, 10), (0, 8, 7, 4)],
+    [(1, 0, 10, 5), (0, 6, 5, 6), (6, 6, 6, 6)],
+    [(0, 1, 5, 10), (6, 0, 6, 6), (5, 7, 7, 5)],
+]
+FRONT_PLATES = [(0, 0, 7, 4), (7, 0, 5, 4), (0, 9, 5, 3), (5, 9, 7, 3)]
+
+
 def trident_plate():
-    # Thick, steel blue plates: large, steel blue plates of uneven sizes that
-    # overlap, each with a dark low edge and a pale high edge, not in a grid.
-    steel = Mark("#4A6A98")
-    dark = Mark("#22344E")
-    pale = Mark("#8AA8D0")
+    # Riveted armor plates: two or three large steel plates of different
+    # sizes on each large face of the body. Each plate has a light top edge,
+    # a dark low edge, a shadow on its right side, and a pale rivet in each
+    # corner. The vanilla colors stay in the gaps between the plates.
+    steel = Mark("#8C989E")
+    light = Mark("#DCE6EA")
+    right = Mark("#78868C")
+    dark = Mark("#2A363C")
+    rivet = Mark("#E8F0F2")
+    layouts = {}
     for x, y, f, col, row in body():
-        cell = (col + noise100(row // 4, len(f), 3101) % 5) // 5, (row + noise100(col // 5, len(f), 3102) % 4) // 4
-        inner_r = (row + noise100(col // 5, len(f), 3102) % 4) % 4
-        if inner_r == 3:
-            dark.put((x, y))
-        elif inner_r == 0 and noise100(cell[0], cell[1], 3103) < 60:
-            pale.put((x, y))
+        x0, y0 = x - col, y - row
+        key = layouts.setdefault((x0, y0, f), len(layouts))
+        if f == "front" and (x0, y0) == tuple(CORE["front"][:2]):
+            plates = FRONT_PLATES
         else:
-            steel.put((x, y))
-    return [steel, dark, pale]
+            plates = PLATE_LAYOUTS[key % len(PLATE_LAYOUTS)]
+        for c0, r0, w, h in plates:
+            c1, r1 = c0 + w - 1, r0 + h - 1
+            if not (c0 <= col <= c1 and r0 <= row <= r1):
+                continue
+            rivets = {(c0 + 1, r0 + 1), (c1 - 1, r0 + 1)}
+            if h >= 5:
+                rivets |= {(c0 + 1, r1 - 1), (c1 - 1, r1 - 1)}
+            if row == r0:
+                light.put((x, y))
+            elif row == r1:
+                dark.put((x, y))
+            elif col == c1:
+                right.put((x, y))
+            elif (col, row) in rivets:
+                rivet.put((x, y))
+            else:
+                steel.put((x, y))
+            break
+    return [steel, light, right, dark, rivet]
 
 
 def coral_shell():

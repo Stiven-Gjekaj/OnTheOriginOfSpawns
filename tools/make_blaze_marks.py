@@ -12,10 +12,20 @@ The blaze texture is 64x32, and it uses the blaze region map. The parts:
 The texture is bright yellow and orange, so the marks use dark, pale, or
 cold colors that read on it.
 The gene models use the bones part0 to part11.
+Each rod gene uses one zone of the rod, so that rod genes stack side by side:
+- the top zone, rows 0 and 1 and the top: Quick Burst, Fire Feed, Rising
+  Heat, Steam Burst.
+- the middle zone, rows 3 and 4: Spark Ring, Sky Guard, Boil Off.
+- the low zone, rows 6 and 7 and the bottom: Golem Melt, Rod Wall, Steam
+  Shell.
+- the stripe zone, one edge of the rod: Blast Ember, Fire Trail.
+No two genes of one family sheet column use the same zone. Rows 2 and 5 are
+in no zone, so the fire of the rods always shows.
 
 Pixel plan for the Searers.
 - White Heat has white, hot eyes with an orange glow.
-- Blast Ember has red, cracked rods: dark red rods with black cracks.
+- Blast Ember has red, cracked rods: a dark red, cracked stripe down one
+  edge of each rod.
 - Shield Scorch has a red, angry brow: a scorched, dark red band with black
   spots across the brow.
 - Golem Melt has orange, molten tips: the low ends of the rods melt, with
@@ -26,23 +36,24 @@ Pixel plan for the Searers.
 Pixel plan for the Volleyers.
 - Long Burst: twelve thin rods, the gene model long_burst_rods: a thin rod
   beside each rod.
-- Quick Burst has three thin, yellow rings on each rod, with dark gaps.
+- Quick Burst has a thin, yellow ring at the top of each rod, over a dark
+  ring.
 - Fan Shot: spread, wide rods, the gene model fan_shot_fins: a second rod
   that leans out from each rod.
 - Seeker Spark has a large, dark gold diamond on the brow and on the top of
   the head.
-- Spark Ring has one thick, gold band round the middle of each rod.
+- Spark Ring has one gold band round the middle of each rod.
 - Soot Cloud has black ash on the face.
 
 Pixel plan for the Smolderers.
 - Deep Burn has dark red eyes in dark sockets.
-- Fire Trail has black, sooty rods.
+- Fire Trail has a black, sooty streak down one edge of each rod.
 - Burn Pain has a deep, cruel frown.
 - Fire Feed has rods that glow at the base: the high ends glow white.
-- Rod Wall: thick, short rods, the gene model rod_wall_collars, charred dark
-  red to black with hot orange cracks.
-- Heat Haze has pale, faded eyes on a face that fades to pale yellow in
-  wavy bands, as heat shimmer.
+- Rod Wall: the gene model rod_wall_collars, a short collar round the low
+  end of each rod, charred dark red to black with hot orange cracks.
+- Heat Haze has pale, faded eyes, and wavy, pale yellow bands on the low
+  half and the edges of the face, as heat shimmer.
 
 Pixel plan for the Hoverers.
 - Rising Heat has rods that point up: pale chevrons up the rods.
@@ -50,17 +61,18 @@ Pixel plan for the Hoverers.
 - Quick Wings: thin, long rods, the gene model quick_wings_rods: a thin end
   under each rod.
 - Smoke Dash has gray smoke round the head.
-- Sky Guard has pale, ash gray rods.
+- Sky Guard has a pale, ash gray band round the middle of each rod.
 - Diving Flame has a sharp, red brow: a thin, red V.
 
 Pixel plan for the Steamhides.
-- Steam Shell has wet, blue gray rods with a shine.
+- Steam Shell has wet, blue gray low ends on the rods, with a shine.
 - Snow Shrug has blue, cold eyes with frost.
-- Boil Off has white steam rings on the rods.
-- Hot Core has a dark core that glows: a dark head with glowing cracks.
+- Boil Off has a white steam ring round the middle of each rod.
+- Hot Core has a dark core that glows: a dark top and back of the head with
+  glowing cracks.
 - Cinder Heart has a bright heart on the bottom of the head, the chest of
   the blaze, and a glow round the low edge of the head.
-- Steam Burst has rods with open vent slits that let out steam at the top.
+- Steam Burst has open vent slits at the top of the rods that let out steam.
 This script needs Pillow.
 """
 from make_gene_marks import Mark, noise100
@@ -110,6 +122,19 @@ def rod_rows(mark, rows, faces=SIDES):
     put(mark, ROD, faces, rows=rows)
 
 
+# Each rod gene uses one zone of the rod, so that the rod genes stack side by
+# side. Rows 2 and 5 are in no zone, so the fire of the rod shows in every
+# combination.
+TOP, MID, LOW = (0, 1), (3, 4), (6, 7)
+
+
+def stripe():
+    """Yield the pixels of the stripe zone: a thin stripe down one edge of the rod."""
+    for x, y, f, col, row in pixels(ROD, ("right", "front")):
+        if (f, col) in (("right", 1), ("front", 0)):
+            yield x, y, f, col, row
+
+
 def rod_parts(name, w, h, d, color, frm, inflate=0.0):
     """Save a gene model of one part on each rod, from the same place on each."""
     im = model_image()
@@ -133,14 +158,13 @@ def white_heat():
 
 
 def blast_ember():
+    # Stripe zone: a dark red, cracked stripe down one edge of each rod, with
+    # black cracks and hot red points.
     red = Mark("#8A1008")
     crack = Mark("#1A0404")
     hot = Mark("#FF4020")
-    for x, y, f, col, row in pixels(ROD, ALL):
-        if f in SIDES and (row + col + SIDES.index(f)) % 3 == 0:
-            (hot if row % 2 else crack).put((x, y))
-        else:
-            red.put((x, y))
+    for x, y, f, col, row in stripe():
+        (crack if row % 3 == 0 else hot if (row + col) % 3 == 1 else red).put((x, y))
     return [red, crack, hot]
 
 
@@ -157,12 +181,12 @@ def shield_scorch():
 
 
 def golem_melt():
-    # Orange, molten tips: rows 5 to 7 of the rods and their bottom are a
-    # bright, molten orange with pale yellow drips.
+    # Low zone: the low ends of the rods melt to a bright, molten orange, with
+    # pale yellow drips at the bottom.
     molten = Mark("#FF6A00")
     drip = Mark("#FFE090")
-    for x, y, f, col, row in pixels(ROD, SIDES, rows=(4, 5, 6, 7)):
-        (drip if (row == 7 or (row == 6 and col == 0)) else molten).put((x, y))
+    for x, y, f, col, row in pixels(ROD, SIDES, rows=LOW):
+        (drip if row == 7 and (col + SIDES.index(f)) % 2 == 0 else molten).put((x, y))
     put(drip, ROD, ("bottom",))
     return [molten, drip]
 
@@ -202,10 +226,13 @@ def long_burst_model():
 
 
 def quick_burst():
+    # Top zone: a thin, bright yellow ring at the top end of each rod, with a
+    # dark ring under it, and a yellow top.
     yellow = Mark("#FFFF80")
     dark = Mark("#4A1404")
-    rod_rows(yellow, (1, 4, 7))
-    rod_rows(dark, (2, 5))
+    rod_rows(yellow, (0,))
+    put(yellow, ROD, ("top",))
+    rod_rows(dark, (1,))
     return [yellow, dark]
 
 
@@ -215,11 +242,11 @@ def fan_shot():
 
 
 def fan_shot_model():
-    # Spread, wide rods: a second, red rod grows from the top of each rod and
-    # leans out by 30 degrees, so each rod spreads wide.
+    # Spread rods: a thin, red rod grows from the top of each rod and leans
+    # out by 30 degrees, so each rod spreads wide.
     im = model_image()
-    paint_box(im, 0, 0, 2, 7, 2, lambda f, x, y: "#FFD040" if y < 2 else "#C83A08" if y < 5 else "#7A1A04")
-    parts = [{"bone": bone, "uv": [0, 0], "from": [0, 0.5, 0], "size": [2, 7, 2], "inflate": -0.2,
+    paint_box(im, 0, 0, 1, 6, 1, lambda f, x, y: "#FFD040" if y < 2 else "#C83A08" if y < 4 else "#7A1A04")
+    parts = [{"bone": bone, "uv": [0, 0], "from": [0.5, 0.5, 0.5], "size": [1, 6, 1],
               "pivot": [1, 0.5, 1], "rotation": [0, 0, -30]} for bone in RODS]
     save_model("fan_shot_fins", im, parts)
 
@@ -248,11 +275,13 @@ def seeker_spark():
 
 
 def spark_ring():
+    # Middle zone: one gold band round the middle of each rod, with a dark
+    # rim under it and a white spark.
     gold = Mark("#C88A10")
     rim = Mark("#4A2004")
     spark = Mark("#FFFFFF")
-    rod_rows(rim, (2, 5))
-    rod_rows(gold, (3, 4))
+    rod_rows(gold, (3,))
+    rod_rows(rim, (4,))
     for x, y, f, col, row in pixels(ROD, ("front", "back"), rows=(3,)):
         if col == 0:
             spark.put((x, y))
@@ -284,10 +313,12 @@ def deep_burn():
 
 
 def fire_trail():
+    # Stripe zone: a black, sooty streak runs down one edge of each rod, with
+    # gray soot in it.
     black = Mark("#141010")
     soot = Mark("#5A5450")
-    for x, y, f, col, row in pixels(ROD, ALL):
-        (soot if noise100(x, y, 3201) < 25 else black).put((x, y))
+    for x, y, f, col, row in stripe():
+        (soot if noise100(x, y, 3201) < 30 else black).put((x, y))
     return [black, soot]
 
 
@@ -301,16 +332,13 @@ def burn_pain():
 
 
 def fire_feed():
-    # Rods that glow at the base: the high ends of the rods glow white and
-    # pale yellow, and the rest of each rod is a darker red.
+    # Top zone: the high ends of the rods glow white and pale yellow.
     white = Mark("#FFFFF0")
     pale = Mark("#FFF0A0")
-    red = Mark("#A02808")
     put(white, ROD, ("top",))
     rod_rows(white, (0,))
-    rod_rows(pale, (1, 2))
-    rod_rows(red, (4, 5, 6, 7))
-    return [white, pale, red]
+    rod_rows(pale, (1,))
+    return [white, pale]
 
 
 def rod_wall():
@@ -319,20 +347,19 @@ def rod_wall():
 
 
 def rod_wall_model():
-    # Thick, short rods: a thick collar round the high half of each rod,
-    # larger than the rod, charred from dark red to black, with hot orange
-    # cracks.
+    # Low zone: a short collar round the low end of each rod, a little larger
+    # than the rod, charred dark red to black, with hot orange cracks.
     def char(f, x, y):
         if (x + 2 * y + len(f)) % 5 == 0:
             return "#FF7A18"
-        return "#1A0806" if y >= 2 else "#5A1408"
-    rod_parts("rod_wall_collars", 2, 4, 2, char, (0, 0, 0), inflate=0.6)
+        return "#1A0806" if y >= 1 else "#5A1408"
+    rod_parts("rod_wall_collars", 2, 2, 2, char, (0, 6, 0), inflate=0.3)
 
 
 def heat_haze():
-    # Pale, faded eyes on a face that shimmers with heat: the face fades to a
-    # pale yellow in wavy bands, with soft, uneven edges, and the eyes are a
-    # pale, faded gray.
+    # Pale, faded eyes in heat shimmer: wavy, pale yellow bands rise on the
+    # low half and the edges of the face, and the eyes are a pale, faded
+    # gray. The brow and the middle of the face stay clear.
     pale = Mark("#FFF4B8")
     soft = Mark("#FFE888")
     eye = Mark("#C8C0B0")
@@ -341,9 +368,10 @@ def heat_haze():
         if row == EYE_ROW and (col in EYES[0] or col in EYES[1]):
             eye.put((x, y))
             continue
+        if not (row >= 5 or col in (0, 7)):
+            continue
         wave = math.sin((col + row * 1.7) * 1.1)
-        edge = col in (0, 7) or row == 7
-        if wave > 0.2 and not (edge and noise100(x, y, 3302) < 60):
+        if wave > 0.2:
             pale.put((x, y))
         elif wave > -0.4 and noise100(x, y, 3303) < 70:
             soft.put((x, y))
@@ -353,13 +381,13 @@ def heat_haze():
 # The Hoverers.
 
 def rising_heat():
-    # Rods that point up: pale chevrons point up on the sides of the rods,
-    # and the tops of the rods are white.
+    # Top zone: pale chevrons point up at the top end of each rod: a pale
+    # ring at the top, and a pale zigzag under it.
     pale = Mark("#FFFFE0")
-    for x, y, f, col, row in pixels(ROD, SIDES):
-        if (row + col) % 3 == 0 and row % 3 != 2:
+    rod_rows(pale, (0,))
+    for x, y, f, col, row in pixels(ROD, SIDES, rows=(1,)):
+        if col == SIDES.index(f) % 2:
             pale.put((x, y))
-    put(pale, ROD, ("top",))
     return [pale]
 
 
@@ -396,9 +424,10 @@ def smoke_dash():
 
 
 def sky_guard():
+    # Middle zone: a pale, ash gray band round the middle of each rod.
     ash = Mark("#B8B4B0")
     dark = Mark("#8A8682")
-    for x, y, f, col, row in pixels(ROD, ALL):
+    for x, y, f, col, row in pixels(ROD, SIDES, rows=MID):
         (dark if noise100(x, y, 3501) < 25 else ash).put((x, y))
     return [ash, dark]
 
@@ -418,10 +447,12 @@ def diving_flame():
 # The Steamhides.
 
 def steam_shell():
+    # Low zone: the low ends of the rods are a wet, blue gray, with a shine.
     gray = Mark("#5A6878")
     shine = Mark("#B8D0E8")
-    for x, y, f, col, row in pixels(ROD, ALL):
-        (shine if f in SIDES and col == 0 and row % 3 == 1 else gray).put((x, y))
+    for x, y, f, col, row in pixels(ROD, SIDES, rows=LOW):
+        (shine if col == 0 and row == 6 else gray).put((x, y))
+    put(gray, ROD, ("bottom",))
     return [gray, shine]
 
 
@@ -435,20 +466,27 @@ def snow_shrug():
 
 
 def boil_off():
+    # Middle zone: a white steam ring round the middle of each rod, with gray
+    # puffs under it.
     white = Mark("#FFFFFF")
     gray = Mark("#C8C8C8")
-    rod_rows(white, (1, 4, 7))
-    rod_rows(gray, (2,))
+    rod_rows(white, (3,))
+    for x, y, f, col, row in pixels(ROD, SIDES, rows=(4,)):
+        if (col + SIDES.index(f)) % 2 == 0:
+            gray.put((x, y))
     return [white, gray]
 
 
 def hot_core():
-    # A dark core that glows: the head, except the face, is a dark charcoal,
-    # with glowing orange cracks.
+    # A dark core that glows through: the top and the high part of the back
+    # of the head are a dark charcoal with glowing orange cracks. The sides keep their fire
+    # under a dark top edge, and the face stays clear.
     dark = Mark("#2A1A14")
     glow = Mark("#FF8A20")
-    for x, y, f, col, row in pixels(HEAD, SHELL):
+    for x, y, f, col, row in list(pixels(HEAD, ("top",))) + list(pixels(HEAD, ("back",), rows=range(5))):
         (glow if (col + 2 * row) % 7 == 0 or (col == 4 and row % 2) else dark).put((x, y))
+    for x, y, f, col, row in pixels(HEAD, ("right", "left"), rows=(0, 1)):
+        (glow if col % 3 == 1 else dark).put((x, y))
     return [dark, glow]
 
 
@@ -471,16 +509,17 @@ def cinder_heart():
 
 
 def steam_burst():
-    # Rods with open vents: a dark, open vent slit runs down the middle of
-    # each side of the rods, and white steam comes out at its top.
+    # Top zone: a small, dark vent slit at the top end of each rod side, and
+    # white steam comes out of the top.
     vent = Mark("#1A0804")
     steam = Mark("#FFFFFF")
-    for x, y, f, col, row in pixels(ROD, SIDES):
-        if col == 1 and 2 <= row <= 6:
+    for x, y, f, col, row in pixels(ROD, SIDES, rows=TOP):
+        if row == 1 and col == 1:
             vent.put((x, y))
-        elif row in (0, 1) and col == 1:
-            steam.put((x, y))
     put(steam, ROD, ("top",))
+    for x, y, f, col, row in pixels(ROD, SIDES, rows=(0,)):
+        if col == 0:
+            steam.put((x, y))
     return [vent, steam]
 
 

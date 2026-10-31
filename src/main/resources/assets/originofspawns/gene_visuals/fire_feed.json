@@ -14,13 +14,6 @@
 				"texture": "originofspawns:textures/gene_marks/fire_feed_1.png",
 				"tint": "#FFF0A0"
 			}
-		},
-		{
-			"effect": {
-				"type": "pattern",
-				"texture": "originofspawns:textures/gene_marks/fire_feed_2.png",
-				"tint": "#A02808"
-			}
 		}
 	]
 }

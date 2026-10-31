@@ -22,7 +22,8 @@ Pixel plan for the Bombers.
 - Shield Burst has red cracks round the mouth.
 - Golem Bomb has uneven iron gray patches with rough edges, some with
   rivets.
-- Twin Shot: two small, red mouths, the gene model twin_shot_mouths.
+- Twin Shot has two small mouths side by side, in the gray of the
+  mouth, with dark insides, on both faces.
 
 Pixel plan for the Barragers.
 - Quick Fire has narrow, red eyes: white lids over the high half of the eyes.
@@ -189,24 +190,25 @@ def golem_bomb():
 
 
 def twin_shot():
-    # The mouths are the gene model twin_shot_mouths.
-    return []
-
-
-def twin_shot_model():
-    # Two small, red mouths: two small, round mouths on the face, under the
-    # eyes, each a red rim round a black hole. On the bone body, the face is
-    # at z -8, from x -8 to 8 and y -8 to 8.
-    im = model_image()
-
-    def mouth(f, x, y):
-        if f != "front":
-            return "#A01010"
-        return "#0A0404" if 0 < x < 2 and 0 < y < 2 else "#E02020"
-    paint_box(im, 0, 0, 3, 3, 1, mouth)
-    parts = [{"bone": "body", "uv": [0, 0], "from": [x, 2, -8.6], "size": [3, 3, 1], "inflate": -0.1}
-             for x in (-6, 3)]
-    save_model("twin_shot_mouths", im, parts)
+    # Two small mouths: two small, wide mouths side by side on the mouth
+    # row, each a rim in the gray of the vanilla mouth round a dark inside.
+    # Pale skin covers the rest of the mouth of both faces, so the shooting
+    # face also shows the two small mouths. The mark adds no red.
+    skin = Mark("#F0F0F0")
+    rim = Mark("#9D9999")
+    inner = Mark("#737373")
+    dark = Mark("#313131")
+    shape = [" rrrr ", "riddir", " riir "]
+    cells = {}
+    for c0 in (8, 18):
+        for r, line in enumerate(shape):
+            for c, ch in enumerate(line):
+                if ch != " ":
+                    cells[(c0 + c, 24 + r)] = {"r": rim, "i": inner, "d": dark}[ch]
+    for c in range(8, 24):
+        for r in range(18, 31):
+            cells.get((c, r), skin).put(face(c, r))
+    return [skin, rim, inner, dark]
 
 
 # The Barragers.
@@ -607,7 +609,6 @@ GENES = {
 }
 
 MODEL_GENES = {
-    "twin_shot": (twin_shot_model, "twin_shot_mouths"),
     "tear_rain": (tear_rain_model, "tear_rain_drops"),
     "swift_drift": (swift_drift_model, "swift_drift_tentacles"),
 }

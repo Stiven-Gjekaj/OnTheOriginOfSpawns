@@ -685,6 +685,7 @@ SHULKER_CLOSEUPS = {key: nether_closeup(key, title, SPIDER_VIEWS)
                     for key, title in (("shulker", "Shulker, default color"), ("shulker_white", "Shulker, white"),
                                        ("shulker_black", "Shulker, black"), ("shulker_yellow", "Shulker, yellow"))}
 RAVAGER_CLOSEUPS = nether_closeup("ravager", "Ravager")
+CREAKING_CLOSEUPS = nether_closeup("creaking", "Creaking")
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
@@ -731,6 +732,7 @@ SPECIES = {
     **{"shulker_" + c: (pg.SHULKER_COLOR_PATH.format(c), None, SHULKER_CLOSEUPS["shulker_" + c])
        for c in pg.SHULKER_COLORS},
     "ravager": (pg.RAVAGER_PATH, None, RAVAGER_CLOSEUPS),
+    "creaking": (pg.CREAKING_PATH, None, CREAKING_CLOSEUPS),
 }
 
 

@@ -91,6 +91,8 @@ SHULKER_PATH = "assets/minecraft/textures/entity/shulker/shulker.png"
 SHULKER_COLOR_PATH = "assets/minecraft/textures/entity/shulker/shulker_{}.png"
 SHULKER_COLORS = ("white", "black", "yellow")
 RAVAGER_PATH = "assets/minecraft/textures/entity/illager/ravager.png"
+CREAKING_PATH = "assets/minecraft/textures/entity/creaking/creaking.png"
+CREAKING_EYES_PATH = "assets/minecraft/textures/entity/creaking/creaking_eyes.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -649,6 +651,15 @@ RAVAGER_FAMILIES = {
     "warbeasts": ["saddle_guard", "escort_rider", "rider_heal", "horde_hide", "raid_scent", "twin_strike"],
 }
 
+# The families of the creaking, from design/species/creaking.md.
+CREAKING_FAMILIES = {
+    "twitchers": ["jitter_step", "blink_strike", "shadow_creep", "fear_twitch", "trail_twitch", "slip_step"],
+    "thornwoods": ["thorn_fist", "shield_splinter", "splinter_burst", "sap_bite", "long_limbs", "thorn_heart"],
+    "heartkeepers": ["hard_heart", "hidden_heart", "close_guard", "root_grip", "dark_heart", "heart_sense"],
+    "slinkers": ["quick_bark", "silent_roots", "flank_walk", "hunt_lust", "dusk_bark", "blast_sense"],
+    "starers": ["long_stare", "stare_back", "lone_watch", "shield_stare", "kill_watch", "heart_twitch"],
+}
+
 
 ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
     "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
@@ -733,6 +744,11 @@ RAVAGER_EXTRA = next_family_extra(RAVAGER_FAMILIES, {
     "roarers": ["fear_roar", "victory_roar"], "ironbacks": ["plate_hide", "spiked_hide"],
     "warbeasts": ["saddle_guard", "escort_rider"],
 }, "roarers")
+CREAKING_EXTRA = next_family_extra(CREAKING_FAMILIES, {
+    "twitchers": ["jitter_step", "trail_twitch"], "thornwoods": ["long_limbs", "thorn_fist"],
+    "heartkeepers": ["hard_heart", "close_guard"], "slinkers": ["dusk_bark", "silent_roots"],
+    "starers": ["stare_back", "long_stare"],
+}, "slinkers")
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -1357,6 +1373,39 @@ RAVAGER_CUBES = [
     ("left_front_leg", (64, 0), (-4, 0, -4), (8, 37, 8), True),
 ]
 RAVAGER_FRAME, RAVAGER_CLOSEUP = (32, 23, 64, 56), ((66, 80), (0, -2))
+
+# The creaking, from CreakingModel. The bone root holds upper_body and the two
+# legs. upper_body holds the head, the body, and the two arms. The head has
+# a block, a crown, and two flat branches, one on each side. The body has two
+# cubes, side by side. Each arm and each leg has more than one cube. The feet
+# are flat planes. The model is not the same on the two sides.
+CREAKING_ROOT = (0, 24, 0)
+CREAKING_UPPER = child_pivot(CREAKING_ROOT, (-1, -19, 0))
+CREAKING_PIVOTS = {
+    "root": CREAKING_ROOT, "upper_body": CREAKING_UPPER,
+    "head": child_pivot(CREAKING_UPPER, (-3, -11, 0)), "body": child_pivot(CREAKING_UPPER, (0, -7, 1)),
+    "right_arm": child_pivot(CREAKING_UPPER, (-7, -9.5, 1.5)), "left_arm": child_pivot(CREAKING_UPPER, (6, -9, 0.5)),
+    "left_leg": child_pivot(CREAKING_ROOT, (1.5, -16, 0.5)), "right_leg": child_pivot(CREAKING_ROOT, (-1, -17.5, 0.5)),
+}
+CREAKING_CUBES = [
+    ("head", (0, 0), (-3, -10, -3), (6, 10, 6), False),
+    ("head", (28, 31), (-3, -13, -3), (6, 3, 6), False),
+    ("head", (12, 40), (3, -13, 0), (9, 14, 0), False),
+    ("head", (34, 12), (-12, -14, 0), (9, 14, 0), False),
+    ("body", (0, 16), (0, -3, -3), (6, 13, 5), False),
+    ("body", (24, 0), (-6, -4, -3), (6, 7, 5), False),
+    ("right_arm", (22, 13), (-2, -1.5, -1.5), (3, 21, 3), False),
+    ("right_arm", (46, 0), (-2, 19.5, -1.5), (3, 4, 3), False),
+    ("left_arm", (30, 40), (0, -1, -1.5), (3, 16, 3), False),
+    ("left_arm", (52, 12), (0, -5, -1.5), (3, 4, 3), False),
+    ("left_arm", (52, 19), (0, 15, -1.5), (3, 4, 3), False),
+    ("left_leg", (42, 40), (-1.5, 0, -1.5), (3, 16, 3), False),
+    ("left_leg", (45, 55), (-1.5, 15.7, -4.5), (5, 0, 9), False),
+    ("right_leg", (0, 34), (-3, -1.5, -1.5), (3, 19, 3), False),
+    ("right_leg", (45, 46), (-5, 17.2, -4.5), (5, 0, 9), False),
+    ("right_leg", (12, 34), (-3, -4.5, -1.5), (3, 3, 3), False),
+]
+CREAKING_FRAME, CREAKING_CLOSEUP = (18, 23, 36, 50), ((40, 54), (0, 2))
 CAMEL_HUSK_FRAME, CAMEL_HUSK_CLOSEUP = (28, 27, 56, 56), ((56, 56), (0, 1))
 
 # Each Nether mob: the cubes, the pivots, the weapon, the wraps, the frame of
@@ -1389,11 +1438,12 @@ NETHER_LOOKS = {
     **{key: (SHULKER_CUBES, SHULKER_PIVOTS, None, [], SHULKER_FRAME, SHULKER_CLOSEUP, True)
        for key in ("shulker",) + tuple("shulker_" + c for c in SHULKER_COLORS)},
     "ravager": (RAVAGER_CUBES, RAVAGER_PIVOTS, None, [], RAVAGER_FRAME, RAVAGER_CLOSEUP, False),
+    "creaking": (CREAKING_CUBES, CREAKING_PIVOTS, None, [], CREAKING_FRAME, CREAKING_CLOSEUP, False),
 }
 # The flyers are seen from below in the game, so their sheets look at them
 # from above, from below, and from the side.
 FLYER_VIEWS = [(-30, 35), (-30, -35), (-90, 5)]
-EYES_PATHS = {"phantom": PHANTOM_EYES_PATH, "breeze": BREEZE_EYES_PATH}
+EYES_PATHS = {"phantom": PHANTOM_EYES_PATH, "breeze": BREEZE_EYES_PATH, "creaking": CREAKING_EYES_PATH}
 
 def grow(cube, k):
     """Return the cube k times larger, with the same texels. The previews draw the small endermite this way."""
@@ -1992,6 +2042,7 @@ SPECIES = {
     **{"shulker_" + c: (SHULKER_COLOR_PATH.format(c), None, SHULKER_FAMILIES, SHULKER_EXTRA, [])
        for c in SHULKER_COLORS},
     "ravager": (RAVAGER_PATH, None, RAVAGER_FAMILIES, RAVAGER_EXTRA, []),
+    "creaking": (CREAKING_PATH, None, CREAKING_FAMILIES, CREAKING_EXTRA, []),
 }
 
 

@@ -102,13 +102,15 @@ public final class GeneSilverfish {
 	public static void hide(Mob mob, ServerLevel level, BlockPos pos) {
 		CarriedGenes genes = mob.getAttached(ModAttachments.GENES);
 		if (genes != null) {
-			HiddenSilverfish.get(level.getServer()).put(level, pos, genes, 0);
+			int extra = GeneEffects.of(mob).filter(GeneEffect.HideBrood.class::isInstance)
+					.mapToInt(effect -> ((GeneEffect.HideBrood) effect).extra()).sum();
+			HiddenSilverfish.get(level.getServer()).put(level, pos, genes, extra);
 		}
 	}
 
 	/**
 	 * Gives a silverfish that comes out of an infested block the genes of the silverfish that hid there, before it joins
-	 * the world. It has full health. A block where no silverfish with genes hid gives a silverfish with genes from the
+	 * the world. It has full health. The extra silverfish of the hide come out too, with genes from the pool. A block where no silverfish with genes hid gives a silverfish with genes from the
 	 * pool, as a natural spawn.
 	 */
 	public static void emerge(ServerLevel level, BlockPos pos, Mob silverfish) {
@@ -122,6 +124,15 @@ public final class GeneSilverfish {
 			GeneEffects.of(silverfish).filter(GeneEffect.HideInStone.class::isInstance)
 					.forEach(effect -> times.put(effect, entry.hideTime()));
 			silverfish.setAttached(ModAttachments.EFFECT_TIMES, times);
+			for (int i = 0; i < entry.extra(); i++) {
+				Mob brood = net.minecraft.world.entity.EntityTypes.SILVERFISH.create(level,
+						net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+				if (brood != null) {
+					brood.snapTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, level.getRandom().nextFloat() * 360.0F, 0.0F);
+					level.addFreshEntity(brood);
+					brood.spawnAnim();
+				}
+			}
 		});
 	}
 

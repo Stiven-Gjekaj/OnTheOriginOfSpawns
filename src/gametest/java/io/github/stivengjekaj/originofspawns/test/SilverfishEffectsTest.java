@@ -167,4 +167,21 @@ public class SilverfishEffectsTest {
 		helper.assertTrue(next.isAlive() && !next.isRemoved(), "the cooldown of the hide goes on after it comes out");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void anEggLodgeLetsTwoSilverfishOutOfItsBlock(GameTestHelper helper) {
+		BlockPos place = new BlockPos(3, 2, 3);
+		bury(helper, place);
+		Silverfish silverfish = silverfish(helper, place, "test_egg_lodge");
+		helper.assertTrue(GeneSilverfish.hideInStone(silverfish, helper.getLevel()), "the silverfish hides");
+		BlockPos hidden = java.util.Arrays.stream(net.minecraft.core.Direction.values()).map(place::relative)
+				.filter(pos -> helper.getBlockState(pos).is(Blocks.INFESTED_STONE)).findFirst().orElseThrow();
+		helper.getLevel().destroyBlock(helper.absolutePos(hidden), true);
+		java.util.List<Silverfish> out = cameOut(helper, hidden, silverfish);
+		helper.assertValueEqual(out.size(), 2, "two silverfish come out");
+		Identifier lodge = Identifier.fromNamespaceAndPath("originofspawns_test", "test_egg_lodge");
+		helper.assertValueEqual(out.stream().filter(fish -> fish.getAttachedOrElse(ModAttachments.GENES, CarriedGenes.NONE)
+				.genes().contains(lodge)).count(), 1L, "only the first one has the genes of the silverfish that hid");
+		helper.succeed();
+	}
 }

@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:silverfish",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "hide_brood", "extra": 1 }, { "type": "hide_in_stone", "threshold": 0.5, "cooldown_seconds": 30 }],
+	"mutation_rate": 0
+}

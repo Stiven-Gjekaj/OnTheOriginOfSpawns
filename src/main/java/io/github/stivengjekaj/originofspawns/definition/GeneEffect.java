@@ -338,7 +338,8 @@ public sealed interface GeneEffect {
 			Map.entry("wake_range", WakeRange.CODEC),
 			Map.entry("wake_on_sight", WakeOnSight.CODEC),
 			Map.entry("wake_on_death", WakeOnDeath.CODEC),
-			Map.entry("hide_in_stone", HideInStone.CODEC)
+			Map.entry("hide_in_stone", HideInStone.CODEC),
+			Map.entry("hide_brood", HideBrood.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5702,6 +5703,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "hide_in_stone";
+		}
+	}
+
+	/**
+	 * When the mob hides in a block, in the vanilla way or with a hide gene, this many more silverfish come out of the
+	 * block when it breaks. They get genes from the pool, as new mobs. More than one effect adds up. Egg Lodge: 1.
+	 */
+	record HideBrood(int extra) implements GeneEffect {
+		public static final MapCodec<HideBrood> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 8).optionalFieldOf("extra", 1).forGetter(HideBrood::extra)
+		).apply(instance, HideBrood::new));
+
+		@Override
+		public String type() {
+			return "hide_brood";
 		}
 	}
 }

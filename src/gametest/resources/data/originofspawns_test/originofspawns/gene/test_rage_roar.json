@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "roar_on_hurt", "cooldown_seconds": 10, "hits": "projectile" }],
+	"mutation_rate": 0
+}

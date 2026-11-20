@@ -361,7 +361,8 @@ public sealed interface GeneEffect {
 			Map.entry("split_scatter", SplitScatter.CODEC),
 			Map.entry("roar_range", RoarRange.CODEC),
 			Map.entry("roar_damage", RoarDamage.CODEC),
-			Map.entry("roar_effect", RoarEffect.CODEC)
+			Map.entry("roar_effect", RoarEffect.CODEC),
+			Map.entry("roar_on_hurt", RoarOnHurt.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6116,6 +6117,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "roar_effect";
+		}
+	}
+
+	/**
+	 * When a hit of the kind in {@code hits} hurts a ravager, it roars at once, one time in each cooldown. The roar needs
+	 * no stun first. Rage Roar: from a projectile, one time each 10 seconds.
+	 */
+	record RoarOnHurt(float cooldownSeconds, Hits hits) implements GeneEffect {
+		public static final MapCodec<RoarOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(RoarOnHurt::cooldownSeconds),
+				Hits.CODEC.optionalFieldOf("hits", Hits.ANY).forGetter(RoarOnHurt::hits)
+		).apply(instance, RoarOnHurt::new));
+
+		@Override
+		public String type() {
+			return "roar_on_hurt";
 		}
 	}
 }

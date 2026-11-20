@@ -66,4 +66,18 @@ public class RavagerEffectsTest {
 		helper.assertFalse(ravager.hasEffect(net.minecraft.world.effect.MobEffects.STRENGTH), "the ravager itself gets no Strength");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aRageRoarRoarsWhenAProjectileHurtsIt(GameTestHelper helper) {
+		Ravager ravager = ravager(helper, new BlockPos(2, 1, 2), "test_rage_roar");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		ravager.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(pig), 1.0F);
+		helper.assertValueEqual(ravager.getRoarTick(), 0, "a melee hit gives no roar");
+		// A second ravager, because the first one does not take a second hit so soon.
+		Ravager shot = ravager(helper, new BlockPos(2, 1, 5), "test_rage_roar");
+		var arrow = EntityTypes.ARROW.create(helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+		shot.hurtServer(helper.getLevel(), helper.getLevel().damageSources().arrow(arrow, pig), 2.0F);
+		helper.assertValueEqual(shot.getRoarTick(), 20, "an arrow starts a roar with no stun");
+		helper.succeed();
+	}
 }

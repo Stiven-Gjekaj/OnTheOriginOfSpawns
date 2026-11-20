@@ -1185,6 +1185,7 @@ public final class GeneCombat {
 			GeneBehaviors.sidestepOnHurt(wounded, source);
 			broodOnHurt(wounded, woundedLevel, source);
 			GeneShulkers.splitOnHurt(wounded);
+			GeneRavagers.roarOnHurt(wounded, source);
 			GeneShulkers.teleportOnHurt(wounded, woundedLevel);
 			GeneSilverfish.hideWhenWounded(wounded, woundedLevel);
 		}

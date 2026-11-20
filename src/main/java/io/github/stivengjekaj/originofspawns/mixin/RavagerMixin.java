@@ -1,9 +1,9 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
-import io.github.stivengjekaj.originofspawns.evolution.GeneRavagers;
-
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
+import io.github.stivengjekaj.originofspawns.evolution.GeneRavagers;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;

@@ -94,11 +94,11 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Long Stride | Galloper | `unreached` | 20% more speed | 10% less maximum health | Legs: long, lean legs. This changes the model |
+| Long Stride | Galloper | `unreached` | 20% more speed | 10% less maximum health | Legs: lean thighs. This changes the model |
 | Sun Hide | Galloper | `sunlight` | The sun burns it only one time each 4 seconds, not each second | 10% less maximum health | Body: a dark, leathery hide |
-| Shy Canter | Galloper | `projectile` | It moves aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Head: tall, laid back ears |
-| Lance Run | Galloper | `melee` | While it runs, the hits of its rider do 20% more damage | 10% less maximum health | Mane: a long, streaming mane. This changes the model |
-| Ghost Gallop | Galloper | `spotted` | It is near invisible in the dark | 10% less maximum health | Body: pale, faded hide |
+| Shy Canter | Galloper | `projectile` | It moves aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Head: tall, laid back ears. This changes the model |
+| Lance Run | Galloper | `melee` | While it runs, the hits of its rider do 20% more damage | 10% less maximum health | Mane: dark streaks on the neck and a long mane. This changes the model |
+| Ghost Gallop | Galloper | `spotted` | It is near invisible in the dark | 10% less maximum health | Body: soft, pale patches on the flanks and the neck |
 | Panic Bolt | Galloper, sub Revenant | `critical` | At under 30% health, it runs away from its target fast for 4 seconds | 10% less maximum health | Tail: a torn, thin tail |
 
 ### Destrier genes
@@ -107,9 +107,9 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Rotten Barding | Destrier | `projectile` | Its riders take 30% less damage from projectiles | 10% less maximum health | Body: a ragged cloth over the back |
 | Battle Saddle | Destrier | `melee` | Its riders take 20% less melee damage | 10% less speed | Body: a high, dark saddle. This changes the model |
-| Grave Bond | Destrier | `critical` | When a rider is under half health, the rider heals 4 health at once, one time each 30 seconds | 10% less maximum health | Head: a green blaze on the face |
+| Grave Bond | Destrier | `critical` | When a rider is under half health, the rider heals 4 health at once, one time each 30 seconds | 10% less maximum health | Head: a thin muzzle strap with a dull green charm. This changes the model |
 | Ash Barding | Destrier | `fire` | Its riders take half the damage from fire | 10% less speed | Body: a gray, scorched cloth |
-| Last Charge | Destrier | `player_death` | When it dies, its riders get Strength for 10 seconds | 10% less maximum health | Mane: red ribbons in the mane |
+| Last Charge | Destrier | `player_death` | When it dies, its riders get Strength for 10 seconds | 10% less maximum health | Mane: red ribbons in the mane. This changes the model |
 | Grave Barding | Destrier, sub Vaulter | `smite` | Smite does half the extra damage to its riders | 10% less speed | Body: bone plates on the chest |
 
 ### Revenant genes
@@ -121,18 +121,18 @@ The visual column gives the region and the mark.
 | Charred Flesh | Revenant | `fire` | Half the damage from fire | 10% less speed | Body: black, charred patches |
 | Bone Frame | Revenant | `explosion` | Half the damage from explosions | 10% less speed | Body: bare ribs on the flank |
 | Holy Scorn | Revenant | `smite` | Smite does half the extra damage | 10% less maximum health | Head: a pale skull face |
-| Rooted Rot | Revenant, sub Stomper | `melee` | Hits do not push it back | 10% less speed | Legs: thick, swollen hocks |
+| Rooted Rot | Revenant, sub Stomper | `melee` | Hits do not push it back | 10% less speed | Legs: thick, swollen hocks. This changes the model |
 
 ### Vaulter genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | High Vault | Vaulter | `unreached` | It jumps 50% higher | 10% less maximum health | Legs: long, springy hocks |
-| Soft Landing | Vaulter | `fall` | No fall damage | 10% less maximum health | Legs: wide, pale hooves |
+| Soft Landing | Vaulter | `fall` | No fall damage | 10% less maximum health | Legs: wide, pale hooves. This changes the model |
 | Leap Strike | Vaulter | `golem` | When it lands from a jump, the mobs and players in 2 blocks take 3 damage | 10% less maximum health | Legs: iron gray hooves |
-| Dodge Leap | Vaulter | `projectile` | It jumps aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Tail: a short, high tail |
+| Dodge Leap | Vaulter | `projectile` | It jumps aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Tail: a short, high tail. This changes the model |
 | Shield Vault | Vaulter | `shield` | When it lands from a jump, the shields of the players in 2 blocks stop for 3 seconds | 10% less speed | Head: a dark, armored brow |
-| Spur Leap | Vaulter, sub Galloper | `spotted` | After a jump, it gets Speed for 3 seconds | 10% less maximum health | Legs: bright bands round the hocks |
+| Spur Leap | Vaulter, sub Galloper | `spotted` | After a jump, it gets Speed for 3 seconds | 10% less maximum health | Legs: worn bands and small spurs on the hocks. This changes the model |
 
 ### Stomper genes
 
@@ -142,8 +142,8 @@ The visual column gives the region and the mark.
 | Mud Kick | Stomper | `spotted` | Its kick gives Slowness for 3 seconds | 10% less maximum health | Legs: mud on the lower legs |
 | Golem Stomp | Stomper | `golem` | Its kick does two times the damage to golems | 10% less speed | Legs: iron gray shins |
 | Bone Shatter | Stomper | `critical` | Its kick gives Weakness for 4 seconds | 10% less maximum health | Body: cracked bones on the chest |
-| Rear Up | Stomper | `crowd` | Its kick also hits the other mobs and players in 2 blocks | 10% less speed | Mane: a wild, raised mane |
-| Trample Run | Stomper, sub Galloper | `player_death` | Its kick pushes the attacker back two times as far | 10% less maximum health | Tail: a long, ragged tail |
+| Rear Up | Stomper | `crowd` | Its kick also hits the other mobs and players in 2 blocks | 10% less speed | Mane: a wild, raised mane. This changes the model |
+| Trample Run | Stomper, sub Galloper | `player_death` | Its kick pushes the attacker back two times as far | 10% less maximum health | Tail: a long, ragged tail. This changes the model |
 
 ## Gene details
 
@@ -199,6 +199,11 @@ The visual column gives the region and the mark.
   against the vanilla model, as for the ghast.
 - It needs a new region map, `textures/region/zombie_horse.png`. The design
   uses the regions head, mane, body, legs, and tail.
+- The texture is 64 x 64. All four legs use the same pixels, so a leg mark
+  shows on each leg. The bones are `head`, `mane`, `body`, the legs, and
+  `tail`.
+- A baby has another texture layout, so a baby gets no gene marks and no
+  gene models.
 
 ## Minor families
 

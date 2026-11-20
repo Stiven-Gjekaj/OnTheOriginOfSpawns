@@ -62,4 +62,12 @@ public abstract class RavagerMixin {
 			GeneRavagers.roarAllies(self);
 		}
 	}
+
+	/**
+	 * A stun chance gene changes the chance that a shield block stuns the ravager.
+	 */
+	@ModifyConstant(method = "blockedByItem", constant = @Constant(doubleValue = 0.5))
+	private double originofspawns$stunChance(double chance) {
+		return GeneRavagers.stunChance((Ravager) (Object) this);
+	}
 }

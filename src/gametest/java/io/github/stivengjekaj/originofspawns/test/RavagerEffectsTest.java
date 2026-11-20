@@ -92,4 +92,21 @@ public class RavagerEffectsTest {
 		helper.assertValueEqual(ravager.getRoarTick(), 20, "the ravager roars");
 		helper.succeed();
 	}
+
+	static void block(GameTestHelper helper, Ravager ravager, net.minecraft.world.entity.LivingEntity defender) {
+		((RavagerAccessor) ravager).originofspawns$blockedByItem(defender,
+				helper.getLevel().damageSources().mobAttack(ravager), 12.0F, true);
+	}
+
+	@GameTest
+	public void aStunChanceGeneChangesTheChanceOfAStunFromAShieldBlock(GameTestHelper helper) {
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneRavagers.stunChance(
+				ravager(helper, new BlockPos(1, 1, 1))), 0.5, "the vanilla chance is 0.5");
+		Ravager easy = ravager(helper, new BlockPos(5, 1, 5), "test_easy_stun");
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneRavagers.stunChance(easy), 1.0,
+				"the largest chance counts");
+		block(helper, easy, CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 2)));
+		helper.assertValueEqual(easy.getStunnedTick(), 40, "a shield block always stuns it");
+		helper.succeed();
+	}
 }

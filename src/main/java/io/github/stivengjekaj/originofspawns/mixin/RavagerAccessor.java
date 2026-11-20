@@ -1,5 +1,7 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Ravager;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,4 +18,7 @@ public interface RavagerAccessor {
 
 	@Accessor("stunnedTick")
 	void originofspawns$setStunnedTick(int ticks);
+
+	@Invoker("blockedByItem")
+	void originofspawns$blockedByItem(LivingEntity defender, DamageSource source, float damage, boolean fullyBlocked);
 }

@@ -363,7 +363,8 @@ public sealed interface GeneEffect {
 			Map.entry("roar_damage", RoarDamage.CODEC),
 			Map.entry("roar_effect", RoarEffect.CODEC),
 			Map.entry("roar_on_hurt", RoarOnHurt.CODEC),
-			Map.entry("roar_on_kill", RoarOnKill.CODEC)
+			Map.entry("roar_on_kill", RoarOnKill.CODEC),
+			Map.entry("stun_chance", StunChance.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6149,6 +6150,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "roar_on_kill";
+		}
+	}
+
+	/**
+	 * Changes the chance that a shield block stuns a ravager. A stun lasts 2 seconds, and then the ravager roars. Else
+	 * the ravager pushes the player back hard. With more than one effect, the largest chance counts. The vanilla chance
+	 * is 0.5. Ironbacks tier 3: 0.6.
+	 */
+	record StunChance(float chance) implements GeneEffect {
+		public static final MapCodec<StunChance> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(StunChance::chance)
+		).apply(instance, StunChance::new));
+
+		@Override
+		public String type() {
+			return "stun_chance";
 		}
 	}
 }

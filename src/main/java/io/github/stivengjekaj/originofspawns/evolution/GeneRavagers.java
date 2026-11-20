@@ -138,4 +138,18 @@ public final class GeneRavagers {
 		}
 		return acted;
 	}
+
+	/**
+	 * The vanilla chance that a shield block stuns a ravager.
+	 */
+	public static final double VANILLA_STUN_CHANCE = 0.5;
+
+	/**
+	 * Returns the chance that a shield block stuns the ravager: the largest stun chance gene, or the vanilla chance.
+	 */
+	public static double stunChance(Ravager ravager) {
+		var chance = GeneEffects.of(ravager).filter(GeneEffect.StunChance.class::isInstance)
+				.mapToDouble(effect -> ((GeneEffect.StunChance) effect).chance()).max();
+		return chance.orElse(VANILLA_STUN_CHANCE);
+	}
 }

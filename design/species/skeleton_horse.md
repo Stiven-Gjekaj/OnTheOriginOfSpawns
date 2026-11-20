@@ -100,8 +100,8 @@ The visual column gives the region and the mark.
 | Grounded Bones | Thunderhoof | `fire` | No damage and no fire from lightning, and half the damage from other fire | 10% less speed | Legs: copper bands on the legs |
 | Long Wait | Thunderhoof | `alone` | Its trap waits two times as long before it goes away | 10% less maximum health | Head: a dark, empty skull |
 | Wide Trap | Thunderhoof | `unreached` | Its trap opens when a player comes in 20 blocks | 10% less maximum health | Head: wide, glowing eye sockets |
-| Charged Riders | Thunderhoof | `crowd` | When its trap opens, the horsemen get Speed for 10 seconds | 10% less maximum health | Body: blue lines on the ribs |
-| Storm Kin | Thunderhoof, sub Squire | `player_death` | When a rider dies, the other horsemen in 16 blocks get Strength for 10 seconds | 10% less maximum health | Mane: white streaks in the mane |
+| Charged Riders | Thunderhoof | `crowd` | When its trap opens, the horses of the trap get Speed for 10 seconds | 10% less maximum health | Body: blue lines on the ribs |
+| Storm Kin | Thunderhoof, sub Squire | `player_death` | When a rider dies, the arrows of the other horsemen in 16 blocks do 30% more damage for 10 seconds | 10% less maximum health | Mane: white streaks in the mane |
 
 ### Tidestrider genes
 
@@ -157,7 +157,8 @@ The visual column gives the region and the mark.
 | Grounded Bones | It works as the creeper Grounded, with half fire damage |
 | Long Wait | The vanilla trap goes away after 15 minutes |
 | Wide Trap | The vanilla trap opens at 10 blocks |
-| Storm Kin | It works as the pillager Grudge, on the horsemen of its trap |
+| Storm Kin | The horsemen shoot bows, and Strength does not change arrow damage, so it changes the arrow damage |
+| Charged Riders | Speed on a skeleton rider does not change the speed of its horse, so the horses get the Speed |
 | Tidestriders | "Speed in water" and "speed on land" use the in water and on land states |
 | Kelp Mane | It works as the creeper Gloom, in water at each light level |
 | Cold Current | It works as the evoker Smoke Veil, on the attacker, in water only |
@@ -270,7 +271,7 @@ mounts.
 |---|---|
 | A skeleton horse region map, and the gene textures and gene models on the horse model | All visuals |
 | More horsemen, extra lightning, a longer wait, a wider reach, and an effect on the horsemen when the trap opens | Thunderhooves, Storm Herald, Long Wait, Wide Trap, Charged Riders |
-| An effect on the horsemen of a trap when one of them dies | Storm Kin |
+| More arrow damage for the horsemen of a trap when one of them dies | Storm Kin |
 | No damage and no fire from lightning on a mount | Grounded Bones |
 | Speed in water and on land | Tidestriders, Deep Stride, and the downsides |
 | Translucent in water at each light level | Kelp Mane |

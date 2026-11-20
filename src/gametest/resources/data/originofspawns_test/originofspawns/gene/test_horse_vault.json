@@ -1,0 +1,7 @@
+{
+	"species": ["minecraft:zombie_horse", "minecraft:skeleton_horse"],
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "attribute", "attribute": "minecraft:jump_strength", "amount": 0.5, "operation": "add_multiplied_total" }, { "type": "damage_taken", "damage_types": "#minecraft:is_fall", "multiplier": 0 }],
+	"mutation_rate": 0
+}

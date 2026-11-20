@@ -79,4 +79,47 @@ public class ZombieHorseEffectsTest {
 		helper.assertTrue(horse.hasAttached(ModAttachments.JUMP_TIME), "the jump aside is a jump for the landing genes");
 		helper.succeed();
 	}
+
+	static final ReusedEffects.Maker HORSE = (helper, pos, genes) -> MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_HORSE, pos, genes);
+
+	@GameTest
+	public void theReusedEffectsWorkOnAZombieHorse(GameTestHelper helper) {
+		ReusedEffects.healOnce(helper, HORSE);
+		ReusedEffects.rootFeet(helper, HORSE);
+		ReusedEffects.translucent(helper, HORSE);
+		ReusedEffects.sidestep(helper, HORSE);
+		ReusedEffects.damageTaken(helper, HORSE);
+		ReusedEffects.smiteResist(helper, HORSE);
+		ReusedEffects.sunShade(helper, HORSE);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aZombieHorseRegeneratesOutOfCombat(GameTestHelper helper) {
+		ReusedEffects.regenerate(helper, HORSE);
+	}
+
+	@GameTest
+	public void aSpeedWhenGeneMakesAZombieHorseFaster(GameTestHelper helper) {
+		ReusedEffects.speedWhenWounded(helper, HORSE);
+	}
+
+	@GameTest
+	public void highVaultMakesTheJumpStrongerAndSoftLandingStopsTheFallDamage(GameTestHelper helper) {
+		ZombieHorse plain = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_HORSE, new BlockPos(1, 1, 1));
+		ZombieHorse vaulter = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_HORSE, new BlockPos(6, 1, 6), "test_horse_vault");
+		io.github.stivengjekaj.originofspawns.evolution.GeneEffects.applyAttributes(vaulter,
+				io.github.stivengjekaj.originofspawns.evolution.GeneEffects.sources(helper.getLevel().registryAccess(),
+						vaulter.getAttached(ModAttachments.GENES)));
+		var strength = net.minecraft.world.entity.ai.attributes.Attributes.JUMP_STRENGTH;
+		vaulter.getAttribute(strength).setBaseValue(plain.getAttribute(strength).getBaseValue());
+		plain.jumpFromGround();
+		vaulter.jumpFromGround();
+		helper.assertTrue(Math.abs(vaulter.getDeltaMovement().y - plain.getDeltaMovement().y * 1.5) < 0.001,
+				"the jump has 50% more strength");
+		var fall = helper.getLevel().damageSources().fall();
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(vaulter, fall, 6.0F), 0.0F,
+				"no fall damage");
+		helper.succeed();
+	}
 }

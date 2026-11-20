@@ -136,4 +136,68 @@ public class MountEffectsTest {
 		}
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aMeleeHitMakesTheMountKickTheAttackerAndTheMobsNearIt(GameTestHelper helper) {
+		var level = helper.getLevel();
+		int x = 1;
+		for (Pair pair : MOUNTS) {
+			String name = pair.mount().toShortString();
+			Mob rider = rider(helper, pair, new BlockPos(x, 1, 2), "test_kick");
+			Mob mount = (Mob) rider.getVehicle();
+			var attacker = CreeperEffectsTest.pigAt(helper, new BlockPos(x, 1, 4));
+			var near = CreeperEffectsTest.pigAt(helper, new BlockPos(x + 1, 1, 3));
+			mount.hurtServer(level, level.damageSources().mobAttack(attacker), 1.0F);
+			helper.assertValueEqual(attacker.getMaxHealth() - attacker.getHealth(), 6.0F,
+					"the kick of the " + name + " does the largest kick damage and 2 more");
+			helper.assertTrue(attacker.hasEffect(MobEffects.BLINDNESS), "the kick of the " + name + " gives Blindness");
+			helper.assertTrue(attacker.getDeltaMovement().z > 1.0, "the kick of the " + name + " pushes the attacker away, two times as far");
+			helper.assertValueEqual(near.getMaxHealth() - near.getHealth(), 6.0F, "the kick of the " + name + " hits a pig near it");
+			helper.assertValueEqual(rider.getHealth(), rider.getMaxHealth(), "the kick of the " + name + " does not hit its rider");
+			attacker.discard();
+			near.discard();
+			x += 2;
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theKickActsOnlyOnAMeleeHitAndOnlyWithAKick(GameTestHelper helper) {
+		var level = helper.getLevel();
+		int x = 1;
+		for (Pair pair : MOUNTS) {
+			String name = pair.mount().toShortString();
+			Mob kicker = mob(helper, pair.mount(), new BlockPos(x, 1, 2), "test_kick");
+			Mob plain = mob(helper, pair.mount(), new BlockPos(x, 1, 6), "test_rider_bond");
+			var shooter = CreeperEffectsTest.pigAt(helper, new BlockPos(x, 1, 4));
+			var snowball = new net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball(level, shooter,
+					new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SNOWBALL));
+			kicker.hurtServer(level, level.damageSources().thrown(snowball, shooter), 1.0F);
+			helper.assertValueEqual(shooter.getHealth(), shooter.getMaxHealth(), "a projectile hit makes no kick of the " + name);
+			plain.hurtServer(level, level.damageSources().mobAttack(shooter), 1.0F);
+			helper.assertValueEqual(shooter.getHealth(), shooter.getMaxHealth(), "a " + name + " with no kick does not kick");
+			shooter.discard();
+			x += 2;
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theKickDoesTwoTimesTheDamageToAGolemAndStopsAShield(GameTestHelper helper) {
+		var level = helper.getLevel();
+		Mob camel = mob(helper, EntityTypes.CAMEL_HUSK, new BlockPos(1, 1, 6), "test_kick");
+		IronGolem golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(6, 1, 6));
+		GeneCombat.kick(camel, level, golem);
+		helper.assertValueEqual(golem.getMaxHealth() - golem.getHealth(), 12.0F, "(4 + 2) times 2 to a golem");
+		var player = CreeperEffectsTest.shieldedPlayer(helper);
+		Mob plain = mob(helper, EntityTypes.ZOMBIE_HORSE, new BlockPos(4, 1, 1), "test_kick");
+		GeneCombat.kick(plain, level, player);
+		helper.assertFalse(player.getCooldowns().isOnCooldown(new net.minecraft.world.item.ItemStack(
+				net.minecraft.world.item.Items.SHIELD)), "a kick with no shield stop keeps the shield up");
+		Mob stopper = mob(helper, EntityTypes.ZOMBIE_HORSE, new BlockPos(4, 1, 2), "test_shield_kick");
+		GeneCombat.kick(stopper, level, player);
+		helper.assertTrue(player.getCooldowns().isOnCooldown(new net.minecraft.world.item.ItemStack(
+				net.minecraft.world.item.Items.SHIELD)), "the shield kick stops the shield");
+		helper.succeed();
+	}
 }

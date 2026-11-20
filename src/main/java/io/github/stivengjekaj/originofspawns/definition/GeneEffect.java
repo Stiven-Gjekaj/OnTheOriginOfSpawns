@@ -304,7 +304,13 @@ public sealed interface GeneEffect {
 			Map.entry("ram", Ram.CODEC),
 			Map.entry("close_snap", CloseSnap.CODEC),
 			Map.entry("riders", Riders.CODEC),
-			Map.entry("rider_effect_when_wounded", RiderEffectWhenWounded.CODEC)
+			Map.entry("rider_effect_when_wounded", RiderEffectWhenWounded.CODEC),
+			Map.entry("kick", Kick.CODEC),
+			Map.entry("kick_damage", KickDamage.CODEC),
+			Map.entry("kick_effect", KickEffect.CODEC),
+			Map.entry("kick_shield_stop", KickShieldStop.CODEC),
+			Map.entry("kick_push", KickPush.CODEC),
+			Map.entry("kick_area", KickArea.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5082,6 +5088,98 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "rider_effect_when_wounded";
+		}
+	}
+
+	/**
+	 * When a melee hit hurts the mob, the mob kicks the attacker: the attacker takes the damage and moves back. The
+	 * kick is a hit of the mob. It also acts when no mob rides the mob. With more than one kick, the largest damage
+	 * counts. The other kick effects change the kick, and without a kick they do nothing.
+	 */
+	record Kick(float damage, float push) implements GeneEffect {
+		public static final MapCodec<Kick> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("damage", 4.0F).forGetter(Kick::damage),
+				Codec.floatRange(0.0F, 4.0F).optionalFieldOf("push", 0.6F).forGetter(Kick::push)
+		).apply(instance, Kick::new));
+
+		@Override
+		public String type() {
+			return "kick";
+		}
+	}
+
+	/**
+	 * Changes the damage of the kick: it adds the extra damage, then it multiplies the damage. With {@code targets},
+	 * it acts only on a target of these types. Hard Kick: 2 extra. Golem Kick: two times the damage to golems.
+	 */
+	record KickDamage(float extra, float multiplier, Optional<TagKey<EntityType<?>>> targets) implements GeneEffect {
+		public static final MapCodec<KickDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("extra", 0.0F).forGetter(KickDamage::extra),
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("multiplier", 1.0F).forGetter(KickDamage::multiplier),
+				TagKey.hashedCodec(Registries.ENTITY_TYPE).optionalFieldOf("targets").forGetter(KickDamage::targets)
+		).apply(instance, KickDamage::new));
+
+		@Override
+		public String type() {
+			return "kick_damage";
+		}
+	}
+
+	/**
+	 * Each target of the kick gets the status effect. Sand Spray: Blindness.
+	 */
+	record KickEffect(Holder<MobEffect> effect, float seconds, int amplifier) implements GeneEffect {
+		public static final MapCodec<KickEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(KickEffect::effect),
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(KickEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(KickEffect::amplifier)
+		).apply(instance, KickEffect::new));
+
+		@Override
+		public String type() {
+			return "kick_effect";
+		}
+	}
+
+	/**
+	 * The kick stops the shield of each target that holds a shield up, for the seconds, before the kick hits.
+	 */
+	record KickShieldStop(float seconds) implements GeneEffect {
+		public static final MapCodec<KickShieldStop> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 60.0F).optionalFieldOf("seconds", 4.0F).forGetter(KickShieldStop::seconds)
+		).apply(instance, KickShieldStop::new));
+
+		@Override
+		public String type() {
+			return "kick_shield_stop";
+		}
+	}
+
+	/**
+	 * Multiplies the push of the kick. Sand Shove: 2.
+	 */
+	record KickPush(float multiplier) implements GeneEffect {
+		public static final MapCodec<KickPush> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("multiplier", 2.0F).forGetter(KickPush::multiplier)
+		).apply(instance, KickPush::new));
+
+		@Override
+		public String type() {
+			return "kick_push";
+		}
+	}
+
+	/**
+	 * The kick also hits the other mobs and players in the radius of the mob. The riders of the mob are safe.
+	 */
+	record KickArea(float radius) implements GeneEffect {
+		public static final MapCodec<KickArea> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 2.0F).forGetter(KickArea::radius)
+		).apply(instance, KickArea::new));
+
+		@Override
+		public String type() {
+			return "kick_area";
 		}
 	}
 }

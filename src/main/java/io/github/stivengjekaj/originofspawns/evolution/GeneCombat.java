@@ -1175,6 +1175,85 @@ public final class GeneCombat {
 				}
 			}
 		}
+		if (source.getDirectEntity() == attacker && !mob.hasPassenger(attacker) && !KICKING.get()) {
+			kick(mob, level, attacker);
+		}
+	}
+
+	/**
+	 * True while a kick hits, so that a kick does not cause a kick.
+	 */
+	private static final ThreadLocal<Boolean> KICKING = ThreadLocal.withInitial(() -> false);
+
+	/**
+	 * Makes the mob kick the attacker, and the others in the radius of a kick area, if the mob has a kick.
+	 *
+	 * @return the number of targets that the kick hit
+	 */
+	public static int kick(Mob mob, ServerLevel level, LivingEntity attacker) {
+		List<GeneEffect> effects = GeneEffects.of(mob).toList();
+		float base = -1.0F;
+		float push = 0.0F;
+		float radius = 0.0F;
+		for (GeneEffect effect : effects) {
+			if (effect instanceof GeneEffect.Kick kick && kick.damage() > base) {
+				base = kick.damage();
+				push = kick.push();
+			} else if (effect instanceof GeneEffect.KickArea area) {
+				radius = Math.max(radius, area.radius());
+			}
+		}
+		if (base < 0.0F) {
+			return 0;
+		}
+		for (GeneEffect effect : effects) {
+			if (effect instanceof GeneEffect.KickPush kickPush) {
+				push *= kickPush.multiplier();
+			}
+		}
+		List<LivingEntity> targets = new java.util.ArrayList<>();
+		targets.add(attacker);
+		if (radius > 0.0F) {
+			float reach = radius;
+			targets.addAll(level.getEntitiesOfClass(LivingEntity.class, mob.getBoundingBox().inflate(reach),
+					other -> other != mob && other != attacker && other.isAlive() && !mob.hasPassenger(other)
+							&& other.distanceTo(mob) <= reach
+							&& !(other instanceof Player player && (player.isSpectator() || player.isCreative()))));
+		}
+		KICKING.set(true);
+		try {
+			for (LivingEntity target : targets) {
+				float damage = base;
+				for (GeneEffect effect : effects) {
+					if (effect instanceof GeneEffect.KickDamage extra && extra.targets().map(tag -> target.getType().builtInRegistryHolder().is(tag)).orElse(true)) {
+						damage = (damage + extra.extra()) * extra.multiplier();
+					} else if (effect instanceof GeneEffect.KickShieldStop stop) {
+						ItemStack shield = target.getItemBlockingWith();
+						if (shield != null && shield.has(net.minecraft.core.component.DataComponents.BLOCKS_ATTACKS)) {
+							shield.get(net.minecraft.core.component.DataComponents.BLOCKS_ATTACKS)
+									.disable(level, target, stop.seconds(), shield);
+						}
+					}
+				}
+				DamageSource kickSource = level.damageSources().mobAttack(mob);
+				target.hurtServer(level, kickSource, damage);
+				for (GeneEffect effect : effects) {
+					if (effect instanceof GeneEffect.KickEffect kickEffect) {
+						target.addEffect(new MobEffectInstance(kickEffect.effect(), Math.round(kickEffect.seconds() * 20.0F),
+								kickEffect.amplifier()), mob);
+					}
+				}
+				if (push > 0.0F) {
+					target.knockback(push, mob.getX() - target.getX(), mob.getZ() - target.getZ(), kickSource, damage);
+					target.needsSync = true;
+				}
+			}
+		} finally {
+			KICKING.set(false);
+		}
+		level.sendParticles(ParticleTypes.SWEEP_ATTACK, attacker.getX(), attacker.getY(0.5), attacker.getZ(), 1, 0.0, 0.0,
+				0.0, 0.0);
+		return targets.size();
 	}
 
 	/**

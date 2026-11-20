@@ -1,0 +1,15 @@
+{
+	"species": ["minecraft:camel_husk", "minecraft:zombie_nautilus", "minecraft:zombie_horse", "minecraft:skeleton_horse"],
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [
+		{ "type": "kick", "damage": 3 },
+		{ "type": "kick", "damage": 4 },
+		{ "type": "kick_damage", "extra": 2 },
+		{ "type": "kick_damage", "multiplier": 2, "targets": "#originofspawns_test:golems" },
+		{ "type": "kick_effect", "effect": "minecraft:blindness", "seconds": 2 },
+		{ "type": "kick_push", "multiplier": 2 },
+		{ "type": "kick_area", "radius": 2 }
+	],
+	"mutation_rate": 0
+}

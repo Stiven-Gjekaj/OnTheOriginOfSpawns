@@ -606,6 +606,15 @@ ZOMBIE_HORSE_FAMILIES = {
     "stomper": ["hard_hooves", "mud_kick", "golem_stomp", "bone_shatter", "rear_up", "trample_run"],
 }
 
+# The families of the skeleton horse, from design/species/skeleton_horse.md.
+SKELETON_HORSE_FAMILIES = {
+    "thunderhoof": ["storm_herald", "grounded_bones", "long_wait", "wide_trap", "charged_riders", "storm_kin"],
+    "tidestrider": ["deep_stride", "kelp_mane", "coral_bones", "cold_current", "shore_bound", "trident_ribs"],
+    "ossifier": ["heavy_bones", "blast_ribs", "rib_gaps", "blessed_skull", "bone_mend", "golem_brace"],
+    "squire": ["bone_barding", "squire_saddle", "faithful_bones", "storm_cloak", "last_ride", "helm_bond"],
+    "wraithrunner": ["ghost_stride", "wraith_veil", "night_run", "bone_dodge", "weightless", "rattle_flight"],
+}
+
 
 ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
     "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
@@ -670,6 +679,11 @@ ZOMBIE_HORSE_EXTRA = next_family_extra(ZOMBIE_HORSE_FAMILIES, {
     "revenant": ["bone_frame", "rooted_rot"], "vaulter": ["soft_landing", "dodge_leap"],
     "stomper": ["rear_up", "trample_run"],
 }, "galloper")
+SKELETON_HORSE_EXTRA = next_family_extra(SKELETON_HORSE_FAMILIES, {
+    "thunderhoof": ["storm_herald", "wide_trap"], "tidestrider": ["kelp_mane", "cold_current"],
+    "ossifier": ["heavy_bones", "rib_gaps"], "squire": ["squire_saddle", "storm_cloak"],
+    "wraithrunner": ["ghost_stride", "night_run"],
+}, "wraithrunner")
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -1253,6 +1267,7 @@ NETHER_LOOKS = {
     "guardian": (GUARDIAN_CUBES, GUARDIAN_PIVOTS, None, [], (24, 6, 48, 44), ((50, 46), (0, 16)), False),
     "camel_husk": (CAMEL_HUSK_CUBES, CAMEL_HUSK_PIVOTS, None, [], CAMEL_HUSK_FRAME, CAMEL_HUSK_CLOSEUP, False),
     "zombie_horse": (EQUINE_CUBES, EQUINE_PIVOTS, None, [], EQUINE_FRAME, EQUINE_CLOSEUP, False),
+    "skeleton_horse": (EQUINE_CUBES, EQUINE_PIVOTS, None, [], EQUINE_FRAME, EQUINE_CLOSEUP, False),
     "zombie_nautilus": (ZOMBIE_NAUTILUS_CUBES, ZOMBIE_NAUTILUS_PIVOTS, None, [], ZOMBIE_NAUTILUS_FRAME,
                         ZOMBIE_NAUTILUS_CLOSEUP, False),
     "zombie_nautilus_warm": (ZOMBIE_NAUTILUS_WARM_CUBES, ZOMBIE_NAUTILUS_WARM_PIVOTS, None, [], ZOMBIE_NAUTILUS_FRAME,
@@ -1852,6 +1867,7 @@ SPECIES = {
     "guardian": (GUARDIAN_PATH, None, GUARDIAN_FAMILIES, GUARDIAN_EXTRA, []),
     "camel_husk": (CAMEL_HUSK_PATH, None, CAMEL_HUSK_FAMILIES, CAMEL_HUSK_EXTRA, []),
     "zombie_horse": (ZOMBIE_HORSE_PATH, None, ZOMBIE_HORSE_FAMILIES, ZOMBIE_HORSE_EXTRA, []),
+    "skeleton_horse": (SKELETON_HORSE_PATH, None, SKELETON_HORSE_FAMILIES, SKELETON_HORSE_EXTRA, []),
     "zombie_nautilus": (ZOMBIE_NAUTILUS_PATH, None, ZOMBIE_NAUTILUS_FAMILIES, ZOMBIE_NAUTILUS_EXTRA, []),
     "zombie_nautilus_warm": (ZOMBIE_NAUTILUS_WARM_PATH, None, ZOMBIE_NAUTILUS_FAMILIES, ZOMBIE_NAUTILUS_EXTRA, []),
 }

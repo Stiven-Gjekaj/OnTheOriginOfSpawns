@@ -334,7 +334,8 @@ public sealed interface GeneEffect {
 			Map.entry("trap_horsemen", TrapHorsemen.CODEC),
 			Map.entry("trap_effect", TrapEffect.CODEC),
 			Map.entry("trap_lightning", TrapLightning.CODEC),
-			Map.entry("horsemen_rally", HorsemenRally.CODEC)
+			Map.entry("horsemen_rally", HorsemenRally.CODEC),
+			Map.entry("wake_range", WakeRange.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5629,6 +5630,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "horsemen_rally";
+		}
+	}
+
+	/**
+	 * When something hurts a silverfish, it wakes the hidden silverfish in this many blocks to each side, and in half
+	 * as many blocks up and down. A vanilla silverfish wakes them in 10 blocks to each side and 5 up and down. The wake
+	 * works as in vanilla: it starts at the nearest blocks, and after each block it can stop. With more than one, the
+	 * largest range counts. Wakers tier 3 and Nest Alarm: 20.
+	 */
+	record WakeRange(int range) implements GeneEffect {
+		public static final MapCodec<WakeRange> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 32).optionalFieldOf("range", 10).forGetter(WakeRange::range)
+		).apply(instance, WakeRange::new));
+
+		@Override
+		public String type() {
+			return "wake_range";
 		}
 	}
 }

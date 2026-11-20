@@ -1,0 +1,56 @@
+package io.github.stivengjekaj.originofspawns.test;
+
+import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
+
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
+import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.monster.Silverfish;
+import net.minecraft.world.level.block.Blocks;
+
+/**
+ * Checks the genes of a silverfish: the wake of the hidden silverfish, the hide in stone, the gnaw, the eggs, and the
+ * reused effects.
+ */
+public class SilverfishEffectsTest {
+	static Silverfish silverfish(GameTestHelper helper, BlockPos pos, String... genes) {
+		return MountEffectsTest.mob(helper, EntityTypes.SILVERFISH, pos, genes);
+	}
+
+	/**
+	 * Hurts the silverfish, and then runs its vanilla wake goal until the wake comes. The silverfish has no AI, so the
+	 * test runs the goal itself.
+	 */
+	static void hurtAndWake(GameTestHelper helper, Silverfish silverfish, Pig attacker) {
+		silverfish.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(attacker), 0.5F);
+		WrappedGoal wake = ((MobAccessor) silverfish).originofspawns$goalSelector().getAvailableGoals().stream()
+				.filter(goal -> goal.getGoal().getClass().getSimpleName().equals("SilverfishWakeUpFriendsGoal"))
+				.findFirst().orElseThrow();
+		for (int i = 0; i < 25; i++) {
+			wake.getGoal().tick();
+		}
+	}
+
+	@GameTest(padding = 16)
+	public void aWakeRangeGeneWakesTheHiddenSilverfishFartherAway(GameTestHelper helper) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 3));
+		Silverfish silverfish = silverfish(helper, new BlockPos(1, 1, 1));
+		// 12 blocks to the east: past the vanilla range of 10, in the gene range of 14.
+		BlockPos far = new BlockPos(13, 1, 1);
+		helper.setBlock(far, Blocks.INFESTED_STONE);
+		hurtAndWake(helper, silverfish, pig);
+		helper.assertBlockPresent(Blocks.INFESTED_STONE, far);
+		silverfish.setAttached(ModAttachments.GENES, new CarriedGenes(java.util.List.of(
+				Identifier.fromNamespaceAndPath("originofspawns_test", "test_nest_alarm"))));
+		hurtAndWake(helper, silverfish, pig);
+		helper.assertBlockNotPresent(Blocks.INFESTED_STONE, far);
+		helper.succeed();
+	}
+}

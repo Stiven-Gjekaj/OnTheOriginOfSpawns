@@ -4,6 +4,7 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -162,5 +163,73 @@ public final class GeneShulkers {
 				((io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker).originofspawns$setRawPeekAmount(100);
 			}
 		}
+	}
+
+	/**
+	 * The places that a sight teleport tries each second.
+	 */
+	private static final int SIGHT_TRIES = 16;
+
+	/**
+	 * Counts the time that the shulker does not see its target. After the time of the gene, it teleports to a place that
+	 * sees the target.
+	 *
+	 * @return true if the shulker teleported now
+	 */
+	public static boolean sightTeleport(Shulker shulker, ServerLevel level, GeneEffect.SightTeleport sight) {
+		LivingEntity target = shulker.getTarget();
+		if (target == null || !target.isAlive() || shulker.hasLineOfSight(target)) {
+			shulker.removeAttached(ModAttachments.BLIND_SINCE);
+			return false;
+		}
+		long now = level.getGameTime();
+		long since = shulker.getAttachedOrElse(ModAttachments.BLIND_SINCE, now);
+		shulker.setAttached(ModAttachments.BLIND_SINCE, since);
+		if (now - since < Math.round(sight.seconds() * 20.0F) || !teleportInSight(shulker, level, target)) {
+			return false;
+		}
+		shulker.removeAttached(ModAttachments.BLIND_SINCE);
+		return true;
+	}
+
+	/**
+	 * Teleports the shulker to a place in 8 blocks that sees the target, with the checks of the vanilla teleport. The
+	 * shulker keeps its target.
+	 *
+	 * @return true if the shulker found a place
+	 */
+	public static boolean teleportInSight(Shulker shulker, ServerLevel level, LivingEntity target) {
+		var access = (io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker;
+		BlockPos old = shulker.blockPosition();
+		for (int i = 0; i < SIGHT_TRIES; i++) {
+			BlockPos place = old.offset(net.minecraft.util.Mth.randomBetweenInclusive(shulker.getRandom(), -8, 8),
+					net.minecraft.util.Mth.randomBetweenInclusive(shulker.getRandom(), -8, 8),
+					net.minecraft.util.Mth.randomBetweenInclusive(shulker.getRandom(), -8, 8));
+			if (place.getY() <= level.getMinY() || !level.isEmptyBlock(place) || !level.getWorldBorder().isWithinBounds(place)
+					|| !level.noCollision(shulker, new net.minecraft.world.phys.AABB(place).deflate(1.0E-6))) {
+				continue;
+			}
+			net.minecraft.core.Direction face = access.originofspawns$findAttachableSurface(place);
+			if (face == null || level.getBlockState(place.relative(face))
+					.is(net.minecraft.tags.BlockTags.SHULKER_DOES_NOT_TELEPORT_TO)) {
+				continue;
+			}
+			net.minecraft.world.phys.Vec3 eyes = net.minecraft.world.phys.Vec3.atCenterOf(place);
+			if (level.clip(new net.minecraft.world.level.ClipContext(eyes, target.getEyePosition(),
+					net.minecraft.world.level.ClipContext.Block.COLLIDER, net.minecraft.world.level.ClipContext.Fluid.NONE,
+					shulker)).getType() != net.minecraft.world.phys.HitResult.Type.MISS) {
+				continue;
+			}
+			shulker.unRide();
+			access.originofspawns$setAttachFace(face);
+			shulker.playSound(net.minecraft.sounds.SoundEvents.SHULKER_TELEPORT, 1.0F, 1.0F);
+			shulker.setPos(place.getX() + 0.5, place.getY(), place.getZ() + 0.5);
+			level.gameEvent(net.minecraft.world.level.gameevent.GameEvent.TELEPORT, old,
+					net.minecraft.world.level.gameevent.GameEvent.Context.of(shulker));
+			level.levelEvent(2016, old, net.minecraft.util.BlockUtil.packDifferenceInPosition(old, shulker.blockPosition(), 8, 8, 8));
+			afterTeleport(shulker);
+			return true;
+		}
+		return false;
 	}
 }

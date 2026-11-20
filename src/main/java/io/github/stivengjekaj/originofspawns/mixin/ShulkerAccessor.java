@@ -1,5 +1,7 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.monster.Shulker;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,4 +17,10 @@ public interface ShulkerAccessor {
 
 	@Invoker("teleportSomewhere")
 	boolean originofspawns$teleportSomewhere();
+
+	@Invoker("findAttachableSurface")
+	Direction originofspawns$findAttachableSurface(BlockPos target);
+
+	@Invoker("setAttachFace")
+	void originofspawns$setAttachFace(Direction face);
 }

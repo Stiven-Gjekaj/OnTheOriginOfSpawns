@@ -204,4 +204,28 @@ public class ShulkerEffectsTest {
 			helper.succeed();
 		});
 	}
+
+	@GameTest(padding = 12)
+	public void aSightBlinkTeleportsToAPlaceThatSeesItsTarget(GameTestHelper helper) {
+		for (BlockPos wall : BlockPos.betweenClosed(new BlockPos(0, 1, 4), new BlockPos(4, 3, 4))) {
+			helper.setBlock(wall, net.minecraft.world.level.block.Blocks.STONE);
+		}
+		Shulker shulker = shulker(helper, new BlockPos(2, 1, 2));
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(2, 1, 6));
+		shulker.setTarget(pig);
+		helper.assertFalse(shulker.hasLineOfSight(pig), "the wall hides the pig");
+		var sight = new io.github.stivengjekaj.originofspawns.definition.GeneEffect.SightTeleport(5.0F);
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneShulkers.sightTeleport(shulker, helper.getLevel(), sight),
+				"the shulker waits 5 seconds");
+		shulker.setAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.BLIND_SINCE,
+				helper.getLevel().getGameTime() - 100L);
+		boolean moved = false;
+		for (int i = 0; i < 40 && !moved; i++) {
+			moved = io.github.stivengjekaj.originofspawns.evolution.GeneShulkers.sightTeleport(shulker, helper.getLevel(), sight);
+		}
+		helper.assertTrue(moved, "after 5 seconds, the shulker teleports");
+		helper.assertTrue(shulker.hasLineOfSight(pig), "the shulker sees the pig from its new place");
+		helper.assertValueEqual(shulker.getTarget(), pig, "the shulker keeps its target");
+		helper.succeed();
+	}
 }

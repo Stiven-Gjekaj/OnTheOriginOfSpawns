@@ -533,6 +533,8 @@ public final class GeneBehaviors {
 				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
 				case GeneEffect.WakeOnSight sight -> GeneSilverfish.wakeOnSight(mob, level, sight);
 				case GeneEffect.Gnaw gnaw -> GeneSilverfish.gnaw(mob, level, gnaw);
+				case GeneEffect.SightTeleport sight when mob instanceof net.minecraft.world.entity.monster.Shulker shulker ->
+						GeneShulkers.sightTeleport(shulker, level, sight);
 				case GeneEffect.Spit spit -> spit(mob, level, spit);
 				case GeneEffect.ShutAfterTeleport shut when mob instanceof net.minecraft.world.entity.monster.Shulker shulker ->
 						GeneShulkers.tickShut(shulker);

@@ -353,7 +353,8 @@ public sealed interface GeneEffect {
 			Map.entry("double_shot", DoubleShot.CODEC),
 			Map.entry("lid_snap", LidSnap.CODEC),
 			Map.entry("teleport_on_hurt", TeleportOnHurt.CODEC),
-			Map.entry("shut_after_teleport", ShutAfterTeleport.CODEC)
+			Map.entry("shut_after_teleport", ShutAfterTeleport.CODEC),
+			Map.entry("sight_teleport", SightTeleport.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5978,6 +5979,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "shut_after_teleport";
+		}
+	}
+
+	/**
+	 * When a shulker does not see its target for the seconds, it teleports to a place in 8 blocks that sees the target, as
+	 * its vanilla teleport. It keeps its target. If it finds no such place, it tries again the next second. Sight Blink:
+	 * 5 seconds.
+	 */
+	record SightTeleport(float seconds) implements GeneEffect {
+		public static final MapCodec<SightTeleport> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("seconds", 5.0F).forGetter(SightTeleport::seconds)
+		).apply(instance, SightTeleport::new));
+
+		@Override
+		public String type() {
+			return "sight_teleport";
 		}
 	}
 }

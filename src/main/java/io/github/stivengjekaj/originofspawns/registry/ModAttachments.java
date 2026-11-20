@@ -136,6 +136,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> SHUT_UNTIL = AttachmentRegistry.create(OriginOfSpawns.id("shut_until"));
 
 	/**
+	 * The game time since which a shulker does not see its target.
+	 */
+	public static final AttachmentType<Long> BLIND_SINCE = AttachmentRegistry.create(OriginOfSpawns.id("blind_since"));
+
+	/**
 	 * The game time of the last melee hit of a mob on each player, by the UUID of the player.
 	 */
 	public static final AttachmentType<java.util.Map<java.util.UUID, Long>> PLAYER_HITS =

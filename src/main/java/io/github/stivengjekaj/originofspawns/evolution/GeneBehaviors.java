@@ -399,6 +399,11 @@ public final class GeneBehaviors {
 			mob.getNavigation().stop();
 			mob.setDeltaMovement(0.0, mob.getDeltaMovement().y, 0.0);
 		}
+		Long jump = mob.getAttached(ModAttachments.JUMP_TIME);
+		if (jump != null && mob.onGround() && level.getGameTime() - jump >= LANDING_TICKS) {
+			mob.removeAttached(ModAttachments.JUMP_TIME);
+			GeneCubes.onLand(mob, level);
+		}
 		List<GeneEffect> effects = GeneEffects.of(mob).toList();
 		updateSpeed(mob, effects);
 		scaleBrainCooldown(mob, level);
@@ -1572,6 +1577,18 @@ public final class GeneBehaviors {
 			mob.setAttached(ModAttachments.DASH_HITS, done);
 		}
 		return count;
+	}
+
+	/**
+	 * The ticks after a jump before the mob can land. A jump leaves the ground in the first ticks.
+	 */
+	private static final long LANDING_TICKS = 3L;
+
+	/**
+	 * Marks the jump of a horse, from a player that rides it or from a climb. The landing effects act when it lands.
+	 */
+	public static void onJump(Mob mob, ServerLevel level) {
+		mob.setAttached(ModAttachments.JUMP_TIME, level.getGameTime());
 	}
 
 	/**

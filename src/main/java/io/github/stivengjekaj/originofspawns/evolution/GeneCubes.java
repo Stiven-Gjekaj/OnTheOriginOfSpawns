@@ -126,7 +126,8 @@ public final class GeneCubes {
 	}
 
 	/**
-	 * Runs the landing effects of the mob, when it lands from a hop of a cube or a long jump of a breeze.
+	 * Runs the landing effects of the mob, when it lands from a hop of a cube, a long jump of a breeze, or a jump of a
+	 * horse. The riders of the mob are safe.
 	 */
 	public static void onLand(net.minecraft.world.entity.Mob cube, ServerLevel level) {
 		for (GeneEffect effect : GeneEffects.of(cube).toList()) {
@@ -139,7 +140,7 @@ public final class GeneCubes {
 					if (landing.mobs()) {
 						for (net.minecraft.world.entity.Mob mob : level.getEntitiesOfClass(net.minecraft.world.entity.Mob.class,
 								cube.getBoundingBox().inflate(landing.radius()),
-								mob -> mob != cube && mob.isAlive() && mob.getType() != cube.getType())) {
+								mob -> mob != cube && mob.isAlive() && mob.getType() != cube.getType() && !cube.hasPassenger(mob))) {
 							mob.hurtServer(level, level.damageSources().mobAttack(cube), landing.damage());
 						}
 					}
@@ -161,7 +162,8 @@ public final class GeneCubes {
 					}
 				}
 				case GeneEffect.LandingShieldStop stop -> {
-					for (Player player : level.getEntitiesOfClass(Player.class, cube.getBoundingBox().inflate(0.1))) {
+					for (Player player : level.getEntitiesOfClass(Player.class, cube.getBoundingBox().inflate(stop.radius()),
+							player -> !cube.hasPassenger(player))) {
 						ItemStack shield = player.getItemBlockingWith();
 						if (shield != null && shield.has(DataComponents.BLOCKS_ATTACKS)) {
 							shield.get(DataComponents.BLOCKS_ATTACKS).disable(level, player, stop.seconds(), shield);
@@ -176,7 +178,7 @@ public final class GeneCubes {
 
 	private static java.util.List<Player> playersNear(net.minecraft.world.entity.Mob cube, ServerLevel level, float radius) {
 		return level.getEntitiesOfClass(Player.class, cube.getBoundingBox().inflate(radius),
-				player -> player.isAlive() && !player.isSpectator());
+				player -> player.isAlive() && !player.isSpectator() && !cube.hasPassenger(player));
 	}
 
 	/**

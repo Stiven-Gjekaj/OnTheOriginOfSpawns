@@ -3718,12 +3718,13 @@ public sealed interface GeneEffect {
 	}
 
 	/**
-	 * When a cube lands on a player that holds up a shield, the shield is useless for this many seconds. The cube
-	 * lands on a player when the player touches the cube at the landing.
+	 * When a mob lands, the shields of the players in the radius that hold them up are useless for this many seconds.
+	 * The default radius is so small that a cube stops only the shield of a player that touches it at the landing.
 	 */
-	record LandingShieldStop(float seconds) implements GeneEffect {
+	record LandingShieldStop(float seconds, float radius) implements GeneEffect {
 		public static final MapCodec<LandingShieldStop> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				Codec.floatRange(0.05F, 600.0F).fieldOf("seconds").forGetter(LandingShieldStop::seconds)
+				Codec.floatRange(0.05F, 600.0F).fieldOf("seconds").forGetter(LandingShieldStop::seconds),
+				Codec.floatRange(0.1F, 16.0F).optionalFieldOf("radius", 0.1F).forGetter(LandingShieldStop::radius)
 		).apply(instance, LandingShieldStop::new));
 
 		@Override

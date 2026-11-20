@@ -47,6 +47,18 @@ public abstract class LivingEntityMixin {
 		}
 	}
 
+	/**
+	 * A horse that a mob rides jumps only to climb. The landing effects of the horse act when it lands.
+	 */
+	@Inject(method = "jumpFromGround", at = @At("TAIL"))
+	private void originofspawns$horseJump(CallbackInfo info) {
+		LivingEntity self = (LivingEntity) (Object) this;
+		if (self instanceof net.minecraft.world.entity.animal.equine.AbstractHorse horse
+				&& self.level() instanceof ServerLevel level && self.hasAttached(ModAttachments.GENES)) {
+			io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.onJump(horse, level);
+		}
+	}
+
 	@Inject(method = "checkTotemDeathProtection", at = @At("HEAD"), cancellable = true)
 	private void originofspawns$undying(DamageSource source, CallbackInfoReturnable<Boolean> info) {
 		LivingEntity self = (LivingEntity) (Object) this;

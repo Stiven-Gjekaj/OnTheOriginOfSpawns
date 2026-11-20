@@ -302,6 +302,11 @@ public final class ModAttachments {
 			AttachmentRegistry.create(OriginOfSpawns.id("spit"));
 
 	/**
+	 * The game time of the last jump of a horse, until it lands.
+	 */
+	public static final AttachmentType<Long> JUMP_TIME = AttachmentRegistry.create(OriginOfSpawns.id("jump_time"));
+
+	/**
 	 * The game time at which the translucent time of a mob after a hurt ends. The clients use it to draw the mob.
 	 */
 	public static final AttachmentType<Long> TRANSLUCENT_UNTIL = AttachmentRegistry.create(OriginOfSpawns.id("translucent_until"),

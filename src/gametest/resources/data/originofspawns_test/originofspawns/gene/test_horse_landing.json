@@ -1,0 +1,7 @@
+{
+	"species": ["minecraft:zombie_horse", "minecraft:skeleton_horse"],
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "landing_damage", "damage": 3, "radius": 2, "mobs": true }, { "type": "landing_shield_stop", "seconds": 3, "radius": 2 }],
+	"mutation_rate": 0
+}

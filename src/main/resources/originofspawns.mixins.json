@@ -6,6 +6,7 @@
 		"AbstractArrowAccessor",
 		"AbstractCubeMobAccessor",
 		"AbstractCubeMobMixin",
+		"AbstractHorseMixin",
 		"AbstractHurtingProjectileMixin",
 		"AbstractPiglinMixin",
 		"AbstractSkeletonAccessor",

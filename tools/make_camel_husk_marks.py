@@ -728,19 +728,29 @@ def long_dash():
 
 
 def long_dash_model():
-    # Long, lean legs: lean, dark muscles lie along the thighs and the
+    # Long, lean legs: lean, raised muscles lie along the thighs and the
     # shoulders, where the legs meet the body. Each muscle is a long, thin
     # shape in the colors of the hide, wide at the foot and thin at the top,
-    # and it stands 0.5 pixel out from the side of the body. The body side
+    # with light edges and a light top, and it stands 0.5 pixel out from the
+    # side of the body. The body side
     # is at x 7.5 on the model, and the legs are at x 4.9 and -4.9.
     im = model_image(32, 32)
 
-    def muscle(f, x, y):
-        if f in ("right", "left") and x == 0:
-            return "#7A6A54"
-        return "#4A3E30" if (x + y) % 4 else "#5A4C3A"
-    paint_box(im, 0, 0, 1, 6, 3, muscle)
-    paint_box(im, 0, 12, 1, 5, 2, muscle)
+    def muscle(depth):
+        def color(f, x, y):
+            if f == "top":
+                return "#8C7454"
+            if f in ("right", "left"):
+                # A soft, light edge on each side, so that the muscle reads
+                # as raised, and darker hide in the middle, lighter at the
+                # top of the muscle.
+                if x in (0, depth - 1):
+                    return "#8C7454"
+                return "#6A5842" if y < 2 else "#4E4030"
+            return "#5A4A38"
+        return color
+    paint_box(im, 0, 0, 1, 6, 3, muscle(3))
+    paint_box(im, 0, 12, 1, 5, 2, muscle(2))
     parts = []
     for leg, sign in (("left_hind_leg", 1), ("right_hind_leg", -1), ("left_front_leg", 1),
                       ("right_front_leg", -1)):

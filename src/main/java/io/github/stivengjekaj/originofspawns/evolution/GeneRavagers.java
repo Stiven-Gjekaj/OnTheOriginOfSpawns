@@ -116,4 +116,26 @@ public final class GeneRavagers {
 		}
 		return false;
 	}
+
+	/**
+	 * After the mob kills a player, each roar on kill gene heals it, and the ravager roars.
+	 *
+	 * @return true if a roar on kill gene acted
+	 */
+	public static boolean onPlayerKilled(net.minecraft.world.entity.Mob killer) {
+		if (!(killer instanceof Ravager ravager)) {
+			return false;
+		}
+		boolean acted = false;
+		for (GeneEffect effect : GeneEffects.of(ravager).toList()) {
+			if (effect instanceof GeneEffect.RoarOnKill roar) {
+				ravager.heal(roar.heal());
+				acted = true;
+			}
+		}
+		if (acted) {
+			roarNow(ravager);
+		}
+		return acted;
+	}
 }

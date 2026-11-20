@@ -362,7 +362,8 @@ public sealed interface GeneEffect {
 			Map.entry("roar_range", RoarRange.CODEC),
 			Map.entry("roar_damage", RoarDamage.CODEC),
 			Map.entry("roar_effect", RoarEffect.CODEC),
-			Map.entry("roar_on_hurt", RoarOnHurt.CODEC)
+			Map.entry("roar_on_hurt", RoarOnHurt.CODEC),
+			Map.entry("roar_on_kill", RoarOnKill.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6133,6 +6134,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "roar_on_hurt";
+		}
+	}
+
+	/**
+	 * After a ravager kills a player, it roars at once and heals this much health at once. The roar needs no stun first.
+	 * Victory Roar: 10 health.
+	 */
+	record RoarOnKill(float heal) implements GeneEffect {
+		public static final MapCodec<RoarOnKill> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1024.0F).optionalFieldOf("heal", 0.0F).forGetter(RoarOnKill::heal)
+		).apply(instance, RoarOnKill::new));
+
+		@Override
+		public String type() {
+			return "roar_on_kill";
 		}
 	}
 }

@@ -80,4 +80,16 @@ public class RavagerEffectsTest {
 		helper.assertValueEqual(shot.getRoarTick(), 20, "an arrow starts a roar with no stun");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aVictoryRoarRoarsAndHealsAfterItKillsAPlayer(GameTestHelper helper) {
+		Ravager ravager = ravager(helper, new BlockPos(2, 1, 2), "test_victory_roar");
+		ravager.setHealth(50.0F);
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(ravager), 1000.0F);
+		helper.assertTrue(player.isDeadOrDying(), "the ravager kills the player");
+		helper.assertValueEqual(ravager.getHealth(), 60.0F, "the ravager heals 10 health at once");
+		helper.assertValueEqual(ravager.getRoarTick(), 20, "the ravager roars");
+		helper.succeed();
+	}
 }

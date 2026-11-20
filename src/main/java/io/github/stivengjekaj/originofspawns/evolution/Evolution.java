@@ -256,6 +256,7 @@ public final class Evolution {
 	 * Raises the genes that a killer mob carries, and counts the player death pressure for its species.
 	 */
 	public static void onPlayerKilled(ServerLevel level, Mob killer, DamageSource source) {
+		GeneRavagers.onPlayerKilled(killer);
 		if (GeneEffects.of(killer).anyMatch(GeneEffect.ChargeAfterKill.class::isInstance)) {
 			killer.setAttached(ModAttachments.LASER_READY, true);
 		}

@@ -95,7 +95,7 @@ public class MountEffectsTest {
 	}
 
 	@GameTest
-	public void aWoundedRiderGetsTheEffectOneTimeInTheCooldown(GameTestHelper helper) {
+	public void aWoundedRiderHealsAndGetsTheEffectOneTimeInTheCooldown(GameTestHelper helper) {
 		int x = 1;
 		for (Pair pair : MOUNTS) {
 			String name = pair.mount().toShortString();
@@ -108,6 +108,8 @@ public class MountEffectsTest {
 				mount.tickCount = 20;
 				GeneBehaviors.tick(mount, helper.getLevel());
 			}
+			helper.assertTrue(Math.abs(wounded.getHealth() - (wounded.getMaxHealth() * 0.4F + 4.0F)) < 0.001F,
+					"the wounded rider of the " + name + " heals 4 health at once");
 			helper.assertTrue(wounded.hasEffect(MobEffects.RESISTANCE), "the wounded rider of the " + name + " gets Resistance");
 			helper.assertFalse(healthy.hasEffect(MobEffects.RESISTANCE), "a rider over half health gets nothing");
 			wounded.removeEffect(MobEffects.RESISTANCE);
@@ -115,6 +117,8 @@ public class MountEffectsTest {
 			mount.tickCount = 40;
 			GeneBehaviors.tick(mount, helper.getLevel());
 			helper.assertFalse(wounded.hasEffect(MobEffects.RESISTANCE), "the next one waits 30 seconds");
+			helper.assertTrue(Math.abs(wounded.getHealth() - (wounded.getMaxHealth() * 0.4F + 4.0F)) < 0.001F,
+					"no second heal in the cooldown");
 			x += 2;
 		}
 		helper.succeed();

@@ -2,6 +2,6 @@
 	"species": ["minecraft:camel_husk", "minecraft:zombie_nautilus", "minecraft:zombie_horse", "minecraft:skeleton_horse"],
 	"counters": "originofspawns_test:test_heat",
 	"family": "originofspawns_test:test",
-	"gains": [{ "type": "rider_effect_when_wounded", "effect": "minecraft:resistance", "seconds": 5, "threshold": 0.5, "cooldown_seconds": 30 }],
+	"gains": [{ "type": "rider_effect_when_wounded", "heal": 4, "effect": "minecraft:resistance", "seconds": 5, "threshold": 0.5, "cooldown_seconds": 30 }],
 	"mutation_rate": 0
 }

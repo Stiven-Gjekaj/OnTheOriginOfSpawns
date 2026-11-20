@@ -1608,8 +1608,8 @@ public final class GeneBehaviors {
 	}
 
 	/**
-	 * Gives the status effect to each mob that rides the mount and is under the health threshold, if the cooldown of
-	 * that rider is over. The behavior tick runs this one time each second.
+	 * Heals each mob that rides the mount and is under the health threshold, and gives it the status effect, if the
+	 * cooldown of that rider is over. The behavior tick runs this one time each second.
 	 *
 	 * @return the number of riders that got the effect now
 	 */
@@ -1620,8 +1620,11 @@ public final class GeneBehaviors {
 					&& rider.getHealth() < rider.getMaxHealth() * bond.threshold()
 					&& GeneCombat.ready(rider, bond, bond.cooldownSeconds())) {
 				GeneCombat.startCooldown(rider, bond);
-				rider.addEffect(new MobEffectInstance(bond.effect(), Math.round(bond.seconds() * 20.0F), bond.amplifier()),
-						mount);
+				if (bond.heal() > 0.0F) {
+					rider.heal(bond.heal());
+				}
+				bond.effect().ifPresent(effect -> rider.addEffect(new MobEffectInstance(effect,
+						Math.round(bond.seconds() * 20.0F), bond.amplifier()), mount));
 				given++;
 			}
 		}

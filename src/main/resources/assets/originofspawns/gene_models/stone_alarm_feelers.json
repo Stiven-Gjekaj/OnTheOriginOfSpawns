@@ -1,0 +1,63 @@
+{
+	"texture": "originofspawns:textures/entity/stone_alarm_feelers.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "segment0",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.6,
+				-0.5,
+				-6.6
+			],
+			"size": [
+				1,
+				1,
+				6
+			],
+			"inflate": -0.3,
+			"pivot": [
+				-1.1,
+				0,
+				-0.6
+			],
+			"rotation": [
+				-30,
+				20,
+				0
+			]
+		},
+		{
+			"bone": "segment0",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.6,
+				-0.5,
+				-6.6
+			],
+			"size": [
+				1,
+				1,
+				6
+			],
+			"inflate": -0.3,
+			"pivot": [
+				1.1,
+				0,
+				-0.6
+			],
+			"rotation": [
+				-30,
+				-20,
+				0
+			]
+		}
+	]
+}

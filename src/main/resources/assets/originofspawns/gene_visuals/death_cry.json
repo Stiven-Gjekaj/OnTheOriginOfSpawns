@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/silverfish.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/death_cry_0.png",
+				"tint": "#FFFFFF"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/death_cry_1.png",
+				"tint": "#D4D4DC"
+			}
+		}
+	]
+}

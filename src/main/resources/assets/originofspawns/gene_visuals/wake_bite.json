@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/silverfish.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/wake_bite_0.png",
+				"tint": "#FFFFFF"
+			}
+		}
+	]
+}

@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/silverfish.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/gnaw_frenzy_0.png",
+				"tint": "#6A0808"
+			}
+		}
+	]
+}

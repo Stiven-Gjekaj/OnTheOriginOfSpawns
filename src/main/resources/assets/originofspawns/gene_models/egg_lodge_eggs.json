@@ -1,0 +1,79 @@
+{
+	"texture": "originofspawns:textures/entity/egg_lodge_eggs.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "segment5",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.7,
+				0.3,
+				-1.0
+			],
+			"size": [
+				1,
+				1,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "segment5",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.7,
+				0.3,
+				0.1
+			],
+			"size": [
+				1,
+				1,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "segment5",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.7,
+				0.3,
+				-1.0
+			],
+			"size": [
+				1,
+				1,
+				1
+			],
+			"inflate": -0.1
+		},
+		{
+			"bone": "segment5",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.7,
+				0.3,
+				0.1
+			],
+			"size": [
+				1,
+				1,
+				1
+			],
+			"inflate": -0.1
+		}
+	]
+}

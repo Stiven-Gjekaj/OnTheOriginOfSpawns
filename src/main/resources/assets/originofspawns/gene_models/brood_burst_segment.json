@@ -1,0 +1,25 @@
+{
+	"mob_texture": true,
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "segment2",
+			"uv": [
+				0,
+				9
+			],
+			"from": [
+				-3,
+				-0.5,
+				-1.5
+			],
+			"size": [
+				6,
+				4,
+				3
+			],
+			"inflate": 0.5
+		}
+	]
+}

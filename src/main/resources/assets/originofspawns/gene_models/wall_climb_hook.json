@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/wall_climb_hook.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "segment6",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				-2,
+				-0.9
+			],
+			"size": [
+				1,
+				2,
+				1
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "segment6",
+			"uv": [
+				0,
+				4
+			],
+			"from": [
+				-0.5,
+				-2.2,
+				-2.5
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"inflate": -0.2
+		}
+	]
+}

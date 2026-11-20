@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/tunnel_gnaw_teeth.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "segment0",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.0,
+				1.05,
+				-2.6
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "segment0",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.0,
+				1.05,
+				-2.6
+			],
+			"size": [
+				1,
+				1,
+				2
+			],
+			"inflate": -0.2
+		}
+	]
+}

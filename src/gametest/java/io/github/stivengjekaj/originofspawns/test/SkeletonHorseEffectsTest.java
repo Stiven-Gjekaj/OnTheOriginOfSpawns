@@ -86,4 +86,34 @@ public class SkeletonHorseEffectsTest {
 		helper.assertTrue(wideGoal.canUse(), "a wide trap opens at 15 blocks");
 		helper.succeed();
 	}
+
+	/**
+	 * Makes a skeleton horse trap that can go away: it is not persistent, as a natural trap.
+	 */
+	static SkeletonHorse naturalTrap(GameTestHelper helper, BlockPos pos, String... genes) {
+		SkeletonHorse horse = EntityTypes.SKELETON_HORSE.create(helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+		horse.setAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.GENES,
+				new io.github.stivengjekaj.originofspawns.evolution.CarriedGenes(java.util.Arrays.stream(genes)
+						.map(gene -> net.minecraft.resources.Identifier.fromNamespaceAndPath("originofspawns_test", gene)).toList()));
+		horse.setNoAi(true);
+		horse.snapTo(helper.absoluteVec(Vec3.atBottomCenterOf(pos)), 0.0F, 0.0F);
+		helper.getLevel().addFreshEntity(horse);
+		horse.setTrap(true);
+		return horse;
+	}
+
+	@GameTest
+	public void longWaitKeepsTheTrapTwoTimesAsLong(GameTestHelper helper) {
+		SkeletonHorse plain = naturalTrap(helper, new BlockPos(1, 1, 1));
+		SkeletonHorse patient = naturalTrap(helper, new BlockPos(5, 1, 5), "test_horse_long_wait");
+		for (SkeletonHorse horse : java.util.List.of(plain, patient)) {
+			// 20 minutes: more than the vanilla 15 minutes, less than 30 minutes.
+			((io.github.stivengjekaj.originofspawns.mixin.SkeletonHorseAccessor) horse).originofspawns$setTrapTime(24000);
+			horse.aiStep();
+		}
+		helper.assertTrue(plain.isRemoved(), "a plain trap goes away after 15 minutes");
+		helper.assertFalse(patient.isRemoved(), "a long wait trap stays for 30 minutes");
+		patient.discard();
+		helper.succeed();
+	}
 }

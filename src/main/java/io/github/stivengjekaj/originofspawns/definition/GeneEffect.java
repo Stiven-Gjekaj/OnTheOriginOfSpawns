@@ -329,7 +329,8 @@ public sealed interface GeneEffect {
 			Map.entry("ink_rate", InkRate.CODEC),
 			Map.entry("translucent_on_hurt", TranslucentOnHurt.CODEC),
 			Map.entry("swim_speed", SwimSpeed.CODEC),
-			Map.entry("trap_range", TrapRange.CODEC)
+			Map.entry("trap_range", TrapRange.CODEC),
+			Map.entry("trap_life", TrapLife.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5543,6 +5544,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "trap_range";
+		}
+	}
+
+	/**
+	 * Multiplies the time before a skeleton horse trap that no player finds goes away. The vanilla time is 15 minutes.
+	 * More than one effect multiplies together. Long Wait: 2.
+	 */
+	record TrapLife(float multiplier) implements GeneEffect {
+		public static final MapCodec<TrapLife> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 10.0F).optionalFieldOf("multiplier", 2.0F).forGetter(TrapLife::multiplier)
+		).apply(instance, TrapLife::new));
+
+		@Override
+		public String type() {
+			return "trap_life";
 		}
 	}
 }

@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:skeleton_horse",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:skeleton_horse/ossifier",
+	"gains": [
+		{
+			"type": "dodge_projectiles",
+			"chance": 0.25
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

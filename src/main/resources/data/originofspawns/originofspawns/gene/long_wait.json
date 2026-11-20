@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:skeleton_horse",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:skeleton_horse/thunderhoof",
+	"gains": [
+		{
+			"type": "trap_life",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

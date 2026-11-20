@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:skeleton_horse",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:skeleton_horse/wraithrunner",
+	"sub_family": "originofspawns:skeleton_horse/tidestrider",
+	"gains": [
+		{
+			"type": "flee",
+			"threshold": 0.3,
+			"seconds": 4,
+			"speed": 1.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

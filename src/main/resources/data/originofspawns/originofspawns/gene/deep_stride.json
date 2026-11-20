@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:skeleton_horse",
+	"counters": "originofspawns:in_water",
+	"family": "originofspawns:skeleton_horse/tidestrider",
+	"gains": [
+		{
+			"type": "swim_speed",
+			"multiplier": 1.2
+		}
+	],
+	"downsides": [
+		{
+			"type": "speed_when",
+			"when": "on_land",
+			"multiplier": 0.9
+		}
+	]
+}

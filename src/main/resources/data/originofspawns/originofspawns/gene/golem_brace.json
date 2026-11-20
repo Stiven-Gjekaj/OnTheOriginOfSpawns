@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:skeleton_horse",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:skeleton_horse/ossifier",
+	"sub_family": "originofspawns:skeleton_horse/squire",
+	"gains": [
+		{
+			"type": "damage_from",
+			"attackers": "#originofspawns:all_golems",
+			"multiplier": 0.7
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

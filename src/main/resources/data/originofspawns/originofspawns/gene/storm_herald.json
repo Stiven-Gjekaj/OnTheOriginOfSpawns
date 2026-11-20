@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:skeleton_horse",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:skeleton_horse/thunderhoof",
+	"gains": [
+		{
+			"type": "trap_lightning",
+			"distance": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

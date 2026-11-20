@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:skeleton_horse",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:skeleton_horse/thunderhoof",
+	"sub_family": "originofspawns:skeleton_horse/squire",
+	"gains": [
+		{
+			"type": "horsemen_rally",
+			"multiplier": 1.3,
+			"seconds": 10,
+			"radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

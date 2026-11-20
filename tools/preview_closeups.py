@@ -673,6 +673,7 @@ PIGLIN_CROSSBOW_CLOSEUPS = {"piglin_crossbow_closeup": (
 PIGLIN_BRUTE_CLOSEUPS = nether_closeup("piglin_brute", "Piglin brute with a gold axe")
 HOGLIN_CLOSEUPS = nether_closeup("hoglin", "Hoglin", SPIDER_VIEWS)
 ZOGLIN_CLOSEUPS = nether_closeup("zoglin", "Zoglin", SPIDER_VIEWS)
+CAMEL_HUSK_CLOSEUPS = nether_closeup("camel_husk", "Camel husk")
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
@@ -709,6 +710,7 @@ SPECIES = {
     "piglin_brute": (pg.PIGLIN_BRUTE_PATH, None, PIGLIN_BRUTE_CLOSEUPS),
     "hoglin": (pg.HOGLIN_PATH, None, HOGLIN_CLOSEUPS),
     "zoglin": (pg.ZOGLIN_PATH, None, ZOGLIN_CLOSEUPS),
+    "camel_husk": (pg.CAMEL_HUSK_PATH, None, CAMEL_HUSK_CLOSEUPS),
 }
 
 

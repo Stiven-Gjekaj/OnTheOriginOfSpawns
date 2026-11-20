@@ -79,6 +79,7 @@ BREEZE_PATH = "assets/minecraft/textures/entity/breeze/breeze.png"
 BREEZE_WIND_PATH = "assets/minecraft/textures/entity/breeze/breeze_wind.png"
 BREEZE_EYES_PATH = "assets/minecraft/textures/entity/breeze/breeze_eyes.png"
 GUARDIAN_PATH = "assets/minecraft/textures/entity/guardian/guardian.png"
+CAMEL_HUSK_PATH = "assets/minecraft/textures/entity/camel/camel_husk.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -574,6 +575,16 @@ GUARDIAN_FAMILIES = {
 }
 
 
+# The families of the camel husk, from design/species/camel_husk.md.
+CAMEL_HUSK_FAMILIES = {
+    "dasher": ["long_dash", "ram_dash", "quick_dash", "spear_charge", "dust_dash", "sand_leap"],
+    "humpback": ["water_hump", "thick_hide", "dried_flesh", "deep_reserve", "bone_hump", "stubborn_hooves"],
+    "dunewalker": ["swift_stride", "sand_veil", "sure_feet", "night_trek", "shy_step", "escape_run"],
+    "bearer": ["saddle_wall", "high_seat", "rider_bond", "fire_cloth", "last_carry", "iron_studs"],
+    "sandkicker": ["hard_kick", "sand_spray", "golem_kick", "shield_kick", "sand_spit", "sand_shove"],
+}
+
+
 ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
     "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
     "fester": ["nether_rot", "stench"], "bladesman": ["riposte", "keen_edge"], "chaser": ["scent_tracker", "vault"],
@@ -622,6 +633,11 @@ GUARDIAN_EXTRA = next_family_extra(GUARDIAN_FAMILIES, {
     "spikeback": ["long_spikes", "coral_shell"], "darter": ["fast_fin", "deep_flight"],
     "shoaler": ["shoal_ward", "guide_beam"],
 }, "shoaler")
+CAMEL_HUSK_EXTRA = next_family_extra(CAMEL_HUSK_FAMILIES, {
+    "dasher": ["long_dash", "spear_charge"], "humpback": ["water_hump", "bone_hump"],
+    "dunewalker": ["swift_stride", "shy_step"], "bearer": ["high_seat", "saddle_wall"],
+    "sandkicker": ["hard_kick", "golem_kick"],
+}, "dunewalker")
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -1075,6 +1091,33 @@ GUARDIAN_CUBES = [
     ("tail2", (25, 19), (1, 10.5, 3), (1, 9, 9), False),
 ] + [(f"spike{i}", (0, 0), (-1, -4.5, -1), (2, 9, 2), False) for i in range(12)]
 
+# The camel husk, from AdultCamelModel, the model of the adult camel. The
+# hump, the tail, and the head are children of the body. The head has three
+# cubes: the low neck, the high neck, and the snout. The ears are children
+# of the head. The legs are children of the root. The model stands at rest.
+CAMEL_BODY = (0, 4, 9.5)
+CAMEL_HEAD = child_pivot(CAMEL_BODY, (0, -3, -19.5))
+CAMEL_HUSK_PIVOTS = {
+    "body": CAMEL_BODY, "hump": child_pivot(CAMEL_BODY, (0, -12, -10)),
+    "tail": child_pivot(CAMEL_BODY, (0, -9, 3.5)), "head": CAMEL_HEAD,
+    "left_ear": child_pivot(CAMEL_HEAD, (2.5, -21, -9.5)), "right_ear": child_pivot(CAMEL_HEAD, (-2.5, -21, -9.5)),
+    "left_hind_leg": (4.9, 1, 9.5), "right_hind_leg": (-4.9, 1, 9.5),
+    "left_front_leg": (4.9, 1, -10.5), "right_front_leg": (-4.9, 1, -10.5),
+}
+CAMEL_HUSK_CUBES = [
+    ("body", (0, 25), (-7.5, -12, -23.5), (15, 12, 27), False),
+    ("hump", (74, 0), (-4.5, -5, -5.5), (9, 5, 11), False),
+    ("tail", (122, 0), (-1.5, 0, 0), (3, 14, 0), False),
+    ("head", (60, 24), (-3.5, -7, -15), (7, 8, 19), False),
+    ("head", (21, 0), (-3.5, -21, -15), (7, 14, 7), False),
+    ("head", (50, 0), (-2.5, -21, -21), (5, 5, 6), False),
+    ("left_ear", (45, 0), (-0.5, 0.5, -1), (3, 1, 2), False),
+    ("right_ear", (67, 0), (-2.5, 0.5, -1), (3, 1, 2), False),
+] + [(leg, uv, (-2.5, 2, -2.5), (5, 21, 5), False)
+     for leg, uv in (("left_hind_leg", (58, 16)), ("right_hind_leg", (94, 16)),
+                     ("left_front_leg", (0, 0)), ("right_front_leg", (0, 26)))]
+CAMEL_HUSK_FRAME, CAMEL_HUSK_CLOSEUP = (28, 27, 56, 56), ((56, 56), (0, 1))
+
 # Each Nether mob: the cubes, the pivots, the weapon, the wraps, the frame of
 # the sheets (VIEW_X, VIEW_Y, VIEW_W, VIEW_H), the frame of the close-ups,
 # and whether the sheets look down on it.
@@ -1094,6 +1137,7 @@ NETHER_LOOKS = {
     "blaze": (BLAZE_CUBES, BLAZE_PIVOTS, None, [], (13, 8, 26, 32), ((28, 34), (0, 8)), False),
     "breeze": (BREEZE_CUBES, BREEZE_PIVOTS, None, [], (12, 7, 24, 33), ((26, 34), (0, 9)), False),
     "guardian": (GUARDIAN_CUBES, GUARDIAN_PIVOTS, None, [], (24, 6, 48, 44), ((50, 46), (0, 16)), False),
+    "camel_husk": (CAMEL_HUSK_CUBES, CAMEL_HUSK_PIVOTS, None, [], CAMEL_HUSK_FRAME, CAMEL_HUSK_CLOSEUP, False),
 }
 # The flyers are seen from below in the game, so their sheets look at them
 # from above, from below, and from the side.
@@ -1687,6 +1731,7 @@ SPECIES = {
     "blaze": (BLAZE_PATH, None, BLAZE_FAMILIES, BLAZE_EXTRA, []),
     "breeze": (BREEZE_PATH, None, BREEZE_FAMILIES, BREEZE_EXTRA, []),
     "guardian": (GUARDIAN_PATH, None, GUARDIAN_FAMILIES, GUARDIAN_EXTRA, []),
+    "camel_husk": (CAMEL_HUSK_PATH, None, CAMEL_HUSK_FAMILIES, CAMEL_HUSK_EXTRA, []),
 }
 
 
@@ -1795,6 +1840,10 @@ def set_mob(species):
             # look at it from the front at a turn, from behind, and from the
             # side.
             MOB["sheet_views"] = [(-30, 15), (150, 20), (-90, 5)]
+        if species == "camel_husk":
+            # The camel husk is long. Its sheets look at it from the front at
+            # a turn, from behind at a turn, and from the side.
+            MOB["sheet_views"] = [(-35, 15), (145, 15), (-90, 5)]
         if species.startswith("ghast"):
             # The ghast floats over the player, so its sheets look at it from
             # the front, from below at the side, and from behind.

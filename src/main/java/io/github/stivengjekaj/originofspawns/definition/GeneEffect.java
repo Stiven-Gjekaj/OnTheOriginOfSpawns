@@ -724,7 +724,16 @@ public sealed interface GeneEffect {
 		/**
 		 * A mob rides the mob, for example a pillager on a ravager.
 		 */
-		RIDDEN;
+		RIDDEN,
+		/**
+		 * 2 or more other raiders are in 8 blocks of the mob. A raider is a pillager, a vindicator, an evoker, a witch, an
+		 * illusioner, or a ravager. The rider of the mob counts.
+		 */
+		RAIDER_GROUP,
+		/**
+		 * No other raider is in 8 blocks of the mob.
+		 */
+		NO_RAIDER;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 

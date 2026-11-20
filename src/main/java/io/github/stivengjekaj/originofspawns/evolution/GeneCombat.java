@@ -209,6 +209,8 @@ public final class GeneCombat {
 			case SHELL_CLOSED -> entity instanceof net.minecraft.world.entity.monster.Shulker shulker
 					&& ((io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker).originofspawns$isClosed();
 			case RIDDEN -> entity.getFirstPassenger() instanceof Mob;
+			case RAIDER_GROUP -> raidersNear(entity) >= 2;
+			case NO_RAIDER -> raidersNear(entity) == 0;
 		};
 	}
 
@@ -530,6 +532,19 @@ public final class GeneCombat {
 		return entity.level().getEntities(entity.getType(), area, other -> other != entity && other.isAlive()
 				&& (other instanceof net.minecraft.world.entity.NeutralMob neutral ? neutral.isAngry()
 						: other instanceof Mob mob && mob.getTarget() != null)).size();
+	}
+
+	/**
+	 * The radius of the raider states, in blocks.
+	 */
+	private static final double RAIDER_RADIUS = 8.0;
+
+	/**
+	 * Returns the number of other living raiders in 8 blocks of the entity.
+	 */
+	public static int raidersNear(LivingEntity entity) {
+		return entity.level().getEntitiesOfClass(net.minecraft.world.entity.raid.Raider.class,
+				entity.getBoundingBox().inflate(RAIDER_RADIUS), other -> other != entity && other.isAlive()).size();
 	}
 
 	public static int sameSpeciesNear(LivingEntity entity, double radius) {

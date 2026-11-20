@@ -148,4 +148,19 @@ public class RavagerEffectsTest {
 		helper.assertTrue(Math.abs(speed.getValue() - alone * 1.2) < 1.0E-6, "20% more speed with a rider");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aHordeHideCountsTheRaidersNearIt(GameTestHelper helper) {
+		Ravager ravager = ravager(helper, new BlockPos(2, 1, 2), "test_horde_hide");
+		var hit = helper.getLevel().damageSources().generic();
+		helper.assertTrue(Math.abs(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(ravager, hit, 10.0F)
+				- 12.0F) < 0.001F, "20% more damage with no raider near");
+		MountEffectsTest.mob(helper, EntityTypes.PILLAGER, new BlockPos(5, 1, 2));
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(ravager, hit, 10.0F),
+				10.0F, "normal damage with 1 raider near");
+		MountEffectsTest.mob(helper, EntityTypes.VINDICATOR, new BlockPos(2, 1, 5));
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(ravager, hit, 10.0F),
+				8.0F, "20% less damage with 2 raiders near");
+		helper.succeed();
+	}
 }

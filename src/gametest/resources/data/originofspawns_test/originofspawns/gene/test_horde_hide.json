@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "damage_taken_when", "when": "raider_group", "multiplier": 0.8 }, { "type": "damage_taken_when", "when": "no_raider", "multiplier": 1.2 }],
+	"mutation_rate": 0
+}

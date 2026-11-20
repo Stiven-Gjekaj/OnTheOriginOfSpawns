@@ -85,6 +85,11 @@ SKELETON_HORSE_PATH = "assets/minecraft/textures/entity/horse/horse_skeleton.png
 ZOMBIE_NAUTILUS_PATH = "assets/minecraft/textures/entity/nautilus/zombie_nautilus.png"
 ZOMBIE_NAUTILUS_WARM_PATH = "assets/minecraft/textures/entity/nautilus/zombie_nautilus_coral.png"
 SILVERFISH_PATH = "assets/minecraft/textures/entity/silverfish/silverfish.png"
+SHULKER_PATH = "assets/minecraft/textures/entity/shulker/shulker.png"
+# The shulker has 17 colors with one layout. The previews show the default
+# (purple) shulker and three more colors: white, black, and yellow.
+SHULKER_COLOR_PATH = "assets/minecraft/textures/entity/shulker/shulker_{}.png"
+SHULKER_COLORS = ("white", "black", "yellow")
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -625,6 +630,15 @@ SILVERFISH_FAMILIES = {
     "infesters": ["egg_bite", "brood_burst", "stone_seed", "egg_sac", "egg_spit", "gut_bite"],
 }
 
+# The families of the shulker, from design/species/shulker.md.
+SHULKER_FAMILIES = {
+    "gunners": ["hot_shot", "double_shot", "seeker_shot"],
+    "lifters": ["high_lift", "heavy_air", "steep_lift"],
+    "bunkers": ["thick_lid", "blast_lid", "snap_lid"],
+    "shifters": ["quick_blink", "sight_blink", "blink_shut"],
+    "budders": ["split_reach", "heir_shell", "scatter_bud"],
+}
+
 
 ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
     "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
@@ -699,6 +713,11 @@ SILVERFISH_EXTRA = next_family_extra(SILVERFISH_FAMILIES, {
     "skitterers": ["fast_scuttle", "flat_body"], "lodgers": ["cobble_skin", "ember_shell"],
     "infesters": ["brood_burst", "egg_spit"],
 }, "lodgers")
+SHULKER_EXTRA = next_family_extra(SHULKER_FAMILIES, {
+    "gunners": ["hot_shot", "double_shot"], "lifters": ["high_lift", "steep_lift"],
+    "bunkers": ["thick_lid", "snap_lid"], "shifters": ["sight_blink", "blink_shut"],
+    "budders": ["split_reach", "heir_shell"],
+}, "shifters")
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -1281,6 +1300,17 @@ SILVERFISH_CUBES = [(f"segment{i}", SILVERFISH_UVS[i], (-w / 2, 0, -d / 2), (w, 
     ("layer2", (20, 18), (-3, 0, -1), (6, 5, 2), False),
 ]
 SILVERFISH_FRAME, SILVERFISH_CLOSEUP = (30, -38, 60, 44), ((60, 84), (0, 48))
+
+# The shulker, from ShulkerModel: the lid, the base, and the head. The
+# previews draw the lid open, as when the shulker shoots: the lid moves up by
+# 16 pixels, so that the head shows over the base.
+SHULKER_PIVOTS = {"lid": (0, 8, 0), "base": (0, 24, 0), "head": (0, 12, 0)}
+SHULKER_CUBES = [
+    ("lid", (0, 0), (-8, -16, -8), (16, 12, 16), False),
+    ("base", (0, 28), (-8, -8, -8), (16, 8, 16), False),
+    ("head", (0, 52), (-3, 0, -3), (6, 6, 6), False),
+]
+SHULKER_FRAME, SHULKER_CLOSEUP = (18, 14, 36, 44), ((38, 48), (0, 8))
 CAMEL_HUSK_FRAME, CAMEL_HUSK_CLOSEUP = (28, 27, 56, 56), ((56, 56), (0, 1))
 
 # Each Nether mob: the cubes, the pivots, the weapon, the wraps, the frame of
@@ -1310,6 +1340,8 @@ NETHER_LOOKS = {
     "zombie_nautilus_warm": (ZOMBIE_NAUTILUS_WARM_CUBES, ZOMBIE_NAUTILUS_WARM_PIVOTS, None, [], ZOMBIE_NAUTILUS_FRAME,
                              ZOMBIE_NAUTILUS_CLOSEUP, False),
     "silverfish": (SILVERFISH_CUBES, SILVERFISH_PIVOTS, None, [], SILVERFISH_FRAME, SILVERFISH_CLOSEUP, True),
+    **{key: (SHULKER_CUBES, SHULKER_PIVOTS, None, [], SHULKER_FRAME, SHULKER_CLOSEUP, True)
+       for key in ("shulker",) + tuple("shulker_" + c for c in SHULKER_COLORS)},
 }
 # The flyers are seen from below in the game, so their sheets look at them
 # from above, from below, and from the side.
@@ -1909,6 +1941,9 @@ SPECIES = {
     "zombie_nautilus": (ZOMBIE_NAUTILUS_PATH, None, ZOMBIE_NAUTILUS_FAMILIES, ZOMBIE_NAUTILUS_EXTRA, []),
     "zombie_nautilus_warm": (ZOMBIE_NAUTILUS_WARM_PATH, None, ZOMBIE_NAUTILUS_FAMILIES, ZOMBIE_NAUTILUS_EXTRA, []),
     "silverfish": (SILVERFISH_PATH, None, SILVERFISH_FAMILIES, SILVERFISH_EXTRA, []),
+    "shulker": (SHULKER_PATH, None, SHULKER_FAMILIES, SHULKER_EXTRA, []),
+    **{"shulker_" + c: (SHULKER_COLOR_PATH.format(c), None, SHULKER_FAMILIES, SHULKER_EXTRA, [])
+       for c in SHULKER_COLORS},
 }
 
 

@@ -681,6 +681,9 @@ ZOMBIE_NAUTILUS_VIEWS = [BACK, ("3/4 mouth end", 145, 15, 1.0), SIDE, ("from bel
 ZOMBIE_NAUTILUS_CLOSEUPS = nether_closeup("zombie_nautilus", "Zombie nautilus, temperate", ZOMBIE_NAUTILUS_VIEWS)
 ZOMBIE_NAUTILUS_WARM_CLOSEUPS = nether_closeup("zombie_nautilus_warm", "Zombie nautilus, warm", ZOMBIE_NAUTILUS_VIEWS)
 SILVERFISH_CLOSEUPS = nether_closeup("silverfish", "Silverfish", SPIDER_VIEWS)
+SHULKER_CLOSEUPS = {key: nether_closeup(key, title, SPIDER_VIEWS)
+                    for key, title in (("shulker", "Shulker, default color"), ("shulker_white", "Shulker, white"),
+                                       ("shulker_black", "Shulker, black"), ("shulker_yellow", "Shulker, yellow"))}
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
@@ -723,6 +726,9 @@ SPECIES = {
     "zombie_nautilus": (pg.ZOMBIE_NAUTILUS_PATH, None, ZOMBIE_NAUTILUS_CLOSEUPS),
     "zombie_nautilus_warm": (pg.ZOMBIE_NAUTILUS_WARM_PATH, None, ZOMBIE_NAUTILUS_WARM_CLOSEUPS),
     "silverfish": (pg.SILVERFISH_PATH, None, SILVERFISH_CLOSEUPS),
+    "shulker": (pg.SHULKER_PATH, None, SHULKER_CLOSEUPS["shulker"]),
+    **{"shulker_" + c: (pg.SHULKER_COLOR_PATH.format(c), None, SHULKER_CLOSEUPS["shulker_" + c])
+       for c in pg.SHULKER_COLORS},
 }
 
 

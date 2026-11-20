@@ -83,9 +83,10 @@ Inkers squirt ink when they are hurt. Their charge is weak.
 
 The zombie nautilus uses `melee`, `projectile`, `trident`, `explosion`,
 `boat`, `shield`, `in_water`, `on_land`, `unreached`, `spotted`, `alone`,
-`crowd`, `critical`, and `player_death`. It lives in the ocean, so it does not
-use `fire`, `sunlight`, `night`, `day`, or `fall`. A golem seldom fights it,
-so it does not use `golem`. It needs no new pressure.
+`crowd`, `critical`, `sunlight`, and `player_death`. The sun burns it out of
+water, as it burns a drowned. It lives in the ocean, so it does not use
+`fire`, `night`, `day`, or `fall`. A golem seldom fights it, so it does not
+use `golem`. It needs no new pressure.
 
 ## Genes
 
@@ -122,7 +123,7 @@ The visual column gives the region and the mark.
 | Dodge Jet | Jetter | `projectile` | It moves aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Body: wide, alert eyes |
 | Shore Crawl | Jetter | `on_land` | On land, it crawls to the nearest water in 8 blocks | 10% less maximum health | Body: wet, dark skin |
 | Deep Escape | Jetter | `critical` | At under 30% health, it swims away fast for 4 seconds | 10% less maximum health | Tentacles: torn tentacles |
-| Lone Current | Jetter | `alone` | 20% more speed with no other zombie nautilus near it | 10% less maximum health | Shell: blue stream lines |
+| Sun Shell | Jetter | `sunlight` | The sun burns it only one time each 4 seconds, not each second | 10% less maximum health | Shell: a dark, sun-baked shell |
 | Wake Jet | Jetter, sub Rammer | `spotted` | After a charge, it gets Speed for 3 seconds | 10% less maximum health | Tentacles: white wake marks |
 
 ### Tidebearer genes
@@ -151,7 +152,9 @@ The visual column gives the region and the mark.
 
 | Gene | Rules |
 |---|---|
-| Rammers, Deep Ram | "Charge" is the vanilla charge attack of the zombie nautilus |
+| Rammers, Deep Ram | "Charge" is the vanilla charge attack of the zombie nautilus. A vanilla zombie nautilus charges only a pufferfish, or an entity that hurt it while in water |
+| Rammer genes | A zombie nautilus with Rammer family points or a Rammer gene also charges at the target of its rider, in water and on land |
+| Sun Shell | It works as the phantom Sun Shade |
 | Quick Ram | The vanilla charge waits 80 ticks between charges |
 | Hull Ram | It works as the guardian Hull Cutter |
 | Shield Ram | It works as the slime Shield Melt |
@@ -262,6 +265,7 @@ These genes and families need parts that the mod does not have yet.
 | Need | Used by |
 |---|---|
 | A zombie nautilus region map, and the gene textures and gene models on the nautilus model, with both variant textures | All visuals |
+| A charge at the target of its rider | Rammers and the Rammer genes |
 | The damage, the time between, and the push of its charge | Rammers, Deep Ram, Quick Ram, Tide Charge, and the downsides |
 | A boat break, a shield stop, and an air loss from its charge | Hull Ram, Shield Ram, Breath Ram |
 | A self effect after a charge, and after an ink squirt | Wake Jet, Ink Rush |
@@ -269,4 +273,4 @@ These genes and families need parts that the mod does not have yet.
 | An effect on a rider at low health, an effect on the riders at death, and a translucent rider | Kin Current, Last Current, Ink Veil |
 | More effects, more reach, and a shorter cooldown on the ink | Thick Ink, Wide Ink, Sour Ink, Quick Ink |
 | A translucent time after a projectile hit | Ink Screen |
-| A check that the reused effects work on a zombie nautilus: armor, thorns, heal once, regenerate, sidestep in water, a crawl to water, flee, speed when alone, effect on hurt with ink, and the damage taken effects | Many genes |
+| A check that the reused effects work on a zombie nautilus: armor, thorns, heal once, regenerate, sidestep in water, a crawl to water, flee, sun shade, effect on hurt with ink, and the damage taken effects | Many genes |

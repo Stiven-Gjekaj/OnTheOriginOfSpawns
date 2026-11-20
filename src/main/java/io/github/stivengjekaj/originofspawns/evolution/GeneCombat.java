@@ -571,6 +571,14 @@ public final class GeneCombat {
 				case GeneEffect.SmiteResist resist when victim.getType().builtInRegistryHolder().is(net.minecraft.tags.EntityTypeTags.SENSITIVE_TO_SMITE) ->
 						result = Math.max(0.0F, result - SMITE_PER_LEVEL * enchantmentLevel(source,
 								net.minecraft.world.item.enchantment.Enchantments.SMITE) * (1.0F - resist.multiplier()));
+				case GeneEffect.BaneResist resist when victim.getType().builtInRegistryHolder()
+						.is(net.minecraft.tags.EntityTypeTags.SENSITIVE_TO_BANE_OF_ARTHROPODS) -> {
+					int level = enchantmentLevel(source, net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS);
+					result = Math.max(0.0F, result - SMITE_PER_LEVEL * level * (1.0F - resist.multiplier()));
+					if (level > 0 && resist.noSlowness()) {
+						victim.setAttached(ModAttachments.BANE_HIT_TIME, victim.level().getGameTime());
+					}
+				}
 				case GeneEffect.DamageFromItem item when source.getEntity() instanceof LivingEntity attacker
 						&& source.getDirectEntity() == attacker && attacker.getMainHandItem().is(item.items()) ->
 						result *= item.multiplier();
@@ -1363,7 +1371,7 @@ public final class GeneCombat {
 	 * Returns true if the weapon of the attacker has the enchantment.
 	 */
 	/**
-	 * The extra damage of Smite for each level to an undead mob.
+	 * The extra damage of Smite for each level to an undead mob. Bane of Arthropods does the same to an arthropod.
 	 */
 	private static final float SMITE_PER_LEVEL = 2.5F;
 
@@ -1815,6 +1823,11 @@ public final class GeneCombat {
 	 * Tells if a status effect does not affect the mob.
 	 */
 	public static boolean immune(LivingEntity entity, MobEffectInstance instance) {
+		// The Slowness of a hit with Bane of Arthropods comes in the tick of the hit.
+		if (instance.getEffect().equals(net.minecraft.world.effect.MobEffects.SLOWNESS)
+				&& entity.getAttachedOrElse(ModAttachments.BANE_HIT_TIME, Long.MIN_VALUE) == entity.level().getGameTime()) {
+			return true;
+		}
 		return GeneEffects.of(entity).anyMatch(effect -> effect instanceof GeneEffect.EffectImmunity immunity
 				&& immunity.effects().contains(instance.getEffect()));
 	}

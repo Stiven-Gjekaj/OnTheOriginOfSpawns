@@ -342,7 +342,8 @@ public sealed interface GeneEffect {
 			Map.entry("hide_brood", HideBrood.CODEC),
 			Map.entry("stone_seed", StoneSeed.CODEC),
 			Map.entry("gnaw", Gnaw.CODEC),
-			Map.entry("dodge_melee", DodgeMelee.CODEC)
+			Map.entry("dodge_melee", DodgeMelee.CODEC),
+			Map.entry("bane_resist", BaneResist.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5769,6 +5770,24 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "dodge_melee";
+		}
+	}
+
+	/**
+	 * Multiplies the extra damage that Bane of Arthropods does to the mob. Bane of Arthropods does 2.5 more damage for
+	 * each level to a mob in the tag {@code #minecraft:sensitive_to_bane_of_arthropods}, such as a silverfish. With
+	 * {@code no_slowness}, the hit of the enchantment also gives the mob no Slowness. Other Slowness still acts. Bane
+	 * Plate: {@code 0}, with no Slowness.
+	 */
+	record BaneResist(float multiplier, boolean noSlowness) implements GeneEffect {
+		public static final MapCodec<BaneResist> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("multiplier", 0.0F).forGetter(BaneResist::multiplier),
+				Codec.BOOL.optionalFieldOf("no_slowness", true).forGetter(BaneResist::noSlowness)
+		).apply(instance, BaneResist::new));
+
+		@Override
+		public String type() {
+			return "bane_resist";
 		}
 	}
 }

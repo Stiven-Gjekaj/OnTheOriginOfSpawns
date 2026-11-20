@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.test;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneSilverfish;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -226,6 +227,26 @@ public class SilverfishEffectsTest {
 		var arrow = EntityTypes.ARROW.create(helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
 		helper.assertTrue(silverfish.hurtServer(helper.getLevel(), helper.getLevel().damageSources().arrow(arrow, pig), 2.0F),
 				"an arrow hits");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aBanePlateTakesNoExtraDamageAndNoSlownessFromBaneOfArthropods(GameTestHelper helper) {
+		Silverfish plated = silverfish(helper, new BlockPos(1, 1, 1), "test_bane_plate");
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		var sword = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_SWORD);
+		sword.enchant(helper.getLevel().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+				.getOrThrow(net.minecraft.world.item.enchantment.Enchantments.BANE_OF_ARTHROPODS), 2);
+		player.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, sword);
+		var slowness = new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.SLOWNESS, 40, 3);
+		helper.assertTrue(plated.addEffect(new net.minecraft.world.effect.MobEffectInstance(slowness)),
+				"Slowness from other sources still acts");
+		plated.removeAllEffects();
+		// 7 damage of the sword and 5 extra damage of Bane of Arthropods II.
+		helper.assertTrue(Math.abs(GeneCombat.modifyDamage(plated, helper.getLevel().damageSources().playerAttack(player), 12.0F)
+				- 7.0F) < 0.001F, "no extra damage from Bane of Arthropods II");
+		helper.assertFalse(plated.addEffect(new net.minecraft.world.effect.MobEffectInstance(slowness)),
+				"the hit of the enchantment gives no Slowness");
 		helper.succeed();
 	}
 }

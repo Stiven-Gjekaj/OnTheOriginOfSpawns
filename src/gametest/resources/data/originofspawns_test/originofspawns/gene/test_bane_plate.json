@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:silverfish",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "bane_resist", "multiplier": 0, "no_slowness": true }],
+	"mutation_rate": 0
+}

@@ -557,6 +557,8 @@ public final class GeneCombat {
 				case GeneEffect.DamageFrom from when source.getEntity() != null
 						&& from.attackers().stream().anyMatch(type -> type.value() == source.getEntity().getType()) ->
 						result *= from.multiplier();
+				case GeneEffect.DashLeap leap when source.is(DamageTypeTags.IS_FALL) && GeneBehaviors.dashedRecently(victim) ->
+						result = 0.0F;
 				case GeneEffect.CriticalImmunity immunity when source.getEntity() instanceof Player
 						&& victim.getAttachedOrElse(ModAttachments.TRACE, DeathTrace.NONE).criticalTime()
 								== victim.level().getGameTime() -> result /= CRITICAL_MULTIPLIER;

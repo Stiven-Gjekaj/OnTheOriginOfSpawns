@@ -275,6 +275,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> RAM_TIME = AttachmentRegistry.create(OriginOfSpawns.id("ram_time"));
 
 	/**
+	 * The game time of the last dash of a camel, from a mob or from a player that rides it.
+	 */
+	public static final AttachmentType<Long> DASH_TIME = AttachmentRegistry.create(OriginOfSpawns.id("dash_time"));
+
+	/**
 	 * The game time when a guardian with a laser lock lost the sight of its target.
 	 */
 	public static final AttachmentType<Long> SIGHT_LOST = AttachmentRegistry.create(OriginOfSpawns.id("sight_lost"));

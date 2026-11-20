@@ -313,7 +313,8 @@ public sealed interface GeneEffect {
 			Map.entry("kick_area", KickArea.CODEC),
 			Map.entry("mount_dash", MountDash.CODEC),
 			Map.entry("dash_rate", DashRate.CODEC),
-			Map.entry("dash_length", DashLength.CODEC)
+			Map.entry("dash_length", DashLength.CODEC),
+			Map.entry("dash_leap", DashLeap.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5232,6 +5233,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "dash_length";
+		}
+	}
+
+	/**
+	 * Each dash of a camel leaps higher: the top of the dash is the blocks higher than the top of a vanilla dash. The
+	 * camel takes no fall damage in the 5 seconds after a dash. It acts on each dash, also on the dash of a player that
+	 * rides it. Sand Leap: 2.
+	 */
+	record DashLeap(float height) implements GeneEffect {
+		public static final MapCodec<DashLeap> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 16.0F).optionalFieldOf("height", 2.0F).forGetter(DashLeap::height)
+		).apply(instance, DashLeap::new));
+
+		@Override
+		public String type() {
+			return "dash_leap";
 		}
 	}
 }

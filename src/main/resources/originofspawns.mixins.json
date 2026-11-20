@@ -15,6 +15,7 @@
 		"BehaviorUtilsMixin",
 		"BlazeAccessor",
 		"CamelAccessor",
+		"CamelMixin",
 		"BlazeAttackGoalMixin",
 		"BlazeMixin",
 		"BoggedMixin",

@@ -1446,7 +1446,76 @@ public final class GeneBehaviors {
 			camel.setDeltaMovement(movement.x * length, movement.y, movement.z * length);
 		}
 		camel.needsSync = true;
+		onDash(camel, level);
 		return true;
+	}
+
+	/**
+	 * The ticks after a dash in which the dash genes still act, for example the safe fall of a dash leap.
+	 */
+	public static final long DASH_TICKS = 100L;
+
+	/**
+	 * Returns true if the camel dashed in the last 5 seconds.
+	 */
+	public static boolean dashedRecently(LivingEntity camel) {
+		Long dash = camel.getAttached(ModAttachments.DASH_TIME);
+		return dash != null && camel.level().getGameTime() - dash <= DASH_TICKS;
+	}
+
+	/**
+	 * Changes the push of a dash that starts now: each dash leap makes the dash go higher.
+	 */
+	public static void dashMotion(net.minecraft.world.entity.animal.camel.Camel camel) {
+		float height = 0.0F;
+		for (GeneEffect effect : GeneEffects.of(camel).toList()) {
+			if (effect instanceof GeneEffect.DashLeap leap) {
+				height += leap.height();
+			}
+		}
+		if (height > 0.0F) {
+			Vec3 movement = camel.getDeltaMovement();
+			camel.setDeltaMovement(movement.x, upwardSpeedFor(apex(movement.y) + height), movement.z);
+			camel.needsSync = true;
+		}
+	}
+
+	/**
+	 * Returns the blocks that an entity with the vanilla gravity rises with this upward speed.
+	 */
+	static double apex(double speed) {
+		double y = 0.0;
+		double top = 0.0;
+		for (int tick = 0; tick < 200 && speed > 0.0; tick++) {
+			y += speed;
+			top = Math.max(top, y);
+			speed = (speed - 0.08) * 0.98;
+		}
+		return top;
+	}
+
+	/**
+	 * Returns the upward speed with which an entity with the vanilla gravity rises the blocks.
+	 */
+	static double upwardSpeedFor(double blocks) {
+		double low = 0.0;
+		double high = 4.0;
+		for (int step = 0; step < 40; step++) {
+			double middle = (low + high) / 2.0;
+			if (apex(middle) < blocks) {
+				low = middle;
+			} else {
+				high = middle;
+			}
+		}
+		return high;
+	}
+
+	/**
+	 * Runs the dash genes of the camel when a dash starts, from a mob or from a player that rides it.
+	 */
+	public static void onDash(net.minecraft.world.entity.animal.camel.Camel camel, ServerLevel level) {
+		camel.setAttached(ModAttachments.DASH_TIME, level.getGameTime());
 	}
 
 	/**

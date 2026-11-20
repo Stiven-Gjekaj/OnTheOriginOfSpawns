@@ -77,4 +77,40 @@ public class CamelHuskEffectsTest {
 		helper.assertTrue(GeneBehaviors.mountDash(quick, helper.getLevel(), dash), "the quick dasher waits 5.3 seconds");
 		helper.succeed();
 	}
+
+	/**
+	 * Returns the blocks that the camel rises with its upward speed now, with the vanilla gravity.
+	 */
+	static double rise(CamelHusk camel) {
+		double speed = camel.getDeltaMovement().y;
+		double y = 0.0;
+		double top = 0.0;
+		for (int tick = 0; tick < 200 && speed > 0.0; tick++) {
+			y += speed;
+			top = Math.max(top, y);
+			speed = (speed - 0.08) * 0.98;
+		}
+		return top;
+	}
+
+	@GameTest
+	public void sandLeapMakesEachDashTwoBlocksHigherAndSafeFromAFall(GameTestHelper helper) {
+		var level = helper.getLevel();
+		CamelHusk plain = MountEffectsTest.mob(helper, EntityTypes.CAMEL_HUSK, new BlockPos(1, 1, 1));
+		CamelHusk leaper = MountEffectsTest.mob(helper, EntityTypes.CAMEL_HUSK, new BlockPos(6, 1, 1), "test_sand_leap");
+		for (CamelHusk camel : java.util.List.of(plain, leaper)) {
+			((io.github.stivengjekaj.originofspawns.mixin.CamelAccessor) camel).originofspawns$dash(1.0F,
+					new net.minecraft.world.phys.Vec3(0.0, 0.0, 1.0));
+		}
+		helper.assertTrue(Math.abs(rise(leaper) - rise(plain) - 2.0) < 0.05, "the dash of a player goes 2 blocks higher");
+		var fall = level.damageSources().fall();
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(leaper, fall, 6.0F), 6.0F,
+				"a fall with no dash hurts");
+		leaper.handleStartJump(90);
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(leaper, fall, 6.0F), 0.0F,
+				"no fall damage after the dash of a player");
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(plain, fall, 6.0F), 6.0F,
+				"a plain camel husk takes fall damage");
+		helper.succeed();
+	}
 }

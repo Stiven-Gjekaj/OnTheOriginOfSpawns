@@ -84,6 +84,7 @@ ZOMBIE_HORSE_PATH = "assets/minecraft/textures/entity/horse/horse_zombie.png"
 SKELETON_HORSE_PATH = "assets/minecraft/textures/entity/horse/horse_skeleton.png"
 ZOMBIE_NAUTILUS_PATH = "assets/minecraft/textures/entity/nautilus/zombie_nautilus.png"
 ZOMBIE_NAUTILUS_WARM_PATH = "assets/minecraft/textures/entity/nautilus/zombie_nautilus_coral.png"
+SILVERFISH_PATH = "assets/minecraft/textures/entity/silverfish/silverfish.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -615,6 +616,15 @@ SKELETON_HORSE_FAMILIES = {
     "wraithrunner": ["ghost_stride", "wraith_veil", "night_run", "bone_dodge", "weightless", "rattle_flight"],
 }
 
+# The families of the silverfish, from design/species/silverfish.md.
+SILVERFISH_FAMILIES = {
+    "wakers": ["nest_alarm", "stone_alarm", "swarm_rally", "blood_call", "death_cry", "wake_bite"],
+    "gnawers": ["flint_jaw", "rust_bite", "gnaw_frenzy", "tunnel_gnaw", "feeding_bite", "leap_bite"],
+    "skitterers": ["fast_scuttle", "dodge_scuttle", "flat_body", "shell_slip", "wall_climb", "alarm_dash"],
+    "lodgers": ["cobble_skin", "deep_lodge", "ember_shell", "stone_ambush", "bane_plate", "egg_lodge"],
+    "infesters": ["egg_bite", "brood_burst", "stone_seed", "egg_sac", "egg_spit", "gut_bite"],
+}
+
 
 ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
     "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
@@ -684,6 +694,11 @@ SKELETON_HORSE_EXTRA = next_family_extra(SKELETON_HORSE_FAMILIES, {
     "ossifier": ["heavy_bones", "rib_gaps"], "squire": ["squire_saddle", "storm_cloak"],
     "wraithrunner": ["ghost_stride", "night_run"],
 }, "wraithrunner")
+SILVERFISH_EXTRA = next_family_extra(SILVERFISH_FAMILIES, {
+    "wakers": ["stone_alarm", "death_cry"], "gnawers": ["tunnel_gnaw", "rust_bite"],
+    "skitterers": ["fast_scuttle", "flat_body"], "lodgers": ["cobble_skin", "ember_shell"],
+    "infesters": ["brood_burst", "egg_spit"],
+}, "lodgers")
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -1245,6 +1260,27 @@ ZOMBIE_NAUTILUS_WARM_CUBES = ZOMBIE_NAUTILUS_CUBES + [
     ("red_coral_first", (0, 112), (-4.5, -5.5, 0), (6, 10, 0), False),
 ]
 ZOMBIE_NAUTILUS_FRAME, ZOMBIE_NAUTILUS_CLOSEUP = (22, 0, 44, 32), ((44, 32), (0, 15))
+
+# The silverfish, from SilverfishModel: seven segments in a row, from the head
+# (segment0) at the front (-z) to the tip of the tail (segment6). Each segment
+# stands on the ground at y 24. The three layers are larger than the
+# segments in them, and most of their pixels are clear: the opaque pixels are
+# bristles. layer0 is round segment2, layer1 round segment4, and layer2 round
+# segment1. The previews move the model 4 pixels to the front, so that its
+# middle is at z 0 and the views show all of it.
+SILVERFISH_SIZES = [(3, 2, 2), (4, 3, 2), (6, 4, 3), (3, 3, 3), (2, 2, 3), (2, 1, 2), (1, 1, 2)]
+SILVERFISH_UVS = [(0, 0), (0, 4), (0, 9), (0, 16), (0, 22), (11, 0), (13, 4)]
+SILVERFISH_Z = [z - 4 for z in (-3.5, -1.5, 1, 4, 7, 9.5, 11.5)]
+SILVERFISH_PIVOTS = dict(
+    {f"segment{i}": (0, 24 - SILVERFISH_SIZES[i][1], SILVERFISH_Z[i]) for i in range(7)},
+    layer0=(0, 16, SILVERFISH_Z[2]), layer1=(0, 20, SILVERFISH_Z[4]), layer2=(0, 19, SILVERFISH_Z[1]))
+SILVERFISH_CUBES = [(f"segment{i}", SILVERFISH_UVS[i], (-w / 2, 0, -d / 2), (w, h, d), False)
+                    for i, (w, h, d) in enumerate(SILVERFISH_SIZES)] + [
+    ("layer0", (20, 0), (-5, 0, -1.5), (10, 8, 3), False),
+    ("layer1", (20, 11), (-3, 0, -1.5), (6, 4, 3), False),
+    ("layer2", (20, 18), (-3, 0, -1), (6, 5, 2), False),
+]
+SILVERFISH_FRAME, SILVERFISH_CLOSEUP = (30, -38, 60, 44), ((60, 84), (0, 48))
 CAMEL_HUSK_FRAME, CAMEL_HUSK_CLOSEUP = (28, 27, 56, 56), ((56, 56), (0, 1))
 
 # Each Nether mob: the cubes, the pivots, the weapon, the wraps, the frame of
@@ -1273,6 +1309,7 @@ NETHER_LOOKS = {
                         ZOMBIE_NAUTILUS_CLOSEUP, False),
     "zombie_nautilus_warm": (ZOMBIE_NAUTILUS_WARM_CUBES, ZOMBIE_NAUTILUS_WARM_PIVOTS, None, [], ZOMBIE_NAUTILUS_FRAME,
                              ZOMBIE_NAUTILUS_CLOSEUP, False),
+    "silverfish": (SILVERFISH_CUBES, SILVERFISH_PIVOTS, None, [], SILVERFISH_FRAME, SILVERFISH_CLOSEUP, True),
 }
 # The flyers are seen from below in the game, so their sheets look at them
 # from above, from below, and from the side.
@@ -1871,6 +1908,7 @@ SPECIES = {
     "skeleton_horse": (SKELETON_HORSE_PATH, None, SKELETON_HORSE_FAMILIES, SKELETON_HORSE_EXTRA, []),
     "zombie_nautilus": (ZOMBIE_NAUTILUS_PATH, None, ZOMBIE_NAUTILUS_FAMILIES, ZOMBIE_NAUTILUS_EXTRA, []),
     "zombie_nautilus_warm": (ZOMBIE_NAUTILUS_WARM_PATH, None, ZOMBIE_NAUTILUS_FAMILIES, ZOMBIE_NAUTILUS_EXTRA, []),
+    "silverfish": (SILVERFISH_PATH, None, SILVERFISH_FAMILIES, SILVERFISH_EXTRA, []),
 }
 
 
@@ -1996,6 +2034,10 @@ def set_mob(species):
             # at the mouth at a turn, at the coil of the shell from below,
             # and at the side.
             MOB["sheet_views"] = [(145, 15), (-35, -30), (-90, 5)]
+        if species == "silverfish":
+            # The silverfish is small, so the previews draw it 3 times
+            # larger, as the endermite.
+            MOB["grow"] = 3
         if species.startswith("ghast"):
             # The ghast floats over the player, so its sheets look at it from
             # the front, from below at the side, and from behind.

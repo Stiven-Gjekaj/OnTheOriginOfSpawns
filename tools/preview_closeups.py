@@ -680,6 +680,7 @@ ZOMBIE_NAUTILUS_VIEWS = [BACK, ("3/4 mouth end", 145, 15, 1.0), SIDE, ("from bel
                          ("from above", 150, 60, 1.0)]
 ZOMBIE_NAUTILUS_CLOSEUPS = nether_closeup("zombie_nautilus", "Zombie nautilus, temperate", ZOMBIE_NAUTILUS_VIEWS)
 ZOMBIE_NAUTILUS_WARM_CLOSEUPS = nether_closeup("zombie_nautilus_warm", "Zombie nautilus, warm", ZOMBIE_NAUTILUS_VIEWS)
+SILVERFISH_CLOSEUPS = nether_closeup("silverfish", "Silverfish", SPIDER_VIEWS)
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
@@ -721,6 +722,7 @@ SPECIES = {
     "skeleton_horse": (pg.SKELETON_HORSE_PATH, None, SKELETON_HORSE_CLOSEUPS),
     "zombie_nautilus": (pg.ZOMBIE_NAUTILUS_PATH, None, ZOMBIE_NAUTILUS_CLOSEUPS),
     "zombie_nautilus_warm": (pg.ZOMBIE_NAUTILUS_WARM_PATH, None, ZOMBIE_NAUTILUS_WARM_CLOSEUPS),
+    "silverfish": (pg.SILVERFISH_PATH, None, SILVERFISH_CLOSEUPS),
 }
 
 

@@ -1,0 +1,75 @@
+{
+	"texture": "originofspawns:textures/entity/spur_leap_spurs.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "left_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				3,
+				3
+			],
+			"size": [
+				1,
+				1,
+				2
+			]
+		},
+		{
+			"bone": "right_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				3,
+				3
+			],
+			"size": [
+				1,
+				1,
+				2
+			]
+		},
+		{
+			"bone": "left_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				3,
+				2.1
+			],
+			"size": [
+				1,
+				1,
+				2
+			]
+		},
+		{
+			"bone": "right_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				3,
+				2.1
+			],
+			"size": [
+				1,
+				1,
+				2
+			]
+		}
+	]
+}

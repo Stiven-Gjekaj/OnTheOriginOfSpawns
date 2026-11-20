@@ -1,5 +1,20 @@
 {
 	"region_map": "originofspawns:textures/region/zombie_horse.png",
-	"layers": [],
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/lance_run_0.png",
+				"tint": "#141C0E"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/lance_run_1.png",
+				"tint": "#4A5A34"
+			}
+		}
+	],
 	"model": "originofspawns:lance_run_mane"
 }

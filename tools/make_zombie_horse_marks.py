@@ -20,30 +20,30 @@ On a side face, the script counts the columns from the back end of the part
 on the left side.
 
 Each gene keeps to its own zone, so that the marks stack:
-- The head. Grave Bond has a blaze down the middle of the top of the head
-  and the snout. Shield Vault has an armored brow at the two sides of the
+- The head. Grave Bond is a gene model: a thin strap round the muzzle, with
+  a small charm. Shield Vault has an armored brow at the two sides of the
   top and over the eyes. Holy Scorn has the low rows of the sides of the
   head, the sides and the bottom of the snout, and teeth on the front. Shy
   Canter has the ears, and tall ears, a gene model.
 - The mane. Last Charge has red ribbons, with loose ends as a gene model.
-  Lance Run (a long mane) and Rear Up (a raised mane) are gene models.
+  Lance Run has dark streaks on the sides of the neck, and long strands, a
+  gene model. Rear Up (a raised mane) is a gene model.
 - The body. Rotten Barding has the back end of the back and the high sides,
   Ash Barding has the front end, and Battle Saddle (a gene model) sits
-  between them. Sun Hide has the sides and the top of the neck, and the high sides under
-  the saddle.
-  On the low sides, from the tail: Rotten Hide, Undying Flesh, and Bone
-  Frame. Grave Barding has the high rows of the chest, and Bone Shatter the
-  low rows and the front of the belly. Charred Flesh has the rump, the
-  back of the belly, and the throat. Ghost Gallop is a faded, pale color under all the other
-  marks.
-- The legs, from the top: High Vault rows 0 to 2, Spur Leap rows 3 and 5,
-  Rooted Rot row 4 (and a swollen hock, a gene model), Golem Stomp rows 6
-  and 7 on the front and the sides, Mud Kick rows 6 to 8 on the back, and
-  the hooves: Hard Hooves on the front and the back of
-  rows 9 and 10 and the bottom, Leap Strike on the sides of rows 8 to 10 and
-  the front of row 8. Soft Landing is a gene model: a
-  wide, pale rim round the low row of the hoof. Long Stride is a gene model:
-  long, lean thighs.
+  between them. Sun Hide has the neck round the streaks of Lance Run, and the
+  high sides under the saddle. On the low sides, from the tail: Rotten Hide, Undying Flesh,
+  and Bone Frame. Grave Barding has the high rows of the chest, and Bone
+  Shatter the low rows and the front of the belly. Charred Flesh has the
+  rump, the back of the belly, and the throat. Ghost Gallop fades soft,
+  uneven patches of the flanks and the neck, under all the other marks.
+- The legs, from the top: High Vault rows 0 to 2, Spur Leap rows 3 and 5
+  (and spurs, a gene model), Rooted Rot row 4 (and a swollen hock, a gene
+  model), Golem Stomp rows 6 and 7 on the front and the sides, Mud Kick rows
+  6 to 8 on the back, and the hooves: Hard Hooves on the front and the back
+  of rows 9 and 10 and the bottom, Leap Strike on the sides of rows 8 to 10
+  and the front of row 8. Soft Landing is a gene model: a wide, pale rim
+  round the low row of the hoof. Long Stride is a gene model: long, lean
+  thighs.
 - The tail. Panic Bolt tears and thins the vanilla tail. Dodge Leap (a short,
   high tail) and Trample Run (a long, ragged tail) are gene models.
 The gene models use the bones body, head, left_ear, right_ear, mane, tail,
@@ -126,17 +126,27 @@ def save_mob_model(name, parts):
 # The head.
 
 def grave_bond():
-    # A green blaze on the face: a green stripe goes down the middle of the
-    # top of the head, and it grows wide over the snout to the nose, with a
-    # pale middle.
-    green = Mark("#30C850")
-    pale = Mark("#B8FFC8")
-    for x, y, f, col, row in pixels(HEAD, ("top",), cols=(2, 3)):
-        (pale if row % 3 == 1 else green).put((x, y))
-    for x, y, f, col, row in pixels(SNOUT, ("top",)):
-        (pale if row % 3 == 1 and col in (1, 2) else green).put((x, y))
-    put(green, SNOUT, ("front",), cols=(1, 2), rows=(0, 1, 2))
-    return [green, pale]
+    # The strap and the charm are the gene model grave_bond_strap.
+    return []
+
+
+def grave_bond_model():
+    # A thin, dark leather strap goes round the muzzle, with thin cheek
+    # straps up the sides of the head, and one small, dull green charm hangs
+    # under the muzzle. On the bone head, the snout is from x -2 to 2, y -11
+    # to -6, and z -7 to -2. The head is from x -3 to 3 and z -2 to 5.
+    im = model_image(32, 16)
+
+    def leather(f, x, y):
+        return "#4A3422" if (x + y) % 4 == 0 else "#2A1C12"
+    paint_box(im, 0, 0, 4, 5, 1, leather)
+    paint_box(im, 12, 0, 0, 5, 1, leather)
+    paint_box(im, 20, 0, 1, 1, 1, lambda f, x, y: "#5A7A4A")
+    parts = [{"bone": "head", "uv": [0, 0], "from": [-2, -11, -5], "size": [4, 5, 1], "inflate": 0.2},
+             {"bone": "head", "uv": [12, 0], "from": [3.05, -11, -1.5], "size": [0, 5, 1]},
+             {"bone": "head", "uv": [12, 0], "from": [-3.05, -11, -1.5], "size": [0, 5, 1]},
+             {"bone": "head", "uv": [20, 0], "from": [-0.5, -5.6, -5], "size": [1, 1, 1]}]
+    save_model("grave_bond_strap", im, parts)
 
 
 def shield_vault():
@@ -221,8 +231,28 @@ def last_charge_model():
 
 
 def lance_run():
-    # The long, streaming mane is the gene model lance_run_mane.
-    return []
+    # A long, streaming mane: dark streaks sweep back along the sides of the
+    # neck, as hair that the wind combs back. The long strands are the gene
+    # model lance_run_mane.
+    streak = Mark("#141C0E")
+    light = Mark("#4A5A34")
+    for x, y, f, col, row in pixels(NECK, ("right", "left")):
+        k = lance_streak(f, col, row)
+        if k == 1:
+            streak.put((x, y))
+        elif k == 2:
+            light.put((x, y))
+    return [streak, light]
+
+
+def lance_streak(f, col, row):
+    """Return 1 for a dark streak of Lance Run on a side of the neck, 2 for its light edge, or 0."""
+    # Column 0 of the right side is the back of the neck, under the mane.
+    back = col if f == "right" else 6 - col
+    k = (row + back) % 4
+    if k == 0:
+        return 1
+    return 2 if k == 1 and back < 4 else 0
 
 
 def lance_run_model():
@@ -390,16 +420,19 @@ def battle_saddle_model():
 
 
 def sun_hide():
-    # A dark, leathery hide: the sides and the top of the neck, and the high
-    # sides under the saddle, are dark, tough leather, with fine, pale
-    # creases that run across it.
+    # A dark, leathery hide: the neck, round the streaks of Lance Run, and
+    # the high sides under the saddle are dark, tough leather, with fine,
+    # pale creases that run across it.
     leather = Mark("#2E2A1A")
     crease = Mark("#6A5A3A")
 
     def mark(col, row):
         return crease if row % 3 == 0 and (col + row // 3) % 4 != 0 else leather
-    for x, y, f, col, row in pixels(NECK, ("right", "left", "top")):
+    for x, y, f, col, row in pixels(NECK, ("top",)):
         mark(col, row).put((x, y))
+    for x, y, f, col, row in pixels(NECK, ("right", "left")):
+        if not lance_streak(f, col, row):
+            mark(col, row).put((x, y))
     for c in range(8, 14):
         for r in range(4):
             mark(c, r).put(side(BODY, c, r))
@@ -490,13 +523,23 @@ def charred_flesh():
 
 
 def ghost_gallop():
-    # Pale, faded hide: the body and the neck fade and turn a pale, ghostly
-    # gray green. The layers go under the marks of the other genes.
-    pale = Mark("#D0DCC8", alpha=130, order=-1, regions=["torso"])
-    for part in (BODY, NECK):
-        for x, y, f, col, row in pixels(part):
-            pale.put((x, y), 210 + noise100(x, y, 6601) // 3)
-    return [{"regions": ["torso"], "effect": {"type": "desaturate", "amount": 0.6}, "order": -2}, pale]
+    # Pale, faded hide: soft, uneven patches of the hide fade to a pale,
+    # ghostly gray over the flanks and the neck, and the green hide shows
+    # between them. The patches go under the marks of the other genes.
+    pale = Mark("#C8D0C0", alpha=150, order=-1, regions=["torso"])
+    faint = Mark("#A8B4A0", alpha=110, order=-1, regions=["torso"])
+    cells = []
+    for c in range(22):
+        for r in range(10):
+            cells += side(BODY, c, r)
+    cells += [(x, y) for x, y, f, col, row in pixels(NECK, ("right", "left"))]
+    for x, y in cells:
+        n = noise100(x // 3, y // 2, 6601)
+        if n < 40:
+            pale.put((x, y), 220 + noise100(x, y, 6602) // 3)
+        elif n < 55:
+            faint.put((x, y))
+    return [pale, faint]
 
 
 # The legs.
@@ -518,12 +561,29 @@ def high_vault():
 
 
 def spur_leap():
-    # Bright bands round the hocks: two bright gold bands go round each hock.
-    gold = Mark("#FFD040")
-    shine = Mark("#FFF4B0")
-    leg_put(gold, SIDES, (3, 5), lambda x, y, f, c, r: c != 1)
-    leg_put(shine, SIDES, (3, 5), lambda x, y, f, c, r: c == 1)
-    return [gold, shine]
+    # Pale, worn bands with spurs: two pale, worn bands go round each hock,
+    # and small metal spurs (the gene model spur_leap_spurs) stand out at the
+    # back of the hocks.
+    band = Mark("#B8B0A0")
+    worn = Mark("#8A8478")
+    leg_put(band, SIDES, (3, 5), lambda x, y, f, c, r: (c + r) % 3 != 0)
+    leg_put(worn, SIDES, (3, 5), lambda x, y, f, c, r: (c + r) % 3 == 0)
+    return [band, worn]
+
+
+def spur_leap_model():
+    # Small metal spurs: a short, dull steel spur stands out back from the
+    # back of each hock, between the two bands. A leg is from y -1 to 10 on
+    # its bone, so row 4 is at y 3. The back of a hind leg is at z 3, and
+    # the back of a front leg at z 2.1.
+    im = model_image(16, 16)
+    paint_box(im, 0, 0, 1, 1, 2, lambda f, x, y: "#8A8E90" if (x + y) % 2 else "#5A5E60")
+    parts = []
+    for bone in LEG_BONES:
+        left = bone.startswith("left")
+        z = 3 if "hind" in bone else 2.1
+        parts.append({"bone": bone, "uv": [0, 0], "from": [-1.5 if left else 0.5, 3, z], "size": [1, 1, 2]})
+    save_model("spur_leap_spurs", im, parts)
 
 
 def rooted_rot():
@@ -665,6 +725,8 @@ MODEL_GENES = {
     "rear_up": (rear_up_model, "rear_up_mane"),
     "trample_run": (trample_run_model, "trample_run_tail"),
     "last_charge": (last_charge_model, "last_charge_ribbons"),
+    "grave_bond": (grave_bond_model, "grave_bond_strap"),
+    "spur_leap": (spur_leap_model, "spur_leap_spurs"),
 }
 
 

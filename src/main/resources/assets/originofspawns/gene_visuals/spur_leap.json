@@ -5,15 +5,16 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/spur_leap_0.png",
-				"tint": "#FFD040"
+				"tint": "#B8B0A0"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/spur_leap_1.png",
-				"tint": "#FFF4B0"
+				"tint": "#8A8478"
 			}
 		}
-	]
+	],
+	"model": "originofspawns:spur_leap_spurs"
 }

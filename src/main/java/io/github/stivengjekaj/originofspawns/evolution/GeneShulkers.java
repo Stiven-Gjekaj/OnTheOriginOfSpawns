@@ -7,6 +7,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ShulkerBullet;
@@ -102,5 +103,29 @@ public final class GeneShulkers {
 			GeneCombat.onHit(shulker, player);
 		}
 		return true;
+	}
+
+	/**
+	 * The range of a teleport of a mob that is not a shulker, as the vanilla teleport of a shulker.
+	 */
+	public static final double TELEPORT_RANGE = 8.0;
+
+	/**
+	 * Teleports the hurt mob, after the chance of each teleport on hurt gene. The mob teleports one time at most.
+	 *
+	 * @return true if the mob teleported
+	 */
+	public static boolean teleportOnHurt(Mob mob, ServerLevel level) {
+		if (!mob.isAlive()) {
+			return false;
+		}
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.TeleportOnHurt teleport && mob.getRandom().nextFloat() < teleport.chance()) {
+				return mob instanceof Shulker shulker
+						? ((io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker).originofspawns$teleportSomewhere()
+						: GeneTeleports.away(mob, level, TELEPORT_RANGE);
+			}
+		}
+		return false;
 	}
 }

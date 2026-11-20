@@ -158,4 +158,17 @@ public class ShulkerEffectsTest {
 				"the next snap waits");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aQuickBlinkTeleportsAtFullHealth(GameTestHelper helper) {
+		Shulker shulker = shulker(helper, new BlockPos(3, 1, 3), "test_quick_blink");
+		// The vanilla teleport of a shulker does nothing with no AI.
+		shulker.setNoAi(false);
+		BlockPos before = shulker.blockPosition();
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		shulker.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(pig), 1.0F);
+		helper.assertTrue(shulker.getHealth() > shulker.getMaxHealth() / 2.0F, "the shulker has more than half health");
+		helper.assertFalse(shulker.blockPosition().equals(before), "the shulker teleports");
+		helper.succeed();
+	}
 }

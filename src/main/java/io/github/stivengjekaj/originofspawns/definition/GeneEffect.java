@@ -351,7 +351,8 @@ public sealed interface GeneEffect {
 			Map.entry("bullet_speed", BulletSpeed.CODEC),
 			Map.entry("bullet_levitation", BulletLevitation.CODEC),
 			Map.entry("double_shot", DoubleShot.CODEC),
-			Map.entry("lid_snap", LidSnap.CODEC)
+			Map.entry("lid_snap", LidSnap.CODEC),
+			Map.entry("teleport_on_hurt", TeleportOnHurt.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5943,6 +5944,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "lid_snap";
+		}
+	}
+
+	/**
+	 * When something hurts the mob, it teleports with this chance, at any health. A shulker uses its vanilla teleport, in
+	 * 8 blocks. Another mob teleports to a free place in 8 blocks. A vanilla shulker teleports only under half health,
+	 * with a chance of 25%. More than one effect gives each its own chance, and the mob teleports one time at most.
+	 * Shifters tier 3 and Quick Blink: 0.5.
+	 */
+	record TeleportOnHurt(float chance) implements GeneEffect {
+		public static final MapCodec<TeleportOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(TeleportOnHurt::chance)
+		).apply(instance, TeleportOnHurt::new));
+
+		@Override
+		public String type() {
+			return "teleport_on_hurt";
 		}
 	}
 }

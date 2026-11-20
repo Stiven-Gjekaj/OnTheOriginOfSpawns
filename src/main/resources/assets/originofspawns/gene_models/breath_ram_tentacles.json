@@ -1,0 +1,61 @@
+{
+	"texture": "originofspawns:textures/entity/breath_ram_tentacles.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "lower_mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				3.5,
+				1,
+				2
+			],
+			"size": [
+				2,
+				7,
+				1
+			],
+			"pivot": [
+				3.5,
+				1,
+				2
+			],
+			"rotation": [
+				60,
+				10,
+				0
+			]
+		},
+		{
+			"bone": "lower_mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-5.5,
+				1,
+				2
+			],
+			"size": [
+				2,
+				7,
+				1
+			],
+			"pivot": [
+				-5.5,
+				1,
+				2
+			],
+			"rotation": [
+				60,
+				-10,
+				0
+			]
+		}
+	]
+}

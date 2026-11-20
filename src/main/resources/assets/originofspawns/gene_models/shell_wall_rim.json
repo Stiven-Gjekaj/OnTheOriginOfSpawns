@@ -1,0 +1,115 @@
+{
+	"texture": "originofspawns:textures/entity/shell_wall_rim.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "shell",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-8,
+				-12,
+				-7
+			],
+			"size": [
+				1,
+				2,
+				4
+			],
+			"mirror": false
+		},
+		{
+			"bone": "shell",
+			"uv": [
+				0,
+				10
+			],
+			"from": [
+				-8,
+				-11,
+				-3
+			],
+			"size": [
+				1,
+				1,
+				8
+			],
+			"mirror": false
+		},
+		{
+			"bone": "shell",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-8,
+				-12,
+				5
+			],
+			"size": [
+				1,
+				2,
+				4
+			],
+			"mirror": false
+		},
+		{
+			"bone": "shell",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				7,
+				-12,
+				-7
+			],
+			"size": [
+				1,
+				2,
+				4
+			],
+			"mirror": true
+		},
+		{
+			"bone": "shell",
+			"uv": [
+				0,
+				10
+			],
+			"from": [
+				7,
+				-11,
+				-3
+			],
+			"size": [
+				1,
+				1,
+				8
+			],
+			"mirror": true
+		},
+		{
+			"bone": "shell",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				7,
+				-12,
+				5
+			],
+			"size": [
+				1,
+				2,
+				4
+			],
+			"mirror": true
+		}
+	]
+}

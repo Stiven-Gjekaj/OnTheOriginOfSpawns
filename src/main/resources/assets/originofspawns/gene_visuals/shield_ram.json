@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/zombie_nautilus.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shield_ram_0.png",
+				"tint": "#6A6A68"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shield_ram_1.png",
+				"tint": "#E0E0D8"
+			}
+		}
+	]
+}

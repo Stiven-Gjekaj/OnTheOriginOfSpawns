@@ -1,0 +1,61 @@
+{
+	"texture": "originofspawns:textures/entity/last_current_tentacles.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "upper_mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				1,
+				-1.5,
+				2
+			],
+			"size": [
+				2,
+				6,
+				1
+			],
+			"pivot": [
+				1,
+				-1.5,
+				2
+			],
+			"rotation": [
+				95,
+				10,
+				0
+			]
+		},
+		{
+			"bone": "upper_mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				-1.5,
+				2
+			],
+			"size": [
+				2,
+				6,
+				1
+			],
+			"pivot": [
+				-3,
+				-1.5,
+				2
+			],
+			"rotation": [
+				95,
+				-10,
+				0
+			]
+		}
+	]
+}

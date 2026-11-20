@@ -1,0 +1,42 @@
+{
+	"texture": "originofspawns:textures/entity/jet_fin_fins.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "upper_mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				5,
+				1.5,
+				3
+			],
+			"size": [
+				4,
+				1,
+				7
+			]
+		},
+		{
+			"bone": "upper_mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-9,
+				1.5,
+				3
+			],
+			"size": [
+				4,
+				1,
+				7
+			],
+			"mirror": true
+		}
+	]
+}

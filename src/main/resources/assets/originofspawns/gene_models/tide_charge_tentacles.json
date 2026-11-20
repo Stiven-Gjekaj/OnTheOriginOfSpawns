@@ -1,0 +1,61 @@
+{
+	"texture": "originofspawns:textures/entity/tide_charge_tentacles.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "upper_mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				3.5,
+				-1.5,
+				2
+			],
+			"size": [
+				1,
+				11,
+				1
+			],
+			"pivot": [
+				3.5,
+				-1.5,
+				2
+			],
+			"rotation": [
+				80,
+				15,
+				0
+			]
+		},
+		{
+			"bone": "upper_mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4.5,
+				-1.5,
+				2
+			],
+			"size": [
+				1,
+				11,
+				1
+			],
+			"pivot": [
+				-4.5,
+				-1.5,
+				2
+			],
+			"rotation": [
+				80,
+				-15,
+				0
+			]
+		}
+	]
+}

@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/zombie_nautilus.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/trident_guard_0.png",
+				"tint": "#E0E8EE"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/trident_guard_1.png",
+				"tint": "#98A4AC"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/trident_guard_2.png",
+				"tint": "#2A70E0"
+			}
+		}
+	]
+}

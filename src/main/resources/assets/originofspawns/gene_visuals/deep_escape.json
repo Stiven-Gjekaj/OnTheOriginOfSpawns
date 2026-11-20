@@ -1,0 +1,21 @@
+{
+	"region_map": "originofspawns:textures/region/zombie_nautilus.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/deep_escape_0.png",
+				"tint": "#D8C8B0"
+			}
+		},
+		{
+			"regions": [
+				"arms"
+			],
+			"effect": {
+				"type": "erase",
+				"texture": "originofspawns:textures/gene_marks/deep_escape_mask.png"
+			}
+		}
+	]
+}

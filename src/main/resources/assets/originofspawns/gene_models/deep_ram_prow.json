@@ -1,0 +1,58 @@
+{
+	"texture": "originofspawns:textures/entity/deep_ram_prow.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "shell",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-5,
+				-11,
+				-9
+			],
+			"size": [
+				10,
+				4,
+				2
+			]
+		},
+		{
+			"bone": "shell",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-3,
+				-10.5,
+				-12
+			],
+			"size": [
+				6,
+				3,
+				3
+			]
+		},
+		{
+			"bone": "shell",
+			"uv": [
+				0,
+				16
+			],
+			"from": [
+				-1,
+				-10,
+				-15
+			],
+			"size": [
+				2,
+				2,
+				3
+			]
+		}
+	]
+}

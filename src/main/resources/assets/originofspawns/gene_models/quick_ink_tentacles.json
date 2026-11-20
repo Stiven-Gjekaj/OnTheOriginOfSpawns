@@ -1,0 +1,61 @@
+{
+	"texture": "originofspawns:textures/entity/quick_ink_tentacles.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "lower_mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				4,
+				-1,
+				2
+			],
+			"size": [
+				2,
+				6,
+				1
+			],
+			"pivot": [
+				4,
+				-1,
+				2
+			],
+			"rotation": [
+				75,
+				30,
+				0
+			]
+		},
+		{
+			"bone": "lower_mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-6,
+				-1,
+				2
+			],
+			"size": [
+				2,
+				6,
+				1
+			],
+			"pivot": [
+				-6,
+				-1,
+				2
+			],
+			"rotation": [
+				75,
+				-30,
+				0
+			]
+		}
+	]
+}

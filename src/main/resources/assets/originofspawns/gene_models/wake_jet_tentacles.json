@@ -1,0 +1,61 @@
+{
+	"texture": "originofspawns:textures/entity/wake_jet_tentacles.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "upper_mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				4,
+				0,
+				2
+			],
+			"size": [
+				2,
+				7,
+				1
+			],
+			"pivot": [
+				4,
+				0,
+				2
+			],
+			"rotation": [
+				85,
+				25,
+				0
+			]
+		},
+		{
+			"bone": "upper_mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-6,
+				0,
+				2
+			],
+			"size": [
+				2,
+				7,
+				1
+			],
+			"pivot": [
+				-6,
+				0,
+				2
+			],
+			"rotation": [
+				85,
+				-25,
+				0
+			]
+		}
+	]
+}

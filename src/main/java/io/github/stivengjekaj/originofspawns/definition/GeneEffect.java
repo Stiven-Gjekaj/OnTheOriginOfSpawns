@@ -343,7 +343,8 @@ public sealed interface GeneEffect {
 			Map.entry("stone_seed", StoneSeed.CODEC),
 			Map.entry("gnaw", Gnaw.CODEC),
 			Map.entry("dodge_melee", DodgeMelee.CODEC),
-			Map.entry("bane_resist", BaneResist.CODEC)
+			Map.entry("bane_resist", BaneResist.CODEC),
+			Map.entry("brood_on_hurt", BroodOnHurt.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5788,6 +5789,24 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "bane_resist";
+		}
+	}
+
+	/**
+	 * When a hit of the kind in {@code hits} hurts the mob, this many new mobs of its species come out of it, one time in
+	 * each cooldown. They get genes from the pool, as new mobs, and they attack the attacker. A projectile hit counts
+	 * also with no shooter. Egg Sac: 1 silverfish from a projectile, one time each 10 seconds.
+	 */
+	record BroodOnHurt(int count, float cooldownSeconds, Hits hits) implements GeneEffect {
+		public static final MapCodec<BroodOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 8).optionalFieldOf("count", 1).forGetter(BroodOnHurt::count),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(BroodOnHurt::cooldownSeconds),
+				Hits.CODEC.optionalFieldOf("hits", Hits.ANY).forGetter(BroodOnHurt::hits)
+		).apply(instance, BroodOnHurt::new));
+
+		@Override
+		public String type() {
+			return "brood_on_hurt";
 		}
 	}
 }

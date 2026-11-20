@@ -249,4 +249,20 @@ public class SilverfishEffectsTest {
 				"the hit of the enchantment gives no Slowness");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void anEggSacLetsASilverfishOutWhenAProjectileHurtsIt(GameTestHelper helper) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 5));
+		Silverfish silverfish = silverfish(helper, new BlockPos(2, 1, 2), "test_egg_sac");
+		hit(helper, silverfish, pig, 1.0F);
+		helper.assertTrue(cameOut(helper, new BlockPos(2, 1, 2), silverfish).isEmpty(), "a melee hit lets nothing out");
+		var arrow = EntityTypes.ARROW.create(helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+		silverfish.hurtServer(helper.getLevel(), helper.getLevel().damageSources().arrow(arrow, pig), 2.0F);
+		java.util.List<Silverfish> out = cameOut(helper, new BlockPos(2, 1, 2), silverfish);
+		helper.assertValueEqual(out.size(), 1, "an arrow lets one silverfish out");
+		helper.assertValueEqual(out.getFirst().getTarget(), pig, "the new silverfish attacks the shooter");
+		helper.assertValueEqual(GeneCombat.broodOnHurt(silverfish, helper.getLevel(),
+				helper.getLevel().damageSources().arrow(arrow, pig)), 0, "the next brood waits");
+		helper.succeed();
+	}
 }

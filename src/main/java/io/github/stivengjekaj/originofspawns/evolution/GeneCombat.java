@@ -1162,6 +1162,7 @@ public final class GeneCombat {
 			GeneBehaviors.startFlee(wounded);
 			GeneBehaviors.countSpinHit(wounded);
 			GeneBehaviors.sidestepOnHurt(wounded, source);
+			broodOnHurt(wounded, woundedLevel, source);
 			GeneSilverfish.hideWhenWounded(wounded, woundedLevel);
 		}
 		if (entity instanceof Mob wounded) {
@@ -1443,6 +1444,38 @@ public final class GeneCombat {
 			mob.setAttached(ModAttachments.HEAL_ONCE_USED, true);
 			level.sendParticles(ParticleTypes.BUBBLE, mob.getX(), mob.getY(0.5), mob.getZ(), 30, 0.4, 0.6, 0.4, 0.1);
 		}
+	}
+
+	/**
+	 * Lets new mobs of the species come out of the hurt mob, for each brood on hurt gene whose kind of hit matches and
+	 * whose cooldown is over.
+	 *
+	 * @return the number of new mobs
+	 */
+	public static int broodOnHurt(Mob mob, ServerLevel level, DamageSource source) {
+		if (source.getDirectEntity() == null || !mob.isAlive()) {
+			return 0;
+		}
+		boolean projectile = source.getDirectEntity() instanceof Projectile;
+		int made = 0;
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.BroodOnHurt brood && brood.hits().includes(projectile)
+					&& ready(mob, brood, brood.cooldownSeconds())) {
+				startCooldown(mob, brood);
+				for (int i = 0; i < brood.count(); i++) {
+					if (mob.getType().create(level, EntitySpawnReason.TRIGGERED) instanceof Mob young) {
+						young.snapTo(mob.getX(), mob.getY(), mob.getZ(), level.getRandom().nextFloat() * 360.0F, 0.0F);
+						if (source.getEntity() instanceof LivingEntity attacker && attacker != mob) {
+							young.setTarget(attacker);
+						}
+						level.addFreshEntity(young);
+						young.spawnAnim();
+						made++;
+					}
+				}
+			}
+		}
+		return made;
 	}
 
 	private static void effectOnHurt(Mob mob, ServerLevel level, GeneEffect.EffectOnHurt onHurt, LivingEntity attacker) {

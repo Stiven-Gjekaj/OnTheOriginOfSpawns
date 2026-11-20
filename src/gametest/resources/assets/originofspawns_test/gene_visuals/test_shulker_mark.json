@@ -1,0 +1,12 @@
+{
+	"region_map": "originofspawns:textures/region/shulker.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "desaturate",
+				"amount": 1,
+				"darken": 1
+			}
+		}
+	]
+}

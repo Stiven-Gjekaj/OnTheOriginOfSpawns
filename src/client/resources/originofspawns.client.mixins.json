@@ -17,6 +17,7 @@
 		"DrownedOuterLayerMixin",
 		"EndermanRendererMixin",
 		"EndermiteRendererMixin",
+		"ShulkerRendererMixin",
 		"SilverfishRendererMixin",
 		"EntityRenderDispatcherMixin",
 		"EvokerRendererMixin",

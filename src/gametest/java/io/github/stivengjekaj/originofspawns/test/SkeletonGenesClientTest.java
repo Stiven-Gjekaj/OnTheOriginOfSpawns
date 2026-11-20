@@ -114,6 +114,9 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			// The silverfish gene model sits on the first back layer, a part of the root.
 			checkMarkAndModel(context, singleplayer, EntityTypes.SILVERFISH, "test_silverfish_mark",
 					Identifier.withDefaultNamespace("textures/entity/silverfish/silverfish.png"), "silverfish");
+			// No shulker gene changes the model, so the shulker check has no gene model.
+			checkMark(context, singleplayer, EntityTypes.SHULKER, "test_shulker_mark",
+					Identifier.withDefaultNamespace("textures/entity/shulker/shulker.png"), "shulker", false);
 			// The slime gene model sits on the inner cube, and the magma cube gene model on the inside cube.
 			checkMarkAndModel(context, singleplayer, EntityTypes.SLIME, "test_slime_mark",
 					Identifier.withDefaultNamespace("textures/entity/slime/slime.png"), "slime");
@@ -174,6 +177,15 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 	 */
 	private static void checkMarkAndModel(ClientGameTestContext context, TestSingleplayerContext singleplayer,
 			EntityType<? extends Mob> type, String gene, Identifier base, String regionMap) {
+		checkMark(context, singleplayer, type, gene, base, regionMap, true);
+	}
+
+	/**
+	 * Checks that a mob with the mark gene gets the texture with the marks of the region map. With {@code model}, it also
+	 * checks that the gene model layer draws the gene model.
+	 */
+	private static void checkMark(ClientGameTestContext context, TestSingleplayerContext singleplayer,
+			EntityType<? extends Mob> type, String gene, Identifier base, String regionMap, boolean model) {
 		Identifier mark = Identifier.fromNamespaceAndPath("originofspawns_test", gene);
 		singleplayer.getServer().runOnServer(server -> {
 			ServerPlayer player = server.getPlayerList().getPlayers().getFirst();
@@ -201,6 +213,9 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			String texture = checkRegionMark(client, base, baked, regionMap);
 			if (texture != null) {
 				return texture;
+			}
+			if (!model) {
+				return null;
 			}
 			int drawn = drawnModelParts(renderer, state);
 			return drawn > 0 ? null : "The gene model layer draws no part of the gene model on " + type;

@@ -206,7 +206,11 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		/**
 		 * The tail of a horse, a part of the body.
 		 */
-		TAIL;
+		TAIL,
+		/**
+		 * The neck of a ravager. Its head is a part of the neck, and the horns and the mouth are parts of the head.
+		 */
+		NECK;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

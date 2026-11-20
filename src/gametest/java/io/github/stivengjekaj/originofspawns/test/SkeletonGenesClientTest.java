@@ -114,6 +114,9 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			// The silverfish gene model sits on the first back layer, a part of the root.
 			checkMarkAndModel(context, singleplayer, EntityTypes.SILVERFISH, "test_silverfish_mark",
 					Identifier.withDefaultNamespace("textures/entity/silverfish/silverfish.png"), "silverfish");
+			// The ravager gene model sits on the right horn, a part of the head in the neck.
+			checkMarkAndModel(context, singleplayer, EntityTypes.RAVAGER, "test_ravager_mark",
+					Identifier.withDefaultNamespace("textures/entity/illager/ravager.png"), "ravager");
 			// No shulker gene changes the model, so the shulker check has no gene model.
 			checkMark(context, singleplayer, EntityTypes.SHULKER, "test_shulker_mark",
 					Identifier.withDefaultNamespace("textures/entity/shulker/shulker.png"), "shulker", false);

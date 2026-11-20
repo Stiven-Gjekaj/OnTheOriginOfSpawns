@@ -141,6 +141,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> BLIND_SINCE = AttachmentRegistry.create(OriginOfSpawns.id("blind_since"));
 
 	/**
+	 * The game time at which the ground charge of a mob ends.
+	 */
+	public static final AttachmentType<Long> GROUND_CHARGE_UNTIL = AttachmentRegistry.create(OriginOfSpawns.id("ground_charge_until"));
+
+	/**
 	 * The game time of the last melee hit of a mob on each player, by the UUID of the player.
 	 */
 	public static final AttachmentType<java.util.Map<java.util.UUID, Long>> PLAYER_HITS =

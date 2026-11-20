@@ -420,6 +420,7 @@ public final class GeneBehaviors {
 				case GeneEffect.RunStrike run -> countRun(mob);
 				case GeneEffect.JumpShot shot -> jumpShot(mob, level);
 				case GeneEffect.Ram ram -> ram(mob, level, ram);
+				case GeneEffect.GroundCharge charge -> GeneRavagers.groundCharge(mob, level, charge);
 				case GeneEffect.MountDash dash when mob instanceof net.minecraft.world.entity.animal.camel.Camel camel ->
 						mountDash(camel, level, dash);
 				case GeneEffect.DashHit hit -> dashHit(mob, level, hit);

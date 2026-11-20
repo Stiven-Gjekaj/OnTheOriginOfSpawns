@@ -178,4 +178,26 @@ public class RavagerEffectsTest {
 		helper.assertValueEqual(lost(pig), 0.0F, "a pig is not a target of a ravager");
 		helper.succeed();
 	}
+
+	@GameTest(maxTicks = 100)
+	public void aLoneChargeRunsAtAFarTargetAndHitsIt(GameTestHelper helper) {
+		Ravager ravager = ravager(helper, new BlockPos(1, 1, 1), "test_lone_charge");
+		// The ravager moves, but it has no vanilla goals, so only the charge hits the pig.
+		((io.github.stivengjekaj.originofspawns.mixin.MobAccessor) ravager).originofspawns$goalSelector().removeAllGoals(goal -> true);
+		((io.github.stivengjekaj.originofspawns.mixin.MobAccessor) ravager).originofspawns$targetSelector().removeAllGoals(goal -> true);
+		ravager.setNoAi(false);
+		Pig near = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 4));
+		ravager.setTarget(near);
+		ravager.setOnGround(true);
+		// The test keeps the pigs in the test area, so the charge in the test starts from 5 blocks, not from 8.
+		var charge = new io.github.stivengjekaj.originofspawns.definition.GeneEffect.GroundCharge(5.0F, 16.0F, 8.0F, 6.0F, 0.6F, 2.0F);
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneRavagers.groundCharge(ravager, helper.getLevel(), charge),
+				"no charge at a target nearer than the minimum range");
+		near.discard();
+		Pig far = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 7));
+		ravager.setTarget(far);
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneRavagers.groundCharge(ravager, helper.getLevel(), charge),
+				"the ravager charges at a target 6 blocks away");
+		helper.succeedWhen(() -> helper.assertValueEqual(lost(far), 6.0F, "the charge does 6 damage"));
+	}
 }

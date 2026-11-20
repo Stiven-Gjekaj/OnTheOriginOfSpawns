@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.evolution;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -155,5 +156,61 @@ public final class GeneRavagers {
 		var chance = GeneEffects.of(ravager).filter(GeneEffect.StunChance.class::isInstance)
 				.mapToDouble(effect -> ((GeneEffect.StunChance) effect).chance()).max();
 		return chance.orElse(VANILLA_STUN_CHANCE);
+	}
+
+	/**
+	 * Starts a ground charge, or moves the mob on in its charge. In a charge, the mob runs at its target. A wall stops
+	 * the charge. A touch hurts the target, pushes it back, and ends the charge.
+	 *
+	 * @return true while the mob charges
+	 */
+	public static boolean groundCharge(net.minecraft.world.entity.Mob mob, net.minecraft.server.level.ServerLevel level,
+			GeneEffect.GroundCharge charge) {
+		LivingEntity target = mob.getTarget();
+		long now = level.getGameTime();
+		Long until = mob.getAttached(ModAttachments.GROUND_CHARGE_UNTIL);
+		if (until != null) {
+			if (target == null || !target.isAlive() || now >= until || mob.horizontalCollision) {
+				mob.removeAttached(ModAttachments.GROUND_CHARGE_UNTIL);
+				return false;
+			}
+			if (mob.getBoundingBox().inflate(0.5).intersects(target.getBoundingBox())) {
+				mob.removeAttached(ModAttachments.GROUND_CHARGE_UNTIL);
+				target.hurtServer(level, mob.damageSources().mobAttack(mob), charge.damage());
+				net.minecraft.world.phys.Vec3 away = target.position().subtract(mob.position()).multiply(1.0, 0.0, 1.0);
+				if (away.lengthSqr() > 1.0E-6) {
+					target.push(away.normalize().scale(1.2).add(0.0, 0.3, 0.0));
+					target.needsSync = true;
+				}
+				return false;
+			}
+			run(mob, target, charge.speed());
+			return true;
+		}
+		if (target == null || !target.isAlive() || !mob.onGround()) {
+			return false;
+		}
+		double distance = mob.distanceTo(target);
+		if (distance < charge.minRange() || distance > charge.range() || !mob.hasLineOfSight(target)
+				|| !GeneCombat.ready(mob, charge, charge.cooldownSeconds())) {
+			return false;
+		}
+		GeneCombat.startCooldown(mob, charge);
+		mob.setAttached(ModAttachments.GROUND_CHARGE_UNTIL, now + Math.round(charge.seconds() * 20.0F));
+		mob.getNavigation().stop();
+		mob.playSound(net.minecraft.sounds.SoundEvents.RAVAGER_ROAR, 1.0F, 1.2F);
+		run(mob, target, charge.speed());
+		return true;
+	}
+
+	private static void run(net.minecraft.world.entity.Mob mob, LivingEntity target, float speed) {
+		net.minecraft.world.phys.Vec3 toTarget = target.position().subtract(mob.position()).multiply(1.0, 0.0, 1.0);
+		if (toTarget.lengthSqr() < 1.0E-6) {
+			return;
+		}
+		net.minecraft.world.phys.Vec3 along = toTarget.normalize().scale(speed);
+		mob.setDeltaMovement(along.x, mob.getDeltaMovement().y, along.z);
+		mob.lookAt(target, 30.0F, 30.0F);
+		mob.needsSync = true;
 	}
 }

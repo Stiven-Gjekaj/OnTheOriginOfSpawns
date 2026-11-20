@@ -366,7 +366,8 @@ public sealed interface GeneEffect {
 			Map.entry("roar_on_kill", RoarOnKill.CODEC),
 			Map.entry("stun_chance", StunChance.CODEC),
 			Map.entry("no_stun", NoStun.CODEC),
-			Map.entry("no_roar", NoRoar.CODEC)
+			Map.entry("no_roar", NoRoar.CODEC),
+			Map.entry("ground_charge", GroundCharge.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6213,6 +6214,29 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "no_roar";
+		}
+	}
+
+	/**
+	 * One time in each cooldown, the mob charges along the ground at its target, when the target is between the two
+	 * ranges and in sight. The charge runs at the speed, in blocks each tick, for the seconds at most. It stops at a wall.
+	 * When the mob touches its target in the charge, the target takes the damage and moves back, and the charge ends.
+	 * The vanilla ravager does not charge. Lone Charge: from 8 blocks, one time each 8 seconds, 6 damage.
+	 */
+	record GroundCharge(float minRange, float range, float cooldownSeconds, float damage, float speed, float seconds)
+			implements GeneEffect {
+		public static final MapCodec<GroundCharge> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("min_range", 8.0F).forGetter(GroundCharge::minRange),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 16.0F).forGetter(GroundCharge::range),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("cooldown_seconds", 8.0F).forGetter(GroundCharge::cooldownSeconds),
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("damage", 6.0F).forGetter(GroundCharge::damage),
+				Codec.floatRange(0.05F, 2.0F).optionalFieldOf("speed", 0.6F).forGetter(GroundCharge::speed),
+				Codec.floatRange(0.05F, 10.0F).optionalFieldOf("seconds", 2.0F).forGetter(GroundCharge::seconds)
+		).apply(instance, GroundCharge::new));
+
+		@Override
+		public String type() {
+			return "ground_charge";
 		}
 	}
 }

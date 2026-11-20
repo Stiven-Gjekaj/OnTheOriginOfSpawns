@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "ground_charge", "min_range": 8, "range": 16, "cooldown_seconds": 8, "damage": 6 }],
+	"mutation_rate": 0
+}

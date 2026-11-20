@@ -1,0 +1,34 @@
+{
+	"texture": "originofspawns:textures/entity/lance_run_mane.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-11,
+				7
+			],
+			"size": [
+				2,
+				16,
+				4
+			],
+			"pivot": [
+				0,
+				-11,
+				7
+			],
+			"rotation": [
+				20,
+				0,
+				0
+			]
+		}
+	]
+}

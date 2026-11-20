@@ -1,0 +1,75 @@
+{
+	"texture": "originofspawns:textures/entity/soft_landing_hooves.png",
+	"texture_width": 32,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "left_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4,
+				9.5,
+				-2
+			],
+			"size": [
+				6,
+				1,
+				6
+			]
+		},
+		{
+			"bone": "right_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2,
+				9.5,
+				-2
+			],
+			"size": [
+				6,
+				1,
+				6
+			]
+		},
+		{
+			"bone": "left_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4,
+				9.5,
+				-2.9
+			],
+			"size": [
+				6,
+				1,
+				6
+			]
+		},
+		{
+			"bone": "right_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2,
+				9.5,
+				-2.9
+			],
+			"size": [
+				6,
+				1,
+				6
+			]
+		}
+	]
+}

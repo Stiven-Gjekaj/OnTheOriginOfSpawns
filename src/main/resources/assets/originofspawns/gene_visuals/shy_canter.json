@@ -1,0 +1,13 @@
+{
+	"region_map": "originofspawns:textures/region/zombie_horse.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/shy_canter_0.png",
+				"tint": "#C8B8A0"
+			}
+		}
+	],
+	"model": "originofspawns:shy_canter_ears"
+}

@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/zombie_horse.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/bone_frame_0.png",
+				"tint": "#E0D8C0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/bone_frame_1.png",
+				"tint": "#B0A890"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/bone_frame_2.png",
+				"tint": "#18200E"
+			}
+		}
+	]
+}

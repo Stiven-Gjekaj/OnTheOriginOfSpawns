@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/zombie_horse.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ash_barding_0.png",
+				"tint": "#8A8A88"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ash_barding_1.png",
+				"tint": "#1A1816"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ash_barding_2.png",
+				"tint": "#FF7A20"
+			}
+		}
+	]
+}

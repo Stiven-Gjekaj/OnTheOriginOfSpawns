@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/zombie_horse.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/golem_stomp_0.png",
+				"tint": "#8A9098"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/golem_stomp_1.png",
+				"tint": "#D0D6DC"
+			}
+		}
+	]
+}

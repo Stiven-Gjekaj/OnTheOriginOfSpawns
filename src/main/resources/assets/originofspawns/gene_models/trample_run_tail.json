@@ -1,0 +1,58 @@
+{
+	"texture": "originofspawns:textures/entity/trample_run_tail.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "tail",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				13,
+				1
+			],
+			"size": [
+				1,
+				8,
+				1
+			]
+		},
+		{
+			"bone": "tail",
+			"uv": [
+				6,
+				0
+			],
+			"from": [
+				-0.5,
+				13,
+				2.5
+			],
+			"size": [
+				1,
+				6,
+				1
+			]
+		},
+		{
+			"bone": "tail",
+			"uv": [
+				12,
+				0
+			],
+			"from": [
+				0.5,
+				13,
+				1.5
+			],
+			"size": [
+				1,
+				9,
+				1
+			]
+		}
+	]
+}

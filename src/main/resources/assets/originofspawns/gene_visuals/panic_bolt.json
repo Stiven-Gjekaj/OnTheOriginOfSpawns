@@ -1,0 +1,21 @@
+{
+	"region_map": "originofspawns:textures/region/zombie_horse.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/panic_bolt_0.png",
+				"tint": "#C8C0A8"
+			}
+		},
+		{
+			"regions": [
+				"pelvis"
+			],
+			"effect": {
+				"type": "erase",
+				"texture": "originofspawns:textures/gene_marks/panic_bolt_mask.png"
+			}
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/zombie_horse.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/holy_scorn_0.png",
+				"tint": "#E8E0C8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/holy_scorn_1.png",
+				"tint": "#1A1612"
+			}
+		}
+	]
+}

@@ -1,0 +1,115 @@
+{
+	"texture": "originofspawns:textures/entity/rear_up_mane.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-13,
+				5
+			],
+			"size": [
+				2,
+				3,
+				2
+			],
+			"pivot": [
+				0,
+				-10,
+				5
+			],
+			"rotation": [
+				-80,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-9,
+				5
+			],
+			"size": [
+				2,
+				3,
+				2
+			],
+			"pivot": [
+				0,
+				-6,
+				5
+			],
+			"rotation": [
+				-80,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-5,
+				5
+			],
+			"size": [
+				2,
+				3,
+				2
+			],
+			"pivot": [
+				0,
+				-2,
+				5
+			],
+			"rotation": [
+				-80,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1,
+				-1,
+				5
+			],
+			"size": [
+				2,
+				3,
+				2
+			],
+			"pivot": [
+				0,
+				2,
+				5
+			],
+			"rotation": [
+				-80,
+				0,
+				0
+			]
+		}
+	]
+}

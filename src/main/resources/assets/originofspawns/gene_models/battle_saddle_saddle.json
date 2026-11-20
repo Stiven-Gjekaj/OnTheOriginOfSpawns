@@ -1,0 +1,94 @@
+{
+	"texture": "originofspawns:textures/entity/battle_saddle_saddle.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-5,
+				-9,
+				-9
+			],
+			"size": [
+				10,
+				1,
+				6
+			],
+			"inflate": 0.05
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-3,
+				-12,
+				-9.5
+			],
+			"size": [
+				6,
+				3,
+				1
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-3,
+				-11,
+				-3.5
+			],
+			"size": [
+				6,
+				3,
+				1
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				20,
+				8
+			],
+			"from": [
+				-5.6,
+				-8,
+				-8
+			],
+			"size": [
+				1,
+				5,
+				4
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				20,
+				8
+			],
+			"from": [
+				4.6,
+				-8,
+				-8
+			],
+			"size": [
+				1,
+				5,
+				4
+			],
+			"mirror": true
+		}
+	]
+}

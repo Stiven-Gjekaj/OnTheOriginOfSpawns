@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/zombie_horse.png",
+	"layers": [
+		{
+			"regions": [
+				"torso"
+			],
+			"effect": {
+				"type": "desaturate",
+				"amount": 0.6
+			},
+			"order": -2
+		},
+		{
+			"regions": [
+				"torso"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ghost_gallop_0.png",
+				"tint": "#D0DCC8"
+			},
+			"order": -1
+		}
+	]
+}

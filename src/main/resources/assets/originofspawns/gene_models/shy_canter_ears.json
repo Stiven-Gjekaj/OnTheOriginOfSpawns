@@ -1,0 +1,61 @@
+{
+	"texture": "originofspawns:textures/entity/shy_canter_ears.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "left_ear",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.55,
+				-18,
+				4
+			],
+			"size": [
+				2,
+				6,
+				1
+			],
+			"pivot": [
+				1.55,
+				-12,
+				4.5
+			],
+			"rotation": [
+				-60,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "right_ear",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2.55,
+				-18,
+				4
+			],
+			"size": [
+				2,
+				6,
+				1
+			],
+			"pivot": [
+				-1.55,
+				-12,
+				4.5
+			],
+			"rotation": [
+				-60,
+				0,
+				0
+			]
+		}
+	]
+}

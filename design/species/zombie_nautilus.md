@@ -199,11 +199,16 @@ The visual column gives the region and the mark.
 ## Body
 
 - The zombie nautilus has the nautilus model and a temperate and a warm
-  texture. Check the texture sizes and the bones against the vanilla model, as
-  for the ghast.
+  texture. Both are 128 x 128 and share one layout, so one region map serves
+  both, and each mark goes on both. The warm model adds flat corals, which are
+  not a region.
 - It needs a new region map, `textures/region/zombie_nautilus.png`. The design
-  uses the regions shell, body, and tentacles. If the two variant textures
-  share one layout, one region map serves both, and each mark goes on both.
+  uses the regions shell, body, and tentacles.
+- The model has no tentacle bones. The "tentacles" are the three mouth parts:
+  `upper_mouth`, `inner_mouth`, and `lower_mouth`. They are small, so most
+  tentacle genes are small gene models, each in its own place.
+- The bones are `shell`, `upper_mouth`, `inner_mouth`, and `lower_mouth`. The
+  coil of the shell is the front as it swims, and the mouth trails.
 
 ## Minor families
 

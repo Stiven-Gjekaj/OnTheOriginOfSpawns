@@ -162,4 +162,22 @@ public class SkeletonHorseEffectsTest {
 				.hasEffect(net.minecraft.world.effect.MobEffects.SPEED), "the riders get no Speed"));
 		helper.succeed();
 	}
+
+	@GameTest
+	public void stormHeraldStrikesRealLightningPastThePlayer(GameTestHelper helper) {
+		var level = helper.getLevel();
+		SkeletonHorse horse = MountEffectsTest.mob(helper, EntityTypes.SKELETON_HORSE, new BlockPos(1, 1, 1));
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(horse.position().add(0.0, 0.0, 3.0));
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.trapLightning(horse, level,
+				new io.github.stivengjekaj.originofspawns.definition.GeneEffect.TrapLightning(3.0F)), "a bolt strikes");
+		var bolts = level.getEntitiesOfClass(net.minecraft.world.entity.LightningBolt.class, horse.getBoundingBox().inflate(12.0));
+		helper.assertValueEqual(bolts.size(), 1, "one bolt");
+		var bolt = bolts.getFirst();
+		helper.assertTrue(Math.abs(bolt.getZ() - (player.getZ() + 3.0)) < 0.01 && Math.abs(bolt.getX() - player.getX()) < 0.01,
+				"the bolt strikes 3 blocks past the player, away from the horse");
+		helper.assertTrue(bolt.distanceTo(horse) > 5.0, "the bolt is far from the horse");
+		bolt.discard();
+		helper.succeed();
+	}
 }

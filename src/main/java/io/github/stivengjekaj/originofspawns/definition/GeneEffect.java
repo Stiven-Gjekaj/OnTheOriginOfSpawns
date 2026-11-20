@@ -332,7 +332,8 @@ public sealed interface GeneEffect {
 			Map.entry("trap_range", TrapRange.CODEC),
 			Map.entry("trap_life", TrapLife.CODEC),
 			Map.entry("trap_horsemen", TrapHorsemen.CODEC),
-			Map.entry("trap_effect", TrapEffect.CODEC)
+			Map.entry("trap_effect", TrapEffect.CODEC),
+			Map.entry("trap_lightning", TrapLightning.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5593,6 +5594,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "trap_effect";
+		}
+	}
+
+	/**
+	 * When the trap of a skeleton horse opens, a real lightning bolt strikes the distance past the nearest player, on
+	 * the far side from the trap, so that it does not hit the horsemen. The vanilla trap lightning does no damage.
+	 * Storm Herald: 3 blocks.
+	 */
+	record TrapLightning(float distance) implements GeneEffect {
+		public static final MapCodec<TrapLightning> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 16.0F).optionalFieldOf("distance", 3.0F).forGetter(TrapLightning::distance)
+		).apply(instance, TrapLightning::new));
+
+		@Override
+		public String type() {
+			return "trap_lightning";
 		}
 	}
 }

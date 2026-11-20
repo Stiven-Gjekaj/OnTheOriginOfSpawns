@@ -1629,6 +1629,9 @@ public final class GeneBehaviors {
 			horse.setAttached(ModAttachments.TRAP_GROUP, group);
 		}
 		for (GeneEffect effect : GeneEffects.of(trap).toList()) {
+			if (effect instanceof GeneEffect.TrapLightning lightning) {
+				trapLightning(trap, level, lightning);
+			}
 			if (effect instanceof GeneEffect.TrapEffect trapEffect) {
 				for (net.minecraft.world.entity.animal.equine.AbstractHorse horse : horses) {
 					horse.addEffect(new MobEffectInstance(trapEffect.effect(), Math.round(trapEffect.seconds() * 20.0F),
@@ -1636,6 +1639,32 @@ public final class GeneBehaviors {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Strikes a real lightning bolt the distance past the nearest player to the trap, on the far side from the trap.
+	 *
+	 * @return true if a bolt struck
+	 */
+	public static boolean trapLightning(Mob trap, ServerLevel level, GeneEffect.TrapLightning lightning) {
+		Player player = level.getNearestPlayer(trap, 64.0);
+		if (player == null) {
+			return false;
+		}
+		Vec3 away = player.position().subtract(trap.position()).multiply(1.0, 0.0, 1.0);
+		if (away.lengthSqr() < 1.0E-6) {
+			away = new Vec3(1.0, 0.0, 0.0);
+		}
+		Vec3 place = player.position().add(away.normalize().scale(lightning.distance()));
+		net.minecraft.world.entity.LightningBolt bolt = net.minecraft.world.entity.EntityTypes.LIGHTNING_BOLT.create(level,
+				net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+		if (bolt == null) {
+			return false;
+		}
+		bolt.snapTo(place.x, level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
+				net.minecraft.util.Mth.floor(place.x), net.minecraft.util.Mth.floor(place.z)), place.z);
+		level.addFreshEntity(bolt);
+		return true;
 	}
 
 	/**

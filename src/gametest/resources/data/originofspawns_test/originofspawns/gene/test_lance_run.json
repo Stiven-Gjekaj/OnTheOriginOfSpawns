@@ -1,0 +1,7 @@
+{
+	"species": ["minecraft:camel_husk", "minecraft:zombie_nautilus", "minecraft:zombie_horse", "minecraft:skeleton_horse"],
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "riders", "effects": [{ "type": "damage_dealt_when", "when": "mount_running", "multiplier": 1.2, "hits": "melee" }] }],
+	"mutation_rate": 0
+}

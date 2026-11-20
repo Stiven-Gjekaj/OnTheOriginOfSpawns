@@ -200,4 +200,25 @@ public class MountEffectsTest {
 				net.minecraft.world.item.Items.SHIELD)), "the shield kick stops the shield");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void theHitsOfARiderDoMoreDamageOnlyWhileTheMountRuns(GameTestHelper helper) {
+		var level = helper.getLevel();
+		var pig = CreeperEffectsTest.pigAt(helper, new BlockPos(7, 1, 7));
+		int x = 1;
+		for (Pair pair : MOUNTS) {
+			String name = pair.mount().toShortString();
+			Mob rider = rider(helper, pair, new BlockPos(x, 1, 2), "test_lance_run");
+			Mob mount = (Mob) rider.getVehicle();
+			mount.xo = mount.getX();
+			mount.zo = mount.getZ();
+			helper.assertValueEqual(GeneCombat.modifyDamage(pig, level.damageSources().mobAttack(rider), 4.0F), 4.0F,
+					"no more damage while the " + name + " stands");
+			mount.xo = mount.getX() - mount.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
+			helper.assertTrue(Math.abs(GeneCombat.modifyDamage(pig, level.damageSources().mobAttack(rider), 4.0F) - 4.8F) < 0.001F,
+					"20% more damage while the " + name + " runs");
+			x += 2;
+		}
+		helper.succeed();
+	}
 }

@@ -203,7 +203,17 @@ public final class GeneCombat {
 					&& entity.blockPosition().distSqr(entity.getAttached(ModAttachments.HOME)) > FAR_HOME_BLOCKS * FAR_HOME_BLOCKS;
 			case TARGET_GOLD_ARMOR -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
 					&& net.minecraft.world.entity.monster.piglin.PiglinAi.isWearingSafeArmor(player);
+			case MOUNT_RUNNING -> entity.getVehicle() instanceof LivingEntity mount && running(mount);
 		};
+	}
+
+	/**
+	 * Returns true if the entity moved faster than half of its movement speed in the last tick. The test uses the
+	 * change of the position, so it also works for a mount that a player rides.
+	 */
+	public static boolean running(LivingEntity entity) {
+		double moved = Math.hypot(entity.getX() - entity.xo, entity.getZ() - entity.zo);
+		return moved > entity.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED) * 0.5;
 	}
 
 	/**

@@ -651,7 +651,11 @@ public sealed interface GeneEffect {
 		/**
 		 * The mob did not shoot in the last 2 seconds. A shot is a fireball of a blaze or of a ghast.
 		 */
-		NOT_SHOOTING;
+		NOT_SHOOTING,
+		/**
+		 * The mob rides a mount that moves faster than half of the movement speed of the mount.
+		 */
+		MOUNT_RUNNING;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 

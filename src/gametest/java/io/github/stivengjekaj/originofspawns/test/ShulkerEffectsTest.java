@@ -294,4 +294,43 @@ public class ShulkerEffectsTest {
 		helper.assertFalse(young.getFirst().blockPosition().equals(start), "the new shulker teleports away");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void theReusedEffectsWorkOnAShulker(GameTestHelper helper) {
+		Shulker heavy = shulker(helper, new BlockPos(1, 1, 1), "test_heavy_air");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 1));
+		GeneCombat.onProjectileHit(heavy, pig);
+		helper.assertTrue(pig.hasEffect(net.minecraft.world.effect.MobEffects.WEAKNESS), "Heavy Air: a bullet hit gives Weakness");
+		Shulker blast = shulker(helper, new BlockPos(1, 1, 4), "test_blast_lid");
+		helper.assertValueEqual(GeneCombat.modifyDamage(blast, helper.getLevel().damageSources().explosion(null, null), 8.0F),
+				4.0F, "Blast Lid: half the damage from explosions");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void fifteenGenesWithThreeInEachFamilyStillGiveEachKindOfFamily(GameTestHelper helper) {
+		// The shulker has 15 genes, 3 in each family. 3 genes of one family give 6 points, the points of a pure family.
+		var gunner = net.minecraft.resources.Identifier.fromNamespaceAndPath("originofspawns", "shulker/gunner");
+		var lifter = net.minecraft.resources.Identifier.fromNamespaceAndPath("originofspawns", "shulker/lifter");
+		var three = java.util.List.of(
+				new io.github.stivengjekaj.originofspawns.evolution.FamilyResult.TaggedGene(gunner, java.util.Optional.empty(), 0.5F),
+				new io.github.stivengjekaj.originofspawns.evolution.FamilyResult.TaggedGene(gunner, java.util.Optional.empty(), 0.4F),
+				new io.github.stivengjekaj.originofspawns.evolution.FamilyResult.TaggedGene(gunner, java.util.Optional.empty(), 0.3F));
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.FamilyResult.of(three).kind(),
+				io.github.stivengjekaj.originofspawns.evolution.FamilyResult.Kind.PURE, "3 genes of one family give a pure family");
+		var mixed = java.util.List.of(three.get(0), three.get(1),
+				new io.github.stivengjekaj.originofspawns.evolution.FamilyResult.TaggedGene(lifter, java.util.Optional.empty(), 0.3F));
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.FamilyResult.of(mixed).kind(),
+				io.github.stivengjekaj.originofspawns.evolution.FamilyResult.Kind.MINOR, "2 genes and 1 gene give a minor family");
+		// The pool rolls from the 15 genes of the species, and a mob keeps 5 at most.
+		var candidates = new java.util.ArrayList<io.github.stivengjekaj.originofspawns.evolution.GeneRoller.Candidate>();
+		for (int i = 0; i < 15; i++) {
+			candidates.add(new io.github.stivengjekaj.originofspawns.evolution.GeneRoller.Candidate(
+					net.minecraft.resources.Identifier.fromNamespaceAndPath("originofspawns_test", "gene_" + i), 1.0F, 0.003F));
+		}
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneRoller.roll(candidates,
+				helper.getLevel().getRandom()).size(), io.github.stivengjekaj.originofspawns.evolution.GeneRoller.MAX_GENES,
+				"a mob gets 5 of the 15 genes");
+		helper.succeed();
+	}
 }

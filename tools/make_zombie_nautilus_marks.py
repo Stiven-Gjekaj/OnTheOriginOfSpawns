@@ -350,22 +350,34 @@ def spiral_rest():
 
 
 def ink_veil():
-    # Black ink stains: smeared streaks of black ink curve round the coil
-    # end of the low cube, as if they run with the spiral of the shell, and
-    # long smears run along the bottom of the shell.
-    ink = Mark("#0A0A10")
-    sheen = Mark("#34344C")
-    cx, cy = 12.5, -4
+    # Black ink stains: flowing streaks of blue black ink curve round the
+    # coil end of the low cube, and follow the spiral of the shell. Each
+    # streak has a dark core, a soft, see-through edge with a little purple,
+    # and a ragged end. Long, curved smears run on along the bottom.
+    core = Mark("#0C0C1A")
+    edge = Mark("#2A1E3E", alpha=150)
+    tint = Mark("#3A2456", alpha=110)
+    # The spiral turns round a point over the middle of the coil end. A
+    # streak follows a curve where the distance from that point, plus a
+    # slow turn with the angle, is near a whole step.
+    cx, cy = 7, -3
     for x, y, f, col, row in pixels(LOW, ("front",)):
-        d = ((col - cx) ** 2 + (row - cy) ** 2) ** 0.5
-        ring = (d + noise100(col, 0, 9601) / 60) % 3
-        if ring < 1.5 and noise100(col // 2, row, 9602) < 85:
-            (sheen if ring < 0.3 else ink).put((x, y))
+        dx, dy = col - cx, row - cy
+        d = math.hypot(dx, dy) + math.atan2(dy, dx) * 1.2
+        k = d % 3.5
+        ragged = noise100(col, row, 9601)
+        if 0.9 <= k < 1.9 and ragged < 92:
+            core.put((x, y))
+        elif (0.4 <= k < 0.9 or 1.9 <= k < 2.5) and ragged < 75:
+            (tint if ragged < 25 else edge).put((x, y))
     for x, y, f, col, row in pixels(LOW, ("bottom",), rows=range(6, 20)):
-        lane = (col + row // 4) % 4
-        if lane == 0 and noise100(col, row // 3, 9603) < 85:
-            (sheen if row % 5 == 0 else ink).put((x, y))
-    return [ink, sheen]
+        k = (col + 3 * math.sin(row / 3)) % 5
+        ragged = noise100(col, row, 9603)
+        if 1 <= k < 2 and ragged < 90:
+            core.put((x, y))
+        elif (0.5 <= k < 1 or 2 <= k < 2.6) and ragged < 70:
+            edge.put((x, y))
+    return [core, edge, tint]
 
 
 def deep_ram():

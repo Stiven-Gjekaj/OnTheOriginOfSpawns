@@ -5,14 +5,21 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/ink_veil_0.png",
-				"tint": "#0A0A10"
+				"tint": "#0C0C1A"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/ink_veil_1.png",
-				"tint": "#34344C"
+				"tint": "#2A1E3E"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ink_veil_2.png",
+				"tint": "#3A2456"
 			}
 		}
 	]

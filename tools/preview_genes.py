@@ -80,6 +80,8 @@ BREEZE_WIND_PATH = "assets/minecraft/textures/entity/breeze/breeze_wind.png"
 BREEZE_EYES_PATH = "assets/minecraft/textures/entity/breeze/breeze_eyes.png"
 GUARDIAN_PATH = "assets/minecraft/textures/entity/guardian/guardian.png"
 CAMEL_HUSK_PATH = "assets/minecraft/textures/entity/camel/camel_husk.png"
+ZOMBIE_NAUTILUS_PATH = "assets/minecraft/textures/entity/nautilus/zombie_nautilus.png"
+ZOMBIE_NAUTILUS_WARM_PATH = "assets/minecraft/textures/entity/nautilus/zombie_nautilus_coral.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -584,6 +586,15 @@ CAMEL_HUSK_FAMILIES = {
     "sandkicker": ["hard_kick", "sand_spray", "golem_kick", "shield_kick", "sand_spit", "sand_shove"],
 }
 
+# The families of the zombie nautilus, from design/species/zombie_nautilus.md.
+ZOMBIE_NAUTILUS_FAMILIES = {
+    "rammer": ["deep_ram", "quick_ram", "hull_ram", "shield_ram", "breath_ram", "tide_charge"],
+    "whorlback": ["layered_shell", "trident_shell", "coral_crust", "barnacle_hide", "sealed_shell", "spiral_rest"],
+    "jetter": ["jet_fin", "dodge_jet", "shore_crawl", "deep_escape", "sun_shell", "wake_jet"],
+    "tidebearer": ["shell_wall", "tide_shield", "trident_guard", "kin_current", "last_current", "ink_veil"],
+    "inker": ["thick_ink", "wide_ink", "sour_ink", "ink_screen", "quick_ink", "ink_rush"],
+}
+
 
 ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
     "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
@@ -638,6 +649,11 @@ CAMEL_HUSK_EXTRA = next_family_extra(CAMEL_HUSK_FAMILIES, {
     "dunewalker": ["swift_stride", "shy_step"], "bearer": ["high_seat", "saddle_wall"],
     "sandkicker": ["hard_kick", "golem_kick"],
 }, "dunewalker")
+ZOMBIE_NAUTILUS_EXTRA = next_family_extra(ZOMBIE_NAUTILUS_FAMILIES, {
+    "rammer": ["deep_ram", "hull_ram"], "whorlback": ["trident_shell", "coral_crust"],
+    "jetter": ["jet_fin", "sun_shell"], "tidebearer": ["shell_wall", "trident_guard"],
+    "inker": ["wide_ink", "sour_ink"],
+}, "inker")
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -1116,6 +1132,56 @@ CAMEL_HUSK_CUBES = [
 ] + [(leg, uv, (-2.5, 2, -2.5), (5, 21, 5), False)
      for leg, uv in (("left_hind_leg", (58, 16)), ("right_hind_leg", (94, 16)),
                      ("left_front_leg", (0, 0)), ("right_front_leg", (0, 26)))]
+# The zombie nautilus, from NautilusModel. The shell and the body are children
+# of the bone root. The three parts of the mouth, upper_mouth, inner_mouth,
+# and lower_mouth, are children of the body. Their texture is a ring of
+# tentacles. The mouth is at the +z end, and the coil of the shell is at the
+# -z end. The warm variant (ZombieNautilusCoralModel) adds flat corals on the
+# shell, children of the bone corals. The corals are not a region.
+NAUTILUS_ROOT = (0, 29, -6)
+NAUTILUS_SHELL = child_pivot(NAUTILUS_ROOT, (0, -13, 5))
+NAUTILUS_BODY = child_pivot(NAUTILUS_ROOT, (0, -8.5, 12.3))
+ZOMBIE_NAUTILUS_PIVOTS = {
+    "shell": NAUTILUS_SHELL, "body": NAUTILUS_BODY,
+    "upper_mouth": child_pivot(NAUTILUS_BODY, (0, -2.51, 7)),
+    "inner_mouth": child_pivot(NAUTILUS_BODY, (0, -0.51, 7.5)),
+    "lower_mouth": child_pivot(NAUTILUS_BODY, (0, 1.49, 7)),
+}
+ZOMBIE_NAUTILUS_CUBES = [
+    ("shell", (0, 0), (-7, -10, -7), (14, 10, 16), False),
+    ("shell", (0, 26), (-7, 0, -7), (14, 8, 20), False),
+    ("shell", (48, 26), (-7, 0, 6), (14, 8, 0), False),
+    ("body", (0, 54), (-5, -4.51, -3), (10, 8, 14), False),
+    ("body", (0, 76), (-5, -4.51, 7), (10, 8, 0), False),
+    ("upper_mouth", (54, 54), (-5, -2, 0), (10, 4, 4), False),
+    ("inner_mouth", (54, 70), (-3, -2, -0.5), (6, 4, 4), False),
+    ("lower_mouth", (54, 62), (-5, -1.98, 0), (10, 4, 4), False),
+]
+NAUTILUS_CORALS = child_pivot(NAUTILUS_SHELL, (8, 4.5, -8))
+NAUTILUS_YELLOW = child_pivot(NAUTILUS_CORALS, (0, -11, 11))
+NAUTILUS_PINK = child_pivot(NAUTILUS_CORALS, (-12.5, -18, 11))
+NAUTILUS_BLUE = child_pivot(NAUTILUS_CORALS, (-14, 0, 5.5))
+ZOMBIE_NAUTILUS_WARM_PIVOTS = dict(
+    ZOMBIE_NAUTILUS_PIVOTS, pink_coral=NAUTILUS_PINK,
+    yellow_coral_second=child_pivot(NAUTILUS_YELLOW, (0, 0, 2), (0, -45, 0)),
+    yellow_coral_first=child_pivot(NAUTILUS_YELLOW, (0, 0, 0), (0, 45, 0)),
+    pink_coral_second=child_pivot(NAUTILUS_PINK, (-1.5, 4.5, 4), (0, 0, 90)),
+    blue_second=child_pivot(NAUTILUS_BLUE, (0, 0, -2), (0, 45, 0)),
+    blue_first=child_pivot(NAUTILUS_BLUE, (0, 0, 0), (0, -45, 0)),
+    red_coral_second=child_pivot(NAUTILUS_CORALS, (-0.5, -1, 1.5), (0, -47.5, 0)),
+    red_coral_first=child_pivot(NAUTILUS_CORALS, (0, 0, 0), (0, 45, 0)),
+)
+ZOMBIE_NAUTILUS_WARM_CUBES = ZOMBIE_NAUTILUS_CUBES + [
+    ("yellow_coral_second", (0, 85), (-4.5, -3.5, 0), (6, 8, 0), False),
+    ("yellow_coral_first", (0, 85), (-4.5, -3.5, 0), (6, 8, 0), False),
+    ("pink_coral", (-8, 94), (-4.5, 4.5, 0), (6, 0, 8), False),
+    ("pink_coral_second", (-8, 94), (-3, 0, -4), (6, 0, 8), False),
+    ("blue_second", (0, 102), (-3.5, -5.5, 0), (5, 10, 0), False),
+    ("blue_first", (0, 102), (-3.5, -5.5, 0), (5, 10, 0), False),
+    ("red_coral_second", (0, 112), (-2.5, -5.5, 0), (4, 10, 0), False),
+    ("red_coral_first", (0, 112), (-4.5, -5.5, 0), (6, 10, 0), False),
+]
+ZOMBIE_NAUTILUS_FRAME, ZOMBIE_NAUTILUS_CLOSEUP = (22, 0, 44, 32), ((44, 32), (0, 15))
 CAMEL_HUSK_FRAME, CAMEL_HUSK_CLOSEUP = (28, 27, 56, 56), ((56, 56), (0, 1))
 
 # Each Nether mob: the cubes, the pivots, the weapon, the wraps, the frame of
@@ -1138,6 +1204,10 @@ NETHER_LOOKS = {
     "breeze": (BREEZE_CUBES, BREEZE_PIVOTS, None, [], (12, 7, 24, 33), ((26, 34), (0, 9)), False),
     "guardian": (GUARDIAN_CUBES, GUARDIAN_PIVOTS, None, [], (24, 6, 48, 44), ((50, 46), (0, 16)), False),
     "camel_husk": (CAMEL_HUSK_CUBES, CAMEL_HUSK_PIVOTS, None, [], CAMEL_HUSK_FRAME, CAMEL_HUSK_CLOSEUP, False),
+    "zombie_nautilus": (ZOMBIE_NAUTILUS_CUBES, ZOMBIE_NAUTILUS_PIVOTS, None, [], ZOMBIE_NAUTILUS_FRAME,
+                        ZOMBIE_NAUTILUS_CLOSEUP, False),
+    "zombie_nautilus_warm": (ZOMBIE_NAUTILUS_WARM_CUBES, ZOMBIE_NAUTILUS_WARM_PIVOTS, None, [], ZOMBIE_NAUTILUS_FRAME,
+                             ZOMBIE_NAUTILUS_CLOSEUP, False),
 }
 # The flyers are seen from below in the game, so their sheets look at them
 # from above, from below, and from the side.
@@ -1732,6 +1802,8 @@ SPECIES = {
     "breeze": (BREEZE_PATH, None, BREEZE_FAMILIES, BREEZE_EXTRA, []),
     "guardian": (GUARDIAN_PATH, None, GUARDIAN_FAMILIES, GUARDIAN_EXTRA, []),
     "camel_husk": (CAMEL_HUSK_PATH, None, CAMEL_HUSK_FAMILIES, CAMEL_HUSK_EXTRA, []),
+    "zombie_nautilus": (ZOMBIE_NAUTILUS_PATH, None, ZOMBIE_NAUTILUS_FAMILIES, ZOMBIE_NAUTILUS_EXTRA, []),
+    "zombie_nautilus_warm": (ZOMBIE_NAUTILUS_WARM_PATH, None, ZOMBIE_NAUTILUS_FAMILIES, ZOMBIE_NAUTILUS_EXTRA, []),
 }
 
 
@@ -1844,6 +1916,11 @@ def set_mob(species):
             # The camel husk is long. Its sheets look at it from the front at
             # a turn, from behind at a turn, and from the side.
             MOB["sheet_views"] = [(-35, 15), (145, 15), (-90, 5)]
+        if species.startswith("zombie_nautilus"):
+            # The mouth of the zombie nautilus is at the back of the model.
+            # Its sheets look at the mouth at a turn, at the coil of the shell
+            # at a turn, and at the side.
+            MOB["sheet_views"] = [(145, 15), (-35, 20), (-90, 5)]
         if species.startswith("ghast"):
             # The ghast floats over the player, so its sheets look at it from
             # the front, from below at the side, and from behind.

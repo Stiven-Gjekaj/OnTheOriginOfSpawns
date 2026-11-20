@@ -90,6 +90,7 @@ SHULKER_PATH = "assets/minecraft/textures/entity/shulker/shulker.png"
 # (purple) shulker and three more colors: white, black, and yellow.
 SHULKER_COLOR_PATH = "assets/minecraft/textures/entity/shulker/shulker_{}.png"
 SHULKER_COLORS = ("white", "black", "yellow")
+RAVAGER_PATH = "assets/minecraft/textures/entity/illager/ravager.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -639,6 +640,15 @@ SHULKER_FAMILIES = {
     "budders": ["split_reach", "heir_shell", "scatter_bud"],
 }
 
+# The families of the ravager, from design/species/ravager.md.
+RAVAGER_FAMILIES = {
+    "impalers": ["horn_gore", "shield_crush", "golem_crusher", "gore_rage", "sweep_horns", "ram_rush"],
+    "tramplers": ["wide_stride", "fence_breaker", "sure_foot", "blood_run", "lone_charge", "rider_rush"],
+    "roarers": ["loud_roar", "fear_roar", "rage_roar", "victory_roar", "lone_roar", "war_roar"],
+    "ironbacks": ["plate_hide", "arrow_hide", "blast_pelt", "ember_pelt", "steady_stance", "spiked_hide"],
+    "warbeasts": ["saddle_guard", "escort_rider", "rider_heal", "horde_hide", "raid_scent", "twin_strike"],
+}
+
 
 ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
     "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
@@ -718,6 +728,11 @@ SHULKER_EXTRA = next_family_extra(SHULKER_FAMILIES, {
     "bunkers": ["thick_lid", "snap_lid"], "shifters": ["sight_blink", "blink_shut"],
     "budders": ["split_reach", "heir_shell"],
 }, "shifters")
+RAVAGER_EXTRA = next_family_extra(RAVAGER_FAMILIES, {
+    "impalers": ["sweep_horns", "golem_crusher"], "tramplers": ["lone_charge", "sure_foot"],
+    "roarers": ["fear_roar", "victory_roar"], "ironbacks": ["plate_hide", "spiked_hide"],
+    "warbeasts": ["saddle_guard", "escort_rider"],
+}, "roarers")
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -1311,6 +1326,37 @@ SHULKER_CUBES = [
     ("head", (0, 52), (-3, 0, -3), (6, 6, 6), False),
 ]
 SHULKER_FRAME, SHULKER_CLOSEUP = (18, 14, 36, 44), ((38, 48), (0, 8))
+
+# The ravager, from RavagerModel. The head is a child of the neck, and the
+# horns and the mouth are children of the head. The body has two cubes and
+# turns by 90 degrees round x, so the back face of each cube is the back of
+# the animal, and its front face is the belly. The legs are on the root.
+RAVAGER_NECK = (0, -7, 5.5)
+RAVAGER_HEAD = child_pivot(RAVAGER_NECK, (0, 16, -17))
+RAVAGER_PIVOTS = {
+    "neck": RAVAGER_NECK, "head": RAVAGER_HEAD,
+    "right_horn": child_pivot(RAVAGER_HEAD, (-10, -14, -8), (63, 0, 0)),
+    "left_horn": child_pivot(RAVAGER_HEAD, (8, -14, -8), (63, 0, 0)),
+    "mouth": child_pivot(RAVAGER_HEAD, (0, -2, 2)),
+    "body": (0, 1, 2, 90, 0, 0),
+    "right_hind_leg": (-8, -13, 18), "left_hind_leg": (8, -13, 18),
+    "right_front_leg": (-8, -13, -5), "left_front_leg": (8, -13, -5),
+}
+RAVAGER_CUBES = [
+    ("neck", (68, 73), (-5, -1, -18), (10, 10, 18), False),
+    ("head", (0, 0), (-8, -20, -14), (16, 20, 16), False),
+    ("head", (0, 0), (-2, -6, -18), (4, 8, 4), False),
+    ("right_horn", (74, 55), (0, -14, -2), (2, 14, 4), False),
+    ("left_horn", (74, 55), (0, -14, -2), (2, 14, 4), True),
+    ("mouth", (0, 36), (-8, 0, -16), (16, 3, 16), False),
+    ("body", (0, 55), (-7, -10, -7), (14, 16, 20), False),
+    ("body", (0, 91), (-6, 6, -7), (12, 13, 18), False),
+    ("right_hind_leg", (96, 0), (-4, 0, -4), (8, 37, 8), False),
+    ("left_hind_leg", (96, 0), (-4, 0, -4), (8, 37, 8), True),
+    ("right_front_leg", (64, 0), (-4, 0, -4), (8, 37, 8), False),
+    ("left_front_leg", (64, 0), (-4, 0, -4), (8, 37, 8), True),
+]
+RAVAGER_FRAME, RAVAGER_CLOSEUP = (32, 23, 64, 56), ((66, 80), (0, -2))
 CAMEL_HUSK_FRAME, CAMEL_HUSK_CLOSEUP = (28, 27, 56, 56), ((56, 56), (0, 1))
 
 # Each Nether mob: the cubes, the pivots, the weapon, the wraps, the frame of
@@ -1342,6 +1388,7 @@ NETHER_LOOKS = {
     "silverfish": (SILVERFISH_CUBES, SILVERFISH_PIVOTS, None, [], SILVERFISH_FRAME, SILVERFISH_CLOSEUP, True),
     **{key: (SHULKER_CUBES, SHULKER_PIVOTS, None, [], SHULKER_FRAME, SHULKER_CLOSEUP, True)
        for key in ("shulker",) + tuple("shulker_" + c for c in SHULKER_COLORS)},
+    "ravager": (RAVAGER_CUBES, RAVAGER_PIVOTS, None, [], RAVAGER_FRAME, RAVAGER_CLOSEUP, False),
 }
 # The flyers are seen from below in the game, so their sheets look at them
 # from above, from below, and from the side.
@@ -1944,6 +1991,7 @@ SPECIES = {
     "shulker": (SHULKER_PATH, None, SHULKER_FAMILIES, SHULKER_EXTRA, []),
     **{"shulker_" + c: (SHULKER_COLOR_PATH.format(c), None, SHULKER_FAMILIES, SHULKER_EXTRA, [])
        for c in SHULKER_COLORS},
+    "ravager": (RAVAGER_PATH, None, RAVAGER_FAMILIES, RAVAGER_EXTRA, []),
 }
 
 
@@ -2063,6 +2111,11 @@ def set_mob(species):
             # The horse is long. Its sheets look at it from the front at a
             # turn, from behind at a turn, and from the side.
             MOB["sheet_views"] = [(-35, 15), (145, 15), (-90, 5)]
+        if species == "ravager":
+            # The ravager is long and tall, and the player sees its back. Its
+            # sheets look down on it from the front at a turn, from behind at
+            # a turn, and from the side.
+            MOB["sheet_views"] = [(-35, 25), (145, 25), (-90, 5)]
         if species.startswith("zombie_nautilus"):
             # The mouth of the zombie nautilus is at the back of the model.
             # It swims, and the player sees it from below too. Its sheets look

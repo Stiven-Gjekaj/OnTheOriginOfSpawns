@@ -729,7 +729,7 @@ def closeup(title, rows, views, adult_tex, baby_tex):
     cell_w, cell_h = size[0] * scale, size[1] * scale
     pad, top, label_h = 16, 70, 40
     out = Image.new("RGBA", (pad + len(views) * (cell_w + pad), top + len(rows) * (cell_h + label_h + pad)),
-                    pg.WHITE)
+                    pg.MOB["background"])
     draw = ImageDraw.Draw(out)
     pg.text(draw, (out.width / 2, 12), title, 32)
     if pg.MOB["note"]:

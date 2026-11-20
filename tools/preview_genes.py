@@ -708,6 +708,7 @@ BABIES = [
 
 SCALE = 8
 WHITE = (255, 255, 255, 255)
+GRAY = (128, 128, 128, 255)
 
 # The bones of the standing zombie: the pivot of each bone, in model pixels.
 # The y axis goes down, as in the vanilla models.
@@ -1799,7 +1800,7 @@ def gene_image(name, tex, genes):
     """Return one image with the front and the back view, and a label."""
     gap, top, foot = 2 * SCALE, 6 * SCALE, 4 * SCALE
     w, h = VIEW_W * SCALE, VIEW_H * SCALE
-    im = Image.new("RGBA", (2 * w + 3 * gap, h + top + foot), WHITE)
+    im = Image.new("RGBA", (2 * w + 3 * gap, h + top + foot), MOB["background"])
     draw = ImageDraw.Draw(im)
     text(draw, (im.width / 2, SCALE), name, 3 * SCALE)
     for i, back in enumerate((False, True)):
@@ -1815,7 +1816,7 @@ def sheet(title, columns):
     gap, top = 2 * SCALE, 11 * SCALE
     w, h = VIEW_W * SCALE, VIEW_H * SCALE
     note_h = 4 * SCALE if MOB["note"] else 0
-    im = Image.new("RGBA", (len(columns) * (w + gap) + gap, top + 3 * h + 4 * gap + note_h), WHITE)
+    im = Image.new("RGBA", (len(columns) * (w + gap) + gap, top + 3 * h + 4 * gap + note_h), MOB["background"])
     draw = ImageDraw.Draw(im)
     text(draw, (im.width / 2, SCALE), title, 4 * SCALE)
     if MOB["note"]:
@@ -1964,6 +1965,9 @@ def set_mob(species):
     MOB["wind"] = None
     MOB["held"] = (stone_sword() if species == "wither_skeleton"
                    else carried_block() if species == "enderman_carrying" else [])
+    # The bones of the skeleton horse are near white, so its previews have a
+    # mid gray background. The other species have a white background.
+    MOB["background"] = GRAY if species == "skeleton_horse" else WHITE
     look = NETHER_LOOKS.get(species)
     if look:
         # The Nether mobs: the cubes, the bones, the weapon, and the frames.

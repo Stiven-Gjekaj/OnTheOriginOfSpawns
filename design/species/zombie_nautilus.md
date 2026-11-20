@@ -98,11 +98,11 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Deep Ram | Rammer | `unreached` | Its charge does 40% more damage | 10% less maximum health | Shell: a sharp, pointed front edge. This changes the model |
-| Quick Ram | Rammer | `spotted` | It charges 50% more often | 10% less maximum health | Body: narrow, pale eyes |
-| Hull Ram | Rammer | `boat` | Its charge breaks the boat of the target | 10% less speed | Shell: a dark red rim |
-| Shield Ram | Rammer | `shield` | Its charge stops a shield for 4 seconds | 10% less speed | Shell: gray scrape marks |
-| Breath Ram | Rammer | `in_water` | Its charge takes 3 seconds of air from the target | 10% less maximum health | Tentacles: blue tips |
-| Tide Charge | Rammer, sub Jetter | `crowd` | Its charge pushes the target back two times as far | 10% less maximum health | Tentacles: long, thin tentacles. This changes the model |
+| Quick Ram | Rammer | `spotted` | It charges 50% more often | 10% less maximum health | Body: narrow, pale eye slits, and thin lines on the mouth |
+| Hull Ram | Rammer | `boat` | Its charge breaks the boat of the target | 10% less speed | Shell: a dark red lip round the opening |
+| Shield Ram | Rammer | `shield` | Its charge stops a shield for 4 seconds | 10% less speed | Shell: gray scrape marks at the opening end |
+| Breath Ram | Rammer | `in_water` | Its charge takes 3 seconds of air from the target | 10% less maximum health | Tentacles: curved tentacles with blue tips. This changes the model |
+| Tide Charge | Rammer, sub Jetter | `crowd` | Its charge pushes the target back two times as far | 10% less maximum health | Tentacles: long, curved tentacles. This changes the model |
 
 ### Whorlback genes
 
@@ -119,12 +119,12 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Jet Fin | Jetter | `unreached` | 20% more speed | 10% less maximum health | Tentacles: wide, flat tentacles |
-| Dodge Jet | Jetter | `projectile` | It moves aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Body: wide, alert eyes |
+| Jet Fin | Jetter | `unreached` | 20% more speed | 10% less maximum health | Tentacles: wide, flat tentacle tips. This changes the model |
+| Dodge Jet | Jetter | `projectile` | It moves aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Body: wide, alert eyes. This changes the model |
 | Shore Crawl | Jetter | `on_land` | On land, it crawls to the nearest water in 8 blocks | 10% less maximum health | Body: wet, dark skin |
 | Deep Escape | Jetter | `critical` | At under 30% health, it swims away fast for 4 seconds | 10% less maximum health | Tentacles: torn tentacles |
 | Sun Shell | Jetter | `sunlight` | The sun burns it only one time each 4 seconds, not each second | 10% less maximum health | Shell: a dark, sun-baked shell |
-| Wake Jet | Jetter, sub Rammer | `spotted` | After a charge, it gets Speed for 3 seconds | 10% less maximum health | Tentacles: white wake marks |
+| Wake Jet | Jetter, sub Rammer | `spotted` | After a charge, it gets Speed for 3 seconds | 10% less maximum health | Tentacles: curved tentacles with white wake marks. This changes the model |
 
 ### Tidebearer genes
 
@@ -133,20 +133,20 @@ The visual column gives the region and the mark.
 | Shell Wall | Tidebearer | `projectile` | Its riders take 30% less damage from projectiles | 10% less maximum health | Shell: a high shell rim. This changes the model |
 | Tide Shield | Tidebearer | `melee` | Its riders take 20% less melee damage | 10% less speed | Shell: a broad, flat shell edge |
 | Trident Guard | Tidebearer | `trident` | Its riders take half the damage from tridents | 10% less speed | Shell: a silver ring |
-| Kin Current | Tidebearer | `critical` | When a rider is under half health, the rider heals 4 health at once, one time each 30 seconds | 10% less maximum health | Body: a green mark between the eyes |
-| Last Current | Tidebearer | `player_death` | When it dies, its riders get Resistance for 10 seconds | 10% less maximum health | Tentacles: pale tips |
-| Ink Veil | Tidebearer, sub Inker | `spotted` | Its riders are near invisible in the dark | 10% less maximum health | Shell: black ink stains |
+| Kin Current | Tidebearer | `critical` | When a rider is under half health, the rider heals 4 health at once, one time each 30 seconds | 10% less maximum health | Shell: a green wave over the mouth |
+| Last Current | Tidebearer | `player_death` | When it dies, its riders get Resistance for 10 seconds | 10% less maximum health | Tentacles: curved tentacles with pale tips. This changes the model |
+| Ink Veil | Tidebearer, sub Inker | `spotted` | Its riders are near invisible in the dark | 10% less maximum health | Shell: dark ink streaks along the spiral |
 
 ### Inker genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Thick Ink | Inker | `melee` | Its ink also gives Slowness for 3 seconds | 10% less maximum health | Body: black ink round the eyes |
-| Wide Ink | Inker | `crowd` | Its ink reaches two times as far | 10% less speed | Tentacles: black tips |
-| Sour Ink | Inker | `unreached` | Its ink also gives Nausea for 4 seconds | 10% less maximum health | Body: purple spots |
-| Ink Screen | Inker | `projectile` | After a projectile hurts it, it is near invisible for 4 seconds | 10% less maximum health | Body: dark, smoky patches |
-| Quick Ink | Inker | `alone` | It squirts its ink two times as often | 10% less maximum health | Tentacles: purple rings |
-| Ink Rush | Inker, sub Jetter | `explosion` | After it squirts ink, it gets Speed for 4 seconds | 10% less maximum health | Tentacles: streaked tentacles |
+| Wide Ink | Inker | `crowd` | Its ink reaches two times as far | 10% less speed | Tentacles: curved tentacles with black tips. This changes the model |
+| Sour Ink | Inker | `unreached` | Its ink also gives Nausea for 4 seconds | 10% less maximum health | Shell: purple spots round the opening |
+| Ink Screen | Inker | `projectile` | After a projectile hurts it, it is near invisible for 4 seconds | 10% less maximum health | Tentacles: dark, smoky tentacle bases |
+| Quick Ink | Inker | `alone` | It squirts its ink two times as often | 10% less maximum health | Tentacles: curved tentacles with purple rings. This changes the model |
+| Ink Rush | Inker, sub Jetter | `explosion` | After it squirts ink, it gets Speed for 4 seconds | 10% less maximum health | Tentacles: streaked, curved tentacles. This changes the model |
 
 ## Gene details
 

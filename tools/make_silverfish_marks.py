@@ -282,10 +282,11 @@ def deep_lodge():
 
 def wake_bite():
     # A white fringe on the back: the high bristles of the front of layer0
-    # are white.
-    white = Mark("#FFFFFF")
-    white.put(bristles("layer0", "front", lambda c, r: r <= 3))
-    return [white]
+    # are a very light warm gray. Pure white looks like holes on a white
+    # background, and the cream of Stone Seed and Egg Lodge is for eggs.
+    pale = Mark("#D8D2CA")
+    pale.put(bristles("layer0", "front", lambda c, r: r <= 3))
+    return [pale]
 
 
 def stone_seed():

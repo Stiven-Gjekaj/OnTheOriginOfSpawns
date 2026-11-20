@@ -2,6 +2,7 @@ package io.github.stivengjekaj.originofspawns.mixin;
 
 import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneShulkers;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Shulker;
@@ -22,13 +23,15 @@ public abstract class ShulkerAttackGoalMixin {
 
 	/**
 	 * After each shot, the throw rate genes of the shulker change the wait to the next shot. The vanilla wait is 1 to 5.5
-	 * seconds. A double shot gene adds a second bullet to some shots.
+	 * seconds. A double shot gene adds a second bullet to some shots. The time of the shot stops a
+	 * lid snap for a short time.
 	 */
 	@ModifyArg(method = "tick", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
 	private Entity originofspawns$afterShot(Entity bullet) {
 		if (bullet instanceof ShulkerBullet shot && shot.getOwner() instanceof Shulker shulker) {
 			this.attackTime = GeneBehaviors.scaleThrowInterval(shulker, this.attackTime);
+			shulker.setAttached(ModAttachments.SHOT_TIME, shulker.level().getGameTime());
 			GeneShulkers.countShot(shulker, shulker.getTarget());
 		}
 		return bullet;

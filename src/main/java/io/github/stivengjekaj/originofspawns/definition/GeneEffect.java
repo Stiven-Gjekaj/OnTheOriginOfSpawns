@@ -350,7 +350,8 @@ public sealed interface GeneEffect {
 			Map.entry("bullet_damage", BulletDamage.CODEC),
 			Map.entry("bullet_speed", BulletSpeed.CODEC),
 			Map.entry("bullet_levitation", BulletLevitation.CODEC),
-			Map.entry("double_shot", DoubleShot.CODEC)
+			Map.entry("double_shot", DoubleShot.CODEC),
+			Map.entry("lid_snap", LidSnap.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -689,7 +690,8 @@ public sealed interface GeneEffect {
 		 */
 		IN_AIR,
 		/**
-		 * The mob did not shoot in the last 2 seconds. A shot is a fireball of a blaze or of a ghast.
+		 * The mob did not shoot in the last 2 seconds. A shot is a fireball of a blaze or of a ghast, or a bullet of a
+		 * shulker.
 		 */
 		NOT_SHOOTING,
 		/**
@@ -5924,6 +5926,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "double_shot";
+		}
+	}
+
+	/**
+	 * When a player is next to the shulker, in 1 block of its body, the shulker snaps its lid on the player for the
+	 * damage, one time in each cooldown. It snaps only while its lid is open, and not in the second after a shot. The snap
+	 * is a melee hit of the shulker, so its hit effects act on it. Snap Lid: 4 damage, one time each 3 seconds.
+	 */
+	record LidSnap(float damage, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<LidSnap> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("damage", 4.0F).forGetter(LidSnap::damage),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("cooldown_seconds", 3.0F).forGetter(LidSnap::cooldownSeconds)
+		).apply(instance, LidSnap::new));
+
+		@Override
+		public String type() {
+			return "lid_snap";
 		}
 	}
 }

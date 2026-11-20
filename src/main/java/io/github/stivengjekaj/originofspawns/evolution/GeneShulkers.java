@@ -4,9 +4,11 @@ import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Shulker;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ShulkerBullet;
 
 /**
@@ -67,6 +69,38 @@ public final class GeneShulkers {
 			return false;
 		}
 		shulker.level().addFreshEntity(new ShulkerBullet(shulker.level(), shulker, target, shulker.getAttachFace().getAxis()));
+		return true;
+	}
+
+	/**
+	 * A snap does not come in this many ticks after a shot.
+	 */
+	public static final long SNAP_SHOT_TICKS = 20L;
+
+	/**
+	 * Snaps the lid of the shulker on the nearest player next to it, if the lid is open, the shulker did not shoot in the
+	 * last second, and the cooldown of the gene is over.
+	 *
+	 * @return true if the shulker snapped
+	 */
+	public static boolean lidSnap(Shulker shulker, ServerLevel level, GeneEffect.LidSnap snap) {
+		long now = level.getGameTime();
+		if (!GeneCombat.test(shulker, GeneEffect.When.SHELL_OPEN)
+				|| now - shulker.getAttachedOrElse(ModAttachments.SHOT_TIME, Long.MIN_VALUE / 2) < SNAP_SHOT_TICKS
+				|| !GeneCombat.ready(shulker, snap, snap.cooldownSeconds())) {
+			return false;
+		}
+		Player player = level.getEntitiesOfClass(Player.class, shulker.getBoundingBox().inflate(1.0),
+				other -> other.isAlive() && !other.isSpectator() && !other.isCreative())
+				.stream().min(java.util.Comparator.comparingDouble(other -> other.distanceToSqr(shulker))).orElse(null);
+		if (player == null) {
+			return false;
+		}
+		GeneCombat.startCooldown(shulker, snap);
+		shulker.playSound(net.minecraft.sounds.SoundEvents.SHULKER_CLOSE, 1.0F, 1.5F);
+		if (player.hurtServer(level, level.damageSources().mobAttack(shulker), snap.damage())) {
+			GeneCombat.onHit(shulker, player);
+		}
 		return true;
 	}
 }

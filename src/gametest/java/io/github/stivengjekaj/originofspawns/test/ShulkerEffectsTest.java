@@ -134,4 +134,28 @@ public class ShulkerEffectsTest {
 		helper.assertValueEqual(GeneCombat.modifyDamage(shulker, shot, 10.0F), 7.0F, "30% less projectile damage while open");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aSnapLidBitesAPlayerNextToItWhileItIsOpen(GameTestHelper helper) {
+		Shulker shulker = shulker(helper, new BlockPos(2, 1, 2), "test_snap_lid");
+		var lid = (io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker;
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setNoGravity(true);
+		player.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(3, 1, 2))));
+		var snap = new io.github.stivengjekaj.originofspawns.definition.GeneEffect.LidSnap(4.0F, 3.0F);
+		lid.originofspawns$setRawPeekAmount(0);
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneShulkers.lidSnap(shulker, helper.getLevel(), snap),
+				"a closed shulker does not snap");
+		lid.originofspawns$setRawPeekAmount(100);
+		shulker.setAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.SHOT_TIME, helper.getLevel().getGameTime());
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneShulkers.lidSnap(shulker, helper.getLevel(), snap),
+				"a shulker does not snap right after a shot");
+		shulker.removeAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.SHOT_TIME);
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneShulkers.lidSnap(shulker, helper.getLevel(), snap),
+				"an open shulker snaps");
+		helper.assertValueEqual(player.getMaxHealth() - player.getHealth(), 4.0F, "the snap does 4 damage");
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneShulkers.lidSnap(shulker, helper.getLevel(), snap),
+				"the next snap waits");
+		helper.succeed();
+	}
 }

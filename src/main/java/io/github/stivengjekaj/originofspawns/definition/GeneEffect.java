@@ -360,7 +360,8 @@ public sealed interface GeneEffect {
 			Map.entry("split_heir", SplitHeir.CODEC),
 			Map.entry("split_scatter", SplitScatter.CODEC),
 			Map.entry("roar_range", RoarRange.CODEC),
-			Map.entry("roar_damage", RoarDamage.CODEC)
+			Map.entry("roar_damage", RoarDamage.CODEC),
+			Map.entry("roar_effect", RoarEffect.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6094,6 +6095,27 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "roar_damage";
+		}
+	}
+
+	/**
+	 * The roar of a ravager gives the status effect to each mob and player that it hurts. With {@code allies}, it gives
+	 * the effect to the other raiders in the radius instead, one time for each roar. Fear Roar: Slowness II for 4
+	 * seconds. War Roar: Strength I for 5 seconds to the raiders in 8 blocks.
+	 */
+	record RoarEffect(Holder<MobEffect> effect, float seconds, int amplifier, boolean allies, float radius)
+			implements GeneEffect {
+		public static final MapCodec<RoarEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(RoarEffect::effect),
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(RoarEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(RoarEffect::amplifier),
+				Codec.BOOL.optionalFieldOf("allies", false).forGetter(RoarEffect::allies),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("radius", 8.0F).forGetter(RoarEffect::radius)
+		).apply(instance, RoarEffect::new));
+
+		@Override
+		public String type() {
+			return "roar_effect";
 		}
 	}
 }

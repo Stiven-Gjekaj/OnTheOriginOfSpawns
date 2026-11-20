@@ -52,4 +52,18 @@ public class RavagerEffectsTest {
 		helper.assertValueEqual(lost(second), 9.0F, "the roar does 50% more damage under half health");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void roarEffectsGoToTheTargetsAndToTheRaidersNear(GameTestHelper helper) {
+		Ravager ravager = ravager(helper, new BlockPos(1, 1, 1), "test_war_roar");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 4));
+		var pillager = MountEffectsTest.mob(helper, EntityTypes.PILLAGER, new BlockPos(5, 1, 1));
+		roar(ravager);
+		var slowness = pig.getEffect(net.minecraft.world.effect.MobEffects.SLOWNESS);
+		helper.assertTrue(slowness != null && slowness.getAmplifier() == 1, "Fear Roar: the pig gets Slowness II");
+		helper.assertTrue(pillager.hasEffect(net.minecraft.world.effect.MobEffects.STRENGTH), "War Roar: the pillager gets Strength");
+		helper.assertFalse(pig.hasEffect(net.minecraft.world.effect.MobEffects.STRENGTH), "the pig is not a raider");
+		helper.assertFalse(ravager.hasEffect(net.minecraft.world.effect.MobEffects.STRENGTH), "the ravager itself gets no Strength");
+		helper.succeed();
+	}
 }

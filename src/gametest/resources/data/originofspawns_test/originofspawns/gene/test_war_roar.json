@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "roar_effect", "effect": "minecraft:slowness", "seconds": 4, "amplifier": 1 }, { "type": "roar_effect", "effect": "minecraft:strength", "seconds": 5, "allies": true, "radius": 8 }],
+	"mutation_rate": 0
+}

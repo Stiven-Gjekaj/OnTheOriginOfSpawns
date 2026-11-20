@@ -149,8 +149,26 @@ public class ZombieNautilusEffectsTest {
 		helper.succeed();
 	}
 
+	/**
+	 * Hurts the nautilus as if its last ink was 6 seconds ago, and returns true if the far player got Blindness.
+	 */
+	static boolean inkAfterSixSeconds(GameTestHelper helper, ZombieNautilus nautilus, net.minecraft.world.entity.player.Player near,
+			net.minecraft.world.entity.player.Player far) {
+		var level = helper.getLevel();
+		var ink = io.github.stivengjekaj.originofspawns.evolution.GeneEffects.of(nautilus)
+				.filter(GeneEffect.EffectOnHurt.class::isInstance).findFirst().orElseThrow();
+		nautilus.setAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.HURT_EFFECT_TIMES,
+				java.util.Map.of((GeneEffect.EffectOnHurt) ink, level.getGameTime() - 120L));
+		far.removeAllEffects();
+		float before = nautilus.getHealth();
+		// The vanilla hurt cooldown lets a second hit in it hurt only with more damage than the first hit.
+		nautilus.hurtServer(level, level.damageSources().playerAttack(near), 3.0F);
+		helper.assertTrue(nautilus.getHealth() < before, "the second hit hurts the nautilus");
+		return far.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS);
+	}
+
 	@GameTest
-	public void theInkGenesAddAnEffectAndReachFarther(GameTestHelper helper) {
+	public void theInkGenesAddAnEffectReachFartherAndComeMoreOften(GameTestHelper helper) {
 		var level = helper.getLevel();
 		var near = CreeperEffectsTest.survivalPlayer(helper).player();
 		var far = CreeperEffectsTest.survivalPlayer(helper).player();
@@ -161,6 +179,7 @@ public class ZombieNautilusEffectsTest {
 		helper.assertTrue(near.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "the plain ink blinds the near player");
 		helper.assertFalse(far.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "the plain ink does not reach 6 blocks");
 		helper.assertFalse(near.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS), "the plain ink gives no Slowness");
+		helper.assertFalse(inkAfterSixSeconds(helper, plain, near, far), "the plain ink waits 10 seconds");
 		plain.discard();
 		near.removeAllEffects();
 		ZombieNautilus inky = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, new BlockPos(1, 1, 1), "test_ink_mods");
@@ -168,6 +187,7 @@ public class ZombieNautilusEffectsTest {
 		helper.assertTrue(far.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "the wide ink reaches 6 blocks");
 		helper.assertTrue(near.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS), "the thick ink gives Slowness");
 		helper.assertTrue(far.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS), "and to each player that it reaches");
+		helper.assertTrue(inkAfterSixSeconds(helper, inky, near, far), "the quick ink waits only 5 seconds");
 		helper.succeed();
 	}
 }

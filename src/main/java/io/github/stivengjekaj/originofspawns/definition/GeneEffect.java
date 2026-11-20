@@ -325,7 +325,8 @@ public sealed interface GeneEffect {
 			Map.entry("drain_air", DrainAir.CODEC),
 			Map.entry("self_effect_after", SelfEffectAfter.CODEC),
 			Map.entry("ink_effect", InkEffect.CODEC),
-			Map.entry("ink_reach", InkReach.CODEC)
+			Map.entry("ink_reach", InkReach.CODEC),
+			Map.entry("ink_rate", InkRate.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5467,6 +5468,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "ink_reach";
+		}
+	}
+
+	/**
+	 * The ink of the mob comes more often: its cooldown is divided by the multiplier. More than one effect multiplies
+	 * together. Quick Ink: 2.
+	 */
+	record InkRate(float multiplier) implements GeneEffect {
+		public static final MapCodec<InkRate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 10.0F).optionalFieldOf("multiplier", 2.0F).forGetter(InkRate::multiplier)
+		).apply(instance, InkRate::new));
+
+		@Override
+		public String type() {
+			return "ink_rate";
 		}
 	}
 }

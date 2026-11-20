@@ -116,6 +116,56 @@ public final class GeneSilverfish {
 			silverfish.setAttached(ModAttachments.GENES, entry.genes());
 			GeneEffects.applyAttributes(silverfish, GeneEffects.sources(level.registryAccess(), entry.genes()));
 			silverfish.setHealth(silverfish.getMaxHealth());
+			// The cooldown of each hide gene goes on from the hide.
+			java.util.Map<GeneEffect, Long> times = new java.util.HashMap<>(
+					silverfish.getAttachedOrElse(ModAttachments.EFFECT_TIMES, java.util.Map.of()));
+			GeneEffects.of(silverfish).filter(GeneEffect.HideInStone.class::isInstance)
+					.forEach(effect -> times.put(effect, entry.hideTime()));
+			silverfish.setAttached(ModAttachments.EFFECT_TIMES, times);
 		});
+	}
+
+	/**
+	 * Hides the mob in a stone block next to it when a hit took it under the threshold of a hide gene, if the cooldown of
+	 * the gene is over.
+	 *
+	 * @return true if the mob hid
+	 */
+	public static boolean hideWhenWounded(Mob mob, ServerLevel level) {
+		if (!mob.isAlive() || !level.getGameRules().get(GameRules.MOB_GRIEFING)) {
+			return false;
+		}
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.HideInStone hide && mob.getHealth() < mob.getMaxHealth() * hide.threshold()
+					&& GeneCombat.ready(mob, hide, hide.cooldownSeconds()) && hideInStone(mob, level)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Hides the mob in a stone block next to it, as the vanilla silverfish hides. The block is one of the six blocks
+	 * next to the middle of the mob, in a random order.
+	 *
+	 * @return true if the mob found a block and hid
+	 */
+	public static boolean hideInStone(Mob mob, ServerLevel level) {
+		BlockPos middle = BlockPos.containing(mob.getX(), mob.getY() + 0.5, mob.getZ());
+		java.util.List<net.minecraft.core.Direction> directions = new java.util.ArrayList<>(
+				java.util.List.of(net.minecraft.core.Direction.values()));
+		net.minecraft.util.Util.shuffle(directions, mob.getRandom());
+		for (net.minecraft.core.Direction direction : directions) {
+			BlockPos pos = middle.relative(direction);
+			BlockState state = level.getBlockState(pos);
+			if (InfestedBlock.isCompatibleHostBlock(state)) {
+				level.setBlockAndUpdate(pos, InfestedBlock.infestedStateByHost(state));
+				hide(mob, level, pos);
+				mob.spawnAnim();
+				mob.discard();
+				return true;
+			}
+		}
+		return false;
 	}
 }

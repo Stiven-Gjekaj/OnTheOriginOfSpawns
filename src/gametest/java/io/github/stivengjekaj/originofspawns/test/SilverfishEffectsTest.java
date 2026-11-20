@@ -130,4 +130,41 @@ public class SilverfishEffectsTest {
 		helper.assertValueEqual(next.getHealth(), 12.0F, "it has full health");
 		helper.succeed();
 	}
+
+	/**
+	 * Fills a cube of stone round the place, with the place itself empty.
+	 */
+	static void bury(GameTestHelper helper, BlockPos pos) {
+		for (BlockPos stone : BlockPos.betweenClosed(pos.offset(-2, -1, -2), pos.offset(2, 3, 2))) {
+			helper.setBlock(stone, stone.equals(pos) ? Blocks.AIR : Blocks.STONE);
+		}
+	}
+
+	/**
+	 * Hurts the silverfish. A second hit in the same second does only the damage above the first hit.
+	 */
+	static void hit(GameTestHelper helper, Silverfish silverfish, Pig attacker, float damage) {
+		silverfish.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(attacker), damage);
+	}
+
+	@GameTest
+	public void aDeepLodgeHidesInStoneUnderHalfHealthOneTimeInTheCooldown(GameTestHelper helper) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		BlockPos place = new BlockPos(3, 2, 3);
+		bury(helper, place);
+		Silverfish silverfish = silverfish(helper, place, "test_deep_lodge");
+		hit(helper, silverfish, pig, 1.0F);
+		helper.assertFalse(silverfish.isRemoved(), "a hit that leaves half health or more does not make it hide");
+		// The second hit does 4 damage more than the first: 3 health is left, under half of 8.
+		hit(helper, silverfish, pig, 5.0F);
+		helper.assertTrue(silverfish.isRemoved(), "a hit under half health makes it hide");
+		BlockPos hidden = java.util.Arrays.stream(net.minecraft.core.Direction.values()).map(place::relative)
+				.filter(pos -> helper.getBlockState(pos).is(Blocks.INFESTED_STONE)).findFirst().orElseThrow();
+		helper.getLevel().destroyBlock(helper.absolutePos(hidden), true);
+		Silverfish next = cameOut(helper, hidden, silverfish).getFirst();
+		helper.assertValueEqual(next.getHealth(), 8.0F, "it comes out with full health");
+		hit(helper, next, pig, 5.0F);
+		helper.assertTrue(next.isAlive() && !next.isRemoved(), "the cooldown of the hide goes on after it comes out");
+		helper.succeed();
+	}
 }

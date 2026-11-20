@@ -337,7 +337,8 @@ public sealed interface GeneEffect {
 			Map.entry("horsemen_rally", HorsemenRally.CODEC),
 			Map.entry("wake_range", WakeRange.CODEC),
 			Map.entry("wake_on_sight", WakeOnSight.CODEC),
-			Map.entry("wake_on_death", WakeOnDeath.CODEC)
+			Map.entry("wake_on_death", WakeOnDeath.CODEC),
+			Map.entry("hide_in_stone", HideInStone.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5682,6 +5683,25 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "wake_on_death";
+		}
+	}
+
+	/**
+	 * When a hit takes the mob under the threshold of its maximum health, it hides in a stone block next to it, one time
+	 * in each cooldown. The block becomes an infested block, as when a vanilla silverfish hides. The silverfish that
+	 * comes out of the block has the genes of the mob and full health, and its cooldown goes on from the hide. The
+	 * blocks are the blocks that a silverfish can infest. As the vanilla hide, it needs the {@code mobGriefing} game
+	 * rule. Lodgers tier 3: 20 seconds.
+	 */
+	record HideInStone(float threshold, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<HideInStone> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.01F, 1.0F).optionalFieldOf("threshold", 0.5F).forGetter(HideInStone::threshold),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("cooldown_seconds", 30.0F).forGetter(HideInStone::cooldownSeconds)
+		).apply(instance, HideInStone::new));
+
+		@Override
+		public String type() {
+			return "hide_in_stone";
 		}
 	}
 }

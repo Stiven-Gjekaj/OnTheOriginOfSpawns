@@ -1138,6 +1138,7 @@ public final class GeneCombat {
 			GeneBehaviors.startFlee(wounded);
 			GeneBehaviors.countSpinHit(wounded);
 			GeneBehaviors.sidestepOnHurt(wounded, source);
+			GeneSilverfish.hideWhenWounded(wounded, woundedLevel);
 		}
 		if (entity instanceof Mob wounded) {
 			for (GeneEffect effect : GeneEffects.of(wounded).toList()) {

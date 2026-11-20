@@ -364,7 +364,8 @@ public sealed interface GeneEffect {
 			Map.entry("roar_effect", RoarEffect.CODEC),
 			Map.entry("roar_on_hurt", RoarOnHurt.CODEC),
 			Map.entry("roar_on_kill", RoarOnKill.CODEC),
-			Map.entry("stun_chance", StunChance.CODEC)
+			Map.entry("stun_chance", StunChance.CODEC),
+			Map.entry("no_stun", NoStun.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6166,6 +6167,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "stun_chance";
+		}
+	}
+
+	/**
+	 * A shield block never stuns a ravager. The ravager pushes the player back hard, as in vanilla when it is not
+	 * stunned. It counts before each stun chance gene. Steady Stance.
+	 */
+	record NoStun() implements GeneEffect {
+		public static final MapCodec<NoStun> CODEC = MapCodec.unit(new NoStun());
+
+		@Override
+		public String type() {
+			return "no_stun";
 		}
 	}
 }

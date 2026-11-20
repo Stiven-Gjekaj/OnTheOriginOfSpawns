@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "no_stun" }, { "type": "stun_chance", "chance": 1 }],
+	"mutation_rate": 0
+}

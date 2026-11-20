@@ -109,4 +109,15 @@ public class RavagerEffectsTest {
 		helper.assertValueEqual(easy.getStunnedTick(), 40, "a shield block always stuns it");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aSteadyStanceIsNeverStunnedAndPushesThePlayerBack(GameTestHelper helper) {
+		Ravager steady = ravager(helper, new BlockPos(2, 1, 2), "test_steady_stance");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(2, 1, 5));
+		pig.setNoGravity(false);
+		block(helper, steady, pig);
+		helper.assertValueEqual(steady.getStunnedTick(), 0, "a shield block does not stun it, also with a stun chance of 1");
+		helper.assertTrue(pig.getDeltaMovement().horizontalDistance() > 0.5, "it pushes the defender back hard");
+		helper.succeed();
+	}
 }

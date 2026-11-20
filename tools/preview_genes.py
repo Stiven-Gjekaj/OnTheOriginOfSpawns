@@ -80,6 +80,8 @@ BREEZE_WIND_PATH = "assets/minecraft/textures/entity/breeze/breeze_wind.png"
 BREEZE_EYES_PATH = "assets/minecraft/textures/entity/breeze/breeze_eyes.png"
 GUARDIAN_PATH = "assets/minecraft/textures/entity/guardian/guardian.png"
 CAMEL_HUSK_PATH = "assets/minecraft/textures/entity/camel/camel_husk.png"
+ZOMBIE_HORSE_PATH = "assets/minecraft/textures/entity/horse/horse_zombie.png"
+SKELETON_HORSE_PATH = "assets/minecraft/textures/entity/horse/horse_skeleton.png"
 ZOMBIE_NAUTILUS_PATH = "assets/minecraft/textures/entity/nautilus/zombie_nautilus.png"
 ZOMBIE_NAUTILUS_WARM_PATH = "assets/minecraft/textures/entity/nautilus/zombie_nautilus_coral.png"
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
@@ -595,6 +597,15 @@ ZOMBIE_NAUTILUS_FAMILIES = {
     "inker": ["thick_ink", "wide_ink", "sour_ink", "ink_screen", "quick_ink", "ink_rush"],
 }
 
+# The families of the zombie horse, from design/species/zombie_horse.md.
+ZOMBIE_HORSE_FAMILIES = {
+    "galloper": ["long_stride", "sun_hide", "shy_canter", "lance_run", "ghost_gallop", "panic_bolt"],
+    "destrier": ["rotten_barding", "battle_saddle", "grave_bond", "ash_barding", "last_charge", "grave_barding"],
+    "revenant": ["undying_flesh", "rotten_hide", "charred_flesh", "bone_frame", "holy_scorn", "rooted_rot"],
+    "vaulter": ["high_vault", "soft_landing", "leap_strike", "dodge_leap", "shield_vault", "spur_leap"],
+    "stomper": ["hard_hooves", "mud_kick", "golem_stomp", "bone_shatter", "rear_up", "trample_run"],
+}
+
 
 ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
     "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
@@ -654,6 +665,11 @@ ZOMBIE_NAUTILUS_EXTRA = next_family_extra(ZOMBIE_NAUTILUS_FAMILIES, {
     "jetter": ["jet_fin", "sun_shell"], "tidebearer": ["shell_wall", "trident_guard"],
     "inker": ["wide_ink", "sour_ink"],
 }, "inker")
+ZOMBIE_HORSE_EXTRA = next_family_extra(ZOMBIE_HORSE_FAMILIES, {
+    "galloper": ["long_stride", "lance_run"], "destrier": ["battle_saddle", "rotten_barding"],
+    "revenant": ["bone_frame", "rooted_rot"], "vaulter": ["soft_landing", "dodge_leap"],
+    "stomper": ["rear_up", "trample_run"],
+}, "galloper")
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -1132,6 +1148,38 @@ CAMEL_HUSK_CUBES = [
 ] + [(leg, uv, (-2.5, 2, -2.5), (5, 21, 5), False)
      for leg, uv in (("left_hind_leg", (58, 16)), ("right_hind_leg", (94, 16)),
                      ("left_front_leg", (0, 0)), ("right_front_leg", (0, 26)))]
+# The zombie horse and the skeleton horse, from AbstractEquineModel, at rest.
+# The texture is 64x64. head_parts holds the neck, and turns down by 30
+# degrees. The head, the mane, and the upper mouth are children of head_parts
+# with no offset, and the ears are children of the head. The tail is a child
+# of the body, and turns by 30 degrees. The four legs use the same pixels;
+# the left legs are mirrored. The undead horses are not scaled up, as the
+# horse is.
+EQUINE_BODY = (0, 11, 5)
+EQUINE_HEAD = (0, 4, -12, 30, 0, 0)
+EQUINE_PIVOTS = {
+    "body": EQUINE_BODY, "tail": child_pivot(EQUINE_BODY, (0, -5, 2), (30, 0, 0)),
+    "head_parts": EQUINE_HEAD, "head": EQUINE_HEAD, "mane": EQUINE_HEAD, "upper_mouth": EQUINE_HEAD,
+    "left_ear": EQUINE_HEAD, "right_ear": EQUINE_HEAD,
+    "left_hind_leg": (4, 14, 7), "right_hind_leg": (-4, 14, 7),
+    "left_front_leg": (4, 14, -10), "right_front_leg": (-4, 14, -10),
+}
+EQUINE_CUBES = [
+    ("body", (0, 32), (-5, -8, -17), (10, 10, 22), False),
+    ("tail", (42, 36), (-1.5, 0, 0), (3, 14, 4), False),
+    ("head_parts", (0, 35), (-2.05, -6, -2), (4, 12, 7), False),
+    ("head", (0, 13), (-3, -11, -2), (6, 5, 7), False),
+    ("mane", (56, 36), (-1, -11, 5.01), (2, 16, 2), False),
+    ("upper_mouth", (0, 25), (-2, -11, -7), (4, 5, 5), False),
+    ("left_ear", (19, 16), (0.55, -13, 4), (2, 3, 1), False),
+    ("right_ear", (19, 16), (-2.55, -13, 4), (2, 3, 1), False),
+    ("left_hind_leg", (48, 21), (-3, -1.01, -1), (4, 11, 4), True),
+    ("right_hind_leg", (48, 21), (-1, -1.01, -1), (4, 11, 4), False),
+    ("left_front_leg", (48, 21), (-3, -1.01, -1.9), (4, 11, 4), True),
+    ("right_front_leg", (48, 21), (-1, -1.01, -1.9), (4, 11, 4), False),
+]
+EQUINE_FRAME, EQUINE_CLOSEUP = (24, 22, 48, 46), ((48, 46), (0, 1))
+
 # The zombie nautilus, from NautilusModel. The shell and the body are children
 # of the bone root. The three parts of the mouth, upper_mouth, inner_mouth,
 # and lower_mouth, are children of the body. Their texture is a ring of
@@ -1204,6 +1252,7 @@ NETHER_LOOKS = {
     "breeze": (BREEZE_CUBES, BREEZE_PIVOTS, None, [], (12, 7, 24, 33), ((26, 34), (0, 9)), False),
     "guardian": (GUARDIAN_CUBES, GUARDIAN_PIVOTS, None, [], (24, 6, 48, 44), ((50, 46), (0, 16)), False),
     "camel_husk": (CAMEL_HUSK_CUBES, CAMEL_HUSK_PIVOTS, None, [], CAMEL_HUSK_FRAME, CAMEL_HUSK_CLOSEUP, False),
+    "zombie_horse": (EQUINE_CUBES, EQUINE_PIVOTS, None, [], EQUINE_FRAME, EQUINE_CLOSEUP, False),
     "zombie_nautilus": (ZOMBIE_NAUTILUS_CUBES, ZOMBIE_NAUTILUS_PIVOTS, None, [], ZOMBIE_NAUTILUS_FRAME,
                         ZOMBIE_NAUTILUS_CLOSEUP, False),
     "zombie_nautilus_warm": (ZOMBIE_NAUTILUS_WARM_CUBES, ZOMBIE_NAUTILUS_WARM_PIVOTS, None, [], ZOMBIE_NAUTILUS_FRAME,
@@ -1802,6 +1851,7 @@ SPECIES = {
     "breeze": (BREEZE_PATH, None, BREEZE_FAMILIES, BREEZE_EXTRA, []),
     "guardian": (GUARDIAN_PATH, None, GUARDIAN_FAMILIES, GUARDIAN_EXTRA, []),
     "camel_husk": (CAMEL_HUSK_PATH, None, CAMEL_HUSK_FAMILIES, CAMEL_HUSK_EXTRA, []),
+    "zombie_horse": (ZOMBIE_HORSE_PATH, None, ZOMBIE_HORSE_FAMILIES, ZOMBIE_HORSE_EXTRA, []),
     "zombie_nautilus": (ZOMBIE_NAUTILUS_PATH, None, ZOMBIE_NAUTILUS_FAMILIES, ZOMBIE_NAUTILUS_EXTRA, []),
     "zombie_nautilus_warm": (ZOMBIE_NAUTILUS_WARM_PATH, None, ZOMBIE_NAUTILUS_FAMILIES, ZOMBIE_NAUTILUS_EXTRA, []),
 }
@@ -1915,6 +1965,10 @@ def set_mob(species):
         if species == "camel_husk":
             # The camel husk is long. Its sheets look at it from the front at
             # a turn, from behind at a turn, and from the side.
+            MOB["sheet_views"] = [(-35, 15), (145, 15), (-90, 5)]
+        if species in ("zombie_horse", "skeleton_horse"):
+            # The horse is long. Its sheets look at it from the front at a
+            # turn, from behind at a turn, and from the side.
             MOB["sheet_views"] = [(-35, 15), (145, 15), (-90, 5)]
         if species.startswith("zombie_nautilus"):
             # The mouth of the zombie nautilus is at the back of the model.

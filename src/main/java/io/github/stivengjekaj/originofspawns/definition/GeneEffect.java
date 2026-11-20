@@ -315,7 +315,8 @@ public sealed interface GeneEffect {
 			Map.entry("dash_rate", DashRate.CODEC),
 			Map.entry("dash_length", DashLength.CODEC),
 			Map.entry("dash_leap", DashLeap.CODEC),
-			Map.entry("dash_hit", DashHit.CODEC)
+			Map.entry("dash_hit", DashHit.CODEC),
+			Map.entry("dash_cloud", DashCloud.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5265,6 +5266,25 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "dash_hit";
+		}
+	}
+
+	/**
+	 * Each dash of a camel raises a dust cloud where it starts: the mobs and players in the radius get the status
+	 * effect. The camel and its riders do not get it. It acts on each dash, also on the dash of a player that rides it.
+	 * Dust Dash: Blindness for 2 seconds.
+	 */
+	record DashCloud(Holder<MobEffect> effect, float seconds, int amplifier, float radius) implements GeneEffect {
+		public static final MapCodec<DashCloud> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(DashCloud::effect),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds", 2.0F).forGetter(DashCloud::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(DashCloud::amplifier),
+				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 3.0F).forGetter(DashCloud::radius)
+		).apply(instance, DashCloud::new));
+
+		@Override
+		public String type() {
+			return "dash_cloud";
 		}
 	}
 }

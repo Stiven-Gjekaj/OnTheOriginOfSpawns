@@ -129,4 +129,17 @@ public class CamelHuskEffectsTest {
 		helper.assertValueEqual(GeneBehaviors.dashHit(camel, level, hit), 0, "one hit in each dash");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void dustDashBlindsTheMobsNearTheStartButNotItsRider(GameTestHelper helper) {
+		Pig near = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 5));
+		Pig far = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 9));
+		CamelHusk camel = camelWithRider(helper, new BlockPos(3, 1, 3), near, "test_dust_dash");
+		Mob husk = (Mob) camel.getFirstPassenger();
+		camel.handleStartJump(90);
+		helper.assertTrue(near.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "the near pig is blind");
+		helper.assertFalse(far.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "the far pig is not blind");
+		helper.assertFalse(husk.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "the rider is not blind");
+		helper.succeed();
+	}
 }

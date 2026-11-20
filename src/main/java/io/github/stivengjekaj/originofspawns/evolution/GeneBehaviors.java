@@ -1518,6 +1518,19 @@ public final class GeneBehaviors {
 	public static void onDash(net.minecraft.world.entity.animal.camel.Camel camel, ServerLevel level) {
 		camel.setAttached(ModAttachments.DASH_TIME, level.getGameTime());
 		camel.removeAttached(ModAttachments.DASH_HITS);
+		for (GeneEffect effect : GeneEffects.of(camel).toList()) {
+			if (effect instanceof GeneEffect.DashCloud cloud) {
+				for (LivingEntity other : level.getEntitiesOfClass(LivingEntity.class, camel.getBoundingBox().inflate(cloud.radius()),
+						other -> other != camel && other.isAlive() && !camel.hasPassenger(other)
+								&& other.distanceTo(camel) <= cloud.radius() + camel.getBbWidth() / 2.0F)) {
+					other.addEffect(new MobEffectInstance(cloud.effect(), Math.round(cloud.seconds() * 20.0F), cloud.amplifier()),
+							camel);
+				}
+				level.sendParticles(new net.minecraft.core.particles.BlockParticleOption(net.minecraft.core.particles.ParticleTypes.DUST_PILLAR,
+								level.getBlockState(camel.getBlockPosBelowThatAffectsMyMovement())),
+						camel.getX(), camel.getY() + 0.3, camel.getZ(), 40, cloud.radius() / 2.0, 0.4, cloud.radius() / 2.0, 0.1);
+			}
+		}
 	}
 
 	/**

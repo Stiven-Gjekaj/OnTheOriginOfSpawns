@@ -310,7 +310,10 @@ public sealed interface GeneEffect {
 			Map.entry("kick_effect", KickEffect.CODEC),
 			Map.entry("kick_shield_stop", KickShieldStop.CODEC),
 			Map.entry("kick_push", KickPush.CODEC),
-			Map.entry("kick_area", KickArea.CODEC)
+			Map.entry("kick_area", KickArea.CODEC),
+			Map.entry("mount_dash", MountDash.CODEC),
+			Map.entry("dash_rate", DashRate.CODEC),
+			Map.entry("dash_length", DashLength.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5184,6 +5187,51 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "kick_area";
+		}
+	}
+
+	/**
+	 * A camel dashes at the target of the mob that rides it, one time in each interval, when the target is in the
+	 * range. A vanilla camel dashes only when the player that rides it jumps. With more than one mount dash, the
+	 * shortest interval counts.
+	 */
+	record MountDash(float intervalSeconds, float range) implements GeneEffect {
+		public static final MapCodec<MountDash> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 600.0F).optionalFieldOf("interval_seconds", 12.0F).forGetter(MountDash::intervalSeconds),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 16.0F).forGetter(MountDash::range)
+		).apply(instance, MountDash::new));
+
+		@Override
+		public String type() {
+			return "mount_dash";
+		}
+	}
+
+	/**
+	 * The mount dash comes more often: the interval is divided by the multiplier. Quick Dash: 1.5.
+	 */
+	record DashRate(float multiplier) implements GeneEffect {
+		public static final MapCodec<DashRate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 10.0F).optionalFieldOf("multiplier", 1.5F).forGetter(DashRate::multiplier)
+		).apply(instance, DashRate::new));
+
+		@Override
+		public String type() {
+			return "dash_rate";
+		}
+	}
+
+	/**
+	 * The mount dash goes farther: its push along the ground is multiplied. Long Dash: 2.
+	 */
+	record DashLength(float multiplier) implements GeneEffect {
+		public static final MapCodec<DashLength> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 10.0F).optionalFieldOf("multiplier", 2.0F).forGetter(DashLength::multiplier)
+		).apply(instance, DashLength::new));
+
+		@Override
+		public String type() {
+			return "dash_length";
 		}
 	}
 }

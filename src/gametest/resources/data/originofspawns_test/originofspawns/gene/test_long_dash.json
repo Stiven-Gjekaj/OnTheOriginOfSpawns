@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:camel_husk",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "mount_dash", "interval_seconds": 8 }, { "type": "dash_length", "multiplier": 2 }],
+	"mutation_rate": 0
+}

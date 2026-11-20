@@ -415,6 +415,8 @@ public final class GeneBehaviors {
 				case GeneEffect.RunStrike run -> countRun(mob);
 				case GeneEffect.JumpShot shot -> jumpShot(mob, level);
 				case GeneEffect.Ram ram -> ram(mob, level, ram);
+				case GeneEffect.MountDash dash when mob instanceof net.minecraft.world.entity.animal.camel.Camel camel ->
+						mountDash(camel, level, dash);
 				case GeneEffect.TouchReach reach when mob instanceof net.minecraft.world.entity.monster.cubemob.AbstractCubeMob cube ->
 						GeneCubes.reachHit(cube);
 				default -> {
@@ -1399,6 +1401,51 @@ public final class GeneBehaviors {
 		Vec3 toTarget = target.getBoundingBox().getCenter().subtract(mob.getBoundingBox().getCenter());
 		mob.setDeltaMovement(toTarget.normalize().scale(ram.speed()));
 		mob.needsSync = true;
+		return true;
+	}
+
+	/**
+	 * Lets the camel dash at the target of the mob that rides it, if the target is in the range, the camel stands on
+	 * the ground, and the interval is over. The shortest interval of the mount dash effects counts, and each dash rate
+	 * makes it shorter. Each dash length makes the dash go farther.
+	 *
+	 * @return true if the camel dashed now
+	 */
+	public static boolean mountDash(net.minecraft.world.entity.animal.camel.Camel camel, ServerLevel level,
+			GeneEffect.MountDash dash) {
+		if (!(camel.getFirstPassenger() instanceof Mob rider) || !(rider.getTarget() instanceof LivingEntity target)
+				|| !target.isAlive() || camel.distanceTo(target) > dash.range() || !camel.onGround()
+				|| camel.refuseToMove() || camel.getJumpCooldown() > 0) {
+			return false;
+		}
+		float interval = dash.intervalSeconds();
+		float length = 1.0F;
+		for (GeneEffect effect : GeneEffects.of(camel).toList()) {
+			if (effect instanceof GeneEffect.MountDash other) {
+				interval = Math.min(interval, other.intervalSeconds());
+			} else if (effect instanceof GeneEffect.DashRate rate) {
+				interval /= rate.multiplier();
+			} else if (effect instanceof GeneEffect.DashLength longer) {
+				length *= longer.multiplier();
+			}
+		}
+		// All mount dash effects share one cooldown, so that two of them do not make two dashes.
+		GeneEffect.MountDash key = new GeneEffect.MountDash(0.0F, 0.0F);
+		if (!GeneCombat.ready(camel, key, interval)) {
+			return false;
+		}
+		GeneCombat.startCooldown(camel, key);
+		Vec3 toTarget = target.position().subtract(camel.position());
+		float yaw = (float) (Math.atan2(toTarget.z, toTarget.x) * (180.0 / Math.PI)) - 90.0F;
+		camel.setYRot(yaw);
+		camel.setYBodyRot(yaw);
+		camel.setYHeadRot(yaw);
+		((io.github.stivengjekaj.originofspawns.mixin.CamelAccessor) camel).originofspawns$dash(1.0F, new Vec3(0.0, 0.0, 1.0));
+		if (length != 1.0F) {
+			Vec3 movement = camel.getDeltaMovement();
+			camel.setDeltaMovement(movement.x * length, movement.y, movement.z * length);
+		}
+		camel.needsSync = true;
 		return true;
 	}
 

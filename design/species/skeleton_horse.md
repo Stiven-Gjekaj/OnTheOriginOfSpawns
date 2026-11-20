@@ -96,34 +96,34 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Storm Herald | Thunderhoof | `spotted` | When its trap opens, lightning also strikes 3 blocks from the player | 10% less maximum health | Mane: a blue, sparking mane |
+| Storm Herald | Thunderhoof | `spotted` | When its trap opens, lightning also strikes 3 blocks from the player | 10% less maximum health | Mane: a blue, sparking mane. This changes the model |
 | Grounded Bones | Thunderhoof | `fire` | No damage and no fire from lightning, and half the damage from other fire | 10% less speed | Legs: copper bands on the legs |
 | Long Wait | Thunderhoof | `alone` | Its trap waits two times as long before it goes away | 10% less maximum health | Head: a dark, empty skull |
-| Wide Trap | Thunderhoof | `unreached` | Its trap opens when a player comes in 20 blocks | 10% less maximum health | Head: wide, glowing eye sockets |
+| Wide Trap | Thunderhoof | `unreached` | Its trap opens when a player comes in 20 blocks | 10% less maximum health | Head: wide, glowing eye sockets. This changes the model |
 | Charged Riders | Thunderhoof | `crowd` | When its trap opens, the horses of the trap get Speed for 10 seconds | 10% less maximum health | Body: blue lines on the ribs |
-| Storm Kin | Thunderhoof, sub Squire | `player_death` | When a rider dies, the arrows of the other horsemen in 16 blocks do 30% more damage for 10 seconds | 10% less maximum health | Mane: white streaks in the mane |
+| Storm Kin | Thunderhoof, sub Squire | `player_death` | When a rider dies, the arrows of the other horsemen in 16 blocks do 30% more damage for 10 seconds | 10% less maximum health | Mane: a dark storm gray mane with pale blue streaks |
 
 ### Tidestrider genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Deep Stride | Tidestrider | `in_water` | 20% more speed in water | 10% less speed on land | Legs: blue gray hooves |
-| Kelp Mane | Tidestrider | `spotted` | It is near invisible in water | 10% less maximum health | Mane: green kelp in the mane |
+| Deep Stride | Tidestrider | `in_water` | 20% more speed in water | 10% less speed on land | Legs: deep blue hooves |
+| Kelp Mane | Tidestrider | `spotted` | It is near invisible in water | 10% less maximum health | Mane: wavy kelp strands in the mane. This changes the model |
 | Coral Bones | Tidestrider | `projectile` | 30% less damage from projectiles | 10% less speed | Body: pink coral on the bones |
-| Cold Current | Tidestrider | `melee` | When a melee hit hurts it in water, the attacker gets Slowness for 3 seconds | 10% less maximum health | Tail: a long, wet tail |
+| Cold Current | Tidestrider | `melee` | When a melee hit hurts it in water, the attacker gets Slowness for 3 seconds | 10% less maximum health | Tail: a long, wet tail. This changes the model |
 | Shore Bound | Tidestrider | `on_land` | On land, it hops to the nearest water in 8 blocks | 10% less maximum health | Legs: wet, dark legs |
-| Trident Ribs | Tidestrider, sub Ossifier | `trident` | Half the damage from tridents | 10% less speed | Body: steel rings round the ribs |
+| Trident Ribs | Tidestrider, sub Ossifier | `trident` | Half the damage from tridents | 10% less speed | Body: wide steel bands with rivets across the ribs. This changes the model |
 
 ### Ossifier genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Heavy Bones | Ossifier | `melee` | Hits do not push it back | 10% less speed | Legs: thick, heavy bones |
+| Heavy Bones | Ossifier | `melee` | Hits do not push it back | 10% less speed | Legs: thick, heavy bones. This changes the model |
 | Blast Ribs | Ossifier | `explosion` | Half the damage from explosions | 10% less speed | Body: dark, cracked ribs |
-| Rib Gaps | Ossifier | `projectile` | Each projectile has a 25% chance to pass through its ribs with no damage | 10% less maximum health | Body: wide gaps between the ribs |
-| Blessed Skull | Ossifier | `smite` | Smite does half the extra damage | 10% less maximum health | Head: a pale, clean skull |
+| Rib Gaps | Ossifier | `projectile` | Each projectile has a 25% chance to pass through its ribs with no damage | 10% less maximum health | Body: broken stubs where two ribs are gone |
+| Blessed Skull | Ossifier | `smite` | Smite does half the extra damage | 10% less maximum health | Head: a pale snout with a faint gold line |
 | Bone Mend | Ossifier | `critical` | One time in its life, it heals to full health at under 25% health | 4 less maximum health | Body: a white, healed bone on the chest |
-| Golem Brace | Ossifier, sub Squire | `golem` | 30% less damage from golems | 10% less speed | Legs: iron gray bands |
+| Golem Brace | Ossifier, sub Squire | `golem` | 30% less damage from golems | 10% less speed | Legs: dark iron bands with rivets |
 
 ### Squire genes
 
@@ -132,20 +132,20 @@ The visual column gives the region and the mark.
 | Bone Barding | Squire | `projectile` | Its riders take 30% less damage from projectiles | 10% less maximum health | Body: bone plates on the flanks |
 | Squire Saddle | Squire | `melee` | Its riders take 20% less melee damage | 10% less speed | Body: an old, dark saddle. This changes the model |
 | Faithful Bones | Squire | `critical` | When a rider is under half health, the rider heals 4 health at once, one time each 30 seconds | 10% less maximum health | Head: a blue mark on the skull |
-| Storm Cloak | Squire | `fire` | Its riders take half the damage from fire | 10% less speed | Body: a gray, singed cloth |
-| Last Ride | Squire | `alone` | When it dies, its riders get Resistance for 10 seconds | 10% less maximum health | Mane: torn ribbons in the mane |
-| Helm Bond | Squire, sub Wraithrunner | `smite` | Smite does half the extra damage to its riders | 10% less speed | Head: an iron band round the skull |
+| Storm Cloak | Squire | `fire` | Its riders take half the damage from fire | 10% less speed | Body: a thin, torn, singed cloth over the back. This changes the model |
+| Last Ride | Squire | `alone` | When it dies, its riders get Resistance for 10 seconds | 10% less maximum health | Mane: torn ribbons in the mane. This changes the model |
+| Helm Bond | Squire, sub Wraithrunner | `smite` | Smite does half the extra damage to its riders | 10% less speed | Head: a dark iron band round the skull |
 
 ### Wraithrunner genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Ghost Stride | Wraithrunner | `unreached` | 20% more speed | 10% less maximum health | Legs: long, thin legs. This changes the model |
+| Ghost Stride | Wraithrunner | `unreached` | 20% more speed | 10% less maximum health | Legs: thin struts up the flank. This changes the model |
 | Wraith Veil | Wraithrunner | `spotted` | It is near invisible in the dark | 10% less maximum health | Body: pale, faded bones |
-| Night Run | Wraithrunner | `alone` | 20% more speed at night | 10% less maximum health | Tail: a pale, wispy tail |
-| Bone Dodge | Wraithrunner | `projectile` | It moves aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Mane: a short, stiff mane |
+| Night Run | Wraithrunner | `alone` | 20% more speed at night | 10% less maximum health | Tail: a pale, wispy tail. This changes the model |
+| Bone Dodge | Wraithrunner | `projectile` | It moves aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Mane: a short, stiff mane. This changes the model |
 | Weightless | Wraithrunner | `fall` | No fall damage | 10% less maximum health | Legs: light, thin hooves |
-| Rattle Flight | Wraithrunner, sub Tidestrider | `critical` | At under 30% health, it runs away from its target fast for 4 seconds | 10% less maximum health | Body: loose, rattling ribs |
+| Rattle Flight | Wraithrunner, sub Tidestrider | `critical` | At under 30% health, it runs away from its target fast for 4 seconds | 10% less maximum health | Body: loose, rattling ribs. This changes the model |
 
 ## Gene details
 
@@ -207,6 +207,11 @@ The visual column gives the region and the mark.
 - It needs a new region map, `textures/region/skeleton_horse.png`. The design
   uses the regions head, mane, body, legs, and tail. If it shares the bones
   of the zombie horse, the gene models can share their bone names.
+- The texture is 64 x 64, with the layout of the zombie horse. The vanilla
+  tail has no pixels, and the mane has few, so most mane and tail genes are
+  gene models.
+- A baby has another texture layout, so a baby gets no gene marks and no
+  gene models.
 
 ## Minor families
 

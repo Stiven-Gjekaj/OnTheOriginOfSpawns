@@ -77,11 +77,30 @@ public final class GeneEffects {
 	 * A gene or a family that the data packs no longer have is skipped.
 	 */
 	public static Stream<GeneEffect> of(Entity entity) {
+		Stream<GeneEffect> own = own(entity);
+		if (entity instanceof Mob && entity.getVehicle() != null) {
+			return Stream.concat(own, fromMount(entity.getVehicle()));
+		}
+		return own;
+	}
+
+	/**
+	 * Returns the effects of the genes and of the family of the entity, with no effects from its mount.
+	 */
+	private static Stream<GeneEffect> own(Entity entity) {
 		CarriedGenes carried = entity.getAttached(ModAttachments.GENES);
 		if (carried == null) {
 			return Stream.empty();
 		}
 		return sources(entity.level().registryAccess(), carried).stream().flatMap(source -> source.effects().stream());
+	}
+
+	/**
+	 * Returns the effects that the mount gives to each mob that rides it.
+	 */
+	private static Stream<GeneEffect> fromMount(Entity mount) {
+		return own(mount).filter(effect -> effect instanceof GeneEffect.Riders)
+				.flatMap(effect -> ((GeneEffect.Riders) effect).effects().stream());
 	}
 
 	/**

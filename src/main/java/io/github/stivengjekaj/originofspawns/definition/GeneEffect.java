@@ -302,7 +302,8 @@ public sealed interface GeneEffect {
 			Map.entry("spike_effect", SpikeEffect.CODEC),
 			Map.entry("shore_hop", ShoreHop.CODEC),
 			Map.entry("ram", Ram.CODEC),
-			Map.entry("close_snap", CloseSnap.CODEC)
+			Map.entry("close_snap", CloseSnap.CODEC),
+			Map.entry("riders", Riders.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5033,6 +5034,30 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "close_snap";
+		}
+	}
+
+	/**
+	 * Gives effects to each mob that rides the mob, as if the rider carried them. A player that rides the mob does not
+	 * get them. Only the effects that change damage and the translucent effect can go in the list.
+	 */
+	record Riders(List<GeneEffect> effects) implements GeneEffect {
+		/**
+		 * The types of effects that a rider can get from its mount.
+		 */
+		public static final java.util.Set<String> ALLOWED = java.util.Set.of("damage_taken", "damage_taken_when",
+				"damage_from", "damage_to", "damage_dealt_when", "smite_resist", "translucent");
+
+		public static final MapCodec<Riders> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.lazyInitialized(() -> GeneEffect.CODEC).validate(effect -> ALLOWED.contains(effect.type())
+								? DataResult.success(effect)
+								: DataResult.error(() -> "A rider cannot get the effect type " + effect.type()))
+						.listOf(1, 16).fieldOf("effects").forGetter(Riders::effects)
+		).apply(instance, Riders::new));
+
+		@Override
+		public String type() {
+			return "riders";
 		}
 	}
 }

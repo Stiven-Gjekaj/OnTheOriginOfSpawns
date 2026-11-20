@@ -21,7 +21,8 @@ the bones.
 
 Each gene keeps to its own zone, so that the marks stack:
 - The ribs. Rib Gaps erases the second and the fourth rib. Trident Ribs has
-  rows 4 and 7 of the ribs, a steel ring across each. Charged Riders has the
+  rows 3, 4, 6, and 7 of the ribs and the chest, two wide steel bands,
+  and steel plates across the gaps, a gene model. Charged Riders has the
   first and the middle rib, and two cross bars of the spine on the top, out
   of the place of a saddle. Blast Ribs has the last rib and the shoulder. Rattle Flight is a gene model: loose ribs that
   hang under the body.
@@ -65,7 +66,7 @@ REGION_MAP = "originofspawns:textures/region/skeleton_horse.png"
 # The columns of the five ribs on a side of the body, from the back.
 RIBS = ((6, 7), (8, 9), (10, 11), (12, 13), (14, 15))
 RIB_ROWS = range(2, 10)
-RING_ROWS = (4, 7)
+RING_ROWS = (3, 4, 6, 7)
 
 
 def rib_cells(ribs, rows=RIB_ROWS):
@@ -111,14 +112,42 @@ def rib_gaps():
 
 
 def trident_ribs():
-    # Steel rings round the ribs: two dark steel rings go across the ribs,
-    # with dull rivets where they cross a rib.
-    steel = Mark("#3E464E")
-    rivet = Mark("#9AA6B0")
+    # Steel rings round the ribs: two wide, dark steel bands go across the
+    # ribs on each side, and on round the frame of the chest, with a light
+    # top edge and a few dull rivets.
+    steel = Mark("#3A424A")
+    light = Mark("#7A8690")
+    rivet = Mark("#A8B4BE")
     for c in range(5, 16):
         for r in RING_ROWS:
-            (rivet if c % 2 == 0 else steel).put(side(BODY, c, r))
-    return [steel, rivet]
+            m = light if r in (3, 6) else rivet if c in (6, 10, 14) else steel
+            m.put(side(BODY, c, r))
+    for x, y, f, col, row in pixels(BODY, ("front",), rows=RING_ROWS):
+        (light if row in (3, 6) else steel).put((x, y))
+    return [steel, light, rivet]
+
+
+def trident_ribs_model():
+    # Wide steel bands: the bands go on across the gaps between the ribs, as
+    # thin plates of dark steel on each side of the body and across the
+    # front of the chest, so that they are clear from the side and the
+    # front. On the bone body, the sides are at x -5 and 5, the front of the
+    # chest is at z -17, and the ribs are from z -11 to 0. Rows 3 and 4 of a
+    # side are at y -5 to -3, and rows 6 and 7 at y -2 to 0.
+    im = model_image(64, 32)
+
+    def band(f, x, y):
+        if y == 0:
+            return "#7A8690"
+        return "#A8B4BE" if x % 4 == 1 else "#3A424A"
+    paint_box(im, 0, 0, 0, 2, 11, band)
+    paint_box(im, 0, 8, 10, 2, 0, band)
+    parts = []
+    for y in (-5, -2):
+        parts.append({"bone": "body", "uv": [0, 0], "from": [5.06, y, -11], "size": [0, 2, 11]})
+        parts.append({"bone": "body", "uv": [0, 0], "from": [-5.06, y, -11], "size": [0, 2, 11], "mirror": True})
+        parts.append({"bone": "body", "uv": [0, 8], "from": [-5, y, -17.06], "size": [10, 2, 0]})
+    save_model("trident_ribs_bands", im, parts)
 
 
 def charged_riders():
@@ -202,7 +231,9 @@ def bone_mend():
     seam = Mark("#5A4A3A")
     pink = Mark("#E8C0B0")
     for x, y, f, col, row in pixels(BODY, ("front",)):
-        (seam if row in (3, 6) else pink if row in (4, 7) else cream).put((x, y))
+        if row in RING_ROWS:
+            continue
+        (seam if row in (2, 8) else pink if row == 5 else cream).put((x, y))
     for x, y, f, col, row in pixels(BODY, ("bottom",), rows=range(11, 22)):
         (seam if row % 4 == 0 else pink if row % 4 == 1 else cream).put((x, y))
     return [cream, seam, pink]
@@ -593,6 +624,7 @@ MODEL_GENES = {
     "night_run": (night_run_model, "night_run_tail"),
     "heavy_bones": (heavy_bones_model, "heavy_bones_legs"),
     "ghost_stride": (ghost_stride_model, "ghost_stride_struts"),
+    "trident_ribs": (trident_ribs_model, "trident_ribs_bands"),
 }
 
 

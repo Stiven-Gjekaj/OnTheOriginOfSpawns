@@ -237,4 +237,23 @@ public final class GeneRavagers {
 		}
 		return broken;
 	}
+
+	/**
+	 * After a mob that rides the mount hurts a target, each heal on rider hit gene of the mount heals it, if its cooldown
+	 * is over.
+	 *
+	 * @return the health that the mount healed
+	 */
+	public static float riderHit(net.minecraft.world.entity.Mob mount) {
+		float healed = 0.0F;
+		for (GeneEffect effect : GeneEffects.of(mount).toList()) {
+			if (effect instanceof GeneEffect.HealOnRiderHit heal && GeneCombat.ready(mount, heal, heal.cooldownSeconds())) {
+				GeneCombat.startCooldown(mount, heal);
+				float before = mount.getHealth();
+				mount.heal(heal.amount());
+				healed += mount.getHealth() - before;
+			}
+		}
+		return healed;
+	}
 }

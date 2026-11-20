@@ -111,6 +111,10 @@ public final class Evolution {
 				GeneCombat.onSpitHit(source.getDirectEntity().getAttached(ModAttachments.SPIT), entity, source.getEntity());
 			}
 			GeneBlasts.onBlastHit(entity, source, damageTaken, blocked);
+			if (!blocked && damageTaken > 0.0F && source.getEntity() instanceof Mob attacker && attacker != entity
+					&& attacker.getVehicle() instanceof Mob mount && mount.hasAttached(ModAttachments.GENES)) {
+				GeneRavagers.riderHit(mount);
+			}
 			// An arrow that a shield stops, or that does no damage, gives none of its effects.
 			if (!blocked && damageTaken > 0.0F && source.getDirectEntity() instanceof Projectile
 					&& source.getEntity() instanceof Mob mob && mob != entity && mob.hasAttached(ModAttachments.GENES)) {

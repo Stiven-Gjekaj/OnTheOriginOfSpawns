@@ -233,4 +233,20 @@ public class RavagerEffectsTest {
 			helper.succeed();
 		});
 	}
+
+	@GameTest
+	public void aRiderHealHealsTheRavagerWhenItsRiderHurtsATarget(GameTestHelper helper) {
+		Ravager ravager = ravager(helper, new BlockPos(2, 1, 2), "test_rider_heal");
+		ravager.setHealth(50.0F);
+		var pillager = MountEffectsTest.mob(helper, EntityTypes.PILLAGER, new BlockPos(2, 1, 2));
+		pillager.startRiding(ravager, true, false);
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 5));
+		var arrow = EntityTypes.ARROW.create(helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+		pig.hurtServer(helper.getLevel(), helper.getLevel().damageSources().arrow(arrow, pillager), 2.0F);
+		helper.assertValueEqual(ravager.getHealth(), 54.0F, "the shot of the rider heals the ravager 4 health");
+		Pig other = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		other.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(pillager), 2.0F);
+		helper.assertValueEqual(ravager.getHealth(), 54.0F, "the next heal waits 4 seconds");
+		helper.succeed();
+	}
 }

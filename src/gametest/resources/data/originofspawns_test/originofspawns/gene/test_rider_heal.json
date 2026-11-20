@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "heal_on_rider_hit", "amount": 4, "cooldown_seconds": 4 }],
+	"mutation_rate": 0
+}

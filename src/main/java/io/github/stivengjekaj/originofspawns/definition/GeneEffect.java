@@ -369,7 +369,8 @@ public sealed interface GeneEffect {
 			Map.entry("no_roar", NoRoar.CODEC),
 			Map.entry("ground_charge", GroundCharge.CODEC),
 			Map.entry("trample", Trample.CODEC),
-			Map.entry("speed_after", SpeedAfter.CODEC)
+			Map.entry("speed_after", SpeedAfter.CODEC),
+			Map.entry("heal_on_rider_hit", HealOnRiderHit.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6283,6 +6284,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "speed_after";
+		}
+	}
+
+	/**
+	 * When a mob that rides the mount hurts a target, with a melee hit or with a projectile, the mount heals the amount at
+	 * once, one time in each cooldown. Rider Heal: 4 health, one time each 4 seconds.
+	 */
+	record HealOnRiderHit(float amount, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<HealOnRiderHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1024.0F).fieldOf("amount").forGetter(HealOnRiderHit::amount),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("cooldown_seconds", 4.0F).forGetter(HealOnRiderHit::cooldownSeconds)
+		).apply(instance, HealOnRiderHit::new));
+
+		@Override
+		public String type() {
+			return "heal_on_rider_hit";
 		}
 	}
 }

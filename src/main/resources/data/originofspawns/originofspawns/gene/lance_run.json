@@ -1,0 +1,26 @@
+{
+	"species": "minecraft:zombie_horse",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:zombie_horse/galloper",
+	"gains": [
+		{
+			"type": "riders",
+			"effects": [
+				{
+					"type": "damage_dealt_when",
+					"when": "mount_running",
+					"multiplier": 1.2,
+					"hits": "melee"
+				}
+			]
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:zombie_horse",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:zombie_horse/stomper",
+	"sub_family": "originofspawns:zombie_horse/galloper",
+	"gains": [
+		{
+			"type": "kick_push",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

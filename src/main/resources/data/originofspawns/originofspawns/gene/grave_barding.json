@@ -1,0 +1,25 @@
+{
+	"species": "minecraft:zombie_horse",
+	"counters": "originofspawns:smite",
+	"family": "originofspawns:zombie_horse/destrier",
+	"sub_family": "originofspawns:zombie_horse/vaulter",
+	"gains": [
+		{
+			"type": "riders",
+			"effects": [
+				{
+					"type": "smite_resist",
+					"multiplier": 0.5
+				}
+			]
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

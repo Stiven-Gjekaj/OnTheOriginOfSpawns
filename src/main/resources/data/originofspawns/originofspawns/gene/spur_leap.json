@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:zombie_horse",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:zombie_horse/vaulter",
+	"sub_family": "originofspawns:zombie_horse/galloper",
+	"gains": [
+		{
+			"type": "self_effect_after",
+			"action": "jump",
+			"effect": "minecraft:speed",
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

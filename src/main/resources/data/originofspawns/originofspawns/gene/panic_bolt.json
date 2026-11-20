@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:zombie_horse",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:zombie_horse/galloper",
+	"sub_family": "originofspawns:zombie_horse/revenant",
+	"gains": [
+		{
+			"type": "flee",
+			"threshold": 0.3,
+			"seconds": 4,
+			"speed": 1.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:zombie_horse",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:zombie_horse/destrier",
+	"gains": [
+		{
+			"type": "death_effect",
+			"effect": "minecraft:strength",
+			"seconds": 10,
+			"riders": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

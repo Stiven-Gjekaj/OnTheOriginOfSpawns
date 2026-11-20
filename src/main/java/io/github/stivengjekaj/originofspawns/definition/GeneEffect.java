@@ -321,7 +321,8 @@ public sealed interface GeneEffect {
 			Map.entry("rider_target_spit", RiderTargetSpit.CODEC),
 			Map.entry("rider_target_charge", RiderTargetCharge.CODEC),
 			Map.entry("charge_rate", ChargeRate.CODEC),
-			Map.entry("charge_push", ChargePush.CODEC)
+			Map.entry("charge_push", ChargePush.CODEC),
+			Map.entry("drain_air", DrainAir.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5378,6 +5379,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "charge_push";
+		}
+	}
+
+	/**
+	 * Each melee hit of the mob on a target in water takes the seconds of air from the target. A target that breathes
+	 * under water loses no air. The charge of a nautilus is a melee hit. Breath Ram: 3.
+	 */
+	record DrainAir(float seconds) implements GeneEffect {
+		public static final MapCodec<DrainAir> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 60.0F).optionalFieldOf("seconds", 3.0F).forGetter(DrainAir::seconds)
+		).apply(instance, DrainAir::new));
+
+		@Override
+		public String type() {
+			return "drain_air";
 		}
 	}
 }

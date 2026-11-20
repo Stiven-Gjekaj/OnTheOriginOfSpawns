@@ -112,4 +112,22 @@ public class ZombieNautilusEffectsTest {
 		helper.assertTrue(quickPush > plainPush * 1.5, "the tide charge pushes the pig much farther");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void breathRamTakesThreeSecondsOfAirFromATargetInWater(GameTestHelper helper) {
+		helper.setBlock(new BlockPos(4, 1, 4), net.minecraft.world.level.block.Blocks.WATER);
+		var swimmer = CreeperEffectsTest.survivalPlayer(helper).player();
+		swimmer.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(4, 1, 4))));
+		swimmer.baseTick();
+		helper.assertTrue(swimmer.isInWater(), "the player is in water");
+		var walker = CreeperEffectsTest.survivalPlayer(helper).player();
+		walker.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(1, 1, 1))));
+		ZombieNautilus rammer = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, new BlockPos(6, 1, 6), "test_breath_ram");
+		int full = swimmer.getAirSupply();
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHit(rammer, swimmer);
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHit(rammer, walker);
+		helper.assertValueEqual(swimmer.getAirSupply(), full - 60, "the hit takes 3 seconds of air in water");
+		helper.assertValueEqual(walker.getAirSupply(), full, "a player on land loses no air");
+		helper.succeed();
+	}
 }

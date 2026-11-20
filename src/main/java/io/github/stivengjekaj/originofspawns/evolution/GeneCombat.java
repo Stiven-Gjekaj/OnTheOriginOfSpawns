@@ -773,6 +773,9 @@ public final class GeneCombat {
 						&& (target instanceof AbstractBoat || target.getVehicle() instanceof AbstractBoat) ->
 						hitBoat(mob, level, target instanceof AbstractBoat boat ? boat : (AbstractBoat) target.getVehicle(),
 								breaker);
+				case GeneEffect.DrainAir air when target instanceof LivingEntity living && living.isInWater()
+						&& !living.canBreatheUnderwater() ->
+						living.setAirSupply(Math.max(living.getAirSupply() - Math.round(air.seconds() * 20.0F), -20));
 				case GeneEffect.DrainFood drain when drain.hits().includes(false) && target instanceof Player player
 						&& mob.getRandom().nextFloat() < drain.chance() -> drainFood(mob, player, drain);
 				case GeneEffect.LeechXp leech when leech.hits().includes(false) && target instanceof Player player ->

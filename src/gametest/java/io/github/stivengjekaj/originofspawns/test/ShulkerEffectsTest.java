@@ -103,4 +103,17 @@ public class ShulkerEffectsTest {
 		helper.assertValueEqual(slow, vanilla * 2, "half the throw rate waits two times as long");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aDoubleShotShootsTwoBulletsAtEachThirdAttack(GameTestHelper helper) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 4));
+		Shulker shulker = shulker(helper, new BlockPos(1, 1, 1), "test_double_shot");
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneShulkers.countShot(shulker, pig), "the first attack");
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneShulkers.countShot(shulker, pig), "the second attack");
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneShulkers.countShot(shulker, pig),
+				"the third attack shoots a second bullet");
+		var bullets = helper.getLevel().getEntitiesOfClass(ShulkerBullet.class, shulker.getBoundingBox().inflate(2.0));
+		helper.assertValueEqual(bullets.size(), 1, "one more bullet");
+		helper.succeed();
+	}
 }

@@ -349,7 +349,8 @@ public sealed interface GeneEffect {
 			Map.entry("spit", Spit.CODEC),
 			Map.entry("bullet_damage", BulletDamage.CODEC),
 			Map.entry("bullet_speed", BulletSpeed.CODEC),
-			Map.entry("bullet_levitation", BulletLevitation.CODEC)
+			Map.entry("bullet_levitation", BulletLevitation.CODEC),
+			Map.entry("double_shot", DoubleShot.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5900,6 +5901,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "bullet_levitation";
+		}
+	}
+
+	/**
+	 * Each attack with this number shoots two bullets in place of one, for example each third attack. Both bullets follow
+	 * the same target. With more than one effect, the smallest number counts. Double Shot: 3.
+	 */
+	record DoubleShot(int every) implements GeneEffect {
+		public static final MapCodec<DoubleShot> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 100).optionalFieldOf("every", 3).forGetter(DoubleShot::every)
+		).apply(instance, DoubleShot::new));
+
+		@Override
+		public String type() {
+			return "double_shot";
 		}
 	}
 }

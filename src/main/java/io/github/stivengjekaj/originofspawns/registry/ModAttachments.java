@@ -126,6 +126,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> EMERGE_TIME = AttachmentRegistry.create(OriginOfSpawns.id("emerge_time"));
 
 	/**
+	 * The number of attacks of a shulker since it joined the world. A double shot gene counts the attacks with it.
+	 */
+	public static final AttachmentType<Integer> SHOT_COUNT = AttachmentRegistry.create(OriginOfSpawns.id("shot_count"));
+
+	/**
 	 * The game time of the last melee hit of a mob on each player, by the UUID of the player.
 	 */
 	public static final AttachmentType<java.util.Map<java.util.UUID, Long>> PLAYER_HITS =

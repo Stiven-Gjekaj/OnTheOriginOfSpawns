@@ -1,0 +1,65 @@
+{
+	"species": "minecraft:zombie_nautilus",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hurt",
+					"effect": "minecraft:blindness",
+					"seconds": 2,
+					"cooldown_seconds": 10,
+					"ink": true,
+					"player_radius": 4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:attack_damage",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hurt",
+					"effect": "minecraft:blindness",
+					"seconds": 3,
+					"cooldown_seconds": 10,
+					"ink": true,
+					"player_radius": 4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:attack_damage",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "effect_on_hurt",
+					"effect": "minecraft:blindness",
+					"seconds": 4,
+					"cooldown_seconds": 10,
+					"ink": true,
+					"player_radius": 4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:attack_damage",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

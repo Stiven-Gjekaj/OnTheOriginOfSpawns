@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:zombie_nautilus",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:zombie_nautilus/jetter",
+	"sub_family": "originofspawns:zombie_nautilus/rammer",
+	"gains": [
+		{
+			"type": "self_effect_after",
+			"action": "charge",
+			"effect": "minecraft:speed",
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

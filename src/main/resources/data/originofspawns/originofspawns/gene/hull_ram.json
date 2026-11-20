@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:zombie_nautilus",
+	"counters": "originofspawns:boat",
+	"family": "originofspawns:zombie_nautilus/rammer",
+	"gains": [
+		{
+			"type": "break_boats",
+			"hits": 1
+		},
+		{
+			"type": "rider_target_charge"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

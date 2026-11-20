@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:zombie_nautilus",
+	"counters": "originofspawns:sunlight",
+	"family": "originofspawns:zombie_nautilus/jetter",
+	"gains": [
+		{
+			"type": "sun_shade",
+			"interval_seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

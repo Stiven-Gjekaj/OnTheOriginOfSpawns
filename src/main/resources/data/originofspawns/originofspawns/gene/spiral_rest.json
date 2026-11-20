@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:zombie_nautilus",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:zombie_nautilus/whorlback",
+	"sub_family": "originofspawns:zombie_nautilus/tidebearer",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 3,
+			"idle_seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

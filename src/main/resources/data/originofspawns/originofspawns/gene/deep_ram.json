@@ -1,0 +1,24 @@
+{
+	"species": "minecraft:zombie_nautilus",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:zombie_nautilus/rammer",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": 0.4,
+			"operation": "add_multiplied_total"
+		},
+		{
+			"type": "rider_target_charge"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

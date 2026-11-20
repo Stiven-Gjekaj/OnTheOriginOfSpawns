@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:zombie_nautilus",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:zombie_nautilus/inker",
+	"sub_family": "originofspawns:zombie_nautilus/jetter",
+	"gains": [
+		{
+			"type": "self_effect_after",
+			"action": "ink",
+			"effect": "minecraft:speed",
+			"seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

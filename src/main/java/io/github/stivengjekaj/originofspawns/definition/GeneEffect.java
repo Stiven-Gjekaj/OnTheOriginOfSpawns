@@ -333,7 +333,8 @@ public sealed interface GeneEffect {
 			Map.entry("trap_life", TrapLife.CODEC),
 			Map.entry("trap_horsemen", TrapHorsemen.CODEC),
 			Map.entry("trap_effect", TrapEffect.CODEC),
-			Map.entry("trap_lightning", TrapLightning.CODEC)
+			Map.entry("trap_lightning", TrapLightning.CODEC),
+			Map.entry("horsemen_rally", HorsemenRally.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5610,6 +5611,24 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "trap_lightning";
+		}
+	}
+
+	/**
+	 * When the mob that rides this horse of a skeleton horse trap dies, the riders of the other horses of the same trap
+	 * in the radius do more damage with their projectiles for the seconds. A horse that did not come from a trap does
+	 * nothing. The horsemen shoot bows, and Strength does not change the damage of an arrow. Storm Kin: 1.3.
+	 */
+	record HorsemenRally(float multiplier, float seconds, float radius) implements GeneEffect {
+		public static final MapCodec<HorsemenRally> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("multiplier", 1.3F).forGetter(HorsemenRally::multiplier),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds", 10.0F).forGetter(HorsemenRally::seconds),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("radius", 16.0F).forGetter(HorsemenRally::radius)
+		).apply(instance, HorsemenRally::new));
+
+		@Override
+		public String type() {
+			return "horsemen_rally";
 		}
 	}
 }

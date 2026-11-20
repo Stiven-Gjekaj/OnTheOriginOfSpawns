@@ -571,6 +571,11 @@ public final class GeneCombat {
 			}
 		}
 		if (source.getEntity() instanceof LivingEntity attacker && attacker != victim) {
+			Float shotBoost = attacker.getAttached(ModAttachments.SHOT_BOOST);
+			if (shotBoost != null && source.getDirectEntity() instanceof Projectile
+					&& attacker.level().getGameTime() <= attacker.getAttachedOrElse(ModAttachments.SHOT_BOOST_END, 0L)) {
+				result *= shotBoost;
+			}
 			Float dashStrike = attacker.getAttached(ModAttachments.DASH_STRIKE);
 			if (dashStrike != null && source.getDirectEntity() == attacker) {
 				// Only the first melee hit after a dash counts.
@@ -1221,6 +1226,34 @@ public final class GeneCombat {
 	}
 
 	/**
+	 * When the mob rides a horse of a skeleton horse trap, each horsemen rally gene of the horse gives the riders of the
+	 * other horses of the trap in the radius a boost to their projectile damage.
+	 *
+	 * @return the number of horsemen that got the boost
+	 */
+	public static int rallyHorsemen(Mob dead, ServerLevel level) {
+		if (!(dead.getVehicle() instanceof Mob horse) || !horse.hasAttached(ModAttachments.TRAP_GROUP)) {
+			return 0;
+		}
+		java.util.UUID group = horse.getAttached(ModAttachments.TRAP_GROUP);
+		int count = 0;
+		for (GeneEffect effect : GeneEffects.of(horse).toList()) {
+			if (!(effect instanceof GeneEffect.HorsemenRally rally)) {
+				continue;
+			}
+			for (Mob other : level.getEntitiesOfClass(Mob.class, horse.getBoundingBox().inflate(rally.radius()),
+					other -> other != horse && group.equals(other.getAttached(ModAttachments.TRAP_GROUP)))) {
+				if (other.getFirstPassenger() instanceof Mob rider && rider != dead && rider.isAlive()) {
+					rider.setAttached(ModAttachments.SHOT_BOOST, rally.multiplier());
+					rider.setAttached(ModAttachments.SHOT_BOOST_END, level.getGameTime() + Math.round(rally.seconds() * 20.0F));
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
+	/**
 	 * True while a kick hits, so that a kick does not cause a kick.
 	 */
 	private static final ThreadLocal<Boolean> KICKING = ThreadLocal.withInitial(() -> false);
@@ -1469,6 +1502,7 @@ public final class GeneCombat {
 	 */
 	public static void onDeath(Mob mob, ServerLevel level, DamageSource source) {
 		healAllies(mob, level);
+		rallyHorsemen(mob, level);
 		// A mob with a sack drops what it took.
 		for (net.minecraft.world.item.ItemStack stack : mob.getAttachedOrElse(ModAttachments.SACK, java.util.List.of())) {
 			mob.spawnAtLocation(level, stack);

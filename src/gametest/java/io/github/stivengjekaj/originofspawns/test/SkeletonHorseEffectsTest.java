@@ -180,4 +180,28 @@ public class SkeletonHorseEffectsTest {
 		bolt.discard();
 		helper.succeed();
 	}
+
+	@GameTest
+	public void stormKinBoostsTheArrowsOfTheOtherHorsemenWhenARiderDies(GameTestHelper helper) {
+		var level = helper.getLevel();
+		SkeletonHorse horse = MountEffectsTest.mob(helper, EntityTypes.SKELETON_HORSE, new BlockPos(3, 1, 1), "test_horse_storm_kin");
+		var horses = openTrap(helper, horse);
+		var dead = (net.minecraft.world.entity.Mob) horse.getFirstPassenger();
+		var other = (net.minecraft.world.entity.Mob) horses.stream().filter(h -> h != horse).findFirst().orElseThrow().getFirstPassenger();
+		var pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		var arrow = new net.minecraft.world.entity.projectile.arrow.Arrow(level, other,
+				new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW), null);
+		var shot = level.damageSources().arrow(arrow, other);
+		// The horsemen get their own genes as new mobs, so the test compares the damage before and after the death.
+		float before = io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(pig, shot, 4.0F);
+		float melee = io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(pig,
+				level.damageSources().mobAttack(other), 4.0F);
+		dead.kill(level);
+		helper.assertTrue(Math.abs(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(pig, shot, 4.0F)
+				- before * 1.3F) < 0.001F, "the arrows of the other horsemen do 30% more damage");
+		helper.assertTrue(Math.abs(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(pig,
+				level.damageSources().mobAttack(other), 4.0F) - melee) < 0.001F, "a melee hit gets no boost");
+		arrow.discard();
+		helper.succeed();
+	}
 }

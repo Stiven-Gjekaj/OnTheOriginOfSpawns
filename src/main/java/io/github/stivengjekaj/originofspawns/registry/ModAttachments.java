@@ -309,6 +309,16 @@ public final class ModAttachments {
 			builder -> builder.persistent(net.minecraft.core.UUIDUtil.CODEC));
 
 	/**
+	 * The damage multiplier of the projectiles of a horseman after a horseman of its trap died.
+	 */
+	public static final AttachmentType<Float> SHOT_BOOST = AttachmentRegistry.create(OriginOfSpawns.id("shot_boost"));
+
+	/**
+	 * The game time at which the shot boost of a horseman ends.
+	 */
+	public static final AttachmentType<Long> SHOT_BOOST_END = AttachmentRegistry.create(OriginOfSpawns.id("shot_boost_end"));
+
+	/**
 	 * The game time of the last jump of a horse, until it lands.
 	 */
 	public static final AttachmentType<Long> JUMP_TIME = AttachmentRegistry.create(OriginOfSpawns.id("jump_time"));

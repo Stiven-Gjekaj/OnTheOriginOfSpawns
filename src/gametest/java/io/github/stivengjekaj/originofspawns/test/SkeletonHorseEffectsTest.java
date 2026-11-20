@@ -204,4 +204,58 @@ public class SkeletonHorseEffectsTest {
 		arrow.discard();
 		helper.succeed();
 	}
+
+	static final ReusedEffects.Maker HORSE = (helper, pos, genes) -> MountEffectsTest.mob(helper, EntityTypes.SKELETON_HORSE, pos, genes);
+
+	@GameTest
+	public void theReusedEffectsWorkOnASkeletonHorse(GameTestHelper helper) {
+		ReusedEffects.armorAttribute(helper, HORSE);
+		ReusedEffects.rootFeet(helper, HORSE);
+		ReusedEffects.smiteResist(helper, HORSE);
+		ReusedEffects.healOnce(helper, HORSE);
+		ReusedEffects.translucent(helper, HORSE);
+		ReusedEffects.sidestep(helper, HORSE);
+		ReusedEffects.damageTaken(helper, HORSE);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aSkeletonHorseOnLandHopsToTheWater(GameTestHelper helper) {
+		ReusedEffects.shoreHop(helper, HORSE);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aSkeletonHorseRegeneratesOutOfCombat(GameTestHelper helper) {
+		ReusedEffects.regenerate(helper, HORSE);
+	}
+
+	@GameTest
+	public void aSpeedWhenGeneMakesASkeletonHorseFaster(GameTestHelper helper) {
+		ReusedEffects.speedWhenWounded(helper, HORSE);
+	}
+
+	@GameTest
+	public void ribGapsGroundedBonesGolemBraceAndKelpManeWorkOnASkeletonHorse(GameTestHelper helper) {
+		var level = helper.getLevel();
+		SkeletonHorse gaps = MountEffectsTest.mob(helper, EntityTypes.SKELETON_HORSE, new BlockPos(1, 1, 1), "test_dodge");
+		float health = gaps.getHealth();
+		helper.assertFalse(gaps.hurtServer(level, level.damageSources().thrown(gaps, null), 4.0F), "a projectile passes through");
+		helper.assertValueEqual(gaps.getHealth(), health, "no damage from the projectile");
+		SkeletonHorse grounded = MountEffectsTest.mob(helper, EntityTypes.SKELETON_HORSE, new BlockPos(6, 1, 1), "test_grounded");
+		var bolt = EntityTypes.LIGHTNING_BOLT.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+		grounded.thunderHit(level, bolt);
+		helper.assertValueEqual(grounded.getHealth(), grounded.getMaxHealth(), "no damage from the lightning");
+		helper.assertTrue(grounded.getRemainingFireTicks() <= 0, "no fire from the lightning");
+		SkeletonHorse brace = MountEffectsTest.mob(helper, EntityTypes.SKELETON_HORSE, new BlockPos(1, 1, 6), "test_golem_bait");
+		var golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(6, 1, 6));
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(brace,
+				level.damageSources().mobAttack(golem), 4.0F), 6.0F, "the damage from a golem changes");
+		helper.setBlock(new BlockPos(4, 1, 4), Blocks.WATER);
+		SkeletonHorse kelp = MountEffectsTest.mob(helper, EntityTypes.SKELETON_HORSE, new BlockPos(4, 1, 4), "test_horse_kelp_mane");
+		kelp.baseTick();
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneEffects.translucentOpacity(kelp).isPresent(),
+				"translucent in water at each light level");
+		helper.succeed();
+	}
 }

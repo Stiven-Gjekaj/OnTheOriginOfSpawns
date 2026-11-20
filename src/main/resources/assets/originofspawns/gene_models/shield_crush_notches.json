@@ -1,0 +1,109 @@
+{
+	"texture": "originofspawns:textures/entity/shield_crush_notches.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_horn",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				-12.5,
+				1.5
+			],
+			"size": [
+				3,
+				2,
+				3
+			]
+		},
+		{
+			"bone": "right_horn",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				-8.5,
+				1.5
+			],
+			"size": [
+				3,
+				2,
+				3
+			]
+		},
+		{
+			"bone": "right_horn",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				-4.5,
+				1.5
+			],
+			"size": [
+				3,
+				2,
+				3
+			]
+		},
+		{
+			"bone": "left_horn",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				-12.5,
+				1.5
+			],
+			"size": [
+				3,
+				2,
+				3
+			]
+		},
+		{
+			"bone": "left_horn",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				-8.5,
+				1.5
+			],
+			"size": [
+				3,
+				2,
+				3
+			]
+		},
+		{
+			"bone": "left_horn",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				-4.5,
+				1.5
+			],
+			"size": [
+				3,
+				2,
+				3
+			]
+		}
+	]
+}

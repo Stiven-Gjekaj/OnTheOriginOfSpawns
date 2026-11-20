@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/ravager.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/horde_hide_0.png",
+				"tint": "#3A4250"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/horde_hide_1.png",
+				"tint": "#2E4A2A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/horde_hide_2.png",
+				"tint": "#D8C8A0"
+			}
+		}
+	]
+}

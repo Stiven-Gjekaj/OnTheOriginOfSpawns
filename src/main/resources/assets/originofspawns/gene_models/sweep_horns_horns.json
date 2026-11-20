@@ -1,0 +1,63 @@
+{
+	"texture": "originofspawns:textures/entity/sweep_horns_horns.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "right_horn",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				-23,
+				-1.5
+			],
+			"size": [
+				2,
+				10,
+				3
+			],
+			"inflate": -0.1,
+			"pivot": [
+				1,
+				-13,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				30
+			]
+		},
+		{
+			"bone": "left_horn",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				-23,
+				-1.5
+			],
+			"size": [
+				2,
+				10,
+				3
+			],
+			"inflate": -0.1,
+			"pivot": [
+				1,
+				-13,
+				0
+			],
+			"rotation": [
+				0,
+				0,
+				-30
+			]
+		}
+	]
+}

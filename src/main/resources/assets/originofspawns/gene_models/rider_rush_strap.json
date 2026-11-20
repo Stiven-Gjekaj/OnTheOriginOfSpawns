@@ -1,0 +1,24 @@
+{
+	"texture": "originofspawns:textures/entity/rider_rush_strap.png",
+	"texture_width": 128,
+	"texture_height": 64,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-7.5,
+				4,
+				-7.5
+			],
+			"size": [
+				15,
+				2,
+				21
+			]
+		}
+	]
+}

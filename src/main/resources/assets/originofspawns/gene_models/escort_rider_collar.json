@@ -1,0 +1,24 @@
+{
+	"texture": "originofspawns:textures/entity/escort_rider_collar.png",
+	"texture_width": 64,
+	"texture_height": 64,
+	"parts": [
+		{
+			"bone": "neck",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-9,
+				-5,
+				-15.5
+			],
+			"size": [
+				18,
+				22,
+				3
+			]
+		}
+	]
+}

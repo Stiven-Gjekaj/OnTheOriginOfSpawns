@@ -1,0 +1,75 @@
+{
+	"texture": "originofspawns:textures/entity/steady_stance_feet.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "right_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-5,
+				36,
+				-5
+			],
+			"size": [
+				10,
+				1,
+				10
+			]
+		},
+		{
+			"bone": "left_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-5,
+				36,
+				-5
+			],
+			"size": [
+				10,
+				1,
+				10
+			]
+		},
+		{
+			"bone": "right_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-5,
+				36,
+				-5
+			],
+			"size": [
+				10,
+				1,
+				10
+			]
+		},
+		{
+			"bone": "left_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-5,
+				36,
+				-5
+			],
+			"size": [
+				10,
+				1,
+				10
+			]
+		}
+	]
+}

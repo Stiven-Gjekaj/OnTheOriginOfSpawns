@@ -98,6 +98,7 @@ public final class GeneSilverfish {
 	/**
 	 * Keeps the genes of a silverfish in the block where it hides now. The block is already an infested block. A
 	 * silverfish with no genes leaves nothing, so a plain silverfish comes out of the block, with genes from the pool.
+	 * Each stone seed gene also infests the blocks next to the block.
 	 */
 	public static void hide(Mob mob, ServerLevel level, BlockPos pos) {
 		CarriedGenes genes = mob.getAttached(ModAttachments.GENES);
@@ -105,6 +106,19 @@ public final class GeneSilverfish {
 			int extra = GeneEffects.of(mob).filter(GeneEffect.HideBrood.class::isInstance)
 					.mapToInt(effect -> ((GeneEffect.HideBrood) effect).extra()).sum();
 			HiddenSilverfish.get(level.getServer()).put(level, pos, genes, extra);
+		}
+		int seeds = GeneEffects.of(mob).filter(GeneEffect.StoneSeed.class::isInstance)
+				.mapToInt(effect -> ((GeneEffect.StoneSeed) effect).count()).sum();
+		if (seeds > 0 && level.getGameRules().get(GameRules.MOB_GRIEFING)) {
+			for (net.minecraft.core.Direction direction : net.minecraft.util.Util.shuffledCopy(
+					net.minecraft.core.Direction.values(), mob.getRandom())) {
+				BlockPos next = pos.relative(direction);
+				BlockState state = level.getBlockState(next);
+				if (seeds > 0 && InfestedBlock.isCompatibleHostBlock(state)) {
+					level.setBlockAndUpdate(next, InfestedBlock.infestedStateByHost(state));
+					seeds--;
+				}
+			}
 		}
 	}
 

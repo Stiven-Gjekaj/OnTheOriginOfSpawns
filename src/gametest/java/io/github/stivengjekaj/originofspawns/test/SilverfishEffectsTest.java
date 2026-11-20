@@ -184,4 +184,17 @@ public class SilverfishEffectsTest {
 				.genes().contains(lodge)).count(), 1L, "only the first one has the genes of the silverfish that hid");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aStoneSeedInfestsTwoMoreBlocksWhenItHides(GameTestHelper helper) {
+		BlockPos place = new BlockPos(3, 2, 3);
+		bury(helper, place);
+		Silverfish silverfish = silverfish(helper, place, "test_stone_seed");
+		helper.assertTrue(GeneSilverfish.hideInStone(silverfish, helper.getLevel()), "the silverfish hides");
+		long infested = java.util.stream.StreamSupport.stream(
+				BlockPos.betweenClosed(place.offset(-2, -1, -2), place.offset(2, 3, 2)).spliterator(), false)
+				.filter(pos -> helper.getBlockState(pos).is(Blocks.INFESTED_STONE)).count();
+		helper.assertValueEqual(infested, 3L, "the block of the silverfish and two blocks next to it are infested");
+		helper.succeed();
+	}
 }

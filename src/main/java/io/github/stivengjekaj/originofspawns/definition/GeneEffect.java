@@ -339,7 +339,8 @@ public sealed interface GeneEffect {
 			Map.entry("wake_on_sight", WakeOnSight.CODEC),
 			Map.entry("wake_on_death", WakeOnDeath.CODEC),
 			Map.entry("hide_in_stone", HideInStone.CODEC),
-			Map.entry("hide_brood", HideBrood.CODEC)
+			Map.entry("hide_brood", HideBrood.CODEC),
+			Map.entry("stone_seed", StoneSeed.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5718,6 +5719,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "hide_brood";
+		}
+	}
+
+	/**
+	 * When the mob hides in a block, in the vanilla way or with a hide gene, it also infests up to this many blocks next
+	 * to that block. They must be blocks that a silverfish can infest. Plain silverfish with genes from the pool come out
+	 * of them. It needs the {@code mobGriefing} game rule. Stone Seed: 2.
+	 */
+	record StoneSeed(int count) implements GeneEffect {
+		public static final MapCodec<StoneSeed> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 6).optionalFieldOf("count", 2).forGetter(StoneSeed::count)
+		).apply(instance, StoneSeed::new));
+
+		@Override
+		public String type() {
+			return "stone_seed";
 		}
 	}
 }

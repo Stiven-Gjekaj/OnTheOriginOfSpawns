@@ -303,7 +303,8 @@ public sealed interface GeneEffect {
 			Map.entry("shore_hop", ShoreHop.CODEC),
 			Map.entry("ram", Ram.CODEC),
 			Map.entry("close_snap", CloseSnap.CODEC),
-			Map.entry("riders", Riders.CODEC)
+			Map.entry("riders", Riders.CODEC),
+			Map.entry("rider_effect_when_wounded", RiderEffectWhenWounded.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5058,6 +5059,27 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "riders";
+		}
+	}
+
+	/**
+	 * When a mob that rides the mob is under the health threshold, the rider gets the status effect, one time in
+	 * each cooldown for each rider. A player that rides the mob does not get it. Rider Bond: Regeneration.
+	 */
+	record RiderEffectWhenWounded(Holder<MobEffect> effect, float seconds, int amplifier, float threshold,
+			float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<RiderEffectWhenWounded> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(RiderEffectWhenWounded::effect),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds", 5.0F).forGetter(RiderEffectWhenWounded::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(RiderEffectWhenWounded::amplifier),
+				Codec.floatRange(0.01F, 1.0F).optionalFieldOf("threshold", 0.5F).forGetter(RiderEffectWhenWounded::threshold),
+				Codec.floatRange(0.0F, 3600.0F).optionalFieldOf("cooldown_seconds", 30.0F)
+						.forGetter(RiderEffectWhenWounded::cooldownSeconds)
+		).apply(instance, RiderEffectWhenWounded::new));
+
+		@Override
+		public String type() {
+			return "rider_effect_when_wounded";
 		}
 	}
 }

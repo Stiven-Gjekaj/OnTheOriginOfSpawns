@@ -3,6 +3,7 @@ package io.github.stivengjekaj.originofspawns.test;
 import java.util.List;
 
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
@@ -12,6 +13,7 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityTypes;
@@ -87,6 +89,32 @@ public class MountEffectsTest {
 			rider.stopRiding();
 			helper.assertValueEqual(GeneCombat.modifyDamage(rider, level.damageSources().inFire(), 4.0F), 4.0F,
 					"the rider off the " + name + " loses the guard");
+			x += 2;
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aWoundedRiderGetsTheEffectOneTimeInTheCooldown(GameTestHelper helper) {
+		int x = 1;
+		for (Pair pair : MOUNTS) {
+			String name = pair.mount().toShortString();
+			Mob wounded = rider(helper, pair, new BlockPos(x, 1, 2), "test_rider_bond");
+			Mob healthy = rider(helper, pair, new BlockPos(x, 1, 6), "test_rider_bond");
+			wounded.setHealth(wounded.getMaxHealth() * 0.4F);
+			healthy.setHealth(healthy.getMaxHealth() * 0.6F);
+			for (Mob rider : List.of(wounded, healthy)) {
+				Mob mount = (Mob) rider.getVehicle();
+				mount.tickCount = 20;
+				GeneBehaviors.tick(mount, helper.getLevel());
+			}
+			helper.assertTrue(wounded.hasEffect(MobEffects.RESISTANCE), "the wounded rider of the " + name + " gets Resistance");
+			helper.assertFalse(healthy.hasEffect(MobEffects.RESISTANCE), "a rider over half health gets nothing");
+			wounded.removeEffect(MobEffects.RESISTANCE);
+			Mob mount = (Mob) wounded.getVehicle();
+			mount.tickCount = 40;
+			GeneBehaviors.tick(mount, helper.getLevel());
+			helper.assertFalse(wounded.hasEffect(MobEffects.RESISTANCE), "the next one waits 30 seconds");
 			x += 2;
 		}
 		helper.succeed();

@@ -435,6 +435,7 @@ public final class GeneBehaviors {
 						mob.heal(regenerate.amount());
 					}
 				}
+				case GeneEffect.RiderEffectWhenWounded bond -> riderEffectWhenWounded(mob, bond);
 				case GeneEffect.GazeEffect gaze when now % Math.max(1, Math.round(gaze.intervalSeconds() * 20.0F)) < TICK_INTERVAL -> {
 					AABB area = mob.getBoundingBox().inflate(gaze.range());
 					for (Player player : level.getEntitiesOfClass(Player.class, area, player -> !player.isSpectator()
@@ -1399,6 +1400,27 @@ public final class GeneBehaviors {
 		mob.setDeltaMovement(toTarget.normalize().scale(ram.speed()));
 		mob.needsSync = true;
 		return true;
+	}
+
+	/**
+	 * Gives the status effect to each mob that rides the mount and is under the health threshold, if the cooldown of
+	 * that rider is over. The behavior tick runs this one time each second.
+	 *
+	 * @return the number of riders that got the effect now
+	 */
+	public static int riderEffectWhenWounded(Mob mount, GeneEffect.RiderEffectWhenWounded bond) {
+		int given = 0;
+		for (Entity passenger : mount.getPassengers()) {
+			if (passenger instanceof Mob rider && rider.isAlive()
+					&& rider.getHealth() < rider.getMaxHealth() * bond.threshold()
+					&& GeneCombat.ready(rider, bond, bond.cooldownSeconds())) {
+				GeneCombat.startCooldown(rider, bond);
+				rider.addEffect(new MobEffectInstance(bond.effect(), Math.round(bond.seconds() * 20.0F), bond.amplifier()),
+						mount);
+				given++;
+			}
+		}
+		return given;
 	}
 
 	/**

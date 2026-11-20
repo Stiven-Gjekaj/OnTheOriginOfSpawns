@@ -1,0 +1,115 @@
+{
+	"texture": "originofspawns:textures/entity/kelp_mane_kelp.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				2.1,
+				-2,
+				4
+			],
+			"size": [
+				1,
+				7,
+				1
+			],
+			"pivot": [
+				2.6,
+				-2,
+				4
+			],
+			"rotation": [
+				-10,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.1,
+				-2,
+				4
+			],
+			"size": [
+				1,
+				7,
+				1
+			],
+			"pivot": [
+				-2.6,
+				-2,
+				4
+			],
+			"rotation": [
+				-10,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				2.1,
+				2,
+				4
+			],
+			"size": [
+				1,
+				7,
+				1
+			],
+			"pivot": [
+				2.6,
+				2,
+				4
+			],
+			"rotation": [
+				-10,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.1,
+				2,
+				4
+			],
+			"size": [
+				1,
+				7,
+				1
+			],
+			"pivot": [
+				-2.6,
+				2,
+				4
+			],
+			"rotation": [
+				-10,
+				0,
+				0
+			]
+		}
+	]
+}

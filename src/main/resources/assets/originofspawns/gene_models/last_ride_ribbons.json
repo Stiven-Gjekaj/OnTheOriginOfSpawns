@@ -1,0 +1,115 @@
+{
+	"texture": "originofspawns:textures/entity/last_ride_ribbons.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				2.1,
+				-9,
+				4
+			],
+			"size": [
+				1,
+				4,
+				1
+			],
+			"pivot": [
+				2.6,
+				-9,
+				4
+			],
+			"rotation": [
+				-15,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.1,
+				-9,
+				4
+			],
+			"size": [
+				1,
+				4,
+				1
+			],
+			"pivot": [
+				-2.6,
+				-9,
+				4
+			],
+			"rotation": [
+				-15,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				2.1,
+				-6,
+				4
+			],
+			"size": [
+				1,
+				4,
+				1
+			],
+			"pivot": [
+				2.6,
+				-6,
+				4
+			],
+			"rotation": [
+				-15,
+				0,
+				0
+			]
+		},
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.1,
+				-6,
+				4
+			],
+			"size": [
+				1,
+				4,
+				1
+			],
+			"pivot": [
+				-2.6,
+				-6,
+				4
+			],
+			"rotation": [
+				-15,
+				0,
+				0
+			]
+		}
+	]
+}

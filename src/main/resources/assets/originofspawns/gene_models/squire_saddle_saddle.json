@@ -1,0 +1,93 @@
+{
+	"texture": "originofspawns:textures/entity/squire_saddle_saddle.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4,
+				-9,
+				-10
+			],
+			"size": [
+				8,
+				1,
+				6
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-3,
+				-11,
+				-10.5
+			],
+			"size": [
+				6,
+				2,
+				1
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				8
+			],
+			"from": [
+				-3,
+				-10,
+				-4.5
+			],
+			"size": [
+				6,
+				2,
+				1
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				20,
+				8
+			],
+			"from": [
+				-5.3,
+				-8,
+				-9
+			],
+			"size": [
+				1,
+				4,
+				4
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				20,
+				8
+			],
+			"from": [
+				4.3,
+				-8,
+				-9
+			],
+			"size": [
+				1,
+				4,
+				4
+			],
+			"mirror": true
+		}
+	]
+}

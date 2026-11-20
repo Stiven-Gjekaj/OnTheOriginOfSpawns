@@ -1,0 +1,88 @@
+{
+	"texture": "originofspawns:textures/entity/night_run_tail.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "tail",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-1.5,
+				0,
+				2
+			],
+			"size": [
+				1,
+				7,
+				1
+			],
+			"pivot": [
+				-1.0,
+				0,
+				2.5
+			],
+			"rotation": [
+				0,
+				0,
+				35
+			]
+		},
+		{
+			"bone": "tail",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0.5,
+				0,
+				2
+			],
+			"size": [
+				1,
+				7,
+				1
+			],
+			"pivot": [
+				1.0,
+				0,
+				2.5
+			],
+			"rotation": [
+				0,
+				0,
+				-35
+			]
+		},
+		{
+			"bone": "tail",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				0,
+				2
+			],
+			"size": [
+				1,
+				7,
+				1
+			],
+			"pivot": [
+				0.0,
+				0,
+				2.5
+			],
+			"rotation": [
+				0,
+				0,
+				0
+			]
+		}
+	]
+}

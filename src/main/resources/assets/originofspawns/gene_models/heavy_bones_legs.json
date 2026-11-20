@@ -1,0 +1,83 @@
+{
+	"mob_texture": true,
+	"texture_width": 64,
+	"texture_height": 64,
+	"parts": [
+		{
+			"bone": "left_hind_leg",
+			"uv": [
+				48,
+				21
+			],
+			"from": [
+				-3,
+				-1.01,
+				-1
+			],
+			"size": [
+				4,
+				11,
+				4
+			],
+			"inflate": 0.6,
+			"mirror": true
+		},
+		{
+			"bone": "right_hind_leg",
+			"uv": [
+				48,
+				21
+			],
+			"from": [
+				-1,
+				-1.01,
+				-1
+			],
+			"size": [
+				4,
+				11,
+				4
+			],
+			"inflate": 0.6,
+			"mirror": false
+		},
+		{
+			"bone": "left_front_leg",
+			"uv": [
+				48,
+				21
+			],
+			"from": [
+				-3,
+				-1.01,
+				-1.9
+			],
+			"size": [
+				4,
+				11,
+				4
+			],
+			"inflate": 0.6,
+			"mirror": true
+		},
+		{
+			"bone": "right_front_leg",
+			"uv": [
+				48,
+				21
+			],
+			"from": [
+				-1,
+				-1.01,
+				-1.9
+			],
+			"size": [
+				4,
+				11,
+				4
+			],
+			"inflate": 0.6,
+			"mirror": false
+		}
+	]
+}

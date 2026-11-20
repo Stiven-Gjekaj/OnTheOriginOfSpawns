@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/wide_trap_eyes.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				3.03,
+				-10,
+				1
+			],
+			"size": [
+				0,
+				2,
+				2
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.03,
+				-10,
+				1
+			],
+			"size": [
+				0,
+				2,
+				2
+			],
+			"glow": true
+		}
+	]
+}

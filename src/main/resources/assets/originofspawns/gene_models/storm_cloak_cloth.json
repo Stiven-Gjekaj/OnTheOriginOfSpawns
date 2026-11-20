@@ -1,0 +1,59 @@
+{
+	"texture": "originofspawns:textures/entity/storm_cloak_cloth.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-5,
+				-8.3,
+				-3
+			],
+			"size": [
+				10,
+				0,
+				8
+			],
+			"inflate": 0.2
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				12
+			],
+			"from": [
+				-5.4,
+				-8.3,
+				-3
+			],
+			"size": [
+				0,
+				3,
+				8
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				12
+			],
+			"from": [
+				5.4,
+				-8.3,
+				-3
+			],
+			"size": [
+				0,
+				3,
+				8
+			]
+		}
+	]
+}

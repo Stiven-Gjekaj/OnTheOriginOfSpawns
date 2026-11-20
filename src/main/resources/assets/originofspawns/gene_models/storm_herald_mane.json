@@ -1,0 +1,91 @@
+{
+	"texture": "originofspawns:textures/entity/storm_herald_mane.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				-11,
+				7
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"pivot": [
+				0.0,
+				-11,
+				7
+			],
+			"rotation": [
+				-45,
+				0,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				-8,
+				7
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"pivot": [
+				0.0,
+				-8,
+				7
+			],
+			"rotation": [
+				-45,
+				0,
+				0
+			],
+			"glow": true
+		},
+		{
+			"bone": "mane",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-0.5,
+				-5,
+				7
+			],
+			"size": [
+				1,
+				5,
+				1
+			],
+			"pivot": [
+				0.0,
+				-5,
+				7
+			],
+			"rotation": [
+				-45,
+				0,
+				0
+			],
+			"glow": true
+		}
+	]
+}

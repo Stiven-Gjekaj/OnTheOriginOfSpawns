@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/skeleton_horse.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/trident_ribs_0.png",
+				"tint": "#5A646C"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/trident_ribs_1.png",
+				"tint": "#D8E0E4"
+			}
+		}
+	]
+}

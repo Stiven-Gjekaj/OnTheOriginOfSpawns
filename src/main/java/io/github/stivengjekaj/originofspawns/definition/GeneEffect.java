@@ -2392,13 +2392,19 @@ public sealed interface GeneEffect {
 
 	/**
 	 * Each melee hit of the mob also hurts the other players in the radius of the target, with a part of the attack
-	 * damage of the mob.
+	 * damage of the mob. With {@code targets}, it hurts the other entities of this list or tag instead of the players.
+	 * Sweep Horns: half damage in 2 blocks to {@code #originofspawns:ravager_targets}.
 	 */
-	record Cleave(float part, float radius) implements GeneEffect {
+	record Cleave(float part, float radius, Optional<HolderSet<EntityType<?>>> targets) implements GeneEffect {
 		public static final MapCodec<Cleave> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("part", 0.5F).forGetter(Cleave::part),
-				Codec.floatRange(0.5F, 8.0F).optionalFieldOf("radius", 2.0F).forGetter(Cleave::radius)
+				Codec.floatRange(0.5F, 8.0F).optionalFieldOf("radius", 2.0F).forGetter(Cleave::radius),
+				RegistryCodecs.holderSet(Registries.ENTITY_TYPE).optionalFieldOf("targets").forGetter(Cleave::targets)
 		).apply(instance, Cleave::new));
+
+		public Cleave(float part, float radius) {
+			this(part, radius, Optional.empty());
+		}
 
 		@Override
 		public String type() {

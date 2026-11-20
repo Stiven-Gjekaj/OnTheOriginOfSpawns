@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "cleave", "part": 0.5, "radius": 2, "targets": "#originofspawns:ravager_targets" }],
+	"mutation_rate": 0
+}

@@ -163,4 +163,19 @@ public class RavagerEffectsTest {
 				8.0F, "20% less damage with 2 raiders near");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aSweepHornsHurtsTheVanillaTargetsNearTheTargetButNotTheRaiders(GameTestHelper helper) {
+		Ravager ravager = ravager(helper, new BlockPos(1, 1, 1), "test_sweep_horns");
+		var golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(4, 1, 4));
+		var villager = helper.spawnWithNoFreeWill(EntityTypes.VILLAGER, new BlockPos(5, 1, 4));
+		var pillager = MountEffectsTest.mob(helper, EntityTypes.PILLAGER, new BlockPos(4, 1, 5));
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 5));
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHit(ravager, golem);
+		helper.assertValueEqual(villager.getMaxHealth() - villager.getHealth(), 6.0F, "the villager takes half of 12 damage");
+		helper.assertValueEqual(golem.getMaxHealth() - golem.getHealth(), 0.0F, "the target itself takes no sweep damage");
+		helper.assertValueEqual(pillager.getHealth(), pillager.getMaxHealth(), "a raider takes no damage");
+		helper.assertValueEqual(lost(pig), 0.0F, "a pig is not a target of a ravager");
+		helper.succeed();
+	}
 }

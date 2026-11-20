@@ -810,7 +810,14 @@ public final class GeneCombat {
 							* cleave.part();
 					AABB area = target.getBoundingBox().inflate(cleave.radius());
 					// The damage of a cleave is not a hit of the mob, so it does not cleave again.
-					for (Player other : level.getEntitiesOfClass(Player.class, area, other -> other != target)) {
+					java.util.List<LivingEntity> others = new java.util.ArrayList<>();
+					if (cleave.targets().isPresent()) {
+						others.addAll(level.getEntitiesOfClass(LivingEntity.class, area, other -> other != target && other != mob
+								&& other.isAlive() && cleave.targets().get().contains(other.getType().builtInRegistryHolder())));
+					} else {
+						others.addAll(level.getEntitiesOfClass(Player.class, area, other -> other != target));
+					}
+					for (LivingEntity other : others) {
 						other.hurtServer(level, level.damageSources().mobAttack(mob), damage);
 					}
 				}

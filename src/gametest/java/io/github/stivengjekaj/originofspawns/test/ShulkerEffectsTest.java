@@ -228,4 +228,38 @@ public class ShulkerEffectsTest {
 		helper.assertValueEqual(shulker.getTarget(), pig, "the shulker keeps its target");
 		helper.succeed();
 	}
+
+	static java.util.List<Shulker> shulkersNear(GameTestHelper helper, Shulker parent) {
+		return helper.getLevel().getEntitiesOfClass(Shulker.class, parent.getBoundingBox().inflate(12.0),
+				other -> other != parent);
+	}
+
+	/**
+	 * Lets the open shulker split with its genes until a new shulker comes. The vanilla split teleports the shulker first,
+	 * and its teleport tries 5 random places, so the test tries more than one time.
+	 */
+	static java.util.List<Shulker> splitUntilANewShulkerComes(GameTestHelper helper, Shulker parent) {
+		var lid = (io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) parent;
+		parent.setNoAi(false);
+		for (int i = 0; i < 40 && shulkersNear(helper, parent).isEmpty(); i++) {
+			lid.originofspawns$setRawPeekAmount(100);
+			io.github.stivengjekaj.originofspawns.evolution.GeneShulkers.splitOnHurt(parent);
+		}
+		parent.setNoAi(true);
+		return shulkersNear(helper, parent);
+	}
+
+	@GameTest(padding = 12)
+	public void aBudderSplitsOffANewShulkerWhenSomethingHurtsIt(GameTestHelper helper) {
+		Shulker parent = shulker(helper, new BlockPos(3, 1, 3), "test_budder");
+		parent.setComponent(net.minecraft.core.component.DataComponents.SHULKER_COLOR, net.minecraft.world.item.DyeColor.RED);
+		java.util.List<Shulker> young = splitUntilANewShulkerComes(helper, parent);
+		helper.assertValueEqual(young.size(), 1, "a new shulker splits off");
+		helper.assertValueEqual(young.getFirst().getVariant(), parent.getVariant(), "the new shulker has the color of the first one");
+		helper.assertFalse(young.getFirst().getAttachedOrElse(io.github.stivengjekaj.originofspawns.registry.ModAttachments.GENES,
+				io.github.stivengjekaj.originofspawns.evolution.CarriedGenes.NONE).genes().contains(
+				net.minecraft.resources.Identifier.fromNamespaceAndPath("originofspawns_test", "test_budder")),
+				"the new shulker has no genes of the first one");
+		helper.succeed();
+	}
 }

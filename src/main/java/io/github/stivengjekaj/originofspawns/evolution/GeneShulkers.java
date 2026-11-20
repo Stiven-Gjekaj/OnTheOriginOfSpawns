@@ -232,4 +232,23 @@ public final class GeneShulkers {
 		}
 		return false;
 	}
+
+	/**
+	 * Lets a hurt shulker split, after the chance of each split on hurt gene. The split is the vanilla split from a
+	 * bullet. The shulker splits one time at most.
+	 *
+	 * @return true if a split gene acted. The vanilla split can still fail
+	 */
+	public static boolean splitOnHurt(Mob mob) {
+		if (!(mob instanceof Shulker shulker) || !shulker.isAlive()) {
+			return false;
+		}
+		for (GeneEffect effect : GeneEffects.of(shulker).toList()) {
+			if (effect instanceof GeneEffect.SplitOnHurt split && shulker.getRandom().nextFloat() < split.chance()) {
+				((io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker).originofspawns$hitByShulkerBullet();
+				return true;
+			}
+		}
+		return false;
+	}
 }

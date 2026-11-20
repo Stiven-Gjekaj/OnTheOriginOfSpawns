@@ -23,4 +23,7 @@ public interface ShulkerAccessor {
 
 	@Invoker("setAttachFace")
 	void originofspawns$setAttachFace(Direction face);
+
+	@Invoker("hitByShulkerBullet")
+	void originofspawns$hitByShulkerBullet();
 }

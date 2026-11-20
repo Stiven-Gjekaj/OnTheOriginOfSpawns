@@ -354,7 +354,8 @@ public sealed interface GeneEffect {
 			Map.entry("lid_snap", LidSnap.CODEC),
 			Map.entry("teleport_on_hurt", TeleportOnHurt.CODEC),
 			Map.entry("shut_after_teleport", ShutAfterTeleport.CODEC),
-			Map.entry("sight_teleport", SightTeleport.CODEC)
+			Map.entry("sight_teleport", SightTeleport.CODEC),
+			Map.entry("split_on_hurt", SplitOnHurt.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5995,6 +5996,24 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "sight_teleport";
+		}
+	}
+
+	/**
+	 * When something hurts a shulker, a new shulker splits off it with this chance. The split works as the vanilla split
+	 * when a bullet hits a shulker: the shulker must be open and teleport away, and the new shulker comes at its old place,
+	 * with its color. The more shulkers are in 8 blocks, the more often the split fails. The new shulker gets genes from
+	 * the pool. More than one effect gives each its own chance, and the shulker splits one time at most. Budders tier 3:
+	 * 0.1.
+	 */
+	record SplitOnHurt(float chance) implements GeneEffect {
+		public static final MapCodec<SplitOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(SplitOnHurt::chance)
+		).apply(instance, SplitOnHurt::new));
+
+		@Override
+		public String type() {
+			return "split_on_hurt";
 		}
 	}
 }

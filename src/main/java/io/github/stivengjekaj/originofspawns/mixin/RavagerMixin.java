@@ -20,4 +20,12 @@ public abstract class RavagerMixin {
 	private double originofspawns$roarRange(double range) {
 		return GeneRavagers.roarRange((Ravager) (Object) this);
 	}
+
+	/**
+	 * A roar damage gene changes the damage of the roar.
+	 */
+	@ModifyConstant(method = "roar", constant = @Constant(floatValue = 6.0F))
+	private float originofspawns$roarDamage(float damage) {
+		return GeneRavagers.roarDamage((Ravager) (Object) this, damage);
+	}
 }

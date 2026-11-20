@@ -38,4 +38,18 @@ public class RavagerEffectsTest {
 		helper.assertTrue(lost(far) > 0.0F, "the loud roar reaches 6 blocks");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aRoarDamageGeneActsWhileItsStateIsTrue(GameTestHelper helper) {
+		Ravager ravager = ravager(helper, new BlockPos(1, 1, 1), "test_wounded_roar");
+		Pig first = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 4));
+		roar(ravager);
+		helper.assertValueEqual(lost(first), 6.0F, "the roar does 6 damage at full health");
+		first.discard();
+		ravager.setHealth(10.0F);
+		Pig second = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 4));
+		roar(ravager);
+		helper.assertValueEqual(lost(second), 9.0F, "the roar does 50% more damage under half health");
+		helper.succeed();
+	}
 }

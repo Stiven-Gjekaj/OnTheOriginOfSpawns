@@ -359,7 +359,8 @@ public sealed interface GeneEffect {
 			Map.entry("split_limit", SplitLimit.CODEC),
 			Map.entry("split_heir", SplitHeir.CODEC),
 			Map.entry("split_scatter", SplitScatter.CODEC),
-			Map.entry("roar_range", RoarRange.CODEC)
+			Map.entry("roar_range", RoarRange.CODEC),
+			Map.entry("roar_damage", RoarDamage.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6076,6 +6077,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "roar_range";
+		}
+	}
+
+	/**
+	 * Multiplies the damage of the roar of a ravager while the state is true. The vanilla roar does 6 damage to each
+	 * mob and player in its range, but not to an illager. More than one effect multiplies together. Lone Roar: 1.5 with
+	 * {@code no_raider}.
+	 */
+	record RoarDamage(float multiplier, When when) implements GeneEffect {
+		public static final MapCodec<RoarDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(RoarDamage::multiplier),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(RoarDamage::when)
+		).apply(instance, RoarDamage::new));
+
+		@Override
+		public String type() {
+			return "roar_damage";
 		}
 	}
 }

@@ -28,4 +28,17 @@ public final class GeneRavagers {
 		}
 		return range;
 	}
+
+	/**
+	 * Returns the damage of the roar of the ravager after its roar damage genes whose state is true.
+	 */
+	public static float roarDamage(Ravager ravager, float damage) {
+		float result = damage;
+		for (GeneEffect effect : GeneEffects.of(ravager).toList()) {
+			if (effect instanceof GeneEffect.RoarDamage roar && GeneCombat.test(ravager, roar.when())) {
+				result *= roar.multiplier();
+			}
+		}
+		return result;
+	}
 }

@@ -1589,6 +1589,7 @@ public final class GeneBehaviors {
 	 */
 	public static void onJump(Mob mob, ServerLevel level) {
 		mob.setAttached(ModAttachments.JUMP_TIME, level.getGameTime());
+		selfEffectAfter(mob, GeneEffect.Action.JUMP);
 	}
 
 	/**

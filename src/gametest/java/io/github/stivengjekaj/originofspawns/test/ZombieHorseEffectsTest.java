@@ -49,4 +49,13 @@ public class ZombieHorseEffectsTest {
 		helper.assertTrue(horse.hasAttached(ModAttachments.JUMP_TIME), "the jump of a climb counts");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void spurLeapGivesSpeedAfterAJump(GameTestHelper helper) {
+		ZombieHorse horse = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_HORSE, new BlockPos(4, 1, 4), "test_horse_spur_leap");
+		helper.assertFalse(horse.hasEffect(net.minecraft.world.effect.MobEffects.SPEED), "no Speed before a jump");
+		horse.handleStartJump(90);
+		helper.assertTrue(horse.hasEffect(net.minecraft.world.effect.MobEffects.SPEED), "Speed after the jump");
+		helper.succeed();
+	}
 }

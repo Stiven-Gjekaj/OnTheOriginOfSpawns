@@ -1,0 +1,7 @@
+{
+	"species": ["minecraft:zombie_horse", "minecraft:skeleton_horse"],
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "self_effect_after", "action": "jump", "effect": "minecraft:speed", "seconds": 3 }],
+	"mutation_rate": 0
+}

@@ -5405,7 +5405,7 @@ public sealed interface GeneEffect {
 
 	/**
 	 * After the action, the mob itself gets the status effect. Wake Jet: Speed after a charge. Ink Rush: Speed after
-	 * ink.
+	 * ink. Spur Leap: Speed after a jump.
 	 */
 	record SelfEffectAfter(Action action, Holder<MobEffect> effect, float seconds, int amplifier) implements GeneEffect {
 		public static final MapCodec<SelfEffectAfter> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -5432,7 +5432,11 @@ public sealed interface GeneEffect {
 		/**
 		 * The mob squirts ink: an effect on hurt with {@code ink} acts.
 		 */
-		INK;
+		INK,
+		/**
+		 * A horse jumps, from a player that rides it, from a climb, or from a jump aside.
+		 */
+		JUMP;
 
 		public static final Codec<Action> CODEC = StringRepresentable.fromEnum(Action::values);
 

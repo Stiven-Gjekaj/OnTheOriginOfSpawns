@@ -1,0 +1,7 @@
+{
+	"species": ["minecraft:camel_husk", "minecraft:zombie_nautilus", "minecraft:zombie_horse", "minecraft:skeleton_horse"],
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "death_effect", "effect": "minecraft:resistance", "seconds": 10, "riders": true }],
+	"mutation_rate": 0
+}

@@ -1404,7 +1404,10 @@ public final class GeneCombat {
 				}
 				case GeneEffect.DeathEffect death when test(mob, death.when()) -> {
 					AABB area = mob.getBoundingBox().inflate(death.radius());
-					List<? extends LivingEntity> reached = death.allies()
+					List<? extends LivingEntity> reached = death.riders()
+							? mob.getPassengers().stream().filter(passenger -> passenger instanceof Mob)
+									.map(passenger -> (Mob) passenger).toList()
+							: death.allies()
 							? level.getEntitiesOfClass(Mob.class, area, other -> other != mob && other.getType() == mob.getType())
 							: level.getEntitiesOfClass(Player.class, area);
 					for (LivingEntity living : reached) {

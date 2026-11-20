@@ -1460,16 +1460,18 @@ public sealed interface GeneEffect {
 	/**
 	 * When the mob dies while the state is true, the players in the radius get a status effect.
 	 * With {@code allies}, the mobs of its species in the radius get it, and the players do not.
+	 * With {@code riders}, only the mobs that ride the mob get it, and the radius does not count.
 	 */
-	record DeathEffect(Holder<MobEffect> effect, float seconds, int amplifier, float radius, When when, boolean allies)
-			implements GeneEffect {
+	record DeathEffect(Holder<MobEffect> effect, float seconds, int amplifier, float radius, When when, boolean allies,
+			boolean riders) implements GeneEffect {
 		public static final MapCodec<DeathEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				MobEffect.CODEC.fieldOf("effect").forGetter(DeathEffect::effect),
 				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(DeathEffect::seconds),
 				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(DeathEffect::amplifier),
-				Codec.floatRange(0.5F, 32.0F).fieldOf("radius").forGetter(DeathEffect::radius),
+				Codec.floatRange(0.5F, 32.0F).optionalFieldOf("radius", 0.5F).forGetter(DeathEffect::radius),
 				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(DeathEffect::when),
-				Codec.BOOL.optionalFieldOf("allies", false).forGetter(DeathEffect::allies)
+				Codec.BOOL.optionalFieldOf("allies", false).forGetter(DeathEffect::allies),
+				Codec.BOOL.optionalFieldOf("riders", false).forGetter(DeathEffect::riders)
 		).apply(instance, DeathEffect::new));
 
 		@Override

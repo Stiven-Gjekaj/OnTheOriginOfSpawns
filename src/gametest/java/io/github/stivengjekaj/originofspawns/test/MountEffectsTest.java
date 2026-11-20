@@ -119,4 +119,21 @@ public class MountEffectsTest {
 		}
 		helper.succeed();
 	}
+
+	@GameTest
+	public void theRidersGetResistanceWhenTheMountDiesAndAMobNearItDoesNot(GameTestHelper helper) {
+		int x = 1;
+		for (Pair pair : MOUNTS) {
+			String name = pair.mount().toShortString();
+			Mob rider = rider(helper, pair, new BlockPos(x, 1, 2), "test_last_carry");
+			Mob near = mob(helper, pair.rider(), new BlockPos(x, 1, 3));
+			Mob mount = (Mob) rider.getVehicle();
+			mount.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 1000.0F);
+			helper.assertTrue(mount.isDeadOrDying(), "the " + name + " dies");
+			helper.assertTrue(rider.hasEffect(MobEffects.RESISTANCE), "the rider of the " + name + " gets Resistance");
+			helper.assertFalse(near.hasEffect(MobEffects.RESISTANCE), "a mob near the " + name + " gets nothing");
+			x += 2;
+		}
+		helper.succeed();
+	}
 }

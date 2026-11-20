@@ -1510,22 +1510,25 @@ public sealed interface GeneEffect {
 	/**
 	 * When a player looks at the mob from farther than the range, the mob moves to the side, after each cooldown.
 	 * With {@code on_hurt}, the mob also moves to the side after a melee hit hurts it. The two share the cooldown.
+	 * With {@code jump}, the mob on the ground jumps to the side, and a horse counts it as a jump.
 	 */
-	record Sidestep(float range, float distance, float cooldownSeconds, boolean aimed, boolean onHurt) implements GeneEffect {
+	record Sidestep(float range, float distance, float cooldownSeconds, boolean aimed, boolean onHurt, boolean jump)
+			implements GeneEffect {
 		public static final MapCodec<Sidestep> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 12.0F).forGetter(Sidestep::range),
 				Codec.floatRange(1.0F, 16.0F).optionalFieldOf("distance", 4.0F).forGetter(Sidestep::distance),
 				Codec.floatRange(0.5F, 600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(Sidestep::cooldownSeconds),
 				Codec.BOOL.optionalFieldOf("aimed", false).forGetter(Sidestep::aimed),
-				Codec.BOOL.optionalFieldOf("on_hurt", false).forGetter(Sidestep::onHurt)
+				Codec.BOOL.optionalFieldOf("on_hurt", false).forGetter(Sidestep::onHurt),
+				Codec.BOOL.optionalFieldOf("jump", false).forGetter(Sidestep::jump)
 		).apply(instance, Sidestep::new));
 
 		public Sidestep(float range, float distance, float cooldownSeconds) {
-			this(range, distance, cooldownSeconds, false, false);
+			this(range, distance, cooldownSeconds, false, false, false);
 		}
 
 		public Sidestep(float range, float distance, float cooldownSeconds, boolean aimed) {
-			this(range, distance, cooldownSeconds, aimed, false);
+			this(range, distance, cooldownSeconds, aimed, false, false);
 		}
 
 		@Override

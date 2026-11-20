@@ -1857,9 +1857,28 @@ public final class GeneBehaviors {
 			if (player.isSpectator() || !seen) {
 				continue;
 			}
-			return stepAside(mob, level, player.position(), sidestep.distance(), state, now);
+			return sidestep.jump() && mob.onGround() ? jumpAside(mob, level, player.position(), sidestep.distance(), state, now)
+					: stepAside(mob, level, player.position(), sidestep.distance(), state, now);
 		}
 		return false;
+	}
+
+	/**
+	 * Makes the mob on the ground jump to the side, at a right angle to the line from the place to the mob. The jump
+	 * goes about the distance along the ground.
+	 */
+	private static boolean jumpAside(Mob mob, ServerLevel level, Vec3 from, float distance, BehaviorState state, long now) {
+		Vec3 toMob = mob.position().subtract(from).multiply(1.0, 0.0, 1.0).normalize();
+		Vec3 side = new Vec3(-toMob.z, 0.0, toMob.x).scale(mob.getRandom().nextBoolean() ? 1.0 : -1.0);
+		// In the air, the drag of each tick keeps 0.91 of the speed, so a speed of distance / 11 goes about the distance.
+		Vec3 push = side.scale(distance / 11.0);
+		mob.setDeltaMovement(push.x, Math.max(0.42, mob.getDeltaMovement().y), push.z);
+		mob.needsSync = true;
+		mob.setAttached(ModAttachments.STATE, state.withSidestepTime(now));
+		if (mob instanceof net.minecraft.world.entity.animal.equine.AbstractHorse) {
+			onJump(mob, level);
+		}
+		return true;
 	}
 
 	/**

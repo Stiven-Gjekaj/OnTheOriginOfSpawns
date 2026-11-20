@@ -58,4 +58,25 @@ public class ZombieHorseEffectsTest {
 		helper.assertTrue(horse.hasEffect(net.minecraft.world.effect.MobEffects.SPEED), "Speed after the jump");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void dodgeLeapJumpsAsideFromAnAimedShot(GameTestHelper helper) {
+		ZombieHorse horse = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_HORSE, new BlockPos(4, 1, 1));
+		horse.setOnGround(true);
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setNoGravity(true);
+		player.setPos(horse.position().add(0.0, 0.0, 5.0));
+		player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, horse.getEyePosition());
+		player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
+		player.startUsingItem(net.minecraft.world.InteractionHand.MAIN_HAND);
+		var position = horse.position();
+		helper.assertTrue(GeneBehaviors.sidestep(horse, helper.getLevel(),
+				new io.github.stivengjekaj.originofspawns.definition.GeneEffect.Sidestep(24.0F, 3.0F, 8.0F, true, false, true)),
+				"the horse jumps aside");
+		helper.assertTrue(horse.position().equals(position), "a jump aside does not teleport the horse");
+		helper.assertTrue(horse.getDeltaMovement().y > 0.4, "the horse jumps up");
+		helper.assertTrue(Math.abs(horse.getDeltaMovement().x) > 0.2, "the horse jumps to the side, east or west");
+		helper.assertTrue(horse.hasAttached(ModAttachments.JUMP_TIME), "the jump aside is a jump for the landing genes");
+		helper.succeed();
+	}
 }

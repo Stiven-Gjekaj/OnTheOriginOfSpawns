@@ -348,7 +348,8 @@ public sealed interface GeneEffect {
 			Map.entry("emerge_strike", EmergeStrike.CODEC),
 			Map.entry("spit", Spit.CODEC),
 			Map.entry("bullet_damage", BulletDamage.CODEC),
-			Map.entry("bullet_speed", BulletSpeed.CODEC)
+			Map.entry("bullet_speed", BulletSpeed.CODEC),
+			Map.entry("bullet_levitation", BulletLevitation.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5881,6 +5882,24 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "bullet_speed";
+		}
+	}
+
+	/**
+	 * Changes the Levitation that the bullets of a shulker give. With {@code seconds}, it lasts this long. With
+	 * {@code amplifier}, it has this level, where 0 is Levitation I. With more than one effect, the longest time and the
+	 * highest level count. The vanilla bullet gives Levitation I for 10 seconds. Lifters tier 3 and High Lift: 20
+	 * seconds. Steep Lift: amplifier 1.
+	 */
+	record BulletLevitation(Optional<Float> seconds, Optional<Integer> amplifier) implements GeneEffect {
+		public static final MapCodec<BulletLevitation> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds").forGetter(BulletLevitation::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier").forGetter(BulletLevitation::amplifier)
+		).apply(instance, BulletLevitation::new));
+
+		@Override
+		public String type() {
+			return "bullet_levitation";
 		}
 	}
 }

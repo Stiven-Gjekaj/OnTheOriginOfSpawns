@@ -1,9 +1,11 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
 import net.minecraft.world.entity.projectile.ShulkerBullet;
+import net.minecraft.world.phys.EntityHitResult;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(ShulkerBullet.class)
 public interface ShulkerBulletAccessor {
@@ -15,4 +17,7 @@ public interface ShulkerBulletAccessor {
 
 	@Accessor("targetDeltaZ")
 	double originofspawns$targetDeltaZ();
+
+	@Invoker("onHitEntity")
+	void originofspawns$onHitEntity(EntityHitResult hit);
 }

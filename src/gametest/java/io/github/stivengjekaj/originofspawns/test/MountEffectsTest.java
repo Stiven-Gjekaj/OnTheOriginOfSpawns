@@ -225,4 +225,27 @@ public class MountEffectsTest {
 		}
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aWoundedMountFleesFromTheTargetOfItsRiderWithTheRider(GameTestHelper helper) {
+		var level = helper.getLevel();
+		var pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 8));
+		int x = 1;
+		for (Pair pair : MOUNTS) {
+			String name = pair.mount().toShortString();
+			Mob rider = rider(helper, pair, new BlockPos(x, 1, 2), "test_smoke_dash");
+			rider.setTarget(pig);
+			Mob mount = (Mob) rider.getVehicle();
+			mount.setHealth(mount.getMaxHealth() / 5.0F);
+			GeneCombat.onHurt(mount, level.damageSources().mobAttack(pig));
+			helper.assertTrue(GeneBehaviors.fleeing(mount).isPresent(), "the " + name + " flees under 30% health");
+			GeneBehaviors.fleeMove(mount);
+			helper.assertTrue(mount.getMoveControl().hasWanted(), "the " + name + " has a place to flee to");
+			helper.assertTrue(mount.getMoveControl().getWantedZ() < mount.getZ() - 8.0,
+					"the " + name + " flees north, away from the target of its rider");
+			helper.assertTrue(rider.getVehicle() == mount, "the rider stays on the " + name);
+			x += 2;
+		}
+		helper.succeed();
+	}
 }

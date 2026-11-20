@@ -2812,11 +2812,23 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Returns the target that the mob flees from: its own target, or for a mount with no target, the target of the mob
+	 * that rides it.
+	 */
+	static LivingEntity fleeTarget(Mob mob) {
+		if (mob.getTarget() == null && mob.getFirstPassenger() instanceof Mob rider) {
+			return rider.getTarget();
+		}
+		return mob.getTarget();
+	}
+
+	/**
 	 * While the mob flees, sets the place that it moves to: 16 blocks away from its target, at the speed of the flee.
+	 * A mount takes its riders with it.
 	 * The game runs this after the goals of the mob, so that no goal changes the place.
 	 */
 	public static void fleeMove(Mob mob) {
-		LivingEntity target = mob.getTarget();
+		LivingEntity target = fleeTarget(mob);
 		var flee = fleeing(mob);
 		if (target == null || flee.isEmpty()) {
 			return;

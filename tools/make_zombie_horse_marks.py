@@ -208,16 +208,15 @@ def last_charge():
 
 
 def last_charge_model():
-    # The loose ends of the ribbons: from each knot, two red ribbon ends hang
-    # down the sides of the neck, 1 pixel wide and thick. On the bone mane,
+    # The loose ends of the ribbons: from each knot, a red ribbon end hangs
+    # down the back of the mane, 1 pixel wide and thick. On the bone mane,
     # the mane is from x -1 to 1, y -11 to 5, and z 5 to 7.
     im = model_image(16, 16)
     paint_box(im, 0, 0, 1, 5, 1, lambda f, x, y: "#E02020" if y < 4 else "#7A0A0A")
     parts = []
     for r0 in (2, 7, 12):
-        for x in (1.05, -2.05):
-            parts.append({"bone": "mane", "uv": [0, 0], "from": [x, -11 + r0, 6], "size": [1, 5, 1],
-                          "pivot": [x, -11 + r0, 6.5], "rotation": [-25, 0, 0]})
+        parts.append({"bone": "mane", "uv": [0, 0], "from": [-0.5, -11 + r0, 7], "size": [1, 5, 1],
+                      "pivot": [0, -11 + r0, 7], "rotation": [-25, 0, 0]})
     save_model("last_charge_ribbons", im, parts)
 
 
@@ -227,18 +226,18 @@ def lance_run():
 
 
 def lance_run_model():
-    # A long, streaming mane: four long, thin strands hang from the back of
-    # the mane and stream back, each a little longer and a little more back
-    # than the one over it. On the bone mane, the mane is from x -1 to 1, y
+    # A long, streaming mane: four long, thin strands hang from the sides of
+    # the mane, on the left and the right in turn, and stream back. The
+    # tufts of Rear Up stand in the middle, so the two stay apart. On the bone mane, the mane is from x -1 to 1, y
     # -11 to 5, and z 5 to 7.
     im = model_image(32, 32)
 
     def strand(f, x, y):
         return "#1A2412" if (x + y) % 3 else "#3A4A2A"
     paint_box(im, 0, 0, 1, 9, 1, strand)
-    parts = [{"bone": "mane", "uv": [0, 0], "from": [x, y, 7], "size": [1, 9, 1],
-              "pivot": [x + 0.5, y, 7], "rotation": [-35 - n * 5, 0, 0]}
-             for n, (x, y) in enumerate(((-1, -10), (0, -6), (-1, -2), (0, 2)))]
+    parts = [{"bone": "mane", "uv": [0, 0], "from": [x, y, 6], "size": [1, 9, 1],
+              "pivot": [x + 0.5, y, 6], "rotation": [-35 - n * 5, 0, 0]}
+             for n, (x, y) in enumerate(((-2, -10), (1, -6), (-2, -2), (1, 2)))]
     save_model("lance_run_mane", im, parts)
 
 
@@ -256,7 +255,7 @@ def rear_up_model():
         return "#C8C0A0" if y == 0 or f == "top" else "#2A3A1E"
     paint_box(im, 0, 0, 2, 3, 2, tuft)
     parts = [{"bone": "mane", "uv": [0, 0], "from": [-1, y - 3, 5], "size": [2, 3, 2],
-              "pivot": [0, y, 5], "rotation": [-80, 0, 0]} for y in (-10, -6, -2, 2)]
+              "pivot": [0, y, 5], "rotation": [-110, 0, 0]} for y in (-10, -6, -2, 2)]
     save_model("rear_up_mane", im, parts)
 
 

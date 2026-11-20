@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/camel_husk.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/thick_hide_0.png",
+				"tint": "#1A120A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/thick_hide_1.png",
+				"tint": "#7A6448"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/thick_hide_2.png",
+				"tint": "#A89070"
+			}
+		}
+	]
+}

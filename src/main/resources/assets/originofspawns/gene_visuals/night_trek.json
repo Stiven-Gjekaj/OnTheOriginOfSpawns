@@ -1,0 +1,20 @@
+{
+	"region_map": "originofspawns:textures/region/camel_husk.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/night_trek_0.png",
+				"tint": "#A8E0FF"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/night_trek_1.png",
+				"tint": "#E0F6FF"
+			}
+		}
+	],
+	"model": "originofspawns:night_trek_eyes"
+}

@@ -1,0 +1,75 @@
+{
+	"texture": "originofspawns:textures/entity/long_dash_legs.png",
+	"texture_width": 32,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "left_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				2.1,
+				-9,
+				0.5
+			],
+			"size": [
+				2,
+				11,
+				2
+			]
+		},
+		{
+			"bone": "right_hind_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4.1,
+				-9,
+				0.5
+			],
+			"size": [
+				2,
+				11,
+				2
+			]
+		},
+		{
+			"bone": "left_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				2.1,
+				-9,
+				-2.5
+			],
+			"size": [
+				2,
+				11,
+				2
+			]
+		},
+		{
+			"bone": "right_front_leg",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-4.1,
+				-9,
+				-2.5
+			],
+			"size": [
+				2,
+				11,
+				2
+			]
+		}
+	]
+}

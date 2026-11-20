@@ -1,0 +1,41 @@
+{
+	"texture": "originofspawns:textures/entity/shy_step_ears.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "left_ear",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				0,
+				-4.5,
+				-0.5
+			],
+			"size": [
+				2,
+				5,
+				1
+			]
+		},
+		{
+			"bone": "right_ear",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2,
+				-4.5,
+				-0.5
+			],
+			"size": [
+				2,
+				5,
+				1
+			]
+		}
+	]
+}

@@ -1,0 +1,75 @@
+{
+	"texture": "originofspawns:textures/entity/high_seat_frame.png",
+	"texture_width": 64,
+	"texture_height": 32,
+	"parts": [
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.5,
+				-27,
+				-16.5
+			],
+			"size": [
+				7,
+				10,
+				1
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				0,
+				12
+			],
+			"from": [
+				-3.5,
+				-25,
+				-4.5
+			],
+			"size": [
+				7,
+				8,
+				1
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				20,
+				0
+			],
+			"from": [
+				-5.5,
+				-24,
+				-16
+			],
+			"size": [
+				1,
+				1,
+				11
+			]
+		},
+		{
+			"bone": "body",
+			"uv": [
+				20,
+				0
+			],
+			"from": [
+				4.5,
+				-24,
+				-16
+			],
+			"size": [
+				1,
+				1,
+				11
+			]
+		}
+	]
+}

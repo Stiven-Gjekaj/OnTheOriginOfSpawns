@@ -1,0 +1,30 @@
+{
+	"region_map": "originofspawns:textures/region/camel_husk.png",
+	"layers": [
+		{
+			"regions": [
+				"torso",
+				"spine",
+				"scalp"
+			],
+			"effect": {
+				"type": "desaturate",
+				"amount": 0.45
+			},
+			"order": -2
+		},
+		{
+			"regions": [
+				"torso",
+				"spine",
+				"scalp"
+			],
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sand_veil_0.png",
+				"tint": "#E0C898"
+			},
+			"order": -1
+		}
+	]
+}

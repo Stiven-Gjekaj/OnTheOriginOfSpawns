@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/night_trek_eyes.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				3.55,
+				-20,
+				-15
+			],
+			"size": [
+				0,
+				2,
+				2
+			],
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.55,
+				-20,
+				-15
+			],
+			"size": [
+				0,
+				2,
+				2
+			],
+			"glow": true
+		}
+	]
+}

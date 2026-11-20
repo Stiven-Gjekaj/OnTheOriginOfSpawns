@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/camel_husk.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dried_flesh_0.png",
+				"tint": "#140A06"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dried_flesh_1.png",
+				"tint": "#8A3A22"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dried_flesh_2.png",
+				"tint": "#C0A888"
+			}
+		}
+	]
+}

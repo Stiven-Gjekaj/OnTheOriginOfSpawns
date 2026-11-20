@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/camel_husk.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ram_dash_0.png",
+				"tint": "#C8B898"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ram_dash_1.png",
+				"tint": "#8A7A60"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/ram_dash_2.png",
+				"tint": "#5A2A1E"
+			}
+		}
+	]
+}

@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/camel_husk.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fire_cloth_0.png",
+				"tint": "#B42018"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fire_cloth_1.png",
+				"tint": "#FF7A18"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/fire_cloth_2.png",
+				"tint": "#FFD040"
+			}
+		}
+	]
+}

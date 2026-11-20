@@ -1,0 +1,33 @@
+{
+	"region_map": "originofspawns:textures/region/camel_husk.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/saddle_wall_0.png",
+				"tint": "#2E3A78"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/saddle_wall_1.png",
+				"tint": "#E8DCC0"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/saddle_wall_2.png",
+				"tint": "#A04A28"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/saddle_wall_3.png",
+				"tint": "#1A1E3C"
+			}
+		}
+	]
+}

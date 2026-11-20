@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/camel_husk.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/iron_studs_0.png",
+				"tint": "#3A2416"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/iron_studs_1.png",
+				"tint": "#C8D0D8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/iron_studs_2.png",
+				"tint": "#6A727A"
+			}
+		}
+	]
+}

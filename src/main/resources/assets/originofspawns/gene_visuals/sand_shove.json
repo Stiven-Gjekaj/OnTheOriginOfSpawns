@@ -1,0 +1,20 @@
+{
+	"region_map": "originofspawns:textures/region/camel_husk.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sand_shove_0.png",
+				"tint": "#D8C098"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sand_shove_1.png",
+				"tint": "#2E2218"
+			}
+		}
+	],
+	"model": "originofspawns:sand_shove_legs"
+}

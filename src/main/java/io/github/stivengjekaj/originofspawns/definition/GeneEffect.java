@@ -341,7 +341,8 @@ public sealed interface GeneEffect {
 			Map.entry("hide_in_stone", HideInStone.CODEC),
 			Map.entry("hide_brood", HideBrood.CODEC),
 			Map.entry("stone_seed", StoneSeed.CODEC),
-			Map.entry("gnaw", Gnaw.CODEC)
+			Map.entry("gnaw", Gnaw.CODEC),
+			Map.entry("dodge_melee", DodgeMelee.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5753,6 +5754,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "gnaw";
+		}
+	}
+
+	/**
+	 * Each melee hit has this chance to miss the mob. A missed hit does no damage and no knockback. A melee hit is a hit
+	 * of a living attacker with no projectile. More than one effect gives each its own chance. Shell Slip: 0.2.
+	 */
+	record DodgeMelee(float chance) implements GeneEffect {
+		public static final MapCodec<DodgeMelee> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 1.0F).fieldOf("chance").forGetter(DodgeMelee::chance)
+		).apply(instance, DodgeMelee::new));
+
+		@Override
+		public String type() {
+			return "dodge_melee";
 		}
 	}
 }

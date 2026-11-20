@@ -431,6 +431,22 @@ public final class GeneCombat {
 		return false;
 	}
 
+	/**
+	 * Returns true if a melee hit misses the mob, after the chance of each melee dodge gene.
+	 */
+	public static boolean dodgesMelee(LivingEntity entity, DamageSource source) {
+		if (!(source.getEntity() instanceof LivingEntity attacker) || source.getDirectEntity() != attacker
+				|| source.is(DamageTypeTags.IS_PROJECTILE)) {
+			return false;
+		}
+		for (GeneEffect effect : GeneEffects.of(entity).toList()) {
+			if (effect instanceof GeneEffect.DodgeMelee dodge && entity.getRandom().nextFloat() < dodge.chance()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static boolean parries(LivingEntity entity, DamageSource source) {
 		if (!(source.getEntity() instanceof LivingEntity attacker) || source.getDirectEntity() != attacker
 				|| source.is(DamageTypeTags.IS_PROJECTILE)) {

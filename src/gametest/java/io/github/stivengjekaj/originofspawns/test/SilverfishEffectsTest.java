@@ -214,4 +214,18 @@ public class SilverfishEffectsTest {
 		helper.assertTrue(GeneSilverfish.gnaw(silverfish, helper.getLevel(), gnaw).isEmpty(), "the next gnaw waits");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aShellSlipLetsAMeleeHitMissButNotAnArrow(GameTestHelper helper) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 5));
+		Silverfish silverfish = silverfish(helper, new BlockPos(1, 1, 1), "test_shell_slip");
+		helper.assertFalse(silverfish.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(pig), 2.0F),
+				"the melee hit misses");
+		helper.assertValueEqual(silverfish.getHealth(), 8.0F, "a missed hit does no damage");
+		helper.assertValueEqual(silverfish.getDeltaMovement().horizontalDistance(), 0.0, "a missed hit does no knockback");
+		var arrow = EntityTypes.ARROW.create(helper.getLevel(), net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+		helper.assertTrue(silverfish.hurtServer(helper.getLevel(), helper.getLevel().damageSources().arrow(arrow, pig), 2.0F),
+				"an arrow hits");
+		helper.succeed();
+	}
 }

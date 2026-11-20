@@ -341,4 +341,19 @@ final class ReusedEffects {
 					"a wounded mob is 30% faster");
 		});
 	}
+
+	/**
+	 * Checks that a knockback resistance gene stops the push of a hit, as the hoglin Root Feet.
+	 */
+	static void rootFeet(GameTestHelper helper, Maker maker) {
+		Mob plain = maker.at(helper, new BlockPos(1, 1, 1));
+		Mob rooted = maker.at(helper, new BlockPos(5, 1, 5), "test_root_feet");
+		GeneEffects.applyAttributes(rooted, GeneEffects.sources(helper.getLevel().registryAccess(),
+				rooted.getAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.GENES)));
+		var source = helper.getLevel().damageSources().generic();
+		plain.knockback(1.0, 1.0, 0.0, source, 1.0F);
+		rooted.knockback(1.0, 1.0, 0.0, source, 1.0F);
+		helper.assertTrue(Math.abs(plain.getDeltaMovement().x) > 0.1, "a hit pushes a plain mob");
+		helper.assertValueEqual(rooted.getDeltaMovement().x, 0.0, "a hit does not push a rooted mob");
+	}
 }

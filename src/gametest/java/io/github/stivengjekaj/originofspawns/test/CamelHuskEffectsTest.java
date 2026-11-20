@@ -179,4 +179,26 @@ public class CamelHuskEffectsTest {
 		helper.assertFalse(GeneBehaviors.riderTargetSpit(lone, level, spit), "a camel husk with no rider does not spit");
 		helper.succeed();
 	}
+
+	static final ReusedEffects.Maker CAMEL = (helper, pos, genes) -> MountEffectsTest.mob(helper, EntityTypes.CAMEL_HUSK, pos, genes);
+
+	@GameTest
+	public void theReusedEffectsWorkOnACamelHusk(GameTestHelper helper) {
+		ReusedEffects.healOnce(helper, CAMEL);
+		ReusedEffects.rootFeet(helper, CAMEL);
+		ReusedEffects.translucent(helper, CAMEL);
+		ReusedEffects.sidestep(helper, CAMEL);
+		ReusedEffects.damageTaken(helper, CAMEL);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aCamelHuskRegeneratesOutOfCombat(GameTestHelper helper) {
+		ReusedEffects.regenerate(helper, CAMEL);
+	}
+
+	@GameTest
+	public void aSpeedWhenGeneMakesACamelHuskFaster(GameTestHelper helper) {
+		ReusedEffects.speedWhenWounded(helper, CAMEL);
+	}
 }

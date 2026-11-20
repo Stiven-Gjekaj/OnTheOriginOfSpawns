@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:silverfish",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "effect_on_hurt", "effect": "minecraft:speed", "seconds": 4, "ally_radius": 8 }],
+	"mutation_rate": 0
+}

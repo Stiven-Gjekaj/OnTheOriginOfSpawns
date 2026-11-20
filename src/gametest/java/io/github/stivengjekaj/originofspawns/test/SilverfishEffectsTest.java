@@ -301,4 +301,85 @@ public class SilverfishEffectsTest {
 			helper.assertValueEqual(pig.getMaxHealth() - pig.getHealth(), 1.0F, "the spit does 1 damage");
 		});
 	}
+
+	static final ReusedEffects.Maker SILVERFISH = (helper, pos, genes) -> silverfish(helper, pos, genes);
+
+	@GameTest
+	public void theReusedHitEffectsWorkOnASilverfish(GameTestHelper helper) {
+		ReusedEffects.effectOnHit(helper, SILVERFISH);
+		ReusedEffects.armorBreak(helper, SILVERFISH);
+		// The reused heal check starts at 10 health, more than a silverfish has, so this check starts lower.
+		Silverfish feeder = silverfish(helper, new BlockPos(6, 1, 1), "test_bloodlust");
+		feeder.setHealth(4.0F);
+		GeneCombat.onHit(feeder, CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 3)));
+		helper.assertValueEqual(feeder.getHealth(), 5.0F, "Feeding Bite: each hit heals 1 health");
+		ReusedEffects.damageTaken(helper, SILVERFISH);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theReusedMovesWorkOnASilverfish(GameTestHelper helper) {
+		ReusedEffects.leap(helper, SILVERFISH);
+		ReusedEffects.sidestep(helper, SILVERFISH);
+		Silverfish climber = silverfish(helper, new BlockPos(6, 1, 6), "test_climb");
+		climber.horizontalCollision = true;
+		helper.assertTrue(climber.onClimbable(), "Wall Climb: a silverfish climbs at a wall");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aGroupGeneWorksOnASilverfish(GameTestHelper helper) {
+		ReusedEffects.groupedAndAlone(helper, SILVERFISH);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aSwarmRallyCallsTheSilverfishToThePlayer(GameTestHelper helper) {
+		ReusedEffects.callOnSight(helper, SILVERFISH);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aBloodCallCallsOnlyTheSilverfishWithNoTarget(GameTestHelper helper) {
+		Silverfish caller = silverfish(helper, new BlockPos(4, 1, 4), "test_blood_call");
+		Silverfish free = silverfish(helper, new BlockPos(2, 1, 4));
+		Silverfish busy = silverfish(helper, new BlockPos(6, 1, 4));
+		Pig other = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		busy.setTarget(other);
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		GeneCombat.onHit(caller, player);
+		helper.assertTrue(free.getTarget() == player, "a silverfish with no target attacks the player");
+		helper.assertTrue(busy.getTarget() == other, "a silverfish with a target keeps it");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void anAlarmDashGivesSpeedToTheSilverfishAndToTheSilverfishNearIt(GameTestHelper helper) {
+		Silverfish dasher = silverfish(helper, new BlockPos(1, 1, 1), "test_alarm_dash");
+		Silverfish ally = silverfish(helper, new BlockPos(4, 1, 4));
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(2, 1, 1));
+		GeneCombat.onHurt(dasher, helper.getLevel().damageSources().mobAttack(pig));
+		helper.assertTrue(dasher.hasEffect(net.minecraft.world.effect.MobEffects.SPEED), "the hurt silverfish gets Speed");
+		helper.assertTrue(ally.hasEffect(net.minecraft.world.effect.MobEffects.SPEED), "the silverfish near it gets Speed");
+		helper.assertFalse(pig.hasEffect(net.minecraft.world.effect.MobEffects.SPEED), "the attacker does not");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aBroodBurstLetsTwoSilverfishOutAtItsDeath(GameTestHelper helper) {
+		Silverfish mother = silverfish(helper, new BlockPos(2, 1, 2), "test_brood_burst");
+		GeneCombat.onDeath(mother, helper.getLevel());
+		helper.assertValueEqual(cameOut(helper, new BlockPos(2, 1, 2), mother).size(), 2, "two silverfish come out");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aFlatBodyTakesNoExtraDamageFromACriticalHit(GameTestHelper helper) {
+		Silverfish flat = silverfish(helper, new BlockPos(1, 1, 1), "test_crit_immune");
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		io.github.stivengjekaj.originofspawns.evolution.Evolution.markCritical(flat);
+		helper.assertValueEqual(GeneCombat.modifyDamage(flat, helper.getLevel().damageSources().playerAttack(player), 6.0F),
+				4.0F, "a critical hit does the damage of a normal hit");
+		helper.succeed();
+	}
 }

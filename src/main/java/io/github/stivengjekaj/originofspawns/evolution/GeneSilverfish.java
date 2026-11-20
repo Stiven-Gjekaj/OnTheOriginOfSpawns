@@ -124,10 +124,12 @@ public final class GeneSilverfish {
 
 	/**
 	 * Gives a silverfish that comes out of an infested block the genes of the silverfish that hid there, before it joins
-	 * the world. It has full health. The extra silverfish of the hide come out too, with genes from the pool. A block where no silverfish with genes hid gives a silverfish with genes from the
+	 * the world. It has full health. The extra silverfish of the hide come out too, with genes from the pool. Each
+	 * silverfish that comes out of a block keeps the time, for its first hit after it. A block where no silverfish with genes hid gives a silverfish with genes from the
 	 * pool, as a natural spawn.
 	 */
 	public static void emerge(ServerLevel level, BlockPos pos, Mob silverfish) {
+		silverfish.setAttached(ModAttachments.EMERGE_TIME, level.getGameTime());
 		HiddenSilverfish.get(level.getServer()).take(level, pos).ifPresent(entry -> {
 			silverfish.setAttached(ModAttachments.GENES, entry.genes());
 			GeneEffects.applyAttributes(silverfish, GeneEffects.sources(level.registryAccess(), entry.genes()));

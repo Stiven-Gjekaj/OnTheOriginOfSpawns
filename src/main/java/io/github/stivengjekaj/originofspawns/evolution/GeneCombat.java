@@ -630,6 +630,15 @@ public final class GeneCombat {
 						// Only the first hit after a leap counts.
 						attacker.removeAttached(ModAttachments.LEAP_TIME);
 					}
+					case GeneEffect.EmergeStrike strike when source.getDirectEntity() == attacker
+							&& attacker.hasAttached(ModAttachments.EMERGE_TIME) -> {
+						if (attacker.level().getGameTime() - attacker.getAttached(ModAttachments.EMERGE_TIME)
+								<= Math.round(strike.seconds() * 20.0F)) {
+							result += strike.damage();
+						}
+						// Only the first hit after it came out counts.
+						attacker.removeAttached(ModAttachments.EMERGE_TIME);
+					}
 					case GeneEffect.TeleportStrike strike when source.getDirectEntity() == attacker
 							&& attacker.hasAttached(ModAttachments.TELEPORT_TIME) -> {
 						if (attacker.level().getGameTime() - attacker.getAttached(ModAttachments.TELEPORT_TIME)

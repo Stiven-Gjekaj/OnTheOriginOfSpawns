@@ -265,4 +265,21 @@ public class SilverfishEffectsTest {
 				helper.getLevel().damageSources().arrow(arrow, pig)), 0, "the next brood waits");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aStoneAmbushHitsHarderOneTimeAfterItComesOutOfABlock(GameTestHelper helper) {
+		BlockPos place = new BlockPos(3, 2, 3);
+		bury(helper, place);
+		Silverfish silverfish = silverfish(helper, place, "test_stone_ambush");
+		GeneSilverfish.hideInStone(silverfish, helper.getLevel());
+		BlockPos hidden = java.util.Arrays.stream(net.minecraft.core.Direction.values()).map(place::relative)
+				.filter(pos -> helper.getBlockState(pos).is(Blocks.INFESTED_STONE)).findFirst().orElseThrow();
+		helper.getLevel().destroyBlock(helper.absolutePos(hidden), true);
+		Silverfish next = cameOut(helper, hidden, silverfish).getFirst();
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		var bite = helper.getLevel().damageSources().mobAttack(next);
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, bite, 1.0F), 3.0F, "the first hit does 2 more damage");
+		helper.assertValueEqual(GeneCombat.modifyDamage(pig, bite, 1.0F), 1.0F, "the second hit does normal damage");
+		helper.succeed();
+	}
 }

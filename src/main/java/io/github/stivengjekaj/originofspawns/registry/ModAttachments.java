@@ -121,6 +121,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> BANE_HIT_TIME = AttachmentRegistry.create(OriginOfSpawns.id("bane_hit_time"));
 
 	/**
+	 * The game time when a silverfish came out of an infested block. The first melee hit after it removes it.
+	 */
+	public static final AttachmentType<Long> EMERGE_TIME = AttachmentRegistry.create(OriginOfSpawns.id("emerge_time"));
+
+	/**
 	 * The game time of the last melee hit of a mob on each player, by the UUID of the player.
 	 */
 	public static final AttachmentType<java.util.Map<java.util.UUID, Long>> PLAYER_HITS =

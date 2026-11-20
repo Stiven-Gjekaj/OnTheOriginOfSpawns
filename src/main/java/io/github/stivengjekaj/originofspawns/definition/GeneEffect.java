@@ -344,7 +344,8 @@ public sealed interface GeneEffect {
 			Map.entry("gnaw", Gnaw.CODEC),
 			Map.entry("dodge_melee", DodgeMelee.CODEC),
 			Map.entry("bane_resist", BaneResist.CODEC),
-			Map.entry("brood_on_hurt", BroodOnHurt.CODEC)
+			Map.entry("brood_on_hurt", BroodOnHurt.CODEC),
+			Map.entry("emerge_strike", EmergeStrike.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5807,6 +5808,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "brood_on_hurt";
+		}
+	}
+
+	/**
+	 * The first melee hit of the mob after it comes out of an infested block does this much more damage, if the hit
+	 * comes in the seconds. Each silverfish that comes out of a block counts, also from a block where no silverfish hid.
+	 * Stone Ambush: 2 damage in 10 seconds.
+	 */
+	record EmergeStrike(float damage, float seconds) implements GeneEffect {
+		public static final MapCodec<EmergeStrike> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("damage", 2.0F).forGetter(EmergeStrike::damage),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds", 10.0F).forGetter(EmergeStrike::seconds)
+		).apply(instance, EmergeStrike::new));
+
+		@Override
+		public String type() {
+			return "emerge_strike";
 		}
 	}
 }

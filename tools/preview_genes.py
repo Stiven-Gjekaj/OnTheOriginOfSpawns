@@ -1918,9 +1918,10 @@ def set_mob(species):
             MOB["sheet_views"] = [(-35, 15), (145, 15), (-90, 5)]
         if species.startswith("zombie_nautilus"):
             # The mouth of the zombie nautilus is at the back of the model.
-            # Its sheets look at the mouth at a turn, at the coil of the shell
-            # at a turn, and at the side.
-            MOB["sheet_views"] = [(145, 15), (-35, 20), (-90, 5)]
+            # It swims, and the player sees it from below too. Its sheets look
+            # at the mouth at a turn, at the coil of the shell from below,
+            # and at the side.
+            MOB["sheet_views"] = [(145, 15), (-35, -30), (-90, 5)]
         if species.startswith("ghast"):
             # The ghast floats over the player, so its sheets look at it from
             # the front, from below at the side, and from behind.

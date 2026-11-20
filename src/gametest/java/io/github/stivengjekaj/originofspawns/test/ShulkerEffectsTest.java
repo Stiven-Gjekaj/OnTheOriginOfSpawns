@@ -289,8 +289,8 @@ public class ShulkerEffectsTest {
 		BlockPos start = parent.blockPosition();
 		java.util.List<Shulker> young = splitUntilANewShulkerComes(helper, parent);
 		helper.assertValueEqual(young.size(), 1, "a new shulker splits off");
-		// The vanilla split puts the new shulker at the place of the parent before its teleport. The parent can teleport
-		// more than one time in the test, so the test compares with each place where the young one can start.
+		// The vanilla split puts the new shulker at the place of the parent before its teleport. Only one shulker is near,
+		// so the first teleport of the parent always gives a split, and that place is the start.
 		helper.assertFalse(young.getFirst().blockPosition().equals(start), "the new shulker teleports away");
 		helper.succeed();
 	}

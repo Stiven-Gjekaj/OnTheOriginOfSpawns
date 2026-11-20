@@ -12,7 +12,7 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/ink_veil_1.png",
-				"tint": "#3A3A58"
+				"tint": "#34344C"
 			}
 		}
 	]

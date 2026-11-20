@@ -27,22 +27,28 @@ Each gene keeps to its own zone, so that the marks stack:
   bands clear. Sun Shell has the top, and Sealed Shell has a scar across the
   top. Coral Crust has the high rows of the high sides, and Layered Shell the
   low rows. Barnacle Hide has the high rows of the low sides, and Tide Shield
-  the low rows. Hull Ram has the rim of the opening at the +z end. Shield
-  Ram has the +z end of the high cube. Spiral Rest has the coil end of the
-  high cube, and Ink Veil the coil end of the low cube and the bottom. Deep
+  the low rows. Hull Ram has the lip of the opening at the +z end. Shield
+  Ram has the high rows of the +z end of the high cube. Spiral Rest has the
+  coil end of the high cube, and Ink Veil the coil end of the low cube and
+  the bottom. Deep
   Ram (a sharp prow) and Shell Wall (a high rim) are gene models.
-- The body. Quick Ram has a slit in the eye row, and Thick Ink a ring of ink
-  round it. Dodge Jet has large eyes, a gene model. Shore Crawl has the low
-  rows of the sides near the mouth, and Ink Screen the low rows near the
-  shell. Sour Ink has the bottom, and Kin Current a mark in the middle of the
-  bottom and on the flat face.
+- The body. Quick Ram has a slit in the eye row, and thin lines on the top
+  and the bottom of the mouth. Thick Ink has bands of ink over and under the
+  eye. Dodge Jet has large eyes, a gene model. Shore Crawl has the low rows
+  of the sides near the mouth, and Ink Screen the low rows near the shell
+  and the bases of the tentacles. Sour Ink has the bottom, the sides of the
+  top, and the edge of the opening on the roof and the bottom of the shell.
+  Kin Current has a mark in the middle of the top and the bottom, and a
+  long wave on the low rows of the +z end of the high cube.
 - The tentacles. The vanilla tentacles have few pixels, so each tentacle
-  gene but Deep Escape is a gene model: a pair of tentacles in its own place
-  round the mouth. Deep Escape tears the vanilla tentacles.
+  gene but Deep Escape is a gene model: a pair of soft tentacles, each a
+  chain of small cubes that bends down and back, in its own place round the
+  mouth. Deep Escape tears the vanilla tentacles.
 The gene models use the bones shell, body, upper_mouth, inner_mouth, and
 lower_mouth.
 This script needs Pillow.
 """
+import math
 import os
 
 from PIL import Image
@@ -120,6 +126,16 @@ def put_side(mark, part, cells):
 SIDE_SCAR = {(c, r) for r in range(10) for c in (r * 14 // 9 + 1, r * 14 // 9 + 2) if c not in BAND_COLS}
 
 
+# The cells of the lip of the opening on the low sides: the edge where the
+# clear opening at the mouth end meets the shell. Hull Ram has them.
+# The band of Trident Shell crosses column 7, so the lip leaves it.
+LIP = {(c, r) for c in range(7) for r in range(8) if c >= 6 or r >= 6 or (r == 5 and c >= 4)}
+
+# The pixels of the top of the upper mouth and the bottom of the lower mouth
+# under the lines of Quick Ram.
+QUICK_LINES = {(x, y) for x in range(58, 68) for y in (55, 57)} | {(x, y) for x in range(68, 78) for y in (63, 65)}
+
+
 def high_side_cells(rows):
     """Yield (col, row) of the high sides in the rows, but not under a band or the scar."""
     for c in range(16):
@@ -130,7 +146,7 @@ def high_side_cells(rows):
                 yield c, r
 
 
-def low_side_cells(rows, first=3):
+def low_side_cells(rows, first=8):
     """Yield (col, row) of the low sides in the rows, from the column first, but not under a band."""
     for c in range(first, 20):
         if c - 4 in BAND_COLS:
@@ -274,31 +290,29 @@ def tide_shield():
 
 
 def hull_ram():
-    # A dark red rim: the rim of the opening, at the mouth end of the low
-    # cube, is dark red, and a dark red line goes along the low edge of the
-    # +z end of the high cube.
+    # A dark red rim: the lip of the opening, at the mouth end of the low
+    # sides, is dark red, with a dark edge, and a dark red line goes along
+    # the low edge of the +z end of the high cube.
     red = Mark("#7A1010")
     dark = Mark("#3A0606")
-    for c in range(0, 3):
-        for r in range(8):
-            (dark if c == 2 else red).put(side(LOW, c, r))
+    for c, r in LIP:
+        (dark if c == 6 or r == 7 else red).put(side(LOW, c, r))
     put(red, HIGH, ("back",), rows=(8,))
     put(dark, HIGH, ("back",), rows=(9,))
     return [red, dark]
 
 
 def shield_ram():
-    # Gray scrape marks: three long, gray scrapes cross the +z end of the
-    # high cube at a slant, each with a pale line along its top.
+    # Gray scrape marks: long, gray scrapes cross the high rows of the +z
+    # end of the high cube at a slant, each with a pale line along its top.
     scrape = Mark("#6A6A68")
     pale = Mark("#E0E0D8")
-    for start in (1, 6, 11):
-        for col in range(14):
-            row = start + col // 3 - 2
-            if 0 <= row < 8 and 1 <= col <= 12:
+    for start in (-2, 6):
+        for col in range(1, 13):
+            row = (col - start) // 3
+            if 0 <= row < 3:
                 pale.put(at(HIGH, "back", col, row))
-                if row + 1 < 8:
-                    scrape.put(at(HIGH, "back", col, row + 1))
+                scrape.put(at(HIGH, "back", col, row + 1))
     return [scrape, pale]
 
 
@@ -336,17 +350,21 @@ def spiral_rest():
 
 
 def ink_veil():
-    # Black ink stains: large stains of black ink on the coil end of the low
-    # cube, with drips that run down, and on the bottom of the shell.
+    # Black ink stains: smeared streaks of black ink curve round the coil
+    # end of the low cube, as if they run with the spiral of the shell, and
+    # long smears run along the bottom of the shell.
     ink = Mark("#0A0A10")
-    sheen = Mark("#3A3A58")
+    sheen = Mark("#34344C")
+    cx, cy = 12.5, -4
     for x, y, f, col, row in pixels(LOW, ("front",)):
-        n = noise100(col // 2, row // 2, 9601)
-        if n < 55 or (col % 3 == 0 and row >= 4):
-            (sheen if noise100(x, y, 9602) < 15 else ink).put((x, y))
-    for x, y, f, col, row in pixels(LOW, ("bottom",)):
-        if noise100(col // 2, row // 2, 9603) < 45:
-            ink.put((x, y))
+        d = ((col - cx) ** 2 + (row - cy) ** 2) ** 0.5
+        ring = (d + noise100(col, 0, 9601) / 60) % 3
+        if ring < 1.5 and noise100(col // 2, row, 9602) < 85:
+            (sheen if ring < 0.3 else ink).put((x, y))
+    for x, y, f, col, row in pixels(LOW, ("bottom",), rows=range(6, 20)):
+        lane = (col + row // 4) % 4
+        if lane == 0 and noise100(col, row // 3, 9603) < 85:
+            (sheen if row % 5 == 0 else ink).put((x, y))
     return [ink, sheen]
 
 
@@ -404,14 +422,15 @@ EYE_COL, EYE_ROW = 8, 2
 
 
 def quick_ram():
-    # Narrow, pale eyes: each eye is white, in a long, narrow, pale slit
-    # that goes along the body, with a fork at the end near the mouth, and
-    # a pale line along the top edge of the body near the mouth.
+    # Narrow, pale eyes: each eye is a narrow, pale slit, white at the eye,
+    # and thin, pale lines run on from the eyes along the top and the bottom
+    # of the mouth.
     pale = Mark("#E8F0E0")
     white = Mark("#FFFFFF")
-    put_side(pale, BODY, [(c, EYE_ROW) for c in range(3, 13) if c not in (5, EYE_COL)]
-             + [(3, 1), (4, 1), (3, 3), (4, 3), (12, 1), (12, 3)] + [(c, 0) for c in range(3, 8)])
-    put_side(white, BODY, [(EYE_COL, EYE_ROW), (5, EYE_ROW)])
+    put_side(pale, BODY, [(c, EYE_ROW) for c in (6, 7, 9, 10)])
+    put_side(white, BODY, [(EYE_COL, EYE_ROW)])
+    put_side(pale, BODY, [(c, EYE_ROW) for c in (3, 4, 5, 11, 12)])
+    pale.put(sorted(QUICK_LINES))
     return [pale, white]
 
 
@@ -459,7 +478,7 @@ def shore_crawl():
 def ink_screen():
     # Dark, smoky patches: soft, dark gray patches of smoke on the low rows
     # of the body near the shell, on the top of the body behind the green
-    # mark, and on the flat face round its middle.
+    # mark, and on the bases of the tentacles round the mouth.
     smoke = Mark("#2A2A30")
     pale = Mark("#7A7A88")
     for c in range(8, 13):
@@ -467,50 +486,53 @@ def ink_screen():
             (pale if noise100(c, r, 9901) < 30 else smoke).put(side(BODY, c, r))
     for x, y, f, col, row in pixels(BODY, ("top",), cols=range(3, 7), rows=range(9, 12)):
         (pale if noise100(x, y, 9903) < 30 else smoke).put((x, y))
-    for x, y, f, col, row in pixels(FACE, ("front",)):
-        if not (3 <= col <= 6 and 2 <= row <= 5) and noise100(x, y, 9902) < 60:
-            smoke.put((x, y))
+    for part in MOUTHS:
+        for x, y, f, col, row in pixels(part):
+            if noise100(x, y, 9701) >= 65 and (x, y) not in QUICK_LINES:
+                (pale if noise100(x, y, 9904) < 30 else smoke).put((x, y))
     return [smoke, pale]
 
 
 def sour_ink():
     # Purple spots: round purple spots, each with a pale middle, on the top
-    # of the body at the sides of the green mark, and on the bottom.
+    # of the body at the sides of the green mark, on the bottom of the body,
+    # and round the edge of the opening on the roof and the bottom of the
+    # shell.
     purple = Mark("#8A2AC8")
     pale = Mark("#E0A8FF")
-    for x, y, f, col, row in pixels(BODY, ("bottom",)):
-        if 3 <= col <= 6 and 4 <= row <= 9:
-            continue
-        k = (col + 2 * row) % 5
-        if k == 0:
-            pale.put((x, y))
-        elif k in (1, 4) and row % 2 == 0:
-            purple.put((x, y))
-    for x, y, f, col, row in pixels(BODY, ("top",), rows=range(3, 12)):
-        if 3 <= col <= 6:
-            continue
-        k = (col + 2 * row) % 4
-        if k == 0:
-            pale.put((x, y))
-        elif k in (1, 3):
-            purple.put((x, y))
+    cells = [(x, y, col, row) for x, y, f, col, row in pixels(BODY, ("bottom",))
+             if not (3 <= col <= 6 and 4 <= row <= 9)]
+    cells += [(x, y, col, row) for x, y, f, col, row in pixels(BODY, ("top",), rows=range(3, 12))
+              if not 3 <= col <= 6]
+    cells += [(x, y, col, row) for x, y, f, col, row in pixels(HIGH, ("bottom",), rows=range(0, 4))
+              if not 4 <= col <= 9]
+    cells += [(x, y, col, row) for x, y, f, col, row in pixels(LOW, ("bottom",), rows=range(0, 6))]
+    for x, y, col, row in cells:
+        # Round spots: the noise is the same for each block of 2x2.
+        n = noise100(x // 2, y // 2, 9801)
+        if n < 55:
+            (pale if (x + y) % 4 == 0 else purple).put((x, y))
     return [purple, pale]
 
 
 def kin_current():
     # A green mark between the eyes: a green mark in the shape of a wave on
     # the top of the body, between the eyes, where the shell does not cover
-    # it, and in the middle of the bottom and of the flat face.
+    # it, on the bottom of the body, and as a long wave on the +z end of the
+    # high cube, over the mouth, where the riders and the player see it.
     green = Mark("#30D060")
     pale = Mark("#C8FFD8")
-    wave = {(3, 3), (4, 2), (5, 3), (6, 2), (3, 4), (6, 4), (4, 5), (5, 5)}
-    for x, y, f, col, row in pixels(FACE, ("front",), cols=range(3, 7), rows=range(2, 6)):
-        (green if (col, row) in wave else pale).put((x, y))
-    for x, y, f, col, row in pixels(BODY, ("bottom",), cols=range(3, 7), rows=range(4, 10)):
-        (green if (col + row) % 2 == 0 else pale).put((x, y))
     top_wave = {(3, 4), (4, 3), (5, 4), (6, 3), (3, 5), (6, 5), (4, 6), (5, 6), (4, 7), (5, 7)}
     for x, y, f, col, row in pixels(BODY, ("top",), cols=range(3, 7), rows=range(3, 9)):
         (green if (col, row) in top_wave else pale).put((x, y))
+    for x, y, f, col, row in pixels(BODY, ("bottom",), cols=range(3, 7), rows=range(4, 10)):
+        (green if (col + row) % 2 == 0 else pale).put((x, y))
+    for x, y, f, col, row in pixels(HIGH, ("back",), cols=range(1, 13), rows=range(4, 8)):
+        wave = 5 + (1 if col % 4 in (1, 2) else 0)
+        if row == wave:
+            green.put((x, y))
+        elif row == wave + 1 and col % 4 == 0:
+            pale.put((x, y))
     return [green, pale]
 
 
@@ -518,11 +540,14 @@ def kin_current():
 
 def deep_escape():
     # Torn tentacles: the ends of the vanilla tentacles are torn away (erased
-    # with a mask), and the torn ends that are left are pale.
+    # with a mask), and the torn ends that are left are pale. The lines of
+    # Quick Ram on the top of the mouth stay.
     mask = Image.new("RGBA", (128, 128), (0, 0, 0, 0))
     pale = Mark("#D8C8B0")
     for part in MOUTHS:
         for x, y, f, col, row in pixels(part):
+            if (x, y) in QUICK_LINES:
+                continue
             n = noise100(x, y, 9701)
             if n < 35:
                 mask.putpixel((x, y), (255, 255, 255, 255))
@@ -534,35 +559,45 @@ def deep_escape():
     return [pale, torn]
 
 
-TENTACLE_BASE = ("#2A3A24", "#1E2A1A")
+TENTACLE_COLORS = ("#24321E", "#2E4026", "#3E5232")
 
 
-def tentacle_pair(name, bone, x, y, length, tip, ring=None, width=1, stripes=None, droop=75, splay=10):
-    """Save a gene model: two tentacles at x and -x, at the height y of the bone, from the front of the mouth.
+def tentacle_pair(name, bone, x, y, segments, tip, ring=None, width=1, flat=False):
+    """Save a gene model: two soft tentacles at x and -x, at the height y of the bone, from the front of the mouth.
 
-    tip is (color, length of the tip). ring is (color, step). stripes is a color for lines along the tentacle.
-    Each tentacle starts 2 pixels in the mouth. It turns down from the line of the body by 90 - droop
-    degrees, and out to its side by splay degrees.
+    A tentacle is a chain of small cubes. Each cube of segments is (length, droop): droop is the angle down
+    from the line of the body, so that the tentacle bends down and back. The first cube is width wide, and the
+    next cubes are 1 narrower each, but not less than 1. tip is (color, number of cubes at the end in that
+    color). ring is a color for a ring at the end of each cube. With flat, each cube is 1 pixel thick and wide,
+    as a fin.
     """
     im = model_image(64, 32)
+    parts = []
+    u = 0
+    for n, (length, droop) in enumerate(segments):
+        w = max(1, width - n)
+        in_tip = n >= len(segments) - tip[1]
 
-    def color(f, cx, cy):
-        # cy counts along the tentacle on the side faces, from the mouth.
-        along = cy if f not in ("top", "bottom") else cy
-        if along >= length - tip[1]:
-            return tip[0]
-        if ring and along % ring[1] == ring[1] - 1:
-            return ring[0]
-        if stripes and cx % 2 == 0:
-            return stripes
-        return TENTACLE_BASE[(cx + along) % 2]
-    paint_box(im, 0, 0, width, length, 1, lambda f, cx, cy: color(f, cx, cy))
-    # The tentacle is a box of width x length x 1. Its "length" is its height
-    # in the box, so each tentacle turns by about 90 degrees round x to
-    # point back, along +z.
-    parts = [{"bone": bone, "uv": [0, 0], "from": [sx, y, 2], "size": [width, length, 1], "pivot": [sx, y, 2],
-              "rotation": [droop, splay if sx > 0 else -splay, 0]} for sx in (x, -x - width)]
-    save_model(name, im, parts)
+        def color(f, cx, cy, in_tip=in_tip, length=length):
+            if in_tip:
+                return tip[0]
+            if ring and cy == length - 1:
+                return ring
+            return TENTACLE_COLORS[(cx + cy) % 3]
+        paint_box(im, u, 0, w, length, 1, color)
+        parts.append((u, w, length, droop))
+        u += 2 * w + 4
+    out = []
+    for sx in (x, -x):
+        py, pz = y, 2.0
+        for u, w, length, droop in parts:
+            left = sx - w / 2
+            out.append({"bone": bone, "uv": [u, 0], "from": [left, py, pz], "size": [w, length, 1],
+                        "pivot": [sx, py, pz], "rotation": [droop, 0, 0]})
+            a = math.radians(droop)
+            # The cube points along (0, cos a, sin a) after the turn.
+            py, pz = py + length * math.cos(a), pz + length * math.sin(a)
+    save_model(name, im, out)
 
 
 def tide_charge():
@@ -571,9 +606,9 @@ def tide_charge():
 
 
 def tide_charge_model():
-    # Long, thin tentacles: two long, thin, pale tentacles at the high
-    # corners of the mouth.
-    tentacle_pair("tide_charge_tentacles", "upper_mouth", 3.5, -1.5, 11, ("#C8D8B8", 3), droop=80, splay=15)
+    # Long, thin tentacles: two long, thin tentacles at the high corners of
+    # the mouth, that bend down and back, with pale tips.
+    tentacle_pair("tide_charge_tentacles", "upper_mouth", 3.5, -1.5, ((4, 85), (4, 70), (4, 55)), ("#C8D8B8", 1))
 
 
 def jet_fin():
@@ -582,16 +617,9 @@ def jet_fin():
 
 
 def jet_fin_model():
-    # Wide, flat tentacles: two wide, flat tentacles, as fins, at the sides
-    # of the mouth, light at the edges.
-    im = model_image(64, 32)
-
-    def fin(f, cx, cy):
-        return "#6A8A5A" if cx in (0, 3) or cy == 0 else "#3A5A30" if (cx + cy) % 3 else "#4A6A3A"
-    paint_box(im, 0, 0, 4, 1, 7, fin)
-    parts = [{"bone": "upper_mouth", "uv": [0, 0], "from": [5, 1.5, 3], "size": [4, 1, 7]},
-             {"bone": "upper_mouth", "uv": [0, 0], "from": [-9, 1.5, 3], "size": [4, 1, 7], "mirror": True}]
-    save_model("jet_fin_fins", im, parts)
+    # Wide, flat tentacles: two wide, flat tentacles at the sides of the
+    # mouth, as fins, that bend down and back, with light edges at the tips.
+    tentacle_pair("jet_fin_fins", "upper_mouth", 6, 1.5, ((3, 85), (3, 70)), ("#6A8A5A", 1), width=3)
 
 
 def breath_ram():
@@ -599,9 +627,10 @@ def breath_ram():
 
 
 def breath_ram_model():
-    # Blue tips: two tentacles at the low corners of the mouth, with long,
-    # bright blue tips.
-    tentacle_pair("breath_ram_tentacles", "lower_mouth", 3.5, 1, 7, ("#30A0FF", 3), width=2, droop=60)
+    # Blue tips: two short, soft tentacles at the low corners of the mouth,
+    # with bright blue tips.
+    tentacle_pair("breath_ram_tentacles", "lower_mouth", 3.5, 1, ((2, 70), (2, 50), (2, 35)), ("#30A0FF", 1),
+                  width=2)
 
 
 def last_current():
@@ -609,9 +638,10 @@ def last_current():
 
 
 def last_current_model():
-    # Pale tips: two tentacles in the middle of the top of the mouth, with
-    # pale, white tips.
-    tentacle_pair("last_current_tentacles", "upper_mouth", 1, -1.5, 6, ("#F0F4F0", 2), width=2, droop=95)
+    # Pale tips: two short, soft tentacles in the middle of the top of the
+    # mouth, with pale, white tips.
+    tentacle_pair("last_current_tentacles", "upper_mouth", 1, -1.5, ((2, 90), (2, 75), (2, 60)), ("#F0F4F0", 1),
+                  width=2)
 
 
 def wide_ink():
@@ -619,9 +649,10 @@ def wide_ink():
 
 
 def wide_ink_model():
-    # Black tips: two tentacles in the middle of the bottom of the mouth,
-    # with black tips.
-    tentacle_pair("wide_ink_tentacles", "lower_mouth", 1, 1.5, 6, ("#050508", 2), width=2, droop=55, splay=0)
+    # Black tips: two short, soft tentacles in the middle of the bottom of
+    # the mouth, that hang down, with black tips.
+    tentacle_pair("wide_ink_tentacles", "lower_mouth", 1, 1.5, ((2, 60), (2, 40), (2, 25)), ("#050508", 1),
+                  width=2)
 
 
 def quick_ink():
@@ -629,10 +660,10 @@ def quick_ink():
 
 
 def quick_ink_model():
-    # Purple rings: two tentacles at the sides of the low part of the mouth,
-    # with purple rings along them.
-    tentacle_pair("quick_ink_tentacles", "lower_mouth", 4, -1, 6, ("#8A2AC8", 1), ring=("#A040E0", 2), width=2,
-                  splay=30)
+    # Purple rings: two soft tentacles at the sides of the low part of the
+    # mouth, with a purple ring at the end of each cube.
+    tentacle_pair("quick_ink_tentacles", "lower_mouth", 4.5, -1, ((2, 75), (2, 60), (2, 45)), ("#8A2AC8", 1),
+                  ring="#A040E0", width=2)
 
 
 def wake_jet():
@@ -640,10 +671,10 @@ def wake_jet():
 
 
 def wake_jet_model():
-    # White wake marks: two tentacles at the sides of the high part of the
-    # mouth, with white lines along them, as a wake.
-    tentacle_pair("wake_jet_tentacles", "upper_mouth", 4, 0, 7, ("#FFFFFF", 1), width=2, stripes="#F0F8FF", droop=85,
-                  splay=25)
+    # White wake marks: two soft tentacles at the sides of the high part of
+    # the mouth, with a white ring at the end of each cube, as a wake.
+    tentacle_pair("wake_jet_tentacles", "upper_mouth", 4.5, 0.5, ((2, 85), (2, 70), (2, 55)), ("#FFFFFF", 1),
+                  ring="#F0F8FF", width=2)
 
 
 def ink_rush():
@@ -651,10 +682,10 @@ def ink_rush():
 
 
 def ink_rush_model():
-    # Streaked tentacles: two tentacles in the middle of the mouth, with dark
-    # streaks along them.
-    tentacle_pair("ink_rush_tentacles", "inner_mouth", 1, 0, 6, ("#1A1A22", 1), width=2, stripes="#101018", droop=70,
-                  splay=5)
+    # Streaked tentacles: two soft tentacles in the middle of the mouth,
+    # dark, with a dark streak ring on each cube.
+    tentacle_pair("ink_rush_tentacles", "inner_mouth", 1, 0, ((2, 80), (2, 65), (2, 50)), ("#1A1A22", 1),
+                  ring="#101018", width=2)
 
 
 GENES = {

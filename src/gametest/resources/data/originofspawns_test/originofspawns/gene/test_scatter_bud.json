@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:shulker",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "split_scatter" }, { "type": "split_on_hurt", "chance": 1 }],
+	"mutation_rate": 0
+}

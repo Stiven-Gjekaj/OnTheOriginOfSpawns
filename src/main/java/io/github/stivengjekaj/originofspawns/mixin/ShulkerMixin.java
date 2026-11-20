@@ -7,6 +7,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Shulker;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,6 +21,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  */
 @Mixin(Shulker.class)
 public abstract class ShulkerMixin {
+	/**
+	 * The shulker that splits off now, between the two parts of the split.
+	 */
+	@Unique
+	private Shulker originofspawns$split;
+
 	@Inject(method = "teleportSomewhere", at = @At("RETURN"))
 	private void originofspawns$afterTeleport(CallbackInfoReturnable<Boolean> info) {
 		Shulker self = (Shulker) (Object) this;
@@ -54,6 +61,19 @@ public abstract class ShulkerMixin {
 			target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
 	private Entity originofspawns$beforeSplit(Entity young) {
 		GeneShulkers.beforeSplit((Shulker) (Object) this, young);
+		this.originofspawns$split = young instanceof Shulker shulker ? shulker : null;
 		return young;
+	}
+
+	/**
+	 * A split scatter gene teleports the shulker that split off.
+	 */
+	@Inject(method = "hitByShulkerBullet", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z", shift = At.Shift.AFTER))
+	private void originofspawns$afterSplit(CallbackInfo info) {
+		if (this.originofspawns$split != null) {
+			GeneShulkers.afterSplit((Shulker) (Object) this, this.originofspawns$split);
+			this.originofspawns$split = null;
+		}
 	}
 }

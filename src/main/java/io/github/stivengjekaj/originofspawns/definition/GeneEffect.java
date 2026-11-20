@@ -357,7 +357,8 @@ public sealed interface GeneEffect {
 			Map.entry("sight_teleport", SightTeleport.CODEC),
 			Map.entry("split_on_hurt", SplitOnHurt.CODEC),
 			Map.entry("split_limit", SplitLimit.CODEC),
-			Map.entry("split_heir", SplitHeir.CODEC)
+			Map.entry("split_heir", SplitHeir.CODEC),
+			Map.entry("split_scatter", SplitScatter.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6046,6 +6047,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "split_heir";
+		}
+	}
+
+	/**
+	 * A shulker that splits off this shulker teleports at once to a free place in 8 blocks, with the vanilla teleport of
+	 * a shulker. It acts on each split, also the vanilla split from a bullet. Scatter Bud.
+	 */
+	record SplitScatter() implements GeneEffect {
+		public static final MapCodec<SplitScatter> CODEC = MapCodec.unit(new SplitScatter());
+
+		@Override
+		public String type() {
+			return "split_scatter";
 		}
 	}
 }

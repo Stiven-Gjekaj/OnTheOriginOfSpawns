@@ -283,4 +283,27 @@ public final class GeneShulkers {
 			shulker.setHealth(shulker.getMaxHealth());
 		}
 	}
+
+	/**
+	 * The vanilla teleports that a scatter tries. Each vanilla teleport tries 5 places.
+	 */
+	private static final int SCATTER_TRIES = 10;
+
+	/**
+	 * Teleports a shulker that split off the parent, after it joined the world, if the parent has a split scatter gene.
+	 *
+	 * @return true if the young shulker teleported
+	 */
+	public static boolean afterSplit(Shulker parent, Shulker young) {
+		if (!GeneEffects.of(parent).anyMatch(GeneEffect.SplitScatter.class::isInstance)) {
+			return false;
+		}
+		var access = (io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) young;
+		for (int i = 0; i < SCATTER_TRIES; i++) {
+			if (access.originofspawns$teleportSomewhere()) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

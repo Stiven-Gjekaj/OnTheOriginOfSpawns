@@ -282,4 +282,16 @@ public class ShulkerEffectsTest {
 				"the new shulker has the genes of the first one");
 		helper.succeed();
 	}
+
+	@GameTest(padding = 12)
+	public void aScatterBudTeleportsTheShulkerThatSplitsOff(GameTestHelper helper) {
+		Shulker parent = shulker(helper, new BlockPos(3, 1, 3), "test_scatter_bud");
+		BlockPos start = parent.blockPosition();
+		java.util.List<Shulker> young = splitUntilANewShulkerComes(helper, parent);
+		helper.assertValueEqual(young.size(), 1, "a new shulker splits off");
+		// The vanilla split puts the new shulker at the place of the parent before its teleport. The parent can teleport
+		// more than one time in the test, so the test compares with each place where the young one can start.
+		helper.assertFalse(young.getFirst().blockPosition().equals(start), "the new shulker teleports away");
+		helper.succeed();
+	}
 }

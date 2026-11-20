@@ -74,4 +74,15 @@ public class SilverfishEffectsTest {
 		helper.assertBlockPresent(Blocks.INFESTED_STONE, hidden);
 		helper.succeed();
 	}
+
+	@GameTest(padding = 16)
+	public void aDeathCryWakesTheHiddenSilverfishWhenABlastKillsIt(GameTestHelper helper) {
+		Silverfish silverfish = silverfish(helper, new BlockPos(1, 1, 1), "test_death_cry");
+		BlockPos hidden = new BlockPos(1, 1, 7);
+		helper.setBlock(hidden, Blocks.INFESTED_STONE);
+		silverfish.hurtServer(helper.getLevel(), helper.getLevel().damageSources().explosion(null, null), 100.0F);
+		helper.assertTrue(silverfish.isDeadOrDying(), "the blast kills the silverfish");
+		helper.assertBlockNotPresent(Blocks.INFESTED_STONE, hidden);
+		helper.succeed();
+	}
 }

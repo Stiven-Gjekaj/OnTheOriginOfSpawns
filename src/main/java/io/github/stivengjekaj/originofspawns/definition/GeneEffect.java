@@ -336,7 +336,8 @@ public sealed interface GeneEffect {
 			Map.entry("trap_lightning", TrapLightning.CODEC),
 			Map.entry("horsemen_rally", HorsemenRally.CODEC),
 			Map.entry("wake_range", WakeRange.CODEC),
-			Map.entry("wake_on_sight", WakeOnSight.CODEC)
+			Map.entry("wake_on_sight", WakeOnSight.CODEC),
+			Map.entry("wake_on_death", WakeOnDeath.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5665,6 +5666,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "wake_on_sight";
+		}
+	}
+
+	/**
+	 * When the mob dies, it wakes the hidden silverfish in this many blocks to each side, and in half as many blocks up
+	 * and down. It acts on each death, also from a projectile or a blast. The wake works as the vanilla wake of a hurt
+	 * silverfish. Death Cry: 10 blocks.
+	 */
+	record WakeOnDeath(int range) implements GeneEffect {
+		public static final MapCodec<WakeOnDeath> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 32).optionalFieldOf("range", 10).forGetter(WakeOnDeath::range)
+		).apply(instance, WakeOnDeath::new));
+
+		@Override
+		public String type() {
+			return "wake_on_death";
 		}
 	}
 }

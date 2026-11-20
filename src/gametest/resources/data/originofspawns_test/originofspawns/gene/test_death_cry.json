@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:silverfish",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "wake_on_death", "range": 10 }],
+	"mutation_rate": 0
+}

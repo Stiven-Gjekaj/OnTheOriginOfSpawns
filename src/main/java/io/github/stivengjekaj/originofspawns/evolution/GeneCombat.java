@@ -1539,6 +1539,7 @@ public final class GeneCombat {
 						}
 					}
 				}
+				case GeneEffect.WakeOnDeath death -> GeneSilverfish.wake(mob, level, death.range());
 				case GeneEffect.CallOnDeath call -> {
 					LivingEntity killer = source != null && source.getEntity() instanceof LivingEntity living
 							? living : mob.getLastHurtByMob();

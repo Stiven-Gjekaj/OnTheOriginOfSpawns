@@ -200,4 +200,20 @@ public class RavagerEffectsTest {
 				"the ravager charges at a target 6 blocks away");
 		helper.succeedWhen(() -> helper.assertValueEqual(lost(far), 6.0F, "the charge does 6 damage"));
 	}
+
+	@GameTest
+	public void aFenceBreakerBreaksTheFencesAndTheGlassThatItWalksInto(GameTestHelper helper) {
+		Ravager ravager = ravager(helper, new BlockPos(2, 1, 2), "test_fence_breaker");
+		helper.setBlock(new BlockPos(2, 1, 3), net.minecraft.world.level.block.Blocks.OAK_FENCE);
+		helper.setBlock(new BlockPos(1, 1, 3), net.minecraft.world.level.block.Blocks.GLASS);
+		helper.setBlock(new BlockPos(3, 1, 3), net.minecraft.world.level.block.Blocks.STONE);
+		ravager.horizontalCollision = true;
+		io.github.stivengjekaj.originofspawns.evolution.GeneRavagers.trample(ravager, helper.getLevel(),
+				new io.github.stivengjekaj.originofspawns.definition.GeneEffect.Trample(
+						io.github.stivengjekaj.originofspawns.definition.GeneEffect.Trample.DEFAULT_BLOCKS));
+		helper.assertBlockPresent(net.minecraft.world.level.block.Blocks.AIR, new BlockPos(2, 1, 3));
+		helper.assertBlockPresent(net.minecraft.world.level.block.Blocks.AIR, new BlockPos(1, 1, 3));
+		helper.assertBlockPresent(net.minecraft.world.level.block.Blocks.STONE, new BlockPos(3, 1, 3));
+		helper.succeed();
+	}
 }

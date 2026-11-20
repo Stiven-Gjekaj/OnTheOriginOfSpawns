@@ -367,7 +367,8 @@ public sealed interface GeneEffect {
 			Map.entry("stun_chance", StunChance.CODEC),
 			Map.entry("no_stun", NoStun.CODEC),
 			Map.entry("no_roar", NoRoar.CODEC),
-			Map.entry("ground_charge", GroundCharge.CODEC)
+			Map.entry("ground_charge", GroundCharge.CODEC),
+			Map.entry("trample", Trample.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6237,6 +6238,25 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "ground_charge";
+		}
+	}
+
+	/**
+	 * When the mob walks into a wall, it breaks the blocks of the tag that it touches, as a vanilla ravager breaks
+	 * leaves. The blocks drop their items. It needs the {@code mobGriefing} game rule. The default tag
+	 * {@code #originofspawns:shatterable} holds fences, fence gates, glass, and glass panes. Fence Breaker.
+	 */
+	record Trample(TagKey<Block> blocks) implements GeneEffect {
+		public static final TagKey<Block> DEFAULT_BLOCKS =
+				TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("originofspawns", "shatterable"));
+
+		public static final MapCodec<Trample> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				TagKey.hashedCodec(Registries.BLOCK).optionalFieldOf("blocks", DEFAULT_BLOCKS).forGetter(Trample::blocks)
+		).apply(instance, Trample::new));
+
+		@Override
+		public String type() {
+			return "trample";
 		}
 	}
 }

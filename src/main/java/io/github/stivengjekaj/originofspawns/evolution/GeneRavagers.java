@@ -213,4 +213,28 @@ public final class GeneRavagers {
 		mob.lookAt(target, 30.0F, 30.0F);
 		mob.needsSync = true;
 	}
+
+	/**
+	 * Breaks the blocks of the trample tag that the mob touches while it walks into a wall, as the vanilla ravager breaks
+	 * leaves.
+	 *
+	 * @return the number of blocks that broke
+	 */
+	public static int trample(net.minecraft.world.entity.Mob mob, net.minecraft.server.level.ServerLevel level,
+			GeneEffect.Trample trample) {
+		if (!mob.horizontalCollision
+				|| !level.getGameRules().get(net.minecraft.world.level.gamerules.GameRules.MOB_GRIEFING)) {
+			return 0;
+		}
+		int broken = 0;
+		net.minecraft.world.phys.AABB box = mob.getBoundingBox().inflate(0.2);
+		for (net.minecraft.core.BlockPos pos : net.minecraft.core.BlockPos.betweenClosed(
+				net.minecraft.util.Mth.floor(box.minX), net.minecraft.util.Mth.floor(box.minY), net.minecraft.util.Mth.floor(box.minZ),
+				net.minecraft.util.Mth.floor(box.maxX), net.minecraft.util.Mth.floor(box.maxY), net.minecraft.util.Mth.floor(box.maxZ))) {
+			if (level.getBlockState(pos).is(trample.blocks()) && level.destroyBlock(pos, true, mob)) {
+				broken++;
+			}
+		}
+		return broken;
+	}
 }

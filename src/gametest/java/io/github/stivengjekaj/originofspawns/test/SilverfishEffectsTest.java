@@ -1,6 +1,8 @@
 package io.github.stivengjekaj.originofspawns.test;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneSilverfish;
 import io.github.stivengjekaj.originofspawns.mixin.MobAccessor;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -9,11 +11,13 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.monster.Silverfish;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Checks the genes of a silverfish: the wake of the hidden silverfish, the hide in stone, the gnaw, the eggs, and the
@@ -51,6 +55,23 @@ public class SilverfishEffectsTest {
 				Identifier.fromNamespaceAndPath("originofspawns_test", "test_nest_alarm"))));
 		hurtAndWake(helper, silverfish, pig);
 		helper.assertBlockNotPresent(Blocks.INFESTED_STONE, far);
+		helper.succeed();
+	}
+
+	@GameTest(padding = 16)
+	public void aStoneAlarmWakesTheHiddenSilverfishWhenItSeesItsTarget(GameTestHelper helper) {
+		Silverfish silverfish = silverfish(helper, new BlockPos(1, 1, 1), "test_stone_alarm");
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(3, 1, 1))));
+		silverfish.setTarget(player);
+		BlockPos hidden = new BlockPos(1, 1, 6);
+		helper.setBlock(hidden, Blocks.INFESTED_STONE);
+		var alarm = new GeneEffect.WakeOnSight(8, 10.0F);
+		helper.assertTrue(GeneSilverfish.wakeOnSight(silverfish, helper.getLevel(), alarm), "the silverfish wakes the others");
+		helper.assertBlockNotPresent(Blocks.INFESTED_STONE, hidden);
+		helper.setBlock(hidden, Blocks.INFESTED_STONE);
+		helper.assertFalse(GeneSilverfish.wakeOnSight(silverfish, helper.getLevel(), alarm), "the next wake waits");
+		helper.assertBlockPresent(Blocks.INFESTED_STONE, hidden);
 		helper.succeed();
 	}
 }

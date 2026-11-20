@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.InfestedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gamerules.GameRules;
@@ -40,6 +41,21 @@ public final class GeneSilverfish {
 	 */
 	public static boolean hasWakeRange(Mob mob) {
 		return GeneEffects.of(mob).anyMatch(GeneEffect.WakeRange.class::isInstance);
+	}
+
+	/**
+	 * Wakes the hidden silverfish when the mob sees its target player, if the cooldown of the gene is over.
+	 *
+	 * @return true if the mob made a wake now. The cooldown starts also when no block woke
+	 */
+	public static boolean wakeOnSight(Mob mob, ServerLevel level, GeneEffect.WakeOnSight sight) {
+		if (!(mob.getTarget() instanceof Player player) || !player.isAlive() || !mob.hasLineOfSight(player)
+				|| !GeneCombat.ready(mob, sight, sight.cooldownSeconds())) {
+			return false;
+		}
+		GeneCombat.startCooldown(mob, sight);
+		wake(mob, level, sight.range());
+		return true;
 	}
 
 	/**

@@ -531,6 +531,7 @@ public final class GeneBehaviors {
 				case GeneEffect.BlockThrow thrown when mob instanceof Enderman enderman ->
 						GeneThrows.throwBlock(enderman, level, thrown);
 				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
+				case GeneEffect.WakeOnSight sight -> GeneSilverfish.wakeOnSight(mob, level, sight);
 				case GeneEffect.FrenziedTargeting frenzy
 						when now % Math.max(1, Math.round(frenzy.intervalSeconds() * 20.0F)) < TICK_INTERVAL
 								&& mob.getRandom().nextFloat() < frenzy.chance() -> {

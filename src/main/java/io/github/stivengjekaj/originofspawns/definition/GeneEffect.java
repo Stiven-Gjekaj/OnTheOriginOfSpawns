@@ -335,7 +335,8 @@ public sealed interface GeneEffect {
 			Map.entry("trap_effect", TrapEffect.CODEC),
 			Map.entry("trap_lightning", TrapLightning.CODEC),
 			Map.entry("horsemen_rally", HorsemenRally.CODEC),
-			Map.entry("wake_range", WakeRange.CODEC)
+			Map.entry("wake_range", WakeRange.CODEC),
+			Map.entry("wake_on_sight", WakeOnSight.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5647,6 +5648,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "wake_range";
+		}
+	}
+
+	/**
+	 * When the mob sees its target player, it wakes the hidden silverfish in this many blocks to each side, and in half
+	 * as many blocks up and down, one time in each cooldown. The wake works as the vanilla wake of a hurt silverfish.
+	 * Stone Alarm: 8 blocks, one time each 10 seconds.
+	 */
+	record WakeOnSight(int range, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<WakeOnSight> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 32).optionalFieldOf("range", 8).forGetter(WakeOnSight::range),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(WakeOnSight::cooldownSeconds)
+		).apply(instance, WakeOnSight::new));
+
+		@Override
+		public String type() {
+			return "wake_on_sight";
 		}
 	}
 }

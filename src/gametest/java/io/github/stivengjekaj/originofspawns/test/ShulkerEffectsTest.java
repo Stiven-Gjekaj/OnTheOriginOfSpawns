@@ -75,4 +75,32 @@ public class ShulkerEffectsTest {
 		helper.assertValueEqual(lifted.getAmplifier(), 1, "the gene Levitation is Levitation II");
 		helper.succeed();
 	}
+
+	/**
+	 * Runs the vanilla attack goal of the shulker at the target until its first shot, and returns the wait to the next
+	 * shot. The random source of the shulker starts at the same seed each time, so the vanilla wait is the same.
+	 */
+	static int waitAfterFirstShot(Shulker shulker, Pig target) {
+		shulker.setTarget(target);
+		net.minecraft.world.entity.ai.goal.Goal attack = ((io.github.stivengjekaj.originofspawns.mixin.MobAccessor) shulker)
+				.originofspawns$goalSelector().getAvailableGoals().stream().map(goal -> goal.getGoal())
+				.filter(goal -> goal.getClass().getSimpleName().equals("ShulkerAttackGoal")).findFirst().orElseThrow();
+		attack.start();
+		shulker.getRandom().setSeed(7L);
+		// The first shot comes after 20 ticks.
+		for (int i = 0; i < 20; i++) {
+			attack.tick();
+		}
+		return ((io.github.stivengjekaj.originofspawns.mixin.ShulkerAttackGoalAccessor) attack).originofspawns$attackTime();
+	}
+
+	@GameTest
+	public void aThrowRateGeneChangesTheWaitBetweenTwoShots(GameTestHelper helper) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 4));
+		int vanilla = waitAfterFirstShot(shulker(helper, new BlockPos(1, 1, 1)), pig);
+		int slow = waitAfterFirstShot(shulker(helper, new BlockPos(1, 1, 4), "test_slow_lid"), pig);
+		helper.assertTrue(vanilla >= 20 && vanilla <= 110, "the vanilla wait is 1 to 5.5 seconds");
+		helper.assertValueEqual(slow, vanilla * 2, "half the throw rate waits two times as long");
+		helper.succeed();
+	}
 }

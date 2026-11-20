@@ -368,7 +368,8 @@ public sealed interface GeneEffect {
 			Map.entry("no_stun", NoStun.CODEC),
 			Map.entry("no_roar", NoRoar.CODEC),
 			Map.entry("ground_charge", GroundCharge.CODEC),
-			Map.entry("trample", Trample.CODEC)
+			Map.entry("trample", Trample.CODEC),
+			Map.entry("speed_after", SpeedAfter.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5509,7 +5510,15 @@ public sealed interface GeneEffect {
 		/**
 		 * A horse jumps, from a player that rides it, from a climb, or from a jump aside.
 		 */
-		JUMP;
+		JUMP,
+		/**
+		 * The mob kills a player.
+		 */
+		KILL,
+		/**
+		 * A melee hit of the mob hurts a player.
+		 */
+		PLAYER_HIT;
 
 		public static final Codec<Action> CODEC = StringRepresentable.fromEnum(Action::values);
 
@@ -6257,6 +6266,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "trample";
+		}
+	}
+
+	/**
+	 * After the action, the mob is faster for the seconds: the multiplier multiplies its movement speed. A new action
+	 * starts the time again. Blood Run: 1.3 for 10 seconds after a kill.
+	 */
+	record SpeedAfter(Action action, float multiplier, float seconds) implements GeneEffect {
+		public static final MapCodec<SpeedAfter> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Action.CODEC.fieldOf("action").forGetter(SpeedAfter::action),
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(SpeedAfter::multiplier),
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(SpeedAfter::seconds)
+		).apply(instance, SpeedAfter::new));
+
+		@Override
+		public String type() {
+			return "speed_after";
 		}
 	}
 }

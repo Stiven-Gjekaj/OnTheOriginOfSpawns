@@ -216,4 +216,21 @@ public class RavagerEffectsTest {
 		helper.assertBlockPresent(net.minecraft.world.level.block.Blocks.STONE, new BlockPos(3, 1, 3));
 		helper.succeed();
 	}
+
+	@GameTest(maxTicks = 260)
+	public void aBloodRunIsFasterForTenSecondsAfterAKill(GameTestHelper helper) {
+		Ravager ravager = ravager(helper, new BlockPos(2, 1, 2), "test_blood_run");
+		var speed = ravager.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
+		io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.tick(ravager, helper.getLevel());
+		double plain = speed.getValue();
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(ravager), 1000.0F);
+		io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.tick(ravager, helper.getLevel());
+		helper.assertTrue(Math.abs(speed.getValue() - plain * 1.3) < 1.0E-6, "30% more speed after the kill");
+		helper.runAfterDelay(202, () -> {
+			io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.tick(ravager, helper.getLevel());
+			helper.assertTrue(Math.abs(speed.getValue() - plain) < 1.0E-6, "the speed ends after 10 seconds");
+			helper.succeed();
+		});
+	}
 }

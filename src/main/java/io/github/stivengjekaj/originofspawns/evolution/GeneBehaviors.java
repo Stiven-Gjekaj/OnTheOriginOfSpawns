@@ -1679,9 +1679,14 @@ public final class GeneBehaviors {
 	}
 
 	/**
-	 * Gives the mob the status effects of its self effect after genes for the action.
+	 * Gives the mob the status effects of its self effect after genes for the action, and keeps the time of the action
+	 * for its speed after genes.
 	 */
 	public static void selfEffectAfter(Mob mob, GeneEffect.Action action) {
+		java.util.Map<GeneEffect.Action, Long> times = new java.util.EnumMap<>(GeneEffect.Action.class);
+		times.putAll(mob.getAttachedOrElse(ModAttachments.ACTION_TIMES, java.util.Map.of()));
+		times.put(action, mob.level().getGameTime());
+		mob.setAttached(ModAttachments.ACTION_TIMES, times);
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			if (effect instanceof GeneEffect.SelfEffectAfter after && after.action() == action) {
 				mob.addEffect(new MobEffectInstance(after.effect(), Math.round(after.seconds() * 20.0F), after.amplifier()), mob);
@@ -2483,7 +2488,14 @@ public final class GeneBehaviors {
 	private static void updateSpeed(Mob mob, List<GeneEffect> effects) {
 		int speedIndex = 0;
 		int attributeIndex = 0;
+		int afterIndex = 0;
 		for (GeneEffect effect : effects) {
+			if (effect instanceof GeneEffect.SpeedAfter after) {
+				Long time = mob.getAttachedOrElse(ModAttachments.ACTION_TIMES, java.util.Map.of()).get(after.action());
+				toggle(mob, mob.getAttribute(Attributes.MOVEMENT_SPEED), OriginOfSpawns.id("speed_after/" + afterIndex++),
+						time != null && mob.level().getGameTime() - time <= Math.round(after.seconds() * 20.0F),
+						after.multiplier() - 1.0, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+			}
 			if (effect instanceof GeneEffect.SpeedWhen when) {
 				toggle(mob, mob.getAttribute(Attributes.MOVEMENT_SPEED), OriginOfSpawns.id("speed_when/" + speedIndex++),
 						GeneCombat.test(mob, when.when()), when.multiplier() - 1.0,

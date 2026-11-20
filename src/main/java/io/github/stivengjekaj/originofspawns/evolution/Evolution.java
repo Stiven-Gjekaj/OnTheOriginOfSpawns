@@ -257,6 +257,7 @@ public final class Evolution {
 	 */
 	public static void onPlayerKilled(ServerLevel level, Mob killer, DamageSource source) {
 		GeneRavagers.onPlayerKilled(killer);
+		GeneBehaviors.selfEffectAfter(killer, GeneEffect.Action.KILL);
 		if (GeneEffects.of(killer).anyMatch(GeneEffect.ChargeAfterKill.class::isInstance)) {
 			killer.setAttached(ModAttachments.LASER_READY, true);
 		}

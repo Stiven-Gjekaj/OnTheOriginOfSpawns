@@ -146,6 +146,12 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> GROUND_CHARGE_UNTIL = AttachmentRegistry.create(OriginOfSpawns.id("ground_charge_until"));
 
 	/**
+	 * The game time of the last time of each action of a mob, for the speed after genes.
+	 */
+	public static final AttachmentType<java.util.Map<io.github.stivengjekaj.originofspawns.definition.GeneEffect.Action, Long>>
+			ACTION_TIMES = AttachmentRegistry.create(OriginOfSpawns.id("action_times"));
+
+	/**
 	 * The game time of the last melee hit of a mob on each player, by the UUID of the player.
 	 */
 	public static final AttachmentType<java.util.Map<java.util.UUID, Long>> PLAYER_HITS =

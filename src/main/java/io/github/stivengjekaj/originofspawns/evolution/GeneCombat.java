@@ -781,6 +781,9 @@ public final class GeneCombat {
 	 * Runs the effects that act when the mob hits a target.
 	 */
 	public static void onHit(Mob mob, Entity target) {
+		if (target instanceof Player && mob.hasAttached(ModAttachments.GENES)) {
+			GeneBehaviors.selfEffectAfter(mob, GeneEffect.Action.PLAYER_HIT);
+		}
 		if (mob instanceof net.minecraft.world.entity.monster.Vex vex && vex.getOwner() instanceof Mob owner
 				&& target instanceof LivingEntity living) {
 			onVexHit(owner, living);

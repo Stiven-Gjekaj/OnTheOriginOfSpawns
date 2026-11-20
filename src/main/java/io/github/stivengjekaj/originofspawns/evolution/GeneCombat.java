@@ -1387,23 +1387,34 @@ public final class GeneCombat {
 				java.util.Map.of());
 		long now = level.getGameTime();
 		Long last = times.get(onHurt);
-		if (last != null && now - last < Math.round(onHurt.cooldownSeconds() * 20.0F)) {
+		float cooldown = onHurt.cooldownSeconds();
+		float playerRadius = onHurt.playerRadius();
+		List<GeneEffect> inkGenes = onHurt.ink() ? GeneEffects.of(mob).toList() : List.of();
+		if (last != null && now - last < Math.round(cooldown * 20.0F)) {
 			return;
 		}
 		MobEffectInstance instance = new MobEffectInstance(onHurt.effect(), Math.round(onHurt.seconds() * 20.0F),
 				onHurt.amplifier());
+		List<LivingEntity> reached = new java.util.ArrayList<>();
 		if (onHurt.allyRadius() > 0.0F) {
 			AABB area = mob.getBoundingBox().inflate(onHurt.allyRadius());
 			for (Mob ally : level.getEntitiesOfClass(Mob.class, area, other -> other.getType() == mob.getType())) {
 				ally.addEffect(new MobEffectInstance(instance), mob);
 			}
-		} else if (onHurt.playerRadius() > 0.0F) {
-			AABB area = mob.getBoundingBox().inflate(onHurt.playerRadius());
-			for (Player player : level.getEntitiesOfClass(Player.class, area)) {
-				player.addEffect(new MobEffectInstance(instance), mob);
-			}
+		} else if (playerRadius > 0.0F) {
+			AABB area = mob.getBoundingBox().inflate(playerRadius);
+			reached.addAll(level.getEntitiesOfClass(Player.class, area));
 		} else {
-			attacker.addEffect(instance, mob);
+			reached.add(attacker);
+		}
+		for (LivingEntity living : reached) {
+			living.addEffect(new MobEffectInstance(instance), mob);
+			for (GeneEffect effect : inkGenes) {
+				if (effect instanceof GeneEffect.InkEffect extra) {
+					living.addEffect(new MobEffectInstance(extra.effect(), Math.round(extra.seconds() * 20.0F),
+							extra.amplifier()), mob);
+				}
+			}
 		}
 		if (onHurt.ink()) {
 			level.sendParticles(ParticleTypes.SQUID_INK, mob.getX(), mob.getY(0.6), mob.getZ(), 30, 0.5, 0.5, 0.5, 0.05);

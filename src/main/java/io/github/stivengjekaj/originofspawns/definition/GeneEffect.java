@@ -323,7 +323,8 @@ public sealed interface GeneEffect {
 			Map.entry("charge_rate", ChargeRate.CODEC),
 			Map.entry("charge_push", ChargePush.CODEC),
 			Map.entry("drain_air", DrainAir.CODEC),
-			Map.entry("self_effect_after", SelfEffectAfter.CODEC)
+			Map.entry("self_effect_after", SelfEffectAfter.CODEC),
+			Map.entry("ink_effect", InkEffect.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5434,6 +5435,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String getSerializedName() {
 			return name().toLowerCase(Locale.ROOT);
+		}
+	}
+
+	/**
+	 * The ink of the mob also gives this status effect to each one that the ink reaches. The ink is an effect on hurt
+	 * with {@code ink}. Thick Ink: Slowness for 3 seconds.
+	 */
+	record InkEffect(Holder<MobEffect> effect, float seconds, int amplifier) implements GeneEffect {
+		public static final MapCodec<InkEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(InkEffect::effect),
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(InkEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(InkEffect::amplifier)
+		).apply(instance, InkEffect::new));
+
+		@Override
+		public String type() {
+			return "ink_effect";
 		}
 	}
 }

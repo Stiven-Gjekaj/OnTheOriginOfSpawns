@@ -1,0 +1,10 @@
+{
+	"species": "minecraft:zombie_nautilus",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [
+		{ "type": "effect_on_hurt", "effect": "minecraft:blindness", "seconds": 4, "cooldown_seconds": 10, "ink": true, "player_radius": 4 },
+		{ "type": "ink_effect", "effect": "minecraft:slowness", "seconds": 3 }
+	],
+	"mutation_rate": 0
+}

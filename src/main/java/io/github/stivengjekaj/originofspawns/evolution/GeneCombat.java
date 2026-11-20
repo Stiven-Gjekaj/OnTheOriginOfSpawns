@@ -827,6 +827,8 @@ public final class GeneCombat {
 				case GeneEffect.FreezeOnHit freeze when freeze.hits().includes(false) && target instanceof LivingEntity living
 						&& mob.getRandom().nextFloat() < freeze.chance() -> freeze(living, freeze.seconds());
 				case GeneEffect.HopBack back -> hopBack(mob, target);
+				case GeneEffect.RiderStrike strike when mob.getFirstPassenger() instanceof Mob rider && rider.isAlive()
+						&& target.isAlive() && mob.level() instanceof ServerLevel level -> rider.doHurtTarget(level, target);
 				case GeneEffect.RunStrike run -> mob.removeAttached(ModAttachments.RUN_BLOCKS);
 				case GeneEffect.ShatterArmor shatter when target instanceof LivingEntity living -> shatter(living, shatter.threshold());
 				case GeneEffect.SelfEffectOnHit self -> mob.addEffect(new MobEffectInstance(self.effect(),

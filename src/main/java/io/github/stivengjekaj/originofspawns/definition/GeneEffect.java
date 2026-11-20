@@ -370,7 +370,8 @@ public sealed interface GeneEffect {
 			Map.entry("ground_charge", GroundCharge.CODEC),
 			Map.entry("trample", Trample.CODEC),
 			Map.entry("speed_after", SpeedAfter.CODEC),
-			Map.entry("heal_on_rider_hit", HealOnRiderHit.CODEC)
+			Map.entry("heal_on_rider_hit", HealOnRiderHit.CODEC),
+			Map.entry("rider_strike", RiderStrike.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6300,6 +6301,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "heal_on_rider_hit";
+		}
+	}
+
+	/**
+	 * When the mount hits a target in melee, the mob that rides it also attacks that target with its melee attack, one
+	 * time for each hit of the mount. A player that rides it does not attack. Twin Strike.
+	 */
+	record RiderStrike() implements GeneEffect {
+		public static final MapCodec<RiderStrike> CODEC = MapCodec.unit(new RiderStrike());
+
+		@Override
+		public String type() {
+			return "rider_strike";
 		}
 	}
 }

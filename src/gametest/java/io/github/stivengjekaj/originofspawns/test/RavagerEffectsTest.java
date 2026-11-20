@@ -249,4 +249,15 @@ public class RavagerEffectsTest {
 		helper.assertValueEqual(ravager.getHealth(), 54.0F, "the next heal waits 4 seconds");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aTwinStrikeLetsTheRiderAttackTheTargetOfTheRavager(GameTestHelper helper) {
+		Ravager ravager = ravager(helper, new BlockPos(2, 1, 2), "test_twin_strike");
+		var vindicator = MountEffectsTest.mob(helper, EntityTypes.VINDICATOR, new BlockPos(2, 1, 2));
+		vindicator.startRiding(ravager, true, false);
+		var golem = helper.spawnWithNoFreeWill(EntityTypes.IRON_GOLEM, new BlockPos(2, 1, 5));
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHit(ravager, golem);
+		helper.assertTrue(golem.getHealth() < golem.getMaxHealth(), "the vindicator on the ravager hits the golem");
+		helper.succeed();
+	}
 }

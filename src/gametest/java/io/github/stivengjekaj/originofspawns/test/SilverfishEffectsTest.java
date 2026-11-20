@@ -286,19 +286,22 @@ public class SilverfishEffectsTest {
 
 	@GameTest(maxTicks = 100)
 	public void anEggSpitGivesInfestedToItsTargetFromSixBlocks(GameTestHelper helper) {
-		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 5));
+		// The vanilla spit flies in an arc a little above the middle of its target, so the target is a player.
+		ServerPlayer player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setNoGravity(true);
+		player.setPos(helper.absoluteVec(Vec3.atBottomCenterOf(new BlockPos(1, 1, 5))));
 		Silverfish silverfish = silverfish(helper, new BlockPos(1, 1, 1));
-		silverfish.setTarget(pig);
+		silverfish.setTarget(player);
 		var spit = new GeneEffect.Spit(6.0F, 6.0F, 1.0F,
 				java.util.Optional.of(net.minecraft.world.effect.MobEffects.INFESTED), 4.0F, 0);
-		helper.assertTrue(GeneBehaviors.spit(silverfish, helper.getLevel(), spit), "the silverfish spits at the pig");
+		helper.assertTrue(GeneBehaviors.spit(silverfish, helper.getLevel(), spit), "the silverfish spits at the player");
 		helper.assertFalse(GeneBehaviors.spit(silverfish, helper.getLevel(), spit), "the next spit waits");
 		Silverfish far = silverfish(helper, new BlockPos(7, 1, 7));
-		far.setTarget(pig);
+		far.setTarget(player);
 		helper.assertFalse(GeneBehaviors.spit(far, helper.getLevel(), spit), "a target past 6 blocks gets no spit");
 		helper.succeedWhen(() -> {
-			helper.assertTrue(pig.hasEffect(net.minecraft.world.effect.MobEffects.INFESTED), "the spit gives Infested");
-			helper.assertValueEqual(pig.getMaxHealth() - pig.getHealth(), 1.0F, "the spit does 1 damage");
+			helper.assertTrue(player.hasEffect(net.minecraft.world.effect.MobEffects.INFESTED), "the spit gives Infested");
+			helper.assertValueEqual(player.getMaxHealth() - player.getHealth(), 1.0F, "the spit does 1 damage");
 		});
 	}
 

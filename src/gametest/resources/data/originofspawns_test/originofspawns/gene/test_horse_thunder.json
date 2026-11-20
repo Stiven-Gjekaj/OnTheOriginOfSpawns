@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:skeleton_horse",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "trap_horsemen", "extra": 2 }],
+	"mutation_rate": 0
+}

@@ -330,7 +330,8 @@ public sealed interface GeneEffect {
 			Map.entry("translucent_on_hurt", TranslucentOnHurt.CODEC),
 			Map.entry("swim_speed", SwimSpeed.CODEC),
 			Map.entry("trap_range", TrapRange.CODEC),
-			Map.entry("trap_life", TrapLife.CODEC)
+			Map.entry("trap_life", TrapLife.CODEC),
+			Map.entry("trap_horsemen", TrapHorsemen.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5559,6 +5560,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "trap_life";
+		}
+	}
+
+	/**
+	 * When the trap of a skeleton horse opens, more horsemen appear: skeleton horses with skeleton riders, as the
+	 * vanilla trap makes three. They get genes as new mobs. More than one effect adds up. Thunderhooves: 1 or 2.
+	 */
+	record TrapHorsemen(int extra) implements GeneEffect {
+		public static final MapCodec<TrapHorsemen> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(0, 8).optionalFieldOf("extra", 1).forGetter(TrapHorsemen::extra)
+		).apply(instance, TrapHorsemen::new));
+
+		@Override
+		public String type() {
+			return "trap_horsemen";
 		}
 	}
 }

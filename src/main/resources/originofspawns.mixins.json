@@ -86,6 +86,7 @@
 		"SensorAccessor",
 		"SkeletonHorseAccessor",
 		"SkeletonHorseMixin",
+		"SkeletonTrapGoalAccessor",
 		"SkeletonTrapGoalMixin",
 		"ServerExplosionMixin",
 		"SmallFireballMixin",

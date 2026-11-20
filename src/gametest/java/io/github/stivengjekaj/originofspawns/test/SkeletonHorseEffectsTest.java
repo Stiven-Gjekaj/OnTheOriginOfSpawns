@@ -116,4 +116,38 @@ public class SkeletonHorseEffectsTest {
 		patient.discard();
 		helper.succeed();
 	}
+
+	/**
+	 * Opens the trap of the horse with a player near it, and returns the horses of the trap.
+	 */
+	static java.util.List<SkeletonHorse> openTrap(GameTestHelper helper, SkeletonHorse horse) {
+		var goal = trap(helper, horse);
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(horse.position().add(0.0, 0.0, 5.0));
+		helper.assertTrue(goal.canUse(), "a player opens the trap");
+		goal.tick();
+		java.util.UUID group = horse.getUUID();
+		return helper.getLevel().getEntitiesOfClass(SkeletonHorse.class, horse.getBoundingBox().inflate(4.0),
+				other -> group.equals(other.getAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.TRAP_GROUP)));
+	}
+
+	@GameTest
+	public void aPlainTrapMakesFourHorsemenOfOneGroup(GameTestHelper helper) {
+		SkeletonHorse horse = MountEffectsTest.mob(helper, EntityTypes.SKELETON_HORSE, new BlockPos(3, 1, 1));
+		var horses = openTrap(helper, horse);
+		helper.assertValueEqual(horses.size(), 4, "the trap horse and three more");
+		horses.forEach(other -> helper.assertTrue(other.getFirstPassenger() instanceof net.minecraft.world.entity.monster.skeleton.Skeleton,
+				"each horse has a skeleton rider"));
+		helper.succeed();
+	}
+
+	@GameTest
+	public void thunderhoovesMakeMoreHorsemen(GameTestHelper helper) {
+		SkeletonHorse horse = MountEffectsTest.mob(helper, EntityTypes.SKELETON_HORSE, new BlockPos(3, 1, 1), "test_horse_thunder");
+		var horses = openTrap(helper, horse);
+		helper.assertValueEqual(horses.size(), 6, "two more horsemen");
+		horses.forEach(other -> helper.assertTrue(other.getFirstPassenger() instanceof net.minecraft.world.entity.monster.skeleton.Skeleton,
+				"each horse has a skeleton rider"));
+		helper.succeed();
+	}
 }

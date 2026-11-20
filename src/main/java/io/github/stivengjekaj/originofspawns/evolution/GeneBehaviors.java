@@ -1593,6 +1593,44 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Runs the trap genes of a skeleton horse after its trap opens. The vanilla trap made its three horsemen next to
+	 * the trap horse in this tick. Each horse of the trap gets the id of the trap, and each trap horsemen gene makes
+	 * more horsemen.
+	 */
+	public static void afterTrapOpens(net.minecraft.world.entity.animal.equine.SkeletonHorse trap, ServerLevel level,
+			io.github.stivengjekaj.originofspawns.mixin.SkeletonTrapGoalAccessor goal) {
+		java.util.UUID group = trap.getUUID();
+		List<net.minecraft.world.entity.animal.equine.AbstractHorse> horses = new java.util.ArrayList<>(level.getEntitiesOfClass(
+				net.minecraft.world.entity.animal.equine.SkeletonHorse.class, trap.getBoundingBox().inflate(2.0),
+				horse -> horse.isTamed() && !horse.hasAttached(ModAttachments.TRAP_GROUP)
+						&& horse.getFirstPassenger() instanceof net.minecraft.world.entity.monster.skeleton.Skeleton));
+		int extra = 0;
+		for (GeneEffect effect : GeneEffects.of(trap).toList()) {
+			if (effect instanceof GeneEffect.TrapHorsemen horsemen) {
+				extra += horsemen.extra();
+			}
+		}
+		var difficulty = level.getCurrentDifficultyAt(trap.blockPosition());
+		for (int i = 0; i < extra; i++) {
+			net.minecraft.world.entity.animal.equine.AbstractHorse horse = goal.originofspawns$createHorse(difficulty);
+			if (horse == null) {
+				continue;
+			}
+			var skeleton = goal.originofspawns$createSkeleton(difficulty, horse);
+			if (skeleton == null) {
+				continue;
+			}
+			skeleton.startRiding(horse);
+			horse.push(trap.getRandom().triangle(0.0, 1.1485), 0.0, trap.getRandom().triangle(0.0, 1.1485));
+			level.addFreshEntityWithPassengers(horse);
+			horses.add(horse);
+		}
+		for (net.minecraft.world.entity.animal.equine.AbstractHorse horse : horses) {
+			horse.setAttached(ModAttachments.TRAP_GROUP, group);
+		}
+	}
+
+	/**
 	 * Gives the mob the status effects of its self effect after genes for the action.
 	 */
 	public static void selfEffectAfter(Mob mob, GeneEffect.Action action) {

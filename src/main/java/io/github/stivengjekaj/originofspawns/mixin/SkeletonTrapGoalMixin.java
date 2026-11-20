@@ -10,7 +10,9 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * Lets the genes of a skeleton horse trap change the trap.
@@ -35,5 +37,16 @@ public abstract class SkeletonTrapGoalMixin {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * After the trap opens, the horses of the trap get the id of the trap, and the trap genes act.
+	 */
+	@Inject(method = "tick", at = @At("TAIL"))
+	private void originofspawns$afterOpen(CallbackInfo info) {
+		if (this.horse.level() instanceof net.minecraft.server.level.ServerLevel level) {
+			io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.afterTrapOpens(this.horse, level,
+					(SkeletonTrapGoalAccessor) this);
+		}
 	}
 }

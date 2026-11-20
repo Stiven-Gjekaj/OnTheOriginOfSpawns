@@ -302,6 +302,13 @@ public final class ModAttachments {
 			AttachmentRegistry.create(OriginOfSpawns.id("spit"));
 
 	/**
+	 * The id of the skeleton horse trap that a horse came from. All the horses of one trap have the id of the trap
+	 * horse.
+	 */
+	public static final AttachmentType<java.util.UUID> TRAP_GROUP = AttachmentRegistry.create(OriginOfSpawns.id("trap_group"),
+			builder -> builder.persistent(net.minecraft.core.UUIDUtil.CODEC));
+
+	/**
 	 * The game time of the last jump of a horse, until it lands.
 	 */
 	public static final AttachmentType<Long> JUMP_TIME = AttachmentRegistry.create(OriginOfSpawns.id("jump_time"));

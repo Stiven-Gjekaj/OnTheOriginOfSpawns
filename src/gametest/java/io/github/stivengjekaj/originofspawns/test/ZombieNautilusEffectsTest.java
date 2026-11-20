@@ -91,4 +91,21 @@ public class ZombieNautilusEffectsTest {
 				net.minecraft.world.item.Items.SHIELD)), "the charge stops the shield");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void quickRamChargesMoreOften(GameTestHelper helper) {
+		var plainPig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 2));
+		var quickPig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 2));
+		ZombieNautilus plain = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, new BlockPos(1, 1, 1));
+		ZombieNautilus quick = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, new BlockPos(6, 1, 1), "test_quick_ram");
+		plain.snapTo(plainPig.position().add(0.0, 0.0, -0.5), 0.0F, 0.0F);
+		quick.snapTo(quickPig.position().add(0.0, 0.0, -0.5), 0.0F, 0.0F);
+		chargeAt(helper, plain, plainPig);
+		chargeAt(helper, quick, quickPig);
+		helper.assertValueEqual(plain.getBrain().getMemory(MemoryModuleType.CHARGE_COOLDOWN_TICKS).orElse(0), 80,
+				"a plain charge waits 80 ticks");
+		helper.assertValueEqual(quick.getBrain().getMemory(MemoryModuleType.CHARGE_COOLDOWN_TICKS).orElse(0), 53,
+				"a quick charge waits 80 / 1.5 ticks");
+		helper.succeed();
+	}
 }

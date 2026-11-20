@@ -319,7 +319,8 @@ public sealed interface GeneEffect {
 			Map.entry("dash_cloud", DashCloud.CODEC),
 			Map.entry("dash_strike", DashStrike.CODEC),
 			Map.entry("rider_target_spit", RiderTargetSpit.CODEC),
-			Map.entry("rider_target_charge", RiderTargetCharge.CODEC)
+			Map.entry("rider_target_charge", RiderTargetCharge.CODEC),
+			Map.entry("charge_rate", ChargeRate.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5346,6 +5347,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "rider_target_charge";
+		}
+	}
+
+	/**
+	 * The vanilla charge attack of a nautilus comes more often: the time between charges is divided by the multiplier.
+	 * The vanilla time is 80 ticks. More than one effect multiplies together. Quick Ram: 1.5.
+	 */
+	record ChargeRate(float multiplier) implements GeneEffect {
+		public static final MapCodec<ChargeRate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 10.0F).optionalFieldOf("multiplier", 1.5F).forGetter(ChargeRate::multiplier)
+		).apply(instance, ChargeRate::new));
+
+		@Override
+		public String type() {
+			return "charge_rate";
 		}
 	}
 }

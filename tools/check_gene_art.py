@@ -6,7 +6,9 @@ The script draws the mob as tools/preview_genes.py does, in the views of the
 sheets and from the front and the back. It prints:
 - for each gene, the part of the pixels of the mob that the gene changes, in
   percent. The script compares the gene with the plain mob, and divides by
-  the pixels that show the mob in one of the two images.
+  the pixels that show the mob in one of the two images. It then gives the
+  part of the texture pixels of the mob that the marks change. A gene model
+  does not change the texture.
 - for each pair of genes where one gene has a gene model, or the two genes
   are in the same family: the part of the changed pixels of the first gene
   that still show when the mob has the two genes. A gene model can cover
@@ -70,11 +72,14 @@ def main(species):
     models = {g for g in genes if "model" in (pg.visual(g) or {})}
     plain = render(tex, [])
     alone, marks = {}, {}
-    print("gene, changed pixels in percent")
+    print("gene, changed pixels in percent: of the render, and of the texture")
+    opaque = [(x, y) for y in range(tex.height) for x in range(tex.width) if tex.getpixel((x, y))[3]]
     for g in genes:
-        alone[g] = render(pg.zombie(tex, [g]), [g])
+        baked = pg.zombie(tex, [g])
+        alone[g] = render(baked, [g])
         marks[g], mob = changed(plain, alone[g])
-        print(f"  {g}: {100 * len(marks[g]) / mob:.1f}")
+        texels = sum(1 for p in opaque if differ(tex.getpixel(p), baked.getpixel(p)))
+        print(f"  {g}: {100 * len(marks[g]) / mob:.1f}  {100 * texels / len(opaque):.1f}")
     rows = []
     for a, b in itertools.permutations(genes, 2):
         if not (a in models or b in models or family_of[a] == family_of[b]):

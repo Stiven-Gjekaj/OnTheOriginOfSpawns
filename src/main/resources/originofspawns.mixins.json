@@ -86,6 +86,7 @@
 		"RangedBowAttackGoalMixin",
 		"RangedCrossbowAttackGoalMixin",
 		"SensorAccessor",
+		"ShulkerAccessor",
 		"ShulkerAttackGoalAccessor",
 		"ShulkerAttackGoalMixin",
 		"ShulkerBulletAccessor",

@@ -695,7 +695,15 @@ public sealed interface GeneEffect {
 		/**
 		 * The mob rides a mount that moves faster than half of the movement speed of the mount.
 		 */
-		MOUNT_RUNNING;
+		MOUNT_RUNNING,
+		/**
+		 * The mob is a shulker with its lid open, also a little. A closed vanilla shulker has 20 more armor.
+		 */
+		SHELL_OPEN,
+		/**
+		 * The mob is a shulker with its lid closed.
+		 */
+		SHELL_CLOSED;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 

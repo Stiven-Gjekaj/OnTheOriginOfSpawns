@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:shulker",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "attribute_when", "when": "shell_open", "attribute": "minecraft:armor", "amount": 8, "operation": "add_value" }, { "type": "attribute_when", "when": "shell_closed", "attribute": "minecraft:armor", "amount": -4, "operation": "add_value" }, { "type": "damage_taken_when", "when": "shell_open", "multiplier": 0.7, "damage_types": "#minecraft:is_projectile" }],
+	"mutation_rate": 0
+}

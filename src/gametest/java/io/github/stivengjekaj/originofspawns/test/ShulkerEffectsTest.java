@@ -116,4 +116,22 @@ public class ShulkerEffectsTest {
 		helper.assertValueEqual(bullets.size(), 1, "one more bullet");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void shellGenesChangeTheArmorAndTheDamageWhileTheShellIsOpenOrClosed(GameTestHelper helper) {
+		Shulker shulker = shulker(helper, new BlockPos(1, 1, 1), "test_bunker_shell");
+		var lid = (io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker;
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 4));
+		var shot = helper.getLevel().damageSources().mobProjectile(bullet(helper, shulker(helper, new BlockPos(1, 1, 4)), pig), pig);
+		lid.originofspawns$setRawPeekAmount(0);
+		io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.tick(shulker, helper.getLevel());
+		// A closed vanilla shulker has 20 armor.
+		helper.assertValueEqual(shulker.getArmorValue(), 16, "4 less armor while closed");
+		helper.assertValueEqual(GeneCombat.modifyDamage(shulker, shot, 10.0F), 10.0F, "full projectile damage while closed");
+		lid.originofspawns$setRawPeekAmount(100);
+		io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.tick(shulker, helper.getLevel());
+		helper.assertValueEqual(shulker.getArmorValue(), 8, "8 armor while open");
+		helper.assertValueEqual(GeneCombat.modifyDamage(shulker, shot, 10.0F), 7.0F, "30% less projectile damage while open");
+		helper.succeed();
+	}
 }

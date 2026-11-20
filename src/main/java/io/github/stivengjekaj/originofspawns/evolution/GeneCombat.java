@@ -204,6 +204,10 @@ public final class GeneCombat {
 			case TARGET_GOLD_ARMOR -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
 					&& net.minecraft.world.entity.monster.piglin.PiglinAi.isWearingSafeArmor(player);
 			case MOUNT_RUNNING -> entity.getVehicle() instanceof LivingEntity mount && running(mount);
+			case SHELL_OPEN -> entity instanceof net.minecraft.world.entity.monster.Shulker shulker
+					&& !((io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker).originofspawns$isClosed();
+			case SHELL_CLOSED -> entity instanceof net.minecraft.world.entity.monster.Shulker shulker
+					&& ((io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker).originofspawns$isClosed();
 		};
 	}
 

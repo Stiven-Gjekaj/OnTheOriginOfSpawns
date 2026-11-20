@@ -97,33 +97,33 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Hot Shot | Gunner | `unreached` | Its bullets do 2 more damage | 10% less maximum health | Head: an orange head |
-| Double Shot | Gunner | `spotted` | Each third attack shoots 2 bullets | 10% less maximum health | Lid: two dark rings on the lid |
-| Seeker Shot | Gunner, sub Lifter | `projectile` | Its bullets fly 30% faster | 10% less maximum health | Head: pale yellow eyes |
+| Hot Shot | Gunner | `unreached` | Its bullets do 2 more damage | 10% less maximum health | Head: an orange back of the head |
+| Double Shot | Gunner | `spotted` | Each third attack shoots 2 bullets | 10% less maximum health | Lid: two dark violet rings on the lid |
+| Seeker Shot | Gunner, sub Lifter | `projectile` | Its bullets fly 30% faster | 10% less maximum health | Head: glowing pale yellow lenses on the eyes. This changes the model |
 
 ### Lifter genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | High Lift | Lifter | `critical` | Its bullets give Levitation for 20 seconds | Its bullets do 10% less damage | Lid: white spots on the lid |
-| Heavy Air | Lifter | `melee` | Its bullets also give Weakness for 6 seconds | Its bullets do 10% less damage | Head: a gray head |
+| Heavy Air | Lifter | `melee` | Its bullets also give Weakness for 6 seconds | Its bullets do 10% less damage | Head: a gray back of the head |
 | Steep Lift | Lifter, sub Gunner | `alone` | Its bullets give Levitation II, not Levitation I | Its bullets do 10% less damage | Base: light blue bands on the base |
 
 ### Bunker genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Thick Lid | Bunker | `projectile` | 30% less damage from projectiles while it is open | It shoots 10% slower | Lid: a thick, dark rim on the lid |
+| Thick Lid | Bunker | `projectile` | 30% less damage from projectiles while it is open | It shoots 10% slower | Lid: a thick, dark rim with a light inner edge on the lid |
 | Blast Lid | Bunker | `explosion` | Half the damage from explosions | It shoots 10% slower | Base: sooty patches on the base |
-| Snap Lid | Bunker, sub Gunner | `melee` | When a player is next to it, it snaps its lid on the player for 4 damage, one time each 3 seconds | It shoots 10% slower | Lid: teeth on the edge of the lid |
+| Snap Lid | Bunker, sub Gunner | `melee` | When a player is next to it, it snaps its lid on the player for 4 damage, one time each 3 seconds | It shoots 10% slower | Lid: teeth on the corners of the lid |
 
 ### Shifter genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Quick Blink | Shifter | `critical` | When something hurts it, it teleports with a 50% chance, at any health | 10% less maximum health | Base: purple sparks on the base |
-| Sight Blink | Shifter | `unreached` | When it cannot see its target for 5 seconds, it teleports to a place that sees the target | 10% less maximum health | Head: wide, pale eyes |
-| Blink Shut | Shifter, sub Bunker | `spotted` | After it teleports, it stays closed for 3 seconds | 10% less maximum health | Lid: a purple seam on the lid |
+| Quick Blink | Shifter | `critical` | When something hurts it, it teleports with a 50% chance, at any health | 10% less maximum health | Base: violet sparks on the base |
+| Sight Blink | Shifter | `unreached` | When it cannot see its target for 5 seconds, it teleports to a place that sees the target | 10% less maximum health | Head: wide eyes with white eye whites |
+| Blink Shut | Shifter, sub Bunker | `spotted` | After it teleports, it stays closed for 3 seconds | 10% less maximum health | Lid: a bright violet seam round the lid |
 
 ### Budder genes
 
@@ -131,7 +131,7 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Split Reach | Budder | `crowd` | Its split works with up to 8 shulkers near it, not 5 | 10% less maximum health | Base: small buds on the base |
 | Heir Shell | Budder | `alone` | A shulker that splits off it gets its genes, not the genes of the pool | 10% less maximum health | Lid: a pale cross on the lid |
-| Scatter Bud | Budder, sub Shifter | `player_death` | A shulker that splits off it teleports at once to a free place in 8 blocks | 10% less maximum health | Head: a pink head |
+| Scatter Bud | Budder, sub Shifter | `player_death` | A shulker that splits off it teleports at once to a free place in 8 blocks | 10% less maximum health | Head: a pink stripe over the head |
 
 ## Gene details
 
@@ -179,7 +179,10 @@ The visual column gives the region and the mark.
   color.
 - It needs a new region map, `textures/region/shulker.png`. The design uses
   the regions lid, base, and head.
-- No gene changes the model.
+- One gene changes the model: Seeker Shot.
+- The head marks show only while the lid is open.
+- Each lid and base mark has a light part and a dark part, so it shows on a
+  white shulker and on a black shulker.
 
 ## Minor families
 

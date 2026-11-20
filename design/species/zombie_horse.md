@@ -107,7 +107,7 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Rotten Barding | Destrier | `projectile` | Its riders take 30% less damage from projectiles | 10% less maximum health | Body: a ragged cloth over the back |
 | Battle Saddle | Destrier | `melee` | Its riders take 20% less melee damage | 10% less speed | Body: a high, dark saddle. This changes the model |
-| Grave Bond | Destrier | `critical` | When a rider is under half health, the rider gets Regeneration for 5 seconds, one time each 30 seconds | 10% less maximum health | Head: a green blaze on the face |
+| Grave Bond | Destrier | `critical` | When a rider is under half health, the rider heals 4 health at once, one time each 30 seconds | 10% less maximum health | Head: a green blaze on the face |
 | Ash Barding | Destrier | `fire` | Its riders take half the damage from fire | 10% less speed | Body: a gray, scorched cloth |
 | Last Charge | Destrier | `player_death` | When it dies, its riders get Strength for 10 seconds | 10% less maximum health | Mane: red ribbons in the mane |
 | Grave Barding | Destrier, sub Vaulter | `smite` | Smite does half the extra damage to its riders | 10% less speed | Body: bone plates on the chest |
@@ -156,7 +156,7 @@ The visual column gives the region and the mark.
 | Ghost Gallop | It works as the creeper Gloom |
 | Panic Bolt | It works as the blaze Smoke Dash. Its riders stay on it |
 | Destriers | "Its riders" are the mobs that ride it. A player that rides it does not count |
-| Grave Bond | It checks each rider |
+| Grave Bond | It checks each rider. The riders are undead, and the undead ignore Regeneration, so it heals at once |
 | Last Charge | It works as the pillager Grudge, on its riders only |
 | Grave Barding | It works as the zoglin Holy Bane, on its riders |
 | Revenants | They work as the vindicator Thick Blood |

@@ -131,7 +131,7 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Bone Barding | Squire | `projectile` | Its riders take 30% less damage from projectiles | 10% less maximum health | Body: bone plates on the flanks |
 | Squire Saddle | Squire | `melee` | Its riders take 20% less melee damage | 10% less speed | Body: an old, dark saddle. This changes the model |
-| Faithful Bones | Squire | `critical` | When a rider is under half health, the rider gets Regeneration for 5 seconds, one time each 30 seconds | 10% less maximum health | Head: a blue mark on the skull |
+| Faithful Bones | Squire | `critical` | When a rider is under half health, the rider heals 4 health at once, one time each 30 seconds | 10% less maximum health | Head: a blue mark on the skull |
 | Storm Cloak | Squire | `fire` | Its riders take half the damage from fire | 10% less speed | Body: a gray, singed cloth |
 | Last Ride | Squire | `alone` | When it dies, its riders get Resistance for 10 seconds | 10% less maximum health | Mane: torn ribbons in the mane |
 | Helm Bond | Squire, sub Wraithrunner | `smite` | Smite does half the extra damage to its riders | 10% less speed | Head: an iron band round the skull |
@@ -168,7 +168,7 @@ The visual column gives the region and the mark.
 | Blessed Skull | It works as the zoglin Holy Bane |
 | Bone Mend | It works as the vindicator Death Wish |
 | Squires | "Its riders" are the mobs that ride it. A player that rides it does not count |
-| Faithful Bones | It checks each rider |
+| Faithful Bones | It checks each rider. The riders are undead, and the undead ignore Regeneration, so it heals at once |
 | Last Ride | It works as the pillager Grudge, on its riders only |
 | Helm Bond | It works as the zoglin Holy Bane, on its riders |
 | Wraith Veil | It works as the creeper Gloom |

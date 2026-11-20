@@ -131,7 +131,7 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Saddle Wall | Bearer | `projectile` | Its riders take 30% less damage from projectiles | 10% less maximum health | Body: a thick saddle blanket |
 | High Seat | Bearer | `melee` | Its riders take 20% less melee damage | 10% less speed | Body: a tall saddle frame. This changes the model |
-| Rider Bond | Bearer | `critical` | When a rider is under half health, the rider gets Regeneration for 5 seconds, one time each 30 seconds | 10% less maximum health | Head: a green mark on the brow |
+| Rider Bond | Bearer | `critical` | When a rider is under half health, the rider heals 4 health at once, one time each 30 seconds | 10% less maximum health | Head: a green mark on the brow |
 | Fire Cloth | Bearer | `fire` | Its riders take half the damage from fire | 10% less speed | Body: a red cloth over the back |
 | Last Carry | Bearer | `player_death` | When it dies, its riders get Resistance for 10 seconds | 10% less maximum health | Body: long, torn tassels |
 | Iron Studs | Bearer, sub Sandkicker | `golem` | Its riders do two times the damage to golems | 10% less speed | Body: iron studs on the saddle |
@@ -162,7 +162,7 @@ The visual column gives the region and the mark.
 | Shy Step | It works as the pillager Evasion |
 | Escape Run | It works as the blaze Smoke Dash. Its riders stay on it |
 | Bearers | "Its riders" are the mobs that ride it. A player that rides it does not count |
-| Rider Bond | It checks each rider |
+| Rider Bond | It checks each rider. The riders are undead, and the undead ignore Regeneration, so it heals at once |
 | Last Carry | It works as the pillager Grudge, on its riders only |
 | Sandkickers | The kick is a hit of the camel husk. It also acts when no mob rides it |
 | Sand Spit | It spits only while a mob rides it and the rider has a target. It works as a llama spit |

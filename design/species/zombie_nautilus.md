@@ -133,7 +133,7 @@ The visual column gives the region and the mark.
 | Shell Wall | Tidebearer | `projectile` | Its riders take 30% less damage from projectiles | 10% less maximum health | Shell: a high shell rim. This changes the model |
 | Tide Shield | Tidebearer | `melee` | Its riders take 20% less melee damage | 10% less speed | Shell: a broad, flat shell edge |
 | Trident Guard | Tidebearer | `trident` | Its riders take half the damage from tridents | 10% less speed | Shell: a silver ring |
-| Kin Current | Tidebearer | `critical` | When a rider is under half health, the rider gets Regeneration for 5 seconds, one time each 30 seconds | 10% less maximum health | Body: a green mark between the eyes |
+| Kin Current | Tidebearer | `critical` | When a rider is under half health, the rider heals 4 health at once, one time each 30 seconds | 10% less maximum health | Body: a green mark between the eyes |
 | Last Current | Tidebearer | `player_death` | When it dies, its riders get Resistance for 10 seconds | 10% less maximum health | Tentacles: pale tips |
 | Ink Veil | Tidebearer, sub Inker | `spotted` | Its riders are near invisible in the dark | 10% less maximum health | Shell: black ink stains |
 
@@ -169,7 +169,7 @@ The visual column gives the region and the mark.
 | Deep Escape | It works as the blaze Smoke Dash |
 | Wake Jet | It uses the self effect after a hit |
 | Tidebearers | "Its riders" are the mobs that ride it. A player that rides it does not count |
-| Kin Current | It checks each rider |
+| Kin Current | It checks each rider. The riders are undead, and the undead ignore Regeneration, so it heals at once |
 | Last Current | It works as the pillager Grudge, on its riders only |
 | Ink Veil | It works as the creeper Gloom, on the riders |
 | Inkers | They work as the evoker Smoke Veil, with an ink cloud and Blindness |

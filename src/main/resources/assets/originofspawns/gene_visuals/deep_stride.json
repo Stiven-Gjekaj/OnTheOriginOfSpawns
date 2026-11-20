@@ -5,14 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/deep_stride_0.png",
-				"tint": "#5A6A80"
+				"tint": "#3A5A8A"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/deep_stride_1.png",
-				"tint": "#B8C8DC"
+				"tint": "#8AB0D8"
 			}
 		}
 	]

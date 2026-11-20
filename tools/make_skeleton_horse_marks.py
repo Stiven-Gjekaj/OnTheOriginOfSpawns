@@ -29,7 +29,8 @@ Each gene keeps to its own zone, so that the marks stack:
   has the pelvis and the rump. Bone Mend has the chest and the breast bone.
   Wraith Veil is a fade under all the other marks. Storm Cloak (a cloth on
   the back end of the back) and Squire Saddle (a saddle) are gene models.
-- The head. Helm Bond has an iron band round the high row of the head.
+- The head. Helm Bond has an iron band round the high row of the head, and
+  the two high rows of its back.
   Faithful Bones has a blue mark on the top of the head. Wide Trap has dark
   rims round the eye sockets, and glowing sockets, a gene model. Blessed
   Skull has the sides and the top of the snout. Long Wait has the front and
@@ -48,6 +49,7 @@ Each gene keeps to its own zone, so that the marks stack:
 The gene models use the bones body, head, mane, tail, and the four legs.
 This script needs Pillow.
 """
+import math
 import os
 
 from PIL import Image
@@ -85,21 +87,23 @@ def leg_put(mark, faces, rows, test=None):
 
 def rib_gaps():
     # Wide gaps between the ribs: the second and the fourth rib are gone
-    # (erased with a mask), so the gaps between the ribs are wide. The rows
-    # of the rings of Trident Ribs stay. The bone in front of the first rib
-    # is dark.
+    # (erased with a mask), so the gaps between the ribs are wide. Dark,
+    # broken stubs of the lost ribs stay at their top and their foot, and the
+    # bone in front of the first rib is dark.
     mask = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
-    dark = Mark("#3A3A36")
+    dark = Mark("#3A322A")
     for c in RIBS[1] + RIBS[3]:
         for r in RIB_ROWS:
             if r in RING_ROWS:
                 continue
+            if r in (2, 9):
+                dark.put(side(BODY, c, r))
+                continue
             for p in side(BODY, c, r):
                 mask.putpixel(p, (255, 255, 255, 255))
-    for c in (5,):
-        for r in RIB_ROWS:
-            if r not in RING_ROWS:
-                dark.put(side(BODY, c, r))
+    for r in RIB_ROWS:
+        if r not in RING_ROWS:
+            dark.put(side(BODY, 5, r))
     name = "rib_gaps_mask"
     mask.save(os.path.join(MARK_DIR, name + ".png"))
     gone = {"regions": ["torso"], "effect": {"type": "erase", "texture": f"originofspawns:textures/gene_marks/{name}.png"}}
@@ -107,10 +111,10 @@ def rib_gaps():
 
 
 def trident_ribs():
-    # Steel rings round the ribs: two steel rings go across the ribs, with
-    # bright rivets where they cross a rib.
-    steel = Mark("#5A646C")
-    rivet = Mark("#D8E0E4")
+    # Steel rings round the ribs: two dark steel rings go across the ribs,
+    # with dull rivets where they cross a rib.
+    steel = Mark("#3E464E")
+    rivet = Mark("#9AA6B0")
     for c in range(5, 16):
         for r in RING_ROWS:
             (rivet if c % 2 == 0 else steel).put(side(BODY, c, r))
@@ -192,15 +196,16 @@ def coral_bones():
 
 def bone_mend():
     # A white, healed bone on the chest: the frame of the chest and the
-    # breast bone are bright, white, new bone, with a pale seam where they
-    # healed.
-    white = Mark("#FFFFFF")
-    seam = Mark("#B8D0C8")
+    # breast bone are new, cream bone, with dark seams where they healed and
+    # a faint pink tint of new growth.
+    cream = Mark("#F4E8C8")
+    seam = Mark("#5A4A3A")
+    pink = Mark("#E8C0B0")
     for x, y, f, col, row in pixels(BODY, ("front",)):
-        (seam if row in (3, 6) else white).put((x, y))
+        (seam if row in (3, 6) else pink if row in (4, 7) else cream).put((x, y))
     for x, y, f, col, row in pixels(BODY, ("bottom",), rows=range(11, 22)):
-        (seam if row % 4 == 0 else white).put((x, y))
-    return [white, seam]
+        (seam if row % 4 == 0 else pink if row % 4 == 1 else cream).put((x, y))
+    return [cream, seam, pink]
 
 
 def wraith_veil():
@@ -220,21 +225,32 @@ def storm_cloak():
 
 
 def storm_cloak_model():
-    # A gray, singed cloth: a gray cloth lies over the back end of the back
-    # and hangs down a little on each side, with black, burnt edges. On the
-    # bone body, the back is at y -8, and the back end of the body is at z
-    # 5.
+    # A gray, singed cloth: a thin, gray cloth lies over the back end of the
+    # back and hangs down the flanks, with burnt holes, a torn hem of
+    # different lengths, and black, singed edges. On the bone body, the back is at y -8, the sides are at x -5
+    # and 5, and the back end is at z 5.
     im = model_image(64, 32)
 
-    def cloth(f, x, y):
-        if f == "top":
-            return "#1A1816" if x in (0, 9) or y in (0, 7) else "#7A7A78" if (x + y) % 4 else "#6A6A68"
-        return "#1A1816" if y == 2 or (x + y) % 5 == 0 else "#7A7A78"
-    paint_box(im, 0, 0, 10, 0, 8, cloth)
-    paint_box(im, 0, 12, 0, 3, 8, cloth)
-    parts = [{"bone": "body", "uv": [0, 0], "from": [-5, -8.3, -3], "size": [10, 0, 8], "inflate": 0.2},
-             {"bone": "body", "uv": [0, 12], "from": [-5.4, -8.3, -3], "size": [0, 3, 8]},
-             {"bone": "body", "uv": [0, 12], "from": [5.4, -8.3, -3], "size": [0, 3, 8]}]
+    def top(f, x, y):
+        if f != "top" or noise100(x, y, 7901) < 18:
+            return None
+        if x in (0, 9) or y in (0, 7) or noise100(x, y, 7902) < 15:
+            return "#2A2420"
+        return "#6A6A6E" if (x + y) % 4 else "#5A5A5E"
+
+    def drape(f, x, y):
+        # The hem is torn: some columns end higher than the others.
+        hem = 2 + noise100(x, 0, 7903) % 4
+        if y > hem or (y > 0 and noise100(x, y, 7904) < 12):
+            return None
+        if y == hem or x in (0, 7):
+            return "#2A2420" if (x + y) % 3 else "#8A4A20"
+        return "#6A6A6E" if (x + y) % 4 else "#5A5A5E"
+    paint_box(im, 0, 0, 10, 0, 8, top)
+    paint_box(im, 0, 12, 0, 6, 8, drape)
+    parts = [{"bone": "body", "uv": [0, 0], "from": [-5, -8.15, -3], "size": [10, 0, 8]},
+             {"bone": "body", "uv": [0, 12], "from": [-5.15, -8.15, -3], "size": [0, 6, 8]},
+             {"bone": "body", "uv": [0, 12], "from": [5.15, -8.15, -3], "size": [0, 6, 8], "mirror": True}]
     save_model("storm_cloak_cloth", im, parts)
 
 
@@ -268,12 +284,14 @@ def squire_saddle_model():
 # The head.
 
 def helm_bond():
-    # An iron band round the skull: a band of dark iron goes round the high
-    # row of the head, with bright rivets.
-    iron = Mark("#4A4E54")
-    rivet = Mark("#C8CED4")
+    # An iron band round the skull: a wide band of dark iron goes round the
+    # high row of the head and the two high rows of the back of the head,
+    # with dull rivets.
+    iron = Mark("#33373C")
+    rivet = Mark("#8A929A")
     for x, y, f, col, row in pixels(HEAD, SIDES, rows=(0,)):
         (rivet if col % 3 == 1 else iron).put((x, y))
+    put(iron, HEAD, ("back",), rows=(1,))
     return [iron, rivet]
 
 
@@ -313,13 +331,12 @@ def wide_trap_model():
 
 def blessed_skull():
     # A pale, clean skull: the sides and the top of the snout are clean,
-    # smooth, pale bone, with a thin gold edge round them.
-    clean = Mark("#F2EEE2")
-    gold = Mark("#D8B860")
+    # pale bone, and a faint gold line of light runs down the middle of the
+    # top of the snout and of its front.
+    clean = Mark("#FAF6EC")
+    gold = Mark("#E0C060")
     for x, y, f, col, row in pixels(SNOUT, ("right", "left", "top")):
-        w, h = SNOUT[f][2], SNOUT[f][3]
-        edge = col in (0, w - 1) or row in (0, h - 1)
-        (gold if edge else clean).put((x, y))
+        (gold if f == "top" and col in (1, 2) else clean).put((x, y))
     return [clean, gold]
 
 
@@ -331,7 +348,7 @@ def long_wait():
     shade = Mark("#4A4740")
     for part, faces in ((SNOUT, ("front", "bottom")), (HEAD, ("bottom", "back"))):
         for x, y, f, col, row in pixels(part, faces):
-            if part is HEAD and f == "back" and row == 0:
+            if part is HEAD and f == "back" and row < 2:
                 continue
             (shade if (col + row) % 3 == 0 else dark).put((x, y))
     return [dark, shade]
@@ -340,18 +357,16 @@ def long_wait():
 # The mane.
 
 def storm_kin():
-    # White streaks in the mane: bright, white streaks run down the back of
-    # the neck and the mane, as lightning.
-    white = Mark("#FFFFFF")
-    pale = Mark("#C8E0FF")
+    # White streaks in the mane: the back of the neck and the mane are dark
+    # storm gray, and bright, pale blue streaks run down them, as lightning
+    # in a storm cloud.
+    storm = Mark("#3A4250")
+    streak = Mark("#B8D8FF")
     for x, y, f, col, row in pixels(NECK, ("back",)):
-        k = (col + row) % 4
-        if k == 0:
-            white.put((x, y))
-        elif k == 1 and row % 2 == 0:
-            pale.put((x, y))
-    put(white, MANE, SIDES)
-    return [white, pale]
+        (streak if (col + row) % 4 == 0 or (col - row) % 7 == 0 else storm).put((x, y))
+    for x, y, f, col, row in pixels(MANE, SIDES):
+        (streak if row % 3 == 0 else storm).put((x, y))
+    return [storm, streak]
 
 
 def mane_strands(name, color_of, spots, size=(1, 6, 1), turn=-30, glow=False):
@@ -382,10 +397,25 @@ def kelp_mane():
 
 
 def kelp_mane_model():
-    # Green kelp in the mane: long, green strands of kelp hang from the low
-    # part of the mane, on both sides of the neck.
-    mane_strands("kelp_mane_kelp", lambda f, x, y: "#2E8A2A" if (x + y) % 3 else "#5AB840",
-                 [(2.1, -2, 4), (-3.1, -2, 4), (2.1, 2, 4), (-3.1, 2, 4)], size=(1, 7, 1), turn=-10)
+    # Green kelp in the mane: loose, wavy strands of kelp hang from the mane
+    # on both sides of the neck, in three lengths. Each strand is a chain of
+    # small pieces that bend one way and then the other, as kelp in water.
+    im = model_image(32, 16)
+    paint_box(im, 0, 0, 1, 2, 1, lambda f, x, y: "#2E8A2A" if y == 0 else "#4AA838")
+    paint_box(im, 4, 0, 1, 2, 1, lambda f, x, y: "#3A9A30" if y == 0 else "#5AB840")
+    parts = []
+    for x in (2.1, -3.1):
+        for y0, count in ((-4, 3), (-1, 5), (2, 4)):
+            # The kelp hangs in front of the ribbons of Last Ride, so the
+            # two stay apart.
+            py, pz = y0, 1.5
+            for n in range(count):
+                turn = -25 if n % 2 == 0 else 15
+                parts.append({"bone": "mane", "uv": [4 * (n % 2), 0], "from": [x, py, pz], "size": [1, 2, 1],
+                              "pivot": [x + 0.5, py, pz], "rotation": [turn, 0, 0]})
+                a = math.radians(turn)
+                py, pz = py + 2 * math.cos(a), pz + 2 * math.sin(a)
+    save_model("kelp_mane_kelp", im, parts)
 
 
 def last_ride():
@@ -469,11 +499,11 @@ def grounded_bones():
 
 
 def golem_brace():
-    # Iron gray bands: a wide brace of iron gray goes round each shin, with
-    # a pale top edge and dark rivets.
-    iron = Mark("#8A9098")
-    light = Mark("#D0D6DC")
-    rivet = Mark("#2A2E34")
+    # Iron gray bands: a wide brace of dark iron gray goes round each shin,
+    # with a light top edge and dark rivets.
+    iron = Mark("#5A6068")
+    light = Mark("#9AA2AA")
+    rivet = Mark("#1E2226")
     leg_put(light, SIDES, (6,))
     leg_put(iron, SIDES, (7, 8), lambda x, y, f, c, r: not (c == 1 and r == 7))
     leg_put(rivet, SIDES, (7,), lambda x, y, f, c, r: c == 1)
@@ -481,10 +511,10 @@ def golem_brace():
 
 
 def deep_stride():
-    # Blue gray hooves: the sides of each hoof are blue gray, with a pale
-    # shine.
-    blue = Mark("#5A6A80")
-    shine = Mark("#B8C8DC")
+    # Blue gray hooves: the sides of each hoof are a deep blue gray, with a
+    # pale blue shine.
+    blue = Mark("#3A5A8A")
+    shine = Mark("#8AB0D8")
     leg_put(blue, ("right", "left"), (9, 10), lambda x, y, f, c, r: not (r == 9 and c == 1))
     leg_put(shine, ("right", "left"), (9,), lambda x, y, f, c, r: c == 1)
     return [blue, shine]

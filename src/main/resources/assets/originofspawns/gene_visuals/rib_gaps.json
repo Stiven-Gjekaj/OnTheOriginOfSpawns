@@ -5,7 +5,7 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/rib_gaps_0.png",
-				"tint": "#3A3A36"
+				"tint": "#3A322A"
 			}
 		},
 		{

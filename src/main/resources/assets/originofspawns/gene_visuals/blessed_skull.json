@@ -5,14 +5,14 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/blessed_skull_0.png",
-				"tint": "#F2EEE2"
+				"tint": "#FAF6EC"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/blessed_skull_1.png",
-				"tint": "#D8B860"
+				"tint": "#E0C060"
 			}
 		}
 	]

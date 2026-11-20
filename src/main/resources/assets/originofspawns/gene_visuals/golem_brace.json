@@ -5,21 +5,21 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/golem_brace_0.png",
-				"tint": "#8A9098"
+				"tint": "#5A6068"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/golem_brace_1.png",
-				"tint": "#D0D6DC"
+				"tint": "#9AA2AA"
 			}
 		},
 		{
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/golem_brace_2.png",
-				"tint": "#2A2E34"
+				"tint": "#1E2226"
 			}
 		}
 	]

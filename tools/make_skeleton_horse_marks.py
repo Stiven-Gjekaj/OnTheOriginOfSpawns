@@ -88,7 +88,8 @@ def leg_put(mark, faces, rows, test=None):
 
 def rib_gaps():
     # Wide gaps between the ribs: the second and the fourth rib are gone
-    # (erased with a mask), so the gaps between the ribs are wide. Dark,
+    # (erased with a mask), with two cross bars of the spine over them, so
+    # the gaps between the ribs are wide. Dark,
     # broken stubs of the lost ribs stay at their top and their foot, and the
     # bone in front of the first rib is dark.
     mask = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
@@ -105,6 +106,12 @@ def rib_gaps():
     for r in RIB_ROWS:
         if r not in RING_ROWS:
             dark.put(side(BODY, 5, r))
+    # The cross bars of the spine over the lost ribs are gone too, so the
+    # gaps show from above. Row 12 of the top is over the fourth rib, and
+    # row 14 is next to it.
+    for x, y, f, col, row in pixels(BODY, ("top",), rows=(12, 14)):
+        if col not in (4, 5):
+            mask.putpixel((x, y), (255, 255, 255, 255))
     name = "rib_gaps_mask"
     mask.save(os.path.join(MARK_DIR, name + ".png"))
     gone = {"regions": ["torso"], "effect": {"type": "erase", "texture": f"originofspawns:textures/gene_marks/{name}.png"}}

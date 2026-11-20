@@ -3,13 +3,17 @@ package io.github.stivengjekaj.originofspawns.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneRavagers;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Ravager;
 
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -69,5 +73,28 @@ public abstract class RavagerMixin {
 	@ModifyConstant(method = "blockedByItem", constant = @Constant(doubleValue = 0.5))
 	private double originofspawns$stunChance(double chance) {
 		return GeneRavagers.stunChance((Ravager) (Object) this);
+	}
+
+	/**
+	 * A no roar gene stops the roar at the end of a stun.
+	 */
+	@WrapOperation(method = "aiStep", at = @At(value = "FIELD",
+			target = "Lnet/minecraft/world/entity/monster/Ravager;roarTick:I", opcode = Opcodes.PUTFIELD, ordinal = 1))
+	private void originofspawns$noRoarAfterStun(Ravager self, int ticks, Operation<Void> original) {
+		if (!GeneCombat.has(self, GeneEffect.NoRoar.class)) {
+			original.call(self, ticks);
+		}
+	}
+
+	/**
+	 * A no roar gene stops the roar sound at the end of a stun.
+	 */
+	@WrapOperation(method = "aiStep", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/monster/Ravager;playSound(Lnet/minecraft/sounds/SoundEvent;FF)V"))
+	private void originofspawns$noRoarSound(Ravager self, SoundEvent sound, float volume, float pitch,
+			Operation<Void> original) {
+		if (!GeneCombat.has(self, GeneEffect.NoRoar.class)) {
+			original.call(self, sound, volume, pitch);
+		}
 	}
 }

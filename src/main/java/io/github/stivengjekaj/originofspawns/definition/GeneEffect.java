@@ -365,7 +365,8 @@ public sealed interface GeneEffect {
 			Map.entry("roar_on_hurt", RoarOnHurt.CODEC),
 			Map.entry("roar_on_kill", RoarOnKill.CODEC),
 			Map.entry("stun_chance", StunChance.CODEC),
-			Map.entry("no_stun", NoStun.CODEC)
+			Map.entry("no_stun", NoStun.CODEC),
+			Map.entry("no_roar", NoRoar.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6180,6 +6181,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "no_stun";
+		}
+	}
+
+	/**
+	 * A ravager does not roar at the end of a stun, and it makes no roar sound then. A roar on hurt gene and a roar on kill
+	 * gene still roar. Steady Stance downside.
+	 */
+	record NoRoar() implements GeneEffect {
+		public static final MapCodec<NoRoar> CODEC = MapCodec.unit(new NoRoar());
+
+		@Override
+		public String type() {
+			return "no_roar";
 		}
 	}
 }

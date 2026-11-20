@@ -120,4 +120,19 @@ public class RavagerEffectsTest {
 		helper.assertTrue(pig.getDeltaMovement().horizontalDistance() > 0.5, "it pushes the defender back hard");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aNoRoarGeneStopsTheRoarAtTheEndOfAStun(GameTestHelper helper) {
+		Ravager plain = ravager(helper, new BlockPos(1, 1, 1));
+		Ravager quiet = ravager(helper, new BlockPos(5, 1, 5), "test_no_roar");
+		((RavagerAccessor) plain).originofspawns$setStunnedTick(1);
+		((RavagerAccessor) quiet).originofspawns$setStunnedTick(1);
+		plain.aiStep();
+		quiet.aiStep();
+		helper.assertValueEqual(plain.getRoarTick(), 20, "a vanilla ravager roars at the end of a stun");
+		helper.assertValueEqual(quiet.getRoarTick(), 0, "the ravager with the gene does not roar");
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneRavagers.roarNow(quiet),
+				"a roar with no stun still works");
+		helper.succeed();
+	}
 }

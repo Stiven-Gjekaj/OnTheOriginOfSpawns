@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombie_nautilus",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "translucent_on_hurt", "seconds": 4, "opacity": 0.1, "damage_types": "#minecraft:is_projectile" }],
+	"mutation_rate": 0
+}

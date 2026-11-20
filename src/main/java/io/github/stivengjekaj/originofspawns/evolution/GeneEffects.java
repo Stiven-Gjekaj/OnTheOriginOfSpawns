@@ -109,7 +109,11 @@ public final class GeneEffects {
 	 */
 	public static Optional<Float> translucentOpacity(Entity entity) {
 		int light = entity.level().getMaxLocalRawBrightness(entity.blockPosition());
-		return of(entity)
+		Optional<Float> hurt = entity.level().getGameTime() < entity.getAttachedOrElse(ModAttachments.TRANSLUCENT_UNTIL, 0L)
+				? of(entity).filter(GeneEffect.TranslucentOnHurt.class::isInstance)
+						.map(effect -> ((GeneEffect.TranslucentOnHurt) effect).opacity()).min(Float::compare)
+				: Optional.empty();
+		Optional<Float> lit = of(entity)
 				.filter(effect -> effect instanceof GeneEffect.Translucent translucent && light <= translucent.maxLight()
 						&& translucent.blocks().map(blocks -> inBlocks(entity, blocks)).orElse(true)
 						&& (!translucent.nightOnly() || entity.level().isDarkOutside())
@@ -117,6 +121,10 @@ public final class GeneEffects {
 								|| GeneCombat.test(living, translucent.when()) && GeneCombat.test(living, translucent.also())))
 				.map(effect -> ((GeneEffect.Translucent) effect).opacity())
 				.min(Float::compare);
+		if (hurt.isPresent() && lit.isPresent()) {
+			return Optional.of(Math.min(hurt.get(), lit.get()));
+		}
+		return hurt.isPresent() ? hurt : lit;
 	}
 
 	/**

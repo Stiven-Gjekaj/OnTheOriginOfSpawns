@@ -326,7 +326,8 @@ public sealed interface GeneEffect {
 			Map.entry("self_effect_after", SelfEffectAfter.CODEC),
 			Map.entry("ink_effect", InkEffect.CODEC),
 			Map.entry("ink_reach", InkReach.CODEC),
-			Map.entry("ink_rate", InkRate.CODEC)
+			Map.entry("ink_rate", InkRate.CODEC),
+			Map.entry("translucent_on_hurt", TranslucentOnHurt.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5483,6 +5484,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "ink_rate";
+		}
+	}
+
+	/**
+	 * After something hurts the mob, the clients draw it translucent for the seconds, at each light level. With
+	 * {@code damage_types}, only that damage counts. Ink Screen: 4 seconds after a projectile.
+	 */
+	record TranslucentOnHurt(float seconds, float opacity, Optional<TagKey<DamageType>> damageTypes) implements GeneEffect {
+		public static final MapCodec<TranslucentOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("seconds", 4.0F).forGetter(TranslucentOnHurt::seconds),
+				Codec.floatRange(0.0F, 1.0F).optionalFieldOf("opacity", 0.1F).forGetter(TranslucentOnHurt::opacity),
+				TagKey.hashedCodec(Registries.DAMAGE_TYPE).optionalFieldOf("damage_types").forGetter(TranslucentOnHurt::damageTypes)
+		).apply(instance, TranslucentOnHurt::new));
+
+		@Override
+		public String type() {
+			return "translucent_on_hurt";
 		}
 	}
 }

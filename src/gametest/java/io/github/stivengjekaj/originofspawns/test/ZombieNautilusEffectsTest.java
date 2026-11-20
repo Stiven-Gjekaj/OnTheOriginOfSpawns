@@ -190,4 +190,26 @@ public class ZombieNautilusEffectsTest {
 		helper.assertTrue(inkAfterSixSeconds(helper, inky, near, far), "the quick ink waits only 5 seconds");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void inkScreenMakesTheNautilusTranslucentForFourSecondsAfterAProjectile(GameTestHelper helper) {
+		var level = helper.getLevel();
+		var pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 7));
+		ZombieNautilus hit = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, new BlockPos(1, 1, 1), "test_ink_screen");
+		ZombieNautilus shot = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, new BlockPos(6, 1, 1), "test_ink_screen");
+		hit.hurtServer(level, level.damageSources().mobAttack(pig), 1.0F);
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneEffects.translucentOpacity(hit).isEmpty(),
+				"a melee hit does not make it translucent");
+		var snowball = new net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball(level, pig,
+				new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SNOWBALL));
+		shot.hurtServer(level, level.damageSources().thrown(snowball, pig), 1.0F);
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneEffects.translucentOpacity(shot).isPresent(),
+				"a projectile makes it translucent");
+		helper.assertValueEqual(shot.getAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.TRANSLUCENT_UNTIL),
+				level.getGameTime() + 80L, "for 4 seconds");
+		shot.setAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.TRANSLUCENT_UNTIL, level.getGameTime());
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneEffects.translucentOpacity(shot).isEmpty(),
+				"it is not translucent after the 4 seconds");
+		helper.succeed();
+	}
 }

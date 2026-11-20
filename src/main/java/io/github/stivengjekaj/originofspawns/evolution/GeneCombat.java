@@ -1136,7 +1136,11 @@ public final class GeneCombat {
 		}
 		if (entity instanceof Mob wounded) {
 			for (GeneEffect effect : GeneEffects.of(wounded).toList()) {
-				if (effect instanceof GeneEffect.SelfEffectOnHurt self
+				if (effect instanceof GeneEffect.TranslucentOnHurt screen && screen.damageTypes().map(source::is).orElse(true)) {
+					long end = wounded.level().getGameTime() + Math.round(screen.seconds() * 20.0F);
+					wounded.setAttached(ModAttachments.TRANSLUCENT_UNTIL,
+							Math.max(end, wounded.getAttachedOrElse(ModAttachments.TRANSLUCENT_UNTIL, 0L)));
+				} else if (effect instanceof GeneEffect.SelfEffectOnHurt self
 						&& self.damageTypes().map(source::is).orElse(true)) {
 					wounded.addEffect(new MobEffectInstance(self.effect(), Math.round(self.seconds() * 20.0F),
 							self.amplifier()), wounded);

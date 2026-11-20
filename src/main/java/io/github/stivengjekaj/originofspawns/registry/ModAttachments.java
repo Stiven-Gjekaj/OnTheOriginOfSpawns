@@ -302,6 +302,12 @@ public final class ModAttachments {
 			AttachmentRegistry.create(OriginOfSpawns.id("spit"));
 
 	/**
+	 * The game time at which the translucent time of a mob after a hurt ends. The clients use it to draw the mob.
+	 */
+	public static final AttachmentType<Long> TRANSLUCENT_UNTIL = AttachmentRegistry.create(OriginOfSpawns.id("translucent_until"),
+			builder -> builder.syncWith(ByteBufCodecs.VAR_LONG, AttachmentSyncPredicate.all()));
+
+	/**
 	 * The game time when a guardian with a laser lock lost the sight of its target.
 	 */
 	public static final AttachmentType<Long> SIGHT_LOST = AttachmentRegistry.create(OriginOfSpawns.id("sight_lost"));

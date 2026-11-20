@@ -142,4 +142,20 @@ public class CamelHuskEffectsTest {
 		helper.assertFalse(husk.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "the rider is not blind");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void spearChargeMakesTheNextHitOfTheRiderAfterADashStronger(GameTestHelper helper) {
+		var level = helper.getLevel();
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 7));
+		CamelHusk camel = camelWithRider(helper, new BlockPos(3, 1, 3), pig, "test_spear_charge");
+		Mob husk = (Mob) camel.getFirstPassenger();
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(pig,
+				level.damageSources().mobAttack(husk), 4.0F), 4.0F, "no more damage before a dash");
+		camel.handleStartJump(90);
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(pig,
+				level.damageSources().mobAttack(husk), 4.0F), 6.0F, "the first hit after the dash does 50% more damage");
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(pig,
+				level.damageSources().mobAttack(husk), 4.0F), 4.0F, "the second hit is plain");
+		helper.succeed();
+	}
 }

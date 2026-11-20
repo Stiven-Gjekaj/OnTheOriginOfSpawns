@@ -286,6 +286,16 @@ public final class ModAttachments {
 			OriginOfSpawns.id("dash_hits"));
 
 	/**
+	 * The damage multiplier of the next melee hit of a rider after a dash of its camel.
+	 */
+	public static final AttachmentType<Float> DASH_STRIKE = AttachmentRegistry.create(OriginOfSpawns.id("dash_strike"));
+
+	/**
+	 * The game time at which the dash strike of a rider ends, if the rider did not hit before.
+	 */
+	public static final AttachmentType<Long> DASH_STRIKE_END = AttachmentRegistry.create(OriginOfSpawns.id("dash_strike_end"));
+
+	/**
 	 * The game time when a guardian with a laser lock lost the sight of its target.
 	 */
 	public static final AttachmentType<Long> SIGHT_LOST = AttachmentRegistry.create(OriginOfSpawns.id("sight_lost"));

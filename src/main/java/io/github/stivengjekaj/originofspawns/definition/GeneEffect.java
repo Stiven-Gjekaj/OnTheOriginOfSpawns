@@ -316,7 +316,8 @@ public sealed interface GeneEffect {
 			Map.entry("dash_length", DashLength.CODEC),
 			Map.entry("dash_leap", DashLeap.CODEC),
 			Map.entry("dash_hit", DashHit.CODEC),
-			Map.entry("dash_cloud", DashCloud.CODEC)
+			Map.entry("dash_cloud", DashCloud.CODEC),
+			Map.entry("dash_strike", DashStrike.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5285,6 +5286,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "dash_cloud";
+		}
+	}
+
+	/**
+	 * After each dash of a camel, the next melee hit of each mob that rides it does more damage, if it comes in the
+	 * seconds. It acts on each dash, also on the dash of a player that rides it, but a player rider does not get it.
+	 * Spear Charge: 1.5.
+	 */
+	record DashStrike(float multiplier, float seconds) implements GeneEffect {
+		public static final MapCodec<DashStrike> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("multiplier", 1.5F).forGetter(DashStrike::multiplier),
+				Codec.floatRange(0.05F, 60.0F).optionalFieldOf("seconds", 5.0F).forGetter(DashStrike::seconds)
+		).apply(instance, DashStrike::new));
+
+		@Override
+		public String type() {
+			return "dash_strike";
 		}
 	}
 }

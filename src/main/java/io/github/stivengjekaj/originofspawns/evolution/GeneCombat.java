@@ -567,6 +567,14 @@ public final class GeneCombat {
 			}
 		}
 		if (source.getEntity() instanceof LivingEntity attacker && attacker != victim) {
+			Float dashStrike = attacker.getAttached(ModAttachments.DASH_STRIKE);
+			if (dashStrike != null && source.getDirectEntity() == attacker) {
+				// Only the first melee hit after a dash counts.
+				attacker.removeAttached(ModAttachments.DASH_STRIKE);
+				if (attacker.level().getGameTime() <= attacker.getAttachedOrElse(ModAttachments.DASH_STRIKE_END, 0L)) {
+					result *= dashStrike;
+				}
+			}
 			for (GeneEffect effect : GeneEffects.of(attacker).toList()) {
 				switch (effect) {
 					case GeneEffect.LaserDamage laser when LASER.get() && test(attacker, laser.when(), victim) ->

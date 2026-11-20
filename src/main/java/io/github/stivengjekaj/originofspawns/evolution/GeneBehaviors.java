@@ -1519,6 +1519,14 @@ public final class GeneBehaviors {
 		camel.setAttached(ModAttachments.DASH_TIME, level.getGameTime());
 		camel.removeAttached(ModAttachments.DASH_HITS);
 		for (GeneEffect effect : GeneEffects.of(camel).toList()) {
+			if (effect instanceof GeneEffect.DashStrike strike) {
+				for (Entity passenger : camel.getPassengers()) {
+					if (passenger instanceof Mob rider) {
+						rider.setAttached(ModAttachments.DASH_STRIKE, strike.multiplier());
+						rider.setAttached(ModAttachments.DASH_STRIKE_END, level.getGameTime() + Math.round(strike.seconds() * 20.0F));
+					}
+				}
+			}
 			if (effect instanceof GeneEffect.DashCloud cloud) {
 				for (LivingEntity other : level.getEntitiesOfClass(LivingEntity.class, camel.getBoundingBox().inflate(cloud.radius()),
 						other -> other != camel && other.isAlive() && !camel.hasPassenger(other)

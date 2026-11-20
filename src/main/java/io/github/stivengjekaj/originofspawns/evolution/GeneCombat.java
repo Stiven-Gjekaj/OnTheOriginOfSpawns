@@ -208,6 +208,7 @@ public final class GeneCombat {
 					&& !((io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker).originofspawns$isClosed();
 			case SHELL_CLOSED -> entity instanceof net.minecraft.world.entity.monster.Shulker shulker
 					&& ((io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker).originofspawns$isClosed();
+			case RIDDEN -> entity.getFirstPassenger() instanceof Mob;
 		};
 	}
 

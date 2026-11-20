@@ -135,4 +135,17 @@ public class RavagerEffectsTest {
 				"a roar with no stun still works");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aRiderRushIsFasterWithARider(GameTestHelper helper) {
+		Ravager ravager = ravager(helper, new BlockPos(2, 1, 2), "test_rider_rush");
+		var speed = ravager.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
+		io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.tick(ravager, helper.getLevel());
+		double alone = speed.getValue();
+		var pillager = MountEffectsTest.mob(helper, EntityTypes.PILLAGER, new BlockPos(2, 1, 2));
+		helper.assertTrue(pillager.startRiding(ravager, true, false), "the pillager rides the ravager");
+		io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.tick(ravager, helper.getLevel());
+		helper.assertTrue(Math.abs(speed.getValue() - alone * 1.2) < 1.0E-6, "20% more speed with a rider");
+		helper.succeed();
+	}
 }

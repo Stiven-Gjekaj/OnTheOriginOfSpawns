@@ -720,7 +720,11 @@ public sealed interface GeneEffect {
 		/**
 		 * The mob is a shulker with its lid closed.
 		 */
-		SHELL_CLOSED;
+		SHELL_CLOSED,
+		/**
+		 * A mob rides the mob, for example a pillager on a ravager.
+		 */
+		RIDDEN;
 
 		public static final Codec<When> CODEC = StringRepresentable.fromEnum(When::values);
 

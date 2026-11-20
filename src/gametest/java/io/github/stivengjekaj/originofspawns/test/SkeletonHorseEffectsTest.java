@@ -45,4 +45,21 @@ public class SkeletonHorseEffectsTest {
 		helper.assertTrue(Math.abs(swimSpeed - plainSpeed * 1.3) < 0.0001, "30% more push in water, not " + swimSpeed / plainSpeed);
 		helper.succeed();
 	}
+
+	@GameTest
+	public void coldCurrentSlowsAMeleeAttackerOnlyInWater(GameTestHelper helper) {
+		var level = helper.getLevel();
+		helper.setBlock(new BlockPos(6, 1, 6), Blocks.WATER);
+		SkeletonHorse dry = MountEffectsTest.mob(helper, EntityTypes.SKELETON_HORSE, new BlockPos(1, 1, 1), "test_horse_cold_current");
+		SkeletonHorse wet = MountEffectsTest.mob(helper, EntityTypes.SKELETON_HORSE, new BlockPos(6, 1, 6), "test_horse_cold_current");
+		wet.baseTick();
+		helper.assertTrue(wet.isInWater(), "one horse is in water");
+		var dryPig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 3));
+		var wetPig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 4));
+		dry.hurtServer(level, level.damageSources().mobAttack(dryPig), 1.0F);
+		wet.hurtServer(level, level.damageSources().mobAttack(wetPig), 1.0F);
+		helper.assertFalse(dryPig.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS), "no Slowness on land");
+		helper.assertTrue(wetPig.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS), "Slowness in water");
+		helper.succeed();
+	}
 }

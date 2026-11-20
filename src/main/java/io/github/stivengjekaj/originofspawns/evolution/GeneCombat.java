@@ -1193,7 +1193,8 @@ public final class GeneCombat {
 				// The damage of thorns does not cause thorns, so that two mobs with thorns do not hurt each other forever.
 				case GeneEffect.Thorns thorns when source.getDirectEntity() == attacker && !source.is(DamageTypes.THORNS) ->
 						attacker.hurtServer(level, level.damageSources().thorns(mob), thorns.damage());
-				case GeneEffect.EffectOnHurt onHurt when onHurt.hits().includes(source.getDirectEntity() != attacker) ->
+				case GeneEffect.EffectOnHurt onHurt when onHurt.hits().includes(source.getDirectEntity() != attacker)
+						&& test(mob, onHurt.when()) ->
 						effectOnHurt(mob, level, onHurt, attacker);
 				case GeneEffect.FireOnHurt fire when source.getDirectEntity() == attacker -> attacker.igniteForSeconds(fire.seconds());
 				case GeneEffect.FreezeAttacker freeze when source.getDirectEntity() == attacker ->

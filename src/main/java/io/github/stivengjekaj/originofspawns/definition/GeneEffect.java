@@ -1817,10 +1817,10 @@ public sealed interface GeneEffect {
 	/**
 	 * When an attacker hurts the mob, the attacker gets a status effect. The effect waits for its cooldown.
 	 * With {@code ink}, the mob sprays a cloud of ink. With an {@code ally_radius} above 0, the mobs of its species
-	 * in the radius get the effect, and the attacker does not.
+	 * in the radius get the effect, and the attacker does not. It acts only while the state is true.
 	 */
 	record EffectOnHurt(Holder<MobEffect> effect, float seconds, int amplifier, float cooldownSeconds, boolean ink,
-			float allyRadius, float playerRadius, Hits hits) implements GeneEffect {
+			float allyRadius, float playerRadius, Hits hits, When when) implements GeneEffect {
 		public static final MapCodec<EffectOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				MobEffect.CODEC.fieldOf("effect").forGetter(EffectOnHurt::effect),
 				Codec.floatRange(0.0F, 3600.0F).fieldOf("seconds").forGetter(EffectOnHurt::seconds),
@@ -1829,7 +1829,8 @@ public sealed interface GeneEffect {
 				Codec.BOOL.optionalFieldOf("ink", false).forGetter(EffectOnHurt::ink),
 				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("ally_radius", 0.0F).forGetter(EffectOnHurt::allyRadius),
 				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("player_radius", 0.0F).forGetter(EffectOnHurt::playerRadius),
-				Hits.CODEC.optionalFieldOf("hits", Hits.ANY).forGetter(EffectOnHurt::hits)
+				Hits.CODEC.optionalFieldOf("hits", Hits.ANY).forGetter(EffectOnHurt::hits),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(EffectOnHurt::when)
 		).apply(instance, EffectOnHurt::new));
 
 		@Override

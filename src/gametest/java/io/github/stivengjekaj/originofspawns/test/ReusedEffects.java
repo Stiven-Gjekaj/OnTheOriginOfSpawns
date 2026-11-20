@@ -123,6 +123,8 @@ final class ReusedEffects {
 		player.setNoGravity(true);
 		player.setPos(mob.position().add(0.0, 0.0, 5.0));
 		CreeperEffectsTest.face(player, 180.0F);
+		// The player aims at the eyes of the mob, also down at a small mob.
+		player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, mob.getEyePosition());
 		player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOW));
 		player.startUsingItem(InteractionHand.MAIN_HAND);
 		Vec3 before = mob.position();
@@ -355,5 +357,31 @@ final class ReusedEffects {
 		rooted.knockback(1.0, 1.0, 0.0, source, 1.0F);
 		helper.assertTrue(Math.abs(plain.getDeltaMovement().x) > 0.1, "a hit pushes a plain mob");
 		helper.assertValueEqual(rooted.getDeltaMovement().x, 0.0, "a hit does not push a rooted mob");
+	}
+
+	/**
+	 * Checks that a mob on land hops to the nearest water, as the guardian Shore Hop.
+	 */
+	static void shoreHop(GameTestHelper helper, Maker maker) {
+		helper.setBlock(new BlockPos(5, 1, 4), net.minecraft.world.level.block.Blocks.WATER);
+		Mob mob = maker.at(helper, new BlockPos(1, 1, 4));
+		mob.setOnGround(true);
+		helper.assertTrue(GeneBehaviors.shoreHop(mob, helper.getLevel(), new GeneEffect.ShoreHop(8.0F)), "the mob hops");
+		helper.assertTrue(mob.getDeltaMovement().y > 0.0 && mob.getDeltaMovement().x > 0.0,
+				"it hops up and east, to the water, not " + mob.getDeltaMovement());
+	}
+
+	/**
+	 * Checks that the sun burns a mob with a sun shade only one time in each interval, as the phantom Sun Shade.
+	 */
+	static void sunShade(GameTestHelper helper, Maker maker) {
+		Mob plain = maker.at(helper, new BlockPos(1, 1, 1));
+		Mob shade = maker.at(helper, new BlockPos(6, 1, 6), "test_sun_shade");
+		var fire = helper.getLevel().damageSources().onFire();
+		io.github.stivengjekaj.originofspawns.evolution.Evolution.markSunBurn(plain);
+		io.github.stivengjekaj.originofspawns.evolution.Evolution.markSunBurn(shade);
+		helper.assertFalse(GeneCombat.sunShaded(plain, fire), "the sun burns a plain mob each time");
+		helper.assertFalse(GeneCombat.sunShaded(shade, fire), "the first burn comes");
+		helper.assertTrue(GeneCombat.sunShaded(shade, fire), "the next burn waits");
 	}
 }

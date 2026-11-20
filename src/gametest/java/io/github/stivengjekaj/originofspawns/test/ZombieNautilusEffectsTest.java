@@ -212,4 +212,47 @@ public class ZombieNautilusEffectsTest {
 				"it is not translucent after the 4 seconds");
 		helper.succeed();
 	}
+
+	static final ReusedEffects.Maker NAUTILUS = (helper, pos, genes) -> MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, pos, genes);
+
+	@GameTest
+	public void theReusedEffectsWorkOnAZombieNautilus(GameTestHelper helper) {
+		ReusedEffects.armorAttribute(helper, NAUTILUS);
+		ReusedEffects.thorns(helper, NAUTILUS);
+		ReusedEffects.healOnce(helper, NAUTILUS);
+		ReusedEffects.sidestep(helper, NAUTILUS);
+		ReusedEffects.damageTaken(helper, NAUTILUS);
+		ReusedEffects.sunShade(helper, NAUTILUS);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aZombieNautilusOnLandHopsToTheWater(GameTestHelper helper) {
+		ReusedEffects.shoreHop(helper, NAUTILUS);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aZombieNautilusRegeneratesOutOfCombat(GameTestHelper helper) {
+		ReusedEffects.regenerate(helper, NAUTILUS);
+	}
+
+	@GameTest
+	public void theAttackDamageAttributeChangesTheDamageOfTheCharge(GameTestHelper helper) {
+		var plainPig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 2));
+		var rammerPig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 2));
+		ZombieNautilus plain = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, new BlockPos(1, 1, 1));
+		ZombieNautilus rammer = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, new BlockPos(6, 1, 1), "test_rammer");
+		io.github.stivengjekaj.originofspawns.evolution.GeneEffects.applyAttributes(rammer,
+				io.github.stivengjekaj.originofspawns.evolution.GeneEffects.sources(helper.getLevel().registryAccess(),
+						rammer.getAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.GENES)));
+		plain.snapTo(plainPig.position().add(0.0, 0.0, -0.5), 0.0F, 0.0F);
+		rammer.snapTo(rammerPig.position().add(0.0, 0.0, -0.5), 0.0F, 0.0F);
+		chargeAt(helper, plain, plainPig);
+		chargeAt(helper, rammer, rammerPig);
+		helper.assertValueEqual(plainPig.getMaxHealth() - plainPig.getHealth(), 3.0F, "a plain charge does 3 damage");
+		helper.assertTrue(Math.abs(rammerPig.getMaxHealth() - rammerPig.getHealth() - 3.9F) < 0.001F,
+				"30% more attack damage makes the charge do 3.9 damage");
+		helper.succeed();
+	}
 }

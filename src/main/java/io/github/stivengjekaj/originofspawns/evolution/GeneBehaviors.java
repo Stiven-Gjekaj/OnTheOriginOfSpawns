@@ -1575,6 +1575,17 @@ public final class GeneBehaviors {
 	}
 
 	/**
+	 * Gives the mob the status effects of its self effect after genes for the action.
+	 */
+	public static void selfEffectAfter(Mob mob, GeneEffect.Action action) {
+		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
+			if (effect instanceof GeneEffect.SelfEffectAfter after && after.action() == action) {
+				mob.addEffect(new MobEffectInstance(after.effect(), Math.round(after.seconds() * 20.0F), after.amplifier()), mob);
+			}
+		}
+	}
+
+	/**
 	 * Gives the target of the mob that rides the mob to the brain of the mob as its attack target, so that its vanilla
 	 * charge attack starts. It waits while the mob has an attack target or the charge cools down.
 	 *

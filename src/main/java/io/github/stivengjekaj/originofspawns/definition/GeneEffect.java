@@ -322,7 +322,8 @@ public sealed interface GeneEffect {
 			Map.entry("rider_target_charge", RiderTargetCharge.CODEC),
 			Map.entry("charge_rate", ChargeRate.CODEC),
 			Map.entry("charge_push", ChargePush.CODEC),
-			Map.entry("drain_air", DrainAir.CODEC)
+			Map.entry("drain_air", DrainAir.CODEC),
+			Map.entry("self_effect_after", SelfEffectAfter.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5394,6 +5395,45 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "drain_air";
+		}
+	}
+
+	/**
+	 * After the action, the mob itself gets the status effect. Wake Jet: Speed after a charge. Ink Rush: Speed after
+	 * ink.
+	 */
+	record SelfEffectAfter(Action action, Holder<MobEffect> effect, float seconds, int amplifier) implements GeneEffect {
+		public static final MapCodec<SelfEffectAfter> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Action.CODEC.fieldOf("action").forGetter(SelfEffectAfter::action),
+				MobEffect.CODEC.fieldOf("effect").forGetter(SelfEffectAfter::effect),
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(SelfEffectAfter::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(SelfEffectAfter::amplifier)
+		).apply(instance, SelfEffectAfter::new));
+
+		@Override
+		public String type() {
+			return "self_effect_after";
+		}
+	}
+
+	/**
+	 * An action of a mob after which an effect acts.
+	 */
+	enum Action implements StringRepresentable {
+		/**
+		 * The vanilla charge attack of a nautilus ends.
+		 */
+		CHARGE,
+		/**
+		 * The mob squirts ink: an effect on hurt with {@code ink} acts.
+		 */
+		INK;
+
+		public static final Codec<Action> CODEC = StringRepresentable.fromEnum(Action::values);
+
+		@Override
+		public String getSerializedName() {
+			return name().toLowerCase(Locale.ROOT);
 		}
 	}
 }

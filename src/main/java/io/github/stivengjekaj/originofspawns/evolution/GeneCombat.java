@@ -1407,6 +1407,7 @@ public final class GeneCombat {
 		}
 		if (onHurt.ink()) {
 			level.sendParticles(ParticleTypes.SQUID_INK, mob.getX(), mob.getY(0.6), mob.getZ(), 30, 0.5, 0.5, 0.5, 0.05);
+			GeneBehaviors.selfEffectAfter(mob, GeneEffect.Action.INK);
 		}
 		java.util.Map<GeneEffect.EffectOnHurt, Long> updated = new java.util.HashMap<>(times);
 		updated.put(onHurt, now);

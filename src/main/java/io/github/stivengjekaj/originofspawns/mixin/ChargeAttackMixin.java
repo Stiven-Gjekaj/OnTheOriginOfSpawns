@@ -49,7 +49,8 @@ public abstract class ChargeAttackMixin {
 	}
 
 	/**
-	 * After the charge ends, each charge rate gene makes the time to the next charge shorter.
+	 * After the charge ends, the self effect after genes act, and each charge rate gene makes the time to the next
+	 * charge shorter.
 	 */
 	@Inject(method = "stop(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/animal/Animal;J)V",
 			at = @At("TAIL"))
@@ -57,6 +58,7 @@ public abstract class ChargeAttackMixin {
 		if (!body.hasAttached(ModAttachments.GENES)) {
 			return;
 		}
+		io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.selfEffectAfter(body, GeneEffect.Action.CHARGE);
 		float rate = 1.0F;
 		for (GeneEffect effect : GeneEffects.of(body).toList()) {
 			if (effect instanceof GeneEffect.ChargeRate charge) {

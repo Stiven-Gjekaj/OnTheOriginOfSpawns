@@ -130,4 +130,22 @@ public class ZombieNautilusEffectsTest {
 		helper.assertValueEqual(walker.getAirSupply(), full, "a player on land loses no air");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void wakeJetGivesSpeedAfterAChargeAndInkRushAfterInk(GameTestHelper helper) {
+		var level = helper.getLevel();
+		var pig = CreeperEffectsTest.pigAt(helper, new BlockPos(2, 1, 2));
+		ZombieNautilus jetter = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, new BlockPos(2, 1, 1), "test_wake_jet");
+		jetter.snapTo(pig.position().add(0.0, 0.0, -0.5), 0.0F, 0.0F);
+		helper.assertFalse(jetter.hasEffect(net.minecraft.world.effect.MobEffects.SPEED), "no Speed before the charge");
+		chargeAt(helper, jetter, pig);
+		helper.assertTrue(jetter.hasEffect(net.minecraft.world.effect.MobEffects.SPEED), "Speed after the charge");
+		helper.assertFalse(jetter.hasEffect(net.minecraft.world.effect.MobEffects.STRENGTH), "no ink effect before ink");
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(jetter.position().add(1.0, 0.0, 0.0));
+		jetter.hurtServer(level, level.damageSources().playerAttack(player), 1.0F);
+		helper.assertTrue(player.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "the ink blinds the player");
+		helper.assertTrue(jetter.hasEffect(net.minecraft.world.effect.MobEffects.STRENGTH), "the effect after ink");
+		helper.succeed();
+	}
 }

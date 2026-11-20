@@ -102,7 +102,7 @@ The visual column gives the region and the mark.
 | Swarm Rally | Waker | `alone` | When it sees a player, it calls the silverfish in 16 blocks to the player | 10% less speed | Tail: a bright tail tip |
 | Blood Call | Waker | `player_death` | When it hurts a player, the silverfish in 8 blocks target that player | 10% less maximum health | Body: red bands on the front segments |
 | Death Cry | Waker | `critical` | When it dies, it wakes the hidden silverfish in 10 blocks | 10% less maximum health | Back: a white stripe across the back |
-| Wake Bite | Waker, sub Infester | `melee` | Its hits give Infested for 3 seconds | 10% less damage | Back: pale ivory bristles on the front layer |
+| Wake Bite | Waker, sub Infester | `melee` | Its hits give Infested for 3 seconds | 10% less damage | Back: light warm gray bristles on the front layer |
 
 ### Gnawer genes
 

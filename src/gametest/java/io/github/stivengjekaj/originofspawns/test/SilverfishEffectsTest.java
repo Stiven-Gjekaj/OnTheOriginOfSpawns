@@ -85,4 +85,49 @@ public class SilverfishEffectsTest {
 		helper.assertBlockNotPresent(Blocks.INFESTED_STONE, hidden);
 		helper.succeed();
 	}
+
+	/**
+	 * Puts stone on the six sides of the place, so that a silverfish there can hide in each direction.
+	 */
+	static void encase(GameTestHelper helper, BlockPos pos) {
+		for (net.minecraft.core.Direction direction : net.minecraft.core.Direction.values()) {
+			helper.setBlock(pos.relative(direction), Blocks.STONE);
+		}
+	}
+
+	/**
+	 * Returns the silverfish in the block at the place, other than the one that the test made.
+	 */
+	static java.util.List<Silverfish> cameOut(GameTestHelper helper, BlockPos pos, Silverfish old) {
+		return helper.getLevel().getEntitiesOfClass(Silverfish.class,
+				new net.minecraft.world.phys.AABB(helper.absolutePos(pos)).inflate(1.5), other -> other != old);
+	}
+
+	@GameTest
+	public void aSilverfishThatHidesInStoneComesOutWithItsGenesAndFullHealth(GameTestHelper helper) {
+		BlockPos place = new BlockPos(2, 2, 2);
+		encase(helper, place);
+		Silverfish silverfish = silverfish(helper, place, "test_lodge_health");
+		WrappedGoal merge = ((MobAccessor) silverfish).originofspawns$goalSelector().getAvailableGoals().stream()
+				.filter(goal -> goal.getGoal().getClass().getSimpleName().equals("SilverfishMergeWithStoneGoal"))
+				.findFirst().orElseThrow();
+		// The vanilla goal hides with a chance at each try. Else it starts a walk, and the mob has no AI to walk.
+		for (int i = 0; i < 500 && !silverfish.isRemoved(); i++) {
+			if (merge.getGoal().canUse()) {
+				merge.getGoal().start();
+			}
+		}
+		helper.assertTrue(silverfish.isRemoved(), "the silverfish hides in the stone");
+		BlockPos hidden = java.util.Arrays.stream(net.minecraft.core.Direction.values()).map(place::relative)
+				.filter(pos -> helper.getBlockState(pos).is(Blocks.INFESTED_STONE)).findFirst().orElseThrow();
+		helper.getLevel().destroyBlock(helper.absolutePos(hidden), true);
+		java.util.List<Silverfish> out = cameOut(helper, hidden, silverfish);
+		helper.assertValueEqual(out.size(), 1, "one silverfish comes out");
+		Silverfish next = out.getFirst();
+		helper.assertValueEqual(next.getAttached(ModAttachments.GENES).genes(), java.util.List.of(
+				Identifier.fromNamespaceAndPath("originofspawns_test", "test_lodge_health")), "it has the genes of the first one");
+		helper.assertValueEqual(next.getMaxHealth(), 12.0F, "its genes change its maximum health");
+		helper.assertValueEqual(next.getHealth(), 12.0F, "it has full health");
+		helper.succeed();
+	}
 }

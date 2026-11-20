@@ -1,6 +1,7 @@
 package io.github.stivengjekaj.originofspawns.evolution;
 
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
+import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -92,5 +93,29 @@ public final class GeneSilverfish {
 			}
 		}
 		return woke;
+	}
+
+	/**
+	 * Keeps the genes of a silverfish in the block where it hides now. The block is already an infested block. A
+	 * silverfish with no genes leaves nothing, so a plain silverfish comes out of the block, with genes from the pool.
+	 */
+	public static void hide(Mob mob, ServerLevel level, BlockPos pos) {
+		CarriedGenes genes = mob.getAttached(ModAttachments.GENES);
+		if (genes != null) {
+			HiddenSilverfish.get(level.getServer()).put(level, pos, genes, 0);
+		}
+	}
+
+	/**
+	 * Gives a silverfish that comes out of an infested block the genes of the silverfish that hid there, before it joins
+	 * the world. It has full health. A block where no silverfish with genes hid gives a silverfish with genes from the
+	 * pool, as a natural spawn.
+	 */
+	public static void emerge(ServerLevel level, BlockPos pos, Mob silverfish) {
+		HiddenSilverfish.get(level.getServer()).take(level, pos).ifPresent(entry -> {
+			silverfish.setAttached(ModAttachments.GENES, entry.genes());
+			GeneEffects.applyAttributes(silverfish, GeneEffects.sources(level.registryAccess(), entry.genes()));
+			silverfish.setHealth(silverfish.getMaxHealth());
+		});
 	}
 }

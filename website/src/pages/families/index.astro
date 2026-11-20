@@ -18,8 +18,8 @@ const tierNote = ["The sub of a minor family gets tier 1.", "A major family alon
 const minor = (a, b) => site.minors.find((m) => m.major === a && m.sub === b);
 const hybridsOf = (sp) => site.hybrids.filter((h) => h.species === sp);
 const minorsOf = (sp) => site.minors.filter((m) => m.species === sp);
-// The Nether mobs whose babies show no gene marks. The design files do not say this yet.
-const unmarkedBabies = ["zombified_piglin", "piglin", "hoglin", "zoglin"];
+// The mobs whose babies show no gene marks. The design files do not say this yet.
+const unmarkedBabies = ["zombified_piglin", "piglin", "hoglin", "zoglin", "zombie_horse", "skeleton_horse"];
 ---
 <Layout title="Families" description="The families, minor families, and hybrids of each species of On the Origin of Spawns.">
   <PageHeader eyebrow="Families" title="The genes of a mob select its family">

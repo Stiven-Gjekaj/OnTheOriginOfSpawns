@@ -56,4 +56,39 @@ public class ZombieNautilusEffectsTest {
 		helper.assertFalse(GeneBehaviors.riderTargetCharge(lone, charge), "a zombie nautilus with no rider takes no target");
 		helper.succeed();
 	}
+
+	/**
+	 * Runs the vanilla charge of the zombie nautilus at the target for some ticks. The target stands where the
+	 * nautilus is, so the first tick hits it.
+	 */
+	static void chargeAt(GameTestHelper helper, ZombieNautilus nautilus, LivingEntity target) {
+		var level = helper.getLevel();
+		nautilus.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, target);
+		ChargeAttack attack = vanillaCharge();
+		helper.assertTrue(attack.tryStart(level, nautilus, level.getGameTime()), "the charge starts");
+		attack.tickOrStop(level, nautilus, level.getGameTime());
+	}
+
+	@GameTest
+	public void hullRamBreaksTheBoatAndShieldRamStopsTheShieldOfTheTarget(GameTestHelper helper) {
+		var level = helper.getLevel();
+		var boat = EntityTypes.OAK_BOAT.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+		boat.snapTo(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(2, 1, 4))), 0.0F, 0.0F);
+		level.addFreshEntity(boat);
+		var sailor = CreeperEffectsTest.survivalPlayer(helper).player();
+		sailor.setPos(boat.position());
+		sailor.startRiding(boat);
+		ZombieNautilus rammer = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, new BlockPos(2, 1, 4), "test_hull_ram");
+		rammer.snapTo(sailor.position(), 0.0F, 0.0F);
+		chargeAt(helper, rammer, sailor);
+		helper.assertTrue(sailor.getHealth() < sailor.getMaxHealth(), "the charge hits the player in the boat");
+		helper.assertFalse(boat.isAlive(), "the charge breaks the boat");
+		var guard = CreeperEffectsTest.shieldedPlayer(helper);
+		ZombieNautilus other = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, new BlockPos(5, 1, 1), "test_hull_ram");
+		other.snapTo(guard.position(), 0.0F, 0.0F);
+		chargeAt(helper, other, guard);
+		helper.assertTrue(guard.getCooldowns().isOnCooldown(new net.minecraft.world.item.ItemStack(
+				net.minecraft.world.item.Items.SHIELD)), "the charge stops the shield");
+		helper.succeed();
+	}
 }

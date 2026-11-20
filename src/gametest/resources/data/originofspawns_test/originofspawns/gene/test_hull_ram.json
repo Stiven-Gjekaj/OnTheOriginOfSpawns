@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombie_nautilus",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "break_boats", "hits": 1 }, { "type": "shield_break", "seconds": 4 }],
+	"mutation_rate": 0
+}

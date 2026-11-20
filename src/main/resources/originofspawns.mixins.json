@@ -16,6 +16,7 @@
 		"BlazeAccessor",
 		"CamelAccessor",
 		"CamelMixin",
+		"ChargeAttackMixin",
 		"BlazeAttackGoalMixin",
 		"BlazeMixin",
 		"BoggedMixin",

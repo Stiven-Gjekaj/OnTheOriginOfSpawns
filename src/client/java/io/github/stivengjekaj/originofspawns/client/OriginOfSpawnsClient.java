@@ -44,6 +44,7 @@ import net.minecraft.client.renderer.entity.AbstractZombieRenderer;
 import net.minecraft.client.renderer.entity.CreeperRenderer;
 import net.minecraft.client.renderer.entity.EndermanRenderer;
 import net.minecraft.client.renderer.entity.EndermiteRenderer;
+import net.minecraft.client.renderer.entity.SilverfishRenderer;
 import net.minecraft.client.renderer.entity.EvokerRenderer;
 import net.minecraft.client.renderer.entity.MagmaCubeRenderer;
 import net.minecraft.client.renderer.entity.GhastRenderer;
@@ -112,6 +113,10 @@ public class OriginOfSpawnsClient implements ClientModInitializer {
 				helper.register(new GeneModelLayer<EndermanRenderState, EndermanModel<EndermanRenderState>>(enderman));
 			} else if (renderer instanceof EndermiteRenderer) {
 				// The endermite model takes any entity render state, so the layer sees it as a model of the living one.
+				helper.register(new GeneModelLayer<>(
+						(RenderLayerParent<LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) (Object) renderer));
+			} else if (renderer instanceof SilverfishRenderer) {
+				// The silverfish model takes any entity render state, so the layer sees it as a model of the living one.
 				helper.register(new GeneModelLayer<>(
 						(RenderLayerParent<LivingEntityRenderState, EntityModel<LivingEntityRenderState>>) (Object) renderer));
 			} else if (renderer instanceof WitchRenderer witch) {

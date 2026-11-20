@@ -84,6 +84,19 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		SEGMENT2,
 		SEGMENT3,
 		/**
+		 * The last three of the seven parts of a silverfish, from the front. A silverfish also uses the first four
+		 * segments: segment0 is the head, and segment5 and segment6 are the tail.
+		 */
+		SEGMENT4,
+		SEGMENT5,
+		SEGMENT6,
+		/**
+		 * The three back layers of a silverfish, from the front. They are parts of the root, as the segments are.
+		 */
+		LAYER0,
+		LAYER1,
+		LAYER2,
+		/**
 		 * The inner cube of a slime, with its eyes and its mouth. The outer gel has the same place as the inner cube.
 		 */
 		CUBE,

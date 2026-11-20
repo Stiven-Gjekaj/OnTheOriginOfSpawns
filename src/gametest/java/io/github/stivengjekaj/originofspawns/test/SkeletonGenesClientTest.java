@@ -111,6 +111,9 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			// The endermite gene model sits on segment1, the body.
 			checkMarkAndModel(context, singleplayer, EntityTypes.ENDERMITE, "test_endermite_mark",
 					Identifier.withDefaultNamespace("textures/entity/endermite/endermite.png"), "endermite");
+			// The silverfish gene model sits on the first back layer, a part of the root.
+			checkMarkAndModel(context, singleplayer, EntityTypes.SILVERFISH, "test_silverfish_mark",
+					Identifier.withDefaultNamespace("textures/entity/silverfish/silverfish.png"), "silverfish");
 			// The slime gene model sits on the inner cube, and the magma cube gene model on the inside cube.
 			checkMarkAndModel(context, singleplayer, EntityTypes.SLIME, "test_slime_mark",
 					Identifier.withDefaultNamespace("textures/entity/slime/slime.png"), "slime");

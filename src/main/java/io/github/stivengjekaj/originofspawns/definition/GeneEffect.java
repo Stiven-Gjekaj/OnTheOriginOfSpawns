@@ -331,7 +331,8 @@ public sealed interface GeneEffect {
 			Map.entry("swim_speed", SwimSpeed.CODEC),
 			Map.entry("trap_range", TrapRange.CODEC),
 			Map.entry("trap_life", TrapLife.CODEC),
-			Map.entry("trap_horsemen", TrapHorsemen.CODEC)
+			Map.entry("trap_horsemen", TrapHorsemen.CODEC),
+			Map.entry("trap_effect", TrapEffect.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5575,6 +5576,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "trap_horsemen";
+		}
+	}
+
+	/**
+	 * When the trap of a skeleton horse opens, each horse of the trap gets the status effect. Speed on a skeleton rider
+	 * does not change the speed of its horse, so the horses get it. Charged Riders: Speed for 10 seconds.
+	 */
+	record TrapEffect(Holder<MobEffect> effect, float seconds, int amplifier) implements GeneEffect {
+		public static final MapCodec<TrapEffect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(TrapEffect::effect),
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(TrapEffect::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(TrapEffect::amplifier)
+		).apply(instance, TrapEffect::new));
+
+		@Override
+		public String type() {
+			return "trap_effect";
 		}
 	}
 }

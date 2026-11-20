@@ -150,4 +150,16 @@ public class SkeletonHorseEffectsTest {
 				"each horse has a skeleton rider"));
 		helper.succeed();
 	}
+
+	@GameTest
+	public void chargedRidersGiveSpeedToEachHorseOfTheTrap(GameTestHelper helper) {
+		SkeletonHorse horse = MountEffectsTest.mob(helper, EntityTypes.SKELETON_HORSE, new BlockPos(3, 1, 1), "test_horse_charged");
+		var horses = openTrap(helper, horse);
+		helper.assertValueEqual(horses.size(), 5, "the trap has five horses");
+		horses.forEach(other -> helper.assertTrue(other.hasEffect(net.minecraft.world.effect.MobEffects.SPEED),
+				"each horse of the trap has Speed, also the extra one"));
+		horses.forEach(other -> helper.assertFalse(((net.minecraft.world.entity.LivingEntity) other.getFirstPassenger())
+				.hasEffect(net.minecraft.world.effect.MobEffects.SPEED), "the riders get no Speed"));
+		helper.succeed();
+	}
 }

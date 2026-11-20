@@ -1594,8 +1594,8 @@ public final class GeneBehaviors {
 
 	/**
 	 * Runs the trap genes of a skeleton horse after its trap opens. The vanilla trap made its three horsemen next to
-	 * the trap horse in this tick. Each horse of the trap gets the id of the trap, and each trap horsemen gene makes
-	 * more horsemen.
+	 * the trap horse in this tick. Each horse of the trap gets the id of the trap, each trap horsemen gene makes more
+	 * horsemen, and each trap effect gene acts on all the horses.
 	 */
 	public static void afterTrapOpens(net.minecraft.world.entity.animal.equine.SkeletonHorse trap, ServerLevel level,
 			io.github.stivengjekaj.originofspawns.mixin.SkeletonTrapGoalAccessor goal) {
@@ -1627,6 +1627,14 @@ public final class GeneBehaviors {
 		}
 		for (net.minecraft.world.entity.animal.equine.AbstractHorse horse : horses) {
 			horse.setAttached(ModAttachments.TRAP_GROUP, group);
+		}
+		for (GeneEffect effect : GeneEffects.of(trap).toList()) {
+			if (effect instanceof GeneEffect.TrapEffect trapEffect) {
+				for (net.minecraft.world.entity.animal.equine.AbstractHorse horse : horses) {
+					horse.addEffect(new MobEffectInstance(trapEffect.effect(), Math.round(trapEffect.seconds() * 20.0F),
+							trapEffect.amplifier()), trap);
+				}
+			}
 		}
 	}
 

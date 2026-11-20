@@ -674,6 +674,10 @@ PIGLIN_BRUTE_CLOSEUPS = nether_closeup("piglin_brute", "Piglin brute with a gold
 HOGLIN_CLOSEUPS = nether_closeup("hoglin", "Hoglin", SPIDER_VIEWS)
 ZOGLIN_CLOSEUPS = nether_closeup("zoglin", "Zoglin", SPIDER_VIEWS)
 CAMEL_HUSK_CLOSEUPS = nether_closeup("camel_husk", "Camel husk")
+ZOMBIE_NAUTILUS_VIEWS = [BACK, ("3/4 mouth end", 145, 15, 1.0), SIDE, ("from below", -35, -40, 1.0), FRONT,
+                         ("from above", 150, 60, 1.0)]
+ZOMBIE_NAUTILUS_CLOSEUPS = nether_closeup("zombie_nautilus", "Zombie nautilus, temperate", ZOMBIE_NAUTILUS_VIEWS)
+ZOMBIE_NAUTILUS_WARM_CLOSEUPS = nether_closeup("zombie_nautilus_warm", "Zombie nautilus, warm", ZOMBIE_NAUTILUS_VIEWS)
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
@@ -711,6 +715,8 @@ SPECIES = {
     "hoglin": (pg.HOGLIN_PATH, None, HOGLIN_CLOSEUPS),
     "zoglin": (pg.ZOGLIN_PATH, None, ZOGLIN_CLOSEUPS),
     "camel_husk": (pg.CAMEL_HUSK_PATH, None, CAMEL_HUSK_CLOSEUPS),
+    "zombie_nautilus": (pg.ZOMBIE_NAUTILUS_PATH, None, ZOMBIE_NAUTILUS_CLOSEUPS),
+    "zombie_nautilus_warm": (pg.ZOMBIE_NAUTILUS_WARM_PATH, None, ZOMBIE_NAUTILUS_WARM_CLOSEUPS),
 }
 
 

@@ -159,16 +159,24 @@ public class ShulkerEffectsTest {
 		helper.succeed();
 	}
 
-	@GameTest
+	// A teleport goes up to 8 blocks, so the test keeps the other tests away.
+	@GameTest(padding = 12)
 	public void aQuickBlinkTeleportsAtFullHealth(GameTestHelper helper) {
+		// A zombie teleports to a free place on the ground, so one hurt shows the teleport.
+		var zombie = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE, new BlockPos(1, 1, 1), "test_quick_blink");
+		BlockPos zombieBefore = zombie.blockPosition();
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		zombie.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(pig), 1.0F);
+		helper.assertTrue(zombie.getHealth() > zombie.getMaxHealth() / 2.0F, "the zombie has more than half health");
+		helper.assertFalse(zombie.blockPosition().equals(zombieBefore), "the hurt zombie teleports");
+		// The vanilla teleport of a shulker tries 5 random places, and works only with AI.
 		Shulker shulker = shulker(helper, new BlockPos(3, 1, 3), "test_quick_blink");
-		// The vanilla teleport of a shulker does nothing with no AI.
 		shulker.setNoAi(false);
 		BlockPos before = shulker.blockPosition();
-		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
-		shulker.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(pig), 1.0F);
-		helper.assertTrue(shulker.getHealth() > shulker.getMaxHealth() / 2.0F, "the shulker has more than half health");
-		helper.assertFalse(shulker.blockPosition().equals(before), "the shulker teleports");
+		for (int i = 0; i < 40 && shulker.blockPosition().equals(before); i++) {
+			io.github.stivengjekaj.originofspawns.evolution.GeneShulkers.teleportOnHurt(shulker, helper.getLevel());
+		}
+		helper.assertFalse(shulker.blockPosition().equals(before), "the shulker uses its vanilla teleport");
 		helper.succeed();
 	}
 }

@@ -314,7 +314,8 @@ public sealed interface GeneEffect {
 			Map.entry("mount_dash", MountDash.CODEC),
 			Map.entry("dash_rate", DashRate.CODEC),
 			Map.entry("dash_length", DashLength.CODEC),
-			Map.entry("dash_leap", DashLeap.CODEC)
+			Map.entry("dash_leap", DashLeap.CODEC),
+			Map.entry("dash_hit", DashHit.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5249,6 +5250,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "dash_leap";
+		}
+	}
+
+	/**
+	 * In the first second of each dash of a camel, the mobs and players that it touches take the damage, one time in
+	 * each dash. Its riders are safe. It acts on each dash, also on the dash of a player that rides it. Ram Dash: 4.
+	 */
+	record DashHit(float damage) implements GeneEffect {
+		public static final MapCodec<DashHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("damage", 4.0F).forGetter(DashHit::damage)
+		).apply(instance, DashHit::new));
+
+		@Override
+		public String type() {
+			return "dash_hit";
 		}
 	}
 }

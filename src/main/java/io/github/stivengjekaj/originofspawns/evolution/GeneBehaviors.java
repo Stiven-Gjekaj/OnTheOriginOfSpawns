@@ -417,6 +417,7 @@ public final class GeneBehaviors {
 				case GeneEffect.Ram ram -> ram(mob, level, ram);
 				case GeneEffect.MountDash dash when mob instanceof net.minecraft.world.entity.animal.camel.Camel camel ->
 						mountDash(camel, level, dash);
+				case GeneEffect.DashHit hit -> dashHit(mob, level, hit);
 				case GeneEffect.TouchReach reach when mob instanceof net.minecraft.world.entity.monster.cubemob.AbstractCubeMob cube ->
 						GeneCubes.reachHit(cube);
 				default -> {
@@ -1516,6 +1517,38 @@ public final class GeneBehaviors {
 	 */
 	public static void onDash(net.minecraft.world.entity.animal.camel.Camel camel, ServerLevel level) {
 		camel.setAttached(ModAttachments.DASH_TIME, level.getGameTime());
+		camel.removeAttached(ModAttachments.DASH_HITS);
+	}
+
+	/**
+	 * The ticks at the start of a dash in which the dash hit acts.
+	 */
+	private static final long DASH_HIT_TICKS = 20L;
+
+	/**
+	 * In the first second of a dash, hits each mob and player that the mob touches, one time in the dash. The riders of
+	 * the mob are safe.
+	 *
+	 * @return the number of entities that the dash hit now
+	 */
+	public static int dashHit(Mob mob, ServerLevel level, GeneEffect.DashHit hit) {
+		Long dash = mob.getAttached(ModAttachments.DASH_TIME);
+		if (dash == null || level.getGameTime() - dash > DASH_HIT_TICKS) {
+			return 0;
+		}
+		java.util.List<Integer> done = new java.util.ArrayList<>(mob.getAttachedOrElse(ModAttachments.DASH_HITS, java.util.List.of()));
+		int count = 0;
+		for (LivingEntity other : level.getEntitiesOfClass(LivingEntity.class, mob.getBoundingBox().inflate(0.5),
+				other -> other != mob && other.isAlive() && !mob.hasPassenger(other) && !done.contains(other.getId())
+						&& !(other instanceof Player player && (player.isSpectator() || player.isCreative())))) {
+			done.add(other.getId());
+			other.hurtServer(level, mob.damageSources().mobAttack(mob), hit.damage());
+			count++;
+		}
+		if (count > 0) {
+			mob.setAttached(ModAttachments.DASH_HITS, done);
+		}
+		return count;
 	}
 
 	/**

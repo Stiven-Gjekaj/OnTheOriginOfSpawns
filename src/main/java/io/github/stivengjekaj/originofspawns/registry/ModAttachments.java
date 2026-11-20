@@ -280,6 +280,12 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> DASH_TIME = AttachmentRegistry.create(OriginOfSpawns.id("dash_time"));
 
 	/**
+	 * The ids of the entities that the dash hit of a camel hit in its last dash. Each one takes one hit in a dash.
+	 */
+	public static final AttachmentType<java.util.List<Integer>> DASH_HITS = AttachmentRegistry.create(
+			OriginOfSpawns.id("dash_hits"));
+
+	/**
 	 * The game time when a guardian with a laser lock lost the sight of its target.
 	 */
 	public static final AttachmentType<Long> SIGHT_LOST = AttachmentRegistry.create(OriginOfSpawns.id("sight_lost"));

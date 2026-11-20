@@ -113,4 +113,20 @@ public class CamelHuskEffectsTest {
 				"a plain camel husk takes fall damage");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void ramDashHitsWhatTheDashTouchesOneTimeAndNotItsRider(GameTestHelper helper) {
+		var level = helper.getLevel();
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 3));
+		CamelHusk camel = camelWithRider(helper, new BlockPos(3, 1, 3), pig, "test_ram_dash");
+		Mob husk = (Mob) camel.getFirstPassenger();
+		var hit = new GeneEffect.DashHit(4.0F);
+		helper.assertValueEqual(GeneBehaviors.dashHit(camel, level, hit), 0, "no hit with no dash");
+		camel.handleStartJump(90);
+		helper.assertValueEqual(GeneBehaviors.dashHit(camel, level, hit), 1, "the dash hits the pig that it touches");
+		helper.assertValueEqual(pig.getMaxHealth() - pig.getHealth(), 4.0F, "the dash does 4 damage");
+		helper.assertValueEqual(husk.getHealth(), husk.getMaxHealth(), "the rider is safe");
+		helper.assertValueEqual(GeneBehaviors.dashHit(camel, level, hit), 0, "one hit in each dash");
+		helper.succeed();
+	}
 }

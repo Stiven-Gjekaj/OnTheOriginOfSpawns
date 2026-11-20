@@ -158,6 +158,7 @@ The states for `when` are:
 | `carrying_block` | The mob is an enderman that carries a block |
 | `in_air` | The mob does not stand on the ground, and it is not in water or in lava |
 | `not_shooting` | The mob did not shoot a fireball in the last 2 seconds |
+| `mount_running` | The mob rides a mount that moves faster than half of the speed of the mount |
 | `target_player` | The target of the mob is a player |
 | `target_gold_armor` | The target is a player with at least one piece of gold armor |
 | `target_no_shield` | The target is a player that does not hold a shield up |
@@ -569,6 +570,60 @@ target. `sidestep` works in water, and a player that draws a trident counts
 as aimed. `flee` gives the mob a path away from its target, so a mob that
 swims along a path also flees. `break_boats` acts on the laser.
 
+#### Mounts
+
+The camel husk, the zombie nautilus, the zombie horse, and the skeleton horse
+are mounts. A mob rides each of them. The camel husk and the horses do not
+attack: their riders fight. "Riders" in these effects are the mobs that ride
+the mount. A player that rides it does not count.
+
+| Type | Fields | Result |
+|---|---|---|
+| `riders` | `effects` (a list of 1 to 16 effects) | Each mob that rides the mount acts as if it carried these effects. A rider that gets off loses them. Only these types can go in the list: `damage_taken`, `damage_taken_when`, `damage_from`, `damage_to`, `damage_dealt_when`, `smite_resist`, and `translucent` |
+| `rider_effect_when_wounded` | `heal` (`0`), `effect` (none), `seconds` (`5`), `amplifier` (`0`), `threshold` (`0.5`), `cooldown_seconds` (`30`) | When a rider is under the threshold of its maximum health, it heals the health at once, and with `effect` it gets the status effect, one time in each cooldown. The undead ignore Regeneration, so use `heal` for undead riders |
+| `kick` | `damage` (`4`), `push` (`0.6`) | When a melee hit hurts the mob, it kicks the attacker: the attacker takes the damage and moves back. It also acts with no rider. A rider that hits its own mount gets no kick |
+| `kick_damage` | `extra` (`0`), `multiplier` (`1`), `targets` (none) | Adds the extra damage to the kick, then multiplies it. With `targets`, it acts only on those mobs |
+| `kick_effect` | `effect`, `seconds`, `amplifier` (`0`) | Each target of the kick gets the status effect |
+| `kick_shield_stop` | `seconds` (`4`) | The kick first stops the shield of each target that holds a shield up |
+| `kick_push` | `multiplier` (`2`) | Multiplies the push of the kick |
+| `kick_area` | `radius` (`2`) | The kick also hits the other mobs and players in the radius. The riders are safe |
+| `mount_dash` | `interval_seconds` (`12`), `range` (`16`) | A camel dashes at the target of its rider, one time in each interval, when the target is in the range. A vanilla camel dashes only for a player rider |
+| `dash_rate` | `multiplier` (`1.5`) | Divides the interval of the mount dash by the multiplier |
+| `dash_length` | `multiplier` (`2`) | Multiplies the length of the mount dash |
+| `dash_leap` | `height` (`2`) | Each dash goes this many blocks higher, and the camel takes no fall damage for 5 seconds after it |
+| `dash_hit` | `damage` (`4`) | In the first second of a dash, each mob and player that the camel touches takes the damage, one time. The riders are safe |
+| `dash_cloud` | `effect`, `seconds` (`2`), `amplifier` (`0`), `radius` (`3`) | When a dash starts, the mobs and players in the radius get the status effect. The camel and its riders do not |
+| `dash_strike` | `multiplier` (`1.5`), `seconds` (`5`) | After a dash, the next melee hit of each mob rider does more damage, if it comes in the seconds |
+| `rider_target_spit` | `interval_seconds` (`6`), `damage` (`2`), `range` (`16`), `effect` (none), `seconds` (`2`), `amplifier` (`0`) | One time in each interval, the mob spits at the target of its rider |
+| `rider_target_charge` | `range` (`11`) | A mob with the vanilla nautilus charge charges at the target of its rider, in water and on land. A vanilla zombie nautilus charges only a pufferfish, or something that hurt it in water |
+| `charge_rate` | `multiplier` (`1.5`) | Divides the time between the charges by the multiplier. Vanilla is 80 ticks |
+| `charge_push` | `multiplier` (`2`) | Multiplies the push of the charge |
+| `drain_air` | `seconds` (`3`) | Each melee hit on a target in water takes the seconds of air from it |
+| `self_effect_after` | `action` (`charge`, `ink`, or `jump`), `effect`, `seconds`, `amplifier` (`0`) | After the action, the mob itself gets the status effect |
+| `ink_effect` | `effect`, `seconds`, `amplifier` (`0`) | The ink also gives this status effect |
+| `ink_reach` | `multiplier` (`2`) | Multiplies the reach of the ink |
+| `ink_rate` | `multiplier` (`2`) | Divides the cooldown of the ink by the multiplier |
+| `translucent_on_hurt` | `seconds` (`4`), `opacity` (`0.1`), `damage_types` (none) | After something hurts the mob, it is translucent for the seconds |
+| `swim_speed` | `multiplier` | Multiplies the push of the mob in water. A vanilla horse swims with no regard to its movement speed |
+| `trap_range` | `range` (`20`) | A skeleton horse trap opens when a player comes in the range. Vanilla is 10 blocks |
+| `trap_life` | `multiplier` (`2`) | Multiplies the time before a trap that no player finds goes away. Vanilla is 15 minutes |
+| `trap_horsemen` | `extra` (`1`) | When the trap opens, this many more horsemen appear. They get genes as new mobs |
+| `trap_effect` | `effect`, `seconds`, `amplifier` (`0`) | When the trap opens, each horse of the trap gets the status effect |
+| `trap_lightning` | `distance` (`3`) | When the trap opens, a real lightning bolt strikes this far past the nearest player, away from the horsemen |
+| `horsemen_rally` | `multiplier` (`1.3`), `seconds` (`10`), `radius` (`16`) | When the rider of this horse dies, the projectiles of the riders of the other horses of the same trap do more damage for the seconds |
+
+The ink genes change the ink of an `effect_on_hurt` with `ink`, so a mob
+needs such an effect for them to act. The trap genes act only on the horse
+that was the trap. The charge of a nautilus is a melee hit for the genes, so
+`shield_break`, `break_boats`, and `effect_on_hit` act on it.
+
+New options: `death_effect` has `riders` (`false`), so that only the riders
+get the effect. `effect_on_hurt` has `when` (`always`). `sidestep` has `jump`
+(`false`), so that the mob jumps aside. `landing_shield_stop` has `radius`.
+The landing effects act when a horse lands from a jump, and they never hurt
+the riders. `flee` on a mount with no target flees from the target of its
+rider.
+
 #### Spiders
 
 These effects suit a spider, but other mobs can also use them. A gene cobweb
@@ -701,6 +756,11 @@ A guardian has `head`, `eye`, `tail0`, `tail1`, `tail2`, and `spike0` to
 `spike11`. The eye, the first tail part, and the spikes are parts of the
 head. Each next tail part is a part of the one before it. The twelve spikes
 share one place on the texture, so a spike mark shows on each spike.
+A camel husk has `body`, `head`, the two ears, and the four legs. A zombie
+nautilus has `shell`, `upper_mouth`, `inner_mouth`, and `lower_mouth`. A
+zombie horse and a skeleton horse have the horse bones and `tail`. A baby
+horse has another texture layout, so it gets no gene marks and no gene
+models.
 
     {
         "texture": "originofspawns:textures/entity/bone_leg.png",

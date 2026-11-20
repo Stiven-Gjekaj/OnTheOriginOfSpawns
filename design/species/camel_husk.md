@@ -96,9 +96,9 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Long Dash | Dasher | `unreached` | Its dash goes two times as far | 10% less maximum health | Legs: long, lean legs. This changes the model |
+| Long Dash | Dasher | `unreached` | Its dash goes two times as far | 10% less maximum health | Legs: raised, lean muscles on the hips and the shoulders. This changes the model |
 | Ram Dash | Dasher | `melee` | Its dash hits the mobs and players in its path for 4 damage | 10% less maximum health | Head: a hard, scarred brow |
-| Quick Dash | Dasher | `spotted` | It dashes 50% more often | 10% less maximum health | Head: narrow, bright eyes |
+| Quick Dash | Dasher | `spotted` | It dashes 50% more often | 10% less maximum health | Head: swept-back wind lines down the neck |
 | Spear Charge | Dasher | `golem` | After a dash, the next hit of its rider does 50% more damage | 10% less maximum health | Body: a red band round the body |
 | Dust Dash | Dasher | `crowd` | When it dashes, the mobs and players in 3 blocks get Blindness for 2 seconds | 10% less speed | Legs: dusty, brown feet |
 | Sand Leap | Dasher, sub Dunewalker | `fall` | Its dash goes 2 blocks higher than a vanilla dash, and it takes no fall damage | 10% less maximum health | Legs: pale wraps round the ankles |
@@ -110,7 +110,7 @@ The visual column gives the region and the mark.
 | Water Hump | Humpback | `critical` | One time in its life, it heals to full health at under 25% health | 4 less maximum health | Body: a large, swollen hump. This changes the model |
 | Thick Hide | Humpback | `projectile` | 30% less damage from projectiles | 10% less speed | Body: thick, cracked hide |
 | Dried Flesh | Humpback | `fire` | Half the damage from fire | 10% less speed | Body: dark, dried patches |
-| Deep Reserve | Humpback | `alone` | It heals 1 health each 3 seconds out of combat | 10% less speed | Body: blue gray veins on the hump |
+| Deep Reserve | Humpback | `alone` | It heals 1 health each 3 seconds out of combat | 10% less speed | Body: soft blue-gray veins on the hump |
 | Bone Hump | Humpback | `explosion` | Half the damage from explosions | 10% less speed | Body: bone ridges on the hump |
 | Stubborn Hooves | Humpback, sub Bearer | `melee` | Hits do not push it back | 10% less speed | Legs: thick, knotted knees |
 
@@ -120,9 +120,9 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Swift Stride | Dunewalker | `unreached` | 20% more speed | 10% less maximum health | Legs: wide, pale foot pads |
 | Sand Veil | Dunewalker | `spotted` | It is near invisible in the dark | 10% less maximum health | Body: sandy, faded skin |
-| Sure Feet | Dunewalker | `fall` | No fall damage | 10% less maximum health | Legs: hard, wide feet |
-| Night Trek | Dunewalker | `alone` | 20% more speed at night | 10% less maximum health | Head: pale, glowing eyes |
-| Shy Step | Dunewalker | `projectile` | It moves aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Head: tall, alert ears |
+| Sure Feet | Dunewalker | `fall` | No fall damage | 10% less maximum health | Legs: hard, wide feet. This changes the model |
+| Night Trek | Dunewalker | `alone` | 20% more speed at night | 10% less maximum health | Head: pale, glowing eyes, and pale hoof prints on the legs. This changes the model |
+| Shy Step | Dunewalker | `projectile` | It moves aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Head: tall, alert ears. This changes the model |
 | Escape Run | Dunewalker, sub Dasher | `critical` | At under 30% health, it runs away from its target fast for 4 seconds | 10% less maximum health | Legs: torn wraps on the legs |
 
 ### Bearer genes
@@ -130,8 +130,8 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Saddle Wall | Bearer | `projectile` | Its riders take 30% less damage from projectiles | 10% less maximum health | Body: a thick saddle blanket |
-| High Seat | Bearer | `melee` | Its riders take 20% less melee damage | 10% less speed | Body: a tall saddle frame. This changes the model |
-| Rider Bond | Bearer | `critical` | When a rider is under half health, the rider heals 4 health at once, one time each 30 seconds | 10% less maximum health | Head: a green mark on the brow |
+| High Seat | Bearer | `melee` | Its riders take 20% less melee damage | 10% less speed | Body: a tall wooden saddle frame. This changes the model |
+| Rider Bond | Bearer | `critical` | When a rider is under half health, the rider heals 4 health at once, one time each 30 seconds | 10% less maximum health | Head: a woven cord with a green charm round the neck |
 | Fire Cloth | Bearer | `fire` | Its riders take half the damage from fire | 10% less speed | Body: a red cloth over the back |
 | Last Carry | Bearer | `player_death` | When it dies, its riders get Resistance for 10 seconds | 10% less maximum health | Body: long, torn tassels |
 | Iron Studs | Bearer, sub Sandkicker | `golem` | Its riders do two times the damage to golems | 10% less speed | Body: iron studs on the saddle |
@@ -145,7 +145,7 @@ The visual column gives the region and the mark.
 | Golem Kick | Sandkicker | `golem` | Its kick does two times the damage to golems | 10% less speed | Legs: iron gray shins |
 | Shield Kick | Sandkicker | `shield` | Its kick stops a shield for 4 seconds | 10% less speed | Head: a grim, low brow |
 | Sand Spit | Sandkicker | `unreached` | Each 6 seconds, it spits at its target for 2 damage and Slowness for 2 seconds | 10% less maximum health | Head: a wide, wet mouth |
-| Sand Shove | Sandkicker, sub Dunewalker | `crowd` | Its kick pushes the attacker back two times as far | 10% less maximum health | Legs: thick, dusty legs |
+| Sand Shove | Sandkicker, sub Dunewalker | `crowd` | Its kick pushes the attacker back two times as far | 10% less maximum health | Legs: thick, dusty legs. This changes the model |
 
 ## Gene details
 
@@ -194,6 +194,10 @@ The visual column gives the region and the mark.
   against the vanilla model, as for the ghast.
 - It needs a new region map, `textures/region/camel_husk.png`. The design uses
   the regions head, body, and legs. The saddle is not a region.
+- The texture is 128 x 128, and only the high 64 rows are used. The bones are
+  `body`, `head`, the two ears, and the four legs. The hump does not move,
+  so the hump models use `body`.
+- A natural camel husk has no saddle, so the saddle genes are gene art.
 
 ## Minor families
 

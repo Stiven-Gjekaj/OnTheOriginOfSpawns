@@ -29,6 +29,7 @@ import net.minecraft.client.model.monster.ghast.GhastModel;
 import net.minecraft.client.model.monster.guardian.GuardianModel;
 import net.minecraft.client.model.animal.camel.CamelModel;
 import net.minecraft.client.model.animal.nautilus.NautilusModel;
+import net.minecraft.client.model.animal.equine.AbstractEquineModel;
 import net.minecraft.client.model.monster.phantom.PhantomModel;
 import net.minecraft.client.model.monster.piglin.PiglinModel;
 import net.minecraft.client.model.monster.piglin.ZombifiedPiglinModel;
@@ -48,6 +49,7 @@ import net.minecraft.client.renderer.entity.MagmaCubeRenderer;
 import net.minecraft.client.renderer.entity.GhastRenderer;
 import net.minecraft.client.renderer.entity.CamelHuskRenderer;
 import net.minecraft.client.renderer.entity.GuardianRenderer;
+import net.minecraft.client.renderer.entity.UndeadHorseRenderer;
 import net.minecraft.client.renderer.entity.ZombieNautilusRenderer;
 import net.minecraft.client.renderer.entity.PhantomRenderer;
 import net.minecraft.client.renderer.entity.PiglinRenderer;
@@ -67,6 +69,7 @@ import net.minecraft.client.renderer.entity.state.IllagerRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.entity.state.GhastRenderState;
 import net.minecraft.client.renderer.entity.state.CamelRenderState;
+import net.minecraft.client.renderer.entity.state.EquineRenderState;
 import net.minecraft.client.renderer.entity.state.GuardianRenderState;
 import net.minecraft.client.renderer.entity.state.NautilusRenderState;
 import net.minecraft.client.renderer.entity.state.PhantomRenderState;
@@ -121,6 +124,8 @@ public class OriginOfSpawnsClient implements ClientModInitializer {
 				helper.register(new GeneModelLayer<CamelRenderState, CamelModel>(camel));
 			} else if (renderer instanceof ZombieNautilusRenderer nautilus) {
 				helper.register(new GeneModelLayer<NautilusRenderState, NautilusModel>(nautilus));
+			} else if (renderer instanceof UndeadHorseRenderer horse) {
+				helper.register(new GeneModelLayer<EquineRenderState, AbstractEquineModel<EquineRenderState>>(horse));
 			} else if (renderer instanceof GuardianRenderer guardian) {
 				helper.register(new GeneModelLayer<GuardianRenderState, GuardianModel>(guardian));
 			} else if (renderer instanceof GhastRenderer ghast) {

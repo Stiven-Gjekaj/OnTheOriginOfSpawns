@@ -34,6 +34,8 @@
 		"SlimeOuterLayerMixin",
 		"SlimeRendererMixin",
 		"SpiderRendererMixin",
+		"UndeadHorseRendererMixin",
+		"UndeadHorseTextureMixin",
 		"VindicatorRendererMixin",
 		"WitchRendererMixin",
 		"ZoglinRendererMixin",

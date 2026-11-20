@@ -189,7 +189,11 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		SHELL,
 		UPPER_MOUTH,
 		INNER_MOUTH,
-		LOWER_MOUTH;
+		LOWER_MOUTH,
+		/**
+		 * The tail of a horse, a part of the body.
+		 */
+		TAIL;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

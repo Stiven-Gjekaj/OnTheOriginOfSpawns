@@ -3,12 +3,14 @@ package io.github.stivengjekaj.originofspawns.mixin;
 import io.github.stivengjekaj.originofspawns.evolution.GeneShulkers;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Shulker;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -43,5 +45,15 @@ public abstract class ShulkerMixin {
 	@ModifyConstant(method = "hitByShulkerBullet", constant = @Constant(floatValue = 5.0F))
 	private float originofspawns$splitLimit(float limit) {
 		return GeneShulkers.splitLimit((Shulker) (Object) this);
+	}
+
+	/**
+	 * A split heir gene gives its genes to the shulker that splits off.
+	 */
+	@ModifyArg(method = "hitByShulkerBullet", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+	private Entity originofspawns$beforeSplit(Entity young) {
+		GeneShulkers.beforeSplit((Shulker) (Object) this, young);
+		return young;
 	}
 }

@@ -356,7 +356,8 @@ public sealed interface GeneEffect {
 			Map.entry("shut_after_teleport", ShutAfterTeleport.CODEC),
 			Map.entry("sight_teleport", SightTeleport.CODEC),
 			Map.entry("split_on_hurt", SplitOnHurt.CODEC),
-			Map.entry("split_limit", SplitLimit.CODEC)
+			Map.entry("split_limit", SplitLimit.CODEC),
+			Map.entry("split_heir", SplitHeir.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6032,6 +6033,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "split_limit";
+		}
+	}
+
+	/**
+	 * A shulker that splits off this shulker gets its genes, not genes from the pool. It acts on each split, also the
+	 * vanilla split from a bullet. Heir Shell.
+	 */
+	record SplitHeir() implements GeneEffect {
+		public static final MapCodec<SplitHeir> CODEC = MapCodec.unit(new SplitHeir());
+
+		@Override
+		public String type() {
+			return "split_heir";
 		}
 	}
 }

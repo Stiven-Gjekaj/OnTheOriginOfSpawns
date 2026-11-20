@@ -269,4 +269,18 @@ public final class GeneShulkers {
 		}
 		return limit;
 	}
+
+	/**
+	 * Gives a shulker that splits off the parent the genes of the parent, before it joins the world, if the parent has a
+	 * split heir gene.
+	 */
+	public static void beforeSplit(Shulker parent, Entity young) {
+		CarriedGenes genes = parent.getAttached(ModAttachments.GENES);
+		if (genes != null && young instanceof Shulker shulker
+				&& GeneEffects.of(parent).anyMatch(GeneEffect.SplitHeir.class::isInstance)) {
+			shulker.setAttached(ModAttachments.GENES, genes);
+			GeneEffects.applyAttributes(shulker, GeneEffects.sources(parent.level().registryAccess(), genes));
+			shulker.setHealth(shulker.getMaxHealth());
+		}
+	}
 }

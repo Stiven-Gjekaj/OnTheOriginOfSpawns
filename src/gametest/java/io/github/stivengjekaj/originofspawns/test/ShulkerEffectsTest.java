@@ -271,4 +271,15 @@ public class ShulkerEffectsTest {
 				shulker(helper, new BlockPos(4, 1, 4), "test_split_reach")), 8, "the gene split stops at 8 shulkers");
 		helper.succeed();
 	}
+
+	@GameTest(padding = 12)
+	public void aHeirShellGivesItsGenesToTheShulkerThatSplitsOff(GameTestHelper helper) {
+		Shulker parent = shulker(helper, new BlockPos(3, 1, 3), "test_heir_shell");
+		java.util.List<Shulker> young = splitUntilANewShulkerComes(helper, parent);
+		helper.assertValueEqual(young.size(), 1, "a new shulker splits off");
+		helper.assertValueEqual(young.getFirst().getAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.GENES).genes(),
+				parent.getAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.GENES).genes(),
+				"the new shulker has the genes of the first one");
+		helper.succeed();
+	}
 }

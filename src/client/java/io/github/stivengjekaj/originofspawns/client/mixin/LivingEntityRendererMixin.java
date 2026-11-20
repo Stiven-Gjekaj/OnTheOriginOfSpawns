@@ -13,6 +13,7 @@ import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Blaze;
 import net.minecraft.world.entity.monster.Endermite;
+import net.minecraft.world.entity.monster.Silverfish;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -42,14 +43,14 @@ public abstract class LivingEntityRendererMixin {
 	}
 
 	/**
-	 * Puts the genes of an endermite or a blaze in its render state. Their renderers have no render state method of
-	 * their own, so the genes come from here.
+	 * Puts the genes of an endermite, a silverfish, or a blaze in its render state. Their renderers have no render state
+	 * method of their own, so the genes come from here.
 	 */
 	@Inject(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V",
 			at = @At("TAIL"))
 	private void originofspawns$extractPlainStateGenes(LivingEntity entity, LivingEntityRenderState state, float partialTick,
 			CallbackInfo info) {
-		if (!(entity instanceof Endermite) && !(entity instanceof Blaze)) {
+		if (!(entity instanceof Endermite) && !(entity instanceof Silverfish) && !(entity instanceof Blaze)) {
 			return;
 		}
 		CarriedGenes genes = entity.getAttached(ModAttachments.GENES);

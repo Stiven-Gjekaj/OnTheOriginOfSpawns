@@ -56,6 +56,7 @@
 			"io.github.stivengjekaj.originofspawns.test.CamelHuskEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.ZombieNautilusEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.ZombieHorseEffectsTest",
+			"io.github.stivengjekaj.originofspawns.test.SkeletonHorseEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.PhantomEffectsTest",
 			"io.github.stivengjekaj.originofspawns.test.DelayedTasksTest"
 		],

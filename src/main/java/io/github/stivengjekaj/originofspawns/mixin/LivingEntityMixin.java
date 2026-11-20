@@ -48,6 +48,26 @@ public abstract class LivingEntityMixin {
 	}
 
 	/**
+	 * Each swim speed gene multiplies the push of the mob in water. The vanilla push in water does not use the movement
+	 * speed of most mobs, for example of a skeleton horse.
+	 */
+	@org.spongepowered.asm.mixin.injection.ModifyArg(method = "travelInWater", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/LivingEntity;moveRelative(FLnet/minecraft/world/phys/Vec3;)V"), index = 0)
+	private float originofspawns$swimSpeed(float speed) {
+		LivingEntity self = (LivingEntity) (Object) this;
+		if (!self.hasAttached(ModAttachments.GENES)) {
+			return speed;
+		}
+		float result = speed;
+		for (GeneEffect effect : GeneEffects.of(self).toList()) {
+			if (effect instanceof GeneEffect.SwimSpeed swim) {
+				result *= swim.multiplier();
+			}
+		}
+		return result;
+	}
+
+	/**
 	 * A horse that a mob rides jumps only to climb. The landing effects of the horse act when it lands.
 	 */
 	@Inject(method = "jumpFromGround", at = @At("TAIL"))

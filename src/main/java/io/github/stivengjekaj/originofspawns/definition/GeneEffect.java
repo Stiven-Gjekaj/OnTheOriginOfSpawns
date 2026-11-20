@@ -327,7 +327,8 @@ public sealed interface GeneEffect {
 			Map.entry("ink_effect", InkEffect.CODEC),
 			Map.entry("ink_reach", InkReach.CODEC),
 			Map.entry("ink_rate", InkRate.CODEC),
-			Map.entry("translucent_on_hurt", TranslucentOnHurt.CODEC)
+			Map.entry("translucent_on_hurt", TranslucentOnHurt.CODEC),
+			Map.entry("swim_speed", SwimSpeed.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5509,6 +5510,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "translucent_on_hurt";
+		}
+	}
+
+	/**
+	 * Multiplies the push of the mob in water. The vanilla push in water of most mobs, such as a skeleton horse, does
+	 * not use the movement speed, so a movement speed gene does not change it. More than one effect multiplies
+	 * together. Tidestriders: 1.3.
+	 */
+	record SwimSpeed(float multiplier) implements GeneEffect {
+		public static final MapCodec<SwimSpeed> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).fieldOf("multiplier").forGetter(SwimSpeed::multiplier)
+		).apply(instance, SwimSpeed::new));
+
+		@Override
+		public String type() {
+			return "swim_speed";
 		}
 	}
 }

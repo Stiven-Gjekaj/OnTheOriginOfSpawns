@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:skeleton_horse",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "swim_speed", "multiplier": 1.3 }],
+	"mutation_rate": 0
+}

@@ -100,8 +100,8 @@ The visual column gives the region and the mark.
 | Ram Dash | Dasher | `melee` | Its dash hits the mobs and players in its path for 4 damage | 10% less maximum health | Head: a hard, scarred brow |
 | Quick Dash | Dasher | `spotted` | It dashes 50% more often | 10% less maximum health | Head: narrow, bright eyes |
 | Spear Charge | Dasher | `golem` | After a dash, the next hit of its rider does 50% more damage | 10% less maximum health | Body: a red band round the body |
-| Dust Dash | Dasher | `crowd` | Its dash leaves a dust cloud that gives Blindness for 2 seconds | 10% less speed | Legs: dusty, brown feet |
-| Sand Leap | Dasher, sub Dunewalker | `fall` | Its dash also leaps 2 blocks high, and it takes no fall damage | 10% less maximum health | Legs: pale wraps round the ankles |
+| Dust Dash | Dasher | `crowd` | When it dashes, the mobs and players in 3 blocks get Blindness for 2 seconds | 10% less speed | Legs: dusty, brown feet |
+| Sand Leap | Dasher, sub Dunewalker | `fall` | Its dash goes 2 blocks higher than a vanilla dash, and it takes no fall damage | 10% less maximum health | Legs: pale wraps round the ankles |
 
 ### Humpback genes
 
@@ -153,7 +153,7 @@ The visual column gives the region and the mark.
 |---|---|
 | Dashers | A vanilla camel husk dashes only when a player rides it. A Dasher dashes while a mob rides it and the rider has a target in 16 blocks |
 | Long Dash, Quick Dash | They change the dash of the Dashers. Without a Dasher family, the camel husk does not dash, and these genes do nothing |
-| Ram Dash, Spear Charge, Dust Dash, Sand Leap | They act on each dash, also on a dash of a player that rides it |
+| Ram Dash, Spear Charge, Dust Dash, Sand Leap | They act on each dash, also on a dash of a player that rides it. Dust Dash does not blind the camel husk or its riders. Spear Charge acts on the melee hits of mob riders only |
 | Humpbacks, Deep Reserve | They work as the vindicator Thick Blood |
 | Water Hump | It works as the vindicator Death Wish |
 | Stubborn Hooves | It works as the hoglin Root Feet |

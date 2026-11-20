@@ -181,7 +181,15 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		SPIKE8,
 		SPIKE9,
 		SPIKE10,
-		SPIKE11;
+		SPIKE11,
+		/**
+		 * The shell of a nautilus, and its mouth in three parts. The shell is a part of the root. The mouth parts are
+		 * parts of the body, and the design calls them tentacles.
+		 */
+		SHELL,
+		UPPER_MOUTH,
+		INNER_MOUTH,
+		LOWER_MOUTH;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

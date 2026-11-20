@@ -37,6 +37,7 @@
 		"VindicatorRendererMixin",
 		"WitchRendererMixin",
 		"ZoglinRendererMixin",
+		"ZombieNautilusRendererMixin",
 		"ZombieVariantTextureMixin",
 		"ZombifiedPiglinRendererMixin"
 	],

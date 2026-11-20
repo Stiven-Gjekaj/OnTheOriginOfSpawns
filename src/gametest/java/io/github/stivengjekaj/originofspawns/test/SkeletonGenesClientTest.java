@@ -150,6 +150,9 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			// The camel husk gene model sits on the head, a part of the body.
 			checkMarkAndModel(context, singleplayer, EntityTypes.CAMEL_HUSK, "test_camel_husk_mark",
 					Identifier.withDefaultNamespace("textures/entity/camel/camel_husk.png"), "camel_husk");
+			// The zombie nautilus gene model sits on the shell, a part of the root.
+			checkMarkAndModel(context, singleplayer, EntityTypes.ZOMBIE_NAUTILUS, "test_zombie_nautilus_mark",
+					Identifier.withDefaultNamespace("textures/entity/nautilus/zombie_nautilus.png"), "zombie_nautilus");
 			checkArmModelOnlyWhileTheArmsAreApart(context, singleplayer);
 			checkEndermanArmModelFollowsTheCarryPose(context, singleplayer);
 			checkEvokerArmModelOnlyWhileItCasts(context, singleplayer);

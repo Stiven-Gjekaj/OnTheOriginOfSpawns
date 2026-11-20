@@ -533,6 +533,7 @@ public final class GeneBehaviors {
 				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
 				case GeneEffect.WakeOnSight sight -> GeneSilverfish.wakeOnSight(mob, level, sight);
 				case GeneEffect.Gnaw gnaw -> GeneSilverfish.gnaw(mob, level, gnaw);
+				case GeneEffect.Spit spit -> spit(mob, level, spit);
 				case GeneEffect.FrenziedTargeting frenzy
 						when now % Math.max(1, Math.round(frenzy.intervalSeconds() * 20.0F)) < TICK_INTERVAL
 								&& mob.getRandom().nextFloat() < frenzy.chance() -> {
@@ -1712,12 +1713,34 @@ public final class GeneBehaviors {
 				|| !GeneCombat.ready(mob, spit, spit.intervalSeconds())) {
 			return false;
 		}
+		GeneCombat.startCooldown(mob, spit);
+		return spitAt(mob, level, target, spit);
+	}
+
+	/**
+	 * One time in each cooldown, the mob spits at its own target in the range and in sight.
+	 *
+	 * @return true if the mob spat
+	 */
+	public static boolean spit(Mob mob, ServerLevel level, GeneEffect.Spit spit) {
+		if (!(mob.getTarget() instanceof LivingEntity target) || !target.isAlive() || mob.distanceTo(target) > spit.range()
+				|| !mob.hasLineOfSight(target) || !GeneCombat.ready(mob, spit, spit.cooldownSeconds())) {
+			return false;
+		}
+		GeneCombat.startCooldown(mob, spit);
+		return spitAt(mob, level, target, new GeneEffect.RiderTargetSpit(spit.cooldownSeconds(), spit.damage(),
+				spit.range(), spit.effect(), spit.seconds(), spit.amplifier()));
+	}
+
+	/**
+	 * Spits a llama spit from the mob at the target. The spit keeps its damage and its effect.
+	 */
+	private static boolean spitAt(Mob mob, ServerLevel level, LivingEntity target, GeneEffect.RiderTargetSpit spit) {
 		net.minecraft.world.entity.projectile.LlamaSpit projectile = net.minecraft.world.entity.EntityTypes.LLAMA_SPIT
 				.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
 		if (projectile == null) {
 			return false;
 		}
-		GeneCombat.startCooldown(mob, spit);
 		projectile.setOwner(mob);
 		Vec3 toTarget = target.position().subtract(mob.position()).multiply(1.0, 0.0, 1.0).normalize();
 		projectile.setPos(mob.getX() + toTarget.x * (mob.getBbWidth() + 1.0F) * 0.5, mob.getEyeY() - 0.1,

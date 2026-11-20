@@ -345,7 +345,8 @@ public sealed interface GeneEffect {
 			Map.entry("dodge_melee", DodgeMelee.CODEC),
 			Map.entry("bane_resist", BaneResist.CODEC),
 			Map.entry("brood_on_hurt", BroodOnHurt.CODEC),
-			Map.entry("emerge_strike", EmergeStrike.CODEC)
+			Map.entry("emerge_strike", EmergeStrike.CODEC),
+			Map.entry("spit", Spit.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5825,6 +5826,28 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "emerge_strike";
+		}
+	}
+
+	/**
+	 * One time in each cooldown, the mob spits a llama spit at its target, if the target is in the range and in sight.
+	 * The spit does the damage, and with {@code effect}, it gives the status effect. A vanilla llama spit does 1 damage.
+	 * Egg Spit: from 6 blocks, one time each 6 seconds, with Infested for 4 seconds.
+	 */
+	record Spit(float cooldownSeconds, float range, float damage, Optional<Holder<MobEffect>> effect, float seconds,
+			int amplifier) implements GeneEffect {
+		public static final MapCodec<Spit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("cooldown_seconds", 6.0F).forGetter(Spit::cooldownSeconds),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 6.0F).forGetter(Spit::range),
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("damage", 1.0F).forGetter(Spit::damage),
+				MobEffect.CODEC.optionalFieldOf("effect").forGetter(Spit::effect),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds", 2.0F).forGetter(Spit::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(Spit::amplifier)
+		).apply(instance, Spit::new));
+
+		@Override
+		public String type() {
+			return "spit";
 		}
 	}
 }

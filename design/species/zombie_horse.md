@@ -81,9 +81,9 @@ Stompers kick the attackers that hurt them. They run slowly.
 ## Pressures
 
 The zombie horse uses `melee`, `projectile`, `explosion`, `fire`, `fall`,
-`shield`, `smite`, `unreached`, `spotted`, `alone`, `crowd`, `critical`,
-`golem`, and `player_death`. The sun does not hurt it, so it does not use
-`sunlight`. It needs no new pressure.
+`shield`, `smite`, `unreached`, `spotted`, `crowd`, `critical`,
+`golem`, `sunlight`, and `player_death`. The sun burns it, as it burns a
+zombie. It needs no new pressure.
 
 ## Genes
 
@@ -95,7 +95,7 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Long Stride | Galloper | `unreached` | 20% more speed | 10% less maximum health | Legs: long, lean legs. This changes the model |
-| Night Gallop | Galloper | `alone` | 20% more speed at night | 10% less maximum health | Head: pale, glowing eyes |
+| Sun Hide | Galloper | `sunlight` | The sun burns it only one time each 4 seconds, not each second | 10% less maximum health | Body: a dark, leathery hide |
 | Shy Canter | Galloper | `projectile` | It moves aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Head: tall, laid back ears |
 | Lance Run | Galloper | `melee` | While it runs, the hits of its rider do 20% more damage | 10% less maximum health | Mane: a long, streaming mane. This changes the model |
 | Ghost Gallop | Galloper | `spotted` | It is near invisible in the dark | 10% less maximum health | Body: pale, faded hide |
@@ -150,7 +150,7 @@ The visual column gives the region and the mark.
 | Gene | Rules |
 |---|---|
 | Gallopers, Long Stride | "Speed" is the movement speed of the zombie horse, also when a player rides it |
-| Night Gallop | It uses the night state |
+| Sun Hide | It works as the phantom Sun Shade |
 | Shy Canter | It works as the pillager Evasion |
 | Lance Run | "While it runs" is while it moves at more than half its speed |
 | Ghost Gallop | It works as the creeper Gloom |
@@ -267,4 +267,4 @@ part one time for all mounts.
 | More damage on the hits of a rider while the mount runs | Lance Run |
 | The jump strength, a hit and a shield stop when it lands, and a jump aside | Vaulters, High Vault, Leap Strike, Shield Vault, Dodge Leap |
 | A kick at the attacker after a melee hit, with damage, effects, golem damage, a hit round it, and a push | Stompers, Hard Hooves, Mud Kick, Golem Stomp, Bone Shatter, Rear Up, Trample Run |
-| A check that the reused effects work on a zombie horse: speed, speed at night, sidestep, translucent, flee, regenerate, heal once, smite resist, knockback, no fall damage, a self effect after a jump, and the damage taken effects | Many genes |
+| A check that the reused effects work on a zombie horse: speed, sun shade, sidestep, translucent, flee, regenerate, heal once, smite resist, knockback, no fall damage, a self effect after a jump, and the damage taken effects | Many genes |

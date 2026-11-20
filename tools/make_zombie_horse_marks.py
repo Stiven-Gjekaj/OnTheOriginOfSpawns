@@ -227,16 +227,18 @@ def lance_run():
 
 
 def lance_run_model():
-    # A long, streaming mane: long, dark strands stream back from the mane,
-    # longer down the neck. On the bone mane, the mane is from x -1 to 1, y
+    # A long, streaming mane: four long, thin strands hang from the back of
+    # the mane and stream back, each a little longer and a little more back
+    # than the one over it. On the bone mane, the mane is from x -1 to 1, y
     # -11 to 5, and z 5 to 7.
-    im = model_image(64, 32)
+    im = model_image(32, 32)
 
     def strand(f, x, y):
-        return "#1A2412" if (x + y) % 3 else "#2E3E20"
-    paint_box(im, 0, 0, 2, 16, 4, strand)
-    parts = [{"bone": "mane", "uv": [0, 0], "from": [-1, -11, 7], "size": [2, 16, 4],
-              "pivot": [0, -11, 7], "rotation": [20, 0, 0]}]
+        return "#1A2412" if (x + y) % 3 else "#3A4A2A"
+    paint_box(im, 0, 0, 1, 9, 1, strand)
+    parts = [{"bone": "mane", "uv": [0, 0], "from": [x, y, 7], "size": [1, 9, 1],
+              "pivot": [x + 0.5, y, 7], "rotation": [-35 - n * 5, 0, 0]}
+             for n, (x, y) in enumerate(((-1, -10), (0, -6), (-1, -2), (0, 2)))]
     save_model("lance_run_mane", im, parts)
 
 
@@ -390,15 +392,18 @@ def battle_saddle_model():
 
 def sun_hide():
     # A dark, leathery hide: the sides and the top of the neck, and the high
-    # sides under the saddle
-    # are dark, tough leather, with fine, pale creases.
+    # sides under the saddle, are dark, tough leather, with fine, pale
+    # creases that run across it.
     leather = Mark("#2E2A1A")
-    crease = Mark("#7A6A48")
+    crease = Mark("#6A5A3A")
+
+    def mark(col, row):
+        return crease if row % 3 == 0 and (col + row // 3) % 4 != 0 else leather
     for x, y, f, col, row in pixels(NECK, ("right", "left", "top")):
-        (crease if (col + row * 2) % 5 == 0 else leather).put((x, y))
+        mark(col, row).put((x, y))
     for c in range(8, 14):
         for r in range(4):
-            (crease if (c + r * 2) % 5 == 0 else leather).put(side(BODY, c, r))
+            mark(c, r).put(side(BODY, c, r))
     return [leather, crease]
 
 

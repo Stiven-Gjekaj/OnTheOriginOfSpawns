@@ -12,7 +12,7 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/sun_hide_1.png",
-				"tint": "#7A6A48"
+				"tint": "#6A5A3A"
 			}
 		}
 	]

@@ -56,7 +56,8 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 			EntityTypes.ENDERMAN, EntityTypes.ENDERMITE, EntityTypes.SLIME,
 			EntityTypes.MAGMA_CUBE, EntityTypes.ZOMBIFIED_PIGLIN, EntityTypes.PIGLIN, EntityTypes.PIGLIN_BRUTE,
 			EntityTypes.HOGLIN, EntityTypes.ZOGLIN, EntityTypes.PHANTOM, EntityTypes.GHAST, EntityTypes.BLAZE,
-			EntityTypes.BREEZE, EntityTypes.GUARDIAN);
+			EntityTypes.BREEZE, EntityTypes.GUARDIAN, EntityTypes.CAMEL_HUSK,
+			EntityTypes.ZOMBIE_NAUTILUS, EntityTypes.ZOMBIE_HORSE, EntityTypes.SKELETON_HORSE);
 	private static final int SHOT_ID = -424242;
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 960;

@@ -352,7 +352,8 @@ public sealed interface GeneEffect {
 			Map.entry("bullet_levitation", BulletLevitation.CODEC),
 			Map.entry("double_shot", DoubleShot.CODEC),
 			Map.entry("lid_snap", LidSnap.CODEC),
-			Map.entry("teleport_on_hurt", TeleportOnHurt.CODEC)
+			Map.entry("teleport_on_hurt", TeleportOnHurt.CODEC),
+			Map.entry("shut_after_teleport", ShutAfterTeleport.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5961,6 +5962,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "teleport_on_hurt";
+		}
+	}
+
+	/**
+	 * After each teleport, a shulker stays closed for the seconds, with the armor of a closed shell. Each teleport counts,
+	 * also the vanilla teleport. After the time, a shulker with a target opens again. With more than one effect, the
+	 * longest time counts. Blink Shut: 3 seconds.
+	 */
+	record ShutAfterTeleport(float seconds) implements GeneEffect {
+		public static final MapCodec<ShutAfterTeleport> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("seconds", 3.0F).forGetter(ShutAfterTeleport::seconds)
+		).apply(instance, ShutAfterTeleport::new));
+
+		@Override
+		public String type() {
+			return "shut_after_teleport";
 		}
 	}
 }

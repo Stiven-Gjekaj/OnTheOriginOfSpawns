@@ -91,6 +91,7 @@
 		"ShulkerAttackGoalMixin",
 		"ShulkerBulletAccessor",
 		"ShulkerBulletMixin",
+		"ShulkerMixin",
 		"SilverfishMergeWithStoneGoalMixin",
 		"SilverfishWakeUpFriendsGoalMixin",
 		"SkeletonHorseAccessor",

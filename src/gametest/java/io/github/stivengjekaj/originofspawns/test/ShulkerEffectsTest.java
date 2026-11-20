@@ -179,4 +179,29 @@ public class ShulkerEffectsTest {
 		helper.assertFalse(shulker.blockPosition().equals(before), "the shulker uses its vanilla teleport");
 		helper.succeed();
 	}
+
+	@GameTest(padding = 12, maxTicks = 100)
+	public void aBlinkShutStaysClosedForThreeSecondsAfterATeleport(GameTestHelper helper) {
+		Shulker shulker = shulker(helper, new BlockPos(3, 1, 3), "test_blink_shut");
+		var lid = (io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker;
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 6));
+		lid.originofspawns$setRawPeekAmount(100);
+		shulker.setNoAi(false);
+		BlockPos before = shulker.blockPosition();
+		for (int i = 0; i < 40 && shulker.blockPosition().equals(before); i++) {
+			lid.originofspawns$teleportSomewhere();
+		}
+		shulker.setNoAi(true);
+		helper.assertFalse(shulker.blockPosition().equals(before), "the shulker teleports");
+		helper.assertTrue(lid.originofspawns$isClosed(), "the shulker is closed after the teleport");
+		helper.assertValueEqual(shulker.getArmorValue(), 20, "the closed shell has its armor");
+		lid.originofspawns$setRawPeekAmount(100);
+		helper.assertTrue(lid.originofspawns$isClosed(), "the shulker does not open in the 3 seconds");
+		shulker.setTarget(pig);
+		helper.runAfterDelay(61, () -> {
+			io.github.stivengjekaj.originofspawns.evolution.GeneShulkers.tickShut(shulker);
+			helper.assertFalse(lid.originofspawns$isClosed(), "after 3 seconds, a shulker with a target opens");
+			helper.succeed();
+		});
+	}
 }

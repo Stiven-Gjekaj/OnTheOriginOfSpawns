@@ -128,4 +128,39 @@ public final class GeneShulkers {
 		}
 		return false;
 	}
+
+	/**
+	 * Closes a shulker after a teleport for the time of its longest shut after teleport gene.
+	 */
+	public static void afterTeleport(Shulker shulker) {
+		var seconds = GeneEffects.of(shulker).filter(GeneEffect.ShutAfterTeleport.class::isInstance)
+				.mapToDouble(effect -> ((GeneEffect.ShutAfterTeleport) effect).seconds()).max();
+		if (seconds.isEmpty()) {
+			return;
+		}
+		shulker.removeAttached(ModAttachments.SHUT_UNTIL);
+		// The vanilla teleport closes the lid with no armor. The closed shell gets its armor here.
+		((io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker).originofspawns$setRawPeekAmount(0);
+		shulker.setAttached(ModAttachments.SHUT_UNTIL, shulker.level().getGameTime() + Math.round(seconds.getAsDouble() * 20.0));
+	}
+
+	/**
+	 * Returns true while a shulker stays closed after a teleport.
+	 */
+	public static boolean shut(Shulker shulker) {
+		return shulker.getAttachedOrElse(ModAttachments.SHUT_UNTIL, Long.MIN_VALUE) > shulker.level().getGameTime();
+	}
+
+	/**
+	 * Ends the closed time after a teleport. A shulker with a target opens again, as its attack opens it.
+	 */
+	public static void tickShut(Shulker shulker) {
+		Long until = shulker.getAttached(ModAttachments.SHUT_UNTIL);
+		if (until != null && shulker.level().getGameTime() >= until) {
+			shulker.removeAttached(ModAttachments.SHUT_UNTIL);
+			if (shulker.getTarget() != null) {
+				((io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker).originofspawns$setRawPeekAmount(100);
+			}
+		}
+	}
 }

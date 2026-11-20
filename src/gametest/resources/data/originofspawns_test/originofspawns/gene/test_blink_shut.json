@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:shulker",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "shut_after_teleport", "seconds": 3 }],
+	"mutation_rate": 0
+}

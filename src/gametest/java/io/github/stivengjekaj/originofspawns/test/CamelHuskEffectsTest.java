@@ -158,4 +158,25 @@ public class CamelHuskEffectsTest {
 				level.damageSources().mobAttack(husk), 4.0F), 4.0F, "the second hit is plain");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void sandSpitSpitsAtTheTargetOfTheRiderForTwoDamageAndSlowness(GameTestHelper helper) {
+		var level = helper.getLevel();
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 7));
+		CamelHusk camel = camelWithRider(helper, new BlockPos(3, 1, 2), pig, "test_sand_spit");
+		var spit = new GeneEffect.RiderTargetSpit(6.0F, 2.0F, 16.0F,
+				java.util.Optional.of(net.minecraft.world.effect.MobEffects.SLOWNESS), 2.0F, 0);
+		helper.assertTrue(GeneBehaviors.riderTargetSpit(camel, level, spit), "the camel husk spits");
+		var spits = level.getEntitiesOfClass(net.minecraft.world.entity.projectile.LlamaSpit.class, camel.getBoundingBox().inflate(4.0));
+		helper.assertValueEqual(spits.size(), 1, "one spit flies");
+		helper.assertTrue(spits.get(0).getDeltaMovement().z > 0.5, "the spit flies at the pig");
+		helper.assertFalse(GeneBehaviors.riderTargetSpit(camel, level, spit), "the next spit waits 6 seconds");
+		pig.hurtServer(level, level.damageSources().spit(spits.get(0), camel), 1.0F);
+		helper.assertValueEqual(pig.getMaxHealth() - pig.getHealth(), 2.0F, "the spit does 2 damage");
+		helper.assertTrue(pig.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS), "the spit gives Slowness");
+		spits.forEach(net.minecraft.world.entity.Entity::discard);
+		CamelHusk lone = MountEffectsTest.mob(helper, EntityTypes.CAMEL_HUSK, new BlockPos(6, 1, 2), "test_sand_spit");
+		helper.assertFalse(GeneBehaviors.riderTargetSpit(lone, level, spit), "a camel husk with no rider does not spit");
+		helper.succeed();
+	}
 }

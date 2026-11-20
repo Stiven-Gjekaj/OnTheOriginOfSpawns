@@ -106,6 +106,10 @@ public final class Evolution {
 		ServerLivingEntityEvents.AFTER_DEATH.register(Evolution::onDeath);
 		ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) -> {
 			GeneCombat.onHurt(entity, source);
+			if (!blocked && damageTaken > 0.0F && source.getDirectEntity() != null
+					&& source.getDirectEntity().hasAttached(ModAttachments.SPIT)) {
+				GeneCombat.onSpitHit(source.getDirectEntity().getAttached(ModAttachments.SPIT), entity, source.getEntity());
+			}
 			GeneBlasts.onBlastHit(entity, source, damageTaken, blocked);
 			// An arrow that a shield stops, or that does no damage, gives none of its effects.
 			if (!blocked && damageTaken > 0.0F && source.getDirectEntity() instanceof Projectile

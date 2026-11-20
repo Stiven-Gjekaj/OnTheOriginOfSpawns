@@ -296,6 +296,12 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> DASH_STRIKE_END = AttachmentRegistry.create(OriginOfSpawns.id("dash_strike_end"));
 
 	/**
+	 * The spit effect that made a llama spit of a mount. It gives the damage and the status effect of the spit.
+	 */
+	public static final AttachmentType<io.github.stivengjekaj.originofspawns.definition.GeneEffect.RiderTargetSpit> SPIT =
+			AttachmentRegistry.create(OriginOfSpawns.id("spit"));
+
+	/**
 	 * The game time when a guardian with a laser lock lost the sight of its target.
 	 */
 	public static final AttachmentType<Long> SIGHT_LOST = AttachmentRegistry.create(OriginOfSpawns.id("sight_lost"));

@@ -439,6 +439,7 @@ public final class GeneBehaviors {
 					}
 				}
 				case GeneEffect.RiderEffectWhenWounded bond -> riderEffectWhenWounded(mob, bond);
+				case GeneEffect.RiderTargetSpit spit -> riderTargetSpit(mob, level, spit);
 				case GeneEffect.GazeEffect gaze when now % Math.max(1, Math.round(gaze.intervalSeconds() * 20.0F)) < TICK_INTERVAL -> {
 					AABB area = mob.getBoundingBox().inflate(gaze.range());
 					for (Player player : level.getEntitiesOfClass(Player.class, area, player -> !player.isSpectator()
@@ -1570,6 +1571,40 @@ public final class GeneBehaviors {
 			mob.setAttached(ModAttachments.DASH_HITS, done);
 		}
 		return count;
+	}
+
+	/**
+	 * Lets the mob spit a llama spit at the target of the mob that rides it, if the target is in the range and in sight,
+	 * and the interval is over. The behavior tick runs this one time each second.
+	 *
+	 * @return true if the mob spat now
+	 */
+	public static boolean riderTargetSpit(Mob mob, ServerLevel level, GeneEffect.RiderTargetSpit spit) {
+		if (!(mob.getFirstPassenger() instanceof Mob rider) || !(rider.getTarget() instanceof LivingEntity target)
+				|| !target.isAlive() || mob.distanceTo(target) > spit.range() || !mob.hasLineOfSight(target)
+				|| !GeneCombat.ready(mob, spit, spit.intervalSeconds())) {
+			return false;
+		}
+		net.minecraft.world.entity.projectile.LlamaSpit projectile = net.minecraft.world.entity.EntityTypes.LLAMA_SPIT
+				.create(level, net.minecraft.world.entity.EntitySpawnReason.TRIGGERED);
+		if (projectile == null) {
+			return false;
+		}
+		GeneCombat.startCooldown(mob, spit);
+		projectile.setOwner(mob);
+		Vec3 toTarget = target.position().subtract(mob.position()).multiply(1.0, 0.0, 1.0).normalize();
+		projectile.setPos(mob.getX() + toTarget.x * (mob.getBbWidth() + 1.0F) * 0.5, mob.getEyeY() - 0.1,
+				mob.getZ() + toTarget.z * (mob.getBbWidth() + 1.0F) * 0.5);
+		projectile.setAttached(ModAttachments.SPIT, spit);
+		double xd = target.getX() - projectile.getX();
+		double yd = target.getY(1.0 / 3.0) - projectile.getY();
+		double zd = target.getZ() - projectile.getZ();
+		double lift = Math.sqrt(xd * xd + zd * zd) * 0.2;
+		net.minecraft.world.entity.projectile.Projectile.spawnProjectileUsingShoot(projectile, level,
+				net.minecraft.world.item.ItemStack.EMPTY, xd, yd + lift, zd, 1.5F, 1.0F);
+		level.playSound(null, mob.getX(), mob.getY(), mob.getZ(), net.minecraft.sounds.SoundEvents.LLAMA_SPIT,
+				mob.getSoundSource(), 1.0F, 1.0F);
+		return true;
 	}
 
 	/**

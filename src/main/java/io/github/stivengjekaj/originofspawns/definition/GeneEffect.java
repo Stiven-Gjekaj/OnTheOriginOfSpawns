@@ -317,7 +317,8 @@ public sealed interface GeneEffect {
 			Map.entry("dash_leap", DashLeap.CODEC),
 			Map.entry("dash_hit", DashHit.CODEC),
 			Map.entry("dash_cloud", DashCloud.CODEC),
-			Map.entry("dash_strike", DashStrike.CODEC)
+			Map.entry("dash_strike", DashStrike.CODEC),
+			Map.entry("rider_target_spit", RiderTargetSpit.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5303,6 +5304,28 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "dash_strike";
+		}
+	}
+
+	/**
+	 * One time in each interval, the mob spits a llama spit at the target of the mob that rides it, if the target is in
+	 * the range and in sight. The spit does the damage, and with {@code effect}, it gives the status effect. A vanilla
+	 * llama spit does 1 damage. Sand Spit: 2 damage and Slowness for 2 seconds.
+	 */
+	record RiderTargetSpit(float intervalSeconds, float damage, float range, Optional<Holder<MobEffect>> effect,
+			float seconds, int amplifier) implements GeneEffect {
+		public static final MapCodec<RiderTargetSpit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 600.0F).optionalFieldOf("interval_seconds", 6.0F).forGetter(RiderTargetSpit::intervalSeconds),
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("damage", 2.0F).forGetter(RiderTargetSpit::damage),
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 16.0F).forGetter(RiderTargetSpit::range),
+				MobEffect.CODEC.optionalFieldOf("effect").forGetter(RiderTargetSpit::effect),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("seconds", 2.0F).forGetter(RiderTargetSpit::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(RiderTargetSpit::amplifier)
+		).apply(instance, RiderTargetSpit::new));
+
+		@Override
+		public String type() {
+			return "rider_target_spit";
 		}
 	}
 }

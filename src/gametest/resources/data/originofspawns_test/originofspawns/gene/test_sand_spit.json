@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:camel_husk",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "rider_target_spit", "interval_seconds": 6, "damage": 2, "effect": "minecraft:slowness", "seconds": 2 }],
+	"mutation_rate": 0
+}

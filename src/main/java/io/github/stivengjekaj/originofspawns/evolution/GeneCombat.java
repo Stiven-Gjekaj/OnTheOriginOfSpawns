@@ -525,6 +525,10 @@ public final class GeneCombat {
 		if (source.getDirectEntity() != null) {
 			result *= source.getDirectEntity().getAttachedOrElse(ModAttachments.REBOUND_DAMAGE, 1.0F);
 		}
+		if (source.getDirectEntity() != null && source.getDirectEntity().hasAttached(ModAttachments.SPIT)) {
+			// A vanilla llama spit does 1 damage. The spit of a mount does the damage of its effect.
+			result *= source.getDirectEntity().getAttached(ModAttachments.SPIT).damage();
+		}
 		if (LASER.get()) {
 			result *= LASER_FRACTION.get();
 		}
@@ -1198,6 +1202,14 @@ public final class GeneCombat {
 		if (source.getDirectEntity() == attacker && !mob.hasPassenger(attacker) && !KICKING.get()) {
 			kick(mob, level, attacker);
 		}
+	}
+
+	/**
+	 * Gives the status effect of the spit of a mount to the entity that the spit hurt.
+	 */
+	public static void onSpitHit(GeneEffect.RiderTargetSpit spit, LivingEntity victim, Entity owner) {
+		spit.effect().ifPresent(effect -> victim.addEffect(new MobEffectInstance(effect, Math.round(spit.seconds() * 20.0F),
+				spit.amplifier()), owner));
 	}
 
 	/**

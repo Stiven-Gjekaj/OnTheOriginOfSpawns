@@ -101,15 +101,15 @@ The visual column gives the region and the mark.
 | Stone Alarm | Waker | `spotted` | When it sees a player, it wakes the hidden silverfish in 8 blocks | Players hear it from two times farther | Head: long feelers. This changes the model |
 | Swarm Rally | Waker | `alone` | When it sees a player, it calls the silverfish in 16 blocks to the player | 10% less speed | Tail: a bright tail tip |
 | Blood Call | Waker | `player_death` | When it hurts a player, the silverfish in 8 blocks target that player | 10% less maximum health | Body: red bands on the front segments |
-| Death Cry | Waker | `critical` | When it dies, it wakes the hidden silverfish in 10 blocks | 10% less maximum health | Back: a white stripe on the back |
-| Wake Bite | Waker, sub Infester | `melee` | Its hits give Infested for 3 seconds | 10% less damage | Back: a white fringe on the back |
+| Death Cry | Waker | `critical` | When it dies, it wakes the hidden silverfish in 10 blocks | 10% less maximum health | Back: a white stripe across the back |
+| Wake Bite | Waker, sub Infester | `melee` | Its hits give Infested for 3 seconds | 10% less damage | Back: pale ivory bristles on the front layer |
 
 ### Gnawer genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Flint Jaw | Gnawer | `melee` | 1 more damage | 10% less speed | Head: gray, stone-colored jaws |
-| Rust Bite | Gnawer | `critical` | Its hits damage the armor of a player two times as much | 10% less maximum health | Body: orange flecks |
+| Flint Jaw | Gnawer | `melee` | 1 more damage | 10% less speed | Head: a dark gray jaw line |
+| Rust Bite | Gnawer | `critical` | Its hits damage the armor of a player two times as much | 10% less maximum health | Back: orange bristles round the body |
 | Gnaw Frenzy | Gnawer | `crowd` | 20% more damage with 2 or more silverfish near it | 20% less damage alone | Body: dark red spots |
 | Tunnel Gnaw | Gnawer | `unreached` | When it cannot reach its target, it gnaws through a stone block in its way, one block each 2 seconds | 10% less maximum health | Head: long front teeth. This changes the model |
 | Feeding Bite | Gnawer | `player_death` | Each hit heals it 1 health | 10% less damage | Tail: a dark red tail |
@@ -119,11 +119,11 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Fast Scuttle | Skitterer | `unreached` | 20% more speed | 10% less maximum health | Tail: a forked tail |
+| Fast Scuttle | Skitterer | `unreached` | 20% more speed | 10% less maximum health | Tail: a forked tail. This changes the model |
 | Dodge Scuttle | Skitterer | `projectile` | It moves aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Body: zigzag lines |
 | Flat Body | Skitterer | `critical` | A critical hit does no extra damage to it | 10% less speed | Back: flat, wide back plates |
 | Shell Slip | Skitterer | `melee` | Each melee hit has a 20% chance to miss it | 10% less damage | Body: a shiny, smooth shell |
-| Wall Climb | Skitterer | `spotted` | It climbs walls, as a spider does | 10% less maximum health | Tail: a hooked tail tip |
+| Wall Climb | Skitterer | `spotted` | It climbs walls, as a spider does | 10% less maximum health | Tail: a pale hook on the tail tip. This changes the model |
 | Alarm Dash | Skitterer, sub Waker | `crowd` | When something hurts it, it and the silverfish near it get 20% more speed for 4 seconds | 10% less damage | Body: pale side spots |
 
 ### Lodger genes
@@ -131,19 +131,19 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Cobble Skin | Lodger | `projectile` | 30% less damage from projectiles | 10% less speed | Body: gray stone plates |
-| Deep Lodge | Lodger | `critical` | When a hit takes it under half health, it hides in a stone block next to it, one time each 30 seconds | 10% less speed | Back: cracks on the back |
-| Ember Shell | Lodger | `fire` | Half the damage from fire and lava | 10% less maximum health | Back: dark red back plates |
-| Stone Ambush | Lodger | `unreached` | Its first hit after it comes out of a block does 2 more damage | 10% less maximum health | Head: wide jaws |
-| Bane Plate | Lodger | `bane` | Bane of Arthropods does no extra damage to it and gives it no Slowness | 10% less speed | Back: thick, dark plates |
-| Egg Lodge | Lodger, sub Infester | `alone` | When it hides in a block, 2 silverfish come out of that block, not 1 | 10% less maximum health | Tail: small eggs on the tail |
+| Deep Lodge | Lodger | `critical` | When a hit takes it under half health, it hides in a stone block next to it, one time each 30 seconds | 10% less speed | Body: cracks where the back meets the sides |
+| Ember Shell | Lodger | `fire` | Half the damage from fire and lava | 10% less maximum health | Back: dark red back plates and red bristles |
+| Stone Ambush | Lodger | `unreached` | Its first hit after it comes out of a block does 2 more damage | 10% less maximum health | Head: long brown jaws out of the sides of the head. This changes the model |
+| Bane Plate | Lodger | `bane` | Bane of Arthropods does no extra damage to it and gives it no Slowness | 10% less speed | Back: near black plates and dark bristles |
+| Egg Lodge | Lodger, sub Infester | `alone` | When it hides in a block, 2 silverfish come out of that block, not 1 | 10% less maximum health | Tail: small cream eggs on the tail. This changes the model |
 
 ### Infester genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Egg Bite | Infester | `melee` | Its hits give Infested for 6 seconds | 10% less damage | Head: pale yellow jaws |
-| Brood Burst | Infester | `explosion` | When it dies, 2 silverfish come out | 10% less maximum health | Body: a swollen middle segment |
-| Stone Seed | Infester | `spotted` | When it hides in a stone block, it also infests 2 stone blocks next to it | 10% less maximum health | Back: small white eggs on the back |
+| Brood Burst | Infester | `explosion` | When it dies, 2 silverfish come out | 10% less maximum health | Body: a swollen middle segment. This changes the model |
+| Stone Seed | Infester | `spotted` | When it hides in a stone block, it also infests 2 stone blocks next to it | 10% less maximum health | Back: small cream eggs on the bristles |
 | Egg Sac | Infester | `projectile` | When a projectile hurts it, a silverfish comes out, one time each 10 seconds | 10% less maximum health | Body: pale, swollen sides |
 | Egg Spit | Infester | `unreached` | It spits an egg at its target from 6 blocks, one time each 6 seconds. The egg gives Infested for 4 seconds | 10% less damage | Head: a green mouth |
 | Gut Bite | Infester, sub Gnawer | `player_death` | Its hits give Hunger for 4 seconds | 10% less maximum health | Body: a green belly |
@@ -204,7 +204,12 @@ The visual column gives the region and the mark.
 - It needs a new region map, `textures/region/silverfish.png`. The design
   uses the regions head, body, back, and tail.
 - The head is the first segment. The tail is the last two segments. The
-  back is the three back layers.
+  back is the tops of the middle segments and the bristles of the three back
+  layers. Most pixels of the back layers are clear, so a mark on a layer
+  colors its bristles.
+- Seven genes change the model: Stone Alarm, Tunnel Gnaw, Stone Ambush, Fast
+  Scuttle, Wall Climb, Egg Lodge, and Brood Burst. The tail is small, so
+  three tail genes are models.
 - The gene models use the silverfish bones. Check them against the vanilla
   model, as for the witch.
 

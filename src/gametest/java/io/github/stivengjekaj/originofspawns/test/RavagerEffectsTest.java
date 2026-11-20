@@ -1,0 +1,41 @@
+package io.github.stivengjekaj.originofspawns.test;
+
+import io.github.stivengjekaj.originofspawns.mixin.RavagerAccessor;
+
+import net.fabricmc.fabric.api.gametest.v1.GameTest;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.monster.Ravager;
+
+/**
+ * Checks the genes of a ravager: its roar, its stun, its charge, its rider, and the reused effects.
+ */
+public class RavagerEffectsTest {
+	static Ravager ravager(GameTestHelper helper, BlockPos pos, String... genes) {
+		return MountEffectsTest.mob(helper, EntityTypes.RAVAGER, pos, genes);
+	}
+
+	static void roar(Ravager ravager) {
+		((RavagerAccessor) ravager).originofspawns$roar();
+	}
+
+	static float lost(Pig pig) {
+		return pig.getMaxHealth() - pig.getHealth();
+	}
+
+	@GameTest
+	public void aLoudRoarReachesEightBlocks(GameTestHelper helper) {
+		Ravager plain = ravager(helper, new BlockPos(1, 1, 1));
+		Pig far = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 8));
+		roar(plain);
+		helper.assertValueEqual(lost(far), 0.0F, "the vanilla roar does not reach 6 blocks");
+		Ravager loud = ravager(helper, new BlockPos(1, 1, 2), "test_loud_roar");
+		plain.discard();
+		roar(loud);
+		helper.assertTrue(lost(far) > 0.0F, "the loud roar reaches 6 blocks");
+		helper.succeed();
+	}
+}

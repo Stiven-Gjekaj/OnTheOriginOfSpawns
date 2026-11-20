@@ -358,7 +358,8 @@ public sealed interface GeneEffect {
 			Map.entry("split_on_hurt", SplitOnHurt.CODEC),
 			Map.entry("split_limit", SplitLimit.CODEC),
 			Map.entry("split_heir", SplitHeir.CODEC),
-			Map.entry("split_scatter", SplitScatter.CODEC)
+			Map.entry("split_scatter", SplitScatter.CODEC),
+			Map.entry("roar_range", RoarRange.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6060,6 +6061,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "split_scatter";
+		}
+	}
+
+	/**
+	 * The roar of a ravager reaches this many blocks. With more than one effect, the largest range counts. The vanilla
+	 * roar reaches 4 blocks. Roarers tier 3: 8 blocks.
+	 */
+	record RoarRange(float blocks) implements GeneEffect {
+		public static final MapCodec<RoarRange> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 32.0F).optionalFieldOf("blocks", 4.0F).forGetter(RoarRange::blocks)
+		).apply(instance, RoarRange::new));
+
+		@Override
+		public String type() {
+			return "roar_range";
 		}
 	}
 }

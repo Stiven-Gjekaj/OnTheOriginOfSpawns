@@ -62,4 +62,28 @@ public class SkeletonHorseEffectsTest {
 		helper.assertTrue(wetPig.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS), "Slowness in water");
 		helper.succeed();
 	}
+
+	/**
+	 * Makes a skeleton horse trap with the test genes and returns its trap goal.
+	 */
+	static net.minecraft.world.entity.animal.equine.SkeletonTrapGoal trap(GameTestHelper helper, SkeletonHorse horse) {
+		horse.setTrap(true);
+		return (net.minecraft.world.entity.animal.equine.SkeletonTrapGoal) ((io.github.stivengjekaj.originofspawns.mixin.MobAccessor) horse)
+				.originofspawns$goalSelector().getAvailableGoals().stream()
+				.map(net.minecraft.world.entity.ai.goal.WrappedGoal::getGoal)
+				.filter(net.minecraft.world.entity.animal.equine.SkeletonTrapGoal.class::isInstance).findFirst().orElseThrow();
+	}
+
+	@GameTest
+	public void wideTrapOpensWhenAPlayerComesInTwentyBlocks(GameTestHelper helper) {
+		SkeletonHorse plain = MountEffectsTest.mob(helper, EntityTypes.SKELETON_HORSE, new BlockPos(1, 1, 1));
+		SkeletonHorse wide = MountEffectsTest.mob(helper, EntityTypes.SKELETON_HORSE, new BlockPos(1, 1, 2), "test_horse_wide_trap");
+		var plainGoal = trap(helper, plain);
+		var wideGoal = trap(helper, wide);
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(plain.position().add(15.0, 0.0, 0.0));
+		helper.assertFalse(plainGoal.canUse(), "a plain trap does not open at 15 blocks");
+		helper.assertTrue(wideGoal.canUse(), "a wide trap opens at 15 blocks");
+		helper.succeed();
+	}
 }

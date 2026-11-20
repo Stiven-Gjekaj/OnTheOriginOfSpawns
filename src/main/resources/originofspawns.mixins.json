@@ -84,6 +84,7 @@
 		"RangedBowAttackGoalMixin",
 		"RangedCrossbowAttackGoalMixin",
 		"SensorAccessor",
+		"SkeletonTrapGoalMixin",
 		"ServerExplosionMixin",
 		"SmallFireballMixin",
 		"SnowballMixin",

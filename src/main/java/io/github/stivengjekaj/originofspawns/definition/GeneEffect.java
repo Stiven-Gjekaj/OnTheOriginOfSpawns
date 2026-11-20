@@ -328,7 +328,8 @@ public sealed interface GeneEffect {
 			Map.entry("ink_reach", InkReach.CODEC),
 			Map.entry("ink_rate", InkRate.CODEC),
 			Map.entry("translucent_on_hurt", TranslucentOnHurt.CODEC),
-			Map.entry("swim_speed", SwimSpeed.CODEC)
+			Map.entry("swim_speed", SwimSpeed.CODEC),
+			Map.entry("trap_range", TrapRange.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5527,6 +5528,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "swim_speed";
+		}
+	}
+
+	/**
+	 * The trap of a skeleton horse opens when a player comes in the range. The vanilla range is 10 blocks. With more
+	 * than one effect, the largest range counts. Wide Trap: 20.
+	 */
+	record TrapRange(float range) implements GeneEffect {
+		public static final MapCodec<TrapRange> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 20.0F).forGetter(TrapRange::range)
+		).apply(instance, TrapRange::new));
+
+		@Override
+		public String type() {
+			return "trap_range";
 		}
 	}
 }

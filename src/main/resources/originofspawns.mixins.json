@@ -86,6 +86,8 @@
 		"RangedBowAttackGoalMixin",
 		"RangedCrossbowAttackGoalMixin",
 		"SensorAccessor",
+		"ShulkerBulletAccessor",
+		"ShulkerBulletMixin",
 		"SilverfishMergeWithStoneGoalMixin",
 		"SilverfishWakeUpFriendsGoalMixin",
 		"SkeletonHorseAccessor",

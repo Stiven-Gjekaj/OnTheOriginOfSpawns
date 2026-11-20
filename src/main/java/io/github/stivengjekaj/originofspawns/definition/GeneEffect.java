@@ -347,7 +347,8 @@ public sealed interface GeneEffect {
 			Map.entry("brood_on_hurt", BroodOnHurt.CODEC),
 			Map.entry("emerge_strike", EmergeStrike.CODEC),
 			Map.entry("spit", Spit.CODEC),
-			Map.entry("bullet_damage", BulletDamage.CODEC)
+			Map.entry("bullet_damage", BulletDamage.CODEC),
+			Map.entry("bullet_speed", BulletSpeed.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5865,6 +5866,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "bullet_damage";
+		}
+	}
+
+	/**
+	 * Multiplies the speed of the bullets of a shulker. The vanilla bullet flies 0.15 blocks each tick, and then a little
+	 * faster at each step. More than one effect multiplies together. Seeker Shot: 1.3.
+	 */
+	record BulletSpeed(float multiplier) implements GeneEffect {
+		public static final MapCodec<BulletSpeed> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 10.0F).fieldOf("multiplier").forGetter(BulletSpeed::multiplier)
+		).apply(instance, BulletSpeed::new));
+
+		@Override
+		public String type() {
+			return "bullet_speed";
 		}
 	}
 }

@@ -38,4 +38,21 @@ public class ShulkerEffectsTest {
 				4.0F, "a hit with no bullet does not change");
 		helper.succeed();
 	}
+
+	static double stepSpeed(ShulkerBullet bullet) {
+		var steps = (io.github.stivengjekaj.originofspawns.mixin.ShulkerBulletAccessor) bullet;
+		return Math.sqrt(steps.originofspawns$targetDeltaX() * steps.originofspawns$targetDeltaX()
+				+ steps.originofspawns$targetDeltaY() * steps.originofspawns$targetDeltaY()
+				+ steps.originofspawns$targetDeltaZ() * steps.originofspawns$targetDeltaZ());
+	}
+
+	@GameTest
+	public void aSeekerShotFliesThirtyPercentFaster(GameTestHelper helper) {
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 4));
+		Shulker plain = shulker(helper, new BlockPos(1, 1, 1));
+		Shulker seeker = shulker(helper, new BlockPos(1, 1, 4), "test_seeker_shot");
+		helper.assertTrue(Math.abs(stepSpeed(bullet(helper, plain, pig)) - 0.15) < 1.0E-6, "a vanilla bullet step is 0.15");
+		helper.assertTrue(Math.abs(stepSpeed(bullet(helper, seeker, pig)) - 0.195) < 1.0E-6, "a seeker bullet step is 0.195");
+		helper.succeed();
+	}
 }

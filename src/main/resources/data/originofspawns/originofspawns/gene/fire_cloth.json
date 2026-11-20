@@ -1,0 +1,25 @@
+{
+	"species": "minecraft:camel_husk",
+	"counters": "originofspawns:fire",
+	"family": "originofspawns:camel_husk/bearer",
+	"gains": [
+		{
+			"type": "riders",
+			"effects": [
+				{
+					"type": "damage_taken",
+					"damage_types": "#minecraft:is_fire",
+					"multiplier": 0.5
+				}
+			]
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

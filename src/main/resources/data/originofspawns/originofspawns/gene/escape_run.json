@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:camel_husk",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:camel_husk/dunewalker",
+	"sub_family": "originofspawns:camel_husk/dasher",
+	"gains": [
+		{
+			"type": "flee",
+			"threshold": 0.3,
+			"seconds": 4,
+			"speed": 1.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

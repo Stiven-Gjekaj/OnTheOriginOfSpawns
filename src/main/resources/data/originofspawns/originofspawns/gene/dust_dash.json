@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:camel_husk",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:camel_husk/dasher",
+	"gains": [
+		{
+			"type": "dash_cloud",
+			"effect": "minecraft:blindness",
+			"seconds": 2,
+			"radius": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

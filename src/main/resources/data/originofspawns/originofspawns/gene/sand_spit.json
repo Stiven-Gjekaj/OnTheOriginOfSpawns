@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:camel_husk",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:camel_husk/sandkicker",
+	"gains": [
+		{
+			"type": "rider_target_spit",
+			"interval_seconds": 6,
+			"damage": 2,
+			"effect": "minecraft:slowness",
+			"seconds": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

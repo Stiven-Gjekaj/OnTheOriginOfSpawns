@@ -1,0 +1,26 @@
+{
+	"species": "minecraft:camel_husk",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:camel_husk/bearer",
+	"sub_family": "originofspawns:camel_husk/sandkicker",
+	"gains": [
+		{
+			"type": "riders",
+			"effects": [
+				{
+					"type": "damage_to",
+					"targets": "#originofspawns:all_golems",
+					"multiplier": 2
+				}
+			]
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

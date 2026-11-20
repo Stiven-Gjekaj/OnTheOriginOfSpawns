@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:camel_husk",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:camel_husk/sandkicker",
+	"gains": [
+		{
+			"type": "kick_shield_stop",
+			"seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1390,6 +1390,11 @@ public final class GeneCombat {
 		float cooldown = onHurt.cooldownSeconds();
 		float playerRadius = onHurt.playerRadius();
 		List<GeneEffect> inkGenes = onHurt.ink() ? GeneEffects.of(mob).toList() : List.of();
+		for (GeneEffect effect : inkGenes) {
+			if (effect instanceof GeneEffect.InkReach reach) {
+				playerRadius *= reach.multiplier();
+			}
+		}
 		if (last != null && now - last < Math.round(cooldown * 20.0F)) {
 			return;
 		}

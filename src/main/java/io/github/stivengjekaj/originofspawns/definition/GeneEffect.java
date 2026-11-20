@@ -324,7 +324,8 @@ public sealed interface GeneEffect {
 			Map.entry("charge_push", ChargePush.CODEC),
 			Map.entry("drain_air", DrainAir.CODEC),
 			Map.entry("self_effect_after", SelfEffectAfter.CODEC),
-			Map.entry("ink_effect", InkEffect.CODEC)
+			Map.entry("ink_effect", InkEffect.CODEC),
+			Map.entry("ink_reach", InkReach.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5452,6 +5453,20 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "ink_effect";
+		}
+	}
+
+	/**
+	 * Multiplies the player radius of the ink of the mob. More than one effect multiplies together. Wide Ink: 2.
+	 */
+	record InkReach(float multiplier) implements GeneEffect {
+		public static final MapCodec<InkReach> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 10.0F).optionalFieldOf("multiplier", 2.0F).forGetter(InkReach::multiplier)
+		).apply(instance, InkReach::new));
+
+		@Override
+		public String type() {
+			return "ink_reach";
 		}
 	}
 }

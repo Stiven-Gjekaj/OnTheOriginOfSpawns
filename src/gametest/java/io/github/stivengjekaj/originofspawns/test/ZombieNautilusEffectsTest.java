@@ -150,20 +150,22 @@ public class ZombieNautilusEffectsTest {
 	}
 
 	@GameTest
-	public void theInkEffectGoesToEachPlayerThatTheInkReaches(GameTestHelper helper) {
+	public void theInkGenesAddAnEffectAndReachFarther(GameTestHelper helper) {
 		var level = helper.getLevel();
 		var near = CreeperEffectsTest.survivalPlayer(helper).player();
 		var far = CreeperEffectsTest.survivalPlayer(helper).player();
 		near.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(2, 1, 2))));
-		far.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(1, 1, 3))));
+		far.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(1, 1, 7))));
 		ZombieNautilus plain = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, new BlockPos(1, 1, 1), "test_plain_ink");
 		plain.hurtServer(level, level.damageSources().playerAttack(near), 1.0F);
 		helper.assertTrue(near.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "the plain ink blinds the near player");
+		helper.assertFalse(far.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "the plain ink does not reach 6 blocks");
 		helper.assertFalse(near.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS), "the plain ink gives no Slowness");
 		plain.discard();
 		near.removeAllEffects();
 		ZombieNautilus inky = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, new BlockPos(1, 1, 1), "test_ink_mods");
 		inky.hurtServer(level, level.damageSources().playerAttack(near), 1.0F);
+		helper.assertTrue(far.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS), "the wide ink reaches 6 blocks");
 		helper.assertTrue(near.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS), "the thick ink gives Slowness");
 		helper.assertTrue(far.hasEffect(net.minecraft.world.effect.MobEffects.SLOWNESS), "and to each player that it reaches");
 		helper.succeed();

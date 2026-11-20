@@ -1,0 +1,25 @@
+{
+	"texture": "originofspawns:textures/entity/stare_back_eye.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-2,
+				-13,
+				-4.5
+			],
+			"size": [
+				4,
+				3,
+				2
+			],
+			"glow": true
+		}
+	]
+}

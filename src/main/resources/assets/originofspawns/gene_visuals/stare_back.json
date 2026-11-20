@@ -1,0 +1,20 @@
+{
+	"region_map": "originofspawns:textures/region/creaking.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/stare_back_0.png",
+				"tint": "#D8D0B8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/stare_back_1.png",
+				"tint": "#2A201A"
+			}
+		}
+	],
+	"model": "originofspawns:stare_back_eye"
+}

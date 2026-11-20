@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/creaking.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/heart_twitch_0.png",
+				"tint": "#FFA030"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/heart_twitch_1.png",
+				"tint": "#3A1A08"
+			}
+		}
+	]
+}

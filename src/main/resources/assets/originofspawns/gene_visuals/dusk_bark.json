@@ -1,0 +1,13 @@
+{
+	"region_map": "originofspawns:textures/region/creaking.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/dusk_bark_0.png",
+				"tint": "#100C0A"
+			}
+		}
+	],
+	"model": "originofspawns:dusk_bark_ledges"
+}

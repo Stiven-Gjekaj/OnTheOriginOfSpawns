@@ -1,0 +1,126 @@
+{
+	"texture": "originofspawns:textures/entity/thorn_fist_thorns.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.6,
+				1,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.6,
+				6,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.6,
+				10,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "right_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3.6,
+				15,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				2.6,
+				2,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				2.6,
+				9,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			]
+		},
+		{
+			"bone": "left_arm",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				2.6,
+				13,
+				-0.5
+			],
+			"size": [
+				2,
+				1,
+				1
+			]
+		}
+	]
+}

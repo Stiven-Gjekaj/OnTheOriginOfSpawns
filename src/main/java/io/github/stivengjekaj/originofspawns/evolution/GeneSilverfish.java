@@ -193,4 +193,42 @@ public final class GeneSilverfish {
 		}
 		return false;
 	}
+
+	/**
+	 * Gnaws through a block in the way of the mob, if the mob finds no path to its target and the interval of the gene is
+	 * over.
+	 *
+	 * @return the place of the block that the mob gnawed, or empty
+	 */
+	public static java.util.Optional<BlockPos> gnaw(Mob mob, ServerLevel level, GeneEffect.Gnaw gnaw) {
+		net.minecraft.world.entity.LivingEntity target = mob.getTarget();
+		if (target == null || !target.isAlive() || !level.getGameRules().get(GameRules.MOB_GRIEFING)
+				|| !GeneCombat.ready(mob, gnaw, gnaw.intervalSeconds())
+				|| !GeneCombat.test(mob, GeneEffect.When.TARGET_UNREACHABLE)) {
+			return java.util.Optional.empty();
+		}
+		BlockPos feet = mob.blockPosition();
+		double dx = target.getX() - mob.getX();
+		double dz = target.getZ() - mob.getZ();
+		double dy = target.getY() - mob.getY();
+		net.minecraft.core.Direction ahead = Math.abs(dx) > Math.abs(dz)
+				? (dx > 0 ? net.minecraft.core.Direction.EAST : net.minecraft.core.Direction.WEST)
+				: (dz > 0 ? net.minecraft.core.Direction.SOUTH : net.minecraft.core.Direction.NORTH);
+		java.util.List<BlockPos> way = new java.util.ArrayList<>();
+		way.add(feet.relative(ahead));
+		if (dy >= 1.0) {
+			way.add(feet.relative(ahead).above());
+			way.add(feet.above());
+		} else if (dy <= -1.0) {
+			way.add(feet.below());
+		}
+		for (BlockPos pos : way) {
+			if (InfestedBlock.isCompatibleHostBlock(level.getBlockState(pos))) {
+				GeneCombat.startCooldown(mob, gnaw);
+				level.destroyBlock(pos, false, mob);
+				return java.util.Optional.of(pos);
+			}
+		}
+		return java.util.Optional.empty();
+	}
 }

@@ -340,7 +340,8 @@ public sealed interface GeneEffect {
 			Map.entry("wake_on_death", WakeOnDeath.CODEC),
 			Map.entry("hide_in_stone", HideInStone.CODEC),
 			Map.entry("hide_brood", HideBrood.CODEC),
-			Map.entry("stone_seed", StoneSeed.CODEC)
+			Map.entry("stone_seed", StoneSeed.CODEC),
+			Map.entry("gnaw", Gnaw.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5735,6 +5736,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "stone_seed";
+		}
+	}
+
+	/**
+	 * When the mob finds no path to its target, it gnaws through a block in its way, one block in each interval. It
+	 * gnaws only the blocks that a silverfish can infest, and the block drops nothing. The block in its way is the block
+	 * in front of it toward the target, or the block above or below it when the target is higher or lower. It needs the
+	 * {@code mobGriefing} game rule. Tunnel Gnaw: one block each 2 seconds.
+	 */
+	record Gnaw(float intervalSeconds) implements GeneEffect {
+		public static final MapCodec<Gnaw> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("interval_seconds", 2.0F).forGetter(Gnaw::intervalSeconds)
+		).apply(instance, Gnaw::new));
+
+		@Override
+		public String type() {
+			return "gnaw";
 		}
 	}
 }

@@ -197,4 +197,21 @@ public class SilverfishEffectsTest {
 		helper.assertValueEqual(infested, 3L, "the block of the silverfish and two blocks next to it are infested");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aTunnelGnawGnawsThroughTheStoneToATargetThatItCannotReach(GameTestHelper helper) {
+		BlockPos place = new BlockPos(3, 2, 3);
+		bury(helper, place);
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(7, 2, 3));
+		Silverfish silverfish = silverfish(helper, place, "test_tunnel_gnaw");
+		silverfish.setTarget(pig);
+		var gnaw = new GeneEffect.Gnaw(2.0F);
+		var gnawed = GeneSilverfish.gnaw(silverfish, helper.getLevel(), gnaw);
+		helper.assertValueEqual(gnawed.orElseThrow(), helper.absolutePos(place.east()), "it gnaws the block toward the pig");
+		helper.assertBlockPresent(Blocks.AIR, place.east());
+		helper.assertTrue(helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class,
+				silverfish.getBoundingBox().inflate(3.0)).isEmpty(), "the block drops nothing");
+		helper.assertTrue(GeneSilverfish.gnaw(silverfish, helper.getLevel(), gnaw).isEmpty(), "the next gnaw waits");
+		helper.succeed();
+	}
 }

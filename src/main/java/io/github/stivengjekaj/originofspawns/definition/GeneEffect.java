@@ -318,7 +318,8 @@ public sealed interface GeneEffect {
 			Map.entry("dash_hit", DashHit.CODEC),
 			Map.entry("dash_cloud", DashCloud.CODEC),
 			Map.entry("dash_strike", DashStrike.CODEC),
-			Map.entry("rider_target_spit", RiderTargetSpit.CODEC)
+			Map.entry("rider_target_spit", RiderTargetSpit.CODEC),
+			Map.entry("rider_target_charge", RiderTargetCharge.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5329,6 +5330,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "rider_target_spit";
+		}
+	}
+
+	/**
+	 * A mob with the vanilla charge attack, such as a zombie nautilus, charges at the target of the mob that rides it,
+	 * in water and on land, when the target is in the range. A vanilla zombie nautilus charges only at a pufferfish, or
+	 * at an entity that hurt it while in water. The charge keeps its vanilla time between charges.
+	 */
+	record RiderTargetCharge(float range) implements GeneEffect {
+		public static final MapCodec<RiderTargetCharge> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 32.0F).optionalFieldOf("range", 11.0F).forGetter(RiderTargetCharge::range)
+		).apply(instance, RiderTargetCharge::new));
+
+		@Override
+		public String type() {
+			return "rider_target_charge";
 		}
 	}
 }

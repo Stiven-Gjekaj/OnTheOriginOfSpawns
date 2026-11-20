@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:zombie_nautilus",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "rider_target_charge" }],
+	"mutation_rate": 0
+}

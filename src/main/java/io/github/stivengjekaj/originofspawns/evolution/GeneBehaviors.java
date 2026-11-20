@@ -418,6 +418,7 @@ public final class GeneBehaviors {
 				case GeneEffect.MountDash dash when mob instanceof net.minecraft.world.entity.animal.camel.Camel camel ->
 						mountDash(camel, level, dash);
 				case GeneEffect.DashHit hit -> dashHit(mob, level, hit);
+				case GeneEffect.RiderTargetCharge charge -> riderTargetCharge(mob, charge);
 				case GeneEffect.TouchReach reach when mob instanceof net.minecraft.world.entity.monster.cubemob.AbstractCubeMob cube ->
 						GeneCubes.reachHit(cube);
 				default -> {
@@ -1571,6 +1572,26 @@ public final class GeneBehaviors {
 			mob.setAttached(ModAttachments.DASH_HITS, done);
 		}
 		return count;
+	}
+
+	/**
+	 * Gives the target of the mob that rides the mob to the brain of the mob as its attack target, so that its vanilla
+	 * charge attack starts. It waits while the mob has an attack target or the charge cools down.
+	 *
+	 * @return true if the mob got the target of its rider now
+	 */
+	public static boolean riderTargetCharge(Mob mob, GeneEffect.RiderTargetCharge charge) {
+		var brain = mob.getBrain();
+		if (!(mob.getFirstPassenger() instanceof Mob rider) || !(rider.getTarget() instanceof LivingEntity target)
+				|| !target.isAlive() || mob.hasPassenger(target) || mob.distanceTo(target) > charge.range()
+				|| !brain.checkMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGET,
+						net.minecraft.world.entity.ai.memory.MemoryStatus.REGISTERED)
+				|| brain.hasMemoryValue(net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGET)
+				|| brain.hasMemoryValue(net.minecraft.world.entity.ai.memory.MemoryModuleType.CHARGE_COOLDOWN_TICKS)) {
+			return false;
+		}
+		brain.setMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGET, target);
+		return true;
 	}
 
 	/**

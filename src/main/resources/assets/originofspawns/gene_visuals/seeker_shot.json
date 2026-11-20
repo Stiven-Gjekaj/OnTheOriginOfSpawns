@@ -1,0 +1,20 @@
+{
+	"region_map": "originofspawns:textures/region/shulker.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/seeker_shot_0.png",
+				"tint": "#FFF27A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/seeker_shot_1.png",
+				"tint": "#E8C030"
+			}
+		}
+	],
+	"model": "originofspawns:seeker_shot_eyes"
+}

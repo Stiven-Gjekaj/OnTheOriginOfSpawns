@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/shulker.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sight_blink_0.png",
+				"tint": "#FFFFFF"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sight_blink_1.png",
+				"tint": "#8A8478"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/sight_blink_2.png",
+				"tint": "#F8F8E8"
+			}
+		}
+	]
+}

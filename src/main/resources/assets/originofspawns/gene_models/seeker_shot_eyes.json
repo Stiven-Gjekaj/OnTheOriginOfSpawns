@@ -1,0 +1,45 @@
+{
+	"texture": "originofspawns:textures/entity/seeker_shot_eyes.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-3,
+				3,
+				-4
+			],
+			"size": [
+				2,
+				1,
+				2
+			],
+			"inflate": -0.05,
+			"glow": true
+		},
+		{
+			"bone": "head",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				1,
+				3,
+				-4
+			],
+			"size": [
+				2,
+				1,
+				2
+			],
+			"inflate": -0.05,
+			"glow": true
+		}
+	]
+}

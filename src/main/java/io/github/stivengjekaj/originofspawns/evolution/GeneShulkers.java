@@ -251,4 +251,22 @@ public final class GeneShulkers {
 		}
 		return false;
 	}
+
+	/**
+	 * The vanilla limit of the split of a shulker.
+	 */
+	public static final int VANILLA_SPLIT_LIMIT = 5;
+
+	/**
+	 * Returns the limit of the split of the shulker: the largest split limit gene, or the vanilla limit.
+	 */
+	public static int splitLimit(Shulker shulker) {
+		int limit = VANILLA_SPLIT_LIMIT;
+		for (GeneEffect effect : GeneEffects.of(shulker).toList()) {
+			if (effect instanceof GeneEffect.SplitLimit split) {
+				limit = Math.max(limit, split.limit());
+			}
+		}
+		return limit;
+	}
 }

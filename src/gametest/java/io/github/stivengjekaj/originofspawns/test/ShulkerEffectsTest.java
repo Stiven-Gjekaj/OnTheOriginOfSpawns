@@ -262,4 +262,13 @@ public class ShulkerEffectsTest {
 				"the new shulker has no genes of the first one");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aSplitReachRaisesTheLimitOfTheSplit(GameTestHelper helper) {
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneShulkers.splitLimit(
+				shulker(helper, new BlockPos(1, 1, 1))), 5, "the vanilla split stops at 5 shulkers");
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneShulkers.splitLimit(
+				shulker(helper, new BlockPos(4, 1, 4), "test_split_reach")), 8, "the gene split stops at 8 shulkers");
+		helper.succeed();
+	}
 }

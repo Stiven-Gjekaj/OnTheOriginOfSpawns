@@ -355,7 +355,8 @@ public sealed interface GeneEffect {
 			Map.entry("teleport_on_hurt", TeleportOnHurt.CODEC),
 			Map.entry("shut_after_teleport", ShutAfterTeleport.CODEC),
 			Map.entry("sight_teleport", SightTeleport.CODEC),
-			Map.entry("split_on_hurt", SplitOnHurt.CODEC)
+			Map.entry("split_on_hurt", SplitOnHurt.CODEC),
+			Map.entry("split_limit", SplitLimit.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6014,6 +6015,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "split_on_hurt";
+		}
+	}
+
+	/**
+	 * Changes the limit of the split of a shulker. In vanilla, each other shulker in 8 blocks adds a fifth to the chance
+	 * that a split fails, so the split stops at 5 shulkers. With a limit, each other shulker adds one part in the limit.
+	 * It acts on each split, also the vanilla split from a bullet. With more than one effect, the largest limit counts.
+	 * Split Reach: 8.
+	 */
+	record SplitLimit(int limit) implements GeneEffect {
+		public static final MapCodec<SplitLimit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.intRange(1, 64).optionalFieldOf("limit", 8).forGetter(SplitLimit::limit)
+		).apply(instance, SplitLimit::new));
+
+		@Override
+		public String type() {
+			return "split_limit";
 		}
 	}
 }

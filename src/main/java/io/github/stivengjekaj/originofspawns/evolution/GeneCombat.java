@@ -595,6 +595,14 @@ public final class GeneCombat {
 			}
 		}
 		if (source.getEntity() instanceof LivingEntity attacker && attacker != victim) {
+			if (source.getDirectEntity() instanceof net.minecraft.world.entity.projectile.ShulkerBullet) {
+				// The extra damage of a bullet comes before the multipliers.
+				for (GeneEffect effect : GeneEffects.of(attacker).toList()) {
+					if (effect instanceof GeneEffect.BulletDamage bullet) {
+						result = Math.max(0.0F, result + bullet.extra());
+					}
+				}
+			}
 			Float shotBoost = attacker.getAttached(ModAttachments.SHOT_BOOST);
 			if (shotBoost != null && source.getDirectEntity() instanceof Projectile
 					&& attacker.level().getGameTime() <= attacker.getAttachedOrElse(ModAttachments.SHOT_BOOST_END, 0L)) {

@@ -346,7 +346,8 @@ public sealed interface GeneEffect {
 			Map.entry("bane_resist", BaneResist.CODEC),
 			Map.entry("brood_on_hurt", BroodOnHurt.CODEC),
 			Map.entry("emerge_strike", EmergeStrike.CODEC),
-			Map.entry("spit", Spit.CODEC)
+			Map.entry("spit", Spit.CODEC),
+			Map.entry("bullet_damage", BulletDamage.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5848,6 +5849,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "spit";
+		}
+	}
+
+	/**
+	 * The bullets of a shulker do this much more damage. The extra damage comes before the multipliers, for example of
+	 * {@code damage_dealt_when} with {@code hits} {@code projectile}. More than one effect adds up. The vanilla bullet does
+	 * 4 damage. Hot Shot: 2.
+	 */
+	record BulletDamage(float extra) implements GeneEffect {
+		public static final MapCodec<BulletDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(-100.0F, 100.0F).fieldOf("extra").forGetter(BulletDamage::extra)
+		).apply(instance, BulletDamage::new));
+
+		@Override
+		public String type() {
+			return "bullet_damage";
 		}
 	}
 }

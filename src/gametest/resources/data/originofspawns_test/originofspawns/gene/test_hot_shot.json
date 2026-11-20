@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:shulker",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "bullet_damage", "extra": 2 }, { "type": "damage_dealt_when", "when": "always", "multiplier": 1.5, "hits": "projectile" }],
+	"mutation_rate": 0
+}

@@ -2,6 +2,6 @@
 	"species": "minecraft:zombie_nautilus",
 	"counters": "originofspawns_test:test_heat",
 	"family": "originofspawns_test:test",
-	"gains": [{ "type": "charge_rate", "multiplier": 1.5 }],
+	"gains": [{ "type": "charge_rate", "multiplier": 1.5 }, { "type": "charge_push", "multiplier": 2 }],
 	"mutation_rate": 0
 }

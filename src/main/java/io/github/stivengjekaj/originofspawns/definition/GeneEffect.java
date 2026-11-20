@@ -320,7 +320,8 @@ public sealed interface GeneEffect {
 			Map.entry("dash_strike", DashStrike.CODEC),
 			Map.entry("rider_target_spit", RiderTargetSpit.CODEC),
 			Map.entry("rider_target_charge", RiderTargetCharge.CODEC),
-			Map.entry("charge_rate", ChargeRate.CODEC)
+			Map.entry("charge_rate", ChargeRate.CODEC),
+			Map.entry("charge_push", ChargePush.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5362,6 +5363,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "charge_rate";
+		}
+	}
+
+	/**
+	 * Multiplies the push of the vanilla charge attack of a nautilus on its target. More than one effect multiplies
+	 * together. Tide Charge: 2.
+	 */
+	record ChargePush(float multiplier) implements GeneEffect {
+		public static final MapCodec<ChargePush> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 10.0F).optionalFieldOf("multiplier", 2.0F).forGetter(ChargePush::multiplier)
+		).apply(instance, ChargePush::new));
+
+		@Override
+		public String type() {
+			return "charge_push";
 		}
 	}
 }

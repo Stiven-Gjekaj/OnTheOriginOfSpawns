@@ -93,7 +93,7 @@ public class ZombieNautilusEffectsTest {
 	}
 
 	@GameTest
-	public void quickRamChargesMoreOften(GameTestHelper helper) {
+	public void quickRamChargesMoreOftenAndTideChargePushesTwoTimesAsFar(GameTestHelper helper) {
 		var plainPig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 2));
 		var quickPig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 2));
 		ZombieNautilus plain = MountEffectsTest.mob(helper, EntityTypes.ZOMBIE_NAUTILUS, new BlockPos(1, 1, 1));
@@ -106,6 +106,10 @@ public class ZombieNautilusEffectsTest {
 				"a plain charge waits 80 ticks");
 		helper.assertValueEqual(quick.getBrain().getMemory(MemoryModuleType.CHARGE_COOLDOWN_TICKS).orElse(0), 53,
 				"a quick charge waits 80 / 1.5 ticks");
+		double plainPush = Math.hypot(plainPig.getDeltaMovement().x, plainPig.getDeltaMovement().z);
+		double quickPush = Math.hypot(quickPig.getDeltaMovement().x, quickPig.getDeltaMovement().z);
+		helper.assertTrue(plainPush > 0.1, "the plain charge pushes the pig");
+		helper.assertTrue(quickPush > plainPush * 1.5, "the tide charge pushes the pig much farther");
 		helper.succeed();
 	}
 }

@@ -1,5 +1,8 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+
 import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
@@ -7,10 +10,13 @@ import io.github.stivengjekaj.originofspawns.evolution.GeneCubes;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.ChargeAttack;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.phys.Vec3;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -64,4 +70,21 @@ public abstract class ChargeAttackMixin {
 		}
 	}
 
+	/**
+	 * Each charge push gene multiplies the push of the charge on the target.
+	 */
+	@WrapOperation(method = "dealKnockBack", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/animal/Animal;causeExtraKnockback(Lnet/minecraft/world/entity/Entity;FLnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/damagesource/DamageSource;FZ)V"))
+	private void originofspawns$chargePush(Animal body, Entity target, float knockback, Vec3 movement, DamageSource source,
+			float damage, boolean fromEffect, Operation<Void> original) {
+		float push = knockback;
+		if (body.hasAttached(ModAttachments.GENES)) {
+			for (GeneEffect effect : GeneEffects.of(body).toList()) {
+				if (effect instanceof GeneEffect.ChargePush charge) {
+					push *= charge.multiplier();
+				}
+			}
+		}
+		original.call(body, target, push, movement, source, damage, fromEffect);
+	}
 }

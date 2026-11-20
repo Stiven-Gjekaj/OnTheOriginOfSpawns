@@ -14,6 +14,20 @@
 				"texture": "originofspawns:textures/gene_marks/quick_dash_1.png",
 				"tint": "#FFF4B0"
 			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/quick_dash_2.png",
+				"tint": "#D8C49A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/quick_dash_3.png",
+				"tint": "#A88E68"
+			}
 		}
 	]
 }

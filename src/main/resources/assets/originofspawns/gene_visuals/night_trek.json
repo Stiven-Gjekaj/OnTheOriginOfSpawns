@@ -12,7 +12,7 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/night_trek_1.png",
-				"tint": "#E0F6FF"
+				"tint": "#D8F0FF"
 			}
 		}
 	],

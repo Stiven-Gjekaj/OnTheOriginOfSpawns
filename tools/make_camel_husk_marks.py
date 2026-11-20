@@ -21,10 +21,10 @@ side and on the left side, so each mark is the same on both sides.
 Each gene keeps to its own zone, so that the marks stack:
 - The head. Ram Dash has the top of the head. Shield Kick has the brow, row
   0 of the sides and the front edge of the top. Quick Dash has the eye row
-  and two streaks behind the eye. Night Trek has a glowing eye, a gene
-  model, and a halo under the eye. Rider Bond has the top of the snout.
-  Sand Spit has the mouth, the low rows and the bottom of the snout, and
-  the throat under it. Shy Step has the ears, and tall ears, a gene model.
+  and pale lines that sweep back along the neck. Night Trek has a glowing
+  eye, a gene model, and a halo under the eye. Rider Bond has a woven cord
+  round the high neck, rows 9 and 10. Sand Spit has the mouth, the low rows
+  and the bottom of the snout, and the throat over the cord. Shy Step has the ears, and tall ears, a gene model.
 - The body. Fire Cloth has the back end of the back, rows 0 to 5 of the
   top. Saddle Wall has the middle of the back round the hump, rows 6 to 20
   of the top, and a drape on the high sides. Iron Studs has a ring of
@@ -33,17 +33,20 @@ Each gene keeps to its own zone, so that the marks stack:
   body in front of the hump, columns 21 to 23 of the sides. Thick Hide has
   the front end of the body, the chest, and the low neck. Dried Flesh has
   the back end of the low sides, the rump, and the belly. Deep Reserve has
-  the sides of the hump. Bone Hump has the top of the hump. Sand Veil is a
+  the sides of the hump, and the rows of the top between the ridges. Bone
+  Hump has the ridges on the top of the hump. Sand Veil is a
   faded, sandy color under all the other marks. Water Hump (a swollen hump)
-  and High Seat (a saddle frame) are gene models.
-- The legs, from the top: Sand Shove rows 0 to 2, Escape Run rows 3 to 5,
+  and High Seat (a tall, wooden saddle frame) are gene models.
+- The legs, from the top: Sand Shove row 0 and the back of rows 1 and 2,
+  Night Trek prints of light on the front and the sides of rows 1 and 2, Escape Run rows 3
+  to 5,
   Stubborn Hooves rows 6 to 8 (the knees), Golem Kick rows 9 to 11 (the
   shins), Sand Leap rows 12 and 13 (the ankles), Dust Dash rows 14 and 15,
   Sand Spray rows 16 and 17 on the front and the outer side, Hard Kick rows
   18 to 20 on the front and the outer side and the bottom, and Swift Stride
   rows 16 to 20 on the back and the inner side. Sure Feet is a gene model:
-  a hard, wide sole round row 20. Long Dash is a gene model: long, lean
-  thighs that go up the flank. Sand Shove also has a gene model: a thick
+  a hard, wide sole round row 20. Long Dash is a gene model: lean, dark
+  muscles on the thighs and the shoulders. Sand Shove also has a gene model: a thick
   copy of each leg with the texture of the mob, so the leg marks show on it.
 The gene models use the bones body, head, left_ear, right_ear, and the four
 legs. The hump is a child of the body that does not move, so the hump
@@ -141,6 +144,18 @@ def all_sides(where):
     return SIDES
 
 
+def outer_inner(where):
+    return leg_faces(None, where)
+
+
+def outer_inner_front(where):
+    return ("front",) + leg_faces(None, where)
+
+
+def front_back(where):
+    return ("front", "back")
+
+
 def front_outer(where):
     return ("front", leg_faces(None, where)[0])
 
@@ -172,29 +187,39 @@ def ram_dash():
 
 def quick_dash():
     # Narrow, bright eyes: a long, narrow slit of bright amber in the eye
-    # row, hot white at the front, and two amber streaks that run from the
-    # eye down the back of the neck, as lines of speed.
+    # row, hot white at the front. Pale, swept-back lines of hair run back
+    # along the neck, as if the wind combs them, in pale sand and light
+    # brown.
     amber = Mark("#FFB020")
     hot = Mark("#FFF4B0")
+    sand = Mark("#D8C49A")
+    light = Mark("#A88E68")
     put_side(amber, HIGH_NECK, [(3, 1), (4, 1), (5, 1)])
     put_side(hot, HIGH_NECK, [(6, 1)])
     hot.put([at(HIGH_NECK, "front", 0, 1), at(HIGH_NECK, "front", 6, 1)])
-    streaks = [(4, 3), (3, 3), (3, 4), (2, 5), (2, 6), (1, 7), (1, 8), (0, 9), (0, 10),
-               (4, 6), (4, 7), (3, 8), (3, 9), (2, 10), (2, 11), (1, 12), (1, 13)]
-    put_side(amber, HIGH_NECK, streaks)
-    put_side(hot, HIGH_NECK, [(c + 1, r) for c, r in streaks if c < 4 and (r in (3, 6, 7) or r % 2 == 0)])
-    return [amber, hot]
+    # Each line starts near the front of the neck and slopes back and down.
+    for start, first in ((3, 4), (5, 6), (7, 6), (11, 6), (12, 4)):
+        for k in range(7):
+            c, r = first - k, start + k // 2
+            if r in CORD_ROWS or r > 13 or c < 0 or (c, r) in BROW_CREASES:
+                continue
+            (sand if k % 3 != 2 else light).put(side(HIGH_NECK, c, r))
+    for x, y, f, col, row in pixels(HIGH_NECK, ("back",), rows=range(6, 14)):
+        if row not in CORD_ROWS and (col + row) % 3 == 0:
+            sand.put((x, y))
+    return [amber, hot, sand, light]
 
 
 def night_trek():
     # Pale, glowing eyes: the glow is the gene model night_trek_eyes. A pale
-    # blue halo lies under each eye, and pale blue tracks of light run from
-    # the eyes down the front edge of the neck.
+    # blue halo lies under each eye. Faint, pale prints of hooves, as marks
+    # of light, lie on the sides and the front of the high legs.
     halo = Mark("#A8E0FF")
-    pale = Mark("#E0F6FF")
+    pale = Mark("#D8F0FF")
     put_side(halo, HIGH_NECK, [(4, 2), (5, 2), (6, 2), (5, 3), (6, 3)])
     halo.put([at(HIGH_NECK, "front", c, r) for c in (0, 6) for r in (2, 3)])
-    put_side(pale, HIGH_NECK, [(6, r) for r in range(4, 14)] + [(5, r) for r in range(4, 14)])
+    # A print is a small U: the two sides of the hoof and its round end.
+    leg_put(pale, outer_inner_front, (1, 2), lambda x, y, f, c, r, n: (c, r) in ((1, 1), (3, 1), (1, 2), (2, 2), (3, 2)))
     return [halo, pale]
 
 
@@ -236,31 +261,16 @@ def shy_step_model():
 
 
 def rider_bond():
-    # A green mark on the brow: a green diamond with a pale middle on the
-    # top of the snout, and a green band with dark knots round the high part
-    # of the snout, as a sign of a bond. The mark is also on the back of the
-    # head.
-    green = Mark("#30C850")
-    pale = Mark("#C8FFC8")
-    dark = Mark("#145A24")
-    diamond = {(2, 0), (1, 1), (3, 1), (0, 2), (4, 2), (0, 3), (4, 3), (1, 4), (3, 4), (2, 5)}
-    for x, y, f, col, row in pixels(SNOUT, ("top",)):
-        if (col, row) in diamond:
-            green.put((x, y))
-        elif (col, row) in ((2, 2), (2, 3)):
-            pale.put((x, y))
-        elif (col, row) in ((1, 2), (3, 2), (1, 3), (3, 3), (2, 1), (2, 4)):
-            dark.put((x, y))
-    for x, y, f, col, row in pixels(SNOUT, ("right", "left", "front"), rows=(0, 1)):
-        (dark if (col + row) % 3 == 0 else green).put((x, y))
-    # The same mark on the back of the head, where the rider sees it.
-    rune = {(3, 6), (2, 7), (4, 7), (1, 8), (5, 8), (2, 9), (4, 9), (3, 10), (3, 11), (2, 12), (4, 12), (3, 13)}
-    for x, y, f, col, row in pixels(HIGH_NECK, ("back",), rows=range(6, 14)):
-        if (col, row) in rune:
-            green.put((x, y))
-        elif (col, row) in ((3, 8), (3, 9)):
-            pale.put((x, y))
-    return [green, pale, dark]
+    # A woven cord with a small green charm: a cord of two browns, woven,
+    # goes round the high neck, as a bond with the rider. A small green
+    # charm hangs from it at the front.
+    cord = Mark("#8A6A40")
+    weave = Mark("#4A3622")
+    green = Mark("#40C060")
+    for x, y, f, col, row in pixels(HIGH_NECK, SIDES, rows=CORD_ROWS):
+        (weave if (col + row) % 2 else cord).put((x, y))
+    green.put([at(HIGH_NECK, "front", c, r) for c in (3, 4) for r in (CORD_ROWS[1] + 1, CORD_ROWS[1] + 2)])
+    return [cord, weave, green]
 
 
 def shield_kick():
@@ -269,8 +279,7 @@ def shield_kick():
     # cheeks behind the eyes.
     ridge = Mark("#1E1812")
     light = Mark("#B49C78")
-    put_side(ridge, HIGH_NECK, [(c, 0) for c in range(7)] + [(0, 1), (1, 1), (2, 1), (0, 2), (1, 2),
-                                                            (0, 3), (1, 4), (0, 5)])
+    put_side(ridge, HIGH_NECK, [(c, 0) for c in range(7)] + sorted(BROW_CREASES))
     put_top(light, HIGH_NECK, [(c, 6) for c in range(7)])
     ridge.put([at(HIGH_NECK, "front", c, 0) for c in (0, 6)])
     put(ridge, HIGH_NECK, ("back",), rows=(3, 4))
@@ -280,7 +289,8 @@ def shield_kick():
 
 def sand_spit():
     # A wide, wet mouth: the mouth line of the snout is a wide, dark gap
-    # with a wet lip, and long, wet drips hang down the throat under it.
+    # with a wet lip, and wet drips hang down the throat under it, over the
+    # cord of Rider Bond.
     mouth = Mark("#1A0E0A")
     wet = Mark("#7A8C88")
     shine = Mark("#C8D8D4")
@@ -289,13 +299,19 @@ def sand_spit():
     put(wet, SNOUT, ("right", "left", "front"), rows=(2,), cols=(1, 2, 3, 4))
     for x, y, f, col, row in pixels(SNOUT, ("bottom",)):
         (wet if (col + row) % 3 == 0 else mouth).put((x, y))
-    for c, length in ((0, 7), (1, 4), (2, 8), (3, 3), (4, 6), (5, 9), (6, 5)):
+    for c, length in ((0, 3), (1, 2), (2, 4), (3, 2), (4, 3), (5, 4), (6, 2)):
         for r in range(5, 5 + length):
             (shine if r == 4 + length else wet).put(at(HIGH_NECK, "front", c, r))
     return [mouth, wet, shine]
 
 
 # The body.
+
+# The cells of the sides of the high neck under the creases of Shield Kick.
+BROW_CREASES = {(0, 1), (1, 1), (2, 1), (0, 2), (1, 2), (0, 3), (1, 4), (0, 5)}
+
+# The rows of the high neck under the cord of Rider Bond.
+CORD_ROWS = (9, 10)
 
 HUMP_TOP = {(c, r) for c in range(3, 12) for r in range(8, 19)}
 STUD_RING = {(c, r) for c in range(2, 13) for r in range(7, 20)
@@ -465,18 +481,31 @@ def dried_flesh():
 
 
 def deep_reserve():
-    # Blue gray veins on the hump: a thick net of branching veins of blue
-    # gray on the sides of the hump, dark where they branch.
-    vein = Mark("#7A90B0")
-    deep = Mark("#3A4A68")
-    for c in range(11):
-        for r in range(5):
-            trunk = r == (c * 2 // 3 + 1) % 5 or r == (12 - c) * 2 // 3 % 5
-            if trunk and (c + r) % 4 == 0:
-                deep.put(side(HUMP, c, r))
-            elif trunk or (c % 3 == 1 and r >= 1) or (r == 4 and c % 2 == 0):
-                vein.put(side(HUMP, c, r))
-    return [vein, deep]
+    # Blue gray veins on the hump: soft, thin, dark blue gray veins branch
+    # over the sides of the hump, uneven, as roots, and go on, thin and
+    # broken, over its top.
+    vein = Mark("#4A586C")
+    soft = Mark("#66748A", alpha=170)
+    cells = set()
+    # Each vein wanders up from the low edge of the hump and forks.
+    for start in (1, 4, 7, 10):
+        c, r = start, 4
+        while r >= 0 and 0 <= c < 11:
+            cells.add((c, r))
+            turn = noise100(c, r, 7501 + start)
+            c += 1 if turn < 35 else -1 if turn > 70 else 0
+            r -= 1
+        # A short side branch from the middle of each vein.
+        cells.add((start + (1 if start < 6 else -1), 2))
+    for c, r in cells:
+        if 0 <= c < 11:
+            (vein if r >= 2 else soft).put(side(HUMP, c, r))
+    # The veins go on over the top of the hump, in the rows between the
+    # ridges of Bone Hump, thin and broken.
+    for x, y, f, col, row in pixels(HUMP, ("top",), rows=(0, 3, 6, 9)):
+        if noise100(col, row, 7502) < 85:
+            soft.put((x, y))
+    return [vein, soft]
 
 
 def bone_hump():
@@ -527,26 +556,33 @@ def high_seat():
 
 
 def high_seat_model():
-    # A tall saddle frame over the hump: a tall front post and a back post
-    # of dark wood with brass caps, and two rails high between them, out of
-    # the way of the hump. The hump top is at y -17 on the bone body, from
-    # x -4.5 to 4.5 and z -15.5 to -4.5.
+    # A tall saddle frame over the hump: two tall, curved posts of dark
+    # wood, one at the front of the hump and one at the back, joined at the
+    # top by a rail, with leather straps that go down the sides of the hump
+    # to the body. Each post curves: it leans out at its foot and in at its
+    # top. On the bone body, the hump is from x -4.5 to 4.5, y -17 to -12,
+    # and z -15.5 to -4.5.
     im = model_image(64, 32)
 
     def wood(f, x, y):
-        if y == 0 or f == "top":
-            return "#E0B040"
-        return "#6A3E1E" if (x + y) % 4 else "#4A2A12"
+        return "#3E2614" if (x + y) % 3 else "#2A180C"
 
-    def rail(f, x, y):
-        return "#8A5228" if (x + y) % 3 else "#5A3216"
-    paint_box(im, 0, 0, 7, 10, 1, wood)
-    paint_box(im, 0, 12, 7, 8, 1, wood)
-    paint_box(im, 20, 0, 1, 1, 11, rail)
-    parts = [{"bone": "body", "uv": [0, 0], "from": [-3.5, -27, -16.5], "size": [7, 10, 1]},
-             {"bone": "body", "uv": [0, 12], "from": [-3.5, -25, -4.5], "size": [7, 8, 1]},
-             {"bone": "body", "uv": [20, 0], "from": [-5.5, -24, -16], "size": [1, 1, 11]},
-             {"bone": "body", "uv": [20, 0], "from": [4.5, -24, -16], "size": [1, 1, 11]}]
+    def strap(f, x, y):
+        return "#6A4A2E" if y % 3 else "#8A6440"
+    paint_box(im, 0, 0, 2, 4, 1, wood)
+    paint_box(im, 0, 8, 2, 3, 1, wood)
+    paint_box(im, 0, 16, 2, 1, 11, wood)
+    paint_box(im, 32, 0, 1, 6, 1, strap)
+    parts = []
+    for z, lean in ((-16.5, -1), (-4.5, 1)):
+        # The low part of the post leans out, and the high part comes back.
+        parts.append({"bone": "body", "uv": [0, 0], "from": [-1, -21, z], "size": [2, 4, 1],
+                      "pivot": [0, -17, z + 0.5], "rotation": [15 * lean, 0, 0]})
+        parts.append({"bone": "body", "uv": [0, 8], "from": [-1, -23.5, z - lean], "size": [2, 3, 1],
+                      "pivot": [0, -21, z + 0.5 - lean], "rotation": [-10 * lean, 0, 0]})
+    parts.append({"bone": "body", "uv": [0, 16], "from": [-1, -24.5, -16], "size": [2, 1, 11]})
+    for x in (-4.7, 3.7):
+        parts.append({"bone": "body", "uv": [32, 0], "from": [x, -17.5, -10.5], "size": [1, 6, 1]})
     save_model("high_seat_frame", im, parts)
 
 
@@ -554,11 +590,12 @@ def high_seat_model():
 
 def sand_shove():
     # Thick, dusty legs: the thick legs are the gene model sand_shove_legs.
-    # Pale dust and dark lines of muscle lie on the high legs.
+    # Pale dust lies on the back of the high legs, and a dark line of
+    # muscle goes round the top of each leg.
     dust = Mark("#D8C098")
     muscle = Mark("#2E2218")
-    leg_put(muscle, all_sides, range(0, 3), lambda x, y, f, c, r, n: c in (0, 4))
-    leg_put(dust, all_sides, range(0, 3), lambda x, y, f, c, r, n: c not in (0, 4))
+    leg_put(muscle, all_sides, (0,))
+    leg_put(dust, lambda where: ("back",), (1, 2))
     return [dust, muscle]
 
 
@@ -691,28 +728,28 @@ def long_dash():
 
 
 def long_dash_model():
-    # Long, lean legs: a lean thigh of 2x11x2 goes up from the top of each
-    # leg along the flank, so that each leg looks long. The thigh is dark,
-    # with a pale tendon down its outer side. It stands 1.5 pixels out from
-    # the side of the body. On each leg bone, the leg is from x -2.5 to 2.5
-    # and from y 2 to 23. The body side is at x 7.5 on the model, and the
-    # legs are at x 4.9 and -4.9. The thighs of the front legs sit at the
-    # front edge of the leg, and the thighs of the hind legs at the back
-    # edge, so that the band of Spear Charge stays clear.
+    # Long, lean legs: lean, dark muscles lie along the thighs and the
+    # shoulders, where the legs meet the body. Each muscle is a long, thin
+    # shape in the colors of the hide, wide at the foot and thin at the top,
+    # and it stands 0.5 pixel out from the side of the body. The body side
+    # is at x 7.5 on the model, and the legs are at x 4.9 and -4.9.
     im = model_image(32, 32)
 
-    def thigh(f, x, y):
-        if f in ("top", "bottom"):
-            return "#4A3A2A"
-        if f in ("right", "left") and x == 1:
-            return "#C8B494"
-        return "#3A2C1E" if (x + y) % 5 else "#5A4836"
-    paint_box(im, 0, 0, 2, 11, 2, thigh)
+    def muscle(f, x, y):
+        if f in ("right", "left") and x == 0:
+            return "#7A6A54"
+        return "#4A3E30" if (x + y) % 4 else "#5A4C3A"
+    paint_box(im, 0, 0, 1, 6, 3, muscle)
+    paint_box(im, 0, 12, 1, 5, 2, muscle)
     parts = []
-    for leg, sign, z in (("left_hind_leg", 1, 0.5), ("right_hind_leg", -1, 0.5), ("left_front_leg", 1, -2.5),
-                         ("right_front_leg", -1, -2.5)):
-        parts.append({"bone": leg, "uv": [0, 0], "from": [2.1 if sign > 0 else -4.1, -9, z],
-                      "size": [2, 11, 2]})
+    for leg, sign in (("left_hind_leg", 1), ("right_hind_leg", -1), ("left_front_leg", 1),
+                      ("right_front_leg", -1)):
+        x = 2.6 if sign > 0 else -3.6
+        # The muscles of the front legs sit at the front edge of the leg, so
+        # that the band of Spear Charge stays clear.
+        z = -3 if "front" in leg else -1.5
+        parts.append({"bone": leg, "uv": [0, 0], "from": [x, -4, z], "size": [1, 6, 3]})
+        parts.append({"bone": leg, "uv": [0, 12], "from": [x, -9, z + 0.5], "size": [1, 5, 2]})
     save_model("long_dash_legs", im, parts)
 
 

@@ -41,7 +41,7 @@ the same name in `design/species/`, or the build stops.
 The pictures of the mobs are screenshots of the game, in
 `public/shots/<species>/<kind>/<name>-<view>.png`.
 The kind is `plain` (a mob with no genes), `gene` (a mob with only that gene),
-or `family` (a mob with the 6 genes of that family).
+or `family` (a mob with all the genes of that family).
 The view is `front` or `back`.
 The build lists the pictures that are there, and a page shows no picture
 where a file is missing.

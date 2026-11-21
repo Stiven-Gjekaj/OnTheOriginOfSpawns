@@ -408,6 +408,9 @@ public final class GeneBehaviors {
 			mob.removeAttached(ModAttachments.JUMP_TIME);
 			GeneCubes.onLand(mob, level);
 		}
+		if (mob instanceof net.minecraft.world.entity.monster.creaking.Creaking creaking) {
+			GeneCreakings.tickLook(creaking);
+		}
 		List<GeneEffect> effects = GeneEffects.of(mob).toList();
 		updateSpeed(mob, effects);
 		scaleBrainCooldown(mob, level);

@@ -215,6 +215,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> FREE_UNTIL = AttachmentRegistry.create(OriginOfSpawns.id("free_until"));
 
 	/**
+	 * True while a player looks at a creaking and holds it still, at the last tick.
+	 */
+	public static final AttachmentType<Boolean> WATCHED = AttachmentRegistry.create(OriginOfSpawns.id("watched"));
+
+	/**
 	 * The game time of the last hit of a creaking on each player, by the UUID of the player.
 	 */
 	public static final AttachmentType<java.util.Map<java.util.UUID, Long>> CREAKING_HITS =

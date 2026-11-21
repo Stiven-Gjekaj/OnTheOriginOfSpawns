@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "blink_strike", "range": 2 }, { "type": "speed_after", "action": "look_away", "multiplier": 1.5, "seconds": 2 }],
+	"mutation_rate": 0
+}

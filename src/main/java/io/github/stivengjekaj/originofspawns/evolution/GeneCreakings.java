@@ -154,4 +154,30 @@ public final class GeneCreakings {
 			creaking.setAttached(ModAttachments.CREAKING_HITS, hits);
 		}
 	}
+
+	/**
+	 * Finds the moment when a player looks away from the creaking that the look held still. Then the look away genes act:
+	 * the self effect after and speed after genes with the action {@code look_away}, and each blink strike.
+	 *
+	 * @return true if a player looked away now
+	 */
+	public static boolean tickLook(Creaking creaking) {
+		boolean watched = watched(creaking);
+		boolean before = creaking.getAttachedOrElse(ModAttachments.WATCHED, false);
+		if (watched != before) {
+			creaking.setAttached(ModAttachments.WATCHED, watched);
+		}
+		if (watched || !before) {
+			return false;
+		}
+		GeneBehaviors.selfEffectAfter(creaking, GeneEffect.Action.LOOK_AWAY);
+		for (GeneEffect effect : GeneEffects.of(creaking).toList()) {
+			if (effect instanceof GeneEffect.BlinkStrike blink && !creaking.level().getEntitiesOfClass(
+					net.minecraft.world.entity.player.Player.class, creaking.getBoundingBox().inflate(blink.range()),
+					player -> !player.isSpectator() && !player.isCreative()).isEmpty()) {
+				creaking.getBrain().eraseMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_COOLING_DOWN);
+			}
+		}
+		return true;
+	}
 }

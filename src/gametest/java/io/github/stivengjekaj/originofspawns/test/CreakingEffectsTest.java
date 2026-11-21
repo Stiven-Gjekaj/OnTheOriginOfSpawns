@@ -261,4 +261,22 @@ public class CreakingEffectsTest {
 		helper.assertTrue(creaking.checkCanMove(), "the look of a player with a shield up does not stop it");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aBlinkStrikeAndASlipStepActWhenAPlayerLooksAway(GameTestHelper helper) {
+		Creaking creaking = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(2, 1, 1), "test_blink_strike");
+		player(helper, new BlockPos(2, 1, 2));
+		creaking.getBrain().setMemoryWithExpiry(net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_COOLING_DOWN, true, 40L);
+		var speed = creaking.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
+		double plain = speed.getValue();
+		watch(creaking);
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.tickLook(creaking), "the player looks");
+		creaking.getEntityData().set(io.github.stivengjekaj.originofspawns.mixin.CreakingAccessor.originofspawns$canMoveData(), true);
+		io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.tick(creaking, helper.getLevel());
+		helper.assertFalse(creaking.getBrain().hasMemoryValue(net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_COOLING_DOWN),
+				"Blink Strike: the look away ends the attack cooldown");
+		io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.tick(creaking, helper.getLevel());
+		helper.assertTrue(Math.abs(speed.getValue() - plain * 1.5) < 1.0E-6, "Slip Step: 50% more speed after the look away");
+		helper.succeed();
+	}
 }

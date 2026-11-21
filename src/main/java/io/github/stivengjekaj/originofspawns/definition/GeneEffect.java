@@ -379,7 +379,8 @@ public sealed interface GeneEffect {
 			Map.entry("heart_twitch", HeartTwitch.CODEC),
 			Map.entry("ignore_far_look_in_dark", IgnoreFarLookInDark.CODEC),
 			Map.entry("ignore_look_after_hit", IgnoreLookAfterHit.CODEC),
-			Map.entry("ignore_shield_look", IgnoreShieldLook.CODEC)
+			Map.entry("ignore_shield_look", IgnoreShieldLook.CODEC),
+			Map.entry("blink_strike", BlinkStrike.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -5528,7 +5529,11 @@ public sealed interface GeneEffect {
 		/**
 		 * A melee hit of the mob hurts a player.
 		 */
-		PLAYER_HIT;
+		PLAYER_HIT,
+		/**
+		 * A player looks away from a creaking that the look held still.
+		 */
+		LOOK_AWAY;
 
 		public static final Codec<Action> CODEC = StringRepresentable.fromEnum(Action::values);
 
@@ -6449,6 +6454,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "ignore_shield_look";
+		}
+	}
+
+	/**
+	 * When a player in the range looks away from a creaking that the look held still, the next hit of the creaking comes
+	 * at once: its attack cooldown ends. A vanilla creaking hits one time each 2 seconds. Blink Strike: 2 blocks.
+	 */
+	record BlinkStrike(float range) implements GeneEffect {
+		public static final MapCodec<BlinkStrike> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.5F, 64.0F).optionalFieldOf("range", 2.0F).forGetter(BlinkStrike::range)
+		).apply(instance, BlinkStrike::new));
+
+		@Override
+		public String type() {
+			return "blink_strike";
 		}
 	}
 }

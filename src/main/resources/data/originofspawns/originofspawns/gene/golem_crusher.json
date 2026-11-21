@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:golem",
+	"family": "originofspawns:ravager/impaler",
+	"gains": [
+		{
+			"type": "damage_to",
+			"targets": "#originofspawns:golems",
+			"multiplier": 1.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

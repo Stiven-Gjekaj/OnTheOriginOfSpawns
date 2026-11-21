@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:ravager/trampler",
+	"gains": [
+		{
+			"type": "ground_charge",
+			"min_range": 8,
+			"range": 16,
+			"cooldown_seconds": 8,
+			"damage": 6
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

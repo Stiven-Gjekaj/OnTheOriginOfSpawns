@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:ravager/warbeast",
+	"gains": [
+		{
+			"type": "raid_rider",
+			"entity": "minecraft:pillager"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

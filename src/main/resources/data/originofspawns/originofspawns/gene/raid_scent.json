@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:ravager/warbeast",
+	"gains": [
+		{
+			"type": "raid_hunt",
+			"range": 48
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

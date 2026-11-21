@@ -1,0 +1,25 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:ravager/warbeast",
+	"gains": [
+		{
+			"type": "riders",
+			"effects": [
+				{
+					"type": "damage_taken_when",
+					"when": "always",
+					"multiplier": 0.7
+				}
+			]
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

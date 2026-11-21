@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:ravager/trampler",
+	"gains": [
+		{
+			"type": "trample"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

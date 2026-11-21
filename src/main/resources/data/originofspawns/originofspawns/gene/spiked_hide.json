@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:ravager/ironback",
+	"sub_family": "originofspawns:ravager/impaler",
+	"gains": [
+		{
+			"type": "thorns",
+			"damage": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

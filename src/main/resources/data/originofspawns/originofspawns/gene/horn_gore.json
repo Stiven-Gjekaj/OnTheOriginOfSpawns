@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:ravager/impaler",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": 0.2,
+			"operation": "add_multiplied_total"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

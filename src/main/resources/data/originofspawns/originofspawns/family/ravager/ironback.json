@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:ravager",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:armor",
+					"amount": 3,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "stun_chance",
+					"chance": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:armor",
+					"amount": 4,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "stun_chance",
+					"chance": 0.7
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:armor",
+					"amount": 6,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "stun_chance",
+					"chance": 0.6
+				}
+			]
+		}
+	]
+}

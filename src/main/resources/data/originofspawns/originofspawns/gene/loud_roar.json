@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:ravager/roarer",
+	"gains": [
+		{
+			"type": "roar_range",
+			"blocks": 6
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

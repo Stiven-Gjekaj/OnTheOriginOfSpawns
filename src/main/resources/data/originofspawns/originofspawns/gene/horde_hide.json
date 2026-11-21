@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:ravager/warbeast",
+	"gains": [
+		{
+			"type": "damage_taken_when",
+			"when": "raider_group",
+			"multiplier": 0.8
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_taken_when",
+			"when": "no_raider",
+			"multiplier": 1.2
+		}
+	]
+}

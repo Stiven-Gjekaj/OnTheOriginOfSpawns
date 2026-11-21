@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:ravager/roarer",
+	"gains": [
+		{
+			"type": "roar_damage",
+			"multiplier": 1.5,
+			"when": "no_raider"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

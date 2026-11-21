@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:ravager/roarer",
+	"gains": [
+		{
+			"type": "roar_on_kill",
+			"heal": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

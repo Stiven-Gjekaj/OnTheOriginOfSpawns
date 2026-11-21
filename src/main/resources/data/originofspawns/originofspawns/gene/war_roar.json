@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:ravager/roarer",
+	"sub_family": "originofspawns:ravager/warbeast",
+	"gains": [
+		{
+			"type": "roar_effect",
+			"effect": "minecraft:strength",
+			"seconds": 5,
+			"allies": true,
+			"radius": 8
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

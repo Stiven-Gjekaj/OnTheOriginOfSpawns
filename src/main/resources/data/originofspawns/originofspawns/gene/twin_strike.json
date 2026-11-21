@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:ravager/warbeast",
+	"sub_family": "originofspawns:ravager/impaler",
+	"gains": [
+		{
+			"type": "rider_strike"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

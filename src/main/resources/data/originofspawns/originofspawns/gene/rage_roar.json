@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:ravager/roarer",
+	"gains": [
+		{
+			"type": "roar_on_hurt",
+			"cooldown_seconds": 10,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

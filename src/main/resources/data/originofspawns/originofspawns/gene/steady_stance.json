@@ -1,0 +1,15 @@
+{
+	"species": "minecraft:ravager",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:ravager/ironback",
+	"gains": [
+		{
+			"type": "no_stun"
+		}
+	],
+	"downsides": [
+		{
+			"type": "no_roar"
+		}
+	]
+}

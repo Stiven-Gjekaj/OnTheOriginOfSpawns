@@ -390,7 +390,8 @@ public sealed interface GeneEffect {
 			Map.entry("dark_heart", DarkHeart.CODEC),
 			Map.entry("heart_sense", HeartSense.CODEC),
 			Map.entry("blast_sense", BlastSense.CODEC),
-			Map.entry("lone_watch", LoneWatch.CODEC)
+			Map.entry("lone_watch", LoneWatch.CODEC),
+			Map.entry("look_wake_range", LookWakeRange.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6633,6 +6634,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "lone_watch";
+		}
+	}
+
+	/**
+	 * A player that looks at the sleeping creaking from this many blocks or less wakes it. Vanilla is 12. With more than
+	 * one, the largest range counts. Long Stare: 24 blocks. The follow range of the creaking (32) limits the look.
+	 */
+	record LookWakeRange(float blocks) implements GeneEffect {
+		public static final MapCodec<LookWakeRange> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 64.0F).fieldOf("blocks").forGetter(LookWakeRange::blocks)
+		).apply(instance, LookWakeRange::new));
+
+		@Override
+		public String type() {
+			return "look_wake_range";
 		}
 	}
 }

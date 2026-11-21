@@ -470,4 +470,25 @@ public class CreakingEffectsTest {
 		helper.assertValueEqual(creaking.getTarget(), first, "the creaking targets the lone player");
 		helper.succeed();
 	}
+
+	/**
+	 * Lets the player look at the sleeping creaking and returns true if the look wakes it.
+	 */
+	static boolean lookWakes(net.minecraft.server.level.ServerPlayer player, Creaking creaking) {
+		creaking.getBrain().setMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.NEAREST_PLAYERS,
+				java.util.List.<net.minecraft.world.entity.player.Player>of(player));
+		player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, creaking.getEyePosition());
+		creaking.checkCanMove();
+		return creaking.isActive();
+	}
+
+	@GameTest
+	public void aLookWakeRangeChangesTheDistanceOfAWakeLook(GameTestHelper helper) {
+		Creaking plain = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 1));
+		Creaking gene = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 5), "test_short_stare");
+		helper.assertTrue(lookWakes(player(helper, new BlockPos(6, 1, 1)), plain), "a look from 5 blocks wakes a plain creaking");
+		helper.assertFalse(lookWakes(player(helper, new BlockPos(6, 1, 5)), gene), "a look from 5 blocks does not reach 3 blocks");
+		helper.assertTrue(lookWakes(player(helper, new BlockPos(3, 1, 5)), gene), "a look from 2 blocks wakes it");
+		helper.succeed();
+	}
 }

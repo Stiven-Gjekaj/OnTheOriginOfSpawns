@@ -120,6 +120,16 @@ public final class GeneCreakings {
 	}
 
 	/**
+	 * Returns the square of the distance in which a look wakes the creaking: the largest range of its look wake range
+	 * genes, or the vanilla value.
+	 */
+	public static double lookWakeRangeSqr(Creaking creaking, double vanilla) {
+		var blocks = GeneEffects.of(creaking).filter(GeneEffect.LookWakeRange.class::isInstance)
+				.mapToDouble(effect -> ((GeneEffect.LookWakeRange) effect).blocks()).max();
+		return blocks.isPresent() ? blocks.getAsDouble() * blocks.getAsDouble() : vanilla;
+	}
+
+	/**
 	 * Returns true if the look of the player does not stop the awake creaking, after its look genes.
 	 */
 	public static boolean ignoresLook(Creaking creaking, net.minecraft.world.entity.player.Player player) {

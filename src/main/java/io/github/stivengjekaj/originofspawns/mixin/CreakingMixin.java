@@ -14,7 +14,9 @@ import net.minecraft.world.level.block.entity.CreakingHeartBlockEntity;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
@@ -57,5 +59,13 @@ public abstract class CreakingMixin {
 			return false;
 		}
 		return original.call(self, viewer, cone, adjust, through, heights);
+	}
+
+	/**
+	 * A look wake range gene changes the distance in which a look wakes the creaking.
+	 */
+	@ModifyConstant(method = "checkCanMove", constant = @Constant(doubleValue = 144.0))
+	private double originofspawns$lookWakeRange(double vanilla) {
+		return GeneCreakings.lookWakeRangeSqr((Creaking) (Object) this, vanilla);
 	}
 }

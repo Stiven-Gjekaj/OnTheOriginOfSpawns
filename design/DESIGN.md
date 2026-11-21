@@ -50,6 +50,23 @@ Change this document when a decision changes.
   breeds it.
 - A rare mob can have fewer genes than 30, for example 15 for the shulker.
 
+### Neutral mobs that fight the player
+
+These rules are for the polar bear, the bee, the wolf, the goat, the
+dolphin, the panda, the llama, and the iron golem.
+
+- Each death counts in the pool, as for a hostile mob.
+  The mob does not have to be angry when it dies.
+- Babies spawn as in vanilla.
+  A natural baby and a bred baby take their genes from the pool.
+  No gene is the only source of babies, as Runt is for the zombie.
+- In milestone 6, a bred baby takes its genes from its parents.
+- A tame mob keeps the genes that it had in the wild.
+  It gets no new genes, and its death does not count in the pool.
+  Examples are a tame wolf and a tame llama.
+- An iron golem that a player builds gets no genes.
+  Only an iron golem that spawns in a village gets genes.
+
 ## Selection
 
 - Each pool counts the causes of death of its members.

@@ -96,55 +96,55 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Horn Gore | Impaler | `melee` | 20% more melee damage | 10% less speed | Horns: dark horn tips |
-| Shield Crush | Impaler | `shield` | Its hits disable a shield for 5 seconds, as an axe does | 10% less speed | Horns: notched horn edges |
-| Golem Crusher | Impaler | `golem` | Its hits do 50% more damage to iron golems | 10% less speed | Head: an iron gray brow |
-| Gore Rage | Impaler | `critical` | At under half health, 30% more melee damage | 10% less speed | Head: red veins round the eyes |
+| Shield Crush | Impaler | `shield` | Its hits disable a shield for 5 seconds, as an axe does | 10% less speed | Horns: three pale notches on the upper edge of each horn. This changes the model |
+| Golem Crusher | Impaler | `golem` | Its hits do 50% more damage to iron golems | 10% less speed | Head: an iron gray, riveted brow |
+| Gore Rage | Impaler | `critical` | At under half health, 30% more melee damage | 10% less speed | Head: red veins on the sides over and behind the eyes |
 | Sweep Horns | Impaler | `crowd` | Its hits also do half damage to the mobs in 2 blocks of the target | 10% less speed | Horns: long horns. This changes the model |
-| Ram Rush | Impaler, sub Trampler | `spotted` | Its first hit after a run of 6 blocks or more does 50% more damage | 10% less speed | Head: a pale stripe down the face |
+| Ram Rush | Impaler, sub Trampler | `spotted` | Its first hit after a run of 6 blocks or more does 50% more damage | 10% less speed | Head: a pale stripe down the top of the head and the forehead |
 
 ### Trampler genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Wide Stride | Trampler | `unreached` | 20% more speed | 10% less maximum health | Legs: pale stripes on the legs |
-| Fence Breaker | Trampler | `projectile` | It breaks fences, fence gates, and glass in its way | 10% less maximum health | Head: scars on the snout |
+| Fence Breaker | Trampler | `projectile` | It breaks fences, fence gates, and glass in its way | 10% less maximum health | Head: scars on the snout and between the eyes |
 | Sure Foot | Trampler | `fall` | Half the fall damage | 10% less maximum health | Legs: dark hooves |
-| Blood Run | Trampler | `player_death` | After it kills a player, 30% more speed for 10 seconds | 10% less maximum health | Body: red marks on the flanks |
-| Lone Charge | Trampler | `alone` | It charges at its target from 8 blocks or more, one time each 8 seconds. The charge does 6 damage and knocks the target back | 10% less maximum health | Neck: a dark mane |
-| Rider Rush | Trampler, sub Warbeast | `crowd` | With a rider, 20% more speed | 10% less maximum health | Body: a brown strap round the body |
+| Blood Run | Trampler | `player_death` | After it kills a player, 30% more speed for 10 seconds | 10% less maximum health | Body: red claw marks on the front flanks |
+| Lone Charge | Trampler | `alone` | It charges at its target from 8 blocks or more, one time each 8 seconds. The charge does 6 damage and knocks the target back | 10% less maximum health | Neck: a crest of dark hair between the head and the body. This changes the model |
+| Rider Rush | Trampler, sub Warbeast | `crowd` | With a rider, 20% more speed | 10% less maximum health | Body: a brown strap with brass buckles round the body. This changes the model |
 
 ### Roarer genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Loud Roar | Roarer | `shield` | Its roar reaches 6 blocks | 10% less melee damage | Mouth: a pale mouth |
-| Fear Roar | Roarer | `melee` | Its roar also gives Slowness II for 4 seconds | 10% less melee damage | Mouth: long teeth |
-| Rage Roar | Roarer | `projectile` | When a projectile hurts it, it roars, one time each 10 seconds | 10% less melee damage | Neck: orange marks on the neck |
+| Loud Roar | Roarer | `shield` | Its roar reaches 6 blocks | 10% less melee damage | Mouth: a pale, shut mouth and pale lips |
+| Fear Roar | Roarer | `melee` | Its roar also gives Slowness II for 4 seconds | 10% less melee damage | Mouth: two short, thick, pale tusks at the corners of the mouth. This changes the model |
+| Rage Roar | Roarer | `projectile` | When a projectile hurts it, it roars, one time each 10 seconds | 10% less melee damage | Head: orange marks on the back of the sides of the head |
 | Victory Roar | Roarer | `player_death` | After it kills a player, it roars and heals 10 health | 10% less melee damage | Head: gold rings round the eyes |
-| Lone Roar | Roarer | `alone` | With no raider in 8 blocks, its roar does 50% more damage | 10% less melee damage | Neck: gray scars on the neck |
-| War Roar | Roarer, sub Warbeast | `crowd` | Its roar gives the raiders in 8 blocks Strength I for 5 seconds | 10% less melee damage | Mouth: a red mouth |
+| Lone Roar | Roarer | `alone` | With no raider in 8 blocks, its roar does 50% more damage | 10% less melee damage | Head: gray scars on the back of the sides of the head |
+| War Roar | Roarer, sub Warbeast | `crowd` | Its roar gives the raiders in 8 blocks Strength I for 5 seconds | 10% less melee damage | Mouth: dark red lips and jaw |
 
 ### Ironback genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Plate Hide | Ironback | `melee` | 4 more armor | 10% less speed | Body: iron plates on the back |
-| Arrow Hide | Ironback | `projectile` | 30% less damage from projectiles | 10% less speed | Body: thick, dark patches |
-| Blast Pelt | Ironback | `explosion` | Half the damage from explosions | 10% less speed | Body: sooty patches |
+| Plate Hide | Ironback | `melee` | 4 more armor | 10% less speed | Legs: riveted iron plates on the tops of the legs |
+| Arrow Hide | Ironback | `projectile` | 30% less damage from projectiles | 10% less speed | Body: thick, dark patches on the back flanks |
+| Blast Pelt | Ironback | `explosion` | Half the damage from explosions | 10% less speed | Body: soot and ash on the rump |
 | Ember Pelt | Ironback | `fire` | Half the damage from fire and lava | 10% less speed | Legs: dark red legs |
-| Steady Stance | Ironback | `shield` | A shield block never stuns it | It does not roar | Legs: wide, pale feet |
-| Spiked Hide | Ironback, sub Impaler | `critical` | A melee attacker takes 2 damage | 10% less speed | Body: short spikes on the back |
+| Steady Stance | Ironback | `shield` | A shield block never stuns it | It does not roar | Legs: a wide, pale pad round each foot. This changes the model |
+| Spiked Hide | Ironback, sub Impaler | `critical` | A melee attacker takes 2 damage | 10% less speed | Body: two rows of short, dark spikes on the back. This changes the model |
 
 ### Warbeast genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Saddle Guard | Warbeast | `spotted` | Its rider takes 30% less damage | 10% less maximum health | Body: a dark saddle cloth |
-| Escort Rider | Warbeast | `alone` | In a raid, it always spawns with a rider | 10% less maximum health | Neck: a gray collar |
+| Saddle Guard | Warbeast | `spotted` | Its rider takes 30% less damage | 10% less maximum health | Body: a dark blue gray saddle cloth with pale stitches |
+| Escort Rider | Warbeast | `alone` | In a raid, it always spawns with a rider | 10% less maximum health | Neck: a thick iron ring round the neck. This changes the model |
 | Rider Heal | Warbeast | `critical` | When its rider hurts a target, it heals 4 health | 10% less maximum health | Head: green marks on the brow |
-| Horde Hide | Warbeast | `crowd` | 20% less damage taken with 2 or more raiders in 8 blocks | 20% more damage taken alone | Body: a band of illager colors |
-| Raid Scent | Warbeast | `unreached` | In a raid, it targets the nearest player in 48 blocks | 10% less maximum health | Head: wide, dark nostrils |
-| Twin Strike | Warbeast, sub Impaler | `melee` | When it hits a target, its rider also attacks that target | 10% less maximum health | Horns: banded horns |
+| Horde Hide | Warbeast | `crowd` | 20% less damage taken with 2 or more raiders in 8 blocks | 20% more damage taken alone | Body: bands of dark blue gray, dark green, and beige |
+| Raid Scent | Warbeast | `unreached` | In a raid, it targets the nearest player in 48 blocks | 10% less maximum health | Head: wide, dark nostrils with flared rims. This changes the model |
+| Twin Strike | Warbeast, sub Impaler | `melee` | When it hits a target, its rider also attacks that target | 10% less maximum health | Horns: banded horns and a pale ring round the root of each horn |
 
 ## Gene details
 
@@ -198,6 +198,15 @@ The visual column gives the region and the mark.
   neck, a body, and four legs. Its texture is 128 x 128.
 - It needs a new region map, `textures/region/ravager.png`. The design uses
   the regions head, horns, mouth, neck, body, and legs.
+- The neck does not show while the ravager stands. The head covers its
+  front, and the body covers its back. So the two neck genes are models,
+  and Rage Roar and Lone Roar mark the back of the sides of the head.
+- The legs stand up past the back and hide most of the flanks. So Plate
+  Hide puts its plates on the tops of the legs.
+- The mouth stays shut. No gene opens it.
+- Nine genes change the model: Shield Crush, Sweep Horns, Lone Charge,
+  Rider Rush, Fear Roar, Steady Stance, Spiked Hide, Escort Rider, and Raid
+  Scent. The eyes stay vanilla.
 - The gene models use the ravager bones. Check them against the vanilla
   model, as for the witch.
 

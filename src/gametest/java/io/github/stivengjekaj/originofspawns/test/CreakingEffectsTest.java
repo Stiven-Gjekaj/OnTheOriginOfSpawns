@@ -75,4 +75,29 @@ public class CreakingEffectsTest {
 		helper.assertValueEqual(bound.creaking().getKillCredit(), player, "the player is the killer");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aHeartBreakCountsForHeartFarOnlyWhenTheCreakingIsFarFromItsHeart(GameTestHelper helper) {
+		Bound near = bound(helper, new BlockPos(1, 1, 1), new BlockPos(4, 1, 4));
+		float before = frequency(helper, near.creaking(), "test_far_from_heart");
+		near.heart().removeProtector(helper.getLevel().damageSources().explosion(null, null));
+		helper.assertTrue(near.creaking().getAttachedOrElse(io.github.stivengjekaj.originofspawns.registry.ModAttachments.HEART_BREAK,
+				false), "the heart break marks the creaking");
+		helper.assertValueEqual(frequency(helper, near.creaking(), "test_far_from_heart"), before,
+				"a creaking 4 blocks from its heart does not count for heart_far");
+		// A far heart would sit out of the test area, so this part asks the facts of the death with a far home.
+		Creaking far = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(6, 1, 6));
+		far.setTransient(helper.absolutePos(new BlockPos(6, 1, 26)));
+		far.setAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.HEART_BREAK, true);
+		var blast = helper.getLevel().damageSources().explosion(null, null);
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.Evolution.facts(far, blast, helper.getLevel())
+				.contains(io.github.stivengjekaj.originofspawns.definition.DeathCondition.HEART_FAR),
+				"a creaking 20 blocks from its heart counts for heart_far");
+		far.removeAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.HEART_BREAK);
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.Evolution.facts(far, blast, helper.getLevel())
+				.contains(io.github.stivengjekaj.originofspawns.definition.DeathCondition.HEART_FAR),
+				"a death with no heart break does not count for heart_far");
+		far.discard();
+		helper.succeed();
+	}
 }

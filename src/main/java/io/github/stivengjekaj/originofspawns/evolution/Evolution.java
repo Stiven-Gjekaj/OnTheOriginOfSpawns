@@ -138,6 +138,11 @@ public final class Evolution {
 	private static final long SHIELD_TICKS = 200L;
 
 	/**
+	 * The distance from its heart past which the death of a creaking from a broken heart counts for heart_far.
+	 */
+	private static final double HEART_FAR_BLOCKS = 16.0;
+
+	/**
 	 * Returns true if the entity holds its shield up now, or blocked a hit with it in the last 10 seconds.
 	 */
 	public static boolean usedShield(LivingEntity entity, long now) {
@@ -359,6 +364,11 @@ public final class Evolution {
 		}
 		if (mob.getAttachedOrElse(ModAttachments.RAID_DEATH, false)) {
 			facts.add(DeathCondition.RAID);
+		}
+		if (mob instanceof net.minecraft.world.entity.monster.creaking.Creaking creaking
+				&& creaking.getAttachedOrElse(ModAttachments.HEART_BREAK, false) && creaking.getHomePos() != null
+				&& net.minecraft.world.phys.Vec3.atCenterOf(creaking.getHomePos()).distanceTo(creaking.position()) > HEART_FAR_BLOCKS) {
+			facts.add(DeathCondition.HEART_FAR);
 		}
 		if (mob instanceof net.minecraft.world.entity.monster.skeleton.Bogged bogged && bogged.isSheared()) {
 			facts.add(DeathCondition.SHEARS);

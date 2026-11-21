@@ -195,6 +195,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Boolean> RAID_DEATH = AttachmentRegistry.create(OriginOfSpawns.id("raid_death"));
 
 	/**
+	 * True on a creaking that dies now because its heart broke.
+	 */
+	public static final AttachmentType<Boolean> HEART_BREAK = AttachmentRegistry.create(OriginOfSpawns.id("heart_break"));
+
+	/**
 	 * The game time of the last leap of a mob with genes. The first melee hit after it removes it.
 	 */
 	public static final AttachmentType<Long> LEAP_TIME = AttachmentRegistry.create(OriginOfSpawns.id("leap_time"));

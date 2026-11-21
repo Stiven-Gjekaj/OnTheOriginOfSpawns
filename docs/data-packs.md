@@ -51,17 +51,26 @@ A pressure needs `damage_types`, `conditions`, or both.
 | `fuse` | The mob is a creeper, and it died while its fuse burned |
 | `bane` | The killer hit the mob with a weapon with the Bane of Arthropods enchantment |
 | `raid` | The mob died as a part of a raid |
+| `heart_far` | The heart of a creaking broke from a player or a blast, and the creaking was more than 16 blocks from its heart |
+| `heart_trail` | The heart of a creaking broke from a player or a blast, and in the 30 seconds before, a player hurt the creaking and the heart showed the trail |
 
 The mod has these pressures: `fire`, `projectile`, `melee`, `explosion`,
 `fall`, `unreached`, `sunlight`, `spotted`, `alone`, `crowd`, `critical`,
 `golem`, `player_death`, `in_water`, `on_land`, `cold`, `night`, `boat`,
 `contact`, `trident`, `wolf`, `shield`, `snow`, `warm`, `dry`, `shears`, `smite`, `day`,
-`fuse`, `bane`, and `raid`.
+`fuse`, `bane`, `raid`, `heart_far`, and `heart_trail`.
 A creeper that explodes does not die, so its blast does not count for a
 pressure. A blast that kills a player counts for `player_death`.
 The `contact` pressure uses the tag `#originofspawns:contact`: cacti and sweet
 berry bushes. The `trident` pressure uses the tag `#originofspawns:trident`.
 The `melee` pressure uses the tag `#originofspawns:melee`.
+
+A creaking that a heart protects takes no damage. It dies when its heart
+breaks. The player that breaks the heart is the killer, so the death counts
+for the pressures of a player kill, for example `alone` and `shield`. A blast
+that breaks the heart counts for `explosion`. A heart that breaks for another
+cause, for example when the creaking goes too far from it, gives no death
+that counts.
 
 ## Gene
 
@@ -157,7 +166,7 @@ The states for `when` are:
 | `wet` | The mob is in water, or rain falls on it |
 | `carrying_block` | The mob is an enderman that carries a block |
 | `in_air` | The mob does not stand on the ground, and it is not in water or in lava |
-| `not_shooting` | The mob did not shoot a fireball in the last 2 seconds |
+| `not_shooting` | The mob did not shoot a fireball or a shulker bullet in the last 2 seconds |
 | `mount_running` | The mob rides a mount that moves faster than half of the speed of the mount |
 | `target_player` | The target of the mob is a player |
 | `target_gold_armor` | The target is a player with at least one piece of gold armor |
@@ -195,6 +204,11 @@ The states for `when` are:
 | `unseen` | The mob is behind the player, or the player did not look at it in the last 3 seconds. In `damage_dealt_when`, it asks this of each player that the mob damages. In other effects, it asks it of the target |
 | `near_spawner` | A monster spawner is in 16 blocks of the mob |
 | `far_from_spawner` | No monster spawner is in 16 blocks of the mob |
+| `shell_open` | The mob is a shulker with its lid open, also a little |
+| `shell_closed` | The mob is a shulker with its lid closed. A closed vanilla shulker has 20 armor, and arrows do not hurt it |
+| `ridden` | A mob rides the mob, for example a pillager on a ravager |
+| `raider_group` | 2 or more other raiders are in 8 blocks. A raider is a pillager, a vindicator, an evoker, a witch, an illusioner, or a ravager. The rider counts |
+| `no_raider` | No other raider is in 8 blocks |
 
 #### Hits
 
@@ -292,7 +306,7 @@ The states for `when` are:
 | `heal_on_hit` | `amount`, `hits` (`melee`), `when` (`always`) | Each hit of the mob heals it by the amount, while the state is true |
 | `regrow` | `seconds`, `heal` (`0`) | After a shear, the mushrooms of a bogged grow back after the seconds, and it heals by `heal` |
 | `parry` | `cooldown_seconds` (`6`) | The mob takes no damage from one melee hit, one time in each cooldown. A shield sound plays |
-| `cleave` | `part` (`0.5`), `radius` (`2`) | Each melee hit also hurts the other players in the radius of the target, with this part of the attack damage of the mob. A cleave does not cleave again |
+| `cleave` | `part` (`0.5`), `radius` (`2`), `targets` (none) | Each melee hit also hurts the other players in the radius of the target, with this part of the attack damage of the mob. With `targets`, a list or a tag of entity types, it hurts the other entities of the list instead of the players. The mob itself and the target do not take it. A cleave does not cleave again |
 | `skull_shot` | `cooldown_seconds` (`10`), `min_range` (`6`), `max_range` (`16`) | One time in each cooldown, the mob shoots a wither skull at its target player in the range, if it can see the player |
 | `death_spawn` | `entity`, `count` (`1`), `life_seconds` (`30`) | When the mob dies, this many mobs of this type come out and attack the killer. A vex lives for `life_seconds` |
 | `soul_hunger` | `per_player`, `max`, `seconds` (`10`) | The mob does more melee damage for each player that it hit in melee in the last `seconds`, up to `max`. `0.2` is 20% for each player |
@@ -599,7 +613,7 @@ the mount. A player that rides it does not count.
 | `charge_rate` | `multiplier` (`1.5`) | Divides the time between the charges by the multiplier. Vanilla is 80 ticks |
 | `charge_push` | `multiplier` (`2`) | Multiplies the push of the charge |
 | `drain_air` | `seconds` (`3`) | Each melee hit on a target in water takes the seconds of air from it |
-| `self_effect_after` | `action` (`charge`, `ink`, or `jump`), `effect`, `seconds`, `amplifier` (`0`) | After the action, the mob itself gets the status effect |
+| `self_effect_after` | `action`, `effect`, `seconds`, `amplifier` (`0`) | After the action, the mob itself gets the status effect. The actions are `charge`, `ink`, `jump`, `kill` (the mob kills a player), `player_hit` (a melee hit of the mob hurts a player), and `look_away` (a player stops holding a creaking still with a look) |
 | `ink_effect` | `effect`, `seconds`, `amplifier` (`0`) | The ink also gives this status effect |
 | `ink_reach` | `multiplier` (`2`) | Multiplies the reach of the ink |
 | `ink_rate` | `multiplier` (`2`) | Divides the cooldown of the ink by the multiplier |
@@ -662,6 +676,124 @@ change the blast damage, and the `hits` field counts a blast as `melee`.
 | `charge_when` | `when` (`storm`) | The creeper becomes charged when the state is true, and it stays charged |
 | `blast_lightning` | | Lightning strikes the place of the blast. This lightning does not charge creepers |
 | `lightning_immunity` | | A lightning strike does no damage to the mob and sets no fire on it. A creeper still becomes charged. A fire block from the lightning can still burn it |
+
+#### Silverfish
+
+These effects suit a silverfish. Other mobs can use the effects that do not
+name a silverfish.
+
+A wake starts at the place of the mob and goes out. Each infested block in
+the range breaks and lets its silverfish out. With no `mobGriefing`, the block
+becomes its normal block again, and no silverfish comes out. After each block,
+the wake stops with a chance of one half. The range goes to each side, and
+half as far up and down. The vanilla range is 10 to each side and 5 up and
+down.
+
+| Type | Fields | Result |
+|---|---|---|
+| `wake_range` | `range` (`10`) | When something hurts the silverfish, its wake reaches this many blocks to each side, and half as far up and down. With more than one, the largest range counts |
+| `wake_on_sight` | `range` (`8`), `cooldown_seconds` (`10`) | When the mob sees its target player, it makes a wake with this range, one time in each cooldown |
+| `wake_on_death` | `range` (`10`) | When the mob dies, it makes a wake with this range. It acts on each death, also from a projectile or a blast |
+| `hide_in_stone` | `threshold` (`0.5`), `cooldown_seconds` (`30`) | When a hit takes the mob under the threshold of its maximum health, it hides in a stone block next to it, one time in each cooldown. The block becomes an infested block. The silverfish that comes out has the genes of the mob and full health, and the cooldown goes on from the hide. It needs `mobGriefing`, as the vanilla hide |
+| `hide_brood` | `extra` (`1`) | When the mob hides in a block, in the vanilla way or with a gene, this many more silverfish come out of the block. They get genes from the pool. More than one effect adds up |
+| `stone_seed` | `count` (`2`) | When the mob hides in a block, it also infests up to this many blocks next to that block. Plain silverfish with genes from the pool come out of them. It needs `mobGriefing` |
+| `gnaw` | `interval_seconds` (`2`) | When the mob finds no path to its target, it gnaws through a block in its way, one block in each interval: the block in front of it toward the target, or the block above or below it when the target is higher or lower. It gnaws only the blocks that a silverfish can infest, and the block drops nothing. It needs `mobGriefing` |
+| `dodge_melee` | `chance` | Each melee hit has this chance to miss the mob. A missed hit does no damage and no knockback. A projectile always hits |
+| `bane_resist` | `multiplier` (`0`), `no_slowness` (`true`) | Multiplies the extra damage of Bane of Arthropods (2.5 for each level). With `no_slowness`, the hit of the enchantment gives no Slowness. Other Slowness still acts |
+| `brood_on_hurt` | `count` (`1`), `cooldown_seconds` (`10`), `hits` (`any`) | When a hit of this kind hurts the mob, this many new mobs of its species come out of it, one time in each cooldown. They get genes from the pool and attack the attacker. A projectile counts also with no shooter |
+| `emerge_strike` | `damage` (`2`), `seconds` (`10`) | The first melee hit after the mob comes out of an infested block does this much more damage, if it comes in the seconds. Each block counts, also a block where no silverfish hid |
+| `spit` | `cooldown_seconds` (`6`), `range` (`6`), `damage` (`1`), `effect` (none), `seconds` (`2`), `amplifier` (`0`) | One time in each cooldown, the mob spits a llama spit at its own target in the range and in sight. The spit does the damage, and with `effect` it gives the status effect. `rider_target_spit` is different: it spits at the target of the rider |
+
+A silverfish that hides in a block, in the vanilla way or with a gene, keeps
+its genes in the block. The silverfish that comes out of that block has the
+same genes and full health. A block where no silverfish with genes hid gives
+a silverfish with genes from the pool. The world saves the hidden silverfish
+in `data/originofspawns/hidden_silverfish.dat`.
+
+#### Shulkers
+
+A bullet hit is a `projectile` hit, so `damage_dealt_when` and
+`effect_on_hit` with `hits` `projectile` act on the bullets. `throw_rate` also
+changes the time between two shots of a shulker. Vanilla is 1 to 5.5 seconds.
+
+| Type | Fields | Result |
+|---|---|---|
+| `bullet_damage` | `extra` | The bullets do this much more damage. The extra comes before the multipliers. More than one effect adds up. The vanilla bullet does 4 damage |
+| `bullet_speed` | `multiplier` | Multiplies the speed of the bullets. The vanilla bullet flies 0.15 blocks each tick. More than one effect multiplies together |
+| `bullet_levitation` | `seconds` (none), `amplifier` (none) | Changes the Levitation of a bullet hit: it lasts `seconds`, and it has the level `amplifier` (0 is Levitation I). The longest time and the highest level count. The vanilla bullet gives Levitation I for 10 seconds |
+| `double_shot` | `every` (`3`) | Each attack with this number shoots two bullets at the same target. The smallest number counts |
+| `lid_snap` | `damage` (`4`), `cooldown_seconds` (`3`) | When a player is in 1 block of the body of the shulker, the shulker snaps its lid on the player for the damage, one time in each cooldown. Only while the lid is open, and not in the second after a shot. The snap is a melee hit, so the hit effects act on it |
+| `teleport_on_hurt` | `chance` | When something hurts the mob, it teleports with this chance, at any health. A shulker uses its vanilla teleport in 8 blocks. Another mob teleports to a free place in 8 blocks. It teleports one time at most for each hurt |
+| `shut_after_teleport` | `seconds` (`3`) | After each teleport, also a vanilla one, the shulker stays closed for the seconds, with the 20 armor of a closed shell. Then a shulker with a target opens again. The longest time counts |
+| `sight_teleport` | `seconds` (`5`) | When the shulker does not see its target for the seconds, it teleports to a place in 8 blocks that sees the target, with the checks of the vanilla teleport. It keeps its target. With no such place, it tries again the next second |
+| `split_on_hurt` | `chance` | When something hurts the shulker, it splits with this chance. The split is the vanilla split from a bullet: the shulker must be open and teleport away, the new shulker comes at the old place with the same color, and it gets genes from the pool. It splits one time at most for each hurt |
+| `split_limit` | `limit` (`8`) | Each other shulker in 8 blocks adds one part in the limit to the chance that a split fails. Vanilla is 5, so the vanilla split stops at 5 shulkers. It acts on each split, also from a bullet. The largest limit counts |
+| `split_heir` | none | A shulker that splits off gets the genes of this shulker, not genes from the pool. It acts on each split, also from a bullet |
+| `split_scatter` | none | A shulker that splits off teleports at once with the vanilla teleport, in 8 blocks. It acts on each split, also from a bullet |
+
+#### Ravagers
+
+The roar of a vanilla ravager comes at the end of a stun. It does 6 damage to
+each mob and player in 4 blocks, but not to an illager, and it pushes them
+hard. The roar is a hit of the ravager with no projectile, so
+`damage_dealt_when` with `hits` `melee` also changes the roar.
+`minecraft:attack_damage` does not change it.
+
+| Type | Fields | Result |
+|---|---|---|
+| `roar_range` | `blocks` (`4`) | The roar reaches this many blocks. The largest range counts |
+| `roar_damage` | `multiplier`, `when` (`always`) | Multiplies the damage of the roar while the state is true. More than one effect multiplies together |
+| `roar_effect` | `effect`, `seconds`, `amplifier` (`0`), `allies` (`false`), `radius` (`8`) | The roar gives the status effect to each mob and player that it hurts. With `allies`, it gives it to the other raiders in the radius instead, one time for each roar. The ravager itself does not get it |
+| `roar_on_hurt` | `cooldown_seconds` (`10`), `hits` (`any`) | When a hit of this kind hurts the ravager, it roars at once, with no stun, one time in each cooldown |
+| `roar_on_kill` | `heal` (`0`) | After the ravager kills a player, it roars at once, with no stun, and heals this much at once |
+| `no_roar` | none | The ravager does not roar at the end of a stun, and makes no roar sound then. `roar_on_hurt` and `roar_on_kill` still roar |
+| `stun_chance` | `chance` | The chance that a shield block stuns the ravager. Else it pushes the player back hard. The largest chance counts. Vanilla is 0.5 |
+| `no_stun` | none | A shield block never stuns the ravager. It counts before each `stun_chance` |
+| `ground_charge` | `min_range` (`8`), `range` (`16`), `cooldown_seconds` (`8`), `damage` (`6`), `speed` (`0.6`), `seconds` (`2`) | One time in each cooldown, the mob charges along the ground at its target between the two ranges and in sight. It runs at the speed in blocks each tick, for the seconds at most. A wall stops it. A touch hurts the target, pushes it back, and ends the charge |
+| `trample` | `blocks` (`#originofspawns:shatterable`) | When the mob walks into a wall, it breaks the blocks of the tag that it touches, as a vanilla ravager breaks leaves. They drop their items. It needs `mobGriefing`. The tag holds fences, fence gates, glass, and glass panes |
+| `speed_after` | `action`, `multiplier`, `seconds` | After the action, the multiplier multiplies the movement speed of the mob for the seconds. A new action starts the time again |
+| `heal_on_rider_hit` | `amount`, `cooldown_seconds` (`4`) | When a mob that rides the mount hurts a target, with a melee hit or a projectile, the mount heals the amount at once, one time in each cooldown |
+| `rider_strike` | none | When the mount hits a target in melee, the mob that rides it also attacks that target with its melee attack, one time for each hit |
+| `raid_rider` | `entity` (`minecraft:pillager`) | When the mob spawns in a raid with no rider, a raider of this type spawns on its back in the same wave. It gets genes as a new mob |
+| `raid_hunt` | `range` (`48`) | While the mob is in an active raid with no target, it targets the nearest player in the range, also out of sight. Creative and spectator players do not count |
+
+#### Creakings
+
+A vanilla creaking does 3 damage, one time each 2 seconds. A look from 12
+blocks or less wakes it. While it is awake, a look from any distance holds it
+still. It walks in 32 blocks of its heart.
+
+The wake types (`heart_sense`, `blast_sense`, `lone_watch`) wake the creaking
+as a vanilla look wakes it: it makes the wake sound and targets the player.
+`attack_interval` also changes the attack time of a creaking, and a melee hit
+of a creaking uses `shield_break`.
+
+| Type | Fields | Result |
+|---|---|---|
+| `watched_step` | `interval_seconds` (`3`) | While a player looks at the creaking and holds it still, it takes one step toward its target in each interval. A step is one block, and walls stop it. The shortest interval counts |
+| `twitch_on_hurt` | `seconds` (`1`), `cooldown_seconds` (`10`) | When a player hurts the creaking, it moves for the seconds, also while a player looks at it, one time in each cooldown |
+| `heart_twitch` | `radius` (`8`), `seconds` (`3`), `cooldown_seconds` (`10`) | When a player comes in the radius of the heart, the creaking moves for the seconds, also while a player looks at it, one time in each cooldown. A creaking with no heart does nothing |
+| `ignore_far_look_in_dark` | `distance` (`6`), `max_light` (`4`) | While the block light at the awake creaking is at most `max_light`, the look of a player farther than the distance does not hold it still. A nearer look still holds it. The look still wakes it |
+| `ignore_look_after_hit` | `seconds` (`2`) | After the creaking hits a player, the look of that player does not hold it still for the seconds. The look of other players still holds it |
+| `ignore_shield_look` | none | The look of a player that holds a shield up does not hold the awake creaking still |
+| `blink_strike` | `range` (`2`) | When a player in the range looks away from the creaking that the look held still, the next hit comes at once: the attack cooldown ends |
+| `hard_heart` | `break_time` (`1`), `blast_proof` (`false`) | The heart takes this many times as long to break, for the player that breaks it, for example with an axe. With `blast_proof`, an explosion does not break the heart. Only while the heart protects the creaking. More than one effect multiplies together |
+| `heart_thorns` | `damage` (`4`) | The player that breaks the heart takes the damage when the heart breaks. The damage does not stop the break |
+| `heart_burst` | `damage` (`4`), `radius` (`3`) | When the heart breaks from a player or a blast, splinters fly out of the creaking and do the damage to each player in the radius (a sphere). Other creakings take no damage |
+| `heart_leash` | `less` (`4`) | The creaking stays in this many fewer blocks of its heart. Vanilla walks in 32 blocks, and the heart lets it go to 34 blocks. Both get smaller. More than one effect adds up. The range is 4 blocks at least |
+| `heart_guard` | `radius` (`8`), `speed` (`1.5`), `cooldown_seconds` (`10`) | When a player comes in the radius of the heart, the creaking stops its attack and walks back to the heart, with the speed as a multiplier of its movement speed, one time in each cooldown. A look wakes it again |
+| `hidden_heart` | none | When a player hurts the creaking, its heart shows no trail and grows no resin. With no trail, the death does not count for `heart_trail` |
+| `dark_heart` | none | While the heart protects the creaking at night, the heart looks as a dormant heart: it does not glow. It still works as an awake heart, and it still grows resin |
+| `heart_sense` | `radius` (`16`) | When a player is in the radius of the heart of the sleeping creaking, the creaking wakes and targets the nearest such player, also with no look. A creaking with no heart does nothing |
+| `blast_sense` | `radius` (`16`) | When TNT is lit in the radius of the heart, the creaking wakes and targets the nearest player in its follow range (32), also with no look. A creaking with no heart does nothing |
+| `lone_watch` | `radius` (`16`) | When the creaking sleeps and only one player is in the radius of the creaking, it wakes and targets that player, also with no look |
+| `look_wake_range` | `blocks` | A look from this many blocks or less wakes the sleeping creaking. Vanilla is 12. The largest range counts. A value under 12 makes the range smaller |
+| `still_after_look` | `seconds` | After a look stops holding the awake creaking still, it stays still for the seconds. The longest time counts. A gene that lets it move while watched still lets it move |
+| `dark_eyes` | none | The eyes of the creaking do not glow while it can move, that is, while no player holds it still. The eyes of a creaking that dies with its heart still flicker |
+| `quiet_steps` | `blocks` | Players hear the steps of the creaking only from this many blocks or less. Its other sounds do not change. The smallest range counts. Only the creaking reads it |
+| `flank_shield` | `range` (`8`), `distance` (`1.5`) | When the target of the creaking is a player in the range that holds a shield up toward it, the creaking walks to a place at the side of the player, the distance away. There it attacks as usual |
+| `attack_reach` | `blocks` | The melee hit of the mob reaches this many blocks farther to each side. More than one effect adds up. The vanilla reach of a mob with no reach item is about 0.83 blocks past its body. Any mob with a melee attack can use it |
+| `target_after_kill` | `range` (`24`) | After the mob kills a player, it targets the nearest other player in the range, also out of sight. Creative and spectator players do not count. A creaking wakes at that player. The largest range counts. Any mob can use it |
 
 ### Gene visuals
 
@@ -761,6 +893,15 @@ nautilus has `shell`, `upper_mouth`, `inner_mouth`, and `lower_mouth`. A
 zombie horse and a skeleton horse have the horse bones and `tail`. A baby
 horse has another texture layout, so it gets no gene marks and no gene
 models.
+A silverfish has `segment0` to `segment6`, the seven segments from the head,
+and `layer0` to `layer2`, the three back layers from the front. Most pixels
+of the back layers are clear, so a mark on a layer colors its bristles. A
+shulker has `lid`, `base`, and `head`. A ravager has `neck`, `head` (a part
+of the neck), `right_horn`, `left_horn`, and `mouth` (parts of the head),
+`body`, and the four leg bones of the creeper. A creaking has `root`, which
+holds `upper_body` and the two legs, and `upper_body` holds `head`, `body`,
+`right_arm`, and `left_arm`. The eye glow layer of a creaking draws over its
+eyes, so a gene that changes the eyes uses a gene model with `glow`.
 
     {
         "texture": "originofspawns:textures/entity/bone_leg.png",
@@ -828,6 +969,7 @@ These tags are for the fields of effects, such as the `targets` of
 | `#originofspawns:golems` | The iron golem |
 | `#originofspawns:all_golems` | The iron golem and the snow golem |
 | `#originofspawns:villagers` | The villager and the wandering trader |
+| `#originofspawns:ravager_targets` | The player, the villager, the wandering trader, and the iron golem: the targets of a vanilla ravager |
 | `#originofspawns:siege_breakable` (block) | Glass blocks and glass panes, the weak blocks that `siege` breaks |
 | `#originofspawns:shatterable` (block) | Fences, fence gates, glass blocks, and glass panes |
 

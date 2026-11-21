@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:heart_far",
+	"family": "originofspawns:creaking/thornwood",
+	"gains": [
+		{
+			"type": "heart_burst",
+			"damage": 4,
+			"radius": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

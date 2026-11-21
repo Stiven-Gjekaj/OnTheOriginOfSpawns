@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:creaking/heartkeeper",
+	"gains": [
+		{
+			"type": "hard_heart",
+			"break_time": 1.5,
+			"blast_proof": true
+		}
+	],
+	"downsides": [
+		{
+			"type": "heart_leash",
+			"less": 4
+		}
+	]
+}

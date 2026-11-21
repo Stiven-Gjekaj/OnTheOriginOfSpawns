@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:creaking/starer",
+	"gains": [
+		{
+			"type": "look_wake_range",
+			"blocks": 24
+		}
+	],
+	"downsides": [
+		{
+			"type": "still_after_look",
+			"seconds": 0.5
+		}
+	]
+}

@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:creaking/thornwood",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:poison",
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

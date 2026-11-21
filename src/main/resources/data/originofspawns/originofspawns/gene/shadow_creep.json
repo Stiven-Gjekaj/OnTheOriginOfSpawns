@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:creaking/twitcher",
+	"gains": [
+		{
+			"type": "ignore_far_look_in_dark",
+			"distance": 6,
+			"max_light": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attack_interval",
+			"multiplier": 1.1
+		}
+	]
+}

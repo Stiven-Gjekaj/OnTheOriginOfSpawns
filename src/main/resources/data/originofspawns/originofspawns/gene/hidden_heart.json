@@ -1,0 +1,16 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:heart_trail",
+	"family": "originofspawns:creaking/heartkeeper",
+	"gains": [
+		{
+			"type": "hidden_heart"
+		}
+	],
+	"downsides": [
+		{
+			"type": "heart_leash",
+			"less": 4
+		}
+	]
+}

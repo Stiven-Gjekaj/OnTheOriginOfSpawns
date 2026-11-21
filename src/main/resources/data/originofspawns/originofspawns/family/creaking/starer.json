@@ -1,0 +1,47 @@
+{
+	"species": "minecraft:creaking",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "look_wake_range",
+					"blocks": 16
+				}
+			],
+			"debuffs": [
+				{
+					"type": "still_after_look",
+					"seconds": 1.5
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "look_wake_range",
+					"blocks": 18
+				}
+			],
+			"debuffs": [
+				{
+					"type": "still_after_look",
+					"seconds": 1
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "look_wake_range",
+					"blocks": 24
+				}
+			],
+			"debuffs": [
+				{
+					"type": "still_after_look",
+					"seconds": 0.5
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:creaking/slinker",
+	"gains": [
+		{
+			"type": "dark_eyes"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

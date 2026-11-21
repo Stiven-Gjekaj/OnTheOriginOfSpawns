@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:creaking/starer",
+	"gains": [
+		{
+			"type": "gaze_effect",
+			"effect": "minecraft:darkness",
+			"seconds": 3,
+			"range": 8,
+			"interval_seconds": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "still_after_look",
+			"seconds": 0.5
+		}
+	]
+}

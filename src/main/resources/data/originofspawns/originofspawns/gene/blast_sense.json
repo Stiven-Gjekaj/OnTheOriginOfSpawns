@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:creaking/slinker",
+	"sub_family": "originofspawns:creaking/starer",
+	"gains": [
+		{
+			"type": "blast_sense",
+			"radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

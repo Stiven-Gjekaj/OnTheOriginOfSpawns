@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:heart_far",
+	"family": "originofspawns:creaking/starer",
+	"sub_family": "originofspawns:creaking/twitcher",
+	"gains": [
+		{
+			"type": "heart_twitch",
+			"radius": 8,
+			"seconds": 3,
+			"cooldown_seconds": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "still_after_look",
+			"seconds": 0.5
+		}
+	]
+}

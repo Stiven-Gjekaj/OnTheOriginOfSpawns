@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:creaking/starer",
+	"gains": [
+		{
+			"type": "lone_watch",
+			"radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "still_after_look",
+			"seconds": 0.5
+		}
+	]
+}

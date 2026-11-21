@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:creaking/thornwood",
+	"gains": [
+		{
+			"type": "shield_break",
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

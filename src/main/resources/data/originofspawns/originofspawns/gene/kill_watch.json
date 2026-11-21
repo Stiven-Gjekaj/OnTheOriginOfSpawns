@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:creaking/starer",
+	"gains": [
+		{
+			"type": "target_after_kill",
+			"range": 24
+		}
+	],
+	"downsides": [
+		{
+			"type": "still_after_look",
+			"seconds": 0.5
+		}
+	]
+}

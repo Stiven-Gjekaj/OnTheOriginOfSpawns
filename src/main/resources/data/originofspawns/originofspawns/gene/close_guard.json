@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:heart_far",
+	"family": "originofspawns:creaking/heartkeeper",
+	"gains": [
+		{
+			"type": "heart_guard",
+			"radius": 8,
+			"speed": 1.5,
+			"cooldown_seconds": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "heart_leash",
+			"less": 4
+		}
+	]
+}

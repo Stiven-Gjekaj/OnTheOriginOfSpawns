@@ -1,0 +1,16 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:creaking/starer",
+	"gains": [
+		{
+			"type": "ignore_shield_look"
+		}
+	],
+	"downsides": [
+		{
+			"type": "still_after_look",
+			"seconds": 0.5
+		}
+	]
+}

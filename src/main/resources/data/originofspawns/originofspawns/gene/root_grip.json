@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:creaking/heartkeeper",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:slowness",
+			"seconds": 2,
+			"amplifier": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "heart_leash",
+			"less": 4
+		}
+	]
+}

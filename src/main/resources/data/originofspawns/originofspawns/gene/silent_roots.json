@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:creaking/slinker",
+	"gains": [
+		{
+			"type": "quiet_steps",
+			"blocks": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

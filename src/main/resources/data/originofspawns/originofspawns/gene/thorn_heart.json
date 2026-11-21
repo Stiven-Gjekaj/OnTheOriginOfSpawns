@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:heart_trail",
+	"family": "originofspawns:creaking/thornwood",
+	"sub_family": "originofspawns:creaking/heartkeeper",
+	"gains": [
+		{
+			"type": "heart_thorns",
+			"damage": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:creaking/heartkeeper",
+	"sub_family": "originofspawns:creaking/starer",
+	"gains": [
+		{
+			"type": "heart_sense",
+			"radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "heart_leash",
+			"less": 4
+		}
+	]
+}

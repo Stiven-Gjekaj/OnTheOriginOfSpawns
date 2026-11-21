@@ -1,0 +1,47 @@
+{
+	"species": "minecraft:creaking",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "watched_step",
+					"interval_seconds": 5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attack_interval",
+					"multiplier": 1.2
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "watched_step",
+					"interval_seconds": 4
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attack_interval",
+					"multiplier": 1.15
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "watched_step",
+					"interval_seconds": 2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attack_interval",
+					"multiplier": 1.1
+				}
+			]
+		}
+	]
+}

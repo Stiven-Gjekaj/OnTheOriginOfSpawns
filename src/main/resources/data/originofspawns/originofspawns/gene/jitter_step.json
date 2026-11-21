@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:creaking/twitcher",
+	"gains": [
+		{
+			"type": "watched_step",
+			"interval_seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attack_interval",
+			"multiplier": 1.1
+		}
+	]
+}

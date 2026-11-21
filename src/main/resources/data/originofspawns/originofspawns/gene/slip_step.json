@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:creaking/twitcher",
+	"sub_family": "originofspawns:creaking/slinker",
+	"gains": [
+		{
+			"type": "speed_after",
+			"action": "look_away",
+			"multiplier": 1.5,
+			"seconds": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attack_interval",
+			"multiplier": 1.1
+		}
+	]
+}

@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:creaking/twitcher",
+	"gains": [
+		{
+			"type": "blink_strike",
+			"range": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attack_interval",
+			"multiplier": 1.1
+		}
+	]
+}

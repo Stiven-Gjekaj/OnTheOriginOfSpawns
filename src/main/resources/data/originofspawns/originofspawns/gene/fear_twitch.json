@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:creaking/twitcher",
+	"gains": [
+		{
+			"type": "ignore_look_after_hit",
+			"seconds": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attack_interval",
+			"multiplier": 1.1
+		}
+	]
+}

@@ -100,9 +100,9 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Pack Bond | Denmate | `crowd` | 5% more damage for each wolf in 8 blocks, up to 20% | 10% less maximum health | Head: a torn ear |
+| Pack Bond | Denmate | `crowd` | 5% more damage for each wolf in 8 blocks, up to 20% | 10% less maximum health | Head: torn tips on both ears |
 | Shared Wounds | Denmate | `critical` | A quarter of the damage that it takes goes to the wolves in 6 blocks | 10% less damage | Body: matching scars on the back |
-| Huddle | Denmate | `projectile` | 30% less damage from projectiles with 2 or more wolves in 8 blocks | 10% less speed | Body: dense fur on the flanks |
+| Huddle | Denmate | `projectile` | 30% less damage from projectiles with 2 or more wolves in 8 blocks | 10% less speed | Body: dense fur on the low flanks and the back of the mane |
 | Grooming | Denmate | `melee` | It heals 1 health each 4 seconds with another wolf in 8 blocks | 10% less damage | Head: a clean, pale muzzle |
 | Alpha Mark | Denmate | `player_death` | When it hits a player, the wolves in 12 blocks get Strength for 5 seconds | 10% less maximum health | Head: a dark mark on the brow |
 | Pack Sprint | Denmate, sub Courser | `unreached` | 20% more speed with 2 or more wolves in 8 blocks | 10% less speed alone | Legs: dark socks on the paws |
@@ -113,7 +113,7 @@ The visual column gives the region and the mark.
 |---|---|---|---|---|---|
 | Lope | Courser | `unreached` | 20% more speed | 10% less maximum health | Legs: long, pale stripes |
 | Wet Nose | Courser | `alone` | Two times the follow range | 10% less speed | Head: a long, dark nose |
-| Spring Leap | Courser | `fall` | It leaps at its target from 3 to 6 blocks away | 10% less maximum health | Legs: strong hind legs with dark bands |
+| Spring Leap | Courser | `fall` | It leaps at its target from 3 to 6 blocks away | 10% less maximum health | Legs: dark bands on all four legs |
 | Night Prowl | Courser | `night` | 20% more speed at night | 10% less damage | Body: a dark stripe down the back |
 | Weave | Courser | `projectile` | It steps aside from an aimed shot, one time each 8 seconds | 10% less maximum health | Body: pale zigzag marks on the sides |
 | Snow Paws | Courser, sub Thickcoat | `snow` | It walks on powder snow, and has 20% more speed on snow | 10% less damage | Legs: white, furry paws |
@@ -122,22 +122,22 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Moon Howl | Bayer | `night` | When it sees a player at night, it calls the wolves in 24 blocks | Players hear it from two times farther | Head: a gray throat |
+| Moon Howl | Bayer | `night` | When it sees a player at night, it calls the wolves in 24 blocks | Players hear it from two times farther | Body: a gray throat on the low sides of the mane, under the head |
 | Alarm Yelp | Bayer | `spotted` | When something hurts it, it calls the wolves in 32 blocks | Players hear it from two times farther | Head: wide, pale ears |
-| Old Grudge | Bayer | `player_death` | After a player dies, it stays angry at that player for 5 minutes | 10% less speed | Head: a scar across the eye |
-| Hot Temper | Bayer | `melee` | Its anger lasts two times as long | 10% less maximum health | Head: red eyes |
-| Fear Howl | Bayer | `crowd` | Players in 4 blocks get Weakness | 10% less maximum health | Body: raised hackles on the neck. This changes the model |
+| Old Grudge | Bayer | `player_death` | After a player dies, it stays angry at that player for 5 minutes | 10% less speed | Head: a scar on the side of the head, behind the eye |
+| Hot Temper | Bayer | `melee` | Its anger lasts two times as long | 10% less maximum health | Head: red eyes and dark red brows |
+| Fear Howl | Bayer | `crowd` | Players in 4 blocks get Weakness | 10% less maximum health | Body: two rows of raised hackles on the top of the neck, behind the ears. This changes the model |
 | Last Howl | Bayer, sub Denmate | `alone` | When it dies, the wolves in 24 blocks target its killer | 10% less maximum health | Body: a pale ring of fur round the neck |
 
 ### Thickcoat genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Shaggy Fur | Thickcoat | `melee` | 2 more armor | 10% less speed | Body: long, shaggy fur on the back. This changes the model |
-| Frost Coat | Thickcoat | `cold` | It takes no damage from freezing | 10% less speed | Body: white tips on the fur |
+| Shaggy Fur | Thickcoat | `melee` | 2 more armor | 10% less speed | Body: a ridge of long, shaggy tufts along the back. This changes the model |
+| Frost Coat | Thickcoat | `cold` | It takes no damage from freezing | 10% less speed | Body: white tips on the fur of the rump |
 | Bristle | Thickcoat | `critical` | A player that hits it in melee takes 1 damage | 10% less speed | Body: stiff, dark bristles on the back |
 | Singed Pelt | Thickcoat | `fire` | Half the damage from fire | 10% less maximum health | Body: singed, brown fur on the flanks |
-| Mud Coat | Thickcoat | `explosion` | Half the damage from explosions | 10% less speed | Body: dried mud on the belly |
+| Mud Coat | Thickcoat | `explosion` | Half the damage from explosions | 10% less speed | Body: dried mud on the belly and the low flanks |
 | Bitten Hide | Thickcoat, sub Biter | `shield` | When something hurts it, it gets Strength for 3 seconds | 10% less speed | Body: old bite scars on the shoulders |
 
 ### Biter genes
@@ -145,8 +145,8 @@ The visual column gives the region and the mark.
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
 | Strong Jaw | Biter | `melee` | 20% more damage | It attacks 15% slower | Head: a wide, dark jaw |
-| Hamstring | Biter | `unreached` | Its hits give Slowness for 4 seconds | 10% less damage | Head: white fang marks on the lips |
-| Rend | Biter | `critical` | Its hits give Weakness for 4 seconds | 10% less maximum health | Head: red stains on the muzzle |
+| Hamstring | Biter | `unreached` | Its hits give Slowness for 4 seconds | 10% less damage | Legs: white fang holes with red edges |
+| Rend | Biter | `critical` | Its hits give Weakness for 4 seconds | 10% less maximum health | Body: red drips down the throat, on the low sides of the mane |
 | Throat Bite | Biter | `shield` | Its first hit on a player does 30% more damage | 10% less maximum health | Head: a dark mask round the eyes |
 | Bone Crush | Biter | `crowd` | Its hits damage armor two times as much | 10% less speed | Head: chipped, yellow teeth |
 | Snarl | Biter, sub Bayer | `spotted` | When it hits a player, the wolves in 16 blocks target that player | 10% less damage | Head: dark, curled lips |
@@ -204,6 +204,15 @@ The visual column gives the region and the mark.
   also the mane and the tail.
 - Two genes change the model: Fear Howl and Shaggy Fur.
   No gene model is in the mouth.
+- The gene models use the wolf texture of each variant, so they have the
+  coat color of the wolf.
+- The head is small, so three head marks are on the neck or the legs:
+  Moon Howl, Rend, and Hamstring.
+- The four legs share their texture, so each leg mark shows on all four
+  legs.
+- The baby wolf has its own model and texture, with no mane. A baby keeps
+  its genes, but it shows no gene marks and no gene models until it grows
+  up.
 
 ## Minor families
 

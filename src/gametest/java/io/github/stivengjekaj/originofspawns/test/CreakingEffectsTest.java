@@ -421,4 +421,18 @@ public class CreakingEffectsTest {
 				BlockPos.betweenClosed(corner.offset(-1, -1, -1), corner.offset(3, 3, 3)).spliterator(), false)
 				.filter(pos -> helper.getBlockState(pos).is(Blocks.RESIN_CLUMP)).count();
 	}
+
+	@GameTest
+	public void aHeartSenseWakesAtAPlayerNearItsHeart(GameTestHelper helper) {
+		Bound bound = bound(helper, new BlockPos(1, 1, 1), new BlockPos(6, 1, 6));
+		var sense = new io.github.stivengjekaj.originofspawns.definition.GeneEffect.HeartSense(3.0F);
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.heartSense(bound.creaking(), sense) == null,
+				"no player is near the heart");
+		var player = player(helper, new BlockPos(2, 1, 3));
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.heartSense(bound.creaking(), sense),
+				player, "a player near the heart wakes the creaking");
+		helper.assertTrue(bound.creaking().isActive(), "the creaking is awake");
+		helper.assertValueEqual(bound.creaking().getTarget(), player, "the creaking targets the player");
+		helper.succeed();
+	}
 }

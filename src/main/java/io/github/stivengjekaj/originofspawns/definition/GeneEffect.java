@@ -387,7 +387,8 @@ public sealed interface GeneEffect {
 			Map.entry("heart_leash", HeartLeash.CODEC),
 			Map.entry("heart_guard", HeartGuard.CODEC),
 			Map.entry("hidden_heart", HiddenHeart.CODEC),
-			Map.entry("dark_heart", DarkHeart.CODEC)
+			Map.entry("dark_heart", DarkHeart.CODEC),
+			Map.entry("heart_sense", HeartSense.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6584,6 +6585,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "dark_heart";
+		}
+	}
+
+	/**
+	 * When a player is in the radius of the heart of a sleeping creaking, the creaking wakes and targets the nearest such
+	 * player, also with no look, as a vanilla creaking wakes when a player looks at it. A creaking with no heart does
+	 * nothing. Heart Sense: 16 blocks.
+	 */
+	record HeartSense(float radius) implements GeneEffect {
+		public static final MapCodec<HeartSense> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("radius", 16.0F).forGetter(HeartSense::radius)
+		).apply(instance, HeartSense::new));
+
+		@Override
+		public String type() {
+			return "heart_sense";
 		}
 	}
 }

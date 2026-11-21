@@ -289,4 +289,21 @@ public final class GeneCreakings {
 				.originofspawns$getCreakingProtector()
 				.filter(creaking -> GeneEffects.of(creaking).anyMatch(GeneEffect.DarkHeart.class::isInstance)).isPresent();
 	}
+
+	/**
+	 * Wakes a sleeping creaking at the nearest player in the radius of its heart.
+	 *
+	 * @return the player that woke the creaking, or null
+	 */
+	public static net.minecraft.world.entity.player.Player heartSense(Creaking creaking, GeneEffect.HeartSense sense) {
+		if (creaking.isActive()) {
+			return null;
+		}
+		net.minecraft.world.entity.player.Player nearest = playersNearHeart(creaking, sense.radius()).stream()
+				.min(java.util.Comparator.comparingDouble(player -> player.distanceToSqr(creaking))).orElse(null);
+		if (nearest != null) {
+			creaking.activate(nearest);
+		}
+		return nearest;
+	}
 }

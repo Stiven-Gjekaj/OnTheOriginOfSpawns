@@ -386,7 +386,8 @@ public sealed interface GeneEffect {
 			Map.entry("heart_burst", HeartBurst.CODEC),
 			Map.entry("heart_leash", HeartLeash.CODEC),
 			Map.entry("heart_guard", HeartGuard.CODEC),
-			Map.entry("hidden_heart", HiddenHeart.CODEC)
+			Map.entry("hidden_heart", HiddenHeart.CODEC),
+			Map.entry("dark_heart", DarkHeart.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6570,6 +6571,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "hidden_heart";
+		}
+	}
+
+	/**
+	 * While the heart of a creaking protects it at night, the heart looks as a dormant heart: it does not glow. The heart
+	 * still works as an awake heart, and it still grows resin. Dark Heart.
+	 */
+	record DarkHeart() implements GeneEffect {
+		public static final MapCodec<DarkHeart> CODEC = MapCodec.unit(new DarkHeart());
+
+		@Override
+		public String type() {
+			return "dark_heart";
 		}
 	}
 }

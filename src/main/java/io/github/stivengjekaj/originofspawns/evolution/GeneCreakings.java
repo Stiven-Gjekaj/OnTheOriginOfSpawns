@@ -280,4 +280,13 @@ public final class GeneCreakings {
 				new net.minecraft.world.entity.ai.memory.WalkTarget(creaking.getHomePos(), guard.speed(), 1));
 		return true;
 	}
+
+	/**
+	 * Returns true if the creaking that the heart protects has a dark heart gene.
+	 */
+	public static boolean darkHeart(net.minecraft.world.level.block.entity.CreakingHeartBlockEntity heart) {
+		return ((io.github.stivengjekaj.originofspawns.mixin.CreakingHeartBlockEntityAccessor) heart)
+				.originofspawns$getCreakingProtector()
+				.filter(creaking -> GeneEffects.of(creaking).anyMatch(GeneEffect.DarkHeart.class::isInstance)).isPresent();
+	}
 }

@@ -389,4 +389,36 @@ public class CreakingEffectsTest {
 		helper.assertValueEqual(hiddenResin, 0L, "the hidden heart grows no resin");
 		helper.succeed();
 	}
+
+	@GameTest(padding = 4)
+	public void aDarkHeartLooksDormantAndStillGrowsResin(GameTestHelper helper) {
+		Bound[] dark = new Bound[1];
+		// The heart is dormant, as a dark heart looks at night.
+		long resin = resinAfterHurtDormant(helper, new BlockPos(1, 1, 1), dark, "test_dark_heart");
+		helper.assertTrue(resin > 0L, "a dark heart that looks dormant still grows resin");
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.darkHeart(dark[0].heart()),
+				"the heart knows that its creaking has a dark heart");
+		Bound[] plain = new Bound[1];
+		long plainResin = resinAfterHurtDormant(helper, new BlockPos(7, 1, 1), plain);
+		helper.assertValueEqual(plainResin, 0L, "a plain dormant heart grows no resin");
+		helper.succeed();
+	}
+
+	/**
+	 * Puts a dormant heart in pale oak logs, lets a player hurt its creaking, and returns the resin clumps that grew.
+	 */
+	static long resinAfterHurtDormant(GameTestHelper helper, BlockPos corner, Bound[] out, String... genes) {
+		for (BlockPos log : BlockPos.betweenClosed(corner, corner.offset(2, 2, 2))) {
+			helper.setBlock(log, Blocks.PALE_OAK_LOG);
+		}
+		Bound bound = bound(helper, corner.offset(1, 1, 1), corner.offset(1, 0, 4), genes);
+		helper.setBlock(corner.offset(1, 1, 1), helper.getBlockState(corner.offset(1, 1, 1))
+				.setValue(CreakingHeartBlock.STATE, CreakingHeartState.DORMANT));
+		out[0] = bound;
+		var player = player(helper, corner.offset(3, 0, 4));
+		bound.creaking().hurtServer(helper.getLevel(), player.damageSources().playerAttack(player), 1.0F);
+		return java.util.stream.StreamSupport.stream(
+				BlockPos.betweenClosed(corner.offset(-1, -1, -1), corner.offset(3, 3, 3)).spliterator(), false)
+				.filter(pos -> helper.getBlockState(pos).is(Blocks.RESIN_CLUMP)).count();
+	}
 }

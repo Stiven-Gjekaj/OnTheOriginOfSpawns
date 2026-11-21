@@ -1,12 +1,18 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.stivengjekaj.originofspawns.evolution.GeneCreakings;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.CreakingHeartBlock;
 import net.minecraft.world.level.block.entity.CreakingHeartBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.CreakingHeartState;
 
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Lets the genes of a creaking change its heart, and marks the death of a creaking from a broken heart.
@@ -53,5 +60,27 @@ public abstract class CreakingHeartBlockEntityMixin {
 	private static double originofspawns$heartRange(double range, @Local(argsOnly = true) CreakingHeartBlockEntity heart) {
 		return ((CreakingHeartBlockEntityAccessor) heart).originofspawns$getCreakingProtector()
 				.map(creaking -> GeneCreakings.heartRange(creaking) + GeneCreakings.HEART_RANGE_SLACK).orElse(range);
+	}
+
+	/**
+	 * A dark heart looks dormant while it protects its creaking at night.
+	 */
+	@Inject(method = "updateCreakingState", at = @At("RETURN"), cancellable = true)
+	private static void originofspawns$darkHeart(Level level, BlockState state, BlockPos pos, CreakingHeartBlockEntity heart,
+			CallbackInfoReturnable<BlockState> info) {
+		BlockState updated = info.getReturnValue();
+		if (updated.getValue(CreakingHeartBlock.STATE) == CreakingHeartState.AWAKE && GeneCreakings.darkHeart(heart)) {
+			info.setReturnValue(updated.setValue(CreakingHeartBlock.STATE, CreakingHeartState.DORMANT));
+		}
+	}
+
+	/**
+	 * A dark heart that looks dormant still grows resin, as an awake heart does.
+	 */
+	@ModifyExpressionValue(method = "creakingHurt", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/level/block/state/BlockState;getValue(Lnet/minecraft/world/level/block/state/properties/Property;)Ljava/lang/Comparable;"))
+	private Comparable<?> originofspawns$darkHeartResin(Comparable<?> state) {
+		return state == CreakingHeartState.DORMANT && GeneCreakings.darkHeart((CreakingHeartBlockEntity) (Object) this)
+				? CreakingHeartState.AWAKE : state;
 	}
 }

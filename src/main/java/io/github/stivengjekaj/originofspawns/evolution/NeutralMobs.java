@@ -6,14 +6,17 @@ import java.util.UUID;
 import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.animal.golem.IronGolem;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * The rules of the neutral mobs that fight the player, such as the wolf. A tame mob keeps its genes, gets no new genes,
@@ -76,5 +79,29 @@ public final class NeutralMobs {
 	public static boolean friendly(Entity mob, Entity other) {
 		UUID owner = isNeutralFighter(mob) ? owner(mob) : null;
 		return owner != null && (owner.equals(other.getUUID()) || owner.equals(owner(other)));
+	}
+
+	/**
+	 * Returns true if a gain that acts on players acts on the other entity. For a mob that is not a neutral fighter,
+	 * this is each player. A wild neutral fighter acts only on a player that it targets, that it is angry at, or that
+	 * hurt it. A tame mob acts on each living entity that it targets or that hurt it, as its vanilla bite does, but
+	 * never on its owner or on a mob of the same owner.
+	 */
+	public static boolean isFoe(Entity mob, Entity other) {
+		if (!(mob instanceof Mob fighter) || !isNeutralFighter(mob)) {
+			return other instanceof Player;
+		}
+		if (!(other instanceof LivingEntity living) || other == mob) {
+			return false;
+		}
+		boolean fought = fighter.getTarget() == living || fighter.getLastHurtByMob() == living;
+		if (owner(mob) != null) {
+			return fought && !friendly(mob, living);
+		}
+		if (!(living instanceof Player player)) {
+			return false;
+		}
+		return fought || fighter instanceof NeutralMob neutral && fighter.level() instanceof ServerLevel level
+				&& neutral.isAngryAt(player, level);
 	}
 }

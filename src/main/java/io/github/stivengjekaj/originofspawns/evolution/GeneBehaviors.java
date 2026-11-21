@@ -505,7 +505,10 @@ public final class GeneBehaviors {
 					List<? extends LivingEntity> targets = aura.allies()
 							? level.getEntitiesOfClass(Mob.class, area, other -> other.getType() == mob.getType()
 									&& (!aura.inWaterOnly() || other.isInWater()))
-							: level.getEntitiesOfClass(Player.class, area, player -> !aura.inWaterOnly() || player.isInWater());
+							: NeutralMobs.isNeutralFighter(mob)
+									? level.getEntitiesOfClass(LivingEntity.class, area, other -> NeutralMobs.isFoe(mob, other)
+											&& (!aura.inWaterOnly() || other.isInWater()))
+									: level.getEntitiesOfClass(Player.class, area, player -> !aura.inWaterOnly() || player.isInWater());
 					for (LivingEntity target : targets) {
 						target.addEffect(new MobEffectInstance(aura.effect(), ticks, aura.amplifier()), mob);
 					}
@@ -543,7 +546,8 @@ public final class GeneBehaviors {
 				case GeneEffect.StareEffect stare -> stareEffect(mob, level, stare);
 				case GeneEffect.BlockThrow thrown when mob instanceof Enderman enderman ->
 						GeneThrows.throwBlock(enderman, level, thrown);
-				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
+				case GeneEffect.CallOnSight call when mob.getTarget() != null && NeutralMobs.isFoe(mob, mob.getTarget()) ->
+						callOnSight(mob, level, call, mob.getTarget());
 				case GeneEffect.WakeOnSight sight -> GeneSilverfish.wakeOnSight(mob, level, sight);
 				case GeneEffect.RaidHunt hunt when mob instanceof net.minecraft.world.entity.raid.Raider raider ->
 						GeneRavagers.raidHunt(raider, hunt);
@@ -2429,7 +2433,7 @@ public final class GeneBehaviors {
 		}
 	}
 
-	private static void callOnSight(Mob mob, ServerLevel level, GeneEffect.CallOnSight call, Player player) {
+	private static void callOnSight(Mob mob, ServerLevel level, GeneEffect.CallOnSight call, LivingEntity player) {
 		BehaviorState state = mob.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE);
 		long now = level.getGameTime();
 		if (state.callTime() >= 0L && now - state.callTime() < Math.round(call.cooldownSeconds() * 20.0F)) {
@@ -2449,9 +2453,9 @@ public final class GeneBehaviors {
 
 	/**
 	 * Makes all mobs of the species of the mob in the radius target the player. A tame mob calls only the mobs of its
-	 * owner, and a wild neutral mob calls only wild mobs.
+	 * owner, and a wild neutral mob calls only wild mobs. The target of a tame mob can also be a mob.
 	 */
-	public static void callAllies(Mob mob, float radius, Player player) {
+	public static void callAllies(Mob mob, float radius, LivingEntity player) {
 		AABB area = mob.getBoundingBox().inflate(radius);
 		for (Mob ally : mob.level().getEntitiesOfClass(Mob.class, area, other -> NeutralMobs.answersCall(mob, other))) {
 			ally.setTarget(player);

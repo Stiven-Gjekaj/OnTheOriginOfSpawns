@@ -203,4 +203,72 @@ public class WolfEffectsTest {
 		helper.assertTrue(packmate.getTarget() == null, "the pack does not attack the owner");
 		helper.succeed();
 	}
+
+	static void anger(Wolf wolf, net.minecraft.world.entity.player.Player player) {
+		wolf.setPersistentAngerTarget(EntityReference.of(player));
+		wolf.startPersistentAngerTimer();
+	}
+
+	static void auraTick(GameTestHelper helper, Wolf wolf) {
+		wolf.tickCount = 20;
+		io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.tick(wolf, helper.getLevel());
+	}
+
+	@GameTest
+	public void theGainsOfAWildWolfActOnAPlayerOnlyWhileItIsAngry(GameTestHelper helper) {
+		Wolf howler = wolf(helper, new BlockPos(1, 1, 1), "test_aura", "test_ambush_bite");
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(3, 1, 1))));
+		var hit = helper.getLevel().damageSources().mobAttack(howler);
+		auraTick(helper, howler);
+		helper.assertFalse(player.hasEffect(net.minecraft.world.effect.MobEffects.WEAKNESS), "a calm wolf gives no Weakness");
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(player, hit, 10.0F),
+				10.0F, "a calm wolf has no first strike on the player");
+		anger(howler, player);
+		auraTick(helper, howler);
+		helper.assertTrue(player.hasEffect(net.minecraft.world.effect.MobEffects.WEAKNESS), "an angry wolf gives Weakness");
+		helper.assertTrue(Math.abs(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(player, hit, 10.0F)
+				- 15.0F) < 0.001F, "an angry wolf has its first strike on the player");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theGainsOfATameWolfActOnTheTargetsOfItsOwnerAndNotOnItsOwner(GameTestHelper helper) {
+		var owner = CreeperEffectsTest.survivalPlayer(helper).player();
+		owner.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(1, 1, 3))));
+		Wolf pet = wolf(helper, new BlockPos(1, 1, 1), "test_aura", "test_ambush_bite", "test_coral", "test_wolf_snarl");
+		Wolf packmate = wolf(helper, new BlockPos(5, 1, 5));
+		tame(pet, owner);
+		tame(packmate, owner);
+		var pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 1));
+		pet.setTarget(pig);
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.test(pet,
+				io.github.stivengjekaj.originofspawns.definition.GeneEffect.When.TARGET_PLAYER),
+				"the target of a tame wolf counts as the player of the gains");
+		auraTick(helper, pet);
+		helper.assertTrue(pig.hasEffect(net.minecraft.world.effect.MobEffects.WEAKNESS), "the aura acts on the target");
+		helper.assertFalse(owner.hasEffect(net.minecraft.world.effect.MobEffects.WEAKNESS), "the aura does not act on the owner");
+		helper.assertTrue(Math.abs(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(pig,
+				helper.getLevel().damageSources().mobAttack(pet), 10.0F) - 15.0F) < 0.001F, "the first strike acts on the target");
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHit(pet, pig);
+		helper.assertValueEqual(packmate.getTarget(), pig, "the call on a hit sends the pack at the target");
+		float health = owner.getHealth();
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(pet, helper.getLevel().damageSources().playerAttack(owner));
+		helper.assertValueEqual(owner.getHealth(), health, "the thorns do not hurt the owner");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void theLastHowlOfATameWolfSendsItsPackAtItsKiller(GameTestHelper helper) {
+		var owner = CreeperEffectsTest.survivalPlayer(helper).player();
+		Wolf pet = wolf(helper, new BlockPos(1, 1, 1), "test_wolf_last_howl");
+		Wolf packmate = wolf(helper, new BlockPos(5, 1, 5));
+		tame(pet, owner);
+		tame(packmate, owner);
+		var pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 1));
+		pet.hurtServer(helper.getLevel(), helper.getLevel().damageSources().mobAttack(pig), 1000.0F);
+		helper.assertTrue(pet.isDeadOrDying(), "the pig kills the tame wolf");
+		helper.assertValueEqual(packmate.getTarget(), pig, "the pack targets the killer");
+		helper.succeed();
+	}
 }

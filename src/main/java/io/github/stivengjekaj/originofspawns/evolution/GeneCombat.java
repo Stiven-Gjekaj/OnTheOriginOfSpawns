@@ -179,8 +179,8 @@ public final class GeneCombat {
 			case TARGET_FAR -> entity instanceof Mob mob && mob.getTarget() != null
 					&& mob.distanceToSqr(mob.getTarget()) > TARGET_FAR_BLOCKS * TARGET_FAR_BLOCKS;
 			case FALLING -> !entity.onGround() && !entity.isInWater() && entity.fallDistance > FALLING_BLOCKS;
-			case SEES_PLAYER -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
-					&& mob.hasLineOfSight(player);
+			case SEES_PLAYER -> entity instanceof Mob mob && mob.getTarget() != null && NeutralMobs.isFoe(mob, mob.getTarget())
+					&& mob.hasLineOfSight(mob.getTarget());
 			// The same test as the vanilla rain that puts out a fire: at the feet or at the top of the mob.
 			case IN_RAIN -> entity.level().isRainingAt(entity.blockPosition()) || entity.level().isRainingAt(
 					BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ()));
@@ -191,10 +191,10 @@ public final class GeneCombat {
 			case IN_AIR -> !entity.onGround() && !entity.isInLiquid();
 			case NOT_SHOOTING -> entity.level().getGameTime() - entity.getAttachedOrElse(ModAttachments.SHOT_TIME, Long.MIN_VALUE / 2)
 					> SHOT_TICKS;
-			case TARGET_PLAYER -> entity instanceof Mob mob && mob.getTarget() instanceof Player;
+			case TARGET_PLAYER -> entity instanceof Mob mob && mob.getTarget() != null && NeutralMobs.isFoe(mob, mob.getTarget());
 			case TARGET_NO_SHIELD -> entity instanceof Mob mob && mob.getTarget() instanceof Player player && !player.isBlocking();
-			case CHASING_PLAYER -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
-					&& mob.distanceTo(player) > CHASE_BLOCKS;
+			case CHASING_PLAYER -> entity instanceof Mob mob && mob.getTarget() != null && NeutralMobs.isFoe(mob, mob.getTarget())
+					&& mob.distanceTo(mob.getTarget()) > CHASE_BLOCKS;
 			case TARGET_HOLDS_WARPED_FUNGUS -> entity instanceof Mob mob && mob.getTarget() instanceof Player player
 					&& player.isHolding(net.minecraft.world.item.Items.WARPED_FUNGUS);
 			case NEAR_HOME -> entity.hasAttached(ModAttachments.HOME)
@@ -640,7 +640,7 @@ public final class GeneCombat {
 				switch (effect) {
 					case GeneEffect.LaserDamage laser when LASER.get() && test(attacker, laser.when(), victim) ->
 							result *= laser.multiplier();
-					case GeneEffect.DamageDealtWhen dealt when (!dealt.playersOnly() || victim instanceof Player)
+					case GeneEffect.DamageDealtWhen dealt when (!dealt.playersOnly() || NeutralMobs.isFoe(attacker, victim))
 							&& dealt.hits().includes(source.getDirectEntity() instanceof Projectile)
 							&& test(attacker, dealt.when(), victim) -> result *= dealt.multiplier();
 					case GeneEffect.Lure lure when attacker.getAttachedOrElse(ModAttachments.STATE, BehaviorState.NONE)
@@ -676,11 +676,11 @@ public final class GeneCombat {
 						// Only the first hit after a teleport counts.
 						attacker.removeAttached(ModAttachments.TELEPORT_TIME);
 					}
-					case GeneEffect.FirstStrike first when victim instanceof Player player -> {
+					case GeneEffect.FirstStrike first when NeutralMobs.isFoe(attacker, victim) -> {
 						long now = attacker.level().getGameTime();
 						java.util.Map<java.util.UUID, Long> strikes = new java.util.HashMap<>(
 								attacker.getAttachedOrElse(ModAttachments.STRIKE_TIMES, java.util.Map.of()));
-						Long last = strikes.put(player.getUUID(), now);
+						Long last = strikes.put(victim.getUUID(), now);
 						if (last == null || now - last > Math.round(first.resetSeconds() * 20.0F)) {
 							result *= first.multiplier();
 						}
@@ -843,8 +843,8 @@ public final class GeneCombat {
 						pushBack(mob, target, knockback.multiplier());
 				case GeneEffect.WebOnHit web when web.hits().includes(false) && mob.level() instanceof ServerLevel level
 						&& mob.getRandom().nextFloat() < web.chance() -> putWeb(level, target, web.seconds());
-				case GeneEffect.CallOnHit call when call.hits().includes(false) && target instanceof Player player ->
-						GeneBehaviors.callAllies(mob, call.radius(), player);
+				case GeneEffect.CallOnHit call when call.hits().includes(false) && NeutralMobs.isFoe(mob, target)
+						&& target instanceof LivingEntity living -> GeneBehaviors.callAllies(mob, call.radius(), living);
 				case GeneEffect.PullDownOnHit pull when target instanceof Player player && player.isInWater() ->
 						GeneBehaviors.pullDown(player, pull.blocks());
 				case GeneEffect.DragUnder drag when target instanceof Player player && player.isInWater() ->
@@ -1186,8 +1186,8 @@ public final class GeneCombat {
 				case GeneEffect.ArrowKnockback knockback -> pushBack(mob, target, knockback.multiplier());
 				case GeneEffect.Knockback knockback when knockback.hits().includes(true) ->
 						pushBack(mob, target, knockback.multiplier());
-				case GeneEffect.CallOnHit call when call.hits().includes(true) && target instanceof Player player ->
-						GeneBehaviors.callAllies(mob, call.radius(), player);
+				case GeneEffect.CallOnHit call when call.hits().includes(true) && NeutralMobs.isFoe(mob, target)
+						&& target instanceof LivingEntity living -> GeneBehaviors.callAllies(mob, call.radius(), living);
 				case GeneEffect.IgniteTarget ignite when ignite.hits().includes(true)
 						&& mob.getRandom().nextFloat() < ignite.chance() -> target.igniteForSeconds(ignite.seconds());
 				case GeneEffect.LightningOnHit lightning when mob.level() instanceof ServerLevel level
@@ -1278,7 +1278,8 @@ public final class GeneCombat {
 				}
 				case GeneEffect.GraveCall call when mob.getRandom().nextFloat() < call.chance() -> graveCall(mob, level, call);
 				// The damage of thorns does not cause thorns, so that two mobs with thorns do not hurt each other forever.
-				case GeneEffect.Thorns thorns when source.getDirectEntity() == attacker && !source.is(DamageTypes.THORNS) ->
+				case GeneEffect.Thorns thorns when source.getDirectEntity() == attacker && !source.is(DamageTypes.THORNS)
+						&& !NeutralMobs.friendly(mob, attacker) ->
 						attacker.hurtServer(level, level.damageSources().thorns(mob), thorns.damage());
 				case GeneEffect.EffectOnHurt onHurt when onHurt.hits().includes(source.getDirectEntity() != attacker)
 						&& test(mob, onHurt.when()) ->
@@ -1657,8 +1658,8 @@ public final class GeneCombat {
 				case GeneEffect.CallOnDeath call -> {
 					LivingEntity killer = source != null && source.getEntity() instanceof LivingEntity living
 							? living : mob.getLastHurtByMob();
-					if (killer instanceof Player player) {
-						GeneBehaviors.callAllies(mob, call.radius(), player);
+					if (killer != null && NeutralMobs.isFoe(mob, killer)) {
+						GeneBehaviors.callAllies(mob, call.radius(), killer);
 					}
 				}
 				case GeneEffect.DeathBurst burst -> {

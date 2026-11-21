@@ -451,4 +451,23 @@ public class CreakingEffectsTest {
 		tnt.discard();
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aLoneWatchWakesAtAPlayerOnlyWhenThePlayerIsAlone(GameTestHelper helper) {
+		Creaking creaking = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 1));
+		var watch = new io.github.stivengjekaj.originofspawns.definition.GeneEffect.LoneWatch(5.0F);
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.loneWatch(creaking, watch) == null,
+				"no player is near the creaking");
+		var first = player(helper, new BlockPos(4, 1, 1));
+		var second = player(helper, new BlockPos(1, 1, 4));
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.loneWatch(creaking, watch) == null,
+				"two players are near the creaking");
+		helper.assertFalse(creaking.isActive(), "the creaking sleeps with two players near it");
+		second.discard();
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.loneWatch(creaking, watch), first,
+				"one player alone wakes the creaking");
+		helper.assertTrue(creaking.isActive(), "the creaking is awake");
+		helper.assertValueEqual(creaking.getTarget(), first, "the creaking targets the lone player");
+		helper.succeed();
+	}
 }

@@ -552,6 +552,8 @@ public final class GeneBehaviors {
 						GeneCreakings.heartGuard(creaking, guard);
 				case GeneEffect.HeartSense sense when mob instanceof net.minecraft.world.entity.monster.creaking.Creaking creaking ->
 						GeneCreakings.heartSense(creaking, sense);
+				case GeneEffect.LoneWatch watch when mob instanceof net.minecraft.world.entity.monster.creaking.Creaking creaking ->
+						GeneCreakings.loneWatch(creaking, watch);
 				case GeneEffect.SightTeleport sight when mob instanceof net.minecraft.world.entity.monster.Shulker shulker ->
 						GeneShulkers.sightTeleport(shulker, level, sight);
 				case GeneEffect.Spit spit -> spit(mob, level, spit);

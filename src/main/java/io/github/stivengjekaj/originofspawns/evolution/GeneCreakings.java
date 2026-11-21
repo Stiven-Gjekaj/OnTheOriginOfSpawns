@@ -308,6 +308,26 @@ public final class GeneCreakings {
 	}
 
 	/**
+	 * Wakes the sleeping creaking at the only player in the radius of the lone watch gene.
+	 *
+	 * @return the player that woke the creaking, or null
+	 */
+	public static net.minecraft.world.entity.player.Player loneWatch(Creaking creaking, GeneEffect.LoneWatch watch) {
+		if (creaking.isActive()) {
+			return null;
+		}
+		java.util.List<net.minecraft.world.entity.player.Player> players = creaking.level().getEntitiesOfClass(
+				net.minecraft.world.entity.player.Player.class, creaking.getBoundingBox().inflate(watch.radius()),
+				player -> player.isAlive() && !player.isSpectator() && !player.isCreative()
+						&& player.distanceTo(creaking) <= watch.radius());
+		if (players.size() != 1) {
+			return null;
+		}
+		creaking.activate(players.getFirst());
+		return players.getFirst();
+	}
+
+	/**
 	 * The distance from a creaking to its heart is 34 blocks at most, so a search for creakings round lit TNT adds it.
 	 */
 	private static final double HEART_REACH = 34.0;

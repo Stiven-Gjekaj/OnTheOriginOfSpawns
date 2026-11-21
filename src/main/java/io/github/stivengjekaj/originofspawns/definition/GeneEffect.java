@@ -389,7 +389,8 @@ public sealed interface GeneEffect {
 			Map.entry("hidden_heart", HiddenHeart.CODEC),
 			Map.entry("dark_heart", DarkHeart.CODEC),
 			Map.entry("heart_sense", HeartSense.CODEC),
-			Map.entry("blast_sense", BlastSense.CODEC)
+			Map.entry("blast_sense", BlastSense.CODEC),
+			Map.entry("lone_watch", LoneWatch.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6617,6 +6618,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "blast_sense";
+		}
+	}
+
+	/**
+	 * When the creaking sleeps and only one player is in the radius, the creaking wakes and targets that player, also with
+	 * no look. Creative and spectator players do not count. Lone Watch: 16 blocks.
+	 */
+	record LoneWatch(float radius) implements GeneEffect {
+		public static final MapCodec<LoneWatch> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("radius", 16.0F).forGetter(LoneWatch::radius)
+		).apply(instance, LoneWatch::new));
+
+		@Override
+		public String type() {
+			return "lone_watch";
 		}
 	}
 }

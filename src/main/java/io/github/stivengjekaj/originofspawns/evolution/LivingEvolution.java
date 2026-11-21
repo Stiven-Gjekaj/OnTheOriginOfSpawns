@@ -82,11 +82,11 @@ public final class LivingEvolution {
 	}
 
 	/**
-	 * Tells if a mob can change its genes now: it has genes, it has no name tag, it is old enough, no player is near,
-	 * and no player can see it.
+	 * Tells if a mob can change its genes now: it has genes, it has no name tag, it is not tame, it is old enough, no
+	 * player is near, and no player can see it.
 	 */
 	public static boolean canChange(Mob mob, ServerLevel level) {
-		if (!mob.isAlive() || mob.hasCustomName() || !mob.hasAttached(ModAttachments.GENES)) {
+		if (!mob.isAlive() || mob.hasCustomName() || !mob.hasAttached(ModAttachments.GENES) || NeutralMobs.outsidePool(mob)) {
 			return false;
 		}
 		Long born = mob.getAttached(ModAttachments.BORN);

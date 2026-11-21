@@ -166,7 +166,8 @@ public final class Evolution {
 		if (mob.hasAttached(ModAttachments.SPAWN_REASON) && mob.getType().builtInRegistryHolder().is(NO_ITEM_PICKUP)) {
 			mob.setCanPickUpLoot(false);
 		}
-		if (!mob.hasAttached(ModAttachments.GENES)) {
+		// A tame mob gets no new genes.
+		if (!mob.hasAttached(ModAttachments.GENES) && !NeutralMobs.outsidePool(mob)) {
 			rollGenes(mob, level);
 			if (mob.hasAttached(ModAttachments.GENES)) {
 				EntitySpawnReason reason = mob.getAttachedOrElse(ModAttachments.SPAWN_REASON, EntitySpawnReason.LOAD);
@@ -258,6 +259,10 @@ public final class Evolution {
 			Discovery.learn(killer, mob);
 		}
 		GeneCombat.onDeath(mob, level, source);
+		// The death of a tame mob does not count in the pool.
+		if (NeutralMobs.outsidePool(mob)) {
+			return;
+		}
 		Identifier species = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
 		BiomeCategory category = BiomeCategory.of(level.getBiome(mob.blockPosition()));
 		select(level, mob.getType(), category, new DeathContext(source, facts(mob, source, level)));
@@ -278,6 +283,10 @@ public final class Evolution {
 		GeneBehaviors.targetAfterKill(killer);
 		if (GeneEffects.of(killer).anyMatch(GeneEffect.ChargeAfterKill.class::isInstance)) {
 			killer.setAttached(ModAttachments.LASER_READY, true);
+		}
+		// The kill of a tame mob does not count in the pool.
+		if (NeutralMobs.outsidePool(killer)) {
+			return;
 		}
 		CarriedGenes carried = killer.getAttached(ModAttachments.GENES);
 		Identifier species = BuiltInRegistries.ENTITY_TYPE.getKey(killer.getType());

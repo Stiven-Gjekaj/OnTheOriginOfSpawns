@@ -349,6 +349,24 @@ public class WolfEffectsTest {
 	}
 
 	@GameTest
+	public void aBayerGeneMakesTheAngerOfThePackReachTwoTimesAsFar(GameTestHelper helper) {
+		var pig = CreeperEffectsTest.pigAt(helper, new BlockPos(4, 1, 1));
+		Wolf other = wolf(helper, new BlockPos(6, 1, 4));
+		// The test makes the follow range 2 blocks, so the call stays in the test area. The other wolf is 5 blocks
+		// away: out of the vanilla call, and in the call that reaches two times as far.
+		for (String gene : new String[] {null, "test_wolf_bayer"}) {
+			Wolf caller = gene == null ? wolf(helper, new BlockPos(1, 1, 4)) : wolf(helper, new BlockPos(1, 1, 4), gene);
+			caller.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.FOLLOW_RANGE).setBaseValue(2.0);
+			caller.setLastHurtByMob(pig);
+			new net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal(caller).setAlertOthers().start();
+			helper.assertValueEqual(other.getTarget() == pig, gene != null, "the call of the pack reaches the other wolf");
+			other.setTarget(null);
+			caller.discard();
+		}
+		helper.succeed();
+	}
+
+	@GameTest
 	public void aSnowPawsWolfWalksOnPowderSnowAndFindsPathsOverIt(GameTestHelper helper) {
 		Wolf plain = wolf(helper, new BlockPos(1, 1, 1));
 		Wolf walker = wolf(helper, new BlockPos(5, 1, 5), "test_snowshoe");
@@ -360,5 +378,53 @@ public class WolfEffectsTest {
 		helper.assertValueEqual(walker.getPathfindingMalus(onTop), 0.0F, "the gene wolf finds paths over powder snow");
 		helper.assertValueEqual(plain.getPathfindingMalus(onTop), -1.0F, "a plain wolf finds no path over powder snow");
 		helper.succeed();
+	}
+
+	static final ReusedEffects.Maker WOLF_MAKER = (helper, pos, genes) -> wolf(helper, pos, genes);
+
+	@GameTest
+	public void theReusedCombatEffectsWorkOnAWolf(GameTestHelper helper) {
+		ReusedEffects.thorns(helper, WOLF_MAKER);
+		ReusedEffects.damageTaken(helper, WOLF_MAKER);
+		ReusedEffects.armorBreak(helper, WOLF_MAKER);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aPackBondAddsDamageForEachWolfNear(GameTestHelper helper) {
+		ReusedEffects.rally(helper, WOLF_MAKER, "test_rally_cry");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aSpringLeapLeapsAtThePrey(GameTestHelper helper) {
+		ReusedEffects.leap(helper, WOLF_MAKER);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aWeaveStepsAsideFromAnAimedBow(GameTestHelper helper) {
+		ReusedEffects.sidestep(helper, WOLF_MAKER);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void sharedWoundsSendAQuarterOfTheDamageToTheWolvesNear(GameTestHelper helper) {
+		Wolf hit = wolf(helper, new BlockPos(1, 1, 1), "test_wolf_shared_wounds");
+		Wolf packmate = wolf(helper, new BlockPos(3, 1, 1));
+		float full = hit.getHealth();
+		hit.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), 4.0F);
+		helper.assertValueEqual(hit.getHealth(), full - 3.0F, "the hit wolf takes three quarters");
+		helper.assertValueEqual(packmate.getHealth(), full - 1.0F, "the wolf near takes a quarter");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 300)
+	public void groomingHealsAWolfInAGroup(GameTestHelper helper) {
+		Wolf groomer = wolf(helper, new BlockPos(1, 1, 1), "test_wolf_grooming");
+		wolf(helper, new BlockPos(3, 1, 1));
+		groomer.setHealth(4.0F);
+		// The wolf heals at its next behavior tick. A busy test server can start that tick late, so the test waits.
+		helper.succeedWhen(() -> helper.assertTrue(groomer.getHealth() > 4.0F, "health was " + groomer.getHealth()));
 	}
 }

@@ -129,6 +129,9 @@ public final class GeneCreakings {
 							<= dark.maxLight()) {
 				return true;
 			}
+			if (effect instanceof GeneEffect.IgnoreShieldLook && player.isBlocking()) {
+				return true;
+			}
 			if (effect instanceof GeneEffect.IgnoreLookAfterHit fear) {
 				Long hit = creaking.getAttachedOrElse(ModAttachments.CREAKING_HITS, java.util.Map.of()).get(player.getUUID());
 				if (hit != null && creaking.level().getGameTime() - hit <= Math.round(fear.seconds() * 20.0F)) {

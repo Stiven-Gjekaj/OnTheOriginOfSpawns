@@ -378,7 +378,8 @@ public sealed interface GeneEffect {
 			Map.entry("twitch_on_hurt", TwitchOnHurt.CODEC),
 			Map.entry("heart_twitch", HeartTwitch.CODEC),
 			Map.entry("ignore_far_look_in_dark", IgnoreFarLookInDark.CODEC),
-			Map.entry("ignore_look_after_hit", IgnoreLookAfterHit.CODEC)
+			Map.entry("ignore_look_after_hit", IgnoreLookAfterHit.CODEC),
+			Map.entry("ignore_shield_look", IgnoreShieldLook.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6435,6 +6436,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "ignore_look_after_hit";
+		}
+	}
+
+	/**
+	 * The look of a player that holds a shield up does not stop an awake creaking. The look of a player with no shield up
+	 * still stops it. Shield Stare.
+	 */
+	record IgnoreShieldLook() implements GeneEffect {
+		public static final MapCodec<IgnoreShieldLook> CODEC = MapCodec.unit(new IgnoreShieldLook());
+
+		@Override
+		public String type() {
+			return "ignore_shield_look";
 		}
 	}
 }

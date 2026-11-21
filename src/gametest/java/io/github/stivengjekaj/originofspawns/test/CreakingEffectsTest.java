@@ -242,4 +242,23 @@ public class CreakingEffectsTest {
 			helper.succeed();
 		});
 	}
+
+	@GameTest
+	public void aShieldStareIgnoresTheLookOfAPlayerWithAShieldUp(GameTestHelper helper) {
+		Creaking creaking = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(2, 1, 1), "test_shield_stare");
+		var player = player(helper, new BlockPos(2, 1, 4));
+		lookAt(player, creaking);
+		helper.assertFalse(creaking.checkCanMove(), "the look of a player with no shield up stops it");
+		player.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND,
+				new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SHIELD));
+		player.startUsingItem(net.minecraft.world.InteractionHand.OFF_HAND);
+		for (int i = 0; i < 10; i++) {
+			player.doTick();
+		}
+		player.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(2, 1, 4))));
+		lookAt(player, creaking);
+		helper.assertTrue(player.isBlocking(), "the player holds the shield up");
+		helper.assertTrue(creaking.checkCanMove(), "the look of a player with a shield up does not stop it");
+		helper.succeed();
+	}
 }

@@ -27,6 +27,7 @@
 		"CreakingAccessor",
 		"CreakingHeartBlockEntityAccessor",
 		"CreakingHeartBlockEntityMixin",
+		"CreakingMixin",
 		"CreeperAccessor",
 		"CreeperMixin",
 		"CrossbowItemMixin",

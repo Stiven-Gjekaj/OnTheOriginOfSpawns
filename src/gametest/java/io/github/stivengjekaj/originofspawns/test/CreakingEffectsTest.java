@@ -160,4 +160,28 @@ public class CreakingEffectsTest {
 				"the next step waits");
 		helper.succeed();
 	}
+
+	/**
+	 * Makes the player look at the creaking, as the brain of the creaking sees it.
+	 */
+	static void lookAt(net.minecraft.server.level.ServerPlayer player, Creaking creaking) {
+		creaking.setIsActive(true);
+		creaking.getBrain().setMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.NEAREST_PLAYERS,
+				java.util.List.<net.minecraft.world.entity.player.Player>of(player));
+		player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, creaking.getEyePosition());
+	}
+
+	@GameTest(maxTicks = 60)
+	public void aTrailTwitchMovesForOneSecondWhenAPlayerHurtsIt(GameTestHelper helper) {
+		Bound bound = bound(helper, new BlockPos(1, 1, 1), new BlockPos(3, 1, 3), "test_trail_twitch");
+		var player = player(helper, new BlockPos(3, 1, 6));
+		lookAt(player, bound.creaking());
+		helper.assertFalse(bound.creaking().checkCanMove(), "the look of the player holds the creaking still");
+		bound.creaking().hurtServer(helper.getLevel(), player.damageSources().playerAttack(player), 1.0F);
+		helper.assertTrue(bound.creaking().checkCanMove(), "after the hurt, the creaking moves while the player looks");
+		helper.runAfterDelay(21, () -> {
+			helper.assertFalse(bound.creaking().checkCanMove(), "after 1 second, the look holds it still again");
+			helper.succeed();
+		});
+	}
 }

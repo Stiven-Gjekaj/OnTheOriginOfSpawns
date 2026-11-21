@@ -374,7 +374,8 @@ public sealed interface GeneEffect {
 			Map.entry("rider_strike", RiderStrike.CODEC),
 			Map.entry("raid_rider", RaidRider.CODEC),
 			Map.entry("raid_hunt", RaidHunt.CODEC),
-			Map.entry("watched_step", WatchedStep.CODEC)
+			Map.entry("watched_step", WatchedStep.CODEC),
+			Map.entry("twitch_on_hurt", TwitchOnHurt.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6366,6 +6367,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "watched_step";
+		}
+	}
+
+	/**
+	 * When a player hurts a creaking, it moves for the seconds, also while a player looks at it, one time in each
+	 * cooldown. Trail Twitch: 1 second, one time each 10 seconds.
+	 */
+	record TwitchOnHurt(float seconds, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<TwitchOnHurt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("seconds", 1.0F).forGetter(TwitchOnHurt::seconds),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(TwitchOnHurt::cooldownSeconds)
+		).apply(instance, TwitchOnHurt::new));
+
+		@Override
+		public String type() {
+			return "twitch_on_hurt";
 		}
 	}
 }

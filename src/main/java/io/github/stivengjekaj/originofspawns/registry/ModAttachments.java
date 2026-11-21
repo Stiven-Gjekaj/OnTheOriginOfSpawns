@@ -210,6 +210,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> STEP_TIME = AttachmentRegistry.create(OriginOfSpawns.id("step_time"));
 
 	/**
+	 * The game time until which a creaking moves, also while a player looks at it.
+	 */
+	public static final AttachmentType<Long> FREE_UNTIL = AttachmentRegistry.create(OriginOfSpawns.id("free_until"));
+
+	/**
 	 * The game time of the last leap of a mob with genes. The first melee hit after it removes it.
 	 */
 	public static final AttachmentType<Long> LEAP_TIME = AttachmentRegistry.create(OriginOfSpawns.id("leap_time"));

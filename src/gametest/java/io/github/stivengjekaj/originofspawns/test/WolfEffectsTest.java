@@ -427,4 +427,15 @@ public class WolfEffectsTest {
 		// The wolf heals at its next behavior tick. A busy test server can start that tick late, so the test waits.
 		helper.succeedWhen(() -> helper.assertTrue(groomer.getHealth() > 4.0F, "health was " + groomer.getHealth()));
 	}
+
+	@GameTest
+	public void aLoudWolfIsHeardFromTwoTimesFarther(GameTestHelper helper) {
+		Wolf plain = wolf(helper, new BlockPos(1, 1, 1));
+		Wolf loud = wolf(helper, new BlockPos(5, 1, 5), "test_wolf_loud");
+		float volume = ((io.github.stivengjekaj.originofspawns.mixin.WolfAccessor) plain).originofspawns$soundVolume();
+		helper.assertValueEqual(volume, 0.4F, "the vanilla volume of a wolf");
+		helper.assertValueEqual(((io.github.stivengjekaj.originofspawns.mixin.WolfAccessor) loud).originofspawns$soundVolume(),
+				0.8F, "two times the volume");
+		helper.succeed();
+	}
 }

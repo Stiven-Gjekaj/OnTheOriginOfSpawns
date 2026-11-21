@@ -637,8 +637,8 @@ SLIME = pg.SLIME_FAMILIES
 
 
 def slime_closeup(size):
-    # One close-up at a size: all 6 genes of each family, in one row each.
-    rows = [(f"{family.capitalize()}: all 6", genes, False) for family, genes in SLIME.items()]
+    # One close-up at a size: all the genes of each family, in one row each.
+    rows = [(f"{family.capitalize()}: all {len(genes)}", genes, False) for family, genes in SLIME.items()]
     return {f"slime_{size}_closeup": (f"Slime at size {size}", rows, SPIDER_VIEWS)}
 
 
@@ -652,23 +652,23 @@ MAGMA_CUBE = pg.MAGMA_CUBE_FAMILIES
 
 
 def magma_cube_closeup(key, title):
-    # One close-up: all 6 genes of each family, in one row each.
-    rows = [(f"{family.capitalize()}: all 6", genes, False) for family, genes in MAGMA_CUBE.items()]
+    # One close-up: all the genes of each family, in one row each.
+    rows = [(f"{family.capitalize()}: all {len(genes)}", genes, False) for family, genes in MAGMA_CUBE.items()]
     return {key + "_closeup": (title, rows, SPIDER_VIEWS)}
 
 
-# The close-ups of the Nether mobs: all 6 genes of each family, in one row
+# The close-ups of the Nether mobs: all the genes of each family, in one row
 # each. The piglin has a second close-up with its crossbow.
 def nether_closeup(species, title, views=ALL_SIDES):
     families = pg.SPECIES[species][2]
-    rows = [(f"{family.capitalize()}: all 6", genes, False) for family, genes in families.items()]
+    rows = [(f"{family.capitalize()}: all {len(genes)}", genes, False) for family, genes in families.items()]
     return {species + "_closeup": (title, rows, views)}
 
 
 ZOMBIFIED_PIGLIN_CLOSEUPS = nether_closeup("zombified_piglin", "Zombified piglin with a gold sword")
 PIGLIN_CLOSEUPS = nether_closeup("piglin", "Piglin with a gold sword")
 PIGLIN_CROSSBOW_CLOSEUPS = {"piglin_crossbow_closeup": (
-    "Piglin with a crossbow", [(f"{family.capitalize()}: all 6", genes, False)
+    "Piglin with a crossbow", [(f"{family.capitalize()}: all {len(genes)}", genes, False)
                                for family, genes in pg.PIGLIN_FAMILIES.items()], ALL_SIDES)}
 PIGLIN_BRUTE_CLOSEUPS = nether_closeup("piglin_brute", "Piglin brute with a gold axe")
 HOGLIN_CLOSEUPS = nether_closeup("hoglin", "Hoglin", SPIDER_VIEWS)

@@ -384,7 +384,8 @@ public sealed interface GeneEffect {
 			Map.entry("hard_heart", HardHeart.CODEC),
 			Map.entry("heart_thorns", HeartThorns.CODEC),
 			Map.entry("heart_burst", HeartBurst.CODEC),
-			Map.entry("heart_leash", HeartLeash.CODEC)
+			Map.entry("heart_leash", HeartLeash.CODEC),
+			Map.entry("heart_guard", HeartGuard.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6537,6 +6538,24 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "heart_leash";
+		}
+	}
+
+	/**
+	 * When a player comes in the radius of the heart of a creaking, the creaking stops its attack and walks back to its
+	 * heart, with the speed as a multiplier of its movement speed, one time in each cooldown. A vanilla creaking fights
+	 * with a speed of 1. A look of a player wakes it again. Close Guard: 8 blocks, 1.5, one time each 10 seconds.
+	 */
+	record HeartGuard(float radius, float speed, float cooldownSeconds) implements GeneEffect {
+		public static final MapCodec<HeartGuard> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("radius", 8.0F).forGetter(HeartGuard::radius),
+				Codec.floatRange(0.1F, 4.0F).optionalFieldOf("speed", 1.5F).forGetter(HeartGuard::speed),
+				Codec.floatRange(0.05F, 3600.0F).optionalFieldOf("cooldown_seconds", 10.0F).forGetter(HeartGuard::cooldownSeconds)
+		).apply(instance, HeartGuard::new));
+
+		@Override
+		public String type() {
+			return "heart_guard";
 		}
 	}
 }

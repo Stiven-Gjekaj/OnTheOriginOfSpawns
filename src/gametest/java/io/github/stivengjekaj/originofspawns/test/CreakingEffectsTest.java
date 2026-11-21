@@ -339,4 +339,23 @@ public class CreakingEffectsTest {
 			helper.succeed();
 		});
 	}
+
+	@GameTest
+	public void aCloseGuardWalksBackToItsHeartWhenAPlayerComesNear(GameTestHelper helper) {
+		Bound bound = bound(helper, new BlockPos(1, 1, 1), new BlockPos(1, 1, 7));
+		var guard = new io.github.stivengjekaj.originofspawns.definition.GeneEffect.HeartGuard(3.0F, 1.5F, 10.0F);
+		var player = player(helper, new BlockPos(6, 1, 6));
+		bound.creaking().activate(player);
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.heartGuard(bound.creaking(), guard),
+				"no player is near the heart");
+		player.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(2, 1, 2))));
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.heartGuard(bound.creaking(), guard),
+				"a player comes near the heart");
+		helper.assertFalse(bound.creaking().isActive(), "the creaking stops its attack");
+		var walk = bound.creaking().getBrain().getMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.WALK_TARGET).orElseThrow();
+		helper.assertValueEqual(walk.getTarget().currentBlockPosition(), helper.absolutePos(new BlockPos(1, 1, 1)),
+				"the creaking walks to its heart");
+		helper.assertValueEqual(walk.getSpeedModifier(), 1.5F, "it walks with 50% more speed");
+		helper.succeed();
+	}
 }

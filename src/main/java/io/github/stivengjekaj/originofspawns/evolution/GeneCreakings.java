@@ -261,4 +261,23 @@ public final class GeneCreakings {
 		}
 		return Math.max(MIN_HEART_RANGE, VANILLA_HEART_RANGE - less);
 	}
+
+	/**
+	 * Sends the creaking back to its heart when a player comes near the heart, if the cooldown of the gene is over. An
+	 * awake creaking stops its attack first.
+	 *
+	 * @return true if the creaking walks back now
+	 */
+	public static boolean heartGuard(Creaking creaking, GeneEffect.HeartGuard guard) {
+		if (!playerCameToHeart(creaking, guard, guard.radius()) || !GeneCombat.ready(creaking, guard, guard.cooldownSeconds())) {
+			return false;
+		}
+		GeneCombat.startCooldown(creaking, guard);
+		if (creaking.isActive()) {
+			creaking.deactivate();
+		}
+		creaking.getBrain().setMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.WALK_TARGET,
+				new net.minecraft.world.entity.ai.memory.WalkTarget(creaking.getHomePos(), guard.speed(), 1));
+		return true;
+	}
 }

@@ -93,6 +93,16 @@ SHULKER_COLORS = ("white", "black", "yellow")
 RAVAGER_PATH = "assets/minecraft/textures/entity/illager/ravager.png"
 CREAKING_PATH = "assets/minecraft/textures/entity/creaking/creaking.png"
 CREAKING_EYES_PATH = "assets/minecraft/textures/entity/creaking/creaking_eyes.png"
+# The wolf has 9 variants with one layout, and each variant has a wild, a
+# tame, and an angry texture. The families show the pale wolf. The close-ups
+# show the pale wolf wild, tame with a red collar, and angry, and the other 8
+# variants wild.
+WOLF_PATH = "assets/minecraft/textures/entity/wolf/wolf.png"
+WOLF_VARIANT_PATH = "assets/minecraft/textures/entity/wolf/wolf_{}.png"
+WOLF_VARIANTS = ("ashen", "black", "chestnut", "rusty", "snowy", "spotted", "striped", "woods")
+WOLF_COLLAR_PATH = "assets/minecraft/textures/entity/wolf/wolf_collar.png"
+# The red dye: DyeColor.RED, texture diffuse color.
+WOLF_COLLAR_RED = (0xB0, 0x2E, 0x26)
 BOGGED_OUTER_PATH = "assets/minecraft/textures/entity/skeleton/bogged_overlay.png"
 DEFAULT_REGION_MAP = "originofspawns:textures/region/humanoid.png"
 
@@ -660,6 +670,15 @@ CREAKING_FAMILIES = {
     "starers": ["long_stare", "stare_back", "lone_watch", "shield_stare", "kill_watch", "heart_twitch"],
 }
 
+# The families of the wolf, from design/species/wolf.md.
+WOLF_FAMILIES = {
+    "denmates": ["pack_bond", "shared_wounds", "huddle", "grooming", "alpha_mark", "pack_sprint"],
+    "coursers": ["lope", "wet_nose", "spring_leap", "night_prowl", "weave", "snow_paws"],
+    "bayers": ["moon_howl", "alarm_yelp", "old_grudge", "hot_temper", "fear_howl", "last_howl"],
+    "thickcoats": ["shaggy_fur", "frost_coat", "bristle", "singed_pelt", "mud_coat", "bitten_hide"],
+    "biters": ["strong_jaw", "hamstring", "rend", "throat_bite", "bone_crush", "snarl"],
+}
+
 
 ZOMBIFIED_PIGLIN_EXTRA = next_family_extra(ZOMBIFIED_PIGLIN_FAMILIES, {
     "vengeful": ["blood_feud", "avenge"], "gilded": ["gold_plating", "gilded_skull"],
@@ -749,6 +768,11 @@ CREAKING_EXTRA = next_family_extra(CREAKING_FAMILIES, {
     "heartkeepers": ["hard_heart", "close_guard"], "slinkers": ["dusk_bark", "silent_roots"],
     "starers": ["stare_back", "long_stare"],
 }, "slinkers")
+WOLF_EXTRA = next_family_extra(WOLF_FAMILIES, {
+    "denmates": ["alpha_mark", "pack_sprint"], "coursers": ["lope", "night_prowl"],
+    "bayers": ["fear_howl", "hot_temper"], "thickcoats": ["shaggy_fur", "frost_coat"],
+    "biters": ["strong_jaw", "throat_bite"],
+}, "coursers")
 
 CREEPER_EXTRA = {
     "blasters": [("All 6 + Rushers", ["sprinter", "short_fuse"], True, {})],
@@ -1406,6 +1430,39 @@ CREAKING_CUBES = [
     ("right_leg", (12, 34), (-3, -4.5, -1.5), (3, 3, 3), False),
 ]
 CREAKING_FRAME, CREAKING_CLOSEUP = (18, 23, 36, 50), ((40, 54), (0, 2))
+
+# The wolf, from AdultWolfModel. The bones head and tail are empty, and their
+# children real_head and real_tail have no offset, so the previews put the
+# cubes on head and tail. The body (the back half) and upper_body (the mane)
+# turn by 90 degrees round x, so the back face of each cube is the back of
+# the wolf, and its front face is the belly. The right legs are mirrored.
+# WolfModel sets the angle of the tail: 36 degrees for a wild wolf, 88
+# degrees for an angry wolf, and 99 degrees for a tame wolf with full health.
+# The previews draw the wolf 2 times larger, so the frames are 2 times larger.
+def wolf_pivots(tail_angle):
+    return {
+        "head": (-1, 13.5, -7), "body": (0, 14, 2, 90, 0, 0), "upper_body": (-1, 14, -3, 90, 0, 0),
+        "right_hind_leg": (-2.5, 16, 7), "left_hind_leg": (0.5, 16, 7),
+        "right_front_leg": (-2.5, 16, -4), "left_front_leg": (0.5, 16, -4),
+        "tail": (-1, 12, 8, tail_angle, 0, 0),
+    }
+
+
+WOLF_CUBES = [
+    ("head", (0, 0), (-2, -3, -2), (6, 6, 4), False),
+    ("head", (16, 14), (-2, -5, 0), (2, 2, 1), False),
+    ("head", (16, 14), (2, -5, 0), (2, 2, 1), False),
+    ("head", (0, 10), (-0.5, -0.001, -5), (3, 3, 4), False),
+    ("body", (18, 14), (-3, -2, -3), (6, 9, 6), False),
+    ("upper_body", (21, 0), (-3, -3, -3), (8, 6, 7), False),
+    ("right_hind_leg", (0, 18), (0, 0, -1), (2, 8, 2), True),
+    ("left_hind_leg", (0, 18), (0, 0, -1), (2, 8, 2), False),
+    ("right_front_leg", (0, 18), (0, 0, -1), (2, 8, 2), True),
+    ("left_front_leg", (0, 18), (0, 0, -1), (2, 8, 2), False),
+    ("tail", (9, 18), (0, 0, -1), (2, 8, 2), False),
+]
+WOLF_FRAME, WOLF_CLOSEUP = (34, -15, 68, 34), ((68, 40), (0, 32))
+WOLF_LOOKS = {"wolf": 36, "wolf_tame": 99, "wolf_angry": 88, **{"wolf_" + v: 36 for v in WOLF_VARIANTS}}
 CAMEL_HUSK_FRAME, CAMEL_HUSK_CLOSEUP = (28, 27, 56, 56), ((56, 56), (0, 1))
 
 # Each Nether mob: the cubes, the pivots, the weapon, the wraps, the frame of
@@ -1440,6 +1497,8 @@ NETHER_LOOKS = {
     "ravager": (RAVAGER_CUBES, RAVAGER_PIVOTS, None, [], RAVAGER_FRAME, RAVAGER_CLOSEUP, False),
     "creaking": (CREAKING_CUBES, CREAKING_PIVOTS, None, [], CREAKING_FRAME, CREAKING_CLOSEUP, False),
 }
+NETHER_LOOKS.update({key: (WOLF_CUBES, wolf_pivots(angle), None, [], WOLF_FRAME, WOLF_CLOSEUP, False)
+                     for key, angle in WOLF_LOOKS.items()})
 # The flyers are seen from below in the game, so their sheets look at them
 # from above, from below, and from the side.
 FLYER_VIEWS = [(-30, 35), (-30, -35), (-90, 5)]
@@ -1885,6 +1944,10 @@ def cubes_of(tex, genes, baby=False):
                "scale": 1.0} for b, uv, f, s, m, inflate in MOB["wraps"]]
     for gene in genes:
         cubes += [c for c in gene_cubes(gene, tex, baby) if c["bone"] not in MOB["hidden"]]
+    # The collar of a tame wolf draws over the marks, as WolfCollarLayer does.
+    if MOB.get("collar"):
+        cubes += [{"bone": b, "uv": uv, "from": f, "size": s, "inflate": 0.01, "mirror": m,
+                   "texture": MOB["collar"], "scale": 1.0} for b, uv, f, s, m in body]
     if MOB["grow"] != 1:
         cubes = [grow(c, MOB["grow"]) for c in cubes]
     return cubes
@@ -2043,6 +2106,10 @@ SPECIES = {
        for c in SHULKER_COLORS},
     "ravager": (RAVAGER_PATH, None, RAVAGER_FAMILIES, RAVAGER_EXTRA, []),
     "creaking": (CREAKING_PATH, None, CREAKING_FAMILIES, CREAKING_EXTRA, []),
+    "wolf": (WOLF_PATH, None, WOLF_FAMILIES, WOLF_EXTRA, []),
+    "wolf_tame": (WOLF_VARIANT_PATH.format("tame"), None, WOLF_FAMILIES, WOLF_EXTRA, []),
+    "wolf_angry": (WOLF_VARIANT_PATH.format("angry"), None, WOLF_FAMILIES, WOLF_EXTRA, []),
+    **{"wolf_" + v: (WOLF_VARIANT_PATH.format(v), None, WOLF_FAMILIES, WOLF_EXTRA, []) for v in WOLF_VARIANTS},
 }
 
 
@@ -2184,6 +2251,26 @@ def set_mob(species):
         if species in EYES_PATHS:
             MOB["sheet_views"] = FLYER_VIEWS if species == "phantom" else [(-20, 10), (160, 15), (-90, 5)]
             MOB["eyes"] = find_zombie_texture(EYES_PATHS[species])
+        if species in WOLF_LOOKS:
+            # The wolf is long and low. Its sheets look down on it a little from
+            # the front at a turn, from behind at a turn, and from the side. The
+            # previews draw it 2 times larger.
+            MOB["sheet_views"] = [(-35, 15), (145, 15), (-90, 5)]
+            MOB["grow"] = 2
+    MOB["collar"] = wolf_collar() if species == "wolf_tame" else None
+
+
+def wolf_collar():
+    """Return the collar texture of the wolf, dyed red."""
+    collar = find_zombie_texture(WOLF_COLLAR_PATH)
+    out = collar.copy()
+    for y in range(collar.height):
+        for x in range(collar.width):
+            r, g, b, a = collar.getpixel((x, y))
+            if a:
+                out.putpixel((x, y), (r * WOLF_COLLAR_RED[0] // 255, g * WOLF_COLLAR_RED[1] // 255,
+                                      b * WOLF_COLLAR_RED[2] // 255, a))
+    return out
 
 
 def main(species="zombie"):

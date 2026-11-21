@@ -686,6 +686,10 @@ SHULKER_CLOSEUPS = {key: nether_closeup(key, title, SPIDER_VIEWS)
                                        ("shulker_black", "Shulker, black"), ("shulker_yellow", "Shulker, yellow"))}
 RAVAGER_CLOSEUPS = nether_closeup("ravager", "Ravager")
 CREAKING_CLOSEUPS = nether_closeup("creaking", "Creaking")
+WOLF_CLOSEUPS = {key: nether_closeup(key, title)
+                 for key, title in (("wolf", "Wolf, pale, wild"), ("wolf_tame", "Wolf, pale, tame, red collar"),
+                                    ("wolf_angry", "Wolf, pale, angry"),
+                                    *(("wolf_" + v, f"Wolf, {v}, wild") for v in pg.WOLF_VARIANTS))}
 
 SPECIES = {
     "zombie": (pg.ZOMBIE_PATH, pg.BABY_PATH, CLOSEUPS),
@@ -733,6 +737,7 @@ SPECIES = {
        for c in pg.SHULKER_COLORS},
     "ravager": (pg.RAVAGER_PATH, None, RAVAGER_CLOSEUPS),
     "creaking": (pg.CREAKING_PATH, None, CREAKING_CLOSEUPS),
+    **{key: (pg.SPECIES[key][0], None, WOLF_CLOSEUPS[key]) for key in WOLF_CLOSEUPS},
 }
 
 

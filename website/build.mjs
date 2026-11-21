@@ -409,13 +409,19 @@ const powerOrder = (bullets(section(designMd, "Families").lines)
 
 // Pressures: the JSON files and the tables of the design files. A pressure
 // that a released gene counters is in the release.
+// The conditions table of docs/data-packs.md gives the text of a pressure
+// with one condition, when no design file gives a text for it.
+const conditionText = Object.fromEntries(
+  (tables(section(sections(read("docs/data-packs.md")), "Pressure").lines).find((x) => x.head[0] === "Condition") || [])
+    .map((r) => [r.Condition.replace(/`/g, ""), r["True when"]]),
+);
 const pressures = pressureJson.map(({ id, json }) => {
   const users = genes.filter((g) => g.counters === id);
   return {
     id,
     damageTypes: json.damage_types || null,
     conditions: json.conditions || [],
-    when: pressureText[id] || "",
+    when: pressureText[id] || (json.conditions?.length === 1 && !json.damage_types && conditionText[json.conditions[0]]) || "",
     species: speciesIds.filter((sp) => users.some((g) => g.species === sp) || pressureSpecies[id]?.has(sp)),
     status: users.some((g) => g.status === "released") ? "released" : "development",
   };

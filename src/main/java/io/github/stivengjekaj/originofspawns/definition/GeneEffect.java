@@ -77,6 +77,7 @@ public sealed interface GeneEffect {
 			Map.entry("no_conversion", NoConversion.CODEC),
 			Map.entry("regenerate", Regenerate.CODEC),
 			Map.entry("call_on_hit", CallOnHit.CODEC),
+			Map.entry("ally_effect_on_hit", AllyEffectOnHit.CODEC),
 			Map.entry("call_on_sight", CallOnSight.CODEC),
 			Map.entry("brood", Brood.CODEC),
 			Map.entry("runt", Runt.CODEC),
@@ -1338,6 +1339,27 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "call_on_hit";
+		}
+	}
+
+	/**
+	 * When the mob hits a player, the other mobs of its species in the radius get the status effect. A tame mob gives
+	 * it only to the mobs of its owner, when it hits a target of its owner. The mob itself does not get it. Alpha Mark:
+	 * Strength for 5 seconds in 12 blocks.
+	 */
+	record AllyEffectOnHit(Holder<MobEffect> effect, float seconds, int amplifier, float radius, Hits hits)
+			implements GeneEffect {
+		public static final MapCodec<AllyEffectOnHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				MobEffect.CODEC.fieldOf("effect").forGetter(AllyEffectOnHit::effect),
+				Codec.floatRange(0.05F, 3600.0F).fieldOf("seconds").forGetter(AllyEffectOnHit::seconds),
+				Codec.intRange(0, 255).optionalFieldOf("amplifier", 0).forGetter(AllyEffectOnHit::amplifier),
+				Codec.floatRange(0.0F, 128.0F).optionalFieldOf("radius", 12.0F).forGetter(AllyEffectOnHit::radius),
+				Hits.CODEC.optionalFieldOf("hits", Hits.MELEE).forGetter(AllyEffectOnHit::hits)
+		).apply(instance, AllyEffectOnHit::new));
+
+		@Override
+		public String type() {
+			return "ally_effect_on_hit";
 		}
 	}
 

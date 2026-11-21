@@ -2462,6 +2462,17 @@ public final class GeneBehaviors {
 		}
 	}
 
+	/**
+	 * Gives the effect of an ally effect on hit gene to the other mobs in its radius that answer a call of the mob.
+	 */
+	public static void allyEffect(Mob mob, GeneEffect.AllyEffectOnHit ally) {
+		AABB area = mob.getBoundingBox().inflate(ally.radius());
+		for (Mob other : mob.level().getEntitiesOfClass(Mob.class, area,
+				other -> other != mob && NeutralMobs.answersCall(mob, other))) {
+			other.addEffect(new MobEffectInstance(ally.effect(), Math.round(ally.seconds() * 20.0F), ally.amplifier()), mob);
+		}
+	}
+
 	private static void rise(Mob mob, ServerLevel level, BehaviorState state) {
 		GeneEffect.Burrow burrow = GeneEffects.of(mob).filter(GeneEffect.Burrow.class::isInstance)
 				.map(GeneEffect.Burrow.class::cast).findFirst().orElse(new GeneEffect.Burrow(24.0F, 2.0F));

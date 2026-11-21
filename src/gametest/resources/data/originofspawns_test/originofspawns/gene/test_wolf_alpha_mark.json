@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "ally_effect_on_hit", "effect": "minecraft:strength", "seconds": 5, "radius": 12 }],
+	"mutation_rate": 0
+}

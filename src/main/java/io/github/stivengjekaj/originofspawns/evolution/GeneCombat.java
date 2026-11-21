@@ -845,6 +845,8 @@ public final class GeneCombat {
 						&& mob.getRandom().nextFloat() < web.chance() -> putWeb(level, target, web.seconds());
 				case GeneEffect.CallOnHit call when call.hits().includes(false) && NeutralMobs.isFoe(mob, target)
 						&& target instanceof LivingEntity living -> GeneBehaviors.callAllies(mob, call.radius(), living);
+				case GeneEffect.AllyEffectOnHit ally when ally.hits().includes(false) && NeutralMobs.isFoe(mob, target) ->
+						GeneBehaviors.allyEffect(mob, ally);
 				case GeneEffect.PullDownOnHit pull when target instanceof Player player && player.isInWater() ->
 						GeneBehaviors.pullDown(player, pull.blocks());
 				case GeneEffect.DragUnder drag when target instanceof Player player && player.isInWater() ->
@@ -1188,6 +1190,8 @@ public final class GeneCombat {
 						pushBack(mob, target, knockback.multiplier());
 				case GeneEffect.CallOnHit call when call.hits().includes(true) && NeutralMobs.isFoe(mob, target)
 						&& target instanceof LivingEntity living -> GeneBehaviors.callAllies(mob, call.radius(), living);
+				case GeneEffect.AllyEffectOnHit ally when ally.hits().includes(true) && NeutralMobs.isFoe(mob, target) ->
+						GeneBehaviors.allyEffect(mob, ally);
 				case GeneEffect.IgniteTarget ignite when ignite.hits().includes(true)
 						&& mob.getRandom().nextFloat() < ignite.chance() -> target.igniteForSeconds(ignite.seconds());
 				case GeneEffect.LightningOnHit lightning when mob.level() instanceof ServerLevel level

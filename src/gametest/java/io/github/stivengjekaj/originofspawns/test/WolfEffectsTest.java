@@ -295,4 +295,20 @@ public class WolfEffectsTest {
 		howl(helper, "test_wolf_day_howl", !helper.getLevel().isDarkOutside());
 		helper.succeed();
 	}
+
+	@GameTest
+	public void anAlphaMarkGivesStrengthToThePackWhenItHitsAPlayer(GameTestHelper helper) {
+		Wolf alpha = wolf(helper, new BlockPos(1, 1, 1), "test_wolf_alpha_mark");
+		Wolf packmate = wolf(helper, new BlockPos(7, 1, 7));
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		var pig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 1));
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHit(alpha, pig);
+		helper.assertFalse(packmate.hasEffect(net.minecraft.world.effect.MobEffects.STRENGTH), "a hit on prey gives nothing");
+		anger(alpha, player);
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHit(alpha, player);
+		var strength = packmate.getEffect(net.minecraft.world.effect.MobEffects.STRENGTH);
+		helper.assertTrue(strength != null && strength.getDuration() == 100, "the pack gets Strength for 5 seconds");
+		helper.assertFalse(alpha.hasEffect(net.minecraft.world.effect.MobEffects.STRENGTH), "the wolf itself gets none");
+		helper.succeed();
+	}
 }

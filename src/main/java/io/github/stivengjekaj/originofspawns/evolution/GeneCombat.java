@@ -784,6 +784,9 @@ public final class GeneCombat {
 		if (target instanceof Player && mob.hasAttached(ModAttachments.GENES)) {
 			GeneBehaviors.selfEffectAfter(mob, GeneEffect.Action.PLAYER_HIT);
 		}
+		if (mob instanceof net.minecraft.world.entity.monster.creaking.Creaking creaking) {
+			GeneCreakings.onHit(creaking, target);
+		}
 		if (mob instanceof net.minecraft.world.entity.monster.Vex vex && vex.getOwner() instanceof Mob owner
 				&& target instanceof LivingEntity living) {
 			onVexHit(owner, living);

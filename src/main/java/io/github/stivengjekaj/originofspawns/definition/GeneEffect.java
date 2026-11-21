@@ -377,7 +377,8 @@ public sealed interface GeneEffect {
 			Map.entry("watched_step", WatchedStep.CODEC),
 			Map.entry("twitch_on_hurt", TwitchOnHurt.CODEC),
 			Map.entry("heart_twitch", HeartTwitch.CODEC),
-			Map.entry("ignore_far_look_in_dark", IgnoreFarLookInDark.CODEC)
+			Map.entry("ignore_far_look_in_dark", IgnoreFarLookInDark.CODEC),
+			Map.entry("ignore_look_after_hit", IgnoreLookAfterHit.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6419,6 +6420,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "ignore_far_look_in_dark";
+		}
+	}
+
+	/**
+	 * After a creaking hits a player, the look of that player does not stop it for the seconds. The look of other players
+	 * still stops it. Fear Twitch: 2 seconds.
+	 */
+	record IgnoreLookAfterHit(float seconds) implements GeneEffect {
+		public static final MapCodec<IgnoreLookAfterHit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("seconds", 2.0F).forGetter(IgnoreLookAfterHit::seconds)
+		).apply(instance, IgnoreLookAfterHit::new));
+
+		@Override
+		public String type() {
+			return "ignore_look_after_hit";
 		}
 	}
 }

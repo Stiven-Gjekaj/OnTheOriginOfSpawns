@@ -215,6 +215,12 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> FREE_UNTIL = AttachmentRegistry.create(OriginOfSpawns.id("free_until"));
 
 	/**
+	 * The game time of the last hit of a creaking on each player, by the UUID of the player.
+	 */
+	public static final AttachmentType<java.util.Map<java.util.UUID, Long>> CREAKING_HITS =
+			AttachmentRegistry.create(OriginOfSpawns.id("creaking_hits"));
+
+	/**
 	 * For each heart gene of a creaking, true if a player was in the radius of its heart at the last check.
 	 */
 	public static final AttachmentType<java.util.Map<io.github.stivengjekaj.originofspawns.definition.GeneEffect, Boolean>>

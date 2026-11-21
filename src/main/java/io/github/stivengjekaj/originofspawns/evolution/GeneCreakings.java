@@ -129,7 +129,26 @@ public final class GeneCreakings {
 							<= dark.maxLight()) {
 				return true;
 			}
+			if (effect instanceof GeneEffect.IgnoreLookAfterHit fear) {
+				Long hit = creaking.getAttachedOrElse(ModAttachments.CREAKING_HITS, java.util.Map.of()).get(player.getUUID());
+				if (hit != null && creaking.level().getGameTime() - hit <= Math.round(fear.seconds() * 20.0F)) {
+					return true;
+				}
+			}
 		}
 		return false;
+	}
+
+	/**
+	 * Keeps the time of a hit of a creaking with a look gene on a player.
+	 */
+	public static void onHit(Creaking creaking, net.minecraft.world.entity.Entity target) {
+		if (target instanceof net.minecraft.world.entity.player.Player player
+				&& GeneEffects.of(creaking).anyMatch(GeneEffect.IgnoreLookAfterHit.class::isInstance)) {
+			java.util.Map<java.util.UUID, Long> hits = new java.util.HashMap<>(
+					creaking.getAttachedOrElse(ModAttachments.CREAKING_HITS, java.util.Map.of()));
+			hits.put(player.getUUID(), creaking.level().getGameTime());
+			creaking.setAttached(ModAttachments.CREAKING_HITS, hits);
+		}
 	}
 }

@@ -224,4 +224,22 @@ public class CreakingEffectsTest {
 			helper.succeed();
 		});
 	}
+
+	@GameTest(maxTicks = 60)
+	public void aFearTwitchIgnoresTheLookOfThePlayerThatItHit(GameTestHelper helper) {
+		Creaking creaking = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(2, 1, 1), "test_fear_twitch");
+		var hit = player(helper, new BlockPos(2, 1, 4));
+		lookAt(hit, creaking);
+		helper.assertFalse(creaking.checkCanMove(), "the look of the player stops it before the hit");
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHit(creaking, hit);
+		helper.assertTrue(creaking.checkCanMove(), "after the hit, the look of that player does not stop it");
+		var other = player(helper, new BlockPos(4, 1, 4));
+		lookAt(other, creaking);
+		helper.assertFalse(creaking.checkCanMove(), "the look of another player still stops it");
+		helper.runAfterDelay(42, () -> {
+			lookAt(hit, creaking);
+			helper.assertFalse(creaking.checkCanMove(), "after 2 seconds, the look of the first player stops it again");
+			helper.succeed();
+		});
+	}
 }

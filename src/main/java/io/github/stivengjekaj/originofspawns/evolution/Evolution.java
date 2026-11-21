@@ -156,6 +156,9 @@ public final class Evolution {
 	}
 
 	private static void onLoad(Entity entity, ServerLevel level) {
+		if (entity instanceof net.minecraft.world.entity.item.PrimedTnt) {
+			GeneCreakings.onTntLit(level, entity);
+		}
 		if (!(entity instanceof Mob mob)) {
 			return;
 		}

@@ -435,4 +435,20 @@ public class CreakingEffectsTest {
 		helper.assertValueEqual(bound.creaking().getTarget(), player, "the creaking targets the player");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aBlastSenseWakesAtTheNearestPlayerWhenTntIsLitNearItsHeart(GameTestHelper helper) {
+		Bound bound = bound(helper, new BlockPos(1, 1, 1), new BlockPos(6, 1, 6), "test_blast_sense");
+		var player = player(helper, new BlockPos(5, 1, 2));
+		var far = new net.minecraft.world.entity.item.PrimedTnt(helper.getLevel(), helper.absoluteVec(new net.minecraft.world.phys.Vec3(7.5, 1, 1.5)).x,
+				helper.absolutePos(new BlockPos(7, 1, 1)).getY(), helper.absoluteVec(new net.minecraft.world.phys.Vec3(7.5, 1, 1.5)).z, null);
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.onTntLit(helper.getLevel(), far), 0,
+				"TNT out of the radius of the heart does not wake the creaking");
+		helper.assertFalse(bound.creaking().isActive(), "the creaking sleeps");
+		var tnt = helper.spawn(EntityTypes.TNT, new BlockPos(3, 1, 1));
+		helper.assertTrue(bound.creaking().isActive(), "lit TNT near the heart wakes the creaking");
+		helper.assertValueEqual(bound.creaking().getTarget(), player, "the creaking targets the nearest player");
+		tnt.discard();
+		helper.succeed();
+	}
 }

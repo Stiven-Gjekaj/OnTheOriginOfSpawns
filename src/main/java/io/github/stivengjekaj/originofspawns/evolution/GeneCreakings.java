@@ -306,4 +306,37 @@ public final class GeneCreakings {
 		}
 		return nearest;
 	}
+
+	/**
+	 * The distance from a creaking to its heart is 34 blocks at most, so a search for creakings round lit TNT adds it.
+	 */
+	private static final double HEART_REACH = 34.0;
+
+	/**
+	 * Wakes each creaking with a blast sense gene whose heart is in the radius of the lit TNT. Each creaking targets the
+	 * nearest player in its follow range.
+	 *
+	 * @return the number of creakings that woke
+	 */
+	public static int onTntLit(net.minecraft.server.level.ServerLevel level, net.minecraft.world.entity.Entity tnt) {
+		int woke = 0;
+		for (Creaking creaking : level.getEntitiesOfClass(Creaking.class, tnt.getBoundingBox().inflate(64.0 + HEART_REACH),
+				creaking -> creaking.isAlive() && creaking.getHomePos() != null)) {
+			for (GeneEffect effect : GeneEffects.of(creaking).toList()) {
+				if (effect instanceof GeneEffect.BlastSense sense
+						&& Vec3.atCenterOf(creaking.getHomePos()).distanceTo(tnt.position()) <= sense.radius()) {
+					net.minecraft.world.entity.player.Player player = level.getNearestPlayer(creaking.getX(), creaking.getY(),
+							creaking.getZ(), creaking.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.FOLLOW_RANGE),
+							candidate -> candidate instanceof net.minecraft.world.entity.player.Player p && !p.isSpectator()
+									&& !p.isCreative());
+					if (player != null) {
+						creaking.activate(player);
+						woke++;
+					}
+					break;
+				}
+			}
+		}
+		return woke;
+	}
 }

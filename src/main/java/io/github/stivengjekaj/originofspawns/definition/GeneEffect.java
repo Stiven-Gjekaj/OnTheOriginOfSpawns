@@ -388,7 +388,8 @@ public sealed interface GeneEffect {
 			Map.entry("heart_guard", HeartGuard.CODEC),
 			Map.entry("hidden_heart", HiddenHeart.CODEC),
 			Map.entry("dark_heart", DarkHeart.CODEC),
-			Map.entry("heart_sense", HeartSense.CODEC)
+			Map.entry("heart_sense", HeartSense.CODEC),
+			Map.entry("blast_sense", BlastSense.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6601,6 +6602,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "heart_sense";
+		}
+	}
+
+	/**
+	 * When TNT is lit in the radius of the heart of a creaking, the creaking wakes and targets the nearest player in its
+	 * follow range, also with no look. A creaking with no heart does nothing. Blast Sense: 16 blocks.
+	 */
+	record BlastSense(float radius) implements GeneEffect {
+		public static final MapCodec<BlastSense> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("radius", 16.0F).forGetter(BlastSense::radius)
+		).apply(instance, BlastSense::new));
+
+		@Override
+		public String type() {
+			return "blast_sense";
 		}
 	}
 }

@@ -11,7 +11,7 @@ natural selection. Burn the zombies, and their children resist fire. Shoot
 them, and they grow armor plates. Every gene changes how a mob looks, so you
 can read the evolution of your world on the bodies of its mobs.
 
-| 37 | 1,095 | 185 | 1,110 | 33 | 6 | 6,284,639 |
+| 38 | 1,125 | 190 | 1,140 | 33 | 6 | 6,459,075 |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | species | genes | families | named family mixes | causes of death | biome pools for each species | possible gene mixes |
 
@@ -48,12 +48,13 @@ can read the evolution of your world on the bodies of its mobs.
 > the piglin, the piglin brute, the hoglin, the zoglin, the phantom, the
 > ghast, the blaze, the breeze, the guardian, the camel husk, the zombie
 > nautilus, the zombie horse, the skeleton horse, the silverfish, the
-> shulker, the ravager, and the creaking.
+> shulker, the ravager, the creaking, and the wolf.
 > Each species has 5 families, 20 minor families, and 10 hybrids. Each
 > species has 30 genes, but the shulker has 15.
 > The numbers above count the main branch.
 > The Beagle Notebook shows the gene pools and what you know of each family.
-> The neutral mobs that fight the player come next, in milestone 2c.
+> The wolf is the first neutral mob that fights the player.
+> The other neutral mobs come next, in milestone 2c.
 > The [wiki](https://stiven-gjekaj.github.io/OnTheOriginOfSpawns/) shows each
 > gene and family.
 > [ROADMAP.md](design/ROADMAP.md) lists the milestones to version 1.0.0.

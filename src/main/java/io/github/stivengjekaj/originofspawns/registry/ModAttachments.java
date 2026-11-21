@@ -200,6 +200,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Boolean> HEART_BREAK = AttachmentRegistry.create(OriginOfSpawns.id("heart_break"));
 
 	/**
+	 * The game time of the last trail that the heart of a creaking showed after a player hurt the creaking.
+	 */
+	public static final AttachmentType<Long> TRAIL_TIME = AttachmentRegistry.create(OriginOfSpawns.id("trail_time"));
+
+	/**
 	 * The game time of the last leap of a mob with genes. The first melee hit after it removes it.
 	 */
 	public static final AttachmentType<Long> LEAP_TIME = AttachmentRegistry.create(OriginOfSpawns.id("leap_time"));

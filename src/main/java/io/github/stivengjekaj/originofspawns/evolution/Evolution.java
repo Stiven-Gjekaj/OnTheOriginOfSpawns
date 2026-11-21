@@ -143,6 +143,11 @@ public final class Evolution {
 	private static final double HEART_FAR_BLOCKS = 16.0;
 
 	/**
+	 * The time before the heart break in which a trail of the heart counts for heart_trail: 30 seconds.
+	 */
+	private static final long HEART_TRAIL_TICKS = 600L;
+
+	/**
 	 * Returns true if the entity holds its shield up now, or blocked a hit with it in the last 10 seconds.
 	 */
 	public static boolean usedShield(LivingEntity entity, long now) {
@@ -369,6 +374,10 @@ public final class Evolution {
 				&& creaking.getAttachedOrElse(ModAttachments.HEART_BREAK, false) && creaking.getHomePos() != null
 				&& net.minecraft.world.phys.Vec3.atCenterOf(creaking.getHomePos()).distanceTo(creaking.position()) > HEART_FAR_BLOCKS) {
 			facts.add(DeathCondition.HEART_FAR);
+		}
+		if (mob.getAttachedOrElse(ModAttachments.HEART_BREAK, false)
+				&& now - mob.getAttachedOrElse(ModAttachments.TRAIL_TIME, Long.MIN_VALUE / 2) <= HEART_TRAIL_TICKS) {
+			facts.add(DeathCondition.HEART_TRAIL);
 		}
 		if (mob instanceof net.minecraft.world.entity.monster.skeleton.Bogged bogged && bogged.isSheared()) {
 			facts.add(DeathCondition.SHEARS);

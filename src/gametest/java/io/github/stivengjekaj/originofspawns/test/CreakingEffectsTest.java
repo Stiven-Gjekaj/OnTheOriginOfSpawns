@@ -100,4 +100,32 @@ public class CreakingEffectsTest {
 		far.discard();
 		helper.succeed();
 	}
+
+	/**
+	 * A survival player in the test area, so that it does not stand in the way of the other tests.
+	 */
+	static net.minecraft.server.level.ServerPlayer player(GameTestHelper helper, BlockPos pos) {
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setNoGravity(true);
+		player.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(pos)));
+		return player;
+	}
+
+	@GameTest
+	public void aHeartBreakAfterATrailCountsForHeartTrail(GameTestHelper helper) {
+		Bound plain = bound(helper, new BlockPos(1, 1, 1), new BlockPos(3, 1, 1));
+		float plainBefore = frequency(helper, plain.creaking(), "test_trail_seen");
+		plain.heart().removeProtector(helper.getLevel().damageSources().explosion(null, null));
+		helper.assertValueEqual(frequency(helper, plain.creaking(), "test_trail_seen"), plainBefore,
+				"a break with no trail does not count for heart_trail");
+		Bound hurt = bound(helper, new BlockPos(1, 1, 5), new BlockPos(3, 1, 5));
+		var player = player(helper, new BlockPos(5, 1, 5));
+		hurt.creaking().hurtServer(helper.getLevel(), player.damageSources().playerAttack(player), 1.0F);
+		helper.assertTrue(hurt.creaking().isAlive(), "the heart keeps the creaking alive");
+		float before = frequency(helper, hurt.creaking(), "test_trail_seen");
+		hurt.heart().removeProtector(helper.getLevel().damageSources().explosion(null, null));
+		helper.assertTrue(frequency(helper, hurt.creaking(), "test_trail_seen") > before,
+				"a break after the trail counts for heart_trail");
+		helper.succeed();
+	}
 }

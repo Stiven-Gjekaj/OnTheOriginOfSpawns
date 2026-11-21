@@ -27,4 +27,14 @@ public abstract class CreakingHeartBlockEntityMixin {
 					.ifPresent(creaking -> creaking.setAttached(ModAttachments.HEART_BREAK, true));
 		}
 	}
+
+	/**
+	 * When a player hurts the creaking and the heart shows its trail, the creaking keeps the time of the trail.
+	 */
+	@Inject(method = "creakingHurt", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/level/block/entity/CreakingHeartBlockEntity;emitParticles(Lnet/minecraft/server/level/ServerLevel;IZ)V"))
+	private void originofspawns$markTrail(CallbackInfo info) {
+		((CreakingHeartBlockEntityAccessor) this).originofspawns$getCreakingProtector()
+				.ifPresent(creaking -> creaking.setAttached(ModAttachments.TRAIL_TIME, creaking.level().getGameTime()));
+	}
 }

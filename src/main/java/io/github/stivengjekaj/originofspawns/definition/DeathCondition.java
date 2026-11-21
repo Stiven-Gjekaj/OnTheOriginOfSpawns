@@ -109,7 +109,12 @@ public enum DeathCondition implements StringRepresentable {
 	/**
 	 * The mob is a creaking that died when its heart broke, and it was more than 16 blocks from its heart.
 	 */
-	HEART_FAR;
+	HEART_FAR,
+	/**
+	 * The mob is a creaking that died when its heart broke, and in the 30 seconds before, a player hurt it and its heart
+	 * showed the trail of particles.
+	 */
+	HEART_TRAIL;
 
 	public static final Codec<DeathCondition> CODEC = StringRepresentable.fromEnum(DeathCondition::values);
 

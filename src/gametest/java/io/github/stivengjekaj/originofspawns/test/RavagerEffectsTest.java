@@ -298,4 +298,53 @@ public class RavagerEffectsTest {
 		helper.assertValueEqual(ravager.getTarget(), player, "the player is its target");
 		helper.succeed();
 	}
+
+	static final ReusedEffects.Maker RAVAGER = (helper, pos, genes) -> ravager(helper, pos, genes);
+
+	@GameTest
+	public void theReusedEffectsWorkOnARavager(GameTestHelper helper) {
+		ReusedEffects.damageToGolems(helper, RAVAGER);
+		ReusedEffects.thorns(helper, RAVAGER);
+		ReusedEffects.armorAttribute(helper, RAVAGER);
+		ReusedEffects.damageTaken(helper, RAVAGER);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aShieldCrushStopsTheShieldOfThePlayer(GameTestHelper helper) {
+		ReusedEffects.meleeShieldBreak(helper, RAVAGER);
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aSaddleGuardProtectsTheRiderOfTheRavager(GameTestHelper helper) {
+		Ravager ravager = ravager(helper, new BlockPos(2, 1, 2), "test_saddle_guard");
+		var pillager = MountEffectsTest.mob(helper, EntityTypes.PILLAGER, new BlockPos(2, 1, 2));
+		var hit = helper.getLevel().damageSources().generic();
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(pillager, hit, 10.0F),
+				10.0F, "a pillager on foot takes full damage");
+		pillager.startRiding(ravager, true, false);
+		helper.assertTrue(Math.abs(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(pillager, hit, 10.0F)
+				- 7.0F) < 0.001F, "the rider takes 30% less damage");
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(ravager, hit, 10.0F),
+				10.0F, "the ravager itself takes full damage");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aGoreRageAndARamRushAddMeleeDamage(GameTestHelper helper) {
+		Ravager rage = ravager(helper, new BlockPos(1, 1, 1), "test_gore_rage");
+		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(5, 1, 5));
+		var hit = helper.getLevel().damageSources().mobAttack(rage);
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(pig, hit, 10.0F), 10.0F,
+				"Gore Rage: normal damage at full health");
+		rage.setHealth(40.0F);
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(pig, hit, 10.0F), 13.0F,
+				"Gore Rage: 30% more damage under half health");
+		Ravager ram = ravager(helper, new BlockPos(1, 1, 5), "test_ram");
+		ram.setAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.RUN_BLOCKS, 7.0);
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCombat.modifyDamage(pig,
+				helper.getLevel().damageSources().mobAttack(ram), 10.0F), 13.0F, "Ram Rush: more damage after a run of 6 blocks");
+		helper.succeed();
+	}
 }

@@ -114,6 +114,9 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			// The silverfish gene model sits on the first back layer, a part of the root.
 			checkMarkAndModel(context, singleplayer, EntityTypes.SILVERFISH, "test_silverfish_mark",
 					Identifier.withDefaultNamespace("textures/entity/silverfish/silverfish.png"), "silverfish");
+			// The creaking gene model sits on the right arm, a part of the upper body.
+			checkMarkAndModel(context, singleplayer, EntityTypes.CREAKING, "test_creaking_mark",
+					Identifier.withDefaultNamespace("textures/entity/creaking/creaking.png"), "creaking");
 			// The ravager gene model sits on the right horn, a part of the head in the neck.
 			checkMarkAndModel(context, singleplayer, EntityTypes.RAVAGER, "test_ravager_mark",
 					Identifier.withDefaultNamespace("textures/entity/illager/ravager.png"), "ravager");

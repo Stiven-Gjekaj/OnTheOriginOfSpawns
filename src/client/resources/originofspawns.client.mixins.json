@@ -13,6 +13,7 @@
 		"BreezeWindLayerMixin",
 		"CamelHuskRendererMixin",
 		"CaveSpiderRendererMixin",
+		"CreakingRendererMixin",
 		"CreeperRendererMixin",
 		"DrownedOuterLayerMixin",
 		"EndermanRendererMixin",

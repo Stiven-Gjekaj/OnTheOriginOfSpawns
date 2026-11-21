@@ -120,6 +120,27 @@ public final class GeneCreakings {
 	}
 
 	/**
+	 * Returns true if the creaking must stay still after a look. A look that holds the awake creaking still starts the
+	 * time again. After the look, a still after look gene holds the creaking still for its seconds.
+	 *
+	 * @param held true if the vanilla look check holds the creaking still
+	 */
+	public static boolean stillAfterLook(Creaking creaking, boolean held) {
+		long now = creaking.level().getGameTime();
+		if (held) {
+			creaking.setAttached(ModAttachments.LOOK_TIME, now);
+			return false;
+		}
+		if (!creaking.isActive()) {
+			return false;
+		}
+		var seconds = GeneEffects.of(creaking).filter(GeneEffect.StillAfterLook.class::isInstance)
+				.mapToDouble(effect -> ((GeneEffect.StillAfterLook) effect).seconds()).max();
+		Long last = creaking.getAttached(ModAttachments.LOOK_TIME);
+		return seconds.isPresent() && last != null && now - last < Math.round(seconds.getAsDouble() * 20.0);
+	}
+
+	/**
 	 * Returns the square of the distance in which a look wakes the creaking: the largest range of its look wake range
 	 * genes, or the vanilla value.
 	 */

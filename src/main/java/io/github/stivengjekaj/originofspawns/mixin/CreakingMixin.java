@@ -39,12 +39,16 @@ public abstract class CreakingMixin {
 	}
 
 	/**
-	 * A creaking that a gene lets move, moves also while a player looks at it.
+	 * A creaking that a gene lets move, moves also while a player looks at it. Else a still after look gene holds it
+	 * still for a short time after a look.
 	 */
 	@Inject(method = "checkCanMove", at = @At("RETURN"), cancellable = true)
 	private void originofspawns$free(CallbackInfoReturnable<Boolean> info) {
-		if (!info.getReturnValueZ() && GeneCreakings.free((Creaking) (Object) this)) {
+		Creaking self = (Creaking) (Object) this;
+		if (GeneCreakings.free(self)) {
 			info.setReturnValue(true);
+		} else if (GeneCreakings.stillAfterLook(self, !info.getReturnValueZ())) {
+			info.setReturnValue(false);
 		}
 	}
 

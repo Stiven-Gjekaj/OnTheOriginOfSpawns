@@ -215,6 +215,11 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> FREE_UNTIL = AttachmentRegistry.create(OriginOfSpawns.id("free_until"));
 
 	/**
+	 * The last game time at which the look of a player held an awake creaking still.
+	 */
+	public static final AttachmentType<Long> LOOK_TIME = AttachmentRegistry.create(OriginOfSpawns.id("look_time"));
+
+	/**
 	 * True while a player looks at a creaking and holds it still, at the last tick.
 	 */
 	public static final AttachmentType<Boolean> WATCHED = AttachmentRegistry.create(OriginOfSpawns.id("watched"));

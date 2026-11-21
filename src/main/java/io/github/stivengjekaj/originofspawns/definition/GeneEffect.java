@@ -391,7 +391,8 @@ public sealed interface GeneEffect {
 			Map.entry("heart_sense", HeartSense.CODEC),
 			Map.entry("blast_sense", BlastSense.CODEC),
 			Map.entry("lone_watch", LoneWatch.CODEC),
-			Map.entry("look_wake_range", LookWakeRange.CODEC)
+			Map.entry("look_wake_range", LookWakeRange.CODEC),
+			Map.entry("still_after_look", StillAfterLook.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6649,6 +6650,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "look_wake_range";
+		}
+	}
+
+	/**
+	 * After a player stops holding the awake creaking still with a look, the creaking stays still for the seconds. With
+	 * more than one, the longest time counts. A gene that lets the creaking move while watched still lets it move.
+	 */
+	record StillAfterLook(float seconds) implements GeneEffect {
+		public static final MapCodec<StillAfterLook> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 60.0F).fieldOf("seconds").forGetter(StillAfterLook::seconds)
+		).apply(instance, StillAfterLook::new));
+
+		@Override
+		public String type() {
+			return "still_after_look";
 		}
 	}
 }

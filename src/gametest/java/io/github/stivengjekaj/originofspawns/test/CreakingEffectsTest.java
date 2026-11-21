@@ -491,4 +491,32 @@ public class CreakingEffectsTest {
 		helper.assertTrue(lookWakes(player(helper, new BlockPos(3, 1, 5)), gene), "a look from 2 blocks wakes it");
 		helper.succeed();
 	}
+
+	/**
+	 * Turns the player to look away from the creaking.
+	 */
+	static void lookAway(net.minecraft.server.level.ServerPlayer player, Creaking creaking) {
+		player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES,
+				player.getEyePosition().scale(2.0).subtract(creaking.getEyePosition()));
+	}
+
+	@GameTest(maxTicks = 60)
+	public void aStillAfterLookHoldsTheCreakingStillAfterAPlayerLooksAway(GameTestHelper helper) {
+		Creaking plain = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 1));
+		Creaking gene = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 5), "test_still_after_look");
+		var plainPlayer = player(helper, new BlockPos(5, 1, 1));
+		var genePlayer = player(helper, new BlockPos(5, 1, 5));
+		lookAt(plainPlayer, plain);
+		lookAt(genePlayer, gene);
+		helper.assertFalse(plain.checkCanMove(), "the look holds the plain creaking still");
+		helper.assertFalse(gene.checkCanMove(), "the look holds the gene creaking still");
+		lookAway(plainPlayer, plain);
+		lookAway(genePlayer, gene);
+		helper.assertTrue(plain.checkCanMove(), "the plain creaking moves at once after the player looks away");
+		helper.assertFalse(gene.checkCanMove(), "the gene creaking stays still after the player looks away");
+		helper.runAfterDelay(22, () -> {
+			helper.assertTrue(gene.checkCanMove(), "after 1 second, the gene creaking moves");
+			helper.succeed();
+		});
+	}
 }

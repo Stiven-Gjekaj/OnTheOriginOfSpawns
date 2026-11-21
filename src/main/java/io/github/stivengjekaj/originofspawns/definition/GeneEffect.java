@@ -1303,15 +1303,22 @@ public sealed interface GeneEffect {
 	/**
 	 * When the mob first targets a player, all mobs of its species in the radius target that player. With
 	 * {@code mobs}, the mobs of the list or tag answer the call in place of its species. Alarm Horn:
-	 * {@code ["minecraft:piglin", "minecraft:piglin_brute"]}.
+	 * {@code ["minecraft:piglin", "minecraft:piglin_brute"]}. The call comes only while the state in {@code when} is
+	 * true. Moon Howl: {@code night}.
 	 */
-	record CallOnSight(float radius, float cooldownSeconds, Optional<HolderSet<EntityType<?>>> mobs) implements GeneEffect {
+	record CallOnSight(float radius, float cooldownSeconds, Optional<HolderSet<EntityType<?>>> mobs, When when)
+			implements GeneEffect {
 		public static final MapCodec<CallOnSight> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.floatRange(0.0F, 128.0F).fieldOf("radius").forGetter(CallOnSight::radius),
 				Codec.floatRange(0.0F, 3600.0F).optionalFieldOf("cooldown_seconds", 30.0F)
 						.forGetter(CallOnSight::cooldownSeconds),
-				RegistryCodecs.holderSet(Registries.ENTITY_TYPE).optionalFieldOf("mobs").forGetter(CallOnSight::mobs)
+				RegistryCodecs.holderSet(Registries.ENTITY_TYPE).optionalFieldOf("mobs").forGetter(CallOnSight::mobs),
+				When.CODEC.optionalFieldOf("when", When.ALWAYS).forGetter(CallOnSight::when)
 		).apply(instance, CallOnSight::new));
+
+		public CallOnSight(float radius, float cooldownSeconds, Optional<HolderSet<EntityType<?>>> mobs) {
+			this(radius, cooldownSeconds, mobs, When.ALWAYS);
+		}
 
 		@Override
 		public String type() {

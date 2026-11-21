@@ -271,4 +271,28 @@ public class WolfEffectsTest {
 		helper.assertValueEqual(packmate.getTarget(), pig, "the pack targets the killer");
 		helper.succeed();
 	}
+
+	static void howl(GameTestHelper helper, String gene, boolean callsNow) {
+		Wolf howler = wolf(helper, new BlockPos(1, 1, 1), gene);
+		Wolf packmate = wolf(helper, new BlockPos(5, 1, 5));
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(3, 1, 1))));
+		howler.setTarget(player);
+		auraTick(helper, howler);
+		helper.assertTrue((packmate.getTarget() == player) == callsNow,
+				callsNow ? "the howl calls the pack while its state is true" : "no howl while its state is false");
+	}
+
+	// The test world has one time of day for all tests, so the two tests check the two states of the call.
+	@GameTest
+	public void aMoonHowlCallsThePackOnlyAtNight(GameTestHelper helper) {
+		howl(helper, "test_wolf_moon_howl", helper.getLevel().isDarkOutside());
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aDayHowlCallsThePackOnlyInTheDay(GameTestHelper helper) {
+		howl(helper, "test_wolf_day_howl", !helper.getLevel().isDarkOutside());
+		helper.succeed();
+	}
 }

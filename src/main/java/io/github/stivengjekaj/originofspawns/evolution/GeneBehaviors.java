@@ -546,8 +546,8 @@ public final class GeneBehaviors {
 				case GeneEffect.StareEffect stare -> stareEffect(mob, level, stare);
 				case GeneEffect.BlockThrow thrown when mob instanceof Enderman enderman ->
 						GeneThrows.throwBlock(enderman, level, thrown);
-				case GeneEffect.CallOnSight call when mob.getTarget() != null && NeutralMobs.isFoe(mob, mob.getTarget()) ->
-						callOnSight(mob, level, call, mob.getTarget());
+				case GeneEffect.CallOnSight call when mob.getTarget() != null && NeutralMobs.isFoe(mob, mob.getTarget())
+						&& GeneCombat.test(mob, call.when()) -> callOnSight(mob, level, call, mob.getTarget());
 				case GeneEffect.WakeOnSight sight -> GeneSilverfish.wakeOnSight(mob, level, sight);
 				case GeneEffect.RaidHunt hunt when mob instanceof net.minecraft.world.entity.raid.Raider raider ->
 						GeneRavagers.raidHunt(raider, hunt);

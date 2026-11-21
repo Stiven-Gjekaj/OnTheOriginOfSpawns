@@ -280,4 +280,22 @@ public class RavagerEffectsTest {
 		ravager.getFirstPassenger().discard();
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aRaidScentTargetsTheNearestPlayerInARaid(GameTestHelper helper) {
+		var scent = new io.github.stivengjekaj.originofspawns.definition.GeneEffect.RaidHunt(48.0F);
+		Ravager ravager = ravager(helper, new BlockPos(2, 1, 2));
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		player.setNoGravity(true);
+		player.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(6, 1, 6))));
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneRavagers.raidHunt(ravager, scent) == null,
+				"a ravager in no raid does not hunt");
+		var raid = new net.minecraft.world.entity.raid.Raid(helper.absolutePos(new BlockPos(2, 1, 2)),
+				net.minecraft.world.Difficulty.NORMAL);
+		raid.joinRaid(helper.getLevel(), 1, ravager, null, true);
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneRavagers.raidHunt(ravager, scent), player,
+				"the ravager in the raid targets the player");
+		helper.assertValueEqual(ravager.getTarget(), player, "the player is its target");
+		helper.succeed();
+	}
 }

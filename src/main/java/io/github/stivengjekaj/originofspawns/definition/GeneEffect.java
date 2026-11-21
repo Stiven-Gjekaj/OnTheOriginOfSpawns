@@ -372,7 +372,8 @@ public sealed interface GeneEffect {
 			Map.entry("speed_after", SpeedAfter.CODEC),
 			Map.entry("heal_on_rider_hit", HealOnRiderHit.CODEC),
 			Map.entry("rider_strike", RiderStrike.CODEC),
-			Map.entry("raid_rider", RaidRider.CODEC)
+			Map.entry("raid_rider", RaidRider.CODEC),
+			Map.entry("raid_hunt", RaidHunt.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6332,6 +6333,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "raid_rider";
+		}
+	}
+
+	/**
+	 * While the mob is in an active raid and has no target, it targets the nearest player in the range, also out of
+	 * sight. A player in creative or spectator mode does not count. The vanilla follow range of a ravager is 32 blocks.
+	 * Raid Scent: 48 blocks.
+	 */
+	record RaidHunt(float range) implements GeneEffect {
+		public static final MapCodec<RaidHunt> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 128.0F).optionalFieldOf("range", 48.0F).forGetter(RaidHunt::range)
+		).apply(instance, RaidHunt::new));
+
+		@Override
+		public String type() {
+			return "raid_hunt";
 		}
 	}
 }

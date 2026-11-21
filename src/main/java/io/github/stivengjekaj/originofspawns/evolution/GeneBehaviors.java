@@ -538,6 +538,8 @@ public final class GeneBehaviors {
 						GeneThrows.throwBlock(enderman, level, thrown);
 				case GeneEffect.CallOnSight call when mob.getTarget() instanceof Player player -> callOnSight(mob, level, call, player);
 				case GeneEffect.WakeOnSight sight -> GeneSilverfish.wakeOnSight(mob, level, sight);
+				case GeneEffect.RaidHunt hunt when mob instanceof net.minecraft.world.entity.raid.Raider raider ->
+						GeneRavagers.raidHunt(raider, hunt);
 				case GeneEffect.Gnaw gnaw -> GeneSilverfish.gnaw(mob, level, gnaw);
 				case GeneEffect.SightTeleport sight when mob instanceof net.minecraft.world.entity.monster.Shulker shulker ->
 						GeneShulkers.sightTeleport(shulker, level, sight);

@@ -273,4 +273,24 @@ public final class GeneRavagers {
 		on.snapTo(raider.getX(), raider.getY(), raider.getZ(), raider.getYRot(), 0.0F);
 		return on.startRiding(raider, false, false);
 	}
+
+	/**
+	 * Gives a raider in an active raid with no target the nearest player in the range of its raid hunt gene.
+	 *
+	 * @return the player that the raider targets now, or null
+	 */
+	public static net.minecraft.world.entity.player.Player raidHunt(Raider raider, GeneEffect.RaidHunt hunt) {
+		if (!raider.hasActiveRaid() || raider.getTarget() != null) {
+			return null;
+		}
+		net.minecraft.world.entity.player.Player nearest = raider.level().getEntitiesOfClass(
+						net.minecraft.world.entity.player.Player.class, raider.getBoundingBox().inflate(hunt.range()),
+						player -> player.isAlive() && !player.isSpectator() && !player.isCreative()
+								&& player.distanceTo(raider) <= hunt.range())
+				.stream().min(java.util.Comparator.comparingDouble(player -> player.distanceToSqr(raider))).orElse(null);
+		if (nearest != null) {
+			raider.setTarget(nearest);
+		}
+		return nearest;
+	}
 }

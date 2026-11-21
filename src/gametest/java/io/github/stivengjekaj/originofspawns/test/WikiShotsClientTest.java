@@ -57,7 +57,8 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 			EntityTypes.MAGMA_CUBE, EntityTypes.ZOMBIFIED_PIGLIN, EntityTypes.PIGLIN, EntityTypes.PIGLIN_BRUTE,
 			EntityTypes.HOGLIN, EntityTypes.ZOGLIN, EntityTypes.PHANTOM, EntityTypes.GHAST, EntityTypes.BLAZE,
 			EntityTypes.BREEZE, EntityTypes.GUARDIAN, EntityTypes.CAMEL_HUSK,
-			EntityTypes.ZOMBIE_NAUTILUS, EntityTypes.ZOMBIE_HORSE, EntityTypes.SKELETON_HORSE);
+			EntityTypes.ZOMBIE_NAUTILUS, EntityTypes.ZOMBIE_HORSE, EntityTypes.SKELETON_HORSE, EntityTypes.SILVERFISH,
+			EntityTypes.SHULKER, EntityTypes.RAVAGER, EntityTypes.CREAKING);
 	private static final int SHOT_ID = -424242;
 	private static final int WIDTH = 720;
 	private static final int HEIGHT = 960;
@@ -115,7 +116,8 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 						for (String view : List.of("front", "back")) {
 							float yaw = view.equals("front") ? FRONT : BACK;
 							context.runOnClient(client -> place(client, type, base, yaw, carried));
-							context.waitTicks(3);
+							// The lid of a shulker opens 5% each tick, so it needs 10 ticks to open half way.
+							context.waitTicks(type == EntityTypes.SHULKER ? 25 : 3);
 							shoot(context, subject.species() + "__" + subject.name() + "__" + view + "__" + background);
 						}
 					}
@@ -210,6 +212,10 @@ public class WikiShotsClientTest implements FabricClientGameTest {
 		// An evoker crosses its arms until it casts. The spell pose shows the marks and the models on the arms.
 		if (mob.getType() == EntityTypes.EVOKER) {
 			castSpell(mob);
+		}
+		// A shulker opens its lid half way, so that the marks on its head and on the top of its lid show.
+		if (mob instanceof net.minecraft.world.entity.monster.Shulker shulker) {
+			((io.github.stivengjekaj.originofspawns.mixin.ShulkerAccessor) shulker).originofspawns$setRawPeekAmount(50);
 		}
 		// A tall or a wide mob, such as the enderman or the hoglin, stands farther away, so that all of it is in the
 		// picture.

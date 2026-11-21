@@ -300,4 +300,14 @@ public class CreakingEffectsTest {
 		helper.assertBlockPresent(Blocks.CREAKING_HEART, new BlockPos(5, 1, 1));
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aThornHeartHurtsThePlayerThatBreaksTheHeart(GameTestHelper helper) {
+		Bound bound = bound(helper, new BlockPos(1, 1, 1), new BlockPos(4, 1, 4), "test_thorn_heart");
+		var player = player(helper, new BlockPos(2, 1, 1));
+		bound.heart().removeProtector(player.damageSources().playerAttack(player));
+		helper.assertValueEqual(player.getMaxHealth() - player.getHealth(), 4.0F, "the player takes 4 damage");
+		helper.assertTrue(bound.creaking().isDeadOrDying(), "the damage does not stop the break");
+		helper.succeed();
+	}
 }

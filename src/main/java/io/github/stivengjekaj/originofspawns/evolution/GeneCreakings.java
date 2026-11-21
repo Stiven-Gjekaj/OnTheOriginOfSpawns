@@ -209,4 +209,19 @@ public final class GeneCreakings {
 	public static boolean heartBlastProof(Creaking creaking) {
 		return GeneEffects.of(creaking).anyMatch(effect -> effect instanceof GeneEffect.HardHeart heart && heart.blastProof());
 	}
+
+	/**
+	 * Runs the effects that act when the heart of the creaking breaks from a player or a blast, before the creaking dies.
+	 */
+	public static void onHeartBreak(Creaking creaking, net.minecraft.world.damagesource.DamageSource source) {
+		if (!(creaking.level() instanceof net.minecraft.server.level.ServerLevel level)) {
+			return;
+		}
+		for (GeneEffect effect : GeneEffects.of(creaking).toList()) {
+			if (effect instanceof GeneEffect.HeartThorns thorns
+					&& source.getEntity() instanceof net.minecraft.world.entity.player.Player player) {
+				player.hurtServer(level, level.damageSources().thorns(creaking), thorns.damage());
+			}
+		}
+	}
 }

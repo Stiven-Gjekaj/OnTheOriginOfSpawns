@@ -1,5 +1,6 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
+import io.github.stivengjekaj.originofspawns.evolution.GeneCreakings;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
 import net.minecraft.world.damagesource.DamageSource;
@@ -18,13 +19,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class CreakingHeartBlockEntityMixin {
 	/**
 	 * A heart that breaks from a player or a blast kills its creaking with the damage source of the break. The mark tells
-	 * the pressures that the death came from the heart.
+	 * the pressures that the death came from the heart. The heart break genes of the creaking act first.
 	 */
 	@Inject(method = "removeProtector", at = @At("HEAD"))
 	private void originofspawns$markHeartBreak(@Nullable DamageSource source, CallbackInfo info) {
 		if (source != null) {
 			((CreakingHeartBlockEntityAccessor) this).originofspawns$getCreakingProtector()
-					.ifPresent(creaking -> creaking.setAttached(ModAttachments.HEART_BREAK, true));
+					.ifPresent(creaking -> {
+						creaking.setAttached(ModAttachments.HEART_BREAK, true);
+						GeneCreakings.onHeartBreak(creaking, source);
+					});
 		}
 	}
 

@@ -381,7 +381,8 @@ public sealed interface GeneEffect {
 			Map.entry("ignore_look_after_hit", IgnoreLookAfterHit.CODEC),
 			Map.entry("ignore_shield_look", IgnoreShieldLook.CODEC),
 			Map.entry("blink_strike", BlinkStrike.CODEC),
-			Map.entry("hard_heart", HardHeart.CODEC)
+			Map.entry("hard_heart", HardHeart.CODEC),
+			Map.entry("heart_thorns", HeartThorns.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6487,6 +6488,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "hard_heart";
+		}
+	}
+
+	/**
+	 * A player that breaks the heart of a creaking takes the damage when the heart breaks. The damage does not stop the
+	 * break. Thorn Heart: 4.
+	 */
+	record HeartThorns(float damage) implements GeneEffect {
+		public static final MapCodec<HeartThorns> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("damage", 4.0F).forGetter(HeartThorns::damage)
+		).apply(instance, HeartThorns::new));
+
+		@Override
+		public String type() {
+			return "heart_thorns";
 		}
 	}
 }

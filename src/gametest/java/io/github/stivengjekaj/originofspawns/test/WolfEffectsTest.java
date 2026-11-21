@@ -311,4 +311,40 @@ public class WolfEffectsTest {
 		helper.assertFalse(alpha.hasEffect(net.minecraft.world.effect.MobEffects.STRENGTH), "the wolf itself gets none");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aHotTemperMakesTheAngerOfAWolfLastTwoTimesAsLong(GameTestHelper helper) {
+		Wolf plain = wolf(helper, new BlockPos(1, 1, 1));
+		Wolf hot = wolf(helper, new BlockPos(5, 1, 5), "test_wolf_hot_temper");
+		long now = helper.getLevel().getGameTime();
+		// The vanilla anger of a wolf lasts 20 to 39 seconds.
+		for (int i = 0; i < 20; i++) {
+			plain.startPersistentAngerTimer();
+			hot.startPersistentAngerTimer();
+			long plainTicks = plain.getPersistentAngerEndTime() - now;
+			long hotTicks = hot.getPersistentAngerEndTime() - now;
+			helper.assertTrue(plainTicks >= 400 && plainTicks <= 780, "the vanilla anger time, not " + plainTicks);
+			helper.assertTrue(hotTicks >= 800 && hotTicks <= 1560, "two times the anger time, not " + hotTicks);
+		}
+		helper.succeed();
+	}
+
+	@GameTest
+	public void anOldGrudgeStaysAngryAtAPlayerThatDied(GameTestHelper helper) {
+		var player = CreeperEffectsTest.survivalPlayer(helper).player();
+		Wolf plain = wolf(helper, new BlockPos(1, 1, 1));
+		Wolf grudge = wolf(helper, new BlockPos(5, 1, 5), "test_wolf_old_grudge");
+		for (Wolf each : java.util.List.of(plain, grudge)) {
+			each.setPersistentAngerTarget(EntityReference.of(player));
+			each.setTimeToRemainAngry(100L);
+			each.setTarget(player);
+			each.playerDied(helper.getLevel(), player);
+		}
+		helper.assertFalse(plain.isAngry(), "a plain wolf forgives a dead player");
+		helper.assertTrue(grudge.isAngry(), "Old Grudge stays angry");
+		helper.assertValueEqual(grudge.getPersistentAngerEndTime() - helper.getLevel().getGameTime(), 6000L,
+				"it stays angry for 5 minutes");
+		helper.assertTrue(grudge.getTarget() == null, "it does not chase the dead body");
+		helper.succeed();
+	}
 }

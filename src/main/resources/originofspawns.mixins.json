@@ -122,6 +122,7 @@
 		"VexAccessor",
 		"WitchAccessor",
 		"WitchMixin",
+		"WolfMixin",
 		"ZoglinAccessor",
 		"ZoglinMixin",
 		"ZombieMixin",

@@ -29,7 +29,7 @@ const initials = (name) => name.split(" ").map((w) => w[0]).join("").toUpperCase
           {site.species.map((sp, i) => (
             <button class="ribbon" type="button" data-species-btn={sp.id} aria-pressed={i === 0 ? "true" : "false"} style={`--rib:${ribbons[i % ribbons.length]}${ribbonText[sp.id] ? `;--rib-text:${ribbonText[sp.id]}` : ""}`} title={sp.name}>{sp.name}</button>
           ))}
-          <button class="ribbon" type="button" disabled style="--rib:#6b6b6b" data-tip="The other hostile mobs come in milestone 2c">More</button>
+          <button class="ribbon" type="button" disabled style="--rib:#6b6b6b" data-tip="The other neutral mobs come in milestone 2c">More</button>
         </div>
         <div class="spread" id="spread">
           <div class="sheet left" id="sheet-genes-left">

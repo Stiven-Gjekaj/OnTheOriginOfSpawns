@@ -149,6 +149,32 @@ public final class GeneCreakings {
 	}
 
 	/**
+	 * Plays a step sound of the creaking only to the players in the smallest range of its quiet steps genes.
+	 *
+	 * @return the players that hear the step, or null if the creaking has no quiet steps gene
+	 */
+	public static java.util.List<net.minecraft.server.level.ServerPlayer> quietStep(Creaking creaking,
+			net.minecraft.sounds.SoundEvent sound, float volume, float pitch) {
+		var blocks = GeneEffects.of(creaking).filter(GeneEffect.QuietSteps.class::isInstance)
+				.mapToDouble(effect -> ((GeneEffect.QuietSteps) effect).blocks()).min();
+		if (blocks.isEmpty() || !(creaking.level() instanceof net.minecraft.server.level.ServerLevel level)) {
+			return null;
+		}
+		java.util.List<net.minecraft.server.level.ServerPlayer> players = level.getPlayers(
+				player -> player.distanceTo(creaking) <= blocks.getAsDouble());
+		if (creaking.isSilent()) {
+			return java.util.List.of();
+		}
+		var packet = new net.minecraft.network.protocol.game.ClientboundSoundPacket(
+				net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.wrapAsHolder(sound), creaking.getSoundSource(),
+				creaking.getX(), creaking.getY(), creaking.getZ(), volume, pitch, level.getRandom().nextLong());
+		for (net.minecraft.server.level.ServerPlayer player : players) {
+			player.connection.send(packet);
+		}
+		return players;
+	}
+
+	/**
 	 * Returns the square of the distance in which a look wakes the creaking: the largest range of its look wake range
 	 * genes, or the vanilla value.
 	 */

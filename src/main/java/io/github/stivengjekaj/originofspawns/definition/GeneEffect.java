@@ -394,7 +394,8 @@ public sealed interface GeneEffect {
 			Map.entry("look_wake_range", LookWakeRange.CODEC),
 			Map.entry("still_after_look", StillAfterLook.CODEC),
 			Map.entry("dark_eyes", DarkEyes.CODEC),
-			Map.entry("attack_reach", AttackReach.CODEC)
+			Map.entry("attack_reach", AttackReach.CODEC),
+			Map.entry("quiet_steps", QuietSteps.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6695,6 +6696,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "attack_reach";
+		}
+	}
+
+	/**
+	 * Players hear the steps of the creaking only from this many blocks or less. Its other sounds do not change. With
+	 * more than one, the smallest range counts. Silent Roots: 4 blocks.
+	 */
+	record QuietSteps(float blocks) implements GeneEffect {
+		public static final MapCodec<QuietSteps> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 16.0F).fieldOf("blocks").forGetter(QuietSteps::blocks)
+		).apply(instance, QuietSteps::new));
+
+		@Override
+		public String type() {
+			return "quiet_steps";
 		}
 	}
 }

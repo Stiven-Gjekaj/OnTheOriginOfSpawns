@@ -72,4 +72,16 @@ public abstract class CreakingMixin {
 	private double originofspawns$lookWakeRange(double vanilla) {
 		return GeneCreakings.lookWakeRangeSqr((Creaking) (Object) this, vanilla);
 	}
+
+	/**
+	 * A quiet steps gene lets only the players near the creaking hear its steps.
+	 */
+	@WrapOperation(method = "playStepSound", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/monster/creaking/Creaking;playSound(Lnet/minecraft/sounds/SoundEvent;FF)V"))
+	private void originofspawns$quietSteps(Creaking self, net.minecraft.sounds.SoundEvent sound, float volume, float pitch,
+			Operation<Void> original) {
+		if (GeneCreakings.quietStep(self, sound, volume, pitch) == null) {
+			original.call(self, sound, volume, pitch);
+		}
+	}
 }

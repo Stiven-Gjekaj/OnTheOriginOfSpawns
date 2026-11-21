@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "quiet_steps", "blocks": 3 }],
+	"mutation_rate": 0
+}

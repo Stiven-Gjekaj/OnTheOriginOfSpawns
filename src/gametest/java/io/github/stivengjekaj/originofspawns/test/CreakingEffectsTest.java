@@ -545,4 +545,19 @@ public class CreakingEffectsTest {
 		helper.assertTrue(gene.isWithinMeleeAttackRange(genePig), "a creaking with 1 more block of reach reaches 2 blocks");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void quietStepsReachOnlyThePlayersNearTheCreaking(GameTestHelper helper) {
+		Creaking plain = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 1));
+		Creaking gene = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 3), "test_silent_roots");
+		var near = player(helper, new BlockPos(3, 1, 3));
+		var far = player(helper, new BlockPos(7, 1, 3));
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.quietStep(plain,
+				net.minecraft.sounds.SoundEvents.CREAKING_STEP, 0.15F, 1.0F) == null, "a plain creaking plays its steps as vanilla");
+		var heard = io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.quietStep(gene,
+				net.minecraft.sounds.SoundEvents.CREAKING_STEP, 0.15F, 1.0F);
+		helper.assertTrue(heard != null && heard.contains(near), "a player in 3 blocks hears the step");
+		helper.assertFalse(heard.contains(far), "a player 6 blocks away does not hear the step");
+		helper.succeed();
+	}
 }

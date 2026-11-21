@@ -221,6 +221,15 @@ public final class GeneCreakings {
 			if (effect instanceof GeneEffect.HeartThorns thorns
 					&& source.getEntity() instanceof net.minecraft.world.entity.player.Player player) {
 				player.hurtServer(level, level.damageSources().thorns(creaking), thorns.damage());
+			} else if (effect instanceof GeneEffect.HeartBurst burst) {
+				level.sendParticles(new net.minecraft.core.particles.BlockParticleOption(net.minecraft.core.particles.ParticleTypes.BLOCK,
+						net.minecraft.world.level.block.Blocks.PALE_OAK_WOOD.defaultBlockState()), creaking.getX(), creaking.getY(0.5),
+						creaking.getZ(), 40, burst.radius() / 2.0, 0.5, burst.radius() / 2.0, 0.2);
+				for (net.minecraft.world.entity.player.Player player : level.getEntitiesOfClass(
+						net.minecraft.world.entity.player.Player.class, creaking.getBoundingBox().inflate(burst.radius()),
+						player -> player.distanceTo(creaking) <= burst.radius())) {
+					player.hurtServer(level, level.damageSources().mobAttack(creaking), burst.damage());
+				}
 			}
 		}
 	}

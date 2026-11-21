@@ -382,7 +382,8 @@ public sealed interface GeneEffect {
 			Map.entry("ignore_shield_look", IgnoreShieldLook.CODEC),
 			Map.entry("blink_strike", BlinkStrike.CODEC),
 			Map.entry("hard_heart", HardHeart.CODEC),
-			Map.entry("heart_thorns", HeartThorns.CODEC)
+			Map.entry("heart_thorns", HeartThorns.CODEC),
+			Map.entry("heart_burst", HeartBurst.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6503,6 +6504,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "heart_thorns";
+		}
+	}
+
+	/**
+	 * When the heart of a creaking breaks from a player or a blast, splinters fly out of the creaking and do the damage to
+	 * the players in the radius. Other creakings take no damage. Splinter Burst: 4 damage in 3 blocks.
+	 */
+	record HeartBurst(float damage, float radius) implements GeneEffect {
+		public static final MapCodec<HeartBurst> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 100.0F).optionalFieldOf("damage", 4.0F).forGetter(HeartBurst::damage),
+				Codec.floatRange(0.5F, 16.0F).optionalFieldOf("radius", 3.0F).forGetter(HeartBurst::radius)
+		).apply(instance, HeartBurst::new));
+
+		@Override
+		public String type() {
+			return "heart_burst";
 		}
 	}
 }

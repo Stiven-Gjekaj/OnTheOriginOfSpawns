@@ -310,4 +310,17 @@ public class CreakingEffectsTest {
 		helper.assertTrue(bound.creaking().isDeadOrDying(), "the damage does not stop the break");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aSplinterBurstHurtsThePlayersNearTheCreakingWhenItsHeartBreaks(GameTestHelper helper) {
+		Bound bound = bound(helper, new BlockPos(1, 1, 1), new BlockPos(4, 1, 4), "test_splinter_burst");
+		var near = player(helper, new BlockPos(5, 1, 5));
+		var far = player(helper, new BlockPos(1, 1, 6));
+		Creaking other = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(4, 1, 5));
+		bound.heart().removeProtector(helper.getLevel().damageSources().explosion(null, null));
+		helper.assertValueEqual(near.getMaxHealth() - near.getHealth(), 4.0F, "a player in 3 blocks takes 4 damage");
+		helper.assertValueEqual(far.getHealth(), far.getMaxHealth(), "a player farther away takes no damage");
+		helper.assertTrue(other.isAlive(), "another creaking takes no damage");
+		helper.succeed();
+	}
 }

@@ -347,4 +347,18 @@ public class WolfEffectsTest {
 		helper.assertTrue(grudge.getTarget() == null, "it does not chase the dead body");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aSnowPawsWolfWalksOnPowderSnowAndFindsPathsOverIt(GameTestHelper helper) {
+		Wolf plain = wolf(helper, new BlockPos(1, 1, 1));
+		Wolf walker = wolf(helper, new BlockPos(5, 1, 5), "test_snowshoe");
+		var onTop = net.minecraft.world.level.pathfinder.PathType.ON_TOP_OF_POWDER_SNOW;
+		helper.assertTrue(net.minecraft.world.level.block.PowderSnowBlock.canEntityWalkOnPowderSnow(walker),
+				"the gene wolf walks on powder snow");
+		helper.assertFalse(net.minecraft.world.level.block.PowderSnowBlock.canEntityWalkOnPowderSnow(plain),
+				"a plain wolf sinks in powder snow");
+		helper.assertValueEqual(walker.getPathfindingMalus(onTop), 0.0F, "the gene wolf finds paths over powder snow");
+		helper.assertValueEqual(plain.getPathfindingMalus(onTop), -1.0F, "a plain wolf finds no path over powder snow");
+		helper.succeed();
+	}
 }

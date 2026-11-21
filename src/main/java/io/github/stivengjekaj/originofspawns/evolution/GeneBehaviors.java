@@ -127,6 +127,9 @@ public final class GeneBehaviors {
 			switch (effect) {
 				case GeneEffect.Leap leap -> goals.addGoal(1, new LeapGoal(mob, leap));
 				case GeneEffect.Lurk lurk -> goals.addGoal(0, new LurkGoal(mob, lurk));
+				// A vanilla wolf finds no path on top of powder snow. A mob that walks on it uses the default cost.
+				case GeneEffect.WalkOnPowderSnow walk ->
+						mob.setPathfindingMalus(net.minecraft.world.level.pathfinder.PathType.ON_TOP_OF_POWDER_SNOW, 0.0F);
 				case GeneEffect.Siege siege -> {
 					if (mob instanceof Zombie zombie) {
 						zombie.setCanBreakDoors(true);

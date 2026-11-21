@@ -44,8 +44,9 @@ Each gene keeps to its own zone, so that the marks stack:
   rows.
 - The arms. Shield Splinter has the hands. Root Grip has bands of roots, and
   Flank Walk has bands of bark, at other rows. Shield Stare has eye knots,
-  and Sap Bite has amber sap, on the arms between the bands. Long Limbs (long
-  arms), Blink Strike (long splinter fingers), and Thorn Fist (thorns) are
+  and Sap Bite has amber sap, on the arms between the bands. Blink Strike
+  has pale splinters that lie flat on the other free rows of the arms. Long
+  Limbs (a thick, blunt limb below each hand) and Thorn Fist (thorns) are
   gene models.
 - The legs, from the top: Quick Bark has pale stripes, Trail Twitch has a
   twist, Heart Twitch has bright cracks, Slip Step has pale moss, and Silent
@@ -431,32 +432,40 @@ def long_limbs():
 
 
 def long_limbs_model():
-    # Long arms: each arm goes on below the hand, as a long, thin limb of
-    # bark, 6 pixels long. The right hand is from y 19.5 to 23.5 on the bone
-    # right_arm, and the left hand from y 15 to 19 on the bone left_arm.
+    # Long arms: each arm goes on below the hand, as a thick, blunt limb of
+    # bark, as wide as the arm and 5 pixels long, with a flat, knotted end.
+    # The right hand is from y 19.5 to 23.5 on the bone right_arm, and the
+    # left hand from y 15 to 19 on the bone left_arm. Each arm is from z
+    # -1.5 to 1.5.
     im = model_image(32, 32)
-    paint_box(im, 0, 0, 2, 6, 2, lambda f, x, y: "#4A3C32" if (x + y) % 3 else "#2A221C")
-    parts = [{"bone": "right_arm", "uv": [0, 0], "from": [-1.5, 23.5, -1], "size": [2, 6, 2]},
-             {"bone": "left_arm", "uv": [0, 0], "from": [0.5, 19, -1], "size": [2, 6, 2]}]
+
+    def bark(f, x, y):
+        if f == "bottom":
+            return "#2A221C" if (x + y) % 2 else "#4A3C32"
+        return "#5A4A3C" if (x + y) % 3 else "#2E2620"
+    paint_box(im, 0, 0, 3, 5, 3, bark)
+    parts = [{"bone": "right_arm", "uv": [0, 0], "from": [-2, 23.5, -1.5], "size": [3, 5, 3]},
+             {"bone": "left_arm", "uv": [0, 0], "from": [0, 19, -1.5], "size": [3, 5, 3]}]
     save_model("long_limbs_arms", im, parts)
 
 
 def blink_strike():
-    # The splinter fingers are the gene model blink_strike_fingers.
-    return []
-
-
-def blink_strike_model():
-    # Long splinter fingers: three long, thin, pale splinters grow out of the
-    # front of each hand and point forward and down.
-    im = model_image(16, 16)
-    paint_box(im, 0, 0, 1, 1, 7, lambda f, x, y: "#E4D8BC" if f != "front" else "#6A5A48")
-    parts = []
-    for bone, x0, y in (("right_arm", -2, 21.5), ("left_arm", 0, 17)):
-        for k in range(3):
-            parts.append({"bone": bone, "uv": [0, 0], "from": [x0 + k, y, -8], "size": [1, 1, 7], "inflate": -0.3,
-                          "pivot": [x0 + k + 0.5, y + 0.5, -1.5], "rotation": [-30, 0, 0]})
-    save_model("blink_strike_fingers", im, parts)
+    # Splinters on the forearms: pale, sharp splinters with dark cracks lie
+    # flat along the free rows of the arms: rows 9 to 11 and 14 of the right
+    # arm, and rows 4 and 5 of the left arm. Nothing sticks out.
+    pale = Mark("#E8DCC0")
+    crack = Mark("#1A1410")
+    order = {"right": 0, "front": 1, "left": 2, "back": 3}
+    for arm, rows in ((RIGHT_ARM, (9, 10, 11, 14)), (LEFT_ARM, (4, 5))):
+        for f in SIDES:
+            for c in range(3):
+                for r in rows:
+                    k = (order[f] * 3 + c + r) % 3
+                    if k == 0:
+                        pale.put(at(arm, f, c, r))
+                    elif k == 1:
+                        crack.put(at(arm, f, c, r))
+    return [pale, crack]
 
 
 def thorn_fist():
@@ -581,7 +590,6 @@ MODEL_GENES = {
     "long_stare": (long_stare_model, "long_stare_eyes"),
     "stare_back": (stare_back_model, "stare_back_eye"),
     "long_limbs": (long_limbs_model, "long_limbs_arms"),
-    "blink_strike": (blink_strike_model, "blink_strike_fingers"),
     "thorn_fist": (thorn_fist_model, "thorn_fist_thorns"),
     "close_guard": (close_guard_model, "close_guard_roots"),
 }

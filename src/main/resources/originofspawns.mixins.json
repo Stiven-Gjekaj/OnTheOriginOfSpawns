@@ -13,6 +13,7 @@
 		"AbstractSkeletonMixin",
 		"AbstractThrownPotionMixin",
 		"AbstractWindChargeMixin",
+		"AnimalMixin",
 		"BehaviorUtilsMixin",
 		"BlazeAccessor",
 		"BlockBehaviourMixin",

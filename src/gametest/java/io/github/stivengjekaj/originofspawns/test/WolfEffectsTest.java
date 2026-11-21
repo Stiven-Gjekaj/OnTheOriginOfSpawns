@@ -132,4 +132,27 @@ public class WolfEffectsTest {
 		helper.assertValueEqual(pools.frequency(WOLF, category, PELT), before, "the death of a tame wolf does not count");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aBredBabyTakesGenesFromThePoolAlsoWhenItIsTame(GameTestHelper helper) {
+		BlockPos pos = new BlockPos(3, 1, 3);
+		var owner = CreeperEffectsTest.survivalPlayer(helper).player();
+		Wolf mother = wolf(helper, pos);
+		Wolf father = wolf(helper, new BlockPos(4, 1, 3));
+		tame(mother, owner);
+		tame(father, owner);
+		GenePools pools = GenePools.get(helper.getLevel().getServer());
+		BiomeCategory category = category(helper, pos);
+		float before = pools.frequency(WOLF, category, PELT);
+		pools.setFrequency(WOLF, category, PELT, 1.0F);
+		mother.spawnChildFromBreeding(helper.getLevel(), father);
+		pools.setFrequency(WOLF, category, PELT, before);
+		var babies = helper.getLevel().getEntitiesOfClass(Wolf.class, mother.getBoundingBox().inflate(2.0), Wolf::isBaby);
+		helper.assertValueEqual(babies.size(), 1, "the parents make one baby");
+		Wolf baby = babies.getFirst();
+		helper.assertTrue(baby.isTame(), "the baby of tame wolves is tame");
+		CarriedGenes genes = baby.getAttached(ModAttachments.GENES);
+		helper.assertTrue(genes != null && genes.genes().contains(PELT), "the bred baby takes the gene from the pool");
+		helper.succeed();
+	}
 }

@@ -166,8 +166,9 @@ public final class Evolution {
 		if (mob.hasAttached(ModAttachments.SPAWN_REASON) && mob.getType().builtInRegistryHolder().is(NO_ITEM_PICKUP)) {
 			mob.setCanPickUpLoot(false);
 		}
-		// A tame mob gets no new genes.
-		if (!mob.hasAttached(ModAttachments.GENES) && !NeutralMobs.outsidePool(mob)) {
+		// A tame mob gets no new genes. A baby that its parents make gets genes, also when it is tame at birth.
+		boolean bred = mob.getAttached(ModAttachments.SPAWN_REASON) == EntitySpawnReason.BREEDING;
+		if (!mob.hasAttached(ModAttachments.GENES) && (bred || !NeutralMobs.outsidePool(mob))) {
 			rollGenes(mob, level);
 			if (mob.hasAttached(ModAttachments.GENES)) {
 				EntitySpawnReason reason = mob.getAttachedOrElse(ModAttachments.SPAWN_REASON, EntitySpawnReason.LOAD);

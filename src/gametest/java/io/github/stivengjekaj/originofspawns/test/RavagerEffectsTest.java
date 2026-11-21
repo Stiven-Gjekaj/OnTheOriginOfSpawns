@@ -26,7 +26,8 @@ public class RavagerEffectsTest {
 		return pig.getMaxHealth() - pig.getHealth();
 	}
 
-	@GameTest
+	// A roar hurts each entity in its range, so the test keeps the other tests away.
+	@GameTest(padding = 12)
 	public void aLoudRoarReachesEightBlocks(GameTestHelper helper) {
 		Ravager plain = ravager(helper, new BlockPos(1, 1, 1));
 		Pig far = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 8));
@@ -39,7 +40,8 @@ public class RavagerEffectsTest {
 		helper.succeed();
 	}
 
-	@GameTest
+	// A roar hurts each entity in its range, so the test keeps the other tests away.
+	@GameTest(padding = 12)
 	public void aRoarDamageGeneActsWhileItsStateIsTrue(GameTestHelper helper) {
 		Ravager ravager = ravager(helper, new BlockPos(1, 1, 1), "test_wounded_roar");
 		Pig first = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 4));
@@ -53,7 +55,8 @@ public class RavagerEffectsTest {
 		helper.succeed();
 	}
 
-	@GameTest
+	// A roar hurts each entity in its range, so the test keeps the other tests away.
+	@GameTest(padding = 12)
 	public void roarEffectsGoToTheTargetsAndToTheRaidersNear(GameTestHelper helper) {
 		Ravager ravager = ravager(helper, new BlockPos(1, 1, 1), "test_war_roar");
 		Pig pig = CreeperEffectsTest.pigAt(helper, new BlockPos(1, 1, 4));

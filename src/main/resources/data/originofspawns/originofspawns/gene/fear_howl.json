@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:wolf/bayer",
+	"gains": [
+		{
+			"type": "aura",
+			"effect": "minecraft:weakness",
+			"radius": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

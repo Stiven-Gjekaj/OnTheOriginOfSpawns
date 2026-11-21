@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns:shield",
+	"family": "originofspawns:wolf/thickcoat",
+	"sub_family": "originofspawns:wolf/biter",
+	"gains": [
+		{
+			"type": "self_effect_on_hurt",
+			"effect": "minecraft:strength",
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

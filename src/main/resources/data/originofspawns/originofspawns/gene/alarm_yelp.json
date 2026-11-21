@@ -1,0 +1,17 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:wolf/bayer",
+	"gains": [
+		{
+			"type": "call_on_hurt",
+			"radius": 32
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

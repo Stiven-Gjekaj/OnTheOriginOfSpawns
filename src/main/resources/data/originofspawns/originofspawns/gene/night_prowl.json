@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns:night",
+	"family": "originofspawns:wolf/courser",
+	"gains": [
+		{
+			"type": "speed_when",
+			"when": "night",
+			"multiplier": 1.2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

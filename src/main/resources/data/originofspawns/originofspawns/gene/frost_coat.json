@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns:cold",
+	"family": "originofspawns:wolf/thickcoat",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_freezing",
+			"multiplier": 0
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

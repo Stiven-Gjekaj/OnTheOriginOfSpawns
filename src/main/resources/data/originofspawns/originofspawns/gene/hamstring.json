@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:wolf/biter",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:slowness",
+			"seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

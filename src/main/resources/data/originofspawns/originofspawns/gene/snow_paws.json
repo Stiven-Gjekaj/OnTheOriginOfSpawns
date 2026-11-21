@@ -1,0 +1,24 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns:snow",
+	"family": "originofspawns:wolf/courser",
+	"sub_family": "originofspawns:wolf/thickcoat",
+	"gains": [
+		{
+			"type": "walk_on_powder_snow"
+		},
+		{
+			"type": "speed_when",
+			"when": "on_snow",
+			"multiplier": 1.2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns:alone",
+	"family": "originofspawns:wolf/courser",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:follow_range",
+			"amount": 1,
+			"operation": "add_multiplied_total"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

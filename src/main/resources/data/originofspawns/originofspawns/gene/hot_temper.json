@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:wolf/bayer",
+	"gains": [
+		{
+			"type": "anger_time",
+			"multiplier": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

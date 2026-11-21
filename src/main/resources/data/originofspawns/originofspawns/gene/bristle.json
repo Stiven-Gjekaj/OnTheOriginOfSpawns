@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:wolf/thickcoat",
+	"gains": [
+		{
+			"type": "thorns",
+			"damage": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

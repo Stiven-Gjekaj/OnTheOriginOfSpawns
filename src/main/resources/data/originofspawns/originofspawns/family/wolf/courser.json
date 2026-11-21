@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:wolf",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "speed_when",
+					"when": "target_player",
+					"multiplier": 1.1
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "always",
+					"multiplier": 1.2
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "speed_when",
+					"when": "target_player",
+					"multiplier": 1.15
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "always",
+					"multiplier": 1.15
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "speed_when",
+					"when": "target_player",
+					"multiplier": 1.2
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_taken_when",
+					"when": "always",
+					"multiplier": 1.1
+				}
+			]
+		}
+	]
+}

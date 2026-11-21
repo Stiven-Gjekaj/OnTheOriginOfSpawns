@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns:night",
+	"family": "originofspawns:wolf/bayer",
+	"gains": [
+		{
+			"type": "call_on_sight",
+			"radius": 24,
+			"when": "night"
+		}
+	],
+	"downsides": [
+		{
+			"type": "loud",
+			"multiplier": 2
+		}
+	]
+}

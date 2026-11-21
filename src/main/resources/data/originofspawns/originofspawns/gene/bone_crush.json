@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:wolf/biter",
+	"gains": [
+		{
+			"type": "armor_break",
+			"multiplier": 2,
+			"hits": "melee"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

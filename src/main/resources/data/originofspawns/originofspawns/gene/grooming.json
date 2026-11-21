@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:wolf/denmate",
+	"gains": [
+		{
+			"type": "regenerate",
+			"amount": 1,
+			"interval_seconds": 4,
+			"idle_seconds": 0,
+			"when": "grouped"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

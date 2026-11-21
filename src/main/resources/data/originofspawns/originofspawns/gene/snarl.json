@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:wolf",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:wolf/biter",
+	"sub_family": "originofspawns:wolf/bayer",
+	"gains": [
+		{
+			"type": "call_on_hit",
+			"radius": 16
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

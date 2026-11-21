@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "hard_heart", "break_time": 1.5, "blast_proof": true }, { "type": "hard_heart", "break_time": 2 }],
+	"mutation_rate": 0
+}

@@ -180,4 +180,33 @@ public final class GeneCreakings {
 		}
 		return true;
 	}
+
+	/**
+	 * Returns the creaking that the heart at the place protects now, or empty. Only the server knows it.
+	 */
+	public static java.util.Optional<Creaking> protector(net.minecraft.world.level.BlockGetter level, net.minecraft.core.BlockPos pos) {
+		return level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.CreakingHeartBlockEntity heart
+				? ((io.github.stivengjekaj.originofspawns.mixin.CreakingHeartBlockEntityAccessor) heart).originofspawns$getCreakingProtector()
+				: java.util.Optional.empty();
+	}
+
+	/**
+	 * Returns the product of the break time multipliers of the hard heart genes of the creaking.
+	 */
+	public static float heartBreakTime(Creaking creaking) {
+		float multiplier = 1.0F;
+		for (GeneEffect effect : GeneEffects.of(creaking).toList()) {
+			if (effect instanceof GeneEffect.HardHeart heart) {
+				multiplier *= heart.breakTime();
+			}
+		}
+		return multiplier;
+	}
+
+	/**
+	 * Returns true if a hard heart gene of the creaking stops an explosion from breaking its heart.
+	 */
+	public static boolean heartBlastProof(Creaking creaking) {
+		return GeneEffects.of(creaking).anyMatch(effect -> effect instanceof GeneEffect.HardHeart heart && heart.blastProof());
+	}
 }

@@ -380,7 +380,8 @@ public sealed interface GeneEffect {
 			Map.entry("ignore_far_look_in_dark", IgnoreFarLookInDark.CODEC),
 			Map.entry("ignore_look_after_hit", IgnoreLookAfterHit.CODEC),
 			Map.entry("ignore_shield_look", IgnoreShieldLook.CODEC),
-			Map.entry("blink_strike", BlinkStrike.CODEC)
+			Map.entry("blink_strike", BlinkStrike.CODEC),
+			Map.entry("hard_heart", HardHeart.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6469,6 +6470,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "blink_strike";
+		}
+	}
+
+	/**
+	 * The heart of a creaking takes this many times as long to break. With {@code blast_proof}, an explosion does not
+	 * break the heart. The time is for the player that breaks it, for example with an axe. It acts only while the heart
+	 * protects the creaking. More than one effect multiplies together. Heartkeepers tier 3: 2. Hard Heart: 1.5, blast proof.
+	 */
+	record HardHeart(float breakTime, boolean blastProof) implements GeneEffect {
+		public static final MapCodec<HardHeart> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.1F, 100.0F).optionalFieldOf("break_time", 1.0F).forGetter(HardHeart::breakTime),
+				Codec.BOOL.optionalFieldOf("blast_proof", false).forGetter(HardHeart::blastProof)
+		).apply(instance, HardHeart::new));
+
+		@Override
+		public String type() {
+			return "hard_heart";
 		}
 	}
 }

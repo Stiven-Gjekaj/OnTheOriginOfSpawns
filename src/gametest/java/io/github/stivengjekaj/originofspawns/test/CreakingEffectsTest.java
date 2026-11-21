@@ -279,4 +279,25 @@ public class CreakingEffectsTest {
 		helper.assertTrue(Math.abs(speed.getValue() - plain * 1.5) < 1.0E-6, "Slip Step: 50% more speed after the look away");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aHardHeartIsSlowerToBreakAndABlastDoesNotBreakIt(GameTestHelper helper) {
+		Bound plain = bound(helper, new BlockPos(1, 1, 1), new BlockPos(1, 1, 3));
+		Bound hard = bound(helper, new BlockPos(5, 1, 1), new BlockPos(5, 1, 3), "test_hard_heart");
+		var player = player(helper, new BlockPos(3, 1, 1));
+		float plainProgress = plain.heart().getBlockState().getDestroyProgress(player, helper.getLevel(), plain.heart().getBlockPos());
+		float hardProgress = hard.heart().getBlockState().getDestroyProgress(player, helper.getLevel(), hard.heart().getBlockPos());
+		helper.assertTrue(Math.abs(hardProgress * 3.0F - plainProgress) < 1.0E-6, "the hard heart takes 3 times as long to break");
+		var explosion = new net.minecraft.world.level.ServerExplosion(helper.getLevel(), null, null, null,
+				net.minecraft.world.phys.Vec3.atCenterOf(hard.heart().getBlockPos()), 4.0F, false,
+				net.minecraft.world.level.Explosion.BlockInteraction.DESTROY);
+		hard.heart().getBlockState().onExplosionHit(helper.getLevel(), hard.heart().getBlockPos(), explosion, (stack, pos) -> {
+		});
+		plain.heart().getBlockState().onExplosionHit(helper.getLevel(), plain.heart().getBlockPos(), explosion, (stack, pos) -> {
+		});
+		helper.assertFalse(plain.creaking().isAlive() && !plain.creaking().isRemoved(), "the same blast breaks a plain heart");
+		helper.assertTrue(hard.creaking().isAlive(), "a blast does not break the hard heart");
+		helper.assertBlockPresent(Blocks.CREAKING_HEART, new BlockPos(5, 1, 1));
+		helper.succeed();
+	}
 }

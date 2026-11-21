@@ -260,4 +260,24 @@ public class RavagerEffectsTest {
 		helper.assertTrue(golem.getHealth() < golem.getMaxHealth(), "the vindicator on the ravager hits the golem");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void anEscortRiderPutsAPillagerOnARavagerInARaid(GameTestHelper helper) {
+		var escort = new io.github.stivengjekaj.originofspawns.definition.GeneEffect.RaidRider(EntityTypes.PILLAGER);
+		Ravager lone = ravager(helper, new BlockPos(5, 1, 5));
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneRavagers.raidRider(lone, helper.getLevel(), escort),
+				"a ravager in no raid gets no rider");
+		Ravager ravager = ravager(helper, new BlockPos(2, 1, 2));
+		var raid = new net.minecraft.world.entity.raid.Raid(helper.absolutePos(new BlockPos(2, 1, 2)),
+				net.minecraft.world.Difficulty.NORMAL);
+		raid.joinRaid(helper.getLevel(), 1, ravager, null, true);
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneRavagers.raidRider(ravager, helper.getLevel(), escort),
+				"the ravager in the raid gets a rider");
+		helper.assertTrue(ravager.getFirstPassenger() instanceof net.minecraft.world.entity.monster.illager.Pillager pillager
+				&& pillager.getCurrentRaid() == raid && pillager.getWave() == 1, "the rider is a pillager in the same wave");
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneRavagers.raidRider(ravager, helper.getLevel(), escort),
+				"a ravager with a rider gets no second rider");
+		ravager.getFirstPassenger().discard();
+		helper.succeed();
+	}
 }

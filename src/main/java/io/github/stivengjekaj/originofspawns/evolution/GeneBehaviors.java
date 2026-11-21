@@ -156,6 +156,10 @@ public final class GeneBehaviors {
 						level.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
 								.get(enchant.enchantment()).ifPresent(holder -> mob.getMainHandItem().enchant(holder, enchant.level()));
 				case GeneEffect.TridentChance trident -> rollTrident(mob, trident);
+				// The vanilla raid puts its own riders on after the raider joins the world, so the gene waits one tick.
+				case GeneEffect.RaidRider rider when mob instanceof net.minecraft.world.entity.raid.Raider raider
+						&& reason == EntitySpawnReason.EVENT && raider.getCurrentRaid() != null ->
+						DelayedTasks.schedule(level, 1, () -> GeneRavagers.raidRider(raider, level, rider));
 				case GeneEffect.Runt runt when mob.getRandom().nextFloat() < runt.chance() -> makeRunt(mob, level, runt);
 				case GeneEffect.Brood brood when broodReason(reason) ->
 						spawnBrood(mob, level, brood.extra(), EntitySpawnReason.REINFORCEMENT, brood.poolGenes(), brood.babyChance());

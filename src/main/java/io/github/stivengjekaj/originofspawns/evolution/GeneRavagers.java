@@ -256,4 +256,21 @@ public final class GeneRavagers {
 		}
 		return healed;
 	}
+
+	/**
+	 * Puts a new raider of the raid rider gene on the back of the raider, in the same wave of its raid, if the raider is
+	 * in a raid and has no rider.
+	 *
+	 * @return true if a rider got on
+	 */
+	public static boolean raidRider(Raider raider, net.minecraft.server.level.ServerLevel level, GeneEffect.RaidRider rider) {
+		net.minecraft.world.entity.raid.Raid raid = raider.getCurrentRaid();
+		if (raid == null || !raider.isAlive() || raider.isVehicle()
+				|| !(rider.entity().create(level, net.minecraft.world.entity.EntitySpawnReason.EVENT) instanceof Raider on)) {
+			return false;
+		}
+		raid.joinRaid(level, raider.getWave(), on, raider.blockPosition(), false);
+		on.snapTo(raider.getX(), raider.getY(), raider.getZ(), raider.getYRot(), 0.0F);
+		return on.startRiding(raider, false, false);
+	}
 }

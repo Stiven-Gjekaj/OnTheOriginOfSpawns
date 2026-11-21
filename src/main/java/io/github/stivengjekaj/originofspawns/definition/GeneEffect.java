@@ -371,7 +371,8 @@ public sealed interface GeneEffect {
 			Map.entry("trample", Trample.CODEC),
 			Map.entry("speed_after", SpeedAfter.CODEC),
 			Map.entry("heal_on_rider_hit", HealOnRiderHit.CODEC),
-			Map.entry("rider_strike", RiderStrike.CODEC)
+			Map.entry("rider_strike", RiderStrike.CODEC),
+			Map.entry("raid_rider", RaidRider.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6314,6 +6315,23 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "rider_strike";
+		}
+	}
+
+	/**
+	 * When the mob spawns in a raid with no rider, a raider of this type spawns on its back and joins the same wave of the
+	 * raid. It gets genes as a new mob. In a vanilla raid, a ravager gets a rider only in some waves. Escort Rider: a
+	 * pillager.
+	 */
+	record RaidRider(EntityType<?> entity) implements GeneEffect {
+		public static final MapCodec<RaidRider> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				BuiltInRegistries.ENTITY_TYPE.byNameCodec().optionalFieldOf("entity", net.minecraft.world.entity.EntityTypes.PILLAGER)
+						.forGetter(RaidRider::entity)
+		).apply(instance, RaidRider::new));
+
+		@Override
+		public String type() {
+			return "raid_rider";
 		}
 	}
 }

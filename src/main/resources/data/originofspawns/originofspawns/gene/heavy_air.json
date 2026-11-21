@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:shulker",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:shulker/lifter",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:weakness",
+			"seconds": 6,
+			"hits": "projectile"
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"hits": "projectile",
+			"multiplier": 0.9
+		}
+	]
+}

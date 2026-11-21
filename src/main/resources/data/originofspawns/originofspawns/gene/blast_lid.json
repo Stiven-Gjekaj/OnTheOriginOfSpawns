@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:shulker",
+	"counters": "originofspawns:explosion",
+	"family": "originofspawns:shulker/bunker",
+	"gains": [
+		{
+			"type": "damage_taken",
+			"damage_types": "#minecraft:is_explosion",
+			"multiplier": 0.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.9
+		}
+	]
+}

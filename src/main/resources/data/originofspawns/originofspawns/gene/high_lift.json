@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:shulker",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:shulker/lifter",
+	"gains": [
+		{
+			"type": "bullet_levitation",
+			"seconds": 20
+		}
+	],
+	"downsides": [
+		{
+			"type": "damage_dealt_when",
+			"when": "always",
+			"hits": "projectile",
+			"multiplier": 0.9
+		}
+	]
+}

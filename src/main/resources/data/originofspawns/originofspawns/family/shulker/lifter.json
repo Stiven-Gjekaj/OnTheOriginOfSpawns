@@ -1,0 +1,53 @@
+{
+	"species": "minecraft:shulker",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "bullet_levitation",
+					"seconds": 13
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"hits": "projectile",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "bullet_levitation",
+					"seconds": 15
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"hits": "projectile",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "bullet_levitation",
+					"seconds": 20
+				}
+			],
+			"debuffs": [
+				{
+					"type": "damage_dealt_when",
+					"when": "always",
+					"hits": "projectile",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:shulker",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:shulker/gunner",
+	"gains": [
+		{
+			"type": "double_shot",
+			"every": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,20 @@
+{
+	"species": "minecraft:shulker",
+	"counters": "originofspawns:spotted",
+	"family": "originofspawns:shulker/shifter",
+	"sub_family": "originofspawns:shulker/bunker",
+	"gains": [
+		{
+			"type": "shut_after_teleport",
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

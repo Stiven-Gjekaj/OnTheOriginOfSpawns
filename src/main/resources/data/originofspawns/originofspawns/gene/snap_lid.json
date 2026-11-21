@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:shulker",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:shulker/bunker",
+	"sub_family": "originofspawns:shulker/gunner",
+	"gains": [
+		{
+			"type": "lid_snap",
+			"damage": 4,
+			"cooldown_seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "throw_rate",
+			"multiplier": 0.9
+		}
+	]
+}

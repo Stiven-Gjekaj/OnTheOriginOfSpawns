@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:shulker",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:shulker/gunner",
+	"gains": [
+		{
+			"type": "bullet_damage",
+			"extra": 2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

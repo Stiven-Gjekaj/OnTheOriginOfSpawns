@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:shulker",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:shulker/budder",
+	"sub_family": "originofspawns:shulker/shifter",
+	"gains": [
+		{
+			"type": "split_scatter"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

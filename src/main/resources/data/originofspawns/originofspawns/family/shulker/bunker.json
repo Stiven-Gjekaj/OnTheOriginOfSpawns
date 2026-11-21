@@ -1,0 +1,56 @@
+{
+	"species": "minecraft:shulker",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "attribute_when",
+					"when": "shell_open",
+					"attribute": "minecraft:armor",
+					"amount": 3,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "throw_rate",
+					"multiplier": 0.8
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute_when",
+					"when": "shell_open",
+					"attribute": "minecraft:armor",
+					"amount": 4,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "throw_rate",
+					"multiplier": 0.85
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute_when",
+					"when": "shell_open",
+					"attribute": "minecraft:armor",
+					"amount": 8,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "throw_rate",
+					"multiplier": 0.9
+				}
+			]
+		}
+	]
+}

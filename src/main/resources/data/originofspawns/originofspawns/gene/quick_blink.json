@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:shulker",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:shulker/shifter",
+	"gains": [
+		{
+			"type": "teleport_on_hurt",
+			"chance": 0.5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

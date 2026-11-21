@@ -1,0 +1,56 @@
+{
+	"species": "minecraft:shulker",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "teleport_on_hurt",
+					"chance": 0.3
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute_when",
+					"when": "shell_closed",
+					"attribute": "minecraft:armor",
+					"amount": -8,
+					"operation": "add_value"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "teleport_on_hurt",
+					"chance": 0.35
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute_when",
+					"when": "shell_closed",
+					"attribute": "minecraft:armor",
+					"amount": -6,
+					"operation": "add_value"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "teleport_on_hurt",
+					"chance": 0.5
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute_when",
+					"when": "shell_closed",
+					"attribute": "minecraft:armor",
+					"amount": -4,
+					"operation": "add_value"
+				}
+			]
+		}
+	]
+}

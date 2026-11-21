@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "ignore_far_look_in_dark", "distance": 3, "max_light": 4 }],
+	"mutation_rate": 0
+}

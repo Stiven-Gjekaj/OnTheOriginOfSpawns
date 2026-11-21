@@ -201,4 +201,27 @@ public class CreakingEffectsTest {
 		player.discard();
 		helper.succeed();
 	}
+
+	@GameTest(maxTicks = 40)
+	public void aShadowCreepIgnoresAFarLookInTheDark(GameTestHelper helper) {
+		Creaking dark = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 1), "test_shadow_creep");
+		Creaking lit = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(6, 1, 1), "test_shadow_creep");
+		// A light of level 6 at the lit creaking does not reach the dark one, 5 blocks away. The light spreads in the next
+		// ticks. The test area has no other block light.
+		helper.setBlock(new BlockPos(6, 1, 1), net.minecraft.world.level.block.Blocks.LIGHT.defaultBlockState()
+				.setValue(net.minecraft.world.level.block.LightBlock.LEVEL, 6));
+		helper.runAfterDelay(10, () -> {
+			// The test gene ignores a look from more than 3 blocks, so that the players stay in the test area.
+			var far = player(helper, new BlockPos(1, 1, 6));
+			lookAt(far, dark);
+			helper.assertTrue(dark.checkCanMove(), "the look from 5 blocks in the dark does not stop it");
+			var farLit = player(helper, new BlockPos(6, 1, 6));
+			lookAt(farLit, lit);
+			helper.assertFalse(lit.checkCanMove(), "in the light, the far look stops it");
+			var near = player(helper, new BlockPos(1, 1, 3));
+			lookAt(near, dark);
+			helper.assertFalse(dark.checkCanMove(), "the look from 2 blocks still stops it");
+			helper.succeed();
+		});
+	}
 }

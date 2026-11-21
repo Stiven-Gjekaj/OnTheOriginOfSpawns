@@ -376,7 +376,8 @@ public sealed interface GeneEffect {
 			Map.entry("raid_hunt", RaidHunt.CODEC),
 			Map.entry("watched_step", WatchedStep.CODEC),
 			Map.entry("twitch_on_hurt", TwitchOnHurt.CODEC),
-			Map.entry("heart_twitch", HeartTwitch.CODEC)
+			Map.entry("heart_twitch", HeartTwitch.CODEC),
+			Map.entry("ignore_far_look_in_dark", IgnoreFarLookInDark.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6402,6 +6403,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "heart_twitch";
+		}
+	}
+
+	/**
+	 * While the block light at an awake creaking is at most the light, the look of a player farther than the distance
+	 * does not stop it. A nearer look still stops it. The look still wakes a creaking. Shadow Creep: 6 blocks, light 4.
+	 */
+	record IgnoreFarLookInDark(float distance, int maxLight) implements GeneEffect {
+		public static final MapCodec<IgnoreFarLookInDark> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 64.0F).optionalFieldOf("distance", 6.0F).forGetter(IgnoreFarLookInDark::distance),
+				Codec.intRange(0, 15).optionalFieldOf("max_light", 4).forGetter(IgnoreFarLookInDark::maxLight)
+		).apply(instance, IgnoreFarLookInDark::new));
+
+		@Override
+		public String type() {
+			return "ignore_far_look_in_dark";
 		}
 	}
 }

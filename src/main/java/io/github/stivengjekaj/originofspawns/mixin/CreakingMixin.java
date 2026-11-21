@@ -5,7 +5,9 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import io.github.stivengjekaj.originofspawns.evolution.GeneCreakings;
 
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.creaking.Creaking;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.CreakingHeartBlockEntity;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,5 +38,18 @@ public abstract class CreakingMixin {
 		if (!info.getReturnValueZ() && GeneCreakings.free((Creaking) (Object) this)) {
 			info.setReturnValue(true);
 		}
+	}
+
+	/**
+	 * A look gene of an awake creaking can stop the look of a player from holding it still. The look still wakes it.
+	 */
+	@WrapOperation(method = "checkCanMove", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/monster/creaking/Creaking;isLookingAtMe(Lnet/minecraft/world/entity/LivingEntity;DZZ[D)Z"))
+	private boolean originofspawns$ignoreLook(Creaking self, LivingEntity viewer, double cone, boolean adjust, boolean through,
+			double[] heights, Operation<Boolean> original) {
+		if (self.isActive() && viewer instanceof Player player && GeneCreakings.ignoresLook(self, player)) {
+			return false;
+		}
+		return original.call(self, viewer, cone, adjust, through, heights);
 	}
 }

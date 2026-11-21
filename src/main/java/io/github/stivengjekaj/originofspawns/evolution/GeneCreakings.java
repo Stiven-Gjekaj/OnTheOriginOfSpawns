@@ -118,4 +118,18 @@ public final class GeneCreakings {
 		freeFor(creaking, twitch.seconds());
 		return true;
 	}
+
+	/**
+	 * Returns true if the look of the player does not stop the awake creaking, after its look genes.
+	 */
+	public static boolean ignoresLook(Creaking creaking, net.minecraft.world.entity.player.Player player) {
+		for (GeneEffect effect : GeneEffects.of(creaking).toList()) {
+			if (effect instanceof GeneEffect.IgnoreFarLookInDark dark && player.distanceTo(creaking) > dark.distance()
+					&& creaking.level().getBrightness(net.minecraft.world.level.LightLayer.BLOCK, creaking.blockPosition())
+							<= dark.maxLight()) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

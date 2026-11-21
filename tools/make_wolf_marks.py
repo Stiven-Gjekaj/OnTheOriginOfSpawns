@@ -390,16 +390,17 @@ def fear_howl():
 
 def fear_howl_model():
     # Raised hackles: two rows of stiff tufts of fur stand up on the top of
-    # the neck and lean back. The tufts use the mob texture, so they have
+    # the neck and lean back. The middle tuft of each row is the tallest. The tufts use the mob texture, so they have
     # the coat of each variant. Their uv is on the back of the head, which
     # does not show and has no marks. The bone upper_body turns by 90
     # degrees round x. Each tuft turns back by -90 degrees round x at its
     # pivot, so the box is upright: in the frame of the pivot, -y is up and
     # -z is the front. The pivot is on the top of the mane (z 4 of the bone).
-    # Each tuft is 2 wide, 1 deep, and 2 or 3 high, and leans back by 20
-    # degrees.
+    # The two rows are at y -1.5 and 0, behind the ears, so that the ears
+    # still show from behind. Each tuft is 2 wide, 1 deep, and 1 or 2 high,
+    # and leans back by 20 degrees.
     parts = []
-    for y, high in ((-2.5, 3), (-1, 2)):
+    for y, high in ((-1.5, 2), (0, 2)):
         for x, tall in ((-2, high - 1), (0, high), (2, high - 1)):
             parts.append({"bone": "upper_body", "uv": [14, 4], "from": [x, y - tall, 3.5], "size": [2, tall, 1],
                           "pivot": [x + 1, y, 4], "rotation": [-70, 0, 0]})

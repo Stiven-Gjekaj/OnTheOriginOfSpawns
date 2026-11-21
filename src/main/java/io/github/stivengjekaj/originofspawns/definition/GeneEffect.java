@@ -383,7 +383,8 @@ public sealed interface GeneEffect {
 			Map.entry("blink_strike", BlinkStrike.CODEC),
 			Map.entry("hard_heart", HardHeart.CODEC),
 			Map.entry("heart_thorns", HeartThorns.CODEC),
-			Map.entry("heart_burst", HeartBurst.CODEC)
+			Map.entry("heart_burst", HeartBurst.CODEC),
+			Map.entry("heart_leash", HeartLeash.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6520,6 +6521,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "heart_burst";
+		}
+	}
+
+	/**
+	 * A creaking stays in this many fewer blocks of its heart. A vanilla creaking walks in 32 blocks of its heart, and its
+	 * heart lets it go past 34 blocks. More than one effect adds up, and the range is 4 blocks at least. Heartkeepers tier
+	 * 3: 4, so 28 blocks. Each Heartkeeper gene downside: 4.
+	 */
+	record HeartLeash(float less) implements GeneEffect {
+		public static final MapCodec<HeartLeash> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.0F, 32.0F).optionalFieldOf("less", 4.0F).forGetter(HeartLeash::less)
+		).apply(instance, HeartLeash::new));
+
+		@Override
+		public String type() {
+			return "heart_leash";
 		}
 	}
 }

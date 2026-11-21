@@ -233,4 +233,32 @@ public final class GeneCreakings {
 			}
 		}
 	}
+
+	/**
+	 * The range from its heart in which a vanilla creaking walks.
+	 */
+	public static final double VANILLA_HEART_RANGE = 32.0;
+
+	/**
+	 * The smallest range from its heart.
+	 */
+	private static final double MIN_HEART_RANGE = 4.0;
+
+	/**
+	 * The heart lets its creaking go this many blocks past its walk range. Vanilla is 34 for 32.
+	 */
+	public static final double HEART_RANGE_SLACK = 2.0;
+
+	/**
+	 * Returns the range from its heart in which the creaking walks, after its heart leash genes.
+	 */
+	public static double heartRange(Creaking creaking) {
+		double less = 0.0;
+		for (GeneEffect effect : GeneEffects.of(creaking).toList()) {
+			if (effect instanceof GeneEffect.HeartLeash leash) {
+				less += leash.less();
+			}
+		}
+		return Math.max(MIN_HEART_RANGE, VANILLA_HEART_RANGE - less);
+	}
 }

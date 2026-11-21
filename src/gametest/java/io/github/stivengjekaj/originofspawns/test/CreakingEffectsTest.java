@@ -323,4 +323,20 @@ public class CreakingEffectsTest {
 		helper.assertTrue(other.isAlive(), "another creaking takes no damage");
 		helper.succeed();
 	}
+
+	@GameTest(maxTicks = 80)
+	public void aHeartLeashKeepsTheCreakingNearerToItsHeart(GameTestHelper helper) {
+		Bound plain = bound(helper, new BlockPos(1, 1, 1), new BlockPos(1, 1, 8));
+		Bound leashed = bound(helper, new BlockPos(6, 1, 1), new BlockPos(6, 1, 8), "test_heart_leash");
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.heartRange(plain.creaking()), 32.0,
+				"a vanilla creaking walks in 32 blocks of its heart");
+		helper.assertValueEqual(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.heartRange(leashed.creaking()), 4.0,
+				"the genes keep it in 4 blocks, the smallest range");
+		// The heart checks its creaking about one time each second. 7 blocks is past the leashed range of 4 and 2.
+		helper.runAfterDelay(60, () -> {
+			helper.assertTrue(leashed.creaking().isRemoved(), "the heart lets the leashed creaking go");
+			helper.assertFalse(plain.creaking().isRemoved(), "the plain creaking stays");
+			helper.succeed();
+		});
+	}
 }

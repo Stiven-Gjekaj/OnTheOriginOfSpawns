@@ -29,6 +29,7 @@
 		"CreakingHeartBlockEntityAccessor",
 		"CreakingHeartBlockEntityMixin",
 		"CreakingHeartBlockMixin",
+		"CreakingHomeNodeEvaluatorMixin",
 		"CreakingMixin",
 		"CreeperAccessor",
 		"CreeperMixin",

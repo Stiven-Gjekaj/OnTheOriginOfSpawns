@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "heart_leash", "less": 14 }, { "type": "heart_leash", "less": 14 }],
+	"mutation_rate": 0
+}

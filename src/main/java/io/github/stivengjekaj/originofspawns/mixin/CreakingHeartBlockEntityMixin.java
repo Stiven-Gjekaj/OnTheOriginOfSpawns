@@ -1,5 +1,7 @@
 package io.github.stivengjekaj.originofspawns.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import io.github.stivengjekaj.originofspawns.evolution.GeneCreakings;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -9,7 +11,9 @@ import net.minecraft.world.level.block.entity.CreakingHeartBlockEntity;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
@@ -40,5 +44,14 @@ public abstract class CreakingHeartBlockEntityMixin {
 	private void originofspawns$markTrail(CallbackInfo info) {
 		((CreakingHeartBlockEntityAccessor) this).originofspawns$getCreakingProtector()
 				.ifPresent(creaking -> creaking.setAttached(ModAttachments.TRAIL_TIME, creaking.level().getGameTime()));
+	}
+
+	/**
+	 * A heart leash gene of the creaking makes the heart let it go nearer to the heart.
+	 */
+	@ModifyConstant(method = "serverTick", constant = @Constant(doubleValue = 34.0))
+	private static double originofspawns$heartRange(double range, @Local(argsOnly = true) CreakingHeartBlockEntity heart) {
+		return ((CreakingHeartBlockEntityAccessor) heart).originofspawns$getCreakingProtector()
+				.map(creaking -> GeneCreakings.heartRange(creaking) + GeneCreakings.HEART_RANGE_SLACK).orElse(range);
 	}
 }

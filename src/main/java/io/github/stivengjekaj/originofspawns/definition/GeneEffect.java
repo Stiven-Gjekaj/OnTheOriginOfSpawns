@@ -373,7 +373,8 @@ public sealed interface GeneEffect {
 			Map.entry("heal_on_rider_hit", HealOnRiderHit.CODEC),
 			Map.entry("rider_strike", RiderStrike.CODEC),
 			Map.entry("raid_rider", RaidRider.CODEC),
-			Map.entry("raid_hunt", RaidHunt.CODEC)
+			Map.entry("raid_hunt", RaidHunt.CODEC),
+			Map.entry("watched_step", WatchedStep.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6349,6 +6350,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "raid_hunt";
+		}
+	}
+
+	/**
+	 * While a player looks at a creaking and holds it still, it takes one step toward its target in each interval. A step
+	 * is one block, and walls stop it. With more than one effect, the shortest interval counts. Twitchers tier 3: 2
+	 * seconds. Jitter Step: 3 seconds.
+	 */
+	record WatchedStep(float intervalSeconds) implements GeneEffect {
+		public static final MapCodec<WatchedStep> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(0.05F, 600.0F).optionalFieldOf("interval_seconds", 3.0F).forGetter(WatchedStep::intervalSeconds)
+		).apply(instance, WatchedStep::new));
+
+		@Override
+		public String type() {
+			return "watched_step";
 		}
 	}
 }

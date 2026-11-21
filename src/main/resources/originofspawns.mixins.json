@@ -24,6 +24,7 @@
 		"BreezeShootMixin",
 		"BreezeWindChargeMixin",
 		"CaveSpiderMixin",
+		"CreakingAccessor",
 		"CreakingHeartBlockEntityAccessor",
 		"CreakingHeartBlockEntityMixin",
 		"CreeperAccessor",

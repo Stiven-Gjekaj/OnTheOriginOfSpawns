@@ -128,4 +128,36 @@ public class CreakingEffectsTest {
 				"a break after the trail counts for heart_trail");
 		helper.succeed();
 	}
+
+	/**
+	 * Gives the creaking a target. A creaking keeps its target in its brain.
+	 */
+	static void target(Creaking creaking, net.minecraft.world.entity.LivingEntity target) {
+		creaking.getBrain().setMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_TARGET, target);
+	}
+
+	/**
+	 * Makes the creaking awake and still, as when a player looks at it.
+	 */
+	static void watch(Creaking creaking) {
+		creaking.setIsActive(true);
+		creaking.getEntityData().set(io.github.stivengjekaj.originofspawns.mixin.CreakingAccessor.originofspawns$canMoveData(), false);
+	}
+
+	@GameTest
+	public void aJitterStepTakesOneStepWhileAPlayerLooksAtIt(GameTestHelper helper) {
+		Creaking creaking = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 3), "test_jitter_step");
+		var pig = CreeperEffectsTest.pigAt(helper, new BlockPos(6, 1, 3));
+		target(creaking, pig);
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.watchedStep(creaking),
+				"a creaking that no player looks at takes no step");
+		watch(creaking);
+		double before = creaking.getX();
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.watchedStep(creaking),
+				"a watched creaking takes a step");
+		helper.assertTrue(Math.abs(creaking.getX() - before - 1.0) < 0.01, "the step is one block toward the pig");
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.watchedStep(creaking),
+				"the next step waits");
+		helper.succeed();
+	}
 }

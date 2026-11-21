@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/wolf.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/old_grudge_0.png",
+				"tint": "#F0E0D8"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/old_grudge_1.png",
+				"tint": "#B0606A"
+			}
+		}
+	]
+}

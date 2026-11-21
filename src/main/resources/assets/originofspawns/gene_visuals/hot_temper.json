@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/wolf.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/hot_temper_0.png",
+				"tint": "#C81010"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/hot_temper_1.png",
+				"tint": "#FF4A2A"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/hot_temper_2.png",
+				"tint": "#5A0A0A"
+			}
+		}
+	]
+}

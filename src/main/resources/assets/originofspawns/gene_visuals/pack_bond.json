@@ -1,0 +1,28 @@
+{
+	"region_map": "originofspawns:textures/region/wolf.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/pack_bond_0.png",
+				"tint": "#3A1A14"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/pack_bond_1.png",
+				"tint": "#9A4038"
+			}
+		},
+		{
+			"regions": [
+				"scalp"
+			],
+			"effect": {
+				"type": "erase",
+				"texture": "originofspawns:textures/gene_marks/pack_bond_mask.png"
+			}
+		}
+	]
+}

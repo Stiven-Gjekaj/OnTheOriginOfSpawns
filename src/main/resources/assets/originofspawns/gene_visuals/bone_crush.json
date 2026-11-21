@@ -1,0 +1,26 @@
+{
+	"region_map": "originofspawns:textures/region/wolf.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/bone_crush_0.png",
+				"tint": "#E8C850"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/bone_crush_1.png",
+				"tint": "#3A2A10"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/bone_crush_2.png",
+				"tint": "#8A6A28"
+			}
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"region_map": "originofspawns:textures/region/wolf.png",
+	"layers": [
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/alpha_mark_0.png",
+				"tint": "#2A1C14"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/alpha_mark_1.png",
+				"tint": "#A08E7C"
+			}
+		}
+	]
+}

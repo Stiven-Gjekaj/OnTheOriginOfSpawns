@@ -519,4 +519,19 @@ public class CreakingEffectsTest {
 			helper.succeed();
 		});
 	}
+
+	@GameTest
+	public void darkEyesDoNotGlowWhileNoPlayerLooksAtTheCreaking(GameTestHelper helper) {
+		Creaking plain = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 1));
+		Creaking gene = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 5), "test_dark_eyes");
+		plain.setIsActive(true);
+		gene.setIsActive(true);
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.darkEyes(plain), "plain eyes glow");
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.darkEyes(gene),
+				"the eyes do not glow while the creaking can move");
+		watch(gene);
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.darkEyes(gene),
+				"the eyes glow while a player looks at the creaking");
+		helper.succeed();
+	}
 }

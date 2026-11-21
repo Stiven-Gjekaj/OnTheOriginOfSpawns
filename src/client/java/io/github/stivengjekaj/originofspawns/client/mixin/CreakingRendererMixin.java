@@ -4,6 +4,7 @@ import java.util.List;
 
 import io.github.stivengjekaj.originofspawns.client.render.GeneTextures;
 import io.github.stivengjekaj.originofspawns.evolution.CarriedGenes;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCreakings;
 import io.github.stivengjekaj.originofspawns.evolution.GeneEffects;
 import io.github.stivengjekaj.originofspawns.registry.ModAttachments;
 
@@ -21,7 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 /**
  * Puts the genes of a creaking in its render state, and gives it the texture with the marks of its genes. The creaking
  * region map has the size of the creaking texture, 64 x 64, and a creaking has no babies, so the marks use the adult
- * layout. The glow layer of the eyes keeps its own texture.
+ * layout. The glow layer of the eyes keeps its own texture. A dark eyes gene turns the glow of the eyes off while the
+ * creaking can move.
  */
 @Mixin(CreakingRenderer.class)
 public abstract class CreakingRendererMixin {
@@ -33,6 +35,9 @@ public abstract class CreakingRendererMixin {
 		state.setData(GeneTextures.OPACITY, null);
 		if (genes != null) {
 			GeneEffects.translucentOpacity(creaking).ifPresent(opacity -> state.setData(GeneTextures.OPACITY, opacity));
+			if (GeneCreakings.darkEyes(creaking)) {
+				state.eyesGlowing = false;
+			}
 		}
 	}
 

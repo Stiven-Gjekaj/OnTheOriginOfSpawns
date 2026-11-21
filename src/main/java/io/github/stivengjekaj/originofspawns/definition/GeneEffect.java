@@ -392,7 +392,8 @@ public sealed interface GeneEffect {
 			Map.entry("blast_sense", BlastSense.CODEC),
 			Map.entry("lone_watch", LoneWatch.CODEC),
 			Map.entry("look_wake_range", LookWakeRange.CODEC),
-			Map.entry("still_after_look", StillAfterLook.CODEC)
+			Map.entry("still_after_look", StillAfterLook.CODEC),
+			Map.entry("dark_eyes", DarkEyes.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6665,6 +6666,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "still_after_look";
+		}
+	}
+
+	/**
+	 * The eyes of the creaking do not glow while it can move, that is, while no player looks at it. The eyes of a
+	 * creaking that dies with its heart still flicker. Dusk Bark.
+	 */
+	record DarkEyes() implements GeneEffect {
+		public static final MapCodec<DarkEyes> CODEC = MapCodec.unit(new DarkEyes());
+
+		@Override
+		public String type() {
+			return "dark_eyes";
 		}
 	}
 }

@@ -141,6 +141,14 @@ public final class GeneCreakings {
 	}
 
 	/**
+	 * Returns true if the eyes of the creaking do not glow: it has a dark eyes gene, it can move, and it does not die
+	 * with its heart.
+	 */
+	public static boolean darkEyes(Creaking creaking) {
+		return !creaking.isTearingDown() && creaking.canMove() && GeneCombat.has(creaking, GeneEffect.DarkEyes.class);
+	}
+
+	/**
 	 * Returns the square of the distance in which a look wakes the creaking: the largest range of its look wake range
 	 * genes, or the vanilla value.
 	 */

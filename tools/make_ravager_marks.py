@@ -28,24 +28,25 @@ Each gene keeps to its own zone, so that the marks stack:
   in rows 8, 9, 11, and 12, and rings round the roots of the horns on the
   head. Sweep Horns (long horns) and Shield Crush (notched edges) are gene
   models.
-- The face. Ram Rush has a stripe down the middle of the top of the head (rows
-  0 to 11) and of the forehead (columns 6 to 9, rows 0 to 7). Rider Heal has green marks
-  on the sides of the forehead (rows 0 to 7) and on the front of the top.
-  Golem Crusher has the brow (rows 8 to 11) and the brow on the sides.
-  Victory Roar has gold rings round the eyes (rows 12 to 15), which wrap
-  round to the sides. Gore Rage has red veins on the cheeks (rows 16 to 18)
-  and on the sides under the eyes. Fence Breaker has scars on the snout, on the
-  bridge between the eyes, and on the front of the top of the head. Raid
-  Scent has wide, dark nostrils on the front of the snout and beside it,
-  and a gene model of flared rims.
+- The face. Ram Rush has a stripe down the middle of the top of the head
+  (rows 0 to 11) and of the forehead (columns 6 to 9, rows 0 to 7). Rider
+  Heal has green marks on the sides of the forehead (rows 0 to 7) and on
+  the front of the top. Golem Crusher has the brow (rows 8 to 11). Victory
+  Roar has gold rings round the eyes (rows 12 to 15), which wrap round to
+  the sides. Gore Rage has red veins on the cheeks (rows 16 to 18) and on
+  the sides over and behind the eyes. Fence Breaker has scars on the snout,
+  on the bridge between the eyes, and on the front of the top of the head.
+  Raid Scent has wide, dark nostrils on the front of the snout and beside
+  it, and a gene model of flared rims.
 - The sides of the head, back half. Rage Roar has orange marks in rows 0 to
   9, and Lone Roar has gray scars in rows 10 to 19. These are the marks of
   the neck, where the neck goes into the head.
-- The mouth. Loud Roar has the front, the back, and the high rows of the
-  sides of the mouth, and the low row of the face at the corners (the
-  lips), pale. War Roar has the low row of the sides of the mouth, red, and
-  a gene model: a red tongue and gums out of the front. Fear Roar (long
-  teeth) is a gene model.
+- The mouth and the jaw. The mouth stays shut, as in vanilla. The jaw is
+  the low 4 rows of columns 6 to 15 of the sides of the head. Loud Roar has
+  the front and the back of the mouth and the high rows of the jaw, pale.
+  War Roar has the sides of the mouth, the low rows of the jaw, and the
+  corners of the low row of the face (the lips), dark red. Fear Roar (two
+  short tusks beside the face) is a gene model.
 - The neck. Escort Rider (a gray collar) and Lone Charge (a dark mane) are
   gene models on the neck, where it shows between the head and the body.
 - The body. Saddle Guard has the saddle, rows 3 to 13 of the back. Blood
@@ -224,15 +225,12 @@ def rider_heal():
 
 def golem_crusher():
     # An iron gray brow: the brow, rows 8 to 11 of the face, is iron gray with
-    # rivets, and it goes on round the front of the sides.
+    # rivets.
     iron = Mark("#A0A4A8")
     rivet = Mark("#4A4E52")
     for c in range(16):
         for r in range(8, 12):
             (rivet if r == 9 and c % 3 == 1 else iron).put(at(HEAD, "front", c, r))
-    for c in range(10, 16):
-        for r in range(8, 12):
-            (rivet if r == 9 and c % 3 == 1 else iron).put(side(HEAD, c, r))
     return [iron, rivet]
 
 
@@ -255,13 +253,13 @@ def victory_roar():
 
 def gore_rage():
     # Red veins round the eyes: a web of red veins on the cheeks, rows 16 to
-    # 18 of the face, and on the sides under and behind the eyes.
+    # 18 of the face, and on the sides over and behind the eyes.
     vein = Mark("#C01818")
     dark = Mark("#6A0808")
     cheeks = cells(HEAD, "front", list(range(0, 4)) + list(range(12, 16)), range(16, 19))
-    under = [p for c in range(8, 16) for r in range(16, 20) for p in side(HEAD, c, r)]
+    over = [p for c in range(10, 16) for r in range(8, 12) for p in side(HEAD, c, r)]
     behind = [p for c in range(8, 12) for r in range(12, 16) for p in side(HEAD, c, r)]
-    pattern([vein, dark], cheeks + under + behind, 2203, (60, 40))
+    pattern([vein, dark], cheeks + over + behind, 2203, (60, 40))
     return [vein, dark]
 
 
@@ -327,11 +325,14 @@ def rage_roar():
 def lone_roar():
     # Gray scars on the neck: long, pale gray scars, with dark edges, cover
     # the back half of the sides of the head, rows 10 to 19, where the neck
-    # goes into the head.
+    # goes into the head. The jaw (columns 6 and 7 of rows 16 to 19) stays
+    # clear.
     scar = Mark("#C4C4C0")
     dark = Mark("#3A3A38")
     for c in range(8):
         for r in range(10, 20):
+            if c >= 6 and r >= 16:
+                continue
             (scar if (c - r) % 3 == 0 else dark).put(side(HEAD, c, r))
     return [scar, dark]
 
@@ -339,57 +340,52 @@ def lone_roar():
 # The mouth.
 
 def war_roar():
-    # A red mouth: the red tongue and gums are the gene model war_roar_tongue.
-    # The low row of the sides of the mouth is red too.
-    red = Mark("#B01818")
-    red.put(cells(MOUTH, "right", range(16), (2,)) + cells(MOUTH, "left", range(16), (2,)))
-    return [red]
-
-
-def war_roar_model():
-    # A red mouth: a long, red tongue hangs out of the middle of the front of
-    # the mouth, between the fangs of Fear Roar, with dark red gums over it. On the bone mouth, the mouth is
-    # from x -8 to 8, y 0 to 3, and z -16 to 0.
-    im = model_image(64, 32)
-    paint_box(im, 0, 0, 5, 1, 10, lambda f, x, y: "#E03030" if f == "top" and x % 3 else "#8A1010")
-    paint_box(im, 0, 12, 5, 3, 1, lambda f, x, y: "#5A0808" if y else "#C01818")
-    parts = [{"bone": "mouth", "uv": [0, 0], "from": [-2.5, 1.5, -24.5], "size": [5, 1, 10], "pivot": [0, 2, -16],
-              "rotation": [25, 0, 0]},
-             {"bone": "mouth", "uv": [0, 12], "from": [-2.5, -1, -16.8], "size": [5, 3, 1]}]
-    save_model("war_roar_tongue", im, parts)
+    # A red mouth: the lips and the jaw are dark red. These are the sides of
+    # the mouth, the low rows of the jaw on the sides of the head (rows 18
+    # and 19 of columns 6 to 15), and the corners of the low row of the face.
+    red = Mark("#A01414")
+    dark = Mark("#5A0808")
+    for f in ("right", "left"):
+        red.put(cells(MOUTH, f, range(16), (0, 1)))
+        dark.put(cells(MOUTH, f, range(16), (2,)))
+    for c in range(6, 16):
+        red.put(side(HEAD, c, 18))
+        dark.put(side(HEAD, c, 19))
+    red.put(cells(HEAD, "front", list(range(0, 4)) + list(range(12, 16)), (19,)))
+    return [red, dark]
 
 
 def loud_roar():
-    # A pale mouth: the front and the sides of the mouth are pale, as old
-    # bone, with gray shade in the low row.
+    # A pale mouth: the front and the back of the mouth are pale, as old
+    # bone, and a pale band runs along the jaw on the sides of the head, rows
+    # 16 and 17 of columns 6 to 15. The mouth stays shut.
     pale = Mark("#E8E0D4")
     shade = Mark("#B0A89C")
-    for f in ("front", "right", "left"):
-        x0, y0, w, h = MOUTH[f]
-        pale.put(cells(MOUTH, f, range(w), (0, 1)))
-        if f == "front":
-            shade.put(cells(MOUTH, f, range(w), (2,)))
-    # The back of the mouth, under the head, is pale too.
+    pale.put(cells(MOUTH, "front", range(16), (0, 1)))
+    shade.put(cells(MOUTH, "front", range(16), (2,)))
     shade.put(cells(MOUTH, "back", range(16), range(3)))
-    # Pale lips: the low row of the face, beside the cheeks.
-    pale.put(cells(HEAD, "front", list(range(0, 4)) + list(range(12, 16)), (19,)))
+    for c in range(6, 16):
+        pale.put(side(HEAD, c, 16))
+        shade.put(side(HEAD, c, 17))
     return [pale, shade]
 
 
 def fear_roar():
-    # The long teeth are the gene model fear_roar_teeth.
+    # The tusks are the gene model fear_roar_tusks.
     return []
 
 
 def fear_roar_model():
-    # Long teeth: four long, pale fangs hang from the front edge of the
-    # mouth, to 6 pixels below it. On the bone mouth, the mouth is from x -8
-    # to 8, y 0 to 3, and z -16 to 0.
+    # Short tusks: a short, thick, pale tusk at each corner of the mouth. It
+    # rises 3 pixels beside the face, and it goes 1 pixel under the jaw at
+    # most.
+    # On the bone mouth, the mouth is from x -8 to 8, y 0 to 3, and z -16 to
+    # 0.
     im = model_image(16, 16)
-    paint_box(im, 0, 0, 2, 9, 2, lambda f, x, y: "#C8B890" if y >= 7 else "#F4EEDC")
-    parts = [{"bone": "mouth", "uv": [0, 0], "from": [x, -1, -17], "size": [2, 9, 2], "inflate": -0.4}
-             for x in (-7.5, -4.5, 2.5, 5.5)]
-    save_model("fear_roar_teeth", im, parts)
+    paint_box(im, 0, 0, 3, 7, 3, lambda f, x, y: "#C8B890" if y >= 5 else "#F4EEDC" if y else "#FFFFF4")
+    parts = [{"bone": "mouth", "uv": [0, 0], "from": [x, -3, -16.8], "size": [3, 7, 3], "inflate": -0.2}
+             for x in (-9, 6)]
+    save_model("fear_roar_tusks", im, parts)
 
 
 # The neck.
@@ -627,8 +623,7 @@ GENES = {
 MODEL_GENES = {
     "sweep_horns": (sweep_horns_model, "sweep_horns_horns"),
     "shield_crush": (shield_crush_model, "shield_crush_notches"),
-    "fear_roar": (fear_roar_model, "fear_roar_teeth"),
-    "war_roar": (war_roar_model, "war_roar_tongue"),
+    "fear_roar": (fear_roar_model, "fear_roar_tusks"),
     "escort_rider": (escort_rider_model, "escort_rider_collar"),
     "raid_scent": (raid_scent_model, "raid_scent_nostrils"),
     "lone_charge": (lone_charge_model, "lone_charge_mane"),

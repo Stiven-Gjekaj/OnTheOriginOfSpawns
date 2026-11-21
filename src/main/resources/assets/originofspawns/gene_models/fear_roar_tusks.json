@@ -1,0 +1,43 @@
+{
+	"texture": "originofspawns:textures/entity/fear_roar_tusks.png",
+	"texture_width": 16,
+	"texture_height": 16,
+	"parts": [
+		{
+			"bone": "mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				-9,
+				-3,
+				-16.8
+			],
+			"size": [
+				3,
+				7,
+				3
+			],
+			"inflate": -0.2
+		},
+		{
+			"bone": "mouth",
+			"uv": [
+				0,
+				0
+			],
+			"from": [
+				6,
+				-3,
+				-16.8
+			],
+			"size": [
+				3,
+				7,
+				3
+			],
+			"inflate": -0.2
+		}
+	]
+}

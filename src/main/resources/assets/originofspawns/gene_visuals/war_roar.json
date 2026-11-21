@@ -5,9 +5,15 @@
 			"effect": {
 				"type": "pattern",
 				"texture": "originofspawns:textures/gene_marks/war_roar_0.png",
-				"tint": "#B01818"
+				"tint": "#A01414"
+			}
+		},
+		{
+			"effect": {
+				"type": "pattern",
+				"texture": "originofspawns:textures/gene_marks/war_roar_1.png",
+				"tint": "#5A0808"
 			}
 		}
-	],
-	"model": "originofspawns:war_roar_tongue"
+	]
 }

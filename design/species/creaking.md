@@ -106,34 +106,34 @@ The visual column gives the region and the mark.
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Jitter Step | Twitcher | `spotted` | While a player looks at it, it takes one step each 3 seconds | It attacks 10% slower | Head: a crooked crack on the face |
-| Blink Strike | Twitcher | `unreached` | When a player looks away from it in 2 blocks, its next hit comes at once | It attacks 10% slower | Arms: long splinter fingers |
-| Shadow Creep | Twitcher | `alone` | In the dark, a look from more than 6 blocks does not stop it | It attacks 10% slower | Body: dark bark on the chest |
-| Fear Twitch | Twitcher | `player_death` | After it hits a player, a look from that player does not stop it for 2 seconds | It attacks 10% slower | Head: white lines round the eyes |
-| Trail Twitch | Twitcher | `heart_trail` | When a player hurts it, it moves for 1 second, also while a player looks at it | It attacks 10% slower | Legs: twisted legs |
+| Jitter Step | Twitcher | `spotted` | While a player looks at it, it takes one step each 3 seconds | It attacks 10% slower | Head: a crooked crack down the face and a zigzag crack on the sides |
+| Blink Strike | Twitcher | `unreached` | When a player looks away from it in 2 blocks, its next hit comes at once | It attacks 10% slower | Arms: pale splinters with dark cracks on the arms |
+| Shadow Creep | Twitcher | `alone` | In the dark, a look from more than 6 blocks does not stop it | It attacks 10% slower | Body: dark bark on the low chest |
+| Fear Twitch | Twitcher | `player_death` | After it hits a player, a look from that player does not stop it for 2 seconds | It attacks 10% slower | Head: white lines round the eyes and back along the sides of the head |
+| Trail Twitch | Twitcher | `heart_trail` | When a player hurts it, it moves for 1 second, also while a player looks at it | It attacks 10% slower | Legs: dark and pale bands that wind round the legs |
 | Slip Step | Twitcher, sub Slinker | `shield` | When a player looks away, it gets 50% more speed for 2 seconds | It attacks 10% slower | Legs: pale moss on the legs |
 
 ### Thornwood genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Thorn Fist | Thornwood | `spotted` | Its hits do 2 more damage | 10% less speed | Arms: thorns on the arms |
+| Thorn Fist | Thornwood | `spotted` | Its hits do 2 more damage | 10% less speed | Arms: short, dark thorns with pale points on the arms. This changes the model |
 | Shield Splinter | Thornwood | `shield` | Its hits disable a shield for 3 seconds, as an axe does | 10% less speed | Arms: dark, heavy hands |
-| Splinter Burst | Thornwood | `heart_far` | When its heart breaks, splinters fly out of it and do 4 damage to the players in 3 blocks | 10% less speed | Body: splinters on the chest |
+| Splinter Burst | Thornwood | `heart_far` | When its heart breaks, splinters fly out of it and do 4 damage to the players in 3 blocks | 10% less speed | Body: pale splinters round the red knot on the chest |
 | Sap Bite | Thornwood | `alone` | Its hits give Poison for 3 seconds | 10% less speed | Arms: amber sap on the arms |
-| Long Limbs | Thornwood | `unreached` | It hits from 1 block farther | 10% less speed | Arms: long arms. This changes the model |
-| Thorn Heart | Thornwood, sub Heartkeeper | `heart_trail` | A player that breaks its heart takes 4 damage | 10% less speed | Body: a red knot on the chest |
+| Long Limbs | Thornwood | `unreached` | It hits from 1 block farther | 10% less speed | Arms: a thick, blunt limb of bark below each hand. This changes the model |
+| Thorn Heart | Thornwood, sub Heartkeeper | `heart_trail` | A player that breaks its heart takes 4 damage | 10% less speed | Body: a red knot on the high chest, front and back |
 
 ### Heartkeeper genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Hard Heart | Heartkeeper | `explosion` | Its heart takes 50% more time to break, and explosions do not break it | It stays in 4 fewer blocks of its heart | Body: a thick bark plate on the chest |
+| Hard Heart | Heartkeeper | `explosion` | Its heart takes 50% more time to break, and explosions do not break it | It stays in 4 fewer blocks of its heart | Body: a thick bark plate on the low chest |
 | Hidden Heart | Heartkeeper | `heart_trail` | When a player hurts it, its heart shows no trail and grows no resin | It stays in 4 fewer blocks of its heart | Head: closed bark over the mouth |
-| Close Guard | Heartkeeper | `heart_far` | When a player comes in 8 blocks of its heart, it goes back to the heart with 50% more speed | It stays in 4 fewer blocks of its heart | Legs: root feet |
+| Close Guard | Heartkeeper | `heart_far` | When a player comes in 8 blocks of its heart, it goes back to the heart with 50% more speed | It stays in 4 fewer blocks of its heart | Legs: four thick roots that spread from each foot. This changes the model |
 | Root Grip | Heartkeeper | `unreached` | Its hits give Slowness II for 2 seconds | It stays in 4 fewer blocks of its heart | Arms: root bands round the arms |
-| Dark Heart | Heartkeeper | `spotted` | Its heart does not glow | It stays in 4 fewer blocks of its heart | Body: a dark core on the chest |
-| Heart Sense | Heartkeeper, sub Starer | `alone` | When a player comes in 16 blocks of its heart, it wakes and targets that player, also with no look | It stays in 4 fewer blocks of its heart | Head: orange eye rims |
+| Dark Heart | Heartkeeper | `spotted` | Its heart does not glow | It stays in 4 fewer blocks of its heart | Body: a dark core on the low chest |
+| Heart Sense | Heartkeeper, sub Starer | `alone` | When a player comes in 16 blocks of its heart, it wakes and targets that player, also with no look | It stays in 4 fewer blocks of its heart | Head: orange rims under the eyes and an orange line round the head |
 
 ### Slinker genes
 
@@ -143,19 +143,19 @@ The visual column gives the region and the mark.
 | Silent Roots | Slinker | `alone` | Players hear its steps only from 4 blocks | 10% less damage | Legs: moss on the feet |
 | Flank Walk | Slinker | `shield` | It walks round to the side of a player that holds a shield up | 10% less damage | Arms: bark bands on the arms |
 | Hunt Lust | Slinker | `player_death` | After it hits a player, 30% more speed for 5 seconds | 10% less damage | Head: a red stripe on the head |
-| Dusk Bark | Slinker | `spotted` | Its eyes do not glow while no player looks at it | 10% less damage | Head: dark shades over the eyes |
-| Blast Sense | Slinker, sub Starer | `explosion` | When TNT is lit in 16 blocks of its heart, it wakes and targets the nearest player, also with no look | 10% less damage | Body: gray ash on the chest |
+| Dusk Bark | Slinker | `spotted` | Its eyes do not glow while no player looks at it | 10% less damage | Head: dark shades and short bark ledges over the eyes. This changes the model |
+| Blast Sense | Slinker, sub Starer | `explosion` | When TNT is lit in 16 blocks of its heart, it wakes and targets the nearest player, also with no look | 10% less damage | Body: gray ash on the back of the chest |
 
 ### Starer genes
 
 | Gene | Tags | Pressure | Gains | Downsides | Visual |
 |---|---|---|---|---|---|
-| Long Stare | Starer | `unreached` | A player that looks at it from 24 blocks or less wakes it | It stays still for 0.5 seconds after a player looks away | Head: wide eyes |
-| Stare Back | Starer | `spotted` | When a player looks at it from 8 blocks or less, the player gets Darkness for 3 seconds, one time each 10 seconds | It stays still for 0.5 seconds after a player looks away | Head: a third eye on the brow |
-| Lone Watch | Starer | `alone` | When only one player is in 16 blocks, it hears that player and targets it, also with no look | It stays still for 0.5 seconds after a player looks away | Body: pale knots like eyes |
+| Long Stare | Starer | `unreached` | A player that looks at it from 24 blocks or less wakes it | It stays still for 0.5 seconds after a player looks away | Head: three wide, bulging, glowing eyes. This changes the model |
+| Stare Back | Starer | `spotted` | When a player looks at it from 8 blocks or less, the player gets Darkness for 3 seconds, one time each 10 seconds | It stays still for 0.5 seconds after a player looks away | Head: a third, glowing eye in a bark knot on the crown. This changes the model |
+| Lone Watch | Starer | `alone` | When only one player is in 16 blocks, it hears that player and targets it, also with no look | It stays still for 0.5 seconds after a player looks away | Body: three pale knots like eyes on the back |
 | Shield Stare | Starer | `shield` | A look from a player that holds a shield up does not stop it | It stays still for 0.5 seconds after a player looks away | Arms: eye knots on the arms |
-| Kill Watch | Starer | `player_death` | After it kills a player, it targets the nearest other player in 24 blocks | It stays still for 0.5 seconds after a player looks away | Head: red eye glints |
-| Heart Twitch | Starer, sub Twitcher | `heart_far` | When a player comes in 8 blocks of its heart, it moves for 3 seconds, also while a player looks at it | It stays still for 0.5 seconds after a player looks away | Legs: bright cracks on the legs |
+| Kill Watch | Starer | `player_death` | After it kills a player, it targets the nearest other player in 24 blocks | It stays still for 0.5 seconds after a player looks away | Head: red glints in the eyes and on the branches of the head |
+| Heart Twitch | Starer, sub Twitcher | `heart_far` | When a player comes in 8 blocks of its heart, it moves for 3 seconds, also while a player looks at it | It stays still for 0.5 seconds after a player looks away | Legs: orange cracks on the legs |
 
 ## Gene details
 
@@ -211,6 +211,15 @@ The visual column gives the region and the mark.
   legs. Its texture is 64 x 64, and it has a glow layer for the eyes.
 - It needs a new region map, `textures/region/creaking.png`. The design uses
   the regions head, body, arms, and legs.
+- The face is small, with three eye slits. So some head genes mark the
+  sides of the head, and two eye genes are glowing models.
+- The marks of the genes that are not eye genes do not touch the eyes. The
+  glow layer draws the vanilla eyes over the texture while the eyes glow.
+- The chest is small, so the chest genes share the front and the back of
+  the low and the high chest.
+- No gene gives the creaking nails or claws.
+- Six genes change the model: Thorn Fist, Long Limbs, Close Guard, Dusk
+  Bark, Long Stare, and Stare Back.
 - The gene models use the creaking bones. Check them against the vanilla
   model, as for the witch.
 

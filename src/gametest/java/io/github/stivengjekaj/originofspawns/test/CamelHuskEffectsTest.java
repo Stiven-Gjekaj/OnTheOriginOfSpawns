@@ -192,7 +192,8 @@ public class CamelHuskEffectsTest {
 		helper.succeed();
 	}
 
-	@GameTest
+	// The heal comes one time each second, so the test waits longer than one second.
+	@GameTest(maxTicks = 60)
 	public void aCamelHuskRegeneratesOutOfCombat(GameTestHelper helper) {
 		ReusedEffects.regenerate(helper, CAMEL);
 	}

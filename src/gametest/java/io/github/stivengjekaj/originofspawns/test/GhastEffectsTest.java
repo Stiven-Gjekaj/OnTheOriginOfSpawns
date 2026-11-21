@@ -401,7 +401,8 @@ public class GhastEffectsTest {
 		helper.succeed();
 	}
 
-	@GameTest
+	// The heal comes one time each second, so the test waits longer than one second.
+	@GameTest(maxTicks = 60)
 	public void theReusedHealsWorkOnAGhast(GameTestHelper helper) {
 		ReusedEffects.regenerate(helper, GhastEffectsTest::ghastWith);
 		ReusedEffects.healOnce(helper, GhastEffectsTest::ghastWith);

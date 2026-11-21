@@ -225,7 +225,8 @@ public class SkeletonHorseEffectsTest {
 		helper.succeed();
 	}
 
-	@GameTest
+	// The heal comes one time each second, so the test waits longer than one second.
+	@GameTest(maxTicks = 60)
 	public void aSkeletonHorseRegeneratesOutOfCombat(GameTestHelper helper) {
 		ReusedEffects.regenerate(helper, HORSE);
 	}

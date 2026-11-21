@@ -1264,14 +1264,15 @@ public final class GeneCombat {
 		}
 		for (GeneEffect effect : GeneEffects.of(mob).toList()) {
 			switch (effect) {
-				case GeneEffect.CallOnHurt call when callReady(mob, level, call) -> {
+				// A tame mob does not call its pack at its owner or at a mob of its owner.
+				case GeneEffect.CallOnHurt call when !NeutralMobs.friendly(mob, attacker) && callReady(mob, level, call) -> {
 					if (call.smoke()) {
 						// A column of smoke that players can see from far away.
 						level.sendParticles(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, mob.getX(), mob.getY() + 2.0, mob.getZ(),
 								6, 0.2, 1.5, 0.2, 0.01);
 					}
 					AABB area = mob.getBoundingBox().inflate(call.radius());
-					for (Mob ally : level.getEntitiesOfClass(Mob.class, area, other -> other.getType() == mob.getType())) {
+					for (Mob ally : level.getEntitiesOfClass(Mob.class, area, other -> NeutralMobs.answersCall(mob, other))) {
 						ally.setTarget(attacker);
 					}
 				}

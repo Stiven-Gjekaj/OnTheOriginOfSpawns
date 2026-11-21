@@ -2448,11 +2448,12 @@ public final class GeneBehaviors {
 	}
 
 	/**
-	 * Makes all mobs of the species of the mob in the radius target the player.
+	 * Makes all mobs of the species of the mob in the radius target the player. A tame mob calls only the mobs of its
+	 * owner, and a wild neutral mob calls only wild mobs.
 	 */
 	public static void callAllies(Mob mob, float radius, Player player) {
 		AABB area = mob.getBoundingBox().inflate(radius);
-		for (Mob ally : mob.level().getEntitiesOfClass(Mob.class, area, other -> other.getType() == mob.getType())) {
+		for (Mob ally : mob.level().getEntitiesOfClass(Mob.class, area, other -> NeutralMobs.answersCall(mob, other))) {
 			ally.setTarget(player);
 		}
 	}

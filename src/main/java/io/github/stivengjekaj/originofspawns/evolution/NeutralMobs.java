@@ -1,5 +1,6 @@
 package io.github.stivengjekaj.originofspawns.evolution;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import io.github.stivengjekaj.originofspawns.OriginOfSpawns;
@@ -10,6 +11,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 
@@ -58,5 +60,21 @@ public final class NeutralMobs {
 			return reference == null ? null : reference.getUUID();
 		}
 		return null;
+	}
+
+	/**
+	 * Returns true if a call of the mob reaches the other mob: it is of the same species, and for a neutral fighter it
+	 * has the same owner. A tame wolf calls only the wolves of its owner, and a wild wolf calls only wild wolves.
+	 */
+	public static boolean answersCall(Mob caller, Entity other) {
+		return other.getType() == caller.getType() && (!isNeutralFighter(caller) || Objects.equals(owner(caller), owner(other)));
+	}
+
+	/**
+	 * Returns true if the other entity is on the side of a tame mob: it is the owner, or it has the same owner.
+	 */
+	public static boolean friendly(Entity mob, Entity other) {
+		UUID owner = isNeutralFighter(mob) ? owner(mob) : null;
+		return owner != null && (owner.equals(other.getUUID()) || owner.equals(owner(other)));
 	}
 }

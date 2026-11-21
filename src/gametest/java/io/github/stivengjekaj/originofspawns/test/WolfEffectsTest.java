@@ -155,4 +155,52 @@ public class WolfEffectsTest {
 		helper.assertTrue(genes != null && genes.genes().contains(PELT), "the bred baby takes the gene from the pool");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aCallOfATameWolfReachesOnlyTheWolvesOfItsOwner(GameTestHelper helper) {
+		var owner = CreeperEffectsTest.survivalPlayer(helper).player();
+		var stranger = CreeperEffectsTest.survivalPlayer(helper).player();
+		Wolf caller = wolf(helper, new BlockPos(1, 1, 1), "test_wolf_yelp");
+		Wolf packmate = wolf(helper, new BlockPos(3, 1, 1));
+		Wolf otherPet = wolf(helper, new BlockPos(5, 1, 1));
+		Wolf wild = wolf(helper, new BlockPos(7, 1, 1));
+		tame(caller, owner);
+		tame(packmate, owner);
+		tame(otherPet, stranger);
+		var pig = CreeperEffectsTest.pigAt(helper, new BlockPos(7, 1, 7));
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(caller,
+				helper.getLevel().damageSources().mobAttack(pig));
+		helper.assertValueEqual(packmate.getTarget(), pig, "a wolf of the same owner answers the call");
+		helper.assertTrue(otherPet.getTarget() == null, "a wolf of another owner does not answer");
+		helper.assertTrue(wild.getTarget() == null, "a wild wolf does not answer");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aCallOfAWildWolfReachesOnlyWildWolves(GameTestHelper helper) {
+		var owner = CreeperEffectsTest.survivalPlayer(helper).player();
+		Wolf caller = wolf(helper, new BlockPos(1, 1, 1), "test_wolf_yelp");
+		Wolf wild = wolf(helper, new BlockPos(3, 1, 1));
+		Wolf pet = wolf(helper, new BlockPos(5, 1, 1));
+		tame(pet, owner);
+		var pig = CreeperEffectsTest.pigAt(helper, new BlockPos(7, 1, 7));
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(caller,
+				helper.getLevel().damageSources().mobAttack(pig));
+		helper.assertValueEqual(wild.getTarget(), pig, "a wild wolf answers the call");
+		helper.assertTrue(pet.getTarget() == null, "a tame wolf does not answer a wild wolf");
+		helper.succeed();
+	}
+
+	@GameTest
+	public void aTameWolfDoesNotCallItsPackAtItsOwner(GameTestHelper helper) {
+		var owner = CreeperEffectsTest.survivalPlayer(helper).player();
+		Wolf caller = wolf(helper, new BlockPos(1, 1, 1), "test_wolf_yelp");
+		Wolf packmate = wolf(helper, new BlockPos(3, 1, 1));
+		tame(caller, owner);
+		tame(packmate, owner);
+		io.github.stivengjekaj.originofspawns.evolution.GeneCombat.onHurt(caller,
+				helper.getLevel().damageSources().playerAttack(owner));
+		helper.assertTrue(packmate.getTarget() == null, "the pack does not attack the owner");
+		helper.succeed();
+	}
 }

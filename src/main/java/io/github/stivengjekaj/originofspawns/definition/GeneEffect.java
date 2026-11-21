@@ -396,7 +396,8 @@ public sealed interface GeneEffect {
 			Map.entry("dark_eyes", DarkEyes.CODEC),
 			Map.entry("attack_reach", AttackReach.CODEC),
 			Map.entry("quiet_steps", QuietSteps.CODEC),
-			Map.entry("flank_shield", FlankShield.CODEC)
+			Map.entry("flank_shield", FlankShield.CODEC),
+			Map.entry("target_after_kill", TargetAfterKill.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6728,6 +6729,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "flank_shield";
+		}
+	}
+
+	/**
+	 * After the mob kills a player, it targets the nearest other player in the range, also out of sight. Creative and
+	 * spectator players do not count. A creaking wakes at that player. The largest range counts. Kill Watch: 24 blocks.
+	 */
+	record TargetAfterKill(float range) implements GeneEffect {
+		public static final MapCodec<TargetAfterKill> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 64.0F).optionalFieldOf("range", 24.0F).forGetter(TargetAfterKill::range)
+		).apply(instance, TargetAfterKill::new));
+
+		@Override
+		public String type() {
+			return "target_after_kill";
 		}
 	}
 }

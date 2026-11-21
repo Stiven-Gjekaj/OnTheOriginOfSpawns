@@ -3114,4 +3114,31 @@ public final class GeneBehaviors {
 		raised.setPersistenceRequired();
 		level.addFreshEntity(raised);
 	}
+
+	/**
+	 * After the mob kills a player, its target after kill genes make it target the nearest other living player in the
+	 * largest range. A creaking wakes at that player.
+	 *
+	 * @return the new target, or null
+	 */
+	public static Player targetAfterKill(Mob mob) {
+		var range = GeneEffects.of(mob).filter(GeneEffect.TargetAfterKill.class::isInstance)
+				.mapToDouble(effect -> ((GeneEffect.TargetAfterKill) effect).range()).max();
+		if (range.isEmpty()) {
+			return null;
+		}
+		Player next = mob.level().getEntitiesOfClass(Player.class, mob.getBoundingBox().inflate(range.getAsDouble()),
+				player -> player.isAlive() && !player.isDeadOrDying() && !player.isSpectator() && !player.isCreative()
+						&& player.distanceTo(mob) <= range.getAsDouble())
+				.stream().min(java.util.Comparator.comparingDouble(player -> player.distanceToSqr(mob))).orElse(null);
+		if (next == null) {
+			return null;
+		}
+		if (mob instanceof net.minecraft.world.entity.monster.creaking.Creaking creaking) {
+			creaking.activate(next);
+		} else {
+			mob.setTarget(next);
+		}
+		return next;
+	}
 }

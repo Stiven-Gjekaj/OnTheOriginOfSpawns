@@ -588,4 +588,19 @@ public class CreakingEffectsTest {
 				"the creaking walks to the place");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aKillWatchTargetsTheNearestOtherPlayerAfterAKill(GameTestHelper helper) {
+		Creaking creaking = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 1), "test_kill_watch");
+		var victim = player(helper, new BlockPos(2, 1, 1));
+		var near = player(helper, new BlockPos(1, 1, 5));
+		player(helper, new BlockPos(6, 1, 6));
+		creaking.activate(victim);
+		victim.setHealth(0.0F);
+		io.github.stivengjekaj.originofspawns.evolution.Evolution.onPlayerKilled(helper.getLevel(), creaking,
+				helper.getLevel().damageSources().mobAttack(creaking));
+		helper.assertValueEqual(creaking.getTarget(), near, "after the kill, the creaking targets the nearest other player");
+		helper.assertTrue(creaking.isActive(), "the creaking is awake");
+		helper.succeed();
+	}
 }

@@ -40,6 +40,10 @@ public class GeneModelLayer<S extends LivingEntityRenderState, M extends EntityM
 		if (genes == null || genes.isEmpty() || state.isInvisible) {
 			return;
 		}
+		// Wolf armor covers the body and the mane, so the gene models of a wolf stay under it.
+		if (state instanceof net.minecraft.client.renderer.entity.state.WolfRenderState wolf && !wolf.bodyArmorItem.isEmpty()) {
+			return;
+		}
 		int overlay = LivingEntityRenderer.getOverlayCoords(state, 0.0F);
 		for (Identifier gene : genes) {
 			GeneVisual visual = GeneVisuals.get(gene);

@@ -210,7 +210,11 @@ public record GeneModel(Optional<Identifier> texture, boolean mobTexture, int te
 		/**
 		 * The neck of a ravager. Its head is a part of the neck, and the horns and the mouth are parts of the head.
 		 */
-		NECK;
+		NECK,
+		/**
+		 * The mane of a wolf, the front half of its body. It is a part of the root, and it turns 90 degrees round X.
+		 */
+		UPPER_BODY;
 
 		public static final Codec<Bone> CODEC = StringRepresentable.fromEnum(Bone::values);
 

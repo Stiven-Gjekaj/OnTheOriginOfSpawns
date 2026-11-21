@@ -20,6 +20,7 @@ import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.monster.creaking.CreakingModel;
 import net.minecraft.client.model.monster.ravager.RavagerModel;
+import net.minecraft.client.model.animal.wolf.WolfModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.monster.blaze.BlazeModel;
 import net.minecraft.client.model.monster.breeze.BreezeModel;
@@ -48,6 +49,7 @@ import net.minecraft.client.renderer.entity.EndermanRenderer;
 import net.minecraft.client.renderer.entity.EndermiteRenderer;
 import net.minecraft.client.renderer.entity.CreakingRenderer;
 import net.minecraft.client.renderer.entity.RavagerRenderer;
+import net.minecraft.client.renderer.entity.WolfRenderer;
 import net.minecraft.client.renderer.entity.SilverfishRenderer;
 import net.minecraft.client.renderer.entity.EvokerRenderer;
 import net.minecraft.client.renderer.entity.MagmaCubeRenderer;
@@ -74,6 +76,7 @@ import net.minecraft.client.renderer.entity.state.IllagerRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.entity.state.CreakingRenderState;
 import net.minecraft.client.renderer.entity.state.RavagerRenderState;
+import net.minecraft.client.renderer.entity.state.WolfRenderState;
 import net.minecraft.client.renderer.entity.state.GhastRenderState;
 import net.minecraft.client.renderer.entity.state.CamelRenderState;
 import net.minecraft.client.renderer.entity.state.EquineRenderState;
@@ -125,6 +128,8 @@ public class OriginOfSpawnsClient implements ClientModInitializer {
 				helper.register(new GeneModelLayer<>((RenderLayerParent<CreakingRenderState, CreakingModel>) renderer));
 			} else if (renderer instanceof RavagerRenderer ravager) {
 				helper.register(new GeneModelLayer<RavagerRenderState, RavagerModel>(ravager));
+			} else if (renderer instanceof WolfRenderer wolf) {
+				helper.register(new GeneModelLayer<WolfRenderState, WolfModel>(wolf));
 			} else if (renderer instanceof SilverfishRenderer) {
 				// The silverfish model takes any entity render state, so the layer sees it as a model of the living one.
 				helper.register(new GeneModelLayer<>(

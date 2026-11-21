@@ -120,6 +120,12 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			// The ravager gene model sits on the right horn, a part of the head in the neck.
 			checkMarkAndModel(context, singleplayer, EntityTypes.RAVAGER, "test_ravager_mark",
 					Identifier.withDefaultNamespace("textures/entity/illager/ravager.png"), "ravager");
+			// The wolf gene model sits on the upper body, the mane of the wolf.
+			checkMarkAndModel(context, singleplayer, EntityTypes.WOLF, "test_wolf_mark",
+					Identifier.withDefaultNamespace("textures/entity/wolf/wolf.png"), "wolf");
+			// The renderer of a wolf swaps to the baby model for a baby, so the baby wolves come in a second check.
+			checkWolfTextures(context, singleplayer, "wild", "tame", "angry", "armor");
+			checkWolfTextures(context, singleplayer, "baby");
 			// No shulker gene changes the model, so the shulker check has no gene model.
 			checkMark(context, singleplayer, EntityTypes.SHULKER, "test_shulker_mark",
 					Identifier.withDefaultNamespace("textures/entity/shulker/shulker.png"), "shulker", false);
@@ -226,6 +232,92 @@ public class SkeletonGenesClientTest implements FabricClientGameTest {
 			int drawn = drawnModelParts(renderer, state);
 			return drawn > 0 ? null : "The gene model layer draws no part of the gene model on " + type;
 		});
+		if (failure != null) {
+			throw new AssertionError(failure);
+		}
+	}
+
+	/**
+	 * Checks that the wolf marks go on the wild, the tame, and the angry texture of each of the 9 variants. A wolf in
+	 * armor draws no gene model, and a baby wolf keeps its vanilla texture.
+	 */
+	private static void checkWolfTextures(ClientGameTestContext context, TestSingleplayerContext singleplayer,
+			String... states) {
+		Identifier mark = Identifier.fromNamespaceAndPath("originofspawns_test", "test_wolf_mark");
+		singleplayer.getServer().runOnServer(server -> {
+			ServerPlayer player = server.getPlayerList().getPlayers().getFirst();
+			var variants = player.level().registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.WOLF_VARIANT)
+					.listElements().toList();
+			for (int v = 0; v < variants.size(); v++) {
+				for (int s = 0; s < states.length; s++) {
+					var wolf = EntityTypes.WOLF.create(player.level(), EntitySpawnReason.COMMAND);
+					wolf.setNoAi(true);
+					wolf.setPersistenceRequired();
+					wolf.setPos(player.position().add(v - 4.0, 0.0, 4.0 + s));
+					wolf.setComponent(net.minecraft.core.component.DataComponents.WOLF_VARIANT, variants.get(v));
+					wolf.setAttached(ModAttachments.GENES, new CarriedGenes(List.of(mark)));
+					switch (states[s]) {
+						case "tame" -> wolf.tame(player);
+						// An anger with no target stays: the anger at a creative player stops at once.
+						case "angry" -> wolf.setTimeToRemainAngry(100000L);
+						case "armor" -> {
+							wolf.tame(player);
+							wolf.setItemSlot(net.minecraft.world.entity.EquipmentSlot.BODY,
+									new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.WOLF_ARMOR));
+						}
+						case "baby" -> wolf.setBaby(true);
+						default -> {
+						}
+					}
+					wolf.setCustomName(net.minecraft.network.chat.Component.literal(v + ":" + states[s]));
+					player.level().addFreshEntity(wolf);
+				}
+			}
+		});
+		context.waitTicks(20);
+		String failure = context.computeOnClient(client -> {
+			var wolves = client.level.getEntitiesOfClass(net.minecraft.world.entity.animal.wolf.Wolf.class,
+					client.player.getBoundingBox().inflate(16.0), wolf -> wolf.getCustomName() != null);
+			int checked = 0;
+			for (var wolf : wolves) {
+				String state = wolf.getCustomName().getString().split(":")[1];
+				EntityRenderDispatcher dispatcher = client.getEntityRenderDispatcher();
+				EntityRenderState render = dispatcher.extractEntity(wolf, 1.0F);
+				LivingEntityRenderer<?, ?, ?> renderer = (LivingEntityRenderer<?, ?, ?>) dispatcher.getRenderer(wolf);
+				Identifier base = wolf.getTexture();
+				Identifier baked = textureOf(renderer, render);
+				if (state.equals("baby")) {
+					if (!baked.equals(base)) {
+						return "A baby wolf gets gene marks on " + base;
+					}
+				} else {
+					String suffix = state.equals("tame") || state.equals("armor") ? "_tame" : state.equals("angry") ? "_angry" : "";
+					if (!base.getPath().endsWith(suffix + ".png")) {
+						return "The " + state + " wolf has the texture " + base;
+					}
+					if (baked.equals(base)) {
+						return "The " + state + " wolf gets no gene marks on " + base;
+					}
+					String texture = checkRegionMark(client, base, baked, "wolf");
+					if (texture != null) {
+						return texture + " on " + base;
+					}
+				}
+				int drawn = drawnModelParts(renderer, render);
+				if ((drawn > 0) != (state.equals("wild") || state.equals("tame") || state.equals("angry"))) {
+					return "The " + state + " wolf draws " + drawn + " gene model parts";
+				}
+				checked++;
+			}
+			int expected = 9 * states.length;
+			return checked == expected ? null : "The client checked " + checked + " wolves, not " + expected;
+		});
+		// The wolves go away, so that the next checks do not see them.
+		singleplayer.getServer().runOnServer(server -> server.getPlayerList().getPlayers().getFirst().level()
+				.getEntitiesOfClass(net.minecraft.world.entity.animal.wolf.Wolf.class,
+						server.getPlayerList().getPlayers().getFirst().getBoundingBox().inflate(16.0),
+						wolf -> wolf.getCustomName() != null)
+				.forEach(net.minecraft.world.entity.Entity::discard));
 		if (failure != null) {
 			throw new AssertionError(failure);
 		}

@@ -42,6 +42,7 @@
 		"UndeadHorseTextureMixin",
 		"VindicatorRendererMixin",
 		"WitchRendererMixin",
+		"WolfRendererMixin",
 		"ZoglinRendererMixin",
 		"ZombieNautilusRendererMixin",
 		"ZombieVariantTextureMixin",

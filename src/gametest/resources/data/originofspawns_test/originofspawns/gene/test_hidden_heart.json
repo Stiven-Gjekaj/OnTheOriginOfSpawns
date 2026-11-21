@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns_test:test_heart_trail",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "hidden_heart" }],
+	"mutation_rate": 0
+}

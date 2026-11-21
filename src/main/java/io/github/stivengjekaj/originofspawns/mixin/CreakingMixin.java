@@ -3,6 +3,8 @@ package io.github.stivengjekaj.originofspawns.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
+import io.github.stivengjekaj.originofspawns.definition.GeneEffect;
+import io.github.stivengjekaj.originofspawns.evolution.GeneCombat;
 import io.github.stivengjekaj.originofspawns.evolution.GeneCreakings;
 
 import net.minecraft.world.entity.LivingEntity;
@@ -26,8 +28,12 @@ public abstract class CreakingMixin {
 	@WrapOperation(method = "hurtServer", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/world/level/block/entity/CreakingHeartBlockEntity;creakingHurt()V"))
 	private void originofspawns$playerHurt(CreakingHeartBlockEntity heart, Operation<Void> original) {
-		original.call(heart);
-		GeneCreakings.onPlayerHurt((Creaking) (Object) this);
+		Creaking self = (Creaking) (Object) this;
+		// A hidden heart shows no trail and grows no resin.
+		if (!GeneCombat.has(self, GeneEffect.HiddenHeart.class)) {
+			original.call(heart);
+		}
+		GeneCreakings.onPlayerHurt(self);
 	}
 
 	/**

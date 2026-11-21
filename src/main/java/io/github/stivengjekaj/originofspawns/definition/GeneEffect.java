@@ -385,7 +385,8 @@ public sealed interface GeneEffect {
 			Map.entry("heart_thorns", HeartThorns.CODEC),
 			Map.entry("heart_burst", HeartBurst.CODEC),
 			Map.entry("heart_leash", HeartLeash.CODEC),
-			Map.entry("heart_guard", HeartGuard.CODEC)
+			Map.entry("heart_guard", HeartGuard.CODEC),
+			Map.entry("hidden_heart", HiddenHeart.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6556,6 +6557,19 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "heart_guard";
+		}
+	}
+
+	/**
+	 * When a player hurts a creaking, its heart shows no trail of particles and grows no resin. In vanilla, the heart
+	 * shows a trail and grows 2 or 3 resin clumps. With no trail, the death does not count for heart_trail. Hidden Heart.
+	 */
+	record HiddenHeart() implements GeneEffect {
+		public static final MapCodec<HiddenHeart> CODEC = MapCodec.unit(new HiddenHeart());
+
+		@Override
+		public String type() {
+			return "hidden_heart";
 		}
 	}
 }

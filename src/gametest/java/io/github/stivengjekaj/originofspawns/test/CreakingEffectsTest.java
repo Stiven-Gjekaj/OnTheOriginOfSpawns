@@ -358,4 +358,35 @@ public class CreakingEffectsTest {
 		helper.assertValueEqual(walk.getSpeedModifier(), 1.5F, "it walks with 50% more speed");
 		helper.succeed();
 	}
+
+	/**
+	 * Puts a heart in pale oak logs, lets a player hurt its creaking, and returns the resin clumps that grew.
+	 */
+	static long resinAfterHurt(GameTestHelper helper, BlockPos corner, Bound[] out, String... genes) {
+		for (BlockPos log : BlockPos.betweenClosed(corner, corner.offset(2, 2, 2))) {
+			helper.setBlock(log, Blocks.PALE_OAK_LOG);
+		}
+		Bound bound = bound(helper, corner.offset(1, 1, 1), corner.offset(1, 0, 4), genes);
+		out[0] = bound;
+		var player = player(helper, corner.offset(3, 0, 4));
+		bound.creaking().hurtServer(helper.getLevel(), player.damageSources().playerAttack(player), 1.0F);
+		return java.util.stream.StreamSupport.stream(
+				BlockPos.betweenClosed(corner.offset(-1, -1, -1), corner.offset(3, 3, 3)).spliterator(), false)
+				.filter(pos -> helper.getBlockState(pos).is(Blocks.RESIN_CLUMP)).count();
+	}
+
+	@GameTest(padding = 4)
+	public void aHiddenHeartShowsNoTrailAndGrowsNoResin(GameTestHelper helper) {
+		Bound[] plain = new Bound[1];
+		Bound[] hidden = new Bound[1];
+		long plainResin = resinAfterHurt(helper, new BlockPos(1, 1, 1), plain);
+		long hiddenResin = resinAfterHurt(helper, new BlockPos(7, 1, 1), hidden, "test_hidden_heart");
+		helper.assertTrue(plain[0].creaking().hasAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.TRAIL_TIME),
+				"a plain heart shows the trail");
+		helper.assertTrue(plainResin > 0L, "a plain heart grows resin");
+		helper.assertFalse(hidden[0].creaking().hasAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.TRAIL_TIME),
+				"the hidden heart shows no trail");
+		helper.assertValueEqual(hiddenResin, 0L, "the hidden heart grows no resin");
+		helper.succeed();
+	}
 }

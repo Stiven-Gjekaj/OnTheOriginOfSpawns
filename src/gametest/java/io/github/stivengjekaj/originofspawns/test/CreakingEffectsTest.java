@@ -534,4 +534,15 @@ public class CreakingEffectsTest {
 				"the eyes glow while a player looks at the creaking");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void anAttackReachHitsFromFartherAway(GameTestHelper helper) {
+		Creaking plain = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 1));
+		Creaking gene = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 5), "test_long_limbs");
+		var plainPig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 1));
+		var genePig = CreeperEffectsTest.pigAt(helper, new BlockPos(3, 1, 5));
+		helper.assertFalse(plain.isWithinMeleeAttackRange(plainPig), "a plain creaking does not reach 2 blocks");
+		helper.assertTrue(gene.isWithinMeleeAttackRange(genePig), "a creaking with 1 more block of reach reaches 2 blocks");
+		helper.succeed();
+	}
 }

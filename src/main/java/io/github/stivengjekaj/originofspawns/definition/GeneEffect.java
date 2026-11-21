@@ -393,7 +393,8 @@ public sealed interface GeneEffect {
 			Map.entry("lone_watch", LoneWatch.CODEC),
 			Map.entry("look_wake_range", LookWakeRange.CODEC),
 			Map.entry("still_after_look", StillAfterLook.CODEC),
-			Map.entry("dark_eyes", DarkEyes.CODEC)
+			Map.entry("dark_eyes", DarkEyes.CODEC),
+			Map.entry("attack_reach", AttackReach.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6679,6 +6680,21 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "dark_eyes";
+		}
+	}
+
+	/**
+	 * The melee hit of the mob reaches this many blocks farther to each side. More than one effect adds up. The vanilla
+	 * reach of a mob with no reach item is about 0.83 blocks past its body. Long Limbs: 1 block.
+	 */
+	record AttackReach(float blocks) implements GeneEffect {
+		public static final MapCodec<AttackReach> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(-1.0F, 8.0F).fieldOf("blocks").forGetter(AttackReach::blocks)
+		).apply(instance, AttackReach::new));
+
+		@Override
+		public String type() {
+			return "attack_reach";
 		}
 	}
 }

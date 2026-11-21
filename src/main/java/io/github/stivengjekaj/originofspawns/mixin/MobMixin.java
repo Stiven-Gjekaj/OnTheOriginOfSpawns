@@ -19,6 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -140,5 +141,17 @@ public abstract class MobMixin {
 				self.setAttached(ModAttachments.COMBAT, record.withDamagedPlayer());
 			}
 		}
+	}
+
+	/**
+	 * An attack reach gene makes the melee range of the mob larger.
+	 */
+	@ModifyArg(method = "isWithinMeleeAttackRange", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/world/entity/Mob;getAttackBoundingBox(D)Lnet/minecraft/world/phys/AABB;", ordinal = 0))
+	private double originofspawns$attackReach(double reach) {
+		return reach + io.github.stivengjekaj.originofspawns.evolution.GeneEffects.of((Mob) (Object) this)
+				.filter(io.github.stivengjekaj.originofspawns.definition.GeneEffect.AttackReach.class::isInstance)
+				.mapToDouble(effect -> ((io.github.stivengjekaj.originofspawns.definition.GeneEffect.AttackReach) effect).blocks())
+				.sum();
 	}
 }

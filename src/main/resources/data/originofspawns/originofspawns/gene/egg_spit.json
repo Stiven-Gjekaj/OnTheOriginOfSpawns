@@ -1,0 +1,23 @@
+{
+	"species": "minecraft:silverfish",
+	"counters": "originofspawns:unreached",
+	"family": "originofspawns:silverfish/infester",
+	"gains": [
+		{
+			"type": "spit",
+			"cooldown_seconds": 6,
+			"range": 6,
+			"damage": 1,
+			"effect": "minecraft:infested",
+			"seconds": 4
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

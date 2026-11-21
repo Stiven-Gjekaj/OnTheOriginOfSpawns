@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:silverfish",
+	"counters": "originofspawns:player_death",
+	"family": "originofspawns:silverfish/gnawer",
+	"gains": [
+		{
+			"type": "heal_on_hit",
+			"amount": 1
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

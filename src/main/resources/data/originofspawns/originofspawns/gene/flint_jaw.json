@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:silverfish",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:silverfish/gnawer",
+	"gains": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": 1,
+			"operation": "add_value"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

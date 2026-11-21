@@ -1,0 +1,22 @@
+{
+	"species": "minecraft:silverfish",
+	"counters": "originofspawns:projectile",
+	"family": "originofspawns:silverfish/gnawer",
+	"sub_family": "originofspawns:silverfish/skitterer",
+	"gains": [
+		{
+			"type": "leap",
+			"min_distance": 2,
+			"max_distance": 4,
+			"cooldown_seconds": 5
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

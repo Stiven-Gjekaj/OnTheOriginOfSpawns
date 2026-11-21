@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:silverfish",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:silverfish/skitterer",
+	"gains": [
+		{
+			"type": "dodge_melee",
+			"chance": 0.2
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

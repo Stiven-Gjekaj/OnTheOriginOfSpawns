@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:silverfish",
+	"counters": "originofspawns:crowd",
+	"family": "originofspawns:silverfish/waker",
+	"gains": [
+		{
+			"type": "wake_range",
+			"range": 20
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

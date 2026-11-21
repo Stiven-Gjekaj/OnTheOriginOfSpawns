@@ -1,0 +1,19 @@
+{
+	"species": "minecraft:silverfish",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:silverfish/waker",
+	"gains": [
+		{
+			"type": "wake_on_death",
+			"range": 10
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:max_health",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

@@ -1,0 +1,18 @@
+{
+	"species": "minecraft:silverfish",
+	"counters": "originofspawns:critical",
+	"family": "originofspawns:silverfish/skitterer",
+	"gains": [
+		{
+			"type": "critical_immunity"
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:movement_speed",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

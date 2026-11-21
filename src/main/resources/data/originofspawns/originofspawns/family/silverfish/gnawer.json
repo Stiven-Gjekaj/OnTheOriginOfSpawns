@@ -1,0 +1,59 @@
+{
+	"species": "minecraft:silverfish",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:attack_damage",
+					"amount": 1,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -4,
+					"operation": "add_value"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:attack_damage",
+					"amount": 1,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -3,
+					"operation": "add_value"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:attack_damage",
+					"amount": 2,
+					"operation": "add_value"
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:max_health",
+					"amount": -2,
+					"operation": "add_value"
+				}
+			]
+		}
+	]
+}

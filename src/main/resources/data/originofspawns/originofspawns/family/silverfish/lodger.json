@@ -1,0 +1,56 @@
+{
+	"species": "minecraft:silverfish",
+	"tiers": [
+		{
+			"buffs": [
+				{
+					"type": "hide_in_stone",
+					"threshold": 0.5,
+					"cooldown_seconds": 40
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.2,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "hide_in_stone",
+					"threshold": 0.5,
+					"cooldown_seconds": 30
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.15,
+					"operation": "add_multiplied_total"
+				}
+			]
+		},
+		{
+			"buffs": [
+				{
+					"type": "hide_in_stone",
+					"threshold": 0.5,
+					"cooldown_seconds": 20
+				}
+			],
+			"debuffs": [
+				{
+					"type": "attribute",
+					"attribute": "minecraft:movement_speed",
+					"amount": -0.1,
+					"operation": "add_multiplied_total"
+				}
+			]
+		}
+	]
+}

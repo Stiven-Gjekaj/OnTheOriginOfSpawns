@@ -1,0 +1,21 @@
+{
+	"species": "minecraft:silverfish",
+	"counters": "originofspawns:melee",
+	"family": "originofspawns:silverfish/waker",
+	"sub_family": "originofspawns:silverfish/infester",
+	"gains": [
+		{
+			"type": "effect_on_hit",
+			"effect": "minecraft:infested",
+			"seconds": 3
+		}
+	],
+	"downsides": [
+		{
+			"type": "attribute",
+			"attribute": "minecraft:attack_damage",
+			"amount": -0.1,
+			"operation": "add_multiplied_total"
+		}
+	]
+}

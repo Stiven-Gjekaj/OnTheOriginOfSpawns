@@ -603,4 +603,64 @@ public class CreakingEffectsTest {
 		helper.assertTrue(creaking.isActive(), "the creaking is awake");
 		helper.succeed();
 	}
+
+	@GameTest(maxTicks = 60)
+	public void theReusedHitEffectsActOnTheHitOfACreaking(GameTestHelper helper) {
+		Creaking plain = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 1));
+		Creaking gene = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 5), "test_creaking_hits");
+		io.github.stivengjekaj.originofspawns.evolution.GeneEffects.applyAttributes(gene, io.github.stivengjekaj.originofspawns.evolution.GeneEffects
+				.sources(helper.getLevel().registryAccess(), gene.getAttached(io.github.stivengjekaj.originofspawns.registry.ModAttachments.GENES)));
+		var plainPlayer = player(helper, new BlockPos(2, 1, 1));
+		var genePlayer = player(helper, new BlockPos(2, 1, 5));
+		var speed = gene.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
+		double baseSpeed = speed.getValue();
+		plain.doHurtTarget(helper.getLevel(), plainPlayer);
+		gene.doHurtTarget(helper.getLevel(), genePlayer);
+		float plainLoss = plainPlayer.getMaxHealth() - plainPlayer.getHealth();
+		float geneLoss = genePlayer.getMaxHealth() - genePlayer.getHealth();
+		helper.assertTrue(plainLoss > 0.0F && geneLoss > plainLoss, "the attack damage gene adds damage: " + plainLoss + " and " + geneLoss);
+		helper.assertTrue(genePlayer.hasEffect(net.minecraft.world.effect.MobEffects.POISON), "the hit gives Poison");
+		var slowness = genePlayer.getEffect(net.minecraft.world.effect.MobEffects.SLOWNESS);
+		helper.assertTrue(slowness != null && slowness.getAmplifier() == 1, "the hit gives Slowness II");
+		helper.assertFalse(plainPlayer.hasEffect(net.minecraft.world.effect.MobEffects.POISON), "a plain hit gives no Poison");
+		helper.succeedWhen(() -> helper.assertTrue(speed.getValue() > baseSpeed * 1.25,
+				"after a hit on a player, the creaking is 30% faster"));
+	}
+
+	@GameTest
+	public void aShieldBreakAndAnAttackIntervalActOnACreaking(GameTestHelper helper) {
+		Creaking gene = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 1), "test_creaking_hits");
+		var player = player(helper, new BlockPos(1, 1, 3));
+		player.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND,
+				new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SHIELD));
+		player.startUsingItem(net.minecraft.world.InteractionHand.OFF_HAND);
+		for (int i = 0; i < 10; i++) {
+			player.doTick();
+		}
+		player.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(1, 1, 3))));
+		player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, gene.getEyePosition());
+		helper.assertTrue(player.isBlocking(), "the player holds the shield up");
+		gene.doHurtTarget(helper.getLevel(), player);
+		helper.assertTrue(player.getCooldowns().isOnCooldown(player.getOffhandItem()), "the hit stops the shield");
+		var cooling = net.minecraft.world.entity.ai.memory.MemoryModuleType.ATTACK_COOLING_DOWN;
+		gene.getBrain().setMemoryWithExpiry(cooling, true, 40L);
+		io.github.stivengjekaj.originofspawns.evolution.GeneBehaviors.scaleBrainCooldown(gene, helper.getLevel());
+		helper.assertValueEqual(gene.getBrain().getTimeUntilExpiry(cooling), 44L, "the attack time of 2 seconds is 10% longer");
+		helper.succeed();
+	}
+
+	@GameTest(maxTicks = 240)
+	public void aStareBackGivesDarknessToAPlayerThatLooksAtTheCreaking(GameTestHelper helper) {
+		Creaking creaking = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(1, 1, 1), "test_stare_back");
+		var looker = player(helper, new BlockPos(1, 1, 6));
+		var away = player(helper, new BlockPos(3, 1, 6));
+		helper.onEachTick(() -> {
+			looker.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, creaking.getEyePosition());
+			lookAway(away, creaking);
+		});
+		helper.succeedWhen(() -> {
+			helper.assertTrue(looker.hasEffect(net.minecraft.world.effect.MobEffects.DARKNESS), "the player that looks gets Darkness");
+			helper.assertFalse(away.hasEffect(net.minecraft.world.effect.MobEffects.DARKNESS), "the player that looks away does not");
+		});
+	}
 }

@@ -1,0 +1,14 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [
+		{ "type": "effect_on_hit", "effect": "minecraft:poison", "seconds": 3 },
+		{ "type": "effect_on_hit", "effect": "minecraft:slowness", "seconds": 2, "amplifier": 1 },
+		{ "type": "speed_after", "action": "player_hit", "multiplier": 1.3, "seconds": 5 },
+		{ "type": "shield_break", "seconds": 3 },
+		{ "type": "attribute", "attribute": "minecraft:attack_damage", "amount": 2, "operation": "add_value" },
+		{ "type": "attack_interval", "multiplier": 1.1 }
+	],
+	"mutation_rate": 0
+}

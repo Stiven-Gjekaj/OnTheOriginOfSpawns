@@ -1,0 +1,7 @@
+{
+	"species": "minecraft:creaking",
+	"counters": "originofspawns_test:test_heat",
+	"family": "originofspawns_test:test",
+	"gains": [{ "type": "gaze_effect", "effect": "minecraft:darkness", "seconds": 3, "range": 8, "interval_seconds": 10 }],
+	"mutation_rate": 0
+}

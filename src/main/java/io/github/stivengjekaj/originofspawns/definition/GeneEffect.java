@@ -395,7 +395,8 @@ public sealed interface GeneEffect {
 			Map.entry("still_after_look", StillAfterLook.CODEC),
 			Map.entry("dark_eyes", DarkEyes.CODEC),
 			Map.entry("attack_reach", AttackReach.CODEC),
-			Map.entry("quiet_steps", QuietSteps.CODEC)
+			Map.entry("quiet_steps", QuietSteps.CODEC),
+			Map.entry("flank_shield", FlankShield.CODEC)
 	);
 
 	Codec<GeneEffect> CODEC = Codec.STRING.partialDispatch("type",
@@ -6711,6 +6712,22 @@ public sealed interface GeneEffect {
 		@Override
 		public String type() {
 			return "quiet_steps";
+		}
+	}
+
+	/**
+	 * When the target of the creaking is a player that holds a shield up toward it, in the range, the creaking walks
+	 * round to a place at the side of the player, the distance away. There it attacks as usual. Flank Walk.
+	 */
+	record FlankShield(float range, float distance) implements GeneEffect {
+		public static final MapCodec<FlankShield> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				Codec.floatRange(1.0F, 32.0F).optionalFieldOf("range", 8.0F).forGetter(FlankShield::range),
+				Codec.floatRange(0.5F, 8.0F).optionalFieldOf("distance", 1.5F).forGetter(FlankShield::distance)
+		).apply(instance, FlankShield::new));
+
+		@Override
+		public String type() {
+			return "flank_shield";
 		}
 	}
 }

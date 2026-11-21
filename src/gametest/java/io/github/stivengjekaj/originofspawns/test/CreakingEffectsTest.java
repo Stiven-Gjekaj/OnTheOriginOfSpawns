@@ -560,4 +560,32 @@ public class CreakingEffectsTest {
 		helper.assertFalse(heard.contains(far), "a player 6 blocks away does not hear the step");
 		helper.succeed();
 	}
+
+	@GameTest
+	public void aFlankWalkGoesToTheSideOfAPlayerWithAShieldUp(GameTestHelper helper) {
+		Creaking creaking = MountEffectsTest.mob(helper, EntityTypes.CREAKING, new BlockPos(2, 1, 1));
+		var flank = new io.github.stivengjekaj.originofspawns.definition.GeneEffect.FlankShield(8.0F, 2.0F);
+		var player = player(helper, new BlockPos(2, 1, 4));
+		target(creaking, player);
+		player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, creaking.getEyePosition());
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.flank(creaking, flank) == null,
+				"the creaking does not flank a player with no shield up");
+		player.setItemInHand(net.minecraft.world.InteractionHand.OFF_HAND,
+				new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.SHIELD));
+		player.startUsingItem(net.minecraft.world.InteractionHand.OFF_HAND);
+		for (int i = 0; i < 10; i++) {
+			player.doTick();
+		}
+		player.setPos(helper.absoluteVec(net.minecraft.world.phys.Vec3.atBottomCenterOf(new BlockPos(2, 1, 4))));
+		player.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, creaking.getEyePosition());
+		helper.assertTrue(player.isBlocking(), "the player holds the shield up");
+		var place = io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.flank(creaking, flank);
+		helper.assertTrue(place != null, "the creaking flanks a player with a shield up");
+		helper.assertTrue(Math.abs(place.x - player.getX()) > 1.9 && Math.abs(place.z - player.getZ()) < 0.1,
+				"the place is 2 blocks to the side of the player, not in front of the shield: " + place.subtract(player.position()));
+		helper.assertValueEqual(creaking.getBrain().getMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.WALK_TARGET)
+				.map(walk -> walk.getTarget().currentBlockPosition()).orElse(null), BlockPos.containing(place),
+				"the creaking walks to the place");
+		helper.succeed();
+	}
 }

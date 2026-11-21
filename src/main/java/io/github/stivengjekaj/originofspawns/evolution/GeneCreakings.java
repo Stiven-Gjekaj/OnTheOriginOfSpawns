@@ -175,6 +175,33 @@ public final class GeneCreakings {
 	}
 
 	/**
+	 * Sends the creaking to the side of its target player when the player holds a shield up toward it. The walk target
+	 * replaces the walk target of the brain before the brain moves the creaking.
+	 *
+	 * @return the place at the side of the player, or null if the creaking does not flank
+	 */
+	public static Vec3 flank(Creaking creaking, GeneEffect.FlankShield flank) {
+		if (!(creaking.getTarget() instanceof net.minecraft.world.entity.player.Player player) || !player.isBlocking()
+				|| !creaking.canMove() || player.distanceTo(creaking) > flank.range()) {
+			return null;
+		}
+		Vec3 look = player.getViewVector(1.0F).multiply(1.0, 0.0, 1.0);
+		Vec3 toCreaking = creaking.position().subtract(player.position()).multiply(1.0, 0.0, 1.0);
+		if (look.lengthSqr() < 1.0E-4 || toCreaking.lengthSqr() < 1.0E-4 || look.dot(toCreaking) <= 0.0) {
+			return null;
+		}
+		look = look.normalize();
+		Vec3 side = new Vec3(-look.z, 0.0, look.x);
+		if (side.dot(toCreaking) < 0.0) {
+			side = side.scale(-1.0);
+		}
+		Vec3 place = player.position().add(side.scale(flank.distance()));
+		creaking.getBrain().setMemory(net.minecraft.world.entity.ai.memory.MemoryModuleType.WALK_TARGET,
+				new net.minecraft.world.entity.ai.memory.WalkTarget(place, 1.0F, 0));
+		return place;
+	}
+
+	/**
 	 * Returns the square of the distance in which a look wakes the creaking: the largest range of its look wake range
 	 * genes, or the vanilla value.
 	 */

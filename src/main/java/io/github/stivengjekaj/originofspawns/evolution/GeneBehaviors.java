@@ -430,6 +430,8 @@ public final class GeneBehaviors {
 				case GeneEffect.GroundCharge charge -> GeneRavagers.groundCharge(mob, level, charge);
 				case GeneEffect.WatchedStep step when mob instanceof net.minecraft.world.entity.monster.creaking.Creaking creaking ->
 						GeneCreakings.watchedStep(creaking);
+				case GeneEffect.FlankShield flank when mob instanceof net.minecraft.world.entity.monster.creaking.Creaking creaking ->
+						GeneCreakings.flank(creaking, flank);
 				case GeneEffect.Trample trample -> GeneRavagers.trample(mob, level, trample);
 				case GeneEffect.MountDash dash when mob instanceof net.minecraft.world.entity.animal.camel.Camel camel ->
 						mountDash(camel, level, dash);

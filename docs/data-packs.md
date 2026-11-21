@@ -236,7 +236,8 @@ The states for `when` are:
 | `share_damage` | `fraction`, `radius` (`8`) | A part of the damage that the mob takes goes to the mobs of its species in the radius |
 | `share_healing` | `radius` (`6`) | When the mob heals, the mobs of its species in the radius heal by the same amount |
 | `call_on_hit` | `radius`, `hits` (`melee`) | When the mob hits a player, the mobs of its species in the radius target that player |
-| `call_on_sight` | `radius`, `cooldown_seconds` (`30`) | When the mob first targets a player, the mobs of its species in the radius target that player |
+| `ally_effect_on_hit` | `effect`, `seconds`, `amplifier` (`0`), `radius` (`12`), `hits` (`melee`) | When the mob hits a player, the other mobs of its species in the radius get the status effect. The mob itself does not get it |
+| `call_on_sight` | `radius`, `cooldown_seconds` (`30`), `when` (`always`) | When the mob first targets a player, the mobs of its species in the radius target that player. The call comes only while the state is true |
 | `grave_call` | `chance`, `max_calls` (`2`), `radius` (`8`) | When the mob is hurt, it has a chance to call a new mob of its species, with no genes |
 | `jockey` | `chance`, `mount` | When the mob spawns in a natural way, it has this chance to ride a new mob of the mount type |
 | `brood` | `extra` | When the mob spawns in a natural way, this many more mobs with the same genes spawn near it |
@@ -274,7 +275,7 @@ The states for `when` are:
 | Type | Fields | Result |
 |---|---|---|
 | `silence` | `idle` (`false`), `hurt` (`false`), `steps` (`false`), `death` (`false`) | Stops these sounds of the mob |
-| `loud` | `multiplier` | Multiplies the volume of the sounds of the mob, also its steps and the fuse of a creeper |
+| `loud` | `multiplier` | Multiplies the volume of the sounds of the mob, also its steps, the fuse of a creeper, and the sounds of a wolf |
 | `translucent` | `max_light` (`7`), `opacity` (`0.1`), `blocks` (none), `night_only` (`false`), `when` (`always`), `also` (`always`) | The client draws the mob translucent at this light level or lower. With `blocks`, only while its feet or its eyes are in a block of this tag. With `night_only` (`false`), only while it is dark outside. With `when` (`always`) and `also` (`always`), only while both states are true. Other mobs still see it |
 | `glowing` | `when` (`always`) | The mob glows while the state is true, so that players see it through walls |
 | `aura` | `effect`, `amplifier` (`0`), `radius`, `interval_seconds` (`2`), `particles` (`false`), `in_water_only` (`false`), `seconds` (none), `allies` (`false`), `when` (`always`) | While the state is true, gives a status effect to the players near the mob. The effect lasts `seconds`, or until the next renewal when there is no `seconds`. With `in_water_only`, only the players in water get it. With `allies`, the mobs of its species get it instead of the players |
@@ -294,7 +295,7 @@ The states for `when` are:
 | `freeze_aura` | `radius`, `rate` (`60`), `when` (`always`) | While the state is true, the players in the radius start to freeze. The freeze grows each second by `rate` ticks. The game takes away 40 ticks each second, so a `rate` above 40 makes it grow. It stops 1 second past full |
 | `fan_shot` | `arrows` (`3`), `angle` (`15`), `cooldown_seconds` (`10`), `when` (`always`) | When the mob shoots its bow while the state is true, it also shoots more arrows in a fan, one time in each cooldown. `arrows` includes the normal shot |
 | `arrow_knockback` | `multiplier` | The projectiles of the mob push the target back more. `2` pushes two times as far |
-| `walk_on_powder_snow` | | The mob walks on powder snow and does not sink, as with leather boots |
+| `walk_on_powder_snow` | | The mob walks on powder snow and does not sink, as with leather boots. It also finds paths on top of powder snow |
 | `arrow_effect` | `effect`, `seconds`, `amplifier` (`0`) | The arrows of the mob carry a status effect, as a tipped arrow does. A stronger effect of the same kind replaces a weaker one |
 | `death_block` | `block` | When the mob dies, the block goes where it died. It goes only in air, and not where a player stands |
 | `armor_break` | `multiplier`, `frozen_only` (`false`), `hits` (`projectile`) | The hits of the mob of the kind in `hits` damage the armor of a player more. `2` damages it two times as much. With `frozen_only`, only on a player that freezes |
@@ -902,6 +903,12 @@ of the neck), `right_horn`, `left_horn`, and `mouth` (parts of the head),
 holds `upper_body` and the two legs, and `upper_body` holds `head`, `body`,
 `right_arm`, and `left_arm`. The eye glow layer of a creaking draws over its
 eyes, so a gene that changes the eyes uses a gene model with `glow`.
+A wolf has `head`, `body` (the back half of the body), `upper_body` (the
+mane), the four leg bones of the creeper, and `tail`. `body` and
+`upper_body` turn 90 degrees round X. The collar and the wolf armor draw over
+the marks. A wolf in wolf armor draws no gene models. A baby wolf has its own
+model and texture, so it draws no gene marks and no gene models until it
+grows up. It keeps its genes.
 
     {
         "texture": "originofspawns:textures/entity/bone_leg.png",
@@ -949,6 +956,30 @@ Thin marks can lose detail, because an adult limb of 12 rows becomes 5 rows.
 - A mob carries a maximum of 5 genes. The genes with the highest frequency
   stay.
 
+### Neutral mobs that fight the player
+
+These rules are for the species in the tag
+`#originofspawns:neutral_fighters`. Now it holds only the wolf.
+
+- Each death of a wild mob counts in the pool, angry or not.
+- A tame mob is a mob of the tag with an owner, for example a tame wolf.
+  It keeps its genes and gets no new genes. Living evolution does not change
+  it.
+- The death of a tame mob does not count in the pool. Its kills of players
+  do not count either.
+- A bred baby gets genes from the pool, also when it is tame at birth.
+- A call of a tame mob (`call_on_hurt`, `call_on_sight`, `call_on_hit`,
+  `call_on_death`, and `ally_effect_on_hit`) reaches only the mobs of the
+  same owner. A call of a wild mob reaches only wild mobs. A tame mob never
+  calls its pack at its owner or at a mob of its owner.
+- A wild mob uses a gain that acts on players only on a player that it
+  targets, that it is angry at, or that hurt it. A tame mob uses such a gain
+  on each living entity that it targets or that hurt it, but never on its
+  owner or on a mob of the same owner. This covers `aura` (not `allies`),
+  `first_strike`, `thorns`, the calls, `ally_effect_on_hit`,
+  `damage_dealt_when` with `players_only`, and the states `target_player`,
+  `chasing_player`, and `sees_player`.
+
 ### Entity tags
 
 These tags of entity types change vanilla spawns. A data pack can add a
@@ -959,6 +990,7 @@ species to them.
 | `#originofspawns:no_random_equipment` | The species spawns with no random weapon, no random armor, and no random enchantments. A natural weapon, such as the bow of a skeleton, stays |
 | `#originofspawns:no_item_pickup` | The species does not pick up items, unless a gene gives it pickup |
 | `#originofspawns:no_vanilla_babies` | The species spawns no babies in vanilla ways. Its babies come only from a gene |
+| `#originofspawns:neutral_fighters` | The species is a neutral mob that fights the player. The rules of these mobs apply to it. It holds the wolf |
 | `#originofspawns:no_vanilla_jockeys` | The species spawns with no rider in vanilla ways, for example the spider that carries a skeleton. A rider comes only from a gene |
 
 These tags are for the fields of effects, such as the `targets` of

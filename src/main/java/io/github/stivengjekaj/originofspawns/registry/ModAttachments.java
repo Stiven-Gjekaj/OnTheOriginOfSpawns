@@ -215,6 +215,12 @@ public final class ModAttachments {
 	public static final AttachmentType<Long> FREE_UNTIL = AttachmentRegistry.create(OriginOfSpawns.id("free_until"));
 
 	/**
+	 * For each heart gene of a creaking, true if a player was in the radius of its heart at the last check.
+	 */
+	public static final AttachmentType<java.util.Map<io.github.stivengjekaj.originofspawns.definition.GeneEffect, Boolean>>
+			HEART_VISITED = AttachmentRegistry.create(OriginOfSpawns.id("heart_visited"));
+
+	/**
 	 * The game time of the last leap of a mob with genes. The first melee hit after it removes it.
 	 */
 	public static final AttachmentType<Long> LEAP_TIME = AttachmentRegistry.create(OriginOfSpawns.id("leap_time"));

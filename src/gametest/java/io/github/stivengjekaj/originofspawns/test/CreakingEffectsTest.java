@@ -184,4 +184,21 @@ public class CreakingEffectsTest {
 			helper.succeed();
 		});
 	}
+
+	@GameTest
+	public void aHeartTwitchMovesWhenAPlayerComesNearItsHeart(GameTestHelper helper) {
+		Bound bound = bound(helper, new BlockPos(1, 1, 1), new BlockPos(1, 1, 6));
+		var twitch = new io.github.stivengjekaj.originofspawns.definition.GeneEffect.HeartTwitch(4.0F, 3.0F, 10.0F);
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.heartTwitch(bound.creaking(), twitch),
+				"no player is near the heart");
+		var player = player(helper, new BlockPos(3, 1, 1));
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.heartTwitch(bound.creaking(), twitch),
+				"a player comes near the heart");
+		helper.assertTrue(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.free(bound.creaking()),
+				"the creaking moves also while a player looks at it");
+		helper.assertFalse(io.github.stivengjekaj.originofspawns.evolution.GeneCreakings.heartTwitch(bound.creaking(), twitch),
+				"a player that stays near the heart does not come again");
+		player.discard();
+		helper.succeed();
+	}
 }

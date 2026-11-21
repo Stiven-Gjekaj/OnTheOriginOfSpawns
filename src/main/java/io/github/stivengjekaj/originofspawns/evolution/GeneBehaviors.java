@@ -543,6 +543,8 @@ public final class GeneBehaviors {
 				case GeneEffect.RaidHunt hunt when mob instanceof net.minecraft.world.entity.raid.Raider raider ->
 						GeneRavagers.raidHunt(raider, hunt);
 				case GeneEffect.Gnaw gnaw -> GeneSilverfish.gnaw(mob, level, gnaw);
+				case GeneEffect.HeartTwitch twitch when mob instanceof net.minecraft.world.entity.monster.creaking.Creaking creaking ->
+						GeneCreakings.heartTwitch(creaking, twitch);
 				case GeneEffect.SightTeleport sight when mob instanceof net.minecraft.world.entity.monster.Shulker shulker ->
 						GeneShulkers.sightTeleport(shulker, level, sight);
 				case GeneEffect.Spit spit -> spit(mob, level, spit);

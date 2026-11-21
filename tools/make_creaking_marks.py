@@ -46,7 +46,7 @@ Each gene keeps to its own zone, so that the marks stack:
   Flank Walk has bands of bark, at other rows. Shield Stare has eye knots,
   and Sap Bite has amber sap, on the arms between the bands. Blink Strike
   has pale splinters that lie flat on the other free rows of the arms. Long
-  Limbs (a thick, blunt limb below each hand) and Thorn Fist (thorns) are
+  Limbs (a thick, blunt limb under each hand) and Thorn Fist (thorns) are
   gene models.
 - The legs, from the top: Quick Bark has pale stripes, Trail Twitch has a
   twist, Heart Twitch has bright cracks, Slip Step has pale moss, and Silent
@@ -433,19 +433,21 @@ def long_limbs():
 
 def long_limbs_model():
     # Long arms: each arm goes on below the hand, as a thick, blunt limb of
-    # bark, as wide as the arm and 5 pixels long, with a flat, knotted end.
+    # bark, as wide as the arm and 7 pixels long, with a flat, knotted end.
     # The right hand is from y 19.5 to 23.5 on the bone right_arm, and the
-    # left hand from y 15 to 19 on the bone left_arm. Each arm is from z
-    # -1.5 to 1.5.
+    # left hand from y 15 to 19 on the bone left_arm. The low 3 rows of each
+    # hand are clear or thin, so the limb starts 1 pixel into the hand, over
+    # its thin row, with no gap. It is 0.05 pixel larger than the hand, so
+    # that it covers that row. Each arm is from z -1.5 to 1.5.
     im = model_image(32, 32)
 
     def bark(f, x, y):
         if f == "bottom":
             return "#2A221C" if (x + y) % 2 else "#4A3C32"
         return "#5A4A3C" if (x + y) % 3 else "#2E2620"
-    paint_box(im, 0, 0, 3, 5, 3, bark)
-    parts = [{"bone": "right_arm", "uv": [0, 0], "from": [-2, 23.5, -1.5], "size": [3, 5, 3]},
-             {"bone": "left_arm", "uv": [0, 0], "from": [0, 19, -1.5], "size": [3, 5, 3]}]
+    paint_box(im, 0, 0, 3, 7, 3, bark)
+    parts = [{"bone": "right_arm", "uv": [0, 0], "from": [-2, 20.5, -1.5], "size": [3, 7, 3], "inflate": 0.05},
+             {"bone": "left_arm", "uv": [0, 0], "from": [0, 16, -1.5], "size": [3, 7, 3], "inflate": 0.05}]
     save_model("long_limbs_arms", im, parts)
 
 

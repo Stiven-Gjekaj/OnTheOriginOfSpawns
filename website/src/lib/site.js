@@ -13,6 +13,19 @@ export const familiesOf = (sp) => families.filter((f) => f.species === sp);
 export const minorsOf = (sp) => minors.filter((m) => m.species === sp);
 export const hybridsOf = (sp) => hybrids.filter((h) => h.species === sp);
 export const genesOf = (sp) => genes.filter((g) => g.species === sp);
+// The number of genes of each family of a species.
+export const genesPerFamily = (sp) => genesOf(sp).length / (familiesOf(sp).length || 1);
+// A sentence that gives the gene count of the species. Most species have the
+// same count. The sentence names each species with a different count.
+export function geneCountText() {
+  const counts = {};
+  for (const s of species) (counts[genesOf(s.id).length] ||= []).push(s);
+  const [common, ...rest] = Object.entries(counts).sort((a, b) => b[1].length - a[1].length);
+  const each = (n, s) => `${n} genes, ${genesPerFamily(s.id)} for each family`;
+  if (!rest.length) return `Each species has ${each(common[0], common[1][0])}.`;
+  const others = rest.flatMap(([n, list]) => list.map((s) => `The ${s.name.toLowerCase()} has ${each(n, s)}.`));
+  return [`Most species have ${each(common[0], common[1][0])}.`, ...others].join(" ");
+}
 export const famById = Object.fromEntries(families.map((f) => [f.id, f]));
 export const geneById = Object.fromEntries(genes.map((g) => [g.id, g]));
 export const famName = (id) => famById[id]?.name ?? id;

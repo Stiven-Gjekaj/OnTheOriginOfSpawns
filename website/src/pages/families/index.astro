@@ -5,7 +5,7 @@ import Icon from "../../components/Icon.astro";
 import site from "../../data/site.json";
 import SpeciesSwitch from "../../components/SpeciesSwitch.astro";
 import MobShot from "../../components/MobShot.astro";
-import { url, famName, kindName, familiesOf, an } from "../../lib/site.js";
+import { url, famName, kindName, familiesOf, an, genesPerFamily } from "../../lib/site.js";
 
 const rules = [
   ["Neutral", "No family has 4 points.", "No family effects. At the start of a world, all mobs are neutral."],
@@ -42,7 +42,7 @@ const unmarkedBabies = ["zombified_piglin", "piglin", "hoglin", "zoglin", "zombi
         {sp.geneRules.length > 0 && <ul class="equip-rules small">{sp.geneRules.map((x) => <li>{x}</li>)}</ul>}
         {sp.conversion.length > 0 && <ul class="equip-rules small">{sp.conversion.map((x) => <li>{x}</li>)}</ul>}
         <ul class="equip-rules small">{[...new Set([...sp.babies, ...sp.jockeys])].map((x) => <li>{x}</li>)}{unmarkedBabies.includes(sp.id) && <li>A baby shows no gene marks.</li>}</ul>
-        <p class="muted small">The picture shows {an(sp.name)} {sp.name.toLowerCase()} with no genes. Each family picture shows {an(sp.name)} {sp.name.toLowerCase()} with all 6 genes of the family.</p>
+        <p class="muted small">The picture shows {an(sp.name)} {sp.name.toLowerCase()} with no genes. Each family picture shows {an(sp.name)} {sp.name.toLowerCase()} with all {genesPerFamily(sp.id)} genes of the family.</p>
       </div>
     </div>
     <section>

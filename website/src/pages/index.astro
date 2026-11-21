@@ -4,7 +4,7 @@ import Icon from "../components/Icon.astro";
 import Status from "../components/Status.astro";
 import MobShot from "../components/MobShot.astro";
 import site from "../data/site.json";
-import { url, familiesOf, speciesStatus, an } from "../lib/site.js";
+import { url, familiesOf, speciesStatus, an, geneCountText } from "../lib/site.js";
 import { brandIcon } from "../lib/icons.js";
 
 const { links, version, minecraft, fabric, tagline, overview, features, roadmap } = site;
@@ -112,7 +112,7 @@ const explore = [
         <div class="section-head">
           <div class="eyebrow">Species</div>
           <h2>Each species evolves its own way</h2>
-          <p>Each species has its own gene pools, 30 genes, and 5 families. A husk and a zombie share nothing.</p>
+          <p>Each species has its own gene pools, genes, and 5 families. {geneCountText()} A husk and a zombie share nothing.</p>
         </div>
         <div class="grid grid-3">
           {site.species.map((sp) => (

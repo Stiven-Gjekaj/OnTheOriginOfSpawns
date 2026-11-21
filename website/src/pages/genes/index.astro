@@ -5,11 +5,11 @@ import GeneCard from "../../components/GeneCard.astro";
 import GeneTips from "../../components/GeneTips.astro";
 import SpeciesSwitch from "../../components/SpeciesSwitch.astro";
 import site from "../../data/site.json";
-import { familiesOf } from "../../lib/site.js";
+import { familiesOf, geneCountText } from "../../lib/site.js";
 ---
 <Layout title="Genes" description={`All ${site.genes.length} genes of On the Origin of Spawns, with their gains, downsides, and marks.`}>
   <PageHeader eyebrow="Genes" title={`The ${site.genes.length} genes`}>
-    Each species has 30 genes. Each gene has gains, downsides, and a mark on the body. Its main tag gives 2 points to a family, and a sub tag gives 1 point. The pictures come from the game. Point at a picture to see the back of the mob. Point at a gene name to see the effects of its data file.
+    {geneCountText()} Each gene has gains, downsides, and a mark on the body. Its main tag gives 2 points to a family, and a sub tag gives 1 point. The pictures come from the game. Point at a picture to see the back of the mob. Point at a gene name to see the effects of its data file.
   </PageHeader>
   <GeneTips />
 
